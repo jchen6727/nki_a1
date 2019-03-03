@@ -12,6 +12,7 @@ from netpyne import specs, sim
 netParams = specs.NetParams()
 
 ## POPULATION PARAMETERS
+# Look at M1 model -- THICKNESS GOES IN POP PARAMS 
 ### Cell types listed below come from labels.py -- NOT OFFICIAL YET! 2/15/19
 ### numCells should come from mpisim.py, cpernet, see Google Drive doc 
 #### Regular Spiking (RS)
