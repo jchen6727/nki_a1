@@ -83,8 +83,8 @@ cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell position
 
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
 cfg.scale = #1.0
-cfg.sizeY = 1350.0
-cfg.sizeX = 400.0
+cfg.sizeY = 2000.0 #1350.0 # should this be set to 2000 since that is the full height of the column? 
+cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
 cfg.scaleDensity = #0.01
 
