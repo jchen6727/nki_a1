@@ -31,7 +31,7 @@ except:
 # General network parameters
 #------------------------------------------------------------------------------
 
-netParams.scale = cfg.scale # Scale factor for number of cells
+netParams.scale = cfg.scale # Scale factor for number of cells # NOT DEFINED YET! 3/11/19
 netParams.sizeX = cfg.sizeX # x-dimension (horizontal length) size in um
 netParams.sizeY = cfg.sizeY # y-dimension (vertical height or cortical depth) size in um
 netParams.sizeZ = cfg.sizeZ # z-dimension (horizontal depth) size in um
@@ -41,13 +41,13 @@ netParams.shape = 'cylinder' # cylindrical (column-like) volume
 # General connectivity parameters
 #------------------------------------------------------------------------------
 ## Values below taken from M1 netParams.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/netParams.py) 
-netParams.scaleConnWeight = #1.0 # Connection weight scale factor (default if no model specified)
-netParams.scaleConnWeightModels = #{'HH_simple': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
-netParams.scaleConnWeightNetStims = #1.0 #0.5  # scale conn weight factor for NetStims
-netParams.defaultThreshold = #0.0 # spike threshold, 10 mV is NetCon default, lower it for all cells
-netParams.defaultDelay = #2.0 # default conn delay (ms)
-netParams.propVelocity = #500.0 # propagation velocity (um/ms)
-netParams.probLambda = #100.0  # length constant (lambda) for connection probability decay (um)
+netParams.scaleConnWeight = 1.0 # Connection weight scale factor (default if no model specified)
+netParams.scaleConnWeightModels = {'HH_simple': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
+netParams.scaleConnWeightNetStims = 1.0 #0.5  # scale conn weight factor for NetStims
+netParams.defaultThreshold = 0.0 # spike threshold, 10 mV is NetCon default, lower it for all cells
+netParams.defaultDelay = 2.0 # default conn delay (ms)
+netParams.propVelocity = 500.0 # propagation velocity (um/ms)
+netParams.probLambda = 100.0  # length constant (lambda) for connection probability decay (um)
 
 
 
@@ -55,16 +55,17 @@ netParams.probLambda = #100.0  # length constant (lambda) for connection probabi
 # Cell parameters
 #------------------------------------------------------------------------------
 
-cellModels = [] # List of cell models? -- Seen in M1 netParams.py 
+cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models? -- Seen in M1 netParams.py 
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 [info from original A1 github repo]
 # Layer V has 2 parts --> E5R: 1250-1334 (0.625-0.667), E5B: 1334-1550 (0.667-0.775)
 layer = {'2': [0.05,0.475], '4': [0.475,0.625], '5R': [0.625,0.667], '5B': [0.667,0.775],'5': [0.625,0.775], '6': [0.775,1]} # normalized layer boundaries -- seen in M1 netParams.py 
 
 #------------------------------------------------------------------------------
-
-
-
+## Load cell rules previously saved using netpyne format
+cellParamLabels = ['IT5A_full', 'IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file -- seen in M1 detailed netParams.py
+loadCellParams = cellParamLabels
+# saveCellParams = False 
 
 #------------------------------------------------------------------------------
 # Population parameters
