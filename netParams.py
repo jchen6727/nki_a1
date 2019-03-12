@@ -31,7 +31,7 @@ except:
 # General network parameters
 #------------------------------------------------------------------------------
 
-netParams.scale = cfg.scale # Scale factor for number of cells # NOT DEFINED YET! 3/11/19
+netParams.scale = cfg.scale # Scale factor for number of cells # NOT DEFINED YET! 3/11/19 # How is this different than scaleDensity? 
 netParams.sizeX = cfg.sizeX # x-dimension (horizontal length) size in um
 netParams.sizeY = cfg.sizeY # y-dimension (vertical height or cortical depth) size in um
 netParams.sizeZ = cfg.sizeZ # z-dimension (horizontal depth) size in um
@@ -63,36 +63,45 @@ layer = {'2': [0.05,0.475], '4': [0.475,0.625], '5R': [0.625,0.667], '5B': [0.66
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format
-cellParamLabels = ['IT5A_full', 'IT2_reduced', 'IT4_reduced', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file -- seen in M1 detailed netParams.py
+cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file 
 loadCellParams = cellParamLabels
 # saveCellParams = False 
+
+
+for ruleLabel in loadCellParams:
+	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes  #PT5B_full was commented out in M1 netParams.py 
+
 
 #------------------------------------------------------------------------------
 # Population parameters
 #------------------------------------------------------------------------------
 
+## load densities
+with open('cells/cellDensity.pkl', 'r') as fileObj: density = pickle.load(fileObj)['density']
+density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
+
 ## These populations are listed in netParams.py from salva's M1 repo (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/netParams.py)
 ### LAYER 2:
-netParams.popParams['IT2'] = {'cellType': 'IT', 'cellModel': '', 'ynormRange': layer['2']}
-netParams.popParams['SOM2'] = {'cellType': 'SOM', 'cellModel': '', 'ynormRange': layer['2']}
-netParams.popParams['PV2'] = {'cellType': 'PV','cellModel': '', 'ynormRange': layer['2']}
+netParams.popParams['IT2'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['2'],   'density': density[('M1','E')][0]}      # IT2_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM2'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('M1','SOM')][0]}    # SOM_simple
+netParams.popParams['PV2'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('M1','PV')][0]}     # PV_simple
 ### LAYER 4: 
-netParams.popParams['IT4'] = {'cellType': 'IT', 'cellModel': '', 'ynormRange': layer['4']}
-### LAYER 5:
-#### What layer should this be? In M1: 5A, but here, 5R? 
-netParams.popParams['IT5A'] = {'cellType': 'IT', 'cellModel': '', 'ynormRange': layer['5R']}
-netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': '', 'ynormRange': layer['5R']}
-netParams.popParams['PV5A'] = {'cellType': 'PV', 'cellModel': '', 'ynormRange': layer['5R']}
-#### Same question as above 
-netParams.popParams['IT5B'] = {'cellType': 'IT', 'cellModel': '', 'ynormRange': layer['5B']}
-netParams.popParams['PT5B'] = {'cellType': 'PT', 'cellModel': '', 'ynormRange': layer['5B']}
-netParams.popParams['SOM5B'] = {'cellType': 'SOM', 'cellModel': '', 'ynormRange': layer['5B']}
-netParams.popParams['PV5B'] = {'cellType': 'PV', 'cellModel': '', 'ynormRange': layer['5B']}
+netParams.popParams['IT4'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('M1','E')][1]}      # IT4_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
+### LAYER 5A: HOW SHOULD THE LAYERING WORK HERE? 
+#netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_full',     'ynormRange': layer['5R']}          # IT5A_full     # cfg.cellmod for 'cellModel' in M1 netParams.py 
+#### LAYER 45A:
+#netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5R']}          # 45A? WHAT IS THE APPROPRIATE LAYER FOR THESE CELLS?
+#netParams.popParams['PV5A'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5R']}          # 45A? WHAT IS THE APPROPRIATE LAYER FOR THESE CELLS? 
+#### LAYER 5B: 
+#netParams.popParams['IT5B'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['5B']}          # IT5B_reduced  # cfg.cellmod for 'cellModel' in M1 netParams.py 
+#netParams.popParams['PT5B'] =  {'cellType': 'PT',  'cellModel': '',            'ynormRange': layer['5B']}          # ?             # cfg.cellmod for 'cellModel' in M1 netParams.py 
+#netParams.popParams['SOM5B'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5B']}          # SOM_simple
+#netParams.popParams['PV5B'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5B']}          # PV_simple
 #### LAYER 6:
-netParams.popParams['IT6'] = {'cellType': 'IT', 'cellModel': '', 'ynormRange': layer['6']}
-netParams.popParams['CT6'] = {'cellType': 'CT', 'cellModel': '', 'ynormRange': layer['6']}
-netParams.popParams['SOM6'] = {'cellType': 'SOM', 'cellModel': '', 'ynormRange': layer['6']}
-netParams.popParams['PV6'] = {'cellType': 'PV', 'cellModel': '', 'ynormRange': layer['6']}
+netParams.popParams['IT6'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('M1','E')][4]}  # IT6_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['CT6'] =    {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('M1','E')][4]}  # CT6_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM6'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('M1','SOM')][4]}    # SOM_simple
+netParams.popParams['PV6'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('M1','PV')][4]}     # PV_simple 
 
 
 
@@ -140,9 +149,9 @@ netParams.popParams['PV6'] = {'cellType': 'PV', 'cellModel': '', 'ynormRange': l
 # Synaptic mechanism parameters
 #------------------------------------------------------------------------------
 ### wmat in mpisim.py & STYP in labels.py  
-netParams.synMechParams['AM2'] = 
-netParams.synMechParams['GA'] = 
-netParams.synMechParams['GA2'] = 
+#netParams.synMechParams['AM2'] = 
+#netParams.synMechParams['GA'] = 
+#netParams.synMechParams['GA2'] = 
 
 #------------------------------------------------------------------------------
 # Local connectivity parameters
@@ -157,9 +166,7 @@ netParams.synMechParams['GA2'] =
 #------------------------------------------------------------------------------
 # Description
 #------------------------------------------------------------------------------
-netParams.description = """ 
-- A1 network, ??? layers, ??? cell types 
-"""
+
 
 
 
