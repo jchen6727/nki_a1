@@ -43,7 +43,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.filename =                	## Set file output name
+# cfg.filename =                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
@@ -82,10 +82,10 @@ cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell position
 #------------------------------------------------------------------------------
 
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
-cfg.scale = #1.0
-cfg.sizeY = 2000.0 #1350.0 # should this be set to 2000 since that is the full height of the column? 
+cfg.scale = 1.0     # Is this what should be used? 
+cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
-cfg.scaleDensity = #0.01
+cfg.scaleDensity = 0.01 # From M1 
 
 
