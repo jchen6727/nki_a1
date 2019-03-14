@@ -65,7 +65,7 @@ layer = {'2': [0.05,0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.66
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file 
+cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file 
 loadCellParams = cellParamLabels
 # saveCellParams = False 
 
@@ -92,7 +92,7 @@ netParams.popParams['IT4'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  
 netParams.popParams['SOM4'] = 	{'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('M1','SOM')][1]}          
 netParams.popParams['PV4'] = 	{'cellType': 'PV', 	'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('M1','PV')][1]}          
 ### LAYER 5A: 
-netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_full',     'ynormRange': layer['5A'], 	'density': density[('M1','E')][2]}      # IT5A_full or reduced?!  	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['5A'], 	'density': density[('M1','E')][2]}      # IT5A_full or reduced?!  	# cfg.cellmod for 'cellModel' in M1 netParams.py 
 netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5A'],	'density': density[('M1','SOM')][2]}          
 netParams.popParams['PV5A'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5A'],	'density': density[('M1','PV')][2]}         
 ### LAYER 5B: 
