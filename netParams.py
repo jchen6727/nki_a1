@@ -92,7 +92,7 @@ netParams.popParams['IT4'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  
 netParams.popParams['SOM4'] = 	{'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('M1','SOM')][1]}          
 netParams.popParams['PV4'] = 	{'cellType': 'PV', 	'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('M1','PV')][1]}          
 ### LAYER 5A: 
-netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_full',     'ynormRange': layer['5A'], 	'density': density[('M1','E')][2]}      # IT5A_full     	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_full',     'ynormRange': layer['5A'], 	'density': density[('M1','E')][2]}      # IT5A_full or reduced?!  	# cfg.cellmod for 'cellModel' in M1 netParams.py 
 netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5A'],	'density': density[('M1','SOM')][2]}          
 netParams.popParams['PV5A'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5A'],	'density': density[('M1','PV')][2]}         
 ### LAYER 5B: 
@@ -155,6 +155,13 @@ netParams.popParams['PV6'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   
 #netParams.synMechParams['AM2'] = 
 #netParams.synMechParams['GA'] = 
 #netParams.synMechParams['GA2'] = 
+
+### From M1 detailed netParams.py 
+netParams.synMechParams['NMDA'] = {'mod': 'MyExp2SynNMDABB', 'tau1NMDA': 15, 'tau2NMDA': 150, 'e': 0}
+netParams.synMechParams['AMPA'] = {'mod':'MyExp2SynBB', 'tau1': 0.05, 'tau2': 5.3*cfg.AMPATau2Factor, 'e': 0}
+netParams.synMechParams['GABAB'] = {'mod':'MyExp2SynBB', 'tau1': 3.5, 'tau2': 260.9, 'e': -93} 
+netParams.synMechParams['GABAA'] = {'mod':'MyExp2SynBB', 'tau1': 0.07, 'tau2': 18.2, 'e': -80}
+netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 100, 'e': -80}
 
 #------------------------------------------------------------------------------
 # Local connectivity parameters
