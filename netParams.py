@@ -59,6 +59,8 @@ cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models? -- Se
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 [info from original A1 github repo]
 # Layer V has 2 parts --> E5R: 1250-1334 (0.625-0.667), E5B: 1334-1550 (0.667-0.775)
+## Layer 5R --> Layer 5A  and  Layer 5B --> Layer 5B (B now stands for lower section of layer 5 vs. Bursting, as it did before)
+## Layer 45A --> Layer 4 + Layer 5A 
 layer = {'2': [0.05,0.475], '4': [0.475,0.625], '5R': [0.625,0.667], '5B': [0.667,0.775],'5': [0.625,0.775], '6': [0.775,1]} # normalized layer boundaries -- seen in M1 netParams.py 
 
 #------------------------------------------------------------------------------
@@ -87,16 +89,21 @@ netParams.popParams['SOM2'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   
 netParams.popParams['PV2'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('M1','PV')][0]}     # PV_simple
 ### LAYER 4: 
 netParams.popParams['IT4'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('M1','E')][1]}      # IT4_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
-### LAYER 5A: HOW SHOULD THE LAYERING WORK HERE? 
-#netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_full',     'ynormRange': layer['5R']}          # IT5A_full     # cfg.cellmod for 'cellModel' in M1 netParams.py 
-#### LAYER 45A:
+
+
+### LAYER 45A (LAYER 4 + LAYER 5A):
 #netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5R']}          # 45A? WHAT IS THE APPROPRIATE LAYER FOR THESE CELLS?
 #netParams.popParams['PV5A'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5R']}          # 45A? WHAT IS THE APPROPRIATE LAYER FOR THESE CELLS? 
+
+### LAYER 5A (cells EXCLUSIVE to layer 5A): 
+#netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_full',     'ynormRange': layer['5R']}          # IT5A_full     # cfg.cellmod for 'cellModel' in M1 netParams.py 
+
 #### LAYER 5B: 
 #netParams.popParams['IT5B'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['5B']}          # IT5B_reduced  # cfg.cellmod for 'cellModel' in M1 netParams.py 
 #netParams.popParams['PT5B'] =  {'cellType': 'PT',  'cellModel': '',            'ynormRange': layer['5B']}          # ?             # cfg.cellmod for 'cellModel' in M1 netParams.py 
 #netParams.popParams['SOM5B'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5B']}          # SOM_simple
 #netParams.popParams['PV5B'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5B']}          # PV_simple
+
 #### LAYER 6:
 netParams.popParams['IT6'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('M1','E')][4]}  # IT6_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
 netParams.popParams['CT6'] =    {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('M1','E')][4]}  # CT6_reduced   # cfg.cellmod for 'cellModel' in M1 netParams.py 
