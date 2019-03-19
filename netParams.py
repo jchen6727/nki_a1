@@ -163,6 +163,33 @@ netParams.synMechParams['GABAB'] = {'mod':'MyExp2SynBB', 'tau1': 3.5, 'tau2': 26
 netParams.synMechParams['GABAA'] = {'mod':'MyExp2SynBB', 'tau1': 0.07, 'tau2': 18.2, 'e': -80}
 netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 100, 'e': -80}
 
+
+#------------------------------------------------------------------------------
+# Current inputs (IClamp)
+#------------------------------------------------------------------------------
+if cfg.addIClamp:
+ 	for key in [k for k in dir(cfg) if k.startswith('IClamp')]:
+		params = getattr(cfg, key, None)
+		[pop,sec,loc,start,dur,amp] = [params[s] for s in ['pop','sec','loc','start','dur','amp']]
+        
+        		# add stim source
+		netParams.stimSourceParams[key] = {'type': 'IClamp', 'delay': start, 'dur': dur, 'amp': amp}
+		
+		# connect stim source to target
+		netParams.stimTargetParams[key+'_'+pop] =  {
+			'source': key, 
+			'conds': {'pop': pop},
+			'sec': sec, 
+			'loc': loc}
+#------------------------------------------------------------------------------
+# NetStim inputs
+#------------------------------------------------------------------------------
+if cfg.addNetStim:
+    for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+    	params = getattr(cfg, key, None)
+    	[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+    	[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+
 #------------------------------------------------------------------------------
 # Local connectivity parameters
 #------------------------------------------------------------------------------
