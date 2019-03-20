@@ -31,12 +31,12 @@ cfg.verbose = False           	## Show detailed messages
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
+allpops = ['IT2','PV2','SOM2','IT4','IT5A','PV5A','SOM5A','IT5B','PT5B','PV5B','SOM5B','IT6','CT6','PV6','SOM6']
 
-cfg.recordTraces = {}         	## Dict with traces to record
+cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
-
 
 
 #------------------------------------------------------------------------------
@@ -56,8 +56,8 @@ cfg.saveCellConns = True		## Seen in M1 cfg.py
 # Analysis and plotting 
 #------------------------------------------------------------------------------
 
-cfg.analysis['plotTraces'] = {} 		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = True     	## Plot a raster
+#cfg.analysis['plotTraces'] = {} 		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True} # from M1 cfg.py --> leaving off these params for now 'labels': 'overlay', 'popRates': True, 'orderInverse': True, 'timeRange': [0,500], 'popColors': popColors, 'figSize': (6,6), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 #------------------------------------------------------------------------------
@@ -99,6 +99,38 @@ cfg.addIClamp = 0
 # NetStim inputs 
 #------------------------------------------------------------------------------
 
-cfg.addNetStim = 0
+## Attempt to add Background Noise inputs 
+cfg.addNetStim = 1
 
-#cfg.NetStim1 = {'pop': 'IT2', 'ynorm':[0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0],'start': 500, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 'weight': 30.0, 'delay': 0}
+cfg.NetStim01 = {'pop': 'IT2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 	'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim02 = {'pop': 'SOM2', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 	'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim03 = {'pop': 'PV2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 	'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+
+cfg.NetStim04 = {'pop': 'IT4', 	'ynorm': [0,1], 'sec': 'soma', 	'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim05 = {'pop': 'SOM4', 'ynorm': [0,1], 'sec': 'soma', 	'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim06 = {'pop': 'PV4', 	'ynorm': [0,1], 'sec': 'soma', 	'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+
+cfg.NetStim07 = {'pop': 'IT5A',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim08 = {'pop': 'SOM5A', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim09 = {'pop': 'PV5A',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+
+cfg.NetStim10 = {'pop': 'IT5B',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim11 = {'pop': 'PT5B',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim12 = {'pop': 'SOM5B', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim13 = {'pop': 'PV5B',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+
+cfg.NetStim14 = {'pop': 'IT6',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim15 = {'pop': 'CT6',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim16 = {'pop': 'SOM6', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+cfg.NetStim17 = {'pop': 'PV6',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+
+
+
+
+
+
+
+
+
+
+
