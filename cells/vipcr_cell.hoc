@@ -14,10 +14,10 @@ public init, topol, basic_shape, subsets, geom, biophys
 public pre_list, connect2target
 
 public soma
-public rad1 // public radProx1, radMed1, radDist1, lmM1, lmt1
-public rad2 // public radProx2, radMed2, radDist2, lmM2, lmt2
-public ori1 // public oriProx1, oriMed1, oriDist1
-public ori2 // public oriProx2, oriMed2, oriDist2
+public rad1 	// public radProx1, radMed1, radDist1, lmM1, lmt1
+public rad2 	// public radProx2, radMed2, radDist2, lmM2, lmt2
+public ori1 	// public oriProx1, oriMed1, oriDist1
+public ori2 	// public oriProx2, oriMed2, oriDist2
 public all
 
 objref pre_list
@@ -33,10 +33,10 @@ proc init() {
 }
 
 create soma
-create rad1 // create radProx1, radMed1, radDist1, lmM1, lmt1
-create rad2 // create radProx2, radMed2, radDist2, lmM2, lmt2
-create ori1 // create oriProx1, oriMed1, oriDist1
-create ori2 // create oriProx2, oriMed2, oriDist2
+create rad1 	// create radProx1, radMed1, radDist1, lmM1, lmt1
+create rad2 	// create radProx2, radMed2, radDist2, lmM2, lmt2
+create ori1 	// create oriProx1, oriMed1, oriDist1
+create ori2 	// create oriProx2, oriMed2, oriDist2
 
 proc topol() { local i
 	connect rad1(0), soma(0) // connect radProx1(0), soma(0)
@@ -58,68 +58,80 @@ proc topol() { local i
 	//basic_shape()
 }
 
-proc basic_shape() {
-	soma     { pt3dclear() pt3dadd(0, 0, 0, 10)      pt3dadd(15, 0, 0, 10)        }
-	radProx1 { pt3dclear() pt3dadd(0, 0, 0, 4)       pt3dadd(-7, 7.50, 0, 4)      }
-	radMed1  { pt3dclear() pt3dadd(-14, 15, 0, 3)    pt3dadd(-21.5, 22.5, 0, 3)   }
-	radDist1 { pt3dclear() pt3dadd(-29, 30, 0, 2)    pt3dadd(-36.5, 37.5, 0, 2)   }
-	lmM1     { pt3dclear() pt3dadd(-44, 45, 0, 1.5)  pt3dadd(-51.5, 52.5, 0, 1.5) }
-	lmt1     { pt3dclear() pt3dadd(-59, 60, 0, 1)    pt3dadd(-74, 75, 0, 1)       }
-	radProx2 { pt3dclear() pt3dadd(15, 0, 0, 4)      pt3dadd(30, 15, 0, 4)        }
-	radMed2  { pt3dclear() pt3dadd(45, 30, 0, 3)     pt3dadd(60, 45, 0, 3)        }
-	radDist2 { pt3dclear() pt3dadd(75, 60, 0, 2)     pt3dadd(82.5, 67.5, 0, 2)    }
-	lmM2     { pt3dclear() pt3dadd(90, 75, 0, 1.5)   pt3dadd(97.5, 82.5, 0, 1.5)  }
-	lmt2     { pt3dclear() pt3dadd(105, 90, 0, 1)    pt3dadd(112.50, 97.5, 0, 1)  }	
-	oriProx1 { pt3dclear() pt3dadd(0, 0, 0, 2)       pt3dadd(-14.5, -14.5, 0, 2)  }
-	oriMed1  { pt3dclear() pt3dadd(-29, -29, 0, 1.5) pt3dadd(-44, -44, 0, 1.5)    }
-	oriDist1 { pt3dclear() pt3dadd(-59, -59, 0, 1)   pt3dadd(-74, -74, 0, 1)      }
-	oriProx2 { pt3dclear() pt3dadd(15, 0, 0, 2)      pt3dadd(30, -14.5, 0, 2)     }
-	oriMed2  { pt3dclear() pt3dadd(45, -29, 0, 1.5)  pt3dadd(60, -44, 0, 1.5)     }
-	oriDist2 { pt3dclear() pt3dadd(75, -59, 0, 1)    pt3dadd(90, -74, 0, 1)       }
-}
+//proc basic_shape() {
+	//soma     { pt3dclear() pt3dadd(0, 0, 0, 10)      pt3dadd(15, 0, 0, 10)        }
+	//rad1     { pt3dclear() pt3dadd()  pt3dadd()	}
+	//rad2     { pt3dclear() pt3dadd()  pt3dadd()	}
+	//ori1     { pt3dclear() pt3dadd()  pt3dadd()	}
+	//ori2     { pt3dclear() pt3dadd()  pt3dadd() }
+	//radProx1 { pt3dclear() pt3dadd(0, 0, 0, 4)       pt3dadd(-7, 7.50, 0, 4)      }
+	//radMed1  { pt3dclear() pt3dadd(-14, 15, 0, 3)    pt3dadd(-21.5, 22.5, 0, 3)   }
+	//radDist1 { pt3dclear() pt3dadd(-29, 30, 0, 2)    pt3dadd(-36.5, 37.5, 0, 2)   }
+	//lmM1     { pt3dclear() pt3dadd(-44, 45, 0, 1.5)  pt3dadd(-51.5, 52.5, 0, 1.5) }
+	//lmt1     { pt3dclear() pt3dadd(-59, 60, 0, 1)    pt3dadd(-74, 75, 0, 1)       }
+	//radProx2 { pt3dclear() pt3dadd(15, 0, 0, 4)      pt3dadd(30, 15, 0, 4)        }
+	//radMed2  { pt3dclear() pt3dadd(45, 30, 0, 3)     pt3dadd(60, 45, 0, 3)        }
+	//radDist2 { pt3dclear() pt3dadd(75, 60, 0, 2)     pt3dadd(82.5, 67.5, 0, 2)    }
+	//lmM2     { pt3dclear() pt3dadd(90, 75, 0, 1.5)   pt3dadd(97.5, 82.5, 0, 1.5)  }
+	//lmt2     { pt3dclear() pt3dadd(105, 90, 0, 1)    pt3dadd(112.50, 97.5, 0, 1)  }	
+	//oriProx1 { pt3dclear() pt3dadd(0, 0, 0, 2)       pt3dadd(-14.5, -14.5, 0, 2)  }
+	//oriMed1  { pt3dclear() pt3dadd(-29, -29, 0, 1.5) pt3dadd(-44, -44, 0, 1.5)    }
+	//oriDist1 { pt3dclear() pt3dadd(-59, -59, 0, 1)   pt3dadd(-74, -74, 0, 1)      }
+	//oriProx2 { pt3dclear() pt3dadd(15, 0, 0, 2)      pt3dadd(30, -14.5, 0, 2)     }
+	//oriMed2  { pt3dclear() pt3dadd(45, -29, 0, 1.5)  pt3dadd(60, -44, 0, 1.5)     }
+	//oriDist2 { pt3dclear() pt3dadd(75, -59, 0, 1)    pt3dadd(90, -74, 0, 1)       }
+//}
 
 objref all
 proc subsets() { local i
 	objref all
 	all = new SectionList()
 	soma     all.append()
-	radProx1 all.append()
-	radMed1  all.append()
-	radDist1 all.append()
-	lmM1     all.append()
-	lmt1     all.append()
-	radProx2 all.append()
-	radMed2  all.append()
-	radDist2 all.append()
-	lmM2     all.append()
-	lmt2     all.append()	
-	oriProx1 all.append()
-	oriMed1  all.append()
-	oriDist1 all.append()
-	oriProx2 all.append()
-	oriMed2  all.append()
-	oriDist2 all.append()
+	rad1     all.append()
+	rad2     all.append()
+	ori1     all.append()
+	ori2     all.append()
+	//radProx1 all.append()
+	//radMed1  all.append()
+	//radDist1 all.append()
+	//lmM1     all.append()
+	//lmt1     all.append()
+	//radProx2 all.append()
+	//radMed2  all.append()
+	//radDist2 all.append()
+	//lmM2     all.append()
+	//lmt2     all.append()	
+	//oriProx1 all.append()
+	//oriMed1  all.append()
+	//oriDist1 all.append()
+	//oriProx2 all.append()
+	//oriMed2  all.append()
+	//oriDist2 all.append()
 }
 
 proc geom() {
 	forsec all {  }
 	soma     {  L = 20   diam = 10  }
-	radProx1 {  L = 50   diam = 4   }
-	radMed1  {  L = 50   diam = 3   }
-	radDist1 {  L = 100  diam = 2   }
-	lmM1     {  L = 50   diam = 1.5 }
-	lmt1     {  L = 50   diam = 1   }
-	radProx2 {  L = 50   diam = 4   }
-	radMed2  {  L = 50   diam = 3   }
-	radDist2 {  L = 100  diam = 2   }
-	lmM2     {  L = 50   diam = 1.5 }
-	lmt2     {  L = 50   diam = 1   }	
-	oriProx1 {  L = 50   diam = 2   }
-	oriMed1  {  L = 50   diam = 1.5 }
-	oriDist1 {  L = 50   diam = 1   }
-	oriProx2 {  L = 50   diam = 2   }
-	oriMed2  {  L = 50   diam = 1.5 }
-	oriDist2 {  L = 50   diam = 1   }
+	rad1     {  L = 300  diam = 3   }
+	rad2     {  L = 300  diam = 3   }
+	ori1     {  L = 150  diam = 1.5 }
+	ori2     {  L = 150  diam = 1.5 }
+	//radProx1 {  L = 50   diam = 4   }
+	//radMed1  {  L = 50   diam = 3   }
+	//radDist1 {  L = 100  diam = 2   }
+	//lmM1     {  L = 50   diam = 1.5 }
+	//lmt1     {  L = 50   diam = 1   }
+	//radProx2 {  L = 50   diam = 4   }
+	//radMed2  {  L = 50   diam = 3   }
+	//radDist2 {  L = 100  diam = 2   }
+	//lmM2     {  L = 50   diam = 1.5 }
+	//lmt2     {  L = 50   diam = 1   }	
+	//oriProx1 {  L = 50   diam = 2   }
+	//oriMed1  {  L = 50   diam = 1.5 }
+	//oriDist1 {  L = 50   diam = 1   }
+	//oriProx2 {  L = 50   diam = 2   }
+	//oriMed2  {  L = 50   diam = 1.5 }
+	//oriDist2 {  L = 50   diam = 1   }
 }
 
 external lambda_f
@@ -166,7 +178,7 @@ proc biophys() {
 		// TO DO: cadyn_new, compile,insert, and verify the validation tests
 	}
 	
-	radProx1 {
+	rad1 {
 		insert pas
 		cm       = 1.2            //microF/cm2
 		g_pas    = 1/20000
@@ -181,7 +193,7 @@ proc biophys() {
 		gkdrbar_kdrcr = 0.018*0.5
 	}
 
-	radProx2 {
+	rad2 {
 		insert pas
 		cm       = 1.2            //microF/cm2
 		g_pas    = 1/20000
@@ -196,127 +208,7 @@ proc biophys() {
 		gkdrbar_kdrcr = 0.018*0.5
 	}	
 
-	radMed1 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-
-	radMed2 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}
-
-	radDist1 {
-		insert pas
-		cm        = 1.2            //microF/cm2
-		g_pas     = 1/20000
-		e_pas     = v_initcr
-		v_initcr  = -70
-		Ra        = 150
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-
-	radDist2 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-
-	lmM1 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-
-	lmM2 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}
-
-	lmt1 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-
-	lmt2 {
-		insert pas
-		cm        = 1.2            //microF/cm2
-		g_pas     = 1/20000
-		e_pas     = v_initcr
-		v_initcr  = -70
-		Ra        = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}					
-
-	oriProx1 {
+	ori1 {
 		insert pas
 		cm       = 1.2            //microF/cm2
 		g_pas    = 1/20000
@@ -331,67 +223,7 @@ proc biophys() {
 		gkdrbar_kdrcr = 0.018*0.5
 	}			
 
-	oriProx2 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}			
-
-	oriMed1 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-
-	oriMed2 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}		
-	
-	oriDist1 {
-		insert pas
-		cm       = 1.2            //microF/cm2
-		g_pas    = 1/20000
-		e_pas    = v_initcr
-		v_initcr = -70
-		Ra       = 150 
-
-		insert Nafcr
-		gnafbar_Nafcr = 0.018*5
-
-		insert kdrcr
-		gkdrbar_kdrcr = 0.018*0.5
-	}			
-
-	oriDist2 {
+	ori2 {
 		insert pas
 		cm       = 1.2            //microF/cm2
 		g_pas    = 1/20000
