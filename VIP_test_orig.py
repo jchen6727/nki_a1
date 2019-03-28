@@ -20,7 +20,7 @@ netParams.popParams['VIP_pop'] = {'cellType': 'VIP', 'numCells': 1, 'cellModel':
 #lambda_f = 100
 
 # Import .hoc
-netParams.importCellParams(label='VIP_rule', conds={'cellType': 'VIP', 'cellModel': 'HH_CA1'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell', importSynMechs=True)
+netParams.importCellParams(label='VIP_rule', conds={'cellType': 'VIP', 'cellModel': 'HH_CA1'}, fileName='cells/vipcr_cell_orig.hoc', cellName='VIPCRCell', importSynMechs=True)
 
 
 # Add a stimulation
