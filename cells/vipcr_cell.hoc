@@ -14,10 +14,10 @@ public init, topol, basic_shape, subsets, geom, biophys
 public pre_list, connect2target
 
 public soma
-public radProx1, radMed1, radDist1, lmM1, lmt1
-public radProx2, radMed2, radDist2, lmM2, lmt2
-public oriProx1, oriMed1, oriDist1
-public oriProx2, oriMed2, oriDist2
+public rad1 // public radProx1, radMed1, radDist1, lmM1, lmt1
+public rad2 // public radProx2, radMed2, radDist2, lmM2, lmt2
+public ori1 // public oriProx1, oriMed1, oriDist1
+public ori2 // public oriProx2, oriMed2, oriDist2
 public all
 
 objref pre_list
@@ -33,28 +33,28 @@ proc init() {
 }
 
 create soma
-create radProx1, radMed1, radDist1, lmM1, lmt1
-create radProx2, radMed2, radDist2, lmM2, lmt2
-create oriProx1, oriMed1, oriDist1
-create oriProx2, oriMed2, oriDist2
+create rad1 // create radProx1, radMed1, radDist1, lmM1, lmt1
+create rad2 // create radProx2, radMed2, radDist2, lmM2, lmt2
+create ori1 // create oriProx1, oriMed1, oriDist1
+create ori2 // create oriProx2, oriMed2, oriDist2
 
 proc topol() { local i
-	connect radProx1(0), soma(0)
-	connect radMed1(0),  radProx1(1)
-	connect radDist1(0), radMed1(1)
-	connect lmM1(0),     radDist1(1)
-	connect lmt1(0),     lmM1(1)
-	connect radProx2(0), soma(1)
-	connect radMed2(0),  radProx2(1)
-	connect radDist2(0), radMed2(1)
-	connect lmM2(0),     radDist2(1)
-	connect lmt2(0),     lmM2(1)	
-	connect oriProx1(0), soma(0)
-	connect oriMed1(0),  oriProx1(1)
-	connect oriDist1(0), oriMed1(1)
-	connect oriProx2(0), soma(1)
-	connect oriMed2(0),  oriProx2(1)
-	connect oriDist2(0), oriMed2(1)
+	connect rad1(0), soma(0) // connect radProx1(0), soma(0)
+	// connect radMed1(0),  radProx1(1)
+	// connect radDist1(0), radMed1(1)
+	// connect lmM1(0),     radDist1(1)
+	// connect lmt1(0),     lmM1(1)
+	connect rad2(0), soma(1) // connect radProx2(0), soma(1)
+	// connect radMed2(0),  radProx2(1)
+	// connect radDist2(0), radMed2(1)
+	// connect lmM2(0),     radDist2(1)
+	// connect lmt2(0),     lmM2(1)	
+	connect ori1(0), soma(0) // connect oriProx1(0), soma(0)
+	// connect oriMed1(0),  oriProx1(1)
+	// connect oriDist1(0), oriMed1(1)
+	connect ori2(0), soma(1) // connect oriProx2(0), soma(1)
+	// connect oriMed2(0),  oriProx2(1)
+	// connect oriDist2(0), oriMed2(1)
 	//basic_shape()
 }
 
