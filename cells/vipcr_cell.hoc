@@ -8,7 +8,7 @@
 global_lambda_f = 1
   func lambda_f() {return global_lambda_f}
 
-begintemplate VIPCRCell
+begintemplate VIPCRCell_EDITED
 public is_art
 public init, topol, basic_shape, subsets, geom, biophys
 public pre_list, connect2target
@@ -319,7 +319,7 @@ proc synapses() {
 
 func is_art() { return 0 }
 
-endtemplate VIPCRCell
+endtemplate VIPCRCell_EDITED
 
 
 
