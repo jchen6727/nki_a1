@@ -67,7 +67,7 @@ layer = {'2': [0.05,0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.66
 ## Load cell rules previously saved using netpyne format (****DOES NOT INCLUDE VIP CELLS****)
 cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file 
 loadCellParams = cellParamLabels
-# saveCellParams = False 
+# saveCellParams = True # This saves the params as a .pkl file
 
 
 for ruleLabel in loadCellParams:
