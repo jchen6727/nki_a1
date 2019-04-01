@@ -255,66 +255,58 @@ obfunc connect2target() { localobj nc //$o1 target point process, optional $o2 r
 
 objref syn_
 
+
 proc synapses_EC() {
-	/* E0 */   lmM1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		EC
+	/* E0 */   rad1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		EC  // was lmM1: 200-250 from soma(0) 
 	syn_.tau1 = 2.0
 	syn_.tau2 = 6.3
 	syn_.e    = 0
-	/* E1 */   lmM2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		EC
+	/* E1 */   rad2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		EC  // was lmM2: 200-250 from soma(1)
 	syn_.tau1 = 2.0
 	syn_.tau2 = 6.3
 	syn_.e    = 0
 }
 
 proc synapses_CA3() {
-	/* E2 */   radMed1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		CA3 Shaffer collateral
+	/* E2 */   rad1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		CA3 Shaffer collateral // was radProx1 & radMed1: 0-50 & 50-100 from soma(0)
 	syn_.tau1 = 2.0
 	syn_.tau2 = 6.3
 	syn_.e    = 0
-	/* E3 */   radMed2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		CA3 Shaffer collateral
-	syn_.tau1 = 2.0
-	syn_.tau2 = 6.3
-	syn_.e    = 0
-	/* E4 */   radProx1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		CA3 Shaffer collateral
-	syn_.tau1 = 2.0
-	syn_.tau2 = 6.3
-	syn_.e    = 0
-	/* E5 */   radProx2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		CA3 Shaffer collateral
+	/* E3 */   rad2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		CA3 Shaffer collateral // was radProx2 & radMed2: 0-50 & 50-100 from soma(1) 
 	syn_.tau1 = 2.0
 	syn_.tau2 = 6.3
 	syn_.e    = 0
 }
 
 proc synapses_PC() {
-	/* E6 */   oriProx1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		PC
+	/* E4 */   ori1 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		PC // was oriProx1: 0-50 from soma(0)
 	syn_.tau1 = 0.5
 	syn_.tau2 = 3.0
 	syn_.e    = 0
-	/* E7 */   oriProx2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		PC
+	/* E5 */   ori2 syn_ = new MyExp2Syn(0.5)  pre_list.append(syn_)	// AMPA		PC // was oriProx2: 0-50 from soma(1) 
 	syn_.tau1 = 0.5
 	syn_.tau2 = 3.0
 	syn_.e    = 0
 }
 
 proc synapses_SEP() {
-	/* I8 */   oriProx1 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-A	Septum
+	/* I8 */   ori1 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-A	Septum // was oriProx1: 0-50 from soma(0)
 	syn_.tau1 = 1
 	syn_.tau2 = 8
 	syn_.e    = -75
-	/* I9 */   oriProx2 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-A	Septum
+	/* I9 */   ori2 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-A	Septum // was oriProx2: 0-50 from soma(1)
 	syn_.tau1 = 1
 	syn_.tau2 = 8
 	syn_.e    = -75
-	/* I10 */   oriProx1 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-B	Septum
+	/* I10 */   ori1 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-B	Septum // was oriProx1: 0-50 from soma(0)
 	syn_.tau1 = 35
 	syn_.tau2 = 100
 	syn_.e    = -75
-	/* I11 */   oriProx2 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-B	Septum
+	/* I11 */   ori2 syn_ = new MyExp2Syn(0.6)  pre_list.append(syn_)	// GABA-B	Septum // was oriProx2: 0-50 from soma(1)
 	syn_.tau1 = 35
 	syn_.tau2 = 100
 	syn_.e    = -75
 }
-
 
 proc synapses() {
   synapses_EC()
