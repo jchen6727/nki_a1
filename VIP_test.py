@@ -8,6 +8,7 @@ Created on Thu Mar 28 11:23:50 2019
 
 # Imports
 from netpyne import specs, sim
+import pickle
 
 # Network Parameters
 netParams = specs.NetParams()
@@ -21,9 +22,8 @@ netParams.popParams['VIP_edited'] = {'cellType': 'VIP', 'numCells': 1, 'cellMode
 #lambda_f = 100
 
 # Import .hoc
-netParams.importCellParams(label='VIP_orig_rule', conds={'cellType': 'VIP', 'cellModel': 'HH_CA1'}, fileName='cells/vipcr_cell_orig.hoc', cellName='VIPCRCell', importSynMechs=True)
-netParams.importCellParams(label='VIP_edited_rule', conds={'cellType': 'VIP', 'cellModel': 'HH_CA1'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
-
+netParams.importCellParams(label='VIP_orig', conds={'cellType': 'VIP', 'cellModel': 'HH_CA1'}, fileName='cells/vipcr_cell_orig.hoc', cellName='VIPCRCell', importSynMechs=True)
+netParams.importCellParams(label='VIP_edited', conds={'cellType': 'VIP', 'cellModel': 'HH_CA1'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
 
 # Add a stimulation
 netParams.stimSourceParams['Input1'] = {'type': 'IClamp', 'del': 50, 'dur': 500, 'amp': 0.4}
@@ -38,6 +38,11 @@ simConfig.duration = 1*1e3
 simConfig.dt = 0.05
 simConfig.recordTraces = {'V_soma':{'sec':'soma', 'loc': 0.5, 'var': 'v'}}
 simConfig.recordStep = 0.1
+
+# Adding this in order to save params as a pkl file 
+##saveCellParams = True 
+for i in range(0,len(allpops)):
+    netParams.saveCellParamsRule(label=allpops[i],fileName='cells/'+allpops[i]+'_cellParams.pkl')
 
 #simConfig.analysis['plotRaster'] = 1
 simConfig.analysis['plotTraces'] = {'include': ['allCells', 'eachPop'], 'overlay': True} #'oneFigPer': 'trace'}
