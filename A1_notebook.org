@@ -21966,8 +21966,7 @@ Plotting 2D representation of network cell locations and connections...
 ***** Petersen et al. 2013 -- really? Seems like it focuses on layer 2/3
 **** VIP interneurons: 
 *** Potential models: 
-**** Layer 1 interneurons:
-***** 
+**** Layer 1 interneurons: 
 **** VIP interneurons:
 ** *NOTES* about interneurons properties:
 *** samn: he mentioned thought one important feature of *PV and SOM is that they tend to fire out of phase*, so will be good to get that in the model
@@ -21996,7 +21995,6 @@ a few days ago they did some experiments with lidocaine in thalamus, lidocaine a
 * <2019-03-25 Mon -- VIP interneuron search>
 ** version control
 ** Possible VIP interneuron models:
-*** 
 * <2019-03-26 Tue -- Interneurons>
 ** Had meeting today in #isb channel:
 *** Read the following papers on L1 interneurons & circuitry:
@@ -22093,7 +22091,7 @@ a few days ago they did some experiments with lidocaine in thalamus, lidocaine a
 *** The rest of this paper may get too granular -- skim it again tomorrow then move on. 
 ** FOR TOMORROW -- need to look for VIP interneuron model from any species, verify that it looks vaguely okay electrophysiologically, then look on neuro-electro & at more literature & BBP/HBP to find electro properties of macaque VIP and substitute with that. (If connectivity can be used as a criteria then sure, need to determine connectivity patterns in the literature then look at connectivity patterns in the available model(s); need to also look at time constants in the literature and neuro-electro and whatnot, and make sure that data is reflected in the model or in my modifications of the model). 
 ** Same applies for layer 1 interneurons -- read more about them in the literature. decide how to proceed later (look at HBP/BBP and at literature for models. or look at what they are closest to -- NGF VIP? how do they differ?) 
-
+   
 * <2019-03-28 Thu -- VIP interneuron search>
 ** (1) get VIP model from modeldb:
 https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=246546&file=/Turi_et_al_2018/cells/vipcr_cell.hoc#tabs-2
@@ -22556,7 +22554,7 @@ density = {k: [x * 0.01 for x in v] for k,v in density.items()} # Scale densitie
 *** L5A:  0.625-0.667
 *** L5B:  0.667-0.775
 *** L6:   0.775-1
-** Cell Densities (from 3D Quantification paper) at the above boundaries:
+** HOW ACCURATE IS THIS?? --> Cell Densities (from 3D Quantification paper) at the above boundaries:
 *** L2/3: 1.81, 1.85, 1.92, 2.01, 1.97, 1.98, 1.95, 1.95, 1.91, 1.91      [*10^5 neurons/mm3]
 *** L4  : 1.92, 1.91, 1.90, 1.91, 1.92, 1.94, 1.95, 1.96, 1.97, 1.98      [*10^5 neurons/mm3]
 *** L5A : 1.98, 1.99, 2.01, 2.03, 2.05, 2.06                              [*10^5 neurons/mm3]
@@ -22691,3 +22689,30 @@ for i in range(0,len(allpops)):
 ** TASK 1 revisted -- need the cellModel to be 'HH_simple' for VIP_simple --> changed this in VIP_test_compare.py in VIP_test subdir
 ** As of now -- VIP_simple_cellParams.pkl lives in cells subdir, and is the final pkl version of VIP simple (for now) 
 ** VERSION CONTROL CHECKPOINT: 
+*** neurosim -- done
+*** desktop -- done
+*** github -- done
+*** laptop -- done 
+** ONE NOTE ON VIP_simple -- DOES NOT HAVE THE 'weight normalization' stuff in M1 netParams.py; see github M1detailed for example 
+*** e.g. 
+## SOM cell params (3-comp)
+if 'SOM_simple' not in loadCellParams:
+    cellRule = netParams.importCellParams(label='SOM_simple', conds={'cellType':'SOM', 'cellModel':'HH_simple'}, 
+      fileName='cells/LTS3.hoc', cellName='LTScell1', cellInstance = True)
+    cellRule['secLists']['spiny'] = ['soma', 'dend']
+    netParams.addCellParamsWeightNorm('SOM_simple', 'conn/SOM_simple_weightNorm.pkl', threshold=cfg.weightNormThreshold)
+netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cellParams.pkl')
+** TASK 2: Add in L1 to cellDensity.py and cellDensity.pkl 
+*** Don't trust 4/9/19 values for cell densities 
+*** Re-do 3D quantification paper cell densities using webtool; fig 6D (https://apps.automeris.io/wpd/)
+**** L1   [0.000-0.050]: 0.27, 0.36, 0.51, 0.68, 0.86    --> AVG: 0.536
+**** L2/3 [0.050-0.475]: 1.2, 2.13, 2.74, 2.32, 2.07, 2.05, 2.23, 2.39, 1.9, 1.4 --> AVG: 2.043
+**** L4   [0.475-0.625]: 1.39, 1.60, 1.82, 2.24, 2.61 --> AVG: 1.932
+**** L5A  [0.625-0.667]: 2.63, 3.03, 3.5, 3.63, 3.41  --> AVG: 3.24
+**** L5B  [0.667-0.775]: 3.44, 3.09, 2.73, 2.34, 2.29, 2.00, 1.69 --> AVG: 2.511  
+**** L6   [0.775-1.000]: 1.75, 1.96, 2.23, 2.6, 2.34, 2.07, 1.69, 1.51, 1.14, 0.74, 0.51, 0.34 --> AVG: 1.573  
+*** Added in overall L1 cell density to cellDensity.py (line 40, density['nrn_density']) from 'Quantification of Neuronal Density...' paper by Kelly & Hawken 2017, fig 6D
+*** Added in E-I proportions for L1 to cellDensity.py (line 43, percentE['Lefort09']) by saying 0% for E and 100% for I (example citation: Schuman et al., 2019 'four unique interneuron populations...')
+*** Added in interneuron population breakdown for L1 (PV, SOM, VIP, nonVIP) to cellDensity.py (lines 61-64) using Tremblay et al. 2016 fig 2 ('GABAergic interneurons in neocortex')
+** VERSION CONTROL CHECKPOINT:
+*** desktop 
