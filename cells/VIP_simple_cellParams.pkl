@@ -2690,7 +2690,7 @@ g2
 (dp858
 S'cellModel'
 p859
-S'HH_CA1'
+S'HH_simple'
 p860
 sS'cellType'
 p861
