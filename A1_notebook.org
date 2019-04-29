@@ -22633,5 +22633,17 @@ density = {k: [x * 0.01 for x in v] for k,v in density.items()} # Scale densitie
 ** Put lab NB into neurosim & desktop
 *** move lab NB specifically into A1 folder 
 *** mv Lab_Notebook.org NEUROSIM/A1/A1_notebook.org 
-*** cd A1 -- git add and commit
-*** 
+*** cd A1 -- git add and commit in laptop A1 
+*** git push ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare
+*** neurosim
+**** git pull /u/ericag/A1_bare
+*** github
+**** cd to A1_bare on neurosim
+**** git push --mirror https://github.com/ericaygriffith/A1
+*** desktop
+**** git pull ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare
+** Get rid of lab_notebook.org wherever it lives 
+*** desktop -- mv Lab_Notebook.org ~/Desktop/NEUROSIM/misc/Lab_Notebook_apr29_2019.org 
+*** laptop -- done
+*** github (N/A)
+*** neurosim -- done (mv Lab_Notebook.org archive/Lab_Notebook.org)  
