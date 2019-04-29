@@ -58,14 +58,14 @@ density[('A1','I')] = [round(density['nrn_density'][i]) * (1-percentE['Lefort09'
 # 3) Use interneuron proportions from 'GABAergic interneurons in neocortex' (Tremblay et al., 2016)
 # Avg for PV, SOM, VIP, non-VIP in each layer of mouse somatosensory cortex (fig 2)
 # ------------------------------------------------------------------------------------------------------------------
-PV = [0.29, 0.641, 0.54, 0.465, 0.424]          # L1: 0.07
-SOM = [0.116, 0.169, 0.319, 0.389, 0.318]       # L1: 0.04
-VIP = [0.347, 0.092, 0.078, 0.06, 0.064]        # L1: 0.052
-nonVIP = [0.247, 0.099, 0.064, 0.085, 0.193]    #L1: 0.9
+PV = 	[0.29, 0.641, 0.54, 0.465, 0.424]          # L1: 0.07
+SOM = 	[0.116, 0.169, 0.319, 0.389, 0.318]       # L1: 0.04
+VIP = 	[0.347, 0.092, 0.078, 0.06, 0.064]        # L1: 0.052
+nonVIP = [0.247, 0.099, 0.064, 0.085, 0.193]    # L1: 0.9
 
-density[('A1','PV')] =  [(density[('A1','I')][i])*(PV[i]) for i in range(len(PV))]
-density[('A1','SOM')] = [(density[('A1','I')][i])*(SOM[i]) for i in range(len(SOM))]
-density[('A1','VIP')] = [(density[('A1','I')][i])*(VIP[i]) for i in range(len(VIP))]
+density[('A1','PV')] =     [(density[('A1','I')][i])*(PV[i]) for i in range(len(PV))]
+density[('A1','SOM')] =    [(density[('A1','I')][i])*(SOM[i]) for i in range(len(SOM))]
+density[('A1','VIP')] =    [(density[('A1','I')][i])*(VIP[i]) for i in range(len(VIP))]
 density[('A1','nonVIP')] = [(density[('A1','I')][i])*(nonVIP[i]) for i in range(len(nonVIP))]
 
 
