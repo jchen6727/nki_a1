@@ -84,32 +84,32 @@ density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Sc
 
 ## These populations are listed in netParams.py from salva's M1 repo (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/netParams.py)
 ### LAYER 2:
-netParams.popParams['IT2'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['2'],   'density': density[('M1','E')][0]}      # IT2_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM2'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('M1','SOM')][0]}    # SOM_simple
-netParams.popParams['PV2'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('M1','PV')][0]}     # PV_simple
-netParams.popParams['VIP2'] =   {'cellType': 'VIP', 'cellModel': , 'ynormRange': layer['2'], }
+netParams.popParams['IT2'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['2'],   'density': density[('A1','E')][0]}      # IT2_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM2'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','SOM')][0]}    # SOM_simple
+netParams.popParams['PV2'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','PV')][0]}     # PV_simple
+netParams.popParams['VIP2'] =   {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','VIP')][0]}
 ### LAYER 4: 
-netParams.popParams['IT4'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('M1','E')][1]}      # IT4_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM4'] = 	{'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('M1','SOM')][1]}          
-netParams.popParams['PV4'] = 	{'cellType': 'PV', 	'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('M1','PV')][1]}          
-netParams.popParams['VIP4'] =   {'cellType': 'VIP', 'cellModel': , 'ynormRange': layer['4'], }
+netParams.popParams['IT4'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('A1','E')][1]}      # IT4_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM4'] = 	{'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('A1','SOM')][1]}          
+netParams.popParams['PV4'] = 	{'cellType': 'PV', 	'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('A1','PV')][1]}          
+netParams.popParams['VIP4'] =   {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['4'],   'density': density[('A1','VIP')][1]}
 ### LAYER 5A: 
-netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['5A'], 	'density': density[('M1','E')][2]}      # IT5A_full or reduced?!  	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5A'],	'density': density[('M1','SOM')][2]}          
-netParams.popParams['PV5A'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5A'],	'density': density[('M1','PV')][2]}         
-netParams.popParams['VIP5A'] = {'cellType': 'VIP', 'cellModel': , 'ynormRange': layer['5A'],  }
+netParams.popParams['IT5A'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'], 	'density': density[('A1','E')][2]}      # IT5A_full or reduced?!  	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM5A'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',    'ynormRange': layer['5A'],	'density': density[('A1','SOM')][2]}          
+netParams.popParams['PV5A'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',    'ynormRange': layer['5A'],	'density': density[('A1','PV')][2]}         
+netParams.popParams['VIP5A'] = {'cellType': 'VIP', 'cellModel': 'HH_simple',    'ynormRange': layer['5A'],  'density': density[('A1','VIP')][2]}
 ### LAYER 5B: 
-netParams.popParams['IT5B'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['5B'], 	'density': 0.5*density[('M1','E')][3]}  # IT5B_reduced  		# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['PT5B'] =  {'cellType': 'PT',  'cellModel': 'HH_reduced',  'ynormRange': layer['5B'], 	'density': 0.5*density[('M1','E')][3]}  # using PT5B_reduced?	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM5B'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['5B'],	'density': density[('M1','SOM')][3]}    # SOM_simple
-netParams.popParams['PV5B'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['5B'],	'density': density[('M1','PV')][3]}     # PV_simple
-netParams.popParams['VIP5B'] = {'cellType': 'VIP', 'cellModel':  , 'ynormRange': layer['5B'], }
+netParams.popParams['IT5B'] =  {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][3]}  # IT5B_reduced  		# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['PT5B'] =  {'cellType': 'PT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][3]}  # using PT5B_reduced?	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM5B'] = {'cellType': 'SOM', 'cellModel': 'HH_simple',    'ynormRange': layer['5B'],	'density': density[('A1','SOM')][3]}    # SOM_simple
+netParams.popParams['PV5B'] =  {'cellType': 'PV',  'cellModel': 'HH_simple',    'ynormRange': layer['5B'],	'density': density[('A1','PV')][3]}     # PV_simple
+netParams.popParams['VIP5B'] = {'cellType': 'VIP', 'cellModel': 'HH_simple',    'ynormRange': layer['5B'],  'density': density[('A1','VIP')][3]}
 ### LAYER 6:
-netParams.popParams['IT6'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('M1','E')][4]}  # IT6_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['CT6'] =    {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('M1','E')][4]}  # CT6_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM6'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('M1','SOM')][4]}    # SOM_simple
-netParams.popParams['PV6'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('M1','PV')][4]}     # PV_simple 
-netParams.popParams['VIP6'] =   {'cellType': 'VIP', 'cellModel':  , 'ynormRange': layer['6'], }
+netParams.popParams['IT6'] =    {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][4]}  # IT6_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['CT6'] =    {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][4]}  # CT6_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
+netParams.popParams['SOM6'] =   {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','SOM')][4]}    # SOM_simple
+netParams.popParams['PV6'] =    {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','PV')][4]}     # PV_simple 
+netParams.popParams['VIP6'] =   {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','VIP')][4]}
 
 
 
