@@ -22714,5 +22714,10 @@ netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cell
 *** Added in overall L1 cell density to cellDensity.py (line 40, density['nrn_density']) from 'Quantification of Neuronal Density...' paper by Kelly & Hawken 2017, fig 6D
 *** Added in E-I proportions for L1 to cellDensity.py (line 43, percentE['Lefort09']) by saying 0% for E and 100% for I (example citation: Schuman et al., 2019 'four unique interneuron populations...')
 *** Added in interneuron population breakdown for L1 (PV, SOM, VIP, nonVIP) to cellDensity.py (lines 61-64) using Tremblay et al. 2016 fig 2 ('GABAergic interneurons in neocortex')
+*** to netParams.py -- Added layer 1 to layer boundary line (line 64) and added L1 cell info (SOM1, PV1, and VIP1) to netParams.popParams -- have not yet added nonVIP cells to netParams.py (have added to cells/cellDensity.py and thus cells/cellDensity.pkl) 
 ** VERSION CONTROL CHECKPOINT:
-*** desktop 
+*** desktop -- done
+*** laptop -- done
+*** neurosim -- done
+*** github -- done 
+
