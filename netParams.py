@@ -65,14 +65,25 @@ layer = {'2': [0.05,0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.66
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (****DOES NOT INCLUDE VIP CELLS****)
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']  # list of cell rules to load from file 
+cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple', 'VIP_simple']  # list of cell rules to load from file 
 loadCellParams = cellParamLabels
-# saveCellParams = True # This saves the params as a .pkl file
+#saveCellParams = True # This saves the params as a .pkl file
 
 
 for ruleLabel in loadCellParams:
 	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes  #PT5B_full was commented out in M1 netParams.py 
 
+
+
+#------------------------------------------------------------------------------
+## THIS DID NOT WORK 
+## VIP cell params (3-comp)
+#if 'VIP_simple' not in loadCellParams:
+#    cellRule = netParams.importCellParams(label='VIP_simple', conds={'cellType':'VIP', 'cellModel':'HH_simple'}, 
+#      fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', cellInstance = True)
+#    #cellRule['secLists']['spiny'] = ['soma', 'dend']
+#    #netParams.addCellParamsWeightNorm('VIP_simple', 'conn/VIP_simple_weightNorm.pkl', threshold=cfg.weightNormThreshold) # DO NOT HAVE VIP_simple_weightNorm.pkl
+#    netParams.saveCellParamsRule(label='VIP_simple', fileName='cells/VIP_simple_cellParams.pkl')
 
 #------------------------------------------------------------------------------
 # Population parameters
