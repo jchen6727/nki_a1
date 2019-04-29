@@ -22309,13 +22309,10 @@ so ~15 comps… maybe can reduce to those main labels: soma, rad, lm, ori ? what
 *** what cellModel should I use? (netParams.popParams) --> arbitrary 
 
 ** *RENAMED vip test script to 1 file named VIP_test.py in ~/Desktop/NEUROSIM/A1*
-
-
 ** TOMORROW: 
 *** What density should I use for VIP cells?
 *** do saveCellParams in either VIP_test.py [done] or in netParams.py of A1 model in order to save cellParams for VIP in each layer
 *** set cellModel in netParams in A1 model --> arbitrary
-
 
 ** VERSION CONTROL:
 *** [done] desktop: add, commit, push
@@ -22647,3 +22644,41 @@ density = {k: [x * 0.01 for x in v] for k,v in density.items()} # Scale densitie
 *** laptop -- done
 *** github (N/A)
 *** neurosim -- done (mv Lab_Notebook.org archive/Lab_Notebook.org)  
+** Go through everything in the model and see what needs to be added [document below]
+** TASK 1: VIP pkl file 
+*** Lines 68-74 in netParams.py name all the populations of cells and then load their .pkl files 
+*** Figure out how to get VIP pkl file like the rest of them 
+*** Salva says: 'check the m1 netParams — when the flag `saveCellParams` is set to true it calls a func to save the params to a pkl file'
+*** in A1/netParams.py --> adding saveCellParams = True
+*** Already did this in A1/VIP_test/VIP_netParams.py --> but was this enough? WHAT gets saved w/ this saveCellParamsRule
+*** There exists (UNCOMMITTED, on DESKTOP), two files in A1/cells which were saved via the above script to .pkl files. But are they correct? 
+*** Try using what M1 model does for SOM & PV 
+**** e.g. ## SOM cell params (3-comp) -- lines 187-193 in M1detailed/netParams.py 
+if 'SOM_simple' not in loadCellParams:
+    cellRule = netParams.importCellParams(label='SOM_simple', conds={'cellType':'SOM', 'cellModel':'HH_simple'}, 
+      fileName='cells/LTS3.hoc', cellName='LTScell1', cellInstance = True)
+    cellRule['secLists']['spiny'] = ['soma', 'dend']
+    netParams.addCellParamsWeightNorm('SOM_simple', 'conn/SOM_simple_weightNorm.pkl', threshold=cfg.weightNormThreshold)
+    netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cellParams.pkl')
+**** Changed all instances of SOM to VIP and commented out cellRule['secLists...] and netParams.addCellParamsWeight... lines 
+**** Can I just execute these lines without the rest of the script and generate a .pkl file that will work? 
+**** did not load the file properly ^^ 
+**** ok so where am I now... I have taken out the VIP cell params stuff from above ^^ 
+**** in A1/cells I copied VIP_edited_cellParams.pkl and renamed it VIP_simple_cellParams.pkl and added 'VIP_simple' to cellParamLabels list. Now it loads this pkl file and it seems to have all the relevant sections & mechanisms from the edited cell file. 
+**** NEXT: (1) see how it differs if I use original VIP (VIP_orig_cellParams.pkl) 
+***** change cellParamLabels list to have 'VIP_orig' rather than  'VIP_simple'
+***** yup -- this one loads the larger model; change back 
+**** NEXT: (2) how did I generate this pkl file?  
+***** Used VIP_test_compare.py in A1/VIP_test and generated 2 pkl files, one with original (vipcr_cell_orig.hoc) and one edited (vipcr_cell.hoc)
+***** Try again in A1/VIP_test directory to see if this generates the same pkl files 
+***** yes -- so, script to generate is in A1/VIP_test/VIP_test_compare.py, which has lines to save the files (below)
+# Adding this in order to save params as a pkl file 
+##saveCellParams = True 
+for i in range(0,len(allpops)):
+    netParams.saveCellParamsRule(label=allpops[i],fileName=allpops[i]+'_cellParams.pkl')
+##^^ This was fileName='cells/'+allpops[i]+'_cellParams.pkl') 
+    **
+**** CONCLUSION: the VIP_simple_cellParams.pkl file in A1/cells is generated using VIP_test_compare.py in A1/VIP_test
+**** and VIP_simple_cellParams.pkl is the same as VIP_edited_cellParams.pkl in VIP_test 
+**** ^^ used 'diff' command to compare 
+*** CONCLUSION: Use VIP_simple_cellParams.pkl located in A1/cells to load VIP_simple cell (the edited of the original vip cell -- from https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=246546&file=/Turi_et_al_2018/cells/vipcr_cell.hoc#tabs-2) 
