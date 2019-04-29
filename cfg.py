@@ -86,7 +86,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
-cfg.scaleDensity = 0.01 # From M1 
+cfg.scaleDensity = 0.01 # From M1 --> how to determine appropriate value for this? 
 
 
 #------------------------------------------------------------------------------
