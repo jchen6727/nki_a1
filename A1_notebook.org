@@ -22645,7 +22645,7 @@ density = {k: [x * 0.01 for x in v] for k,v in density.items()} # Scale densitie
 *** github (N/A)
 *** neurosim -- done (mv Lab_Notebook.org archive/Lab_Notebook.org)  
 ** Go through everything in the model and see what needs to be added [document below]
-** TASK 1: VIP pkl file 
+** TASK 1: VIP pkl file -- conclusion: VIP_simple_cellParams.pkl in cells subdir  
 *** Lines 68-74 in netParams.py name all the populations of cells and then load their .pkl files 
 *** Figure out how to get VIP pkl file like the rest of them 
 *** Salva says: 'check the m1 netParams — when the flag `saveCellParams` is set to true it calls a func to save the params to a pkl file'
@@ -22682,3 +22682,12 @@ for i in range(0,len(allpops)):
 **** and VIP_simple_cellParams.pkl is the same as VIP_edited_cellParams.pkl in VIP_test 
 **** ^^ used 'diff' command to compare 
 *** CONCLUSION: Use VIP_simple_cellParams.pkl located in A1/cells to load VIP_simple cell (the edited of the original vip cell -- from https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=246546&file=/Turi_et_al_2018/cells/vipcr_cell.hoc#tabs-2) 
+
+** VERSION CONTROL CHECKPOINT:
+*** desktop -- done
+*** neurosim -- done
+*** github -- done
+*** laptop -- done 
+** TASK 1 revisted -- need the cellModel to be 'HH_simple' for VIP_simple --> changed this in VIP_test_compare.py in VIP_test subdir
+** As of now -- VIP_simple_cellParams.pkl lives in cells subdir, and is the final pkl version of VIP simple (for now) 
+** VERSION CONTROL CHECKPOINT: 
