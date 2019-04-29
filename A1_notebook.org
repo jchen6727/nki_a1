@@ -22720,4 +22720,10 @@ netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cell
 *** laptop -- done
 *** neurosim -- done
 *** github -- done 
-
+** TASK 3: Add in nonVIP cells to all layers
+*** nonVIP cell lines added to netParams.popParams in netParams.py, but are commented out because there is not a nonVIP cell model yet
+*** nonVIP cell proportions added to cells/cellDensity.py (and outputted in cells/cellDensity.pkl)
+** TASK 4: Make a nonVIP cell -- TOMORROW 
+** LAST TASK OF TODAY -- check the densities to make sure these are reasonable numbers (or at least what I think I am entering in): confirmed 
+* <2019-04-30 Tues -- nonVIP cell model creation>
+** Make a nonVIP cell model based on VIP cell model & literature variation (use optimization algorithm) 
