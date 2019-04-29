@@ -76,16 +76,6 @@ for ruleLabel in loadCellParams:
 
 
 #------------------------------------------------------------------------------
-## THIS DID NOT WORK 
-## VIP cell params (3-comp)
-#if 'VIP_simple' not in loadCellParams:
-#    cellRule = netParams.importCellParams(label='VIP_simple', conds={'cellType':'VIP', 'cellModel':'HH_simple'}, 
-#      fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', cellInstance = True)
-#    #cellRule['secLists']['spiny'] = ['soma', 'dend']
-#    #netParams.addCellParamsWeightNorm('VIP_simple', 'conn/VIP_simple_weightNorm.pkl', threshold=cfg.weightNormThreshold) # DO NOT HAVE VIP_simple_weightNorm.pkl
-#    netParams.saveCellParamsRule(label='VIP_simple', fileName='cells/VIP_simple_cellParams.pkl')
-
-#------------------------------------------------------------------------------
 # Population parameters
 #------------------------------------------------------------------------------
 
