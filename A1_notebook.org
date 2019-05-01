@@ -1,4 +1,4 @@
-Lab Notebook -*- mode: org -*-
+A1 Project Lab Notebook -*- mode: org -*-
 
 * <2019-01-10 Thu -- NEUROSIM mirroring> 
 ** EMACS LAB NOTEBOOK NOTES:
@@ -22727,3 +22727,7 @@ netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cell
 ** LAST TASK OF TODAY -- check the densities to make sure these are reasonable numbers (or at least what I think I am entering in): confirmed 
 * <2019-04-30 Tues -- nonVIP cell model creation>
 ** Make a nonVIP cell model based on VIP cell model & literature variation (use optimization algorithm) 
+** READ GRANT TEXT 
+** [DONE FOR DESKTOP] Switch default python from py2 to py3 on laptop & desktop 
+* <2019-05-01 Wed -- A1 abstract for SfN 2019>
+** Working on abstract to submit by Thursday 5PM
