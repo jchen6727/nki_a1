@@ -22766,26 +22766,110 @@ ImportError: No module named dicts
 **** temp conclusion: something wrong with how I am saving the VIP_simple_cellParams.pkl
 
 *** Try loading from .hoc instead:
-**** What does pkl file have that .hoc doesn't? Hmm. 
+**** *What does pkl file have that .hoc doesn't?*  
 **** vipcell_cr.hoc is the relevant file 
 **** archive vipcell_cr_orig.hoc
-***** made a copy to my laptop's desktop, just for temp purposes   
-***** delete from git repo of laptop --> *git rm cells/vipcr_cell_orig.hoc*
-***** git add other changes (to netParams.py and A1_notebook.org)
-***** git commit all changes 
+***** ON LAPTOP
+****** made a copy to my laptop's desktop, just for temp purposes   
+****** delete from git repo of laptop --> *git rm cells/vipcr_cell_orig.hoc*
+****** git add other changes (to netParams.py and A1_notebook.org)
+****** git commit all changes 
+****** git push ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare
+***** ON NEUROSIM
+****** cd /u/ericag/A1
+****** git pull /u/ericag/A1_bare
+***** ON GITHUB
+****** cd /u/ericag/A1_bare (on neurosim)
+****** git push --mirror https://github.com/ericaygriffith/A1 
+***** ON DESKTOP
+****** cd ~/Desktop/NEUROSIM/A1
+****** git pull ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare 
 
+***** on laptop --> put vipcr_cell_orig.hoc into ~/Desktop/NEUROSIM/archive/A1_archive 
+***** also made a readme file in the same directory to keep track of the files in this archive 
+***** NOTE: did not copy / git repo this archive anywhere other than laptop 
+***** NOTE: original VIP cell came from --> https://senselab.med.yale.edu/modeldb/ShowModel.cshtml?model=246546&file=/Turi_et_al_2018/cells/vipcr_cell.hoc#tabs-2
+
+**** Commented out all VIP lines in popParams 
+***** appears that I have already inserted the appropriate densities into cellDensity.pkl, is this true?? --> yes, using cellDensity.py 
+
+**** Try: *netParams.importCellParams(label='VIP_simple_rule', fileName='cells/vipcr_cell.hoc')*
+***** ERROR:
+Traceback (most recent call last):
+  File "netParams.py", line 72, in <module>
+    netParams.importCellParams(label='VIP_simple_rule', fileName='cells/vipcr_cell.hoc')
+TypeError: importCellParams() takes at least 5 arguments (3 given)
+***** TO FIX: 3 additional arguments required: conds, cellName, importSynMechs (label & fileName given)
+***** conds={'cellType': 'VIP', 'cellModel': 'HH_simple'} 
+****** Using the above values because this will allow popParams to match to cellParams when calling VIP cells, I believe 
+****** using VIP as celltype bc that's what this cell is
+****** and using cellModel HH_simple because that's what the rest of the interneuron pops in this model use -- not sure if this is right though, but it's a starting point
+***** cellName='VIPCRCell_EDITED'  (use what comes after 'begintemplate' in .hoc file) 
+***** importSynMechs = True
+**** Try: *netParams.importCellParams(label='VIP_simple_rule', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs = True)*
+***** NOW LOADS!
+***** Is VIP getting loaded into netParams? *>>> netParams.cellParams.keys()*
+****** OUTPUT: ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple', 'VIP_simple_rule']
+****** Change netParams.importCellParams(label='VIP_simple_rule'...) to 'VIP_simple' to match the rest 
+
+**
+***** Is everything being loaded? *>>> netParams.cellParams['VIP_simple_rule']*
+{secs: 
+    
+{soma: 
+        {ions: {na: {i: 10.0, e: 50.0, o: 140.0}, ca: {i: 5e-05, e:
+    132.4579341637009, o: 2.0}, k: {i: 54.4, e: -77.0, o: 2.5}},
+    mechs: {pas: {e: -70.0, g: 5e-05}, IKscr: {gKsbar: 0.000725},
+    kdrcr: {gkdrbar: 0.018}, cadyn: {}, cancr: {gcabar: 0.0}, Nafcr:
+    {gnafbar: 0.015}, iCcr: {gkcbar: 3e-05}}, geom: {nseg: 201, diam:
+    10.0, L: 20.0, cm: 1.2, Ra: 150.0}, topol: {}}, 
+
+ori1: {ions: {na: {i: 10.0, e: 50.0, o: 140.0}, k: {i: 54.4, e:
+-77.0, o: 2.5}}, mechs: {kdrcr: {gkdrbar: 0.009}, pas: {e: -70.0, g:
+5e-05}, Nafcr: {gnafbar: 0.09}}, geom: {nseg: 1501, diam: 1.5, L:
+150.0, cm: 1.2, Ra: 150.0}, topol: {childX: 0.0, parentSec: 'soma',
+parentX: 0.0}}, 
+    
+ori2: {ions: {na: {i: 10.0, e: 50.0, o: 140.0}, k: {i: 54.4, e:
+    -77.0, o: 2.5}}, mechs: {kdrcr: {gkdrbar: 0.009}, pas: {e: -70.0,
+    g: 5e-05}, Nafcr: {gnafbar: 0.09}}, geom: {nseg: 1501, diam: 1.5,
+    L: 150.0, cm: 1.2, Ra: 150.0}, topol: {childX: 0.0, parentSec:
+    'soma', parentX: 1.0}}, 
+
+rad2: {ions: {na: {i: 10.0, e: 50.0, o:
+    140.0}, k: {i: 54.4, e: -77.0, o: 2.5}}, mechs: {kdrcr: {gkdrbar:
+    0.009}, pas: {e: -70.0, g: 5e-05}, Nafcr: {gnafbar: 0.09}}, geom:
+    {nseg: 3001, diam: 3.0, L: 300.0, cm: 1.2, Ra: 150.0}, topol:
+    {childX: 0.0, parentSec: 'soma', parentX: 1.0}},
+
+rad1: {ions: {na: {i: 10.0, e: 50.0, o: 140.0}, k: {i: 54.4, e: -77.0,
+o: 2.5}}, mechs: {kdrcr: {gkdrbar: 0.009}, pas: {e: -70.0, g: 5e-05},
+Nafcr: {gnafbar: 0.09}}, geom: {nseg: 3001, diam: 3.0, L: 300.0, cm:
+1.2, Ra: 150.0}, topol: {childX: 0.0, parentSec: 'soma', parentX:
+0.0}}}, 
+
+globals: {ki0_k_ion: 140.0, celsius: 23.0, ko0_k_ion: 3.82}, 
+secLists: {all: ['soma', 'rad1', 'rad2', 'ori1', 'ori2']}, 
+conds: {cellModel: 'HH_simple', cellType: 'VIP'}}
+
+
+***** ^^ Everything appears to be loading properly? 
+
+
+
+**** Uncomment VIP lines in popParams 
+*** Version control checkpoint 
+**** Laptop
+**** NEUROSIM
+**** Github
+**** Desktop 
 
 ** TO DO:
-*** Get this to run on supercomputer (comet? who to talk to? A: JOE OR DON)
-**** messaged Joe about guide 
-**** see below
-*** Get VIP cells working 
-**** pkl file save? just import .hoc somehow? 
 *** Make non-VIP cells (NGNF cells, same?)
 **** optimize cell type
 **** calculate density (done already??)
 **** insert density into cellDensity.pkl
 **** place the cells into the model  
-
+**** NOTE: placed the 2 mysteriously sourced figures (FROM WHICH PAPER?) about NGF cells into ~/Desktop/NEUROSIM/A1/figures -- plan to use for optimization 
 
 
