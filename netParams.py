@@ -40,7 +40,6 @@ netParams.shape = 'cylinder' # cylindrical (column-like) volume
 #------------------------------------------------------------------------------
 # General connectivity parameters
 #------------------------------------------------------------------------------
-## Values below taken from M1 netParams.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/netParams.py) 
 netParams.scaleConnWeight = 1.0 # Connection weight scale factor (default if no model specified)
 netParams.scaleConnWeightModels = {'HH_simple': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
 netParams.scaleConnWeightNetStims = 1.0 #0.5  # scale conn weight factor for NetStims
@@ -55,17 +54,14 @@ netParams.probLambda = 100.0  # length constant (lambda) for connection probabil
 # Cell parameters
 #------------------------------------------------------------------------------
 
-cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models? -- Seen in M1 netParams.py 
+cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models
 
-# II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 [info from original A1 github repo]
-# Layer V has 2 parts --> E5R: 1250-1334 (0.625-0.667), E5B: 1334-1550 (0.667-0.775)
-## Layer 5R --> Layer 5A  and  Layer 5B --> Layer 5B (B now stands for lower section of layer 5 vs. Bursting, as it did before)
-## Layer 45A --> Layer 4 + Layer 5A 
-layer = {'1': [0.00, 0.05], '2': [0.05,0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # normalized layer boundaries -- seen in M1 netParams.py 
+# II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
+layer = {'1': [0.00, 0.05], '2': [0.05,0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # normalized layer boundaries  
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple', 'VIP_simple']  # list of cell rules to load from file 
+cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']# 'VIP_simple']  # list of cell rules to load from file 
 loadCellParams = cellParamLabels
 #saveCellParams = True # This saves the params as a .pkl file
 
@@ -83,7 +79,6 @@ for ruleLabel in loadCellParams:
 with open('cells/cellDensity.pkl', 'r') as fileObj: density = pickle.load(fileObj)['density']
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
 
-## These populations are listed in netParams.py from salva's M1 repo (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/netParams.py)
 ### LAYER 1:
 netParams.popParams['SOM1'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','SOM')][0]} 
 netParams.popParams['PV1'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','PV')][0]} 

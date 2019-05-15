@@ -22731,3 +22731,61 @@ netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cell
 ** [DONE FOR DESKTOP] Switch default python from py2 to py3 on laptop & desktop 
 * <2019-05-01 Wed -- A1 abstract for SfN 2019>
 ** Working on abstract to submit by Thursday 5PM
+* <2019-05-15 Wed -- VIP & L1 interneurons>
+** Change comments to exclude M1 comments and to update accuracy / conciseness (in netParams.py):
+*** cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models? -- Seen in M1 netParams.py --> cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models
+*** "General Connectivity Parameters" section: ## Values below taken from M1 netParams.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/netParams.py) <-- this comment is now gone. 
+*** LAYER COMMENTS GONE: 
+**** ## Layer 5R --> Layer 5A  and  Layer 5B --> Layer 5B (B now stands for lower section of layer 5 vs. Bursting, as it did before)
+**** ## Layer 45A --> Layer 4 + Layer 5A 
+**** ## Layer V has 2 parts --> E5R: 1250-1334 (0.625-0.667), E5B: 1334-1550 (0.667-0.775) 
+** COMET access:
+*** Joe pointed me to this guide from Sam: https://docs.google.com/document/d/1aVC1JJuxJ8xiGNmO8pjkABR8Xfeak5QOfnzZguCRBss/edit
+*** Once I have access, joe will take me through how he runs the EEE code on comet (https://github.com/Neurosim-lab/EEE_network/blob/master/README.md) 
+*** Messaged @subha for comet access (asked joe)
+** VIP cells:
+*** Errors w/ current setup (load from pkl file):
+**** Feel like I figured out that I did something wrong with the saving of the pkl file for the VIP cells
+**** Error when I do not comment out VIP_simple in cellParamLabels in netParams.py:
+Traceback (most recent call last):
+  File "netParams.py", line 74, in <module>
+    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes  #PT5B_full was commented out in M1 netParams.py 
+  File "/Library/Python/2.7/site-packages/netpyne/specs.py", line 660, in loadCellParamsRule
+    cellRule = pickle.load(fileObj)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/pickle.py", line 1378, in load
+    return Unpickler(file).load()
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/pickle.py", line 858, in load
+    dispatch[key](self)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/pickle.py", line 1090, in load_global
+    klass = self.find_class(module, name)
+  File "/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/pickle.py", line 1124, in find_class
+    __import__(module)
+ImportError: No module named dicts 
+**** Error goes away when I comment out the above ^^ 
+
+**** temp conclusion: something wrong with how I am saving the VIP_simple_cellParams.pkl
+
+*** Try loading from .hoc instead:
+**** What does pkl file have that .hoc doesn't? Hmm. 
+**** vipcell_cr.hoc is the relevant file 
+**** archive vipcell_cr_orig.hoc
+***** made a copy to my laptop's desktop, just for temp purposes   
+***** delete from git repo of laptop --> *git rm cells/vipcr_cell_orig.hoc*
+***** git add other changes (to netParams.py and A1_notebook.org)
+***** git commit all changes 
+
+
+** TO DO:
+*** Get this to run on supercomputer (comet? who to talk to? A: JOE OR DON)
+**** messaged Joe about guide 
+**** see below
+*** Get VIP cells working 
+**** pkl file save? just import .hoc somehow? 
+*** Make non-VIP cells (NGNF cells, same?)
+**** optimize cell type
+**** calculate density (done already??)
+**** insert density into cellDensity.pkl
+**** place the cells into the model  
+
+
+
