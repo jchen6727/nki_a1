@@ -69,7 +69,7 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
 	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes  #PT5B_full was commented out in M1 netParams.py 
 
-
+netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs = True)
 
 #------------------------------------------------------------------------------
 # Population parameters
