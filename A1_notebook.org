@@ -22859,10 +22859,14 @@ conds: {cellModel: 'HH_simple', cellType: 'VIP'}}
 
 **** Uncomment VIP lines in popParams 
 *** Version control checkpoint 
-**** Laptop
-**** NEUROSIM
-**** Github
-**** Desktop 
+**** Laptop --> added, committed, pushed to A1_bare
+**** NEUROSIM --> pulled from A1_bare to A1, pushed from bare to github
+**** Github --> pushed from A1_bare to github
+**** Desktop --> pulled from A1_bare 
+
+*** Archive VIP_simple_cellParams.pkl
+**** make a temp copy on laptop's desktop
+**** git rm cells/VIP_simple_cellParams.pkl
 
 ** TO DO:
 *** Make non-VIP cells (NGNF cells, same?)
