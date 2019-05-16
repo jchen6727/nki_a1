@@ -22743,6 +22743,9 @@ netParams.saveCellParamsRule(label='SOM_simple', fileName='cells/SOM_simple_cell
 *** Joe pointed me to this guide from Sam: https://docs.google.com/document/d/1aVC1JJuxJ8xiGNmO8pjkABR8Xfeak5QOfnzZguCRBss/edit
 *** Once I have access, joe will take me through how he runs the EEE code on comet (https://github.com/Neurosim-lab/EEE_network/blob/master/README.md) 
 *** Messaged @subha for comet access (asked joe)
+*** Messaged Don 
+*** Made an account on xsede: eyg42, t0rt13e_Bxsede
+*** Don will add me to our allocation -- I will get an email in a day 
 ** VIP cells:
 *** Errors w/ current setup (load from pkl file):
 **** Feel like I figured out that I did something wrong with the saving of the pkl file for the VIP cells
@@ -22762,9 +22765,7 @@ Traceback (most recent call last):
     __import__(module)
 ImportError: No module named dicts 
 **** Error goes away when I comment out the above ^^ 
-
 **** temp conclusion: something wrong with how I am saving the VIP_simple_cellParams.pkl
-
 *** Try loading from .hoc instead:
 **** *What does pkl file have that .hoc doesn't?*  
 **** vipcell_cr.hoc is the relevant file 
@@ -22866,14 +22867,200 @@ conds: {cellModel: 'HH_simple', cellType: 'VIP'}}
 
 *** Archive VIP_simple_cellParams.pkl
 **** make a temp copy on laptop's desktop
+**** move file to ~/Desktop/NEUROSIM/archive/A1_archive
 **** git rm cells/VIP_simple_cellParams.pkl
+**** add & commit changes
+**** Version Control
+***** laptop --> added, committed, pushed to A1_bare
+***** desktop --> pulled from A1_bare 
+***** github --> pushed from A1_bare on neurosim
+***** neurosim --> pulled from A1_bare
 
-** TO DO:
-*** Make non-VIP cells (NGNF cells, same?)
-**** optimize cell type
-**** calculate density (done already??)
-**** insert density into cellDensity.pkl
-**** place the cells into the model  
-**** NOTE: placed the 2 mysteriously sourced figures (FROM WHICH PAPER?) about NGF cells into ~/Desktop/NEUROSIM/A1/figures -- plan to use for optimization 
+** non-VIP (NGF) cells:
+*** Workflow:
+**** *Just make one population*
+**** Start with VIP cells as a template 
+**** Optimize cell type 
+**** In terms of density -- should I get rid of them in layers that are not L1? 
+*** What was the justification for using VIP cell as a template? Look in NB and on slack. --> *because VIP and NGF cells are both subsets of 5HT marked cells* 
+*** NOTE: moved optimization figures from desktop (of laptop) to ~/Desktop/NEUROSIM/A1/figures
+*** NOTES on NGF cells from the literature:
+**** 'Electrophysiological Differences Between Neurogliaform Cells From Monkey and Rat Prefrontal Cortex'
+***** rat NGF -- late-spiking cells (not so for monkey NGF)
+***** monkey NGF -- higher input resistance, lower spike threshold, higher firing frequency, more spike adaptation 
+*** Potential extant models:
+**** https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=187604&file=/modeldbca1/cells/class_ngfcell.hoc#tabs-2
+**** BBP S1 has a NGF cell -- messaged sid for pointer in the right direction 
+*** Test-load potential model found on modeldb (https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=187604&file=/modeldbca1/cells/class_ngfcell.hoc#tabs-2):
+**** download hoc file: ~/Desktop/NEUROSIM/A1/cells/ngf_cell.hoc
+**** download corresponding mod files 
+**** make copies and test first in ~/Desktop/test_ngf 
+***** mkdir ~/Desktop/test_ngf
+***** put in all mod files and .hoc file (same dir -- no subdirs)
+***** compile w/ nrnivmodl in above directory 
+**** Changes I am making to test_ngf_simple.hoc file (in ~/Desktop/test_ngf):
+***** deleting "// external variables" in beginning of file bc I suspect these are coming from external files that I am not loading 
+***** commented out synapse stuff in proc init:
+// synapses
+	//pre_list = new List() // define a list for the presynaptic connections
+	//define_synapses($3)	// local fcn: define all possible synaptic connections received by this cell
+***** deleting gid and randi in proc_init because seems like this has to do with parallel processing:
+(proc init() {
+	//gid = $1
+	//randi = $2)
+***** deleting shape for now (pt3d lines) because was commented out in vipcr_cell.hoc 
+proc size_sections() {
+	soma[0] {pt3dclear()
+		pt3dadd(0, 0, 0, 10) // distance from (0,0,0) = 0
+		pt3dadd(0, 10, 0, 10) // distance from (0,0,0) = 10
+		pt3dadd(0, 20, 0, 10) // distance from (0,0,0) = 20
+	}
+	dend[0] {pt3dclear()
+		pt3dadd(0, 20, 0, 4) // distance from (0,0,0) = 20
+		pt3dadd(19.4709, 66.053, 0, 4) // distance from (0,0,0) = 68.8631
+		pt3dadd(38.9418, 112.106, 0, 4) // distance from (0,0,0) = 118.677
+	}
+	dend[1] {pt3dclear()
+		pt3dadd(38.9418, 112.106, 0, 3) // distance from (0,0,0) = 118.677
+		pt3dadd(58.4128, 158.159, 0, 3) // distance from (0,0,0) = 168.601
+		pt3dadd(77.8837, 204.212, 0, 3) // distance from (0,0,0) = 218.56
+	}
+	dend[2] {pt3dclear()
+		pt3dadd(77.8837, 204.212, 0, 2) // distance from (0,0,0) = 218.56
+		pt3dadd(116.826, 296.318, 0, 2) // distance from (0,0,0) = 318.516
+		pt3dadd(155.767, 388.424, 0, 2) // distance from (0,0,0) = 418.494
+	}
+	dend[3] {pt3dclear()
+		pt3dadd(155.767, 388.424, 0, 1.5) // distance from (0,0,0) = 418.494
+		pt3dadd(175.238, 434.477, 0, 1.5) // distance from (0,0,0) = 468.486
+		pt3dadd(194.709, 480.531, 0, 1.5) // distance from (0,0,0) = 518.48
+	}
+	dend[4] {pt3dclear()
+		pt3dadd(194.709, 480.531, 0, 1) // distance from (0,0,0) = 518.48
+		pt3dadd(214.18, 526.584, 0, 1) // distance from (0,0,0) = 568.475
+		pt3dadd(233.651, 572.637, 0, 1) // distance from (0,0,0) = 618.47
+	}
+	dend[5] {pt3dclear()
+		pt3dadd(0, 20, 0, 4) // distance from (0,0,0) = 20
+		pt3dadd(-19.4709, 66.053, 0, 4) // distance from (0,0,0) = 68.8631
+		pt3dadd(-38.9418, 112.106, 0, 4) // distance from (0,0,0) = 118.677
+	}
+	dend[6] {pt3dclear()
+		pt3dadd(-38.9418, 112.106, 0, 3) // distance from (0,0,0) = 118.677
+		pt3dadd(-58.4128, 158.159, 0, 3) // distance from (0,0,0) = 168.601
+		pt3dadd(-77.8837, 204.212, 0, 3) // distance from (0,0,0) = 218.56
+	}
+	dend[7] {pt3dclear()
+		pt3dadd(-77.8837, 204.212, 0, 2) // distance from (0,0,0) = 218.56
+		pt3dadd(-116.826, 296.318, 0, 2) // distance from (0,0,0) = 318.516
+		pt3dadd(-155.767, 388.424, 0, 2) // distance from (0,0,0) = 418.494
+	}
+	dend[8] {pt3dclear()
+		pt3dadd(-155.767, 388.424, 0, 1.5) // distance from (0,0,0) = 418.494
+		pt3dadd(-175.238, 434.477, 0, 1.5) // distance from (0,0,0) = 468.486
+		pt3dadd(-194.709, 480.531, 0, 1.5) // distance from (0,0,0) = 518.48
+	}
+	dend[9] {pt3dclear()
+		pt3dadd(-194.709, 480.531, 0, 1) // distance from (0,0,0) = 518.48
+		pt3dadd(-214.18, 526.584, 0, 1) // distance from (0,0,0) = 568.475
+		pt3dadd(-233.651, 572.637, 0, 1) // distance from (0,0,0) = 618.47
+	}
+	dend[10] {pt3dclear()
+		pt3dadd(0, 0, 0, 2) // distance from (0,0,0) = 0
+		pt3dadd(-19.4709, -46.0531, 0, 2) // distance from (0,0,0) = 50
+		pt3dadd(-38.9418, -92.1061, 0, 2) // distance from (0,0,0) = 100
+	}
+	dend[11] {pt3dclear()
+		pt3dadd(-38.9418, -92.1061, 0, 1.5) // distance from (0,0,0) = 100
+		pt3dadd(-58.4128, -138.159, 0, 1.5) // distance from (0,0,0) = 150
+		pt3dadd(-77.8837, -184.212, 0, 1.5) // distance from (0,0,0) = 200
+	}
+	dend[12] {pt3dclear()
+		pt3dadd(-77.8837, -184.212, 0, 1) // distance from (0,0,0) = 200
+		pt3dadd(-97.3546, -230.265, 0, 1) // distance from (0,0,0) = 250
+		pt3dadd(-116.826, -276.318, 0, 1) // distance from (0,0,0) = 300
+	}
+	dend[13] {pt3dclear()
+		pt3dadd(0, 0, 0, 2) // distance from (0,0,0) = 0
+		pt3dadd(19.4709, -46.053, 0, 2) // distance from (0,0,0) = 50
+		pt3dadd(38.9419, -92.1061, 0, 2) // distance from (0,0,0) = 100
+	}
+	dend[14] {pt3dclear()
+		pt3dadd(38.9419, -92.1061, 0, 1.5) // distance from (0,0,0) = 100
+		pt3dadd(58.4128, -138.159, 0, 1.5) // distance from (0,0,0) = 150
+		pt3dadd(77.8837, -184.212, 0, 1.5) // distance from (0,0,0) = 200
+	}
+	dend[15] {pt3dclear()
+		pt3dadd(77.8837, -184.212, 0, 1) // distance from (0,0,0) = 200
+		pt3dadd(97.3546, -230.265, 0, 1) // distance from (0,0,0) = 250
+		pt3dadd(116.826, -276.318, 0, 1) // distance from (0,0,0) = 300
+	}
+}
 
+***** (1) thus (^^) also deleting size_sections in proc init() AND (2) taking out size_sections in first 'public' line 
+***** deleted proc position:
+proc position(){ local i
+	forall {
+		for i = 0, n3d()-1 {
+			pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
+		}
+	}
+	x = $1  y = $2  z = $3	
+}
+
+***** deleted define_synapses():
+strdef myStr
+objref newSecRef, syn
+proc define_synapses() {
+	ind = $1
+	i = 0
+
+	access soma[0]
+	{distance()}
+
+	for celltype = 0, numCellTypes-1 {
+		templist = new List ()
+		for r=0, cellType[ind].SynList[celltype].count()-1 {
+			execute(cellType[ind].SynList[celltype].object(r).NewSynStr, this) // sets newSecRef
+						
+			forsec newSecRef {		
+				for (x,0) {
+					execute(cellType[ind].SynList[celltype].object(r).CondStr, this)
+					 if (y==1) {
+						execute(cellType[ind].SynList[celltype].object(r).SynStr, this)
+						if (cellType[ind].SynList[celltype].object(r).GABAabFlag==0) {
+							syn.tau1 = cellType[ind].SynList[celltype].object(r).tau1
+							syn.tau2 = cellType[ind].SynList[celltype].object(r).tau2
+							syn.e = cellType[ind].SynList[celltype].object(r).efirst
+							if (strcmp(cellType[ind].SynList[celltype].object(r).SynType,"MyExp2Sidnw")==0) {
+								execute(cellType[ind].SynList[celltype].object(r).Scaling, this)
+							}
+						} else {
+							syn.tau1a = cellType[ind].SynList[celltype].object(r).tau1a
+							syn.tau2a = cellType[ind].SynList[celltype].object(r).tau2a
+							syn.ea = cellType[ind].SynList[celltype].object(r).ea
+							syn.tau1b = cellType[ind].SynList[celltype].object(r).tau1b
+							syn.tau2b = cellType[ind].SynList[celltype].object(r).tau2b
+							syn.eb = cellType[ind].SynList[celltype].object(r).eb
+						}
+						syn.sid = i
+						templist.append(syn)
+						i = i + 1
+					}
+				}
+			}
+		}
+		pre_list.append(templist)
+		findme = 1
+	}
+}
+**** LOADS NOW!! -- but synapse info is gone 
+**** strip down to BASICS -- test_ngf_redo.hoc
+**** load it in netpyne [done]
+**** replace synapse info ?????? maybe later?? 
+*** Test potential model to see if it behaves similarly to what we see in literature 
+
+** NOT DONE TODAY (cont tomorrow):
+*** replace synapse info in test_ngf_redo.hoc????
+*** Test potential model (above) to see if it behaves similarly to what we see in the literature
 
