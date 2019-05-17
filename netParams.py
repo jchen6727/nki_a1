@@ -6,7 +6,6 @@ High-level specifications for A1 network model using NetPyNE
 Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 """
 
-# I AM MAKING A TEST CHANGE 
 from netpyne import specs
 import pickle, json
 

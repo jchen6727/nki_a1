@@ -23096,7 +23096,7 @@ Email: ericaygriffith@gmail.com
 ****** on comet: cd /home/eyg42 
 ****** git clone ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1
 ***** commit on neurosim
-***** pull from neurosim on comet
+***** pull from neurosim on comet --> tested and WORKS! 
 ***** run on comet 
 **** Edit files on home machine / neurosim, then commit there, pull from neurosim on comet, etc. 
 
