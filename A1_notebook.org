@@ -23069,10 +23069,40 @@ proc define_synapses() {
 *** TACC account created: 
 Account: tg857900
 Email: ericaygriffith@gmail.com
-
 ** Git repo branching:
 *** Learn how to 'branch' so that I can upload what I'm working on with the NGF cell 
-
 ** NGF cells:
 *** Test potential model (test_ngf_redo.hoc in ~/Desktop/test_ngf) to see if it behaves similarly to what we see in the literature (so far, no) 
 *** Replace synapse info in test_ngf_redo.hoc (??)
+* <2019-05-17 Fri -- NGF cells>
+** *NOTE* Don't forget to git pull everything on desktop machine!!
+** Comet access
+*** TACC account created: 
+Account: tg857900
+Email: ericaygriffith@gmail.com
+*** XSEDE info:
+**** eyg42
+**** t0rt13e_Bxsede 
+*** Guides to using Comet:
+**** Full guide to using Comet: https://www.sdsc.edu/support/user_guides/comet.html
+**** Sam's guide to using Comet: https://docs.google.com/document/d/1aVC1JJuxJ8xiGNmO8pjkABR8Xfeak5QOfnzZguCRBss/edit
+*** Login via ssh: ssh eyg42@comet.sdsc.edu
+*** Save *data* to: /oasis/scratch/comet/eyg42/temp_project
+*** Projects on Comet:
+**** Save *source code* to /home/eyg42/project_name
+**** From Sam's guide (link above): 
+***** place repo on neurosim (done)
+***** clone to comet: 
+****** on comet: cd /home/eyg42 
+****** git clone ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1
+***** commit on neurosim
+***** pull from neurosim on comet
+***** run on comet 
+**** Edit files on home machine / neurosim, then commit there, pull from neurosim on comet, etc. 
+
+
+
+
+git clone ssh://john@example.com/path/to/my-project.git
+cd my-project
+# Start working on the project
