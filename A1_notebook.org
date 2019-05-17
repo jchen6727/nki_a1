@@ -23064,3 +23064,15 @@ proc define_synapses() {
 *** replace synapse info in test_ngf_redo.hoc????
 *** Test potential model (above) to see if it behaves similarly to what we see in the literature
 
+* <2019-05-16 Thu -- NGF cells>
+** COMET access
+*** TACC account created: 
+Account: tg857900
+Email: ericaygriffith@gmail.com
+
+** Git repo branching:
+*** Learn how to 'branch' so that I can upload what I'm working on with the NGF cell 
+
+** NGF cells:
+*** Test potential model (test_ngf_redo.hoc in ~/Desktop/test_ngf) to see if it behaves similarly to what we see in the literature (so far, no) 
+*** Replace synapse info in test_ngf_redo.hoc (??)
