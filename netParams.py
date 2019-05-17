@@ -185,7 +185,7 @@ netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 
 #  	for key in [k for k in dir(cfg) if k.startswith('IClamp')]:
 # 		params = getattr(cfg, key, None)
 # 		[pop,sec,loc,start,dur,amp] = [params[s] for s in ['pop','sec','loc','start','dur','amp']]
-        
+		
 #         		# add stim source
 # 		netParams.stimSourceParams[key] = {'type': 'IClamp', 'delay': start, 'dur': dur, 'amp': amp}
 		
@@ -199,24 +199,24 @@ netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 
 # NetStim inputs
 #------------------------------------------------------------------------------
 if cfg.addNetStim:
-    for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-    	params = getattr(cfg, key, None)
-    	[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-    	[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+		params = getattr(cfg, key, None)
+		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
 
-    	# add stim source
-        netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+		# add stim source
+		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
 
-        # connect stim source to target 
-        netParams.stimTargetParams[key+'_'+pop] =  {
-        	'source': key, 
-            'conds': {'pop': pop, 'ynorm': ynorm},
-            'sec': sec, 
-            'loc': loc,
-            'synMech': synMech,
-            'weight': weight,
-            'synMechWeightFactor': synMechWeightFactor,
-            'delay': delay}
+		# connect stim source to target 
+		netParams.stimTargetParams[key+'_'+pop] =  {
+			'source': key, 
+			'conds': {'pop': pop, 'ynorm': ynorm},
+			'sec': sec, 
+			'loc': loc,
+			'synMech': synMech,
+			'weight': weight,
+			'synMechWeightFactor': synMechWeightFactor,
+			'delay': delay}
 
 #------------------------------------------------------------------------------
 # Local connectivity parameters

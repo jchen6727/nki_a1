@@ -23077,18 +23077,19 @@ Email: ericaygriffith@gmail.com
 * <2019-05-17 Fri -- NGF cells>
 ** *NOTE* Don't forget to git pull everything on desktop machine!!
 ** Comet access
-*** TACC account created: 
+*** Account info and User Guides:
+**** TACC account created: 
 Account: tg857900
 Email: ericaygriffith@gmail.com
-*** XSEDE info:
-**** eyg42
-**** t0rt13e_Bxsede 
-*** Guides to using Comet:
-**** Full guide to using Comet: https://www.sdsc.edu/support/user_guides/comet.html
-**** Sam's guide to using Comet: https://docs.google.com/document/d/1aVC1JJuxJ8xiGNmO8pjkABR8Xfeak5QOfnzZguCRBss/edit
-*** Login via ssh: ssh eyg42@comet.sdsc.edu
-*** Save *data* to: /oasis/scratch/comet/eyg42/temp_project
-*** Projects on Comet:
+**** XSEDE info:
+***** eyg42
+***** t0rt13e_Bxsede 
+**** Guides to using Comet:
+***** Full guide to using Comet: https://www.sdsc.edu/support/user_guides/comet.html
+***** Sam's guide to using Comet: https://docs.google.com/document/d/1aVC1JJuxJ8xiGNmO8pjkABR8Xfeak5QOfnzZguCRBss/edit
+*** *Login* via ssh: =ssh eyg42@comet.sdsc.edu=
+*** Save *data* to: =/oasis/scratch/comet/eyg42/temp_project= <-- already exists 
+*** *Projects* on Comet:
 **** Save *source code* to /home/eyg42/project_name
 **** From Sam's guide (link above): 
 ***** place repo on neurosim (done)
@@ -23106,3 +23107,49 @@ Email: ericaygriffith@gmail.com
 git clone ssh://john@example.com/path/to/my-project.git
 cd my-project
 # Start working on the project
+*** *NOTE* A1 netParams.py does not run on comet, but oh well. At least it's there for now!! 
+** Comet NEUROSIM setup
+*** got bashrc files from joe, sam, and craig
+*** using the following for my bashrc file on comet:
+**** CODE:
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+module purge
+export PATH=/home/lytton/anaconda3/bin:/home/lytton/anaconda3/condabin:/home/lytton/nrn/x86_64/bin:/home/lytton/site/bin:/home/lytton/site/scripts:/opt/gnu/gcc/bin:/opt/gsl/2.1/gnu/bin:/opt/ibutils/bin:/opt/openmpi/gnu/ib/bin:/opt/pdsh/bin:/opt/rocks/bin:/opt/rocks/sbin:/opt/sdsc/bin:/opt/sdsc/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin
+module load gnu
+module load openmpi_ib
+module load gsl
+module load gnutools/2.69
+# module load gnubase/2.69
+
+export NEURONHOME=/home/lytton/nrn/share/nrn
+export PYTHONPATH=  # clear it
+export LD_LIBRARY_PATH=/opt/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64:/home/lytton/anaconda3/lib
+. /home/lytton/anaconda3/etc/profile.d/conda.sh
+conda activate
+export PS1="co$ "
+export
+PYTHONPATH=/home/lytton/netpyne:/home/lytton/nrn/lib/python:$PYTHONPATH:/home/lytton/site/nrniv/local/python
+**** locaed on laptop in ~/Desktop/NEUROSIM/archive/bashrc_bill
+*** works! Can use comet now to run things!!! 
+** Changing netParams.py to run on comet:
+*** ERROR: File "netParams.py", line 208
+    netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+                                                                                                                                ^
+TabError: inconsistent use of tabs and spaces in indentation
+
+*** In sublime:
+**** selected all text in netParams.py
+**** view --> indentation --> UNCHECKED 'indent using spaces'
+**** view --> indentation --> 'convert indentation to tabs'
+**** runs on local machine --> commit and version control 
+***** laptop
+***** neurosim
+***** github
+***** comet
+***** desktop -- TO DO 
