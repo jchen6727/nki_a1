@@ -22,7 +22,6 @@ A1 Project Lab Notebook -*- mode: org -*-
 *** Org mode for beginners: https://orgmode.org/worg/org-tutorials/org4beginners.html
 
 ** All setup instructions coming from 'Neurosim machines' document on shared lab wiki https://docs.google.com/document/d/1OFwB2tP_qtOJsgZ1aPgD5iGYVBWHqkAHfFC4VAS12_M/edit#
-
 ** Start with Neurosim mirroring: https://docs.google.com/document/d/1t9o_3nuxzZ7lhr7-UW2D15PjCPuwoK3STH8ETpICT7w/edit#
 *** 1. Set up csh (==tcsh) as default shell
 **** =sudo apt-get install tcsh= [in terminal, while in home dir]
@@ -52,12 +51,11 @@ Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
 **** logged out and then logged back in
 **** =echo $SHELL=  [on cmd line]
 **** output: /usr/bin/tcsh
-
 *** 2. You may find it eaiser to create a user on your machine with the same username as neurosim 
 **** DID NOT TAKE THIS STEP
 **** Username local is ricky, and username on neurosim is
 *** 3. Grab list of packages to be installed from /usr/site/config/ubuntu-neurosim  
-**** Executed the line below from the cmd line, in /home/ricky from a tcsh shel
+**** Executed the line below from the cmd line, in /home/ricky from a tcsh shell
 **** =scp ericag@no.neurosim.downstate.edu:/usr/site/config/ubuntu-neurosim $cwd= 
 *** 4. Install packages from the list in (3)
 **** COMMAND LINE INPUT [tcsh; /home/ricky]
@@ -9575,7 +9573,6 @@ E: Unable to locate package ubuntu-neurosim
 ***** Clearly foreach aa ('cat ubuntu-neurosim') takes what is inside the quotes as literal text and is trying to install cat and ubuntu-neurosim, neither of which are packages. How to fix this? 
 ***** SOLUTION: use backticks ` not single quotes ' !!
 **** NOTE: to unset a variable in the command line, type =unset var_name=
-
 *** [TO DO] 5. Make the following subdirectories for the install (which install?)
 **** sudo mkdir -p /usr/site/nrniv  ~NOTE: -p argument creates parent directories as needed~
 **** sudo mkdir -p /usr/arch
@@ -9685,7 +9682,6 @@ added 543 changesets with 1519 changes to 216 files
 new changesets 23a6a1171432:e2c25f718f3b
 updating to branch default
 202 files updated, 0 files merged, 0 files removed, 0 files unresolved
-
 
 
 
@@ -9977,7 +9973,6 @@ alias display 'display -geometry 1200x1200'
 
 
 **** *QUESTION*: Do I need to worry about the one instance of billl's usename that I see, in alias HOCLIB setenv HOC_LIBRARY_PATH? *NOT CHANGING FOR NOW*
-
 
 
 
@@ -23138,18 +23133,308 @@ PYTHONPATH=/home/lytton/netpyne:/home/lytton/nrn/lib/python:$PYTHONPATH:/home/ly
 **** locaed on laptop in ~/Desktop/NEUROSIM/archive/bashrc_bill
 *** works! Can use comet now to run things!!! 
 ** Changing netParams.py to run on comet:
-*** ERROR: File "netParams.py", line 208
+*** Indentation Error:
+**** Error text:
+ERROR: File "netParams.py", line 208
     netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
                                                                                                                                 ^
 TabError: inconsistent use of tabs and spaces in indentation
 
-*** In sublime:
-**** selected all text in netParams.py
-**** view --> indentation --> UNCHECKED 'indent using spaces'
-**** view --> indentation --> 'convert indentation to tabs'
-**** runs on local machine --> commit and version control 
-***** laptop
-***** neurosim
-***** github
-***** comet
+**** Correcting the above error in sublime:
+***** selected all text in netParams.py
+***** view --> indentation --> UNCHECKED 'indent using spaces'
+***** view --> indentation --> 'convert indentation to tabs'
+***** runs on local machine --> commit and version control 
+***** laptop -- added, committed, pushed to A1_bare on neurosim
+***** neurosim -- pulled from A1_bare
+***** github -- pushed from A1_bare 
+***** comet -- pulled from A1_bare
 ***** desktop -- TO DO 
+*** Mod file error (1st fix attempt):
+**** Did not compile mod files 
+**** Code used to (attempt) compile:
+***** ln -s mod/x86_64
+***** cd mod
+***** nrnivmodl
+**** Output of the above code:
+co$ nrnivmodl
+Creating x86_64 directory for .o files.
+
+/home/eyg42/A1/mod
+ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod cancr.mod canin.mod can_mig.mod catcb.mod cat_mig.mod cat_traub.mod gabab.mod h_BS.mod HCN1.mod h_harnett.mod hin.mod h_kole.mod h_migliore.mod ican_sidi.mod iccr.mod IC.mod ikscr.mod IKsin.mod kap_BS.mod kapcb.mod kapin.mod kBK.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrcr.mod kdrin.mod MyExp2SynBB.mod my_exp2syn.mod MyExp2SynNMDABB.mod nafcr.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod cancr.mod canin.mod can_mig.mod catcb.mod cat_mig.mod cat_traub.mod gabab.mod h_BS.mod HCN1.mod h_harnett.mod hin.mod h_kole.mod h_migliore.mod ican_sidi.mod iccr.mod IC.mod ikscr.mod IKsin.mod kap_BS.mod kapcb.mod kapin.mod kBK.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrcr.mod kdrin.mod MyExp2SynBB.mod my_exp2syn.mod MyExp2SynNMDABB.mod nafcr.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+"/home/lytton/nrn/x86_64/bin/nocmodl" ar_traub
+"/home/lytton/nrn/x86_64/bin/nocmodl" cadad
+"/home/lytton/nrn/x86_64/bin/nocmodl" cadyn
+"/home/lytton/nrn/x86_64/bin/nocmodl" cagk
+Translating cadad.mod into cadad.c
+Translating cadyn.mod into cadyn.c
+Translating ar_traub.mod into ar_traub.c
+Translating cagk.mod into cagk.c
+Thread Safe
+Thread Safe
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o cadyn.lo cadyn.c
+Thread Safe
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o cadad.lo 
+cadad.c
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o ar_traub.lo ar_traub.c
+Thread Safe
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o cagk.lo cagk.c
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c cadad.c  -fPIC -DPIC -o .libs/cadad.o
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c cadyn.c  -fPIC -DPIC -o .libs/cadyn.o
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c ar_traub.c  -fPIC -DPIC -o .libs/ar_traub.o
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c cagk.c  -fPIC -DPIC -o .libs/cagk.o
+/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1: error while loading shared libraries: libmpfr.so.4: cannot open shared object file: No such file or directory
+/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1: error while loading shared libraries: libmpfr.so.4: cannot open shared object file: No such file or directory
+/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1: error while loading shared libraries: libmpfr.so.4: cannot open shared object file: No such file or directory
+/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1: error while loading shared libraries: libmpfr.so.4: cannot open shared object file: No such file or directory
+make: *** [cadad.lo] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [ar_traub.lo] Error 1
+make: *** [cadyn.lo] Error 1
+make: *** [cagk.lo] Error 1
+**** Attempted to run python -i netParams.py, but still getting seg fault error:
+co$ python -i netParams.py 
+Warning: no DISPLAY environment variable.
+--No graphics will be displayed.
+NEURON: Nafcr is not a MECHANISM
+ in vipcr_cell.hoc near line 159
+ 		insert Nafcr 
+              ^
+        xopen("vipcr_cell.hoc")
+      execute1("{xopen("vi...")
+    load_file("cells/vipc...")
+Segmentation fault
+*** Mod file error (2nd fix attempt):
+**** changed .bashrc to mimic sam's a little more:
+***** deleted extraneous pythonpath line (just said pythonpath = #clear it)
+***** Added MODL_INCLUDE: export MODL_INCLUDE=/home/lytton/site/nrniv/local/mod 
+***** Added HOC_LIBRARY_PATH: export HOC_LIBRARY_PATH=/home/lytton/site/nrniv/local/hoc:/home/lytton/site/nrniv/simctrl/hoc
+***** *NOTE*: edited in laptop bashrc_bill as well as on comet (orig available on slack from joe) 
+**** Evidently same error when compiling: 
+co$ nrnivmodl
+Creating x86_64 directory for .o files.
+
+/home/eyg42/A1/mod
+ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod cancr.mod canin.mod can_mig.mod catcb.mod cat_mig.mod cat_traub.mod gabab.mod h_BS.mod HCN1.mod h_harnett.mod hin.mod h_kole.mod h_migliore.mod ican_sidi.mod iccr.mod IC.mod ikscr.mod IKsin.mod kap_BS.mod kapcb.mod kapin.mod kBK.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrcr.mod kdrin.mod MyExp2SynBB.mod my_exp2syn.mod MyExp2SynNMDABB.mod nafcr.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod cancr.mod canin.mod can_mig.mod catcb.mod cat_mig.mod cat_traub.mod gabab.mod h_BS.mod HCN1.mod h_harnett.mod hin.mod h_kole.mod h_migliore.mod ican_sidi.mod iccr.mod IC.mod ikscr.mod IKsin.mod kap_BS.mod kapcb.mod kapin.mod kBK.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrcr.mod kdrin.mod MyExp2SynBB.mod my_exp2syn.mod MyExp2SynNMDABB.mod nafcr.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+"/home/lytton/nrn/x86_64/bin/nocmodl" ar_traub
+"/home/lytton/nrn/x86_64/bin/nocmodl" cadad
+"/home/lytton/nrn/x86_64/bin/nocmodl" cadyn
+"/home/lytton/nrn/x86_64/bin/nocmodl" cagk
+Translating ar_traub.mod into ar_traub.c
+Translating cadad.mod into cadad.c
+Translating cadyn.mod into cadyn.c
+Translating cagk.mod into cagk.c
+Thread Safe
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o ar_traub.lo ar_traub.c
+Thread Safe
+Thread Safe
+Thread Safe
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o cadad.lo cadad.c
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o cadyn.lo cadyn.c
+"/home/lytton/nrn/share/nrn/libtool" --tag=CC --mode=compile mpicc -DHAVE_CONFIG_H  -I. -I.. -I"/home/lytton/nrn/include/nrn" -I"/home/lytton/nrn/x86_64/lib"      -g -O2 -c -o cagk.lo cagk.c
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c cagk.c  -fPIC -DPIC -o .libs/cagk.o
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c cadad.c  -fPIC -DPIC -o .libs/cadad.o
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c ar_traub.c  -fPIC -DPIC -o .libs/ar_traub.o
+libtool: compile:  mpicc -DHAVE_CONFIG_H -I. -I.. -I/home/lytton/nrn/include/nrn -I/home/lytton/nrn/x86_64/lib -g -O2 -c cadyn.c  -fPIC -DPIC -o .libs/cadyn.o
+/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1/opt/gnu/gcc/libexec/gcc/x86_64-unknown-linux-gnu/4.9.2/cc1: : : : error while loading shared librarieserror while loading shared librarieserror while loading shared librarieserror while loading shared libraries: : : : libmpfr.so.4: libmpfr.so.4libmpfr.so.4cannot open shared object filelibmpfr.so.4: : : : cannot open shared object filecannot open shared object fileNo such file or directorycannot open shared object file: : 
+: No such file or directoryNo such file or directoryNo such file or directory
+
+
+make: *** [cadyn.lo] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [cagk.lo] Error 1
+make: *** [cadad.lo] Error 1
+make: *** [ar_traub.lo] Error 1
+
+* <2019-05-20 Mon -- NGF cells>
+** Comet access: =ssh eyg42@comet.sdsc.edu= (eyg42, t0rt13e_Bxsede) 
+** mod files now succesfully compiled on Comet! process outlined below:
+*** had to copy the text in the .bashrc file to .bash_profile 
+*** made a symbolic link in parent dir (/home/eyg42/A1), then cd'ed to mod dir and did nrnivmodl
+*** https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/compile:
+rm -r mod/x86_64
+ln -s mod/x86_64 x86_64
+cd mod
+nrnivmodl
+cd ..
+** Problem: PYTHON 2 is still default on my laptop, but using python 3 on both desktop and comet. Need to remedy this so I can keep testing the new A1 files on my laptop. 
+*** python 3 location on laptop: /Users/ericaygriffith/anaconda3 
+*** need to do neurosim mirroring on laptop
+*** NEUROSIM mirroring on laptop
+**** *NOTE*: following directions from above & wiki (https://docs.google.com/document/d/1OFwB2tP_qtOJsgZ1aPgD5iGYVBWHqkAHfFC4VAS12_M/edit#heading=h.ox1l1m5urv0x)
+**** cd ~
+**** scp ericag@no.neurosim.downstate.edu:/usr/site/config/ubuntu-neurosim $cwd
+**** foreach aa (`cat ubuntu-neurosim`)
+***** foreach? brew install $aa     (# this is because mac os x doesn't have apt-get; should I have done this as sudo?) 
+***** foreach? end 
+*** I could just download neuron & netpyne & anaconda3 
+**** NEURON:
+***** Went to https://neuron.yale.edu/neuron/ and downloaded/installed NEURON 7.6
+***** The following lines were added to the end of .bash_profile 
+export PATH="/Applications/NEURON-7.6/nrn/x86_64/bin":$PATH #added by NEURON installer
+export
+PYTHONPATH="/Applications/NEURON-7.6/nrn/lib/python":$PYTHONPATH
+#added by NEURON installer
+***** Added the above lines to .tcshrc and commented out the corresponding NEURON 7.5 lines 
+***** quit terminal, reopened 
+**** NetPyNE:
+**** Anaconda3:
+***** located in ~/anaconda3
+***** *NOTE* already in .bash_profile: =export PATH=~/anaconda3/bin:$PATH=
+***** Added =setenv PATH ~/anaconda3/bin:$PATH= to .tcshrc
+***** *QUESTION*: what about PYTHONHOME and NRN_PYLIB in .tcshrc? *COMMENTING THEM OUT FOR NOW*
+**** (1) Copy of current .tcshrc script:
+setenv PATH /Applications/NEURON-7.6/nrn/x86_64/bin:$PATH
+setenv PYTHONPATH /Applications/NEURON-7.6/nrn/lib/python
+setenv PATH ~/anaconda3/bin:$PATH
+
+#setenv PATH /Applications/NEURON-7.5/nrn/x86_64/bin:$PATH
+#setenv PYTHONPATH /Applications/NEURON-7.5/nrn/lib/python
+
+# COMMENTING OUT THESE TWO LINES on 5/20/2019 because I am trying to use python 3
+#setenv PYTHONHOME /System/Library/Frameworks/Python.framework/Versions/2.7
+#setenv NRN_PYLIB /System/Library/Frameworks/Python.framework/Versions/2.7/Python
+
+setenv PATH /usr/local/site/nrniv/local/bin:$PATH
+
+**** (2) Copy of current .tcshrc script: 
+# NEURON
+setenv PYTHONHOME ~/anaconda3
+setenv PYTHONPATH /Applications/NEURON-7.6/nrn/lib/python:~/anaconda3/lib/python3.7
+setenv NEURONHOME /Applications/NEURON-7.6
+
+#setenv PATH /Applications/NEURON-7.6/nrn/x86_64/bin:$PATH
+#setenv PYTHONPATH /Applications/NEURON-7.6/nrn/lib/python
+
+# PYTHON
+setenv PATH ~/anaconda3/bin:$PATH
+
+#setenv PATH /Applications/NEURON-7.5/nrn/x86_64/bin:$PATH
+#setenv PYTHONPATH /Applications/NEURON-7.5/nrn/lib/python
+
+# COMMENTING OUT THESE TWO LINES on 5/20/2019 because I am trying to use python 3
+#setenv PYTHONHOME /System/Library/Frameworks/Python.framework/Versions/2.7
+#setenv NRN_PYLIB /System/Library/Frameworks/Python.framework/Versions/2.7/Python
+
+setenv PATH /usr/local/site/nrniv/local/bin:$PATH
+**** (3) Copy of current .tcshrc script (Same as (2) but cleaned up):
+# NEURON
+setenv PYTHONHOME ~/anaconda3
+setenv PYTHONPATH /Applications/NEURON-7.6/nrn/lib/python:~/anaconda3/lib/python3.7
+setenv NEURONHOME /Applications/NEURON-7.6
+
+# PYTHON
+setenv PATH ~/anaconda3/bin:$PATH
+
+# COMMENTING OUT THESE TWO LINES on 5/20/2019 because I am trying to use python 3
+#setenv PYTHONHOME /System/Library/Frameworks/Python.framework/Versions/2.7
+#setenv NRN_PYLIB /System/Library/Frameworks/Python.framework/Versions/2.7/Python
+
+setenv PATH /usr/local/site/nrniv/local/bin:$PATH
+
+**** ERROR w/ 'nrniv -python': 
+[Ericas-Air-3:~] ericagriffith% nrniv -python
+NEURON -- VERSION 7.6.7 HEAD (603da174) 2019-04-19
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2018
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+dlopen failed - 
+dlopen(x86_64/.libs/libnrnmech.so, 2): Symbol not found: __ZN9ivPrinterC1EPSo
+  Referenced from: /Applications/NEURON-7.5/nrn/x86_64/lib/libivoc.0.dylib
+  Expected in: flat namespace
+ in /Applications/NEURON-7.5/nrn/x86_64/lib/libivoc.0.dylib
+Could not load either libnrnpython3 or libnrnpython2
+pyver10=0 pylib=/Users/ericagriffith/anaconda3/bin/../lib/libpython3.7m.dylib
+Python not available
+**** (4) Added this line to .tcshrc: =setenv NRN_PYLIB /Applications/NEURON-7.6/nrn/lib/python=
+**** UNINSTALLED NEURON 7.5 (deleted it) 
+/Applications/NEURON-7.5/nrn/x86_64/lib/libnrnoc.0.dylib
+--> trying =setenv NRN_PYLIB
+/Applications/NEURON-7.6/nrn/x86_64/lib/python= instead --> setenv NRN_PYLIB /Applications/NEURON-7.6/nrn/x86_64/lib/
+**** GOING TO TRY RESTARTING 
+*** Going to delete neuron, netpyne, and keep anaconda and start over 
+** Anaconda3, NEURON-7.6, and NetPyNE all working on my laptop:
+*** Installed anaconda3 and added the appropriate lines to my bash_profile and .tcshrc (now default python is python3 anaconda)
+*** NEURON: 
+**** Deleted all references to NEURON in .tcshrc & bash_profile
+**** Downloaded NEURON-7.6 
+**** This added the following lines to my .bash_profile
+export PATH="/Applications/NEURON-7.6/nrn/x86_64/bin":$PATH #added by NEURON installer
+export PYTHONPATH="/Applications/NEURON-7.6/nrn/lib/python":$PYTHONPATH #added by NEURON installer
+**** Current copy of my .tcshrc file:
+# PYTHON is first part, NEURON is the second part
+setenv PATH ~/anaconda3/bin:/Applications/NEURON-7.6/nrn/x86_64/bin:$PATH
+
+# from NEURON Installer in .bash_profile
+setenv PYTHONPATH /Applications/NEURON-7.6/nrn/lib/python
+
+
+# COMMENTING OUT THESE TWO LINES on 5/20/2019 because I am trying to use python 3
+#setenv PYTHONHOME /System/Library/Frameworks/Python.framework/Versions/2.7
+#setenv NRN_PYLIB /System/Library/Frameworks/Python.framework/Versions/2.7/Python
+
+
+#setenv PATH /usr/local/site/nrniv/local/bin:$PATH
+
+**** ERROR with nrniv -python:
+NEURON -- VERSION 7.6.7 HEAD (603da174) 2019-04-19
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2018
+See http://neuron.yale.edu/neuron/credits
+
+loading membrane mechanisms from x86_64/.libs/libnrnmech.so
+dlopen failed - 
+dlopen(x86_64/.libs/libnrnmech.so, 2): Library not loaded: /Applications/NEURON-7.5/nrn/x86_64/lib/libnrnoc.0.dylib
+  Referenced from: /Users/ericagriffith/x86_64/.libs/libnrnmech.0.so
+  Reason: image not found
+**** FIXED the above error by going to ~ and rm -r x86_64 --> was referencing something that did not exist (in NEURON 7.5) 
+**** =nrniv -python= now works, as well as =python --> import neuron=
+*** NetPyNE: 
+**** cd ~
+**** pip install netpyne
+***** Collecting netpyne
+  Downloading https://files.pythonhosted.org/packages/78/ad/f324390e56bdd946332f3499374b83148bb643f4bc38c44d412175f20a76/netpyne-0.9.2-py2.py3-none-any.whl (361kB)
+    100% |████████████████████████████████| 368kB 13.8MB/s 
+Requirement already satisfied: scipy in /anaconda3/lib/python3.7/site-packages (from netpyne) (1.1.0)
+Collecting future (from netpyne)
+  Downloading https://files.pythonhosted.org/packages/90/52/e20466b85000a181e1e144fd8305caf2cf475e2f9674e797b222f8105f5f/future-0.17.1.tar.gz (829kB)
+    100% |████████████████████████████████| 829kB 3.8MB/s 
+Requirement already satisfied: matplotlib>2.2 in /anaconda3/lib/python3.7/site-packages (from netpyne) (2.2.3)
+Requirement already satisfied: numpy in /anaconda3/lib/python3.7/site-packages (from netpyne) (1.15.1)
+Requirement already satisfied: pandas in /anaconda3/lib/python3.7/site-packages (from netpyne) (0.23.4)
+Collecting matplotlib-scalebar (from netpyne)
+  Downloading https://files.pythonhosted.org/packages/97/4f/d8b07da43cad4fe16a3b9a368b1a15629d3488e615c04c2943e7b69b8817/matplotlib_scalebar-0.5.1-py2.py3-none-any.whl
+Requirement already satisfied: cycler>=0.10 in /anaconda3/lib/python3.7/site-packages (from matplotlib>2.2->netpyne) (0.10.0)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /anaconda3/lib/python3.7/site-packages (from matplotlib>2.2->netpyne) (2.2.0)
+Requirement already satisfied: python-dateutil>=2.1 in /anaconda3/lib/python3.7/site-packages (from matplotlib>2.2->netpyne) (2.7.3)
+Requirement already satisfied: pytz in /anaconda3/lib/python3.7/site-packages (from matplotlib>2.2->netpyne) (2018.5)
+Requirement already satisfied: six>=1.10 in /anaconda3/lib/python3.7/site-packages (from matplotlib>2.2->netpyne) (1.11.0)
+Requirement already satisfied: kiwisolver>=1.0.1 in /anaconda3/lib/python3.7/site-packages (from matplotlib>2.2->netpyne) (1.0.1)
+Requirement already satisfied: setuptools in /anaconda3/lib/python3.7/site-packages (from kiwisolver>=1.0.1->matplotlib>2.2->netpyne) (40.2.0)
+Building wheels for collected packages: future
+  Running setup.py bdist_wheel for future ... done
+  Stored in directory: /Users/ericagriffith/Library/Caches/pip/wheels/0c/61/d2/d6b7317325828fbb39ee6ad559dbe4664d0896da4721bf379e
+Successfully built future
+twisted 18.7.0 requires PyHamcrest>=1.9.0, which is not installed.
+Installing collected packages: future, matplotlib-scalebar, netpyne
+Successfully installed future-0.17.1 matplotlib-scalebar-0.5.1 netpyne-0.9.2
+You are using pip version 10.0.1, however version 19.1.1 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+**** pip install --upgrade pip
+***** Collecting pip
+  Downloading https://files.pythonhosted.org/packages/5c/e0/be401c003291b56efc55aeba6a80ab790d3d4cece2778288d65323009420/pip-19.1.1-py2.py3-none-any.whl (1.4MB)
+    100% |████████████████████████████████| 1.4MB 8.3MB/s 
+twisted 18.7.0 requires PyHamcrest>=1.9.0, which is not installed.
+Installing collected packages: pip
+  Found existing installation: pip 10.0.1
+    Uninstalling pip-10.0.1:
+      Successfully uninstalled pip-10.0.
+** Edited netParams.py so pickle opening cellDensity has 'rb' option vs. 'r' -- not working in python3
+** Version control checkpoint:
+*** laptop:
+*** NEUROSIM:
+*** Github:
+*** Comet:
+*** desktop: 
