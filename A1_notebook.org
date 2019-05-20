@@ -23083,7 +23083,7 @@ Email: ericaygriffith@gmail.com
 ***** Full guide to using Comet: https://www.sdsc.edu/support/user_guides/comet.html
 ***** Sam's guide to using Comet: https://docs.google.com/document/d/1aVC1JJuxJ8xiGNmO8pjkABR8Xfeak5QOfnzZguCRBss/edit
 *** *Login* via ssh: =ssh eyg42@comet.sdsc.edu=
-*** Save *data* to: =/oasis/scratch/comet/eyg42/temp_project= <-- already exists 
+*** Save *data* to: =/oasis/scratch/comet/eyg42/temp_project= <-- already exist 
 *** *Projects* on Comet:
 **** Save *source code* to /home/eyg42/project_name
 **** From Sam's guide (link above): 
@@ -23095,10 +23095,6 @@ Email: ericaygriffith@gmail.com
 ***** pull from neurosim on comet --> tested and WORKS! 
 ***** run on comet 
 **** Edit files on home machine / neurosim, then commit there, pull from neurosim on comet, etc. 
-
-
-
-
 git clone ssh://john@example.com/path/to/my-project.git
 cd my-project
 # Start working on the project
@@ -23433,8 +23429,96 @@ Installing collected packages: pip
       Successfully uninstalled pip-10.0.
 ** Edited netParams.py so pickle opening cellDensity has 'rb' option vs. 'r' -- not working in python3
 ** Version control checkpoint:
-*** laptop:
-*** NEUROSIM:
-*** Github:
+*** laptop: added, committed, pushed to A1_bare on neurosim
+*** NEUROSIM: pulled from A1_bare (into A1)
+*** Github: pushed from neurosim A1_bare
 *** Comet:
-*** desktop: 
+**** ssh eyg42@comet.sdsc.edu
+**** cd A1
+**** git pull ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare
+*** desktop: *TO DO*
+** Make sure mpiexec works (*does not work everywhere) 
+*** Laptop: 
+**** mpiexec command not found 
+*** Comet: 
+**** co$ mpiexec -np 2 nrniv -python -mpi init.py
+--------------------------------------------------------------------------
+Open MPI failed to open the /dev/knem device due to a local error.
+Please check with your system administrator to get the problem fixed,
+or set the btl_sm_use_knem MCA parameter to 0 to run without /dev/knem
+support.
+
+  Local host: comet-ln2
+  Errno:      2 (No such file or directory)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+WARNING: Open MPI failed to open the /dev/knem device due to a local
+error. Please check with your system administrator to get the problem
+fixed, or set the btl_vader_single_copy_mechanism MCA variable to none
+to silence this warning and run without knem support.
+
+The vader shared memory BTL will fall back on another single-copy
+mechanism if one is available. This may result in lower performance.
+
+  Local host: comet-ln2
+  Errno:      2 (No such file or directory)
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+WARNING: Linux kernel knem support was requested via the
+btl_vader_single_copy_mechanism MCA parameter, but Knem support was either not
+compiled into this Open MPI installation, or Knem support was unable
+to be activated in this process.
+
+The vader BTL will fall back on another single-copy mechanism if one
+is available. This may result in lower performance.
+
+  Local host: comet-ln2
+--------------------------------------------------------------------------
+numprocs=2
+NEURON -- VERSION 7.7.0-46-ga3a462a master (a3a462a) 2019-04-09
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2018
+See http://neuron.yale.edu/neuron/credits
+
+Additional mechanisms from files
+ ar_traub.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod cancr.mod canin.mod can_mig.mod catcb.mod cat_mig.mod cat_traub.mod gabab.mod h_BS.mod HCN1.mod h_harnett.mod hin.mod h_kole.mod h_migliore.mod ican_sidi.mod iccr.mod IC.mod ikscr.mod IKsin.mod kap_BS.mod kapcb.mod kapin.mod kBK.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrcr.mod kdrin.mod MyExp2SynBB.mod my_exp2syn.mod MyExp2SynNMDABB.mod nafcr.mod nafx.mod nap_sidi.mod nax_BS.mod savedist.mod vecstim.mod
+Note: NeuroML import failed; import/export functions for NeuroML will not be available. 
+  To install the pyNeuroML & libNeuroML Python packages visit: https://www.neuroml.org/getneuroml
+
+Creating network of 25 cell populations on 2 hosts...
+[comet-ln2.sdsc.edu:28957] 1 more process has sent help message help-mpi-btl-sm.txt / knem fail open
+[comet-ln2.sdsc.edu:28957] Set MCA parameter "orte_base_help_aggregate" to 0 to see all help / error messages
+[comet-ln2.sdsc.edu:28957] 1 more process has sent help message help-btl-vader.txt / knem fail open
+[comet-ln2.sdsc.edu:28957] 1 more process has sent help message help-btl-vader.txt / knem requested but not available
+  Number of cells on node 1: 231 
+  Number of cells on node 0: 231 
+  Done; cell creation time = 3.19 s.
+Making connections...
+  Number of connections on node 0: 0 
+  Done; cell connection time = 0.01 s.
+Adding stims...
+  Number of connections on node 1: 0 
+  Number of stims on node 1: 231 
+  Number of stims on node 0: 231 
+  Done; cell stims creation time = 0.07 s.
+Recording 0 traces of 0 types on node 0
+Recording 0 traces of 0 types on node 1
+
+Running simulation for 500.0 ms...
+*** Desktop
+** *TO DO*: *VERSION CONTROL ON DESKTOP*
+** Made sure that in cfg.py, that cfg.recordTraces is actually recording all traces
+*** AKA: Do all 'soma' sections in each cell pop actually refer to the 'soma', or do some use soma_0, etc.? 
+*** YES THEY DO --> netParams.cellParams['IT5A_full']['secs'] --> always saw 'soma' listed in every population 
+** NGF cells
+*** DECISION: Should I get rid of the rest of the nonVIP cells in L2-L6? 
+*** (TO DO) Git Repo branching to deal with NGF cell progress  
+*** Work is still on laptop, in ~/Desktop/test_ngf
+*** re-compile mod files 
+**** rm -r x86_64
+**** nrnivmodl 
+*** *RECALL*: this cell has soma_0 NOT soma --> NEEDS TO BE CORRECTED 
+**** =create soma[1]= --> =create soma= in .hoc file (test_ngf_redo.hoc) 
+**** in netParams.py -->
+***** netParams.stimTargetParams['Input->NGF_pop'] = {'source': 'Input', 'sec':'soma'... ETC}
+***** simConfig.recordTraces = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}}
+*** SOMETHING STRANGE HERE --> changing the gmax of sodium does odd things (	gNasoma=20000//3.7860265 // SOMETHING IS VERY ODD HERE)
