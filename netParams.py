@@ -75,7 +75,7 @@ netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellMo
 #------------------------------------------------------------------------------
 
 ## load densities
-with open('cells/cellDensity.pkl', 'r') as fileObj: density = pickle.load(fileObj)['density']
+with open('cells/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileObj)['density']
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
 
 ### LAYER 1:
