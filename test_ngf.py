@@ -9,7 +9,7 @@ from netpyne import specs, sim
 
 netParams = specs.NetParams() 
 
-netParams.importCellParams(label='NGF_Rule', conds={'cellType': 'NGF', 'cellModel': 'HH_ngf'}, fileName='test_ngf_redo.hoc', cellName='ngfcell', importSynMechs = True)
+netParams.importCellParams(label='NGF_Rule', conds={'cellType': 'NGF', 'cellModel': 'HH_ngf'}, fileName='cells/test_ngf_redo.hoc', cellName='ngfcell', importSynMechs = True)
 
 netParams.popParams['NGF_pop'] = {'cellType': 'NGF', 'numCells': 1, 'cellModel': 'HH_ngf'}
 
