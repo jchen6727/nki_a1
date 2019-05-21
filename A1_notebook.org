@@ -23616,4 +23616,5 @@ Running simulation for 500.0 ms...
 	A1_notebook.org
 Please commit your changes or stash them before you switch branches.
 Aborting"
+**** Resolve the above: git add & commit notebook 
 **** 
