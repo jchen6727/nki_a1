@@ -23548,6 +23548,63 @@ Running simulation for 500.0 ms...
 ****** If you commit, this moves "HEAD" along the the branch:
 ******* e.g. [[~/Desktop/NEUROSIM/A1/figures/git_help/head_commit.png]]
 ****** To switch back to "master" branch: =git checkout master=
-*** Add a branch -- try this for real
+****** To merge: =git merge name_of_branch]=
+****** To delete branch: =git branch -d name_of_branch=
+*** Add a branch -- try this for real *ATTEMPT 1*
 **** Doing this on laptop (Mac OS X El Capitan, Version 10.11.4) 
-**** 
+**** =cd ~/Desktop/NEUROSIM/A1=
+**** =git checkout -b NGF_test= *NOTE:* name of branch is *NGF_test*
+**** QUESTIONS: 
+***** how does this look in my actual directory...? Like what if I'm moving and creating files? Do I need to do that piece in my master branch and then only edit in the test branch? 
+***** How do I do this..?? Should I make a test repo to try this out?
+***** What is going to happen to my mod files? 
+**** =git checkout master=
+*** MAKE A TEST REPO 
+**** Using ~/Desktop/NEUROSIM/M1detailed
+**** Compressed this directory so I can have an 'untainted' version 
+**** Opened this project directory in Sourcetree
+**** In the above dir, =git checkout -b NGF_test=
+**** Now, I am going to copy in ALL the mod files from =~/Desktop/test_ngf= to =~/Desktop/NEUROSIM/M1detailed/mod=
+**** Still in =NGF_test= branch
+**** git add & git commit all new mod files 
+***** git add mod/ch_*
+***** git add mod/iconc_*
+***** git commit -a -m 'adding mod files while on NGF_test branch'
+**** Copied in =test_ngf_redo.hoc= from =~/Desktop/test_ngf= to =~/Desktop/NEUROSIM/M1detailed/cells/test_ngf_redo.hoc=
+**** Copied in =test_ngf.py= to =~/Desktop/NEUROSIM/M1detailed/test_ngf.py=
+**** git add & commit (still on NGF_test branch)
+***** git add cells/test_ngf_redo.hoc
+***** git add test_ngf.py 
+***** git commit -a -m 'adding ngf hoc and test files'
+**** Now re-compiling with these NEW, ADDITIONAL mod files and seeing what happens
+***** cd mod
+***** nrnivmodl 
+**** Editing test_ngf.py:
+***** hoc file can now be properly imported
+***** RECALL: file is now in cells/test_ngf_redo.hoc 
+***** EDIT: In netParams.importCellParams in test_ngf.py, change filename to 'cells/test_ngf_redo.hoc'
+**** git add test_ngf.py 
+**** git commit test_ngf.py -m 'changed filename in import cell params to reflect new location in subdir'
+**** *SWITCH BACK TO MASTER AND SEE WHAT 'ls' REVEALS*
+***** =git checkout master=
+***** changed files are no longer there
+**** Switch back to test branch: =git checkout NGF_test=
+**** Switch to master and merge 
+***** git checkout master
+***** git merge NGF_test
+**** Delete branch: =git branch -d NGF_test=
+*** Add a branch -- try this for real *ATTEMPT 2*
+**** Step 1: =cd ~/Desktop/NEUROSIM/A1=
+**** Step 2: Open A1 sourcetree 
+**** Step 3: Create test branch (=git checkout -b test_ngf=)
+**** Step 4: Add all necessary files to the A1 directory
+***** mod files --> A1/mod/new_mod_files
+***** test_ngf_redo.hoc --> A1/cells/test_ngf_redo.hoc 
+***** test_ngf.py --> A1/test_ngf.py 
+**** Step 5: git add & git commit all new files from (4) 
+***** ADD:
+****** git add mod/ch_*
+****** git add mod/iconc_*
+****** git add test_ngf.py
+****** git add cells/test_ngf_redo.hoc 
+***** COMMIT: git commit -a -m 'adding ngf mod files, tester script for ngf testing, and ngf hoc file into cells subdir'
