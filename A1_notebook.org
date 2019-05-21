@@ -23607,4 +23607,13 @@ Running simulation for 500.0 ms...
 ****** git add mod/iconc_*
 ****** git add test_ngf.py
 ****** git add cells/test_ngf_redo.hoc 
-***** COMMIT: git commit -a -m 'adding ngf mod files, tester script for ngf testing, and ngf hoc file into cells subdir'
+***** COMMIT: git commit -a -m 'adding ngf mod files, tester script for ngf testing into main A1 dir, and ngf hoc file into cells subdir'
+**** Modify test_ngf.py to load .hoc in new location
+***** in netParams.importCellParams --> change filename to 'cells/test_ngf_redo.hoc'
+***** add & commit change
+**** Tried to switch back to master: =git checkout master= & got this message:
+"error: Your local changes to the following files would be overwritten by checkout:
+	A1_notebook.org
+Please commit your changes or stash them before you switch branches.
+Aborting"
+**** 
