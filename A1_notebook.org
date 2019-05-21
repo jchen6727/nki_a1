@@ -23522,3 +23522,32 @@ Running simulation for 500.0 ms...
 ***** netParams.stimTargetParams['Input->NGF_pop'] = {'source': 'Input', 'sec':'soma'... ETC}
 ***** simConfig.recordTraces = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}}
 *** SOMETHING STRANGE HERE --> changing the gmax of sodium does odd things (	gNasoma=20000//3.7860265 // SOMETHING IS VERY ODD HERE)
+* <2019-05-21 Tue -- NGF cells>
+** Location of files:
+*** For now, NGF cells still only exist on laptop (~/Desktop/test_ngf)
+*** Add a branch -- some technical tips
+**** Use sourcetree to visualize branching
+***** This is a tip from Salva
+***** Set this up on laptop only -- sourcetree is for Mac OS X (I believe)
+***** Just opened sourcetree, then opened A1 
+**** Git documentation materials:
+***** LINKS:
+****** https://git-scm.com/book/en/v1/Git-Branching-What-a-Branch-Is 
+****** https://git-scm.com/book/en/v1/Git-Branching-Basic-Branching-and-Merging
+***** Commands / Info:
+****** To create branch: =git branch name_of_branch= OR =git checkout -b name_of_branch= 
+******* The latter command creates /and/ switches to branch
+******* Creates at the same commit that you're currently working on
+******* For figure below, =git branch testing=
+[[~/Desktop/NEUROSIM/A1/figures/git_help/branch_testing.png]]
+****** "HEAD" points to the branch that you are working on
+******* e.g. [[~/Desktop/NEUROSIM/A1/figures/git_help/head.png]]
+****** To switch to the branch you created: =git checkout name_of_branch=
+******* "HEAD" switches to testing branch
+******* [[~/Desktop/NEUROSIM/A1/figures/git_help/switch.png]]
+****** If you commit, this moves "HEAD" along the the branch:
+******* e.g. [[~/Desktop/NEUROSIM/A1/figures/git_help/head_commit.png]]
+****** To switch back to "master" branch: =git checkout master=
+*** Add a branch -- try this for real
+**** Doing this on laptop (Mac OS X El Capitan, Version 10.11.4) 
+**** 
