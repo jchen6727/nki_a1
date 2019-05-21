@@ -23617,4 +23617,13 @@ Running simulation for 500.0 ms...
 Please commit your changes or stash them before you switch branches.
 Aborting"
 **** Resolve the above: git add & commit notebook 
-**** 
+**** *NOTE* the files listed in my finder /actually change/ based on which branch I am on - wow! 
+**** *HOW DO I PUSH WHEN I AM ON A BRANCH??*
+***** =git push -u origin test_ngf=
+****** output: To ssh://no.neurosim.downstate.edu/u/ericag/A1_bare
+ * [new branch]      test_ngf -> test_ngf
+Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
+***** But, when I ssh into neurosim, and pull from /u/ericag/A1_bare, I don't have the ability to switch branches to test_ngf 
+***** Try =git push -u origin HEAD=
+***** Same thing
+**** I am going to give up on that and merge then delete branch; getting freaked out!! 
