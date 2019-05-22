@@ -23523,7 +23523,7 @@ Running simulation for 500.0 ms...
 ***** simConfig.recordTraces = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}}
 *** SOMETHING STRANGE HERE --> changing the gmax of sodium does odd things (	gNasoma=20000//3.7860265 // SOMETHING IS VERY ODD HERE)
 * <2019-05-21 Tue -- NGF cells>
-** Location of files:
+** Branch attempts:
 *** For now, NGF cells still only exist on laptop (~/Desktop/test_ngf)
 *** Add a branch -- some technical tips
 **** Use sourcetree to visualize branching
@@ -23627,3 +23627,11 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ***** Try =git push -u origin HEAD=
 ***** Same thing
 **** I am going to give up on that and merge then delete branch; getting freaked out!! 
+***** on laptop: =git checkout master=
+***** git merge test_ngf 
+***** git push ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare
+***** git branch -d test_ngf 
+** 
+
+
+** *VERSION CONTROL DESKTOP*
