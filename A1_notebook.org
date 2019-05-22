@@ -23631,7 +23631,11 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ***** git merge test_ngf 
 ***** git push ssh://ericag@no.neurosim.downstate.edu/u/ericag/A1_bare
 ***** git branch -d test_ngf 
-** 
-
 
 ** *VERSION CONTROL DESKTOP*
+* <2019-05-22 Wed -- NGF cells>
+** Set aside branching efforts for now and focus on refining the NGF cells
+** *VERSION CONTROL DESKTOP!*
+** hoc file modifications:
+*** Rename from test_ngf_redo.hoc to test_ngf.hoc 
+*** Simplify test_ngf.hoc 
