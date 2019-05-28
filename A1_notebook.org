@@ -23637,5 +23637,12 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ** Set aside branching efforts for now and focus on refining the NGF cells
 ** *VERSION CONTROL DESKTOP!*
 ** hoc file modifications:
-*** Rename from test_ngf_redo.hoc to test_ngf.hoc 
+*** Rename from test_ngf_redo.hoc --> test_ngf.hoc 
 *** Simplify test_ngf.hoc 
+**** Deleting all 'offsets' and 'slopes' 
+**** Commented out all values in proc mech_init - will uncomment as they are used 
+**** There are a couple different values for the same variables (e.g. gKvA) -- what to do about this? 
+**** Rebuild from near-scratch 
+**** Think there is something strange happening with the soma -- comment all lines having to do with dendrites and try from one compartment first 
+<2019-05-28 Tue - NGF cells>
+
