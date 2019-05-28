@@ -23652,3 +23652,25 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 *** neurosim
 *** comet 
 ** Importing NGF cell into netParams.py (commented out for now) 
+** Edited name of NGF cell hoc file to ngf_cell.hoc (in cells subdir) 
+** Edited test_ngf.py in A1 in order to import correct .hoc file (updated name) 
+** Cut out extraneous parts of ngf_cell.hoc (now reflects what is in test dir on laptop) 
+** Still need to lower the threshold -- work on SOMA FIRST 
+** SOMA EDITS:
+*** right now soma has Nav channel (ch_Navngf), Kdr_fast channel (ch_Kdrfastngf), and leak channel (ch_leak)
+*** In the original file, all sections (thus, including soma), also had:
+**** iconc_Ca
+**** ch_KvAngf
+**** ch_CavN
+**** ch_CavL
+**** ch_KCas
+**** ch_KvCaB
+**** ek = -90, eca = 130, e_ch_leak = -60
+**** iconc_CaZ=2 (CaZ? iconc_Ca=2?) 
+*** Adding proximal A-type potassium (ch_KvAngf) -- *fewer spikes*, went from 4 to 2 at 1.9nA current input (way too high still) 
+*** Adding HAV-N channel (T-type calcium, ch_CavN) -- 2 spikes, but *closer together* (when added by itself, still 4 spikes) 
+*** Adding L-type calcium channel (ch_CavL)  -- hard to say what effect this had
+*** Adding small potassium channel, calcium gated (ch_KCaS) 
+*** Before this line ^^ added iconc_Ca -- since small potassium channel is calcium gated, now having the calcium iconc_Ca mech in there made a difference
+*** Adding big potassium channel (v- and ca-gated, ch_KvCaB) -- didn't seem to make too much difference 
+*** did all this in test_ngf.hoc --> doing it in A1 copy now 
