@@ -23644,5 +23644,11 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 **** There are a couple different values for the same variables (e.g. gKvA) -- what to do about this? 
 **** Rebuild from near-scratch 
 **** Think there is something strange happening with the soma -- comment all lines having to do with dendrites and try from one compartment first 
-<2019-05-28 Tue - NGF cells>
-
+* <2019-05-28 Tue - NGF cells>
+** Version control
+*** github
+*** desktop -- TO DO
+*** laptop
+*** neurosim
+*** comet 
+** Importing NGF cell into netParams.py (commented out for now) 
