@@ -31,7 +31,7 @@ density = {}
 
 ## cell types
 cellTypes = ['IT', 'PT', 'CT', 'PV', 'SOM', 'VIP', 'nonVIP'] # added VIP and non-VIP interneuron classes # based on Tremblay et al., 2016 ('GABAergic Interneurons in the Neocortex: From Cellular Properties to Circuits')
-
+## MAY NEED TO CHANGE nonVIP --> NGF (at least for L1?) 
   
 # ------------------------------------------------------------------------------------------------------------------
 # 1) Use neuron density profile from 3D Quantification paper (Kelly & Hawken 2017) --> neurons/mm3

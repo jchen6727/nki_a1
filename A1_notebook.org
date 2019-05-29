@@ -23674,3 +23674,11 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 *** Before this line ^^ added iconc_Ca -- since small potassium channel is calcium gated, now having the calcium iconc_Ca mech in there made a difference
 *** Adding big potassium channel (v- and ca-gated, ch_KvCaB) -- didn't seem to make too much difference 
 *** did all this in test_ngf.hoc --> doing it in A1 copy now 
+** *VERSION CONTROL CHECKPOINT*
+*** github
+*** neurosim
+*** comet
+*** laptop
+*** desktop -- TO DO
+** Changed netParams.py in A1 so that the popParams is labeled 'NGF' vs. 'nonVIP' -- have not changed this label in density.py though (in cells subdir) 
+** 
