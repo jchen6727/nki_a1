@@ -23644,7 +23644,7 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 **** There are a couple different values for the same variables (e.g. gKvA) -- what to do about this? 
 **** Rebuild from near-scratch 
 **** Think there is something strange happening with the soma -- comment all lines having to do with dendrites and try from one compartment first 
-* <2019-05-28 Tue - NGF cells>
+* <2019-05-28 Tue -- NGF cells>
 ** Version control
 *** github
 *** desktop -- TO DO
@@ -23682,3 +23682,76 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 *** desktop -- TO DO
 ** Changed netParams.py in A1 so that the popParams is labeled 'NGF' vs. 'nonVIP' -- have not changed this label in density.py though (in cells subdir) 
 ** 
+* <2019-05-29 Wed -- NGF cells>
+** OPTIONS:
+*** Get old hoc file to work
+*** optimize new file
+*** put dendrites (back) in BEFORE optimization
+*** put dendrites (back) in AFTER optimization 
+** From modeldb: 
+*** https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=187604&file=/modeldbca1/main.hoc#tabs-2
+*** {load_file("./setupfiles/load_cell_category_info.hoc")} --> defines 'numCellTypes'
+*** added this file to ~/Desktop/test_ngf (on laptop) 
+** how to load the above file? 
+*** Load the following:
+****  >>> h.load_file('nrngui.hoc')
+**** >>> h.load_file('CellCategoryInfo.hoc')
+**** >>> h.load_file('defaultvar.hoc')
+**** >>> h.load_file('parameters.hoc')
+**** >>> h.load_file('set_other_parameters.hoc')
+**** >>> h.load_file('load_cell_category_info.hoc') --> ERRORS:
+***** (1) resolved after loading nrngui.hoc?
+****** nrniv: String is not a template
+ in load_cell_category_info.hoc near line 50
+***** (2) resolved after adding in defaultvar, parameters, and set_other_parameters
+****** nrniv: undefined variable cmdstr
+ in load_cell_category_info.hoc near line 96
+ loadCellCategoryInfo()
+
+***** (3) resolved after changing path to cellnumbers_101.dat
+****** nrniv: ../datasets/cellnumbers_101.dat :file is not open
+ in load_cell_category_info.hoc near line 96
+****** path should be --> /datasets/cellnumbers_101.dat
+* <2019-06-03 Mon -- NGF cells>
+** Still mostly working in 
+* <2019-06-08 Sat -- NGF cells>
+** Using VIP cell as test now -- created a new directory on my laptop ~/Desktop/test_vip_ngf which contains the vipcr cell being used in A1 right now 
+** PROBLEMS: no adaptation; FI curve is similar 
+** How to add adaptation? 
+* <2019-06-09 Sun -- NGF cells>
+** HCN channel 
+* <2019-06-11 Tue - NGF cells>
+** Doing tests in ~/Desktop/test_vip_ngf 
+** using vipcr_cell.hoc as my cell template that I'm importing
+** Added an A-type potassium channel to induce delay (Kv4?) in first AP spike
+*** kv4hh mod file: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=97860&file=/rejuvenation/mod/kv4hh.mod#tabs-2 
+*** Evidence: 
+**** https://www.ncbi.nlm.nih.gov/pubmed/21484879
+**** http://www.jneurosci.org/content/jneuro/20/11/4145.full.pdf
+**** 'A-type K+ current dominates somatic excitability of delayed firing neurons in rat substantia gelatinosa' https://onlinelibrary.wiley.com/doi/abs/10.1002/syn.20879, https://www.ncbi.nlm.nih.gov/pubmed/21484879
+** Added the following then removed them because they did not do anything to induce delay in first spike: 
+*** kv4csi: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=145672&file=/Fineberg_et_al_2012/Kv4_csiosi.mod#tabs-2
+*** kv4csiosi: see above link 
+*** Kv4f: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=143100&file=/GPeNeuronKitano/Kv4s.mod#tabs-2
+*** Kv4s: see above link 
+*** kaDa: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=245427&file=/MoubarakEtAl2018/KV4_DAsoma.mod#tabs-2
+*** kaDasoma: see above link
+*** Kv3_1: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=184184&file=/472352327/modfiles/Kv3_1.mod#tabs-2
+*** kamt: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=3648&file=/ka_kdr_mt/kamt.mod#tabs-2
+*** SKv3_1: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=169457&file=/Maki-MarttunenEtAl2015/SKv3_1.mod#tabs-2
+** Noticing that the dendritic components have a lot more relevance than I thought they would -- taking away soma Na/K channels didn't actually eliminate action potentials - why is this? 
+** *PROBLEM*: first spike will not go away
+** *HYPOTHESES* & *POTENTIAL SOLUTIONS*:
+*** (1) fast sodium channel is too fast to activate compared to the a-type potassium -- not supressed until after the first spike
+**** Make sodium channel activation time constant slower
+**** Make potassium channel activation time constant faster
+**** Add a faster activating potassium channel into the mix? 
+*** (3) May need a D-type potassium channel, as mentioned by sam? 
+*** (4) Try a slower sodium channel 
+*** (5) Try a faster potassium channel 
+** TRIED SOLUTIONS:
+*** *TRIED* (2) channel in soma alone is not good enough 
+**** place in dendrites to see if there is an effect -- start with 1 dendrite and work your way up 
+**** did rad1 
+**** did rad1 and rad2 
+**** Definitely increasing the firing threshold overall, but there is still an initial depolarization, so adding it to other dendrites isn't the problem 
