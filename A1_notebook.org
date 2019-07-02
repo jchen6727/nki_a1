@@ -23720,7 +23720,7 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ** How to add adaptation? 
 * <2019-06-09 Sun -- NGF cells>
 ** HCN channel 
-* <2019-06-11 Tue - NGF cells>
+* <2019-06-11 Tue -- NGF cells>
 ** Doing tests in ~/Desktop/test_vip_ngf 
 ** using vipcr_cell.hoc as my cell template that I'm importing
 ** Added an A-type potassium channel to induce delay (Kv4?) in first AP spike
@@ -23755,3 +23755,11 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 **** did rad1 
 **** did rad1 and rad2 
 **** Definitely increasing the firing threshold overall, but there is still an initial depolarization, so adding it to other dendrites isn't the problem 
+* <2019-06-12 Wed -- NGF cells>
+** Put in NGF cell updates (repository version control) 
+*** neurosim
+*** github
+*** desktop **TO DO**
+*** comet ** TO DO ** 
+* <2019-07-02 Tue -- optimization debug>
+** Added netParams.version to netParams.py to keep track of version number & major changes -- starting with netParams.version = 1 
