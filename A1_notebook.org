@@ -23763,3 +23763,17 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 *** comet ** TO DO ** 
 * <2019-07-02 Tue -- optimization debug>
 ** Added netParams.version to netParams.py to keep track of version number & major changes -- starting with netParams.version = 1 
+** Version control
+*** laptop
+*** github
+*** comet
+*** neurosim
+** Organize Auditory Cortex Paperpile 
+*** Cortical Connectivity
+*** A1 Cell Type Info
+**** L1 interneurons
+*** Cortical Connectivity
+*** Thalamic Connectivity 
+** RECALL: links to google drive spreadsheets w/ data:
+*** original bitbucket repo: https://docs.google.com/spreadsheets/d/1JoIkf02TWzEXbAA_sfRN8o1VPNi_ai6ZDeBJ5JiRy_o/edit#gid=0
+*** alternative sources: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=972301607
