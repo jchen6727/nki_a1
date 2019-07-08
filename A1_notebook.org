@@ -23777,3 +23777,15 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ** RECALL: links to google drive spreadsheets w/ data:
 *** original bitbucket repo: https://docs.google.com/spreadsheets/d/1JoIkf02TWzEXbAA_sfRN8o1VPNi_ai6ZDeBJ5JiRy_o/edit#gid=0
 *** alternative sources: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=972301607
+** Editing A1 params (alternative sources) to include connectivity data:
+*** link: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+*** "Connectivity" is the sheet label 
+** Notes from *Connectivity in mouse A1*
+*** "Spatial Profile of Excitatory and Inhibitory Synaptic Connectivity in Mouse Primary Auditory Cortex" R Levy & A Reyes, NYU, 2012 
+*** Connectivity assessed between *excitatory pyramidal* cells and *FS and non-FS cells* in *L4* 
+*** *connection probability* was *distance dependent*
+*** *synaptic strength* was strongest in *unitary synapses formed by FS cells* and was not distance-dependent 
+* <2019-07-03 Weds -- literature review>
+** Collected more papers -- synced now with paperpile
+* <2019-07-08 Mon -- optimization debug>
+** 
