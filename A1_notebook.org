@@ -23788,4 +23788,16 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 * <2019-07-03 Weds -- literature review>
 ** Collected more papers -- synced now with paperpile
 * <2019-07-08 Mon -- optimization debug>
-** 
+** See claustrum nb (summary: asked #isb, got 2 suggestions -- see below)
+*** change output file/folder for each run
+*** do not use sbatch to submit CS_evol.py, use =screen -L python CS_evol.py=
+* <2019-07-09 Tue -- literature review>
+** Papers already in A1 params (alternative sources) [regarding connectivity):
+*** Spatial profile of E & I ... in Mouse Primary Auditory Cortex
+*** Columnar Connectivity and Laminar Processing in Cat Primary Auditory Cortex
+**** put figure 4G into the spreadsheet 
+*** Layer 6 CT Neurons Activate a Cortical Output Layer, Layer 5a
+** Papers to read today: 
+*** [DONE] Columnar Connectivity and Laminar Processing in Cat Primary Auditory Cortex
+*** [DONE] Layer 6 CT Neurons Activate a Cortical Output Layer, Layer 5a
+** Salva added more papers; see A1 params (alternative sources), tab "conn papers" 
