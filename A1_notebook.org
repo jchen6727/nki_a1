@@ -23801,3 +23801,28 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 *** [DONE] Columnar Connectivity and Laminar Processing in Cat Primary Auditory Cortex
 *** [DONE] Layer 6 CT Neurons Activate a Cortical Output Layer, Layer 5a
 ** Salva added more papers; see A1 params (alternative sources), tab "conn papers" 
+* <2019-07-10 Weds -- see claustrum for optimization debug>
+** Fixing single cell optimization submission to comet
+* <2019-07-11 Thurs -- see claustrum for optimization debug>
+** Fixing submission on comet 
+* <2019-07-12 Fri -- see clausturm>
+* <2019-07-15 Mon -- Lit Review>
+** Reviewing papers on paperpile for connection info
+** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+** Papers reviewed:
+*** (1) Dense Inhibitory Connectivity in Neocortex
+**** REGION: frontal cortex
+**** ANIMAL: mouse
+**** SUMMARY: Connectivity between sGFP inteneurons (SST+) & pyr cells in L2/3 is a function of distance. Interneurons within a 200 micrometer radius of the pyramidal cells will be densely connected with said pyr cell. Connection probabilility decreases as intersomatic distance increases --> *by what function?*
+*** (2) Synaptic Computation and Sensory Processing in Neocortical L2/3
+**** REGION: S1, V1, A1 (L2/3)
+**** ANIMAL: mouse
+* <2019-07-16 Tues -- Lit Review>
+** Reviewing papers on paperpile for connection info
+** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+** Papers reviewed:
+* <2019-07-17 Wed -- Lit Review & optimization on comet>
+** Reviewing papers on paperpile for connection info
+*** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+*** Papers reviewed:
+** Debugging optimization submission on comet -- SEE CLAUSTRUM NOTEBOOK
