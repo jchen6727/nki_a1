@@ -23828,5 +23828,9 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 **** REGION: Auditory Cortex
 **** ANIMAL: mouse 
 
-* <2019-07-17 Wed -- Optimization debug on comet>
+* <2019-07-17 Wed -- Lit Review + Optimization debug on comet>
 ** Debugging optimization submission on comet -- SEE CLAUSTRUM NOTEBOOK
+** Lit Review Notes:
+*** I put notes on 'Conn papers' tab in A1 params to note if I've reviewed the paper yet or not 
+*** gdoc: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840)
+
