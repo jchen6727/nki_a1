@@ -23821,8 +23821,12 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ** Reviewing papers on paperpile for connection info
 ** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
 ** Papers reviewed:
-* <2019-07-17 Wed -- Lit Review & optimization on comet>
-** Reviewing papers on paperpile for connection info
-*** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
-*** Papers reviewed:
+*** "Synaptic Properties of Thalamic Input to the Subgranular Layers of Primary Somatosensory and Auditory Cortices in the Mouse"
+**** REGION: S1 & A1
+**** ANIMAL: Mouse
+*** "Optogenetic Activation of an Inhibitory Network Enhances Feedforward Functional Connectivity in Auditory Cortex"
+**** REGION: Auditory Cortex
+**** ANIMAL: mouse 
+
+* <2019-07-17 Wed -- Optimization debug on comet>
 ** Debugging optimization submission on comet -- SEE CLAUSTRUM NOTEBOOK
