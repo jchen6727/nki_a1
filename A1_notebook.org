@@ -23833,4 +23833,38 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ** Lit Review Notes:
 *** I put notes on 'Conn papers' tab in A1 params to note if I've reviewed the paper yet or not 
 *** gdoc: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840)
-
+*** May have found some new useful papers -- have not added to database yet:
+**** *Cortical connectivity and sensory coding*, Harris & Mrsic-Flogel, 2013 (https://www.ncbi.nlm.nih.gov/pubmed/24201278)
+**** *A synaptic organizing principle for cortical neuronal groups*, Perin Berger & Markram, 2011 (https://www.pnas.org/content/108/13/5419.short)
+**** *Scaling of Topologically Similar Functional Modules Defines Mouse Primary Auditory and Somatosensory Microcircuitry*, Sadovsky & MacLean, 2013 (https://www.jneurosci.org/content/33/35/14048.short)
+**** *Differential tuning and population dynamics of excitatory and inhibitory neurons reflect differences in local intracortical connectivity*, Hofer et al., 2019 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6370002/pdf/emss-35754.pdf)
+** optimization debug: see claustrum notebook (.../claustrum/claustrum_notebook.org)
+** CONNECTIVITY:
+*** go thru M1 code and find the connectivity-related constructs 
+*** M1detailed/cfg.py:
+**** E-->E AMPA to NMDA Ratio
+***** cfg.synWeightFractionEE = [0.5, 0.5] 
+**** E->I AMPA to NMDA ratio
+***** cfg.synWeightFractionEI = [0.5, 0.5] 
+**** SOM -> E GABAASlow to GABAB ratio
+***** cfg.synWeightFractionSOME = [0.9, 0.1] # 
+**** cfg.synsperconn = {'HH_full': 5, 'HH_reduced': 1, 'HH_simple': 1}
+**** cfg.AMPATau2Factor = 1.0
+**** I->E/I layer weights (L2/3+4, L5, L6)
+***** cfg.IEweights = [1.2, 1.2, 1.2]
+***** cfg.IIweights = [0.8, 1.2, 0.8]
+**** NOTE: DID NOT INCLUDE GAIN-RELATED CONSTRUCTS!!
+*** M1detailed/netParams.py:
+**** Line 331 "Local connectivity parameters"
+***** Conn data contained in: *conn/conn.pkl* (according to line 333)
+****** pmat: probability
+****** wmat: weights
+****** bins: ???
+***** E-->E (line 339)
+****** preTypes = [['IT'], ['IT'], ['IT', 'PT'], ['IT','CT'], ['IT','CT']] 
+****** postTypes = ['IT', 'IT', 'PT', 'IT','CT']
+***** E-->I (line 368)
+***** I-->all (line 400) 
+**** Line 487 "Long-range connectivity parameters"
+***** Conn data contained in: *conn/conn_long.pkl* (according to line 234)
+**** Line 520 "Subcellular connectivity (synaptic distribution)"
