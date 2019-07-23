@@ -23868,3 +23868,85 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 **** Line 487 "Long-range connectivity parameters"
 ***** Conn data contained in: *conn/conn_long.pkl* (according to line 234)
 **** Line 520 "Subcellular connectivity (synaptic distribution)"
+** A note about using pickle:
+*** Was trying to load M1detailed/conn/conn.pkl to look at the local connectivity data used in the M1 model
+*** Loaded up python then did =import pickle=
+*** ERRORS with the following code:
+**** with open('conn.pkl','rb') as f:
+*****     conn_data = pickle.load(f)
+**** ERROR: "UnicodeDecodeError: 'ascii' codec can't decode byte 0xb8 in position 0: ordinal not in range(128)"
+*** ERRORS with the next try:
+**** with open('conn.pkl','r') as f: 
+...    data = pickle.load(f)
+**** ERROR: TypeError: a bytes-like object is required, not 'str'
+*** RESOLVED with the following code:
+**** with open('conn.pkl','rb') as f:
+     conn_data = pickle.load(f, encoding='bytes')
+* <2019-07-23 Tue -- NGF cell evol setup> 
+** Created directory for NGF cell optimization:
+*** LOCAL: /Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization
+**** contents include relevant mod files & ngf_cell.hoc
+**** mod files compiled in this dir with nrnivmodl (output below)
+ericagriffith% nrnivmodl
+Creating x86_64 directory for .o files.
+
+/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization
+ch_CavL.mod ch_CavN.mod ch_KCaS.mod ch_Kdrfastngf.mod ch_KvAngf.mod ch_KvCaB.mod ch_Navngf.mod ch_leak.mod iconc_Ca.mod
+ch_CavL.mod ch_CavN.mod ch_KCaS.mod ch_Kdrfastngf.mod ch_KvAngf.mod ch_KvCaB.mod ch_Navngf.mod ch_leak.mod iconc_Ca.mod
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_CavL
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_CavN
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KCaS
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_Kdrfastngf
+Translating ch_Kdrfastngf.mod into ch_Kdrfastngf.c
+Translating ch_CavN.mod into ch_CavN.c
+Translating ch_KCaS.mod into ch_KCaS.c
+Translating ch_CavL.mod into ch_CavL.c
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+Notice: This mechanism cannot be used with CVODE
+Notice: This mechanism cannot be used with CVODE
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_Kdrfastngf.lo ch_Kdrfastngf.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KCaS.lo ch_KCaS.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_CavN.lo ch_CavN.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_CavL.lo ch_CavL.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_CavN.c  -fno-common -DPIC -o .libs/ch_CavN.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_Kdrfastngf.c  -fno-common -DPIC -o .libs/ch_Kdrfastngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KCaS.c  -fno-common -DPIC -o .libs/ch_KCaS.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_CavL.c  -fno-common -DPIC -o .libs/ch_CavL.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KvAngf
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KvCaB
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_Navngf
+Translating ch_KvCaB.mod into ch_KvCaB.c
+Translating ch_KvAngf.mod into ch_KvAngf.c
+Translating ch_Navngf.mod into ch_Navngf.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_leak
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KvCaB.lo ch_KvCaB.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_Navngf.lo ch_Navngf.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KvAngf.lo ch_KvAngf.c
+Translating ch_leak.mod into ch_leak.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_leak.lo ch_leak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KvCaB.c  -fno-common -DPIC -o .libs/ch_KvCaB.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KvAngf.c  -fno-common -DPIC -o .libs/ch_KvAngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_Navngf.c  -fno-common -DPIC -o .libs/ch_Navngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_leak.c  -fno-common -DPIC -o .libs/ch_leak.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" iconc_Ca
+Translating iconc_Ca.mod into iconc_Ca.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o iconc_Ca.lo iconc_Ca.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c iconc_Ca.c  -fno-common -DPIC -o .libs/iconc_Ca.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o mod_func.lo mod_func.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c mod_func.c  -fno-common -DPIC -o .libs/mod_func.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=link gcc -module  -g -O2    -headerpad_max_install_names -o libnrnmech.la -rpath "/Applications/NEURON-7.6/nrn/x86_64/lib"  ch_CavL.lo ch_CavN.lo ch_KCaS.lo ch_Kdrfastngf.lo ch_KvAngf.lo ch_KvCaB.lo ch_Navngf.lo ch_leak.lo iconc_Ca.lo mod_func.lo  -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrnoc -loc -lmemacs  -lscopmath -lsparse13 -lreadline -lncurses -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrniv -livoc -lneuron_gnu -lmeschach -lsundials       
+libtool: link: gcc -Wl,-undefined -Wl,dynamic_lookup -o .libs/libnrnmech.0.so -bundle  .libs/ch_CavL.o .libs/ch_CavN.o .libs/ch_KCaS.o .libs/ch_Kdrfastngf.o .libs/ch_KvAngf.o .libs/ch_KvCaB.o .libs/ch_Navngf.o .libs/ch_leak.o .libs/iconc_Ca.o .libs/mod_func.o   -L/Applications/NEURON-7.6/nrn/x86_64/lib /Applications/NEURON-7.6/nrn/x86_64/lib/libnrnoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/liboc.dylib -L/usr/X11/lib -lX11 /Applications/NEURON-7.6/nrn/x86_64/lib/libmemacs.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libscopmath.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsparse13.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libreadline.dylib -lncurses /Applications/NEURON-7.6/nrn/x86_64/lib/libnrniv.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libivoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libneuron_gnu.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libmeschach.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsundials.dylib  -g -O2  
+libtool: link: (cd ".libs" && rm -f "libnrnmech.so" && ln -s "libnrnmech.0.so" "libnrnmech.so")
+libtool: link: ( cd ".libs" && rm -f "libnrnmech.la" && ln -s "../libnrnmech.la" "libnrnmech.la" )
+Successfully created x86_64/special
+*** updated repo so this now appears in remote repositories as well 
