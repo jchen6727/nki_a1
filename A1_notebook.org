@@ -23950,3 +23950,11 @@ libtool: link: (cd ".libs" && rm -f "libnrnmech.so" && ln -s "libnrnmech.0.so" "
 libtool: link: ( cd ".libs" && rm -f "libnrnmech.la" && ln -s "../libnrnmech.la" "libnrnmech.la" )
 Successfully created x86_64/special
 *** updated repo so this now appears in remote repositories as well 
+** Set up evol files in ...A1/cells/NGF_optimization:
+*** [done] NGF_netParams.py
+**** params to be modified needs to be changed still 
+*** [done] NGF_cfg.py
+*** [done] NGF_batch.py 
+*** [done] NGF_init.py
+*** [done] NGF_evol.py 
+*** test_NGF.py??? just to load the individual cell? useful? 
