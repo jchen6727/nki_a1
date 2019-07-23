@@ -5,7 +5,7 @@ import numpy
 from scipy import interpolate     	# for curve smoothing in adaptation fitness
 import scipy.io                   	# for importing matlab files
 from netpyne import sim 			# neural network design and simulation
-import CS_batch	        		# Import for BATCH RUN
+import NGF_batch	        		# Import for BATCH RUN
 from statistics import mean 		# to calculate mean(s) for RMP fitness function
 import json                       	# to read batch output files
 import os  							# to be able to navigate file system in python
@@ -40,7 +40,7 @@ def evaluate_netparams(candidates, args):
 	print('BATCH SUBMISSIONS FOR GEN ' + str(ngen) + ' ARE BEGINNING')
 
 	for icand,cand in enumerate(candidates): 
-		# Modify network params in CS_netParams.py based on this candidate's params ("genes")
+		# Modify network params in NGF_netParams.py based on this candidate's params ("genes")
 
 ############## CHANGE THESE BASED ON WHAT NEEDS TO BE MODIFIED ###########
 
@@ -60,7 +60,7 @@ def evaluate_netparams(candidates, args):
 			fo.write("cellRule['secs']['soma']['mechs']['hh2']['gnabar']=" + str(cand[0]) + "\ncellRule['secs']['soma']['mechs']['hh2']['gkbar']=" + str(cand[1]) + "\ncellRule['secs']['soma']['mechs']['im']['taumax']=" + str(cand[2]) + "\ncellRule['secs']['soma']['mechs']['im']['gkbar']=" + str(cand[3]) + "\ncellRule['secs']['soma']['mechs']['pas']['g']=" + str(cand[4]))
 
 		# Run batch using the above candidate params
-		CS_batch.batch_full(icand, ngen, runType) ## Do I need to do 'global runType' first? 
+		NGF_batch.batch_full(icand, ngen, runType) ## Do I need to do 'global runType' first? 
 		print('BATCH JOB FOR CAND_' + str(icand) + ' FROM GEN_' + str(ngen) + ' SUBMITTED')
 
 	print('END OF BATCH SUBMISSIONS FOR GEN ' + str(ngen))
@@ -91,9 +91,9 @@ def evaluate_netparams(candidates, args):
 			data_files = os.listdir(data_path) # EXISTING DATA FILES 
 
 			# THE DATA FILES WE NEED TO EXIST TO MOVE ON
-			data_file_0 = 'CS_batch_data_cand' + str(cand_index) + '_0.json' ## NEED ICAND ITER FOR THIS 
-			data_file_1 = 'CS_batch_data_cand' + str(cand_index) + '_1.json'
-			data_file_2 = 'CS_batch_data_cand' + str(cand_index) + '_2.json'
+			data_file_0 = 'NGF_batch_data_cand' + str(cand_index) + '_0.json' ## NEED ICAND ITER FOR THIS 
+			data_file_1 = 'NGF_batch_data_cand' + str(cand_index) + '_1.json'
+			data_file_2 = 'NGF_batch_data_cand' + str(cand_index) + '_2.json'
 
 			if data_file_0 in data_files and data_file_1 in data_files and data_file_2 in data_files:
 				print('BATCH RUN FOR CAND ' + str(cand_index) + ' IS COMPLETE')
@@ -178,10 +178,10 @@ ngen = -1
 machine_ID = input('COMET or LOCAL?')
 
 if machine_ID == 'COMET':
-	data_path_stem = ## CHANGE THIS #'/oasis/scratch/comet/eyg42/temp_project/claustrum/CS/CS_batch_data_gen_'
+	data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF/NGF_batch_data_gen_'
 	runType = 'hpc_slurm'
 elif machine_ID == 'LOCAL':
-	data_path_stem =  ## CHANGE THIS #'/Users/ericagriffith/Desktop/NEUROSIM/claustrum/CS/optimization/CS_batch_data_gen_'
+	data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_batch_data_gen_'
 	runType = 'mpi_bulletin'
 else:
 	raise Exception("Computing system not recognized")
@@ -196,6 +196,7 @@ rand.seed(1)
 #                hh2_gnabar gkbar  tau_im, g_im, g_pas    			// e_pas, vinit, vtraub -- leave alone for now
 minParamValues = [0.00100, 0.00009, 100, 7.5e-5, 0.00001]
 maxParamValues = [0.00400, 0.00020, 700, 7.5e-5, 0.00007]
+## ^^ CHANGE THESE
 
 # instantiate MO evolutionary computation algorithm with random seed
 my_ec = ec.emo.NSGA2(rand) #ec.EvolutionaryComputation(rand)
