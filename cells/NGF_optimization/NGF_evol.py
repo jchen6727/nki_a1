@@ -175,13 +175,16 @@ global ngen
 ngen = -1
 
 # SET DATA PATH HERE 
-machine_ID = input('COMET or LOCAL?')
+machine_ID = input('COMET or LOCAL or zn?')
 
 if machine_ID == 'COMET':
 	data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF/NGF_batch_data_gen_'
 	runType = 'hpc_slurm'
 elif machine_ID == 'LOCAL':
 	data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_batch_data_gen_'
+	runType = 'mpi_bulletin'
+elif machine_ID == 'zn':
+	data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_batch_data_gen_'
 	runType = 'mpi_bulletin'
 else:
 	raise Exception("Computing system not recognized")
