@@ -23965,7 +23965,7 @@ Successfully created x86_64/special
 * <2019-07-29 Mon -- >
 ** Got CS cells (claustrum) evol script to run on comet (slowly -- depends on queue) and zn 
 ** GOAL: Get NGF cells running on zn/comet
-** (1) Make sure that all the scripts are set up to run 
+** (1) Make sure that all the scripts are set up to run on zn, comet, and local
 *** Changed NGF_evol.py to have option for machine_ID == 'zn' 
 **** runType = 'mpi_bulletin' 
 **** data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_batch_data_gen_'
@@ -23973,8 +23973,83 @@ Successfully created x86_64/special
 **** walltime: 2 hrs --> 00:30 
 **** nodes: 4 --> 1
 ** (2) What are the data benchmarks for the NGF cells? 
-** (3) Change evol script to reflect new data benchmarks
-*** Fitness functions
-*** Parameters
-*** cfg file (current injections) 
+*** From "Electrophysiological Differences Between Neurogliaform Cells From Monkey and Rat Prefrontal Cortex" by Povysheva et al., 2006. 
+*** Table 2, Intrinsic Properties: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/table_2.png]]
+*** Fig 3B, Subthreshold responses [triangles: monkey]: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_3B.png]]
+*** Fig 4E, 1st peak delay: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_4E.png]]
+*** Adaptation-related figures (3): 
+**** Fig 5C, Adaptation ratio: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5C.png]]
+**** Fig 5E, Onset frequency: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5E.png]]
+**** Fig 5F, Steady state frequency: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5F.png]]
+** (3) Change evol scripts to reflect new data benchmarks
+*** Things to consider:
+**** Fitness functions
+**** Parameters
+**** cfg file (current injections) 
+**** V_soma (make sure not soma_0 etc.) 
+*** Passive Properties::
+**** RMP: -67 +/- 5 mV (table 2)
+**** Figure 3B (subthreshold responses)
+***** LEGEND:
+****** triangles == monke
+****** empty == steady state, I think?
+
+***** Used web digitizer to extract data: https://apps.automeris.io/wpd/
+***** DATA POINTS:
+****** -10pA: -6 mV
+****** -20pA: -9 mV
+****** -30pA: -13 mV
+****** -40pA: -16 mV
+****** -50pA: -19 mV
+****** -60pA: -23 mV
+****** -70pA: -27 mV
+****** -80pA: -29 mV
+****** -90pA: -31 mV
+****** -100pA: -35 mV
+****** -110pA: -36 mV
+****** -120pA: -38 mV
+
+*** Spiking properties:
+**** 1st spike latency: 59 +/36 ms  (table 2) 
+**** Spike threshold: -41 +/- 4 mV (table 2)
+**** Spikes @ threshold: 3.1 +/- 1.4  (table 2)
+*** Adaptation: 
+**** Steady state frequency at 2x threshold: 24 +/- 11 Hz (table 2) 
+**** Fig 5F, Steady State Frequency (Hz):
+***** current is pA ABOVE threshold
+***** calculated at the FIRST INTERSPIKE INTERVAL
+***** 40pA: 22 Hz
+***** 50pA: 24 Hz
+***** 60pA: 27 Hz
+***** 70pA: 30 Hz
+***** 80pA: 33 Hz
+***** 90pA: 35 Hz
+***** 100pA: 37 Hz 
+***** 110pA: 39 Hz
+***** 120pA: 41 Hz
+**** Fig 5E, Onset Frequency (Hz):
+***** current is pA ABOVE threshold
+***** calculated as average instantaneous frequency within the last 200ms 
+***** 40pA: 43 Hz
+***** 50pA: 52 Hz
+***** 60pA: 68 Hz
+***** 70pA: 80 Hz
+***** 80pA: 96 Hz
+***** 90pA: 110 Hz
+***** 100pA: 119 Hz
+***** 110pA: 131 Hz
+***** 120pA: 139 Hz
+**** Fig 5C, Adaptation Ratio:
+***** current is pA ABOVE threshold
+***** AR = ratio between first and last ISI 
+***** 40pA: 0.5
+***** 50pA: 0.48
+***** 60pA: 0.44
+***** 70pA: 0.39
+***** 80pA: 0.36
+***** 90pA: 0.32
+***** 100pA: 0.30
+***** 110pA: 0.27
+***** 120pA: 0.25
+*** PROTOCOL: to characterize membrane properties, current steps were applied for 500 ms in 5- to 10-pA increments 
 
