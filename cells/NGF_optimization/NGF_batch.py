@@ -5,7 +5,7 @@ import os
 import sys
 
 #runType='hpc_slurm'	# COMET
-#runType = 'mpi_bulletin'	# LAPTOP
+#runType = 'mpi_bulletin'	# LAPTOP or ZN
 batchLabel='NGF_batch_data'
 
 def batch_full(icand, ngen, runType):
@@ -26,8 +26,8 @@ def batch_full(icand, ngen, runType):
 		b.saveFolder = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF/' + batchLabel  + '_gen_' + str(ngen)
 		b.runCfg = {'type': 'hpc_slurm',
 								'allocation': 'shs100',
-								'walltime': '02:00:00',
-								'nodes': 4,
+								'walltime': '00:30:00',
+								'nodes': 1,
 								'coresPerNode': 24,
 								'email': 'ericaygriffith@gmail.com',
 								'folder': '/home/eyg42/A1/cells/NGF_optimization',
