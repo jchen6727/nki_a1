@@ -23962,3 +23962,19 @@ Successfully created x86_64/special
 *** COMET: /oasis/scratch/comet/eyg42/temp_project/A1/NGF/
 *** LOCAL: ~/NEUROSIM/A1/cells/NGF_optimization/
 *** These changes have been matched in NGF_evol.py 
+* <2019-07-29 Mon -- >
+** Got CS cells (claustrum) evol script to run on comet (slowly -- depends on queue) and zn 
+** GOAL: Get NGF cells running on zn/comet
+** (1) Make sure that all the scripts are set up to run 
+*** Changed NGF_evol.py to have option for machine_ID == 'zn' 
+**** runType = 'mpi_bulletin' 
+**** data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_batch_data_gen_'
+*** Changed NGF_batch.py to request less walltime & fewer nodes for comet run
+**** walltime: 2 hrs --> 00:30 
+**** nodes: 4 --> 1
+** (2) What are the data benchmarks for the NGF cells? 
+** (3) Change evol script to reflect new data benchmarks
+*** Fitness functions
+*** Parameters
+*** cfg file (current injections) 
+
