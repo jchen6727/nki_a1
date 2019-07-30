@@ -23962,7 +23962,7 @@ Successfully created x86_64/special
 *** COMET: /oasis/scratch/comet/eyg42/temp_project/A1/NGF/
 *** LOCAL: ~/NEUROSIM/A1/cells/NGF_optimization/
 *** These changes have been matched in NGF_evol.py 
-* <2019-07-29 Mon -- >
+* <2019-07-29 Mon -- NGF cell changes>
 ** Got CS cells (claustrum) evol script to run on comet (slowly -- depends on queue) and zn 
 ** GOAL: Get NGF cells running on zn/comet
 ** (1) Make sure that all the scripts are set up to run on zn, comet, and local
@@ -23972,7 +23972,7 @@ Successfully created x86_64/special
 *** Changed NGF_batch.py to request less walltime & fewer nodes for comet run
 **** walltime: 2 hrs --> 00:30 
 **** nodes: 4 --> 1
-** (2) What are the data benchmarks for the NGF cells? 
+** (2) Location & source of data benchmarks for the NGF cells:
 *** From "Electrophysiological Differences Between Neurogliaform Cells From Monkey and Rat Prefrontal Cortex" by Povysheva et al., 2006. 
 *** Table 2, Intrinsic Properties: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/table_2.png]]
 *** Fig 3B, Subthreshold responses [triangles: monkey]: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_3B.png]]
@@ -23981,19 +23981,13 @@ Successfully created x86_64/special
 **** Fig 5C, Adaptation ratio: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5C.png]]
 **** Fig 5E, Onset frequency: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5E.png]]
 **** Fig 5F, Steady state frequency: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5F.png]]
-** (3) Change evol scripts to reflect new data benchmarks
-*** Things to consider:
-**** Fitness functions
-**** Parameters
-**** cfg file (current injections) 
-**** V_soma (make sure not soma_0 etc.) 
+** (3) DATA:
 *** Passive Properties::
 **** RMP: -67 +/- 5 mV (table 2)
 **** Figure 3B (subthreshold responses)
 ***** LEGEND:
 ****** triangles == monke
 ****** empty == steady state, I think?
-
 ***** Used web digitizer to extract data: https://apps.automeris.io/wpd/
 ***** DATA POINTS:
 ****** -10pA: -6 mV
@@ -24050,6 +24044,50 @@ Successfully created x86_64/special
 ***** 90pA: 0.32
 ***** 100pA: 0.30
 ***** 110pA: 0.27
-***** 120pA: 0.25
-*** PROTOCOL: to characterize membrane properties, current steps were applied for 500 ms in 5- to 10-pA increments 
-
+** (4) Change evol scripts to reflect new data benchmarks
+*** Things to consider:
+**** Fitness functions
+**** Parameters:
+***** cfg file (current injections) 
+***** netParams
+**** V_soma (make sure not soma_0 etc.) --> done, 'soma'
+*** PARAMETERS:
+**** Channel mechanisms present in NGF cell & their accompanying parameters
+***** ch_Navngf
+****** gmax
+****** ena
+***** ch_Kdrfastngf
+****** gmax
+***** ch_leak
+****** gmax
+****** e
+***** ch_KvAngf
+****** gmax
+***** ch_CavN
+****** gmax
+***** ch_CavL
+****** gmax
+***** iconc_Ca
+****** catau
+****** caiinf
+***** ch_KCaS
+****** gmax
+***** ch_KvCaB
+****** gmax
+**** Modifiable geometry parameters: 
+***** cm
+*** Parameters to be modified in evol script & accompanying netParams code: 
+**** netParams.cellParams['NGF_Rule']['secs']['soma']['mechs'][MECH_NAME][PARAM_NAME]
+***** netParams.cellParams --> cellRule[] in netParams.py
+***** cellRule['NGF_Rule']['secs']['soma']['mechs']
+* <2019-07-30 Tue -- NGF cell modifications + connectivity data>
+** NGF cells:
+*** Add Ih to NGF cells
+**** Using Migliore 2010 
+**** Modify gmax only during optimization
+*** Extract sag data from Fig 3B of paper mentioned yesterday (see nb entry)
+*** Separate passive and active optimization
+**** Start with passive: do grid search using netpyne
+**** Create new fitness functions for active optimization
+** Connectivity data:
+*** Started new tab in gdrive spreadsheet entitled "FINAL DATA"
