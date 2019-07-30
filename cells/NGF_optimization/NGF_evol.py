@@ -50,17 +50,17 @@ def evaluate_netparams(candidates, args):
 		fo.close()
 		## overwrite old lines
 		fo = open('NGF_netParams.py', 'w')
-		for line in lines:
+		for line in lines: # CHANGE THIS TO MATCH NUMBER OF MODIFIED PARAMS
 			if line != lines[len(lines)-1] and line != lines[len(lines)-2] and line != lines[len(lines)-3] and line != lines[len(lines)-4] and line != lines[len(lines)-5]: # requires that there be the desired lines already at the end
 				fo.write(line)
 		fo.close()
 
 		## append new lines  
-		with open('NGF_netParams.py', 'a') as fo:
-			fo.write("cellRule['secs']['soma']['mechs']['hh2']['gnabar']=" + str(cand[0]) + "\ncellRule['secs']['soma']['mechs']['hh2']['gkbar']=" + str(cand[1]) + "\ncellRule['secs']['soma']['mechs']['im']['taumax']=" + str(cand[2]) + "\ncellRule['secs']['soma']['mechs']['im']['gkbar']=" + str(cand[3]) + "\ncellRule['secs']['soma']['mechs']['pas']['g']=" + str(cand[4]))
+		with open('NGF_netParams.py', 'a') as fo: # CHANGE THIS TO REFLECT THE MECHANISMS BEING CHANGED
+			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs'][][]=" + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] =" + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] = " + str(cand[2]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] = " + str(cand[3]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] = " + str(cand[4]))
 
 		# Run batch using the above candidate params
-		NGF_batch.batch_full(icand, ngen, runType) ## Do I need to do 'global runType' first? 
+		NGF_batch.batch_full(icand, ngen, runType)
 		print('BATCH JOB FOR CAND_' + str(icand) + ' FROM GEN_' + str(ngen) + ' SUBMITTED')
 
 	print('END OF BATCH SUBMISSIONS FOR GEN ' + str(ngen))
@@ -90,8 +90,8 @@ def evaluate_netparams(candidates, args):
 		for cand_index in unfinished:
 			data_files = os.listdir(data_path) # EXISTING DATA FILES 
 
-			# THE DATA FILES WE NEED TO EXIST TO MOVE ON
-			data_file_0 = 'NGF_batch_data_cand' + str(cand_index) + '_0.json' ## NEED ICAND ITER FOR THIS 
+			# THE DATA FILES WE NEED TO EXIST TO MOVE ON ## CHANGE THIS ACCORDING TO MATCH NUMBER OF CFG-SPECIFIED CURRENT STEPS
+			data_file_0 = 'NGF_batch_data_cand' + str(cand_index) + '_0.json'
 			data_file_1 = 'NGF_batch_data_cand' + str(cand_index) + '_1.json'
 			data_file_2 = 'NGF_batch_data_cand' + str(cand_index) + '_2.json'
 
@@ -196,9 +196,9 @@ rand.seed(1)
 
 
 # min and max allowed value for each param optimized:
-#                hh2_gnabar gkbar  tau_im, g_im, g_pas    			// e_pas, vinit, vtraub -- leave alone for now
-minParamValues = [0.00100, 0.00009, 100, 7.5e-5, 0.00001]
-maxParamValues = [0.00400, 0.00020, 700, 7.5e-5, 0.00007]
+#
+minParamValues = []
+maxParamValues = []
 ## ^^ CHANGE THESE
 
 # instantiate MO evolutionary computation algorithm with random seed
@@ -222,11 +222,11 @@ final_pop = my_ec.evolve(generator=generate_netparams,  # assign design paramete
                       pop_size=10,                      # each generation of parameter sets will consist of pop_size individuals
                       maximize=False,                   # best fitness corresponds to minimum value
                       bounder=ec.Bounder(minParamValues, maxParamValues), # boundaries for parameter set ([probability, weight, delay])
-                      max_evaluations=200,             	# evolutionary algorithm termination at max_evaluations evaluations
+                      max_evaluations=50,             	# evolutionary algorithm termination at max_evaluations evaluations
                       num_selected=5,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
-                      num_inputs=5,              		# len([a, b, c, d, ...]) -- number of parameters being varied
-                      num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+                      num_inputs=?????,              		# len([a, b, c, d, ...]) -- number of parameters being varied
+                      num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
 
 
 final_arc = my_ec.archive                               # seen this MO examples
