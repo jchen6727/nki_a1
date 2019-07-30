@@ -24083,7 +24083,18 @@ Successfully created x86_64/special
 * <2019-07-30 Tue -- NGF cell modifications + connectivity data>
 ** NGF cells:
 *** Add Ih to NGF cells
-**** Using Migliore 2010 
+**** Using Migliore 2010 (h_migliore.mod)
+**** Already present in A1/mod, but added it to cells/NGF_optimization
+**** Recompile with nrnivmodl (rm -r x86_64 --> nrnivmodl) 
+**** Add channel mechanism to ngf_cell.hoc
+***** suffix: hd (found in mod file)
+***** added to ngf_cell.hoc, in proc init(): insert hd, gbar_hd = 0.0001 
+**** Test addition of channel mechanism:
+***** created test_ngf.py on local machine just to see if it loads
+***** python -i test_ngf.py --> WORKS
+***** no need to add test_ngf.py to git repo
+**** Add both files (ngf_cell.hoc & h_migliore.mod) to git repo
+**** re-compile in remote directories on COMET and NEUROSIM 
 **** Modify gmax only during optimization
 *** Extract sag data from Fig 3B of paper mentioned yesterday (see nb entry)
 *** Separate passive and active optimization
