@@ -24092,13 +24092,54 @@ Successfully created x86_64/special
 **** Test addition of channel mechanism:
 ***** created test_ngf.py on local machine just to see if it loads
 ***** python -i test_ngf.py --> WORKS
-***** no need to add test_ngf.py to git repo
+***** add test_ngf.py to git repo to test compile success on comet & neurosim
 **** Add both files (ngf_cell.hoc & h_migliore.mod) to git repo
-**** re-compile in remote directories on COMET and NEUROSIM 
-**** Modify gmax only during optimization
+**** Re-compile in remote directories on COMET and NEUROSIM 
+***** NEUROSIM: nrnivmodl in /u/ericag/A1/cells/NGF_optimization (no need to re-compile in main A1 directory because this mod file is already present) 
+***** COMET: nrnivmodl in /home/eyg42/A1/cells/NGF_optimization 
+***** Test re-compile by running test_ngf.py in .../cells/NGF_optimization subdir on COMET and NEUROSIM
+****** DO NOT FORGET TO DO conda activate py36 in NEUROSIM or else will get outdated version of python 
+****** Works on comet & neurosim (test_ngf.py) 
+**** *NOTE*: Modify gmax only during optimization
+*** Take care of netpyne clone problem for NGF now on COMET and NEUROSIM
+***** cd ~/A1/cells/NGF_optimization
+***** git clone -b development https://github.com/neurosim-lab/netpyne.git
+***** cd netpyne; git checkout development ('Already on 'development'')
+***** cd .. (make sure in ~/A1/cells/NGF_optimization)
+***** mv netpyne netpyne_temp
+***** cd netpyne_temp
+***** mv netpyne ../netpyne
+***** TEST: python, import netpyne, netpyne.__file__ should return: optimization_directory/netpyne/__init__.py --> WORKED on both COMET and NEUROSIM
 *** Extract sag data from Fig 3B of paper mentioned yesterday (see nb entry)
 *** Separate passive and active optimization
 **** Start with passive: do grid search using netpyne
 **** Create new fitness functions for active optimization
 ** Connectivity data:
 *** Started new tab in gdrive spreadsheet entitled "FINAL DATA"
+* <2019-08-01 Thu -- netParams changes>
+** Separating L2/3 into L2 and L3 
+*** netParams.py changes:
+**** LAYER BOUNDARIES:
+***** Cell parameters section change:
+****** BEFORE: layer = {....'2': [0.05, 0.475]....{
+****** NOW: layer = {...'2': [0.05, 0.08], '3': [0.08, 0.475]...} 
+****** SOURCE: https://www.frontiersin.org/articles/10.3389/fnana.2014.00081/full
+****** In the above source, L2 is approx 15% of total L2/3 depth, based on proportions found in figures. Thus, made L2 approx 15% of total L2/3 depth as well. 
+***** Population parameters change:
+****** Added ### LAYER 3 section w/ appropriate pops
+****** Changed their names from IT2 --> IT3, etc. (changed name only)
+**** DENSITIES:
+***** '## load densities' loads a cellDensity.pkl file which needs to be modified first. 
+***** Then, pop densities in  ### Layer 2 and ### Layer 3 (in # Population parameters) needs to be modified  
+**** CELL TYPES:
+***** in cellParamLabels, need to add in IT3 cell pops by name
+***** need to also MAKE these pkl files or something?? 
+**** netParams.version = 2
+*** cfg.py changes:
+**** in #Recording section, added the following to allpops: 'IT3', 'SOM3', 'PV3', 'VIP3'
+**** added in Layer 3 pops to cfg.addNetStim in #NetStim inputs section 
+
+** Added in Layer 1 netstims to cfg.py 
+
+** Adding in L4 Spiny Stellate cells:
+*** Changing IT4 into ITP4 (pyramidal) and ITS4 (stellate)
