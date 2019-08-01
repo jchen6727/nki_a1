@@ -22,7 +22,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 1 
+netParams.version = 2
 
 #------------------------------------------------------------------------------
 #
@@ -60,17 +60,17 @@ netParams.probLambda = 100.0  # length constant (lambda) for connection probabil
 cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
-layer = {'1': [0.00, 0.05], '2': [0.05,0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # normalized layer boundaries  
+layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # normalized layer boundaries  
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple']# 'VIP_simple']  # list of cell rules to load from file 
+cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple'] # list of cell rules to load from file 
 loadCellParams = cellParamLabels
 #saveCellParams = True # This saves the params as a .pkl file
 
 
 for ruleLabel in loadCellParams:
-	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes  #PT5B_full was commented out in M1 netParams.py 
+	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes
 
 netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs = True)
 #netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
@@ -95,6 +95,14 @@ netParams.popParams['SOM2'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',  
 netParams.popParams['PV2'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','PV')][1]}     # PV_simple
 netParams.popParams['VIP2'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','VIP')][1]}
 #netParams.popParams['NGF2'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['2'],   'density': density[('A1','nonVIP')][1]}
+
+### LAYER 3:
+netParams.popParams['IT3'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['3'],   'density': density[('A1','E')][1]} ## CHANGE DENSITIES??????
+netParams.popParams['SOM3'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','SOM')][1]}
+netParams.popParams['PV3'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','PV')][1]}
+netParams.popParams['VIP3'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','VIP')][1]}
+#netParams.popParams['NGF3'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['3'],   'density': density[('A1','nonVIP')][1]}
+
 
 ### LAYER 4: 
 netParams.popParams['IT4'] =     {'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('A1','E')][2]}      # IT4_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
