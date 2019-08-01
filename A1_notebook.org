@@ -24138,8 +24138,13 @@ Successfully created x86_64/special
 *** cfg.py changes:
 **** in #Recording section, added the following to allpops: 'IT3', 'SOM3', 'PV3', 'VIP3'
 **** added in Layer 3 pops to cfg.addNetStim in #NetStim inputs section 
-
-** Added in Layer 1 netstims to cfg.py 
-
+** Added in Layer 1 netstims to cfg.py and L1 pops to 'allpops' also in cfg.py 
 ** Adding in L4 Spiny Stellate cells:
 *** Changing IT4 into ITP4 (pyramidal) and ITS4 (stellate)
+*** netParams.py changes:
+**** In '#Population parameters' section, modified ## LAYER 4 so now netParams.popParams['IT4'] --> netParams.popParams['ITP4'] and netParams.popParams['ITS4']
+**** DENSITY FOR THESE NEEDS TO BE CHANGED <-- similarly for L2 and L3 
+*** cfg.py changes:
+**** 'allpops' in #Recording section now includes 'ITP4' and 'ITS4' instead of 'IT4'
+**** netstims --> changed to netstims to IT4 now go to ITP4 and ITS4 
+*** netParams.version = 3
