@@ -24148,3 +24148,103 @@ Successfully created x86_64/special
 **** 'allpops' in #Recording section now includes 'ITP4' and 'ITS4' instead of 'IT4'
 **** netstims --> changed to netstims to IT4 now go to ITP4 and ITS4 
 *** netParams.version = 3
+* <2019-08-02 Fri -- tcshrc changes and NGF passive>
+** Added the following lines to my .tcshrc file on local machine:
+*** ## NEUROSIM ALIAS
+#alias sshtX 'ssh \!:1 -X -S /tmp/%r@%h:%p'
+alias sshtX 'ssh ericag@no -X -S /tmp/no:22'
+alias ssfX 'rm /tmp/no:22; ssh ericag@no -fNXTMS /tmp/no:22'
+#alias ssfX 'rm /tmp/ericag@{\!:1}:22; ssh {\!:1} -fNXTMS /tmp/ericag@{\!:1}:22'
+#alias ssfX 'rm /tmp/$USER@{\!:1}:22; ssh {\!:1} -fNXTMS /tmp/$USER@{\!:1}:22'
+
+#alias scpin   'scp -q -r -o 'ControlPath=/tmp/%r@%h:%p' \!:1\:$cwd/\!:2 .'
+#alias scpout  'scp -r -o 'ControlPath=/tmp/%r@%h:%p' \!:* \!:1\:$cwd'
+*** ## HPC machines ##
+### comet at SDSC
+alias comcon 'rm /tmp/com:+home+eyg42:22; ssh eyg42@comet.sdsc.edu -fNxTMS /tmp/com:+home+eyg42:22'
+alias comx   'ssh eyg42@comet.sdsc.edu -S /tmp/com:+home+eyg42:22'
+alias comin  'scp -q -r -o ControlPath=/tmp/com:+home+eyg42:22 eyg42@comet.sdsc.edu:/home/eyg42/\!:1 \$
+alias comout 'scp -q -r -o ControlPath=/tmp/com:+home+eyg42:22 \!:1 eyg42@comet.sdsc.edu:/home/eyg42/\$
+*** This allows me to do the following:
+**** comcon; comx --> to login to comet
+**** sshtX; ssfX --> to login to neurosim
+**** To pass files back and forth btwn comet & local:
+***** Make a file on local (launch emacs, ^x^f to make a file)
+***** =comout FILENAME= (on local machine)
+***** Go to comet emacs --> file should be in analogous location relative to home dir; edit and save on comet (^x^s for save on emacs)
+***** On local, =comin aa= --> now edits are back on local machine
+** Further .tcshrc changes:
+*** 
+** CONNECTION WEIGHTS (per salva): 
+*** I_con (strength) = p_con (probability) * i_con (unitary connection psp amp or weight)
+*** So, *weight* is *PSP amplitude* --> look for this in datasets
+** NGF passive evol: 
+*** Set up batch for passive
+*** What params need to be modified in channel mechs for PASSIVE? 
+**** gmax_ch_Navngf
+**** gmax_ch_Kdrfastngf
+**** gmax_ch_leak
+**** cm 
+**** What about 'e' values? Leave this alone for now. 
+*** What data needs to be fit? 
+**** This is all from "Electrophysiological Differences Between Neurogliaform Cells From Monkey and Rat Prefrontal Cortex," Povysheva et al., 2006 [https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=984213127]
+**** RMP = -67 +/- 5mV
+**** Subthreshold responses (Fig 3B):
+-10pA: -6 mV
+-20pA: -9 mV
+-30pA: -13 mV
+-40pA: -16 mV
+-50pA: -19 mV
+-60pA: -23 mV
+-70pA: -27 mV
+-80pA: -29 mV
+-90pA: -31 mV
+-100pA: -35 mV
+-110pA: -36 mV
+-120pA: -38 mV
+**** Re: subthreshold responses above, current injections are absolute values I believe, but steady state voltage response is the change from RMP. 
+* <2019-08-05 Mon -- L4 stellate cells & NGF passive>
+** Possible L4 stellate cell models identified on modelDB:
+*** (1) https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=146565&file=/LavzinEtAl2012/l4ss3.hoc#tabs-2
+*** (2) https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=114637&file=/SSC_model/ssc.hoc#tabs-2
+*** (3) https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=2488&file=/cells/cells/j7.hoc#tabs-2
+** L4 Stellate cell model: 
+*** Going to go with Mainen & Sejnowski (1996)
+https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=2488&file=/cells/cells/j7.hoc#tabs-2
+*** Paper is in paperpile: 
+**** LINK: https://paperpile.com/app/shared/YBAvM3
+**** TITLE: "Influence of Dendritic Structure on Firing Pattern in Model Neocortical Neurons" (1996) 
+*** Python version (supplied by samn): 
+**** mainen.py
+**** /usr/local/site/nrniv/python/mainen.py
+*** mod files / channel mechanisms used:
+**** In mainen.py:
+***** /usr/local/site/nrniv/mod 
+***** naz.mod
+***** kv.mod
+***** km.mod
+***** kca.mod
+***** Nca.mod
+***** cadad.mod
+***** pas (no mod file) 
+**** In paper / orig model:
+***** na.mod
+***** kv.mod
+***** km.mod
+***** kca.mod
+***** cad.mod
+***** pas (probably, didn't actually confirm; no mod file) 
+**** mod files used in mainen.py are now located in ~/Desktop/L4S/updated_mods/ directory [laptop]
+**** mod files in mainen.py are currently in ~/Desktop/L4S/ directory [laptop]
+*** From the paper: Layer 4 spiny stellates gave adapting spike trains (no AHP or bursting noted)
+*** Fig 1B is explicitly L4 SS, while Fig. 2C is the closest to replicate it with the reduced model. 
+*** Fig. 2C: adapting spike trains with no AHPs or bursting 
+**** kappa = 0, rho = 400 & 460 both look decent
+**** spike-frequency adaptation varies with the SIZE of the dendritic compartment 
+** Putting L4 into model:
+*** moving mod files over (into ~/Desktop/NEUROSIM/A1/mod):
+**** cadad.mod --> already there
+**** kca.mod --> IMPORTED 
+**** kv.mod --> IMPORTED
+**** km.mod --> IMPORTED 
+**** Nca.mod --> IMPORTED 
