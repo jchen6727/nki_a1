@@ -24248,3 +24248,17 @@ https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=2488&file=/cells/ce
 **** kv.mod --> IMPORTED
 **** km.mod --> IMPORTED 
 **** Nca.mod --> IMPORTED 
+*** added mod files into A1 repo (github, comet, neurosim, laptop)
+*** re-compiled on laptop, comet, and neurosim (with nrnivmodl) 
+*** recall pop['ITP4'] --> PYRAMIDAL CELLS OF L4
+*** pop['ITS4'] --> L4 SPINY STELLATE 
+** Changes to A1 repo:
+*** Added ITS4.py to A1/cells
+*** changes to netParams.py file:
+**** .version = 4
+**** Imported L4 spiny stellate from ITS4.py:
+## IMPORT L4 SPINY STELLATE
+netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+**** changed netParams.popParams['ITS4'] to match cell type and cell model from import:
+netParams.popParams['ITS4'] =	{'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
+*** no changes yet to cfg.py 
