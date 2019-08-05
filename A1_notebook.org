@@ -24262,3 +24262,11 @@ netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cell
 **** changed netParams.popParams['ITS4'] to match cell type and cell model from import:
 netParams.popParams['ITS4'] =	{'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
 *** no changes yet to cfg.py 
+** re-compile mod files like this (from top A1 folder -- e.g. ~/Desktop/NEUROSIM/A1:
+*** CODE:
+rm -r mod/x86_64
+ln -s mod/x86_64 x86_64
+cd mod
+nrnivmodl
+cd ..
+*** done on laptop, comet
