@@ -3,7 +3,7 @@ from neuron import h
 from math import pi
 
 class ITS4_cell:
-  def __init__ (self,ID=0,ty=0,col=0,rho=165.0,kappa=10.0,soma_pas=False):
+  def __init__ (self,ID=0,ty=0,col=0,rho=165.0,kappa=0.01,soma_pas=False): #kappa =10 --> 0 is fully connected 
     self.ID=ID
     self.ty=ty
     self.col=col
@@ -35,10 +35,10 @@ class ITS4_cell:
     soma.insert('kv') # kv.mod
     soma.gmax_naz = 30e3
     soma.gbar_kv = 1.5e3 ## gbar_kv not gmax_kv in OLD mod file (check nrniv/mod?)
-    if self.soma_pas:
-      soma.insert('pas')
-      soma.e_pas=-70
-      soma.g_pas=1/3e4
+    #if self.soma_pas:
+    #  soma.insert('pas')
+    #  soma.e_pas=-70
+    #  soma.g_pas=1/3e4
 
   def initdend (self):
     dend = self.dend
