@@ -11,8 +11,6 @@ import pickle, json
 
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
-#netParams.version = 49 # What is this for? Seen in M1 netParams.py 
-
 try:
 	from __main__ import cfg  # import SimConfig object with params from parent module
 except:
@@ -22,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 3
+netParams.version = 4
 
 #------------------------------------------------------------------------------
 #
@@ -72,8 +70,15 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
 	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes
 
+## IMPORT VIP 
 netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs = True)
+
+## IMPORT NGF 
 #netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
+
+## IMPORT L4 SPINY STELLATE
+netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+
 
 #------------------------------------------------------------------------------
 # Population parameters
@@ -105,11 +110,11 @@ netParams.popParams['VIP3'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',  
 
 
 ### LAYER 4: 
-netParams.popParams['ITP4'] =     {'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['ITS4'] =     {'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM4'] = 	 {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('A1','SOM')][2]}          
-netParams.popParams['PV4'] = 	 {'cellType': 'PV', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 	'density': density[('A1','PV')][2]}          
-netParams.popParams['VIP4'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['4'],   'density': density[('A1','VIP')][2]}
+netParams.popParams['ITP4'] =	{'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
+netParams.popParams['ITS4'] =	{'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
+netParams.popParams['SOM4'] = 	 {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 'density': density[('A1','SOM')][2]}
+netParams.popParams['PV4'] = 	 {'cellType': 'PV', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 'density': density[('A1','PV')][2]}
+netParams.popParams['VIP4'] =	{'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 'density': density[('A1','VIP')][2]}
 #netParams.popParams['NGF4'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['4'],   'density': density[('A1','nonVIP')][2]}
 
 ### LAYER 5A: 
