@@ -24269,4 +24269,8 @@ ln -s mod/x86_64 x86_64
 cd mod
 nrnivmodl
 cd ..
-*** done on laptop, comet
+*** done on laptop, comet, neurosim
+** RECALL: to test on neurosim, do =conda activate py36= in /u/ericag/A1 first, or else 'no module named future' error 
+** Changes to ITS4.py:
+*** kappa was 100 --> 0.01 (must be trending towards zero) 
+*** rho was 165 --> going to keep it that way for now 
