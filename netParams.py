@@ -76,7 +76,7 @@ netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellMo
 ## IMPORT NGF 
 #netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
 
-## IMPORT L4 SPINY STELLATE
+## IMPORT L4 SPINY STELLATE 
 netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
 
 
