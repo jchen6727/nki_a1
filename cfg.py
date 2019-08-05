@@ -11,7 +11,7 @@ Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 from netpyne import specs
 import pickle
 
-cfg = specs.SimConfig()  
+cfg = specs.SimConfig()
 
 #------------------------------------------------------------------------------
 #
