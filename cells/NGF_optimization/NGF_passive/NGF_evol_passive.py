@@ -88,74 +88,28 @@ def evaluate_netparams(candidates, args):
 		unfinished = [i for i, x in enumerate(fitnessCandidates) if x is None]
 
 		for cand_index in unfinished:
-			data_files = os.listdir(data_path) # EXISTING DATA FILES 
 
-			# THE DATA FILES WE NEED TO EXIST TO MOVE ON ## CHANGE THIS ACCORDING TO MATCH NUMBER OF CFG-SPECIFIED CURRENT STEPS
-			data_file_0 = 'NGF_batch_data_cand' + str(cand_index) + '_0.json'
-			data_file_1 = 'NGF_batch_data_cand' + str(cand_index) + '_1.json'
-			data_file_2 = 'NGF_batch_data_cand' + str(cand_index) + '_2.json'
+			data_file_root = 'NGF_batch_data_cand' + str(cand_index)
+			data_files_DONE = os.listdir(data_path) # EXISTING DATA FILES 
+			data_files_NEEDED = [data_file_root + '_0.json', data_file_root + '_1.json', data_file_root + '_2.json', data_file_root + '_3.json', data_file_root + '_4.json', data_file_root + '_5.json', data_file_root + '_6.json', data_file_root + '_7.json', data_file_root + '_8.json', data_file_root + '_9.json', data_file_root + '_10.json', data_file_root + '_11.json', data_file_root + '_12.json']
+			data_files_DONE.sort()
+			data_files_NEEDED.sort()
 
-			if data_file_0 in data_files and data_file_1 in data_files and data_file_2 in data_files:
+
+			if data_files_DONE == data_files_NEEDED:
 				print('BATCH RUN FOR CAND ' + str(cand_index) + ' IS COMPLETE')
 				print('FITNESS CALCULATIONS FOR CAND ' + str(cand_index) + ' BEGINNING')
 
 				######## FITNESS CALCULATIONS ##########################
 				###### RMP ######
-				outputData_RMP = json.load(open(data_path + data_file_0))
+				outputData_RMP = json.load(open(data_path + 'NGF_batch_data_cand' + str(cand_index) + '_0.json'))
 				vdata_RMP = list(outputData_RMP['simData']['V_soma']['cell_0'])
 				RMP_sim = mean(vdata_RMP)
-
-				# IF TRYING MEAN APPROACH:
-				RMP_fitness = abs(RMP_sim-(-74)) # -74 mV is the approximate desired RMP
-
-				#MAKE SURE CURRENT INJECTION is for 1000ms !!
-
-				###### FIRING RATE FITNESS (1) ######
-				## This would be for 0.16 nA -- 11 spikes
-				outputData_160 = json.load(open(data_path + data_file_1))
-				spkt_160 = outputData_160['simData']['spkt']
-				numSpikes_160 = len(spkt_160)
-
-				FI_fitness_160 = abs(numSpikes_160 - 11)
-
-
-				###### FIRING RATE FITNESS (2) ######
-				## This would be for 0.32 nA -- 18 spikes
-				outputData_320 = json.load(open(data_path + data_file_2))
-				spkt_320 = outputData_320['simData']['spkt']
-				numSpikes_320 = len(spkt_320)
-
-				FI_fitness_320 = abs(numSpikes_320 - 18)
+				RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 
 
 
-				###### ADAPTATION FITNESS (1) ######
-				# use outputData_160, spkt_160 from earlier firing rate fitness
-				if len(spkt_160) > 9:
-					ISI_160 = []
-					for i in range(len(spkt_160)-1):
-						ISI = spkt_160[i+1] - spkt_160[i]
-						ISI_160.append(ISI)
-					sim_adapt_160 =  max(ISI_160) - min(ISI_160)   	## do max - min
-					adapt_160 = abs(sim_adapt_160 - 3.2)
-
-				else:
-					adapt_160 = 1000
-
-				###### ADAPTATION FITNESS (2) ######
-				# use outputData_320, spkt_320 from earlier firing rate fitness
-				if len(spkt_320) > 15:
-					ISI_320 = []
-					for i in range(len(spkt_320)-1):
-						ISI = spkt_320[i+1] - spkt_320[i]
-						ISI_320.append(ISI)
-					sim_adapt_320 =  max(ISI_320) - min(ISI_320)   	## do max - min
-					adapt_320 = abs(sim_adapt_320 - 26)
-				else:
-					adapt_320 = 1000
-
-
-				fitnessCandidates[cand_index] = ec.emo.Pareto([RMP_fitness, FI_fitness_160, FI_fitness_320, adapt_160, adapt_320], maximize = [False, False, False, False, False])
+				fitnessCandidates[cand_index] = ec.emo.Pareto([RMP_fitness], maximize = [False, False])
 
 				cands_completed += 1
 				print('FITNESS EVALUATIONS FOR CANDIDATE ' + str(cand_index) + ' ARE COMPLETE')
