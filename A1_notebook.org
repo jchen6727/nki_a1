@@ -24314,11 +24314,12 @@ cd ..
 ***** subthreshold_deltas = [-6, -9. -13, -16, -19, -23, -27, -29, -30, -35, -36, -38] # changes from RMP in response to subthreshold current step inputs
 ***** RMP = -67 #+/- 5mV 
 **** Change paths:
-***** In 'machine_ID' section, added NGF_passive to data_path_stem(s):
-****** if machine_ID == 'COMET': data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_' --> NEEDS TO BE CREATED *[DONE]*
-****** if machine_ID == 'LOCAL': data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
-****** if machine_ID == 'zn': data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_' --> *NEEDS A GIT REPO UPDATE ON NEUROSIM TO MEAN ANYTHING*
+***** if machine_ID == 'COMET': data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_' --> NEEDS TO BE CREATED *[DONE]*
+***** if machine_ID == 'LOCAL': data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
+***** if machine_ID == 'zn': data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_' --> *DONE* NEEDS A GIT REPO UPDATE ON NEUROSIM TO MEAN ANYTHING
 *** NGF_batch_passive.py changes:
 **** params['amp'] = [0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09. -0.1, -0.11, -0.12]
 **** Change paths: 
 ***** in b.runCfg (in runType == hpc_slurm), added NGF_passive to *folder* path --> 'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive' 
+***** in b.saveFolder for hpc_slurm runType --> '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' (formerly last part of path was just 'NGF') 
+*** Compiled mod files in NGF_passive on comet & neurosim & local  
