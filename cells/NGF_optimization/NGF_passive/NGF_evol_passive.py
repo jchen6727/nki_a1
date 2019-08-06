@@ -100,16 +100,39 @@ def evaluate_netparams(candidates, args):
 				print('BATCH RUN FOR CAND ' + str(cand_index) + ' IS COMPLETE')
 				print('FITNESS CALCULATIONS FOR CAND ' + str(cand_index) + ' BEGINNING')
 
-				######## FITNESS CALCULATIONS ##########################
+			############ FITNESS CALCULATIONS ##########################
+				###### EXTRACT THE MEAN STEADY STATE VOLTAGE RESPONSES ###### 
+				mean_responses = [None for data in data_files_DONE]
+				for i in range(len(data_files_DONE)):
+					outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+					vdata = list(outputData['simData']['V_soma']['cell_0'])
+					steady_state_response = mean(vdata)
+					mean_responses[i] = steady_state_response
+				### ^^ NEEDS TO BE CHANGED TO BE AFTER DELAY AND ONCE STEADY STATE HAS BEEN REACHED
+
+
 				###### RMP ######
-				outputData_RMP = json.load(open(data_path + 'NGF_batch_data_cand' + str(cand_index) + '_0.json'))
-				vdata_RMP = list(outputData_RMP['simData']['V_soma']['cell_0'])
-				RMP_sim = mean(vdata_RMP)
-				RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
+				RMP_sim = mean_responses[0]
+				RMP_fitness = abs(RMP_sim-RMP)**2 # RMP defined in main code
+				outputData_RMP = json.load(open(data_path + data_file_root + '_0.json'))
 
 
+				###### SUBTHRESHOLD RESPONSES #####
+				sim_responses = mean_responses[1:]
+				sim_deltas = [None for n in sim_responses]
+				for i in range(len(sim_responses)):
+					sim_deltas[i] = sim_responses[i] - RMP_sim
 
-				fitnessCandidates[cand_index] = ec.emo.Pareto([RMP_fitness], maximize = [False, False])
+				subthresh_comparison = [None for x in subthreshold_deltas]
+				for i in range(len(sim_deltas)):
+					subthresh_comparison[i] = (sim_deltas[i] - subthreshold_deltas[i])**2
+
+				subthresh_fitness = 0
+				for i in range(len(subthresh_comparison)):
+					subthresh_fitness += subthresh_comparison[i]
+
+				### POPULATE FITNESS OBJECT 
+				fitnessCandidates[cand_index] = ec.emo.Pareto([RMP_fitness, subthresh_fitness], maximize = [False, False])
 
 				cands_completed += 1
 				print('FITNESS EVALUATIONS FOR CANDIDATE ' + str(cand_index) + ' ARE COMPLETE')
