@@ -25,3 +25,50 @@ c.3.3.4 Computational modeling: We will use our model of the thalamocortical sys
 
 ** Methods
 c.2.4 Computational modeling:  Modeling is performed in the NEURON simulation environment233. Detailed computational modeling methods can be found in our previous publications234-240 and the “Facilities and other resources” section for Brown University.  
+* CELL TYPES
+** Budinger et al 2018
+- Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
+- large, intrinsically bursting, non adapting pyramidal cells (~PT) found in L5A and L5A/B border
+- medium size pyramidals, regular spiking and adapting (~IT) found throughout L5A and 5B
+- CT cells projecting to thalamus found in both L5 and L6
+- (several differences compared to mouse M1)
+** Excitatory types
+- IT2,	ITP4 (pyramidal),	ITS4 (stellate),	IT5A,	IT5B,	PT5B,	IT6,	CT6
+- maybe add star pyramidal: they are present in L3,L4,L6 and have different physiol, different axonal projs, more radial dends, shorter apical dends
+- split IT2 and IT3 - since different connection
+** Inhibitory types
+- NGF1, PV2/3, PV4, PV5A, PV5B, PV6,	SOM2/3,	SOM4,	SOM,5A,	SOM5B,	VIPL2/3,	VIP4,	VIP5A,	VIP5B,	VIP6
+** Allen Brain V1
+http://portal.brain-map.org/explore/models/mv1-all-layers
+
+exc frac	inh frac	PV 	SST	5HT3a	Total
+0.85	0.15				
+0.85	0.15	0.295918367	0.214285714	0.489795918	1
+0.85	0.15	0.552380952	0.295238095	0.152380952	1
+0.85	0.15	0.485714286	0.428571429	0.085714286	1
+0.85	0.15	0.458333333	0.458333333	0.083333333	1
+* CONNECTIVITY
+** Budinger et al 2018
+- mentions ‘massive thalamic inputs’ target the few pyramidal cells but also interneurons, ‘providing strong FF inhibition’
+
+** E-E 
+*** probability
+- L3,4 E -> L3,4 E (Levy & Reyes, 2012)
+ 
+*** weight
+- L3,4 E -> L3,4 E (Levy & Reyes, 2012)
+
+** E-I
+*** probability
+- L3,4 E -> L3,4 SOM,PV (Levy & Reyes, 2012)
+
+*** weight
+- L3,4 E -> L3,4 SOM,PV (Levy & Reyes, 2012)
+** I-E 
+*** probability
+- L3,4 SOM,PV -> L3,4 E (Levy & Reyes, 2012)
+*** weight
+- L3,4 SOM,PV -> L3,4 E (Levy & Reyes, 2012)
+** I-I 
+*** probability
+*** weight
