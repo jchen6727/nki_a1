@@ -24298,5 +24298,27 @@ cd ..
 *** cfg.py changes:
 **** Added 'NGF2' thru 'NGF6' to allpops in 'Recording' section 
 **** Added 'NGF2' thru 'NGF6' to 'NetStim inputs' section then adjusted all the netstim input numbers accordingly 
-** NGF passive optimization 
-*** Add Ih channel mechanism to A1/cells/ngf_cell.hoc (main hoc file) 
+** NGF optimization repo --> eventually untrack all these files 
+** NGF active optimization
+*** [on laptop] ~/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_active 
+*** all relevant mod files are in directory (including Ih mechanism)
+*** ngf_cell.hoc is in directory
+** NGF passive optimization:
+*** Basic Setup (create all files, etc.)  
+**** Added Ih channel mechanism to A1/cells/ngf_cell.hoc (main hoc file) 
+**** Created [on laptop] ~/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive
+**** All mod files are in this directory, along with .hoc file (with Ih mechanism), and a test_ngf.py script to ensure it can get properly loaded in (checked -- works)
+**** Created *NGF_evol_passive.py* 
+*** NGF_evol_passive.py changes:
+**** Added 'Optimization Targets' section in main code
+***** subthreshold_deltas = [-6, -9. -13, -16, -19, -23, -27, -29, -30, -35, -36, -38] # changes from RMP in response to subthreshold current step inputs
+***** RMP = -67 #+/- 5mV 
+**** Change paths:
+***** In 'machine_ID' section, added NGF_passive to data_path_stem(s):
+****** if machine_ID == 'COMET': data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_' --> NEEDS TO BE CREATED *[DONE]*
+****** if machine_ID == 'LOCAL': data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
+****** if machine_ID == 'zn': data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_' --> *NEEDS A GIT REPO UPDATE ON NEUROSIM TO MEAN ANYTHING*
+*** NGF_batch_passive.py changes:
+**** params['amp'] = [0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09. -0.1, -0.11, -0.12]
+**** Change paths: 
+***** in b.runCfg (in runType == hpc_slurm), added NGF_passive to *folder* path --> 'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive' 
