@@ -24321,15 +24321,18 @@ cd ..
 ***** compare data_files_DONE to data_files_NEEDED using sort and == 
 **** Changed fitness functions:
 ***** RMP
+****** CODE:
 outputData_RMP = json.load(open(data_path + 'NGF_batch_data_cand' + str(cand_index) + '_0.json'))
 vdata_RMP = list(outputData_RMP['simData']['V_soma']['cell_0'])
 RMP_sim = mean(vdata_RMP)
 RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
-***** SUBTHRESHOLD RESPONSES 
-****** 
+****** squared the difference btwn target and result as well (see above) 
+***** SUBTHRESHOLD RESPONSES fitness changed as well 
+**** added fitnesses to fitnessCandidates 
 *** NGF_batch_passive.py changes:
 **** params['amp'] = [0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09. -0.1, -0.11, -0.12]
 **** Change paths: 
 ***** in b.runCfg (in runType == hpc_slurm), added NGF_passive to *folder* path --> 'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive' 
 ***** in b.saveFolder for hpc_slurm runType --> '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' (formerly last part of path was just 'NGF') 
 *** Compiled mod files in NGF_passive on comet & neurosim & local  
+** TO DO: Change the params being modified by NGF_evol_passive.py!! 
