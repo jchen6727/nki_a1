@@ -24274,3 +24274,20 @@ cd ..
 ** Changes to ITS4.py:
 *** kappa was 100 --> 0.01 (must be trending towards zero) 
 *** rho was 165 --> going to keep it that way for now 
+*** updated on laptop, comet, neurosim, github 
+* <2019-08-06 Tue -- L1 changes & NGF passive>
+** Get rid of all cells in L1 except for NGF 
+*** netParams.py changes:
+**** .version = 5
+**** commented out then deleted the rest of the popParams in L1:
+***** #netParams.popParams['SOM1'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','SOM')][0]} 
+***** #netParams.popParams['PV1'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','PV')][0]} 
+***** #netParams.popParams['VIP1'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','VIP')][0]}
+*** cfg.py changes:
+**** In 'Recording' section, removed 'SOM1', 'PV1', and 'VIP1' from allpops 
+**** Added 'NGF1' to allpops
+**** In 'NetStim inputs' section, removed 'SOM1', 'PV1', and 'VIP1' 
+***** cfg.NetStim01 = {'pop': 'SOM1',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+***** cfg.NetStim02 = {'pop': 'PV1', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+***** cfg.NetStim03 = {'pop': 'VIP1',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+**** Added 'NGF1' to NetStim inputs & changed the numbers of all the NetStims 
