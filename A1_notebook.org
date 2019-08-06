@@ -24291,3 +24291,10 @@ cd ..
 ***** cfg.NetStim02 = {'pop': 'PV1', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
 ***** cfg.NetStim03 = {'pop': 'VIP1',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
 **** Added 'NGF1' to NetStim inputs & changed the numbers of all the NetStims 
+** Add NGF to L2 - L6 
+*** netParams.py changes:
+**** .version = 6
+**** Uncommented netParams.popParams lines for NGF2, NGF3, NGF4, NGF5A, NGF5B, NGF6
+*** cfg.py changes:
+**** Added 'NGF2' thru 'NGF6' to allpops in 'Recording' section 
+**** Added 'NGF2' thru 'NGF6' to 'NetStim inputs' section then adjusted all the netstim input numbers accordingly 
