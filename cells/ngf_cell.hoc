@@ -24,6 +24,9 @@ proc init() {
 		gmax_ch_leak = 8.470825e-05 	//gleak
 		e_ch_leak = -60
 
+		insert hd 
+		gbar_hd = 0.0001				//mho per cm2 //default value in mod file
+
 		insert ch_KvAngf 				// Proximal A-type potassium 
 		gmax_ch_KvAngf = 0.00015 		// 5.2203905e-06 //gKvA
 		
