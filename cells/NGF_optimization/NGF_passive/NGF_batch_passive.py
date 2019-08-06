@@ -23,7 +23,7 @@ def batch_full(icand, ngen, runType):
 	b.method = 'grid'
 
 	if runType == 'hpc_slurm':
-		b.saveFolder = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF/' + batchLabel  + '_gen_' + str(ngen)
+		b.saveFolder = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + batchLabel  + '_gen_' + str(ngen)
 		b.runCfg = {'type': 'hpc_slurm',
 								'allocation': 'shs100',
 								'walltime': '00:30:00',
