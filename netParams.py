@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 4
+netParams.version = 5
 
 #------------------------------------------------------------------------------
 #
@@ -74,7 +74,7 @@ for ruleLabel in loadCellParams:
 netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs = True)
 
 ## IMPORT NGF 
-#netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
+netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
 
 ## IMPORT L4 SPINY STELLATE 
 netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
@@ -89,10 +89,7 @@ with open('cells/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileO
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
 
 ### LAYER 1:
-netParams.popParams['SOM1'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','SOM')][0]} 
-netParams.popParams['PV1'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','PV')][0]} 
-netParams.popParams['VIP1'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','VIP')][0]}
-#netParams.popParams['NGF1'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['1'],   'density': density[('A1','nonVIP')][0]}
+netParams.popParams['NGF1'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['1'],   'density': density[('A1','nonVIP')][0]}
 
 ### LAYER 2:
 netParams.popParams['IT2'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['2'],   'density': density[('A1','E')][1]}      # IT2_reduced   	# cfg.cellmod for 'cellModel' in M1 netParams.py 
