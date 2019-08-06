@@ -24298,3 +24298,5 @@ cd ..
 *** cfg.py changes:
 **** Added 'NGF2' thru 'NGF6' to allpops in 'Recording' section 
 **** Added 'NGF2' thru 'NGF6' to 'NetStim inputs' section then adjusted all the netstim input numbers accordingly 
+** NGF passive optimization 
+*** Add Ih channel mechanism to A1/cells/ngf_cell.hoc (main hoc file) 
