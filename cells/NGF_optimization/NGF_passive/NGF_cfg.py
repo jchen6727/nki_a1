@@ -3,7 +3,7 @@ from netpyne import specs
 #Simulation optios 
 cfg = specs.SimConfig() # usually do simConfig (but will do cfg here bc need to for batch run)
 
-cfg.duration = 1.5*1e3 			# Duration of the simulation, in ms
+cfg.duration = 1.1*1e3 			# Duration of the simulation, in ms
 cfg.dt = 0.05 				# Internal integration timestep to use # lowering this from 0.1 to match record Step? 
 cfg.verbose = 0			# Show detailed messages 
 cfg.recordTraces = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}}  # Dict with traces to record
