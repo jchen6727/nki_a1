@@ -24336,3 +24336,32 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 ***** in b.saveFolder for hpc_slurm runType --> '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' (formerly last part of path was just 'NGF') 
 *** Compiled mod files in NGF_passive on comet & neurosim & local  
 ** TO DO: Change the params being modified by NGF_evol_passive.py!! 
+* <2019-08-07 Wed -- NGF passive>
+** Try writing the fitness functions as actual functions to be called later 
+** What params should be modified? 
+*** Channels present:
+**** ch_Navngf.mod: "sodium channel (voltage dependent, higher threshold)"
+**** ch_Kdrfastngf.mod: "Fast delayed rectifier potassium channel (voltage dependent, for neurogliaform family)"
+**** ch_leak.mod: leak conductance (voltage independent) 
+**** h_migliore.mod: I-h channel from Magee 1998 for distal dendrites
+**** ch_KvAngf.mod: Proximal A-type potassium 
+**** ch_CavN: T-type calcium
+**** ch_CavL: L-type calcium 
+**** iconc_Ca.mod: intracellular calcium accumulation
+**** ch_KCaS: small K+ channel; calcium gated
+**** ch_KvCaB: Big K+ channel; voltage & ca2+ gated
+*** samn: for passive parameters usually fit the *leak channel density/reversal*, and *capacitance*
+*** ^^ Per advice above, should modify: gmax_ch_Navngf, ena, and cm
+** NGF_evol_passive.py changes:
+*** Changed re-write lines to pertain to the correct params and the correct lines in netParams.py
+*** Changed num_inputs to 3 
+** NGF_netParams.py changes:
+*** Added 3 lines at the end for gmax, ena, and cm 
+*** Commented out soma vinit line for now (set to RMP? meh) 
+
+** TO DO: 
+*** Commit changes, see if it runs on local and zn 
+*** Change comet run so uses shared partition 
+*** mean_responses[i] = steady_state_response
+### ^^ NEEDS TO BE CHANGED TO BE AFTER DELAY AND ONCE STEADY STATE HAS BEEN REACHED 
+
