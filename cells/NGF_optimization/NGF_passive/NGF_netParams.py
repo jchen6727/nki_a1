@@ -14,7 +14,7 @@ netParams.popParams['NGF_pop'] = {'cellType': 'NGF', 'numCells': 1, 'cellModel':
 ## Import template file
 cellRule = netParams.importCellParams(label = 'NGF_rule', conds = {'cellType': 'NGF', 'cellModel': 'NGF_hh'}, fileName='ngf_cell.hoc', cellName = 'ngfcell')
 # # Insert candidates from passive optimization scheme 
-cellRule['secs']['soma']['vinit'] = -74
+#cellRule['secs']['soma']['vinit'] = -74
 
 
 ## Add in Stimulation Source (IClamp) 
@@ -24,10 +24,6 @@ netParams.stimTargetParams['Input->NGF'] = {'source': 'Input', 'sec':'soma', 'lo
 
 ##########
 # CHANGE THESE!! parameters to be modified 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
-# cellRule['NGF_Rule']['secs']['soma']['mechs'][][] = 
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = 
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] = 
