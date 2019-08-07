@@ -24,6 +24,11 @@ def generate_netparams(random, args):
     return initialParams
 
 
+####### FITNESS FUNCTIONS #######
+#def eval_RMP_ritness():
+
+#def eval_subthresh_fitness():
+
 
 ###### FITNESS FUNCTION ######
 # Design fitness function, used in the ec evolve function --> final_pop = my_ec.evolve(...,evaluator=evaluate_netparams,...)
@@ -51,13 +56,13 @@ def evaluate_netparams(candidates, args):
 		## overwrite old lines
 		fo = open('NGF_netParams.py', 'w')
 		for line in lines: # CHANGE THIS TO MATCH NUMBER OF MODIFIED PARAMS
-			if line != lines[len(lines)-1] and line != lines[len(lines)-2] and line != lines[len(lines)-3] and line != lines[len(lines)-4] and line != lines[len(lines)-5]: # requires that there be the desired lines already at the end
+			if line != lines[len(lines)-1] and line != lines[len(lines)-2] and line != lines[len(lines)-3]: # requires that there be the desired lines already at the end
 				fo.write(line)
 		fo.close()
 
 		## append new lines  
 		with open('NGF_netParams.py', 'a') as fo: # CHANGE THIS TO REFLECT THE MECHANISMS BEING CHANGED
-			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs'][][]=" + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] =" + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] = " + str(cand[2]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] = " + str(cand[3]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs'][][] = " + str(cand[4]))
+			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = " + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = " + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  " + str(cand[2]))
 
 		# Run batch using the above candidate params
 		NGF_batch.batch_full(icand, ngen, runType)
@@ -102,6 +107,7 @@ def evaluate_netparams(candidates, args):
 
 			############ FITNESS CALCULATIONS ##########################
 				###### EXTRACT THE MEAN STEADY STATE VOLTAGE RESPONSES ###### 
+				# RMP_ritness = eval_RMP_fitness(ARGS)
 				mean_responses = [None for data in data_files_DONE]
 				for i in range(len(data_files_DONE)):
 					outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
@@ -118,6 +124,7 @@ def evaluate_netparams(candidates, args):
 
 
 				###### SUBTHRESHOLD RESPONSES #####
+				# subthresh_fitness = eval_subthresh_fitness(ARGS)
 				sim_responses = mean_responses[1:]
 				sim_deltas = [None for n in sim_responses]
 				for i in range(len(sim_responses)):
@@ -199,14 +206,14 @@ my_ec.terminator = ec.terminators.evaluation_termination  # termination dictated
 #call evolution iterator
 final_pop = my_ec.evolve(generator=generate_netparams,  # assign design parameter generator to iterator parameter generator
                       evaluator=evaluate_netparams,     # assign fitness function to iterator evaluator
-                      pop_size=10,                      # each generation of parameter sets will consist of pop_size individuals
+                      pop_size=6,                      # each generation of parameter sets will consist of pop_size individuals
                       maximize=False,                   # best fitness corresponds to minimum value
                       bounder=ec.Bounder(minParamValues, maxParamValues), # boundaries for parameter set ([probability, weight, delay])
-                      max_evaluations=50,             	# evolutionary algorithm termination at max_evaluations evaluations
+                      max_evaluations=24,             	# evolutionary algorithm termination at max_evaluations evaluations
                       num_selected=5,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
-                      num_inputs=?????,              		# len([a, b, c, d, ...]) -- number of parameters being varied
-                      num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+                      num_inputs=3,              		# len([a, b, c, d, ...]) -- number of parameters being varied
+                      num_elites=2)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
 
 
 final_arc = my_ec.archive                               # seen this MO examples
