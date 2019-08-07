@@ -24359,8 +24359,17 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 *** Added 3 lines at the end for gmax, ena, and cm 
 *** Commented out soma vinit line for now (set to RMP? meh) 
 
+** Committed changes -- try running:
+*** local
+**** ERROR: in *NGF_evol_passive.py* no module named NGF_batch --> RESOLVED; changed to NGF_batch_passive (along with call from NGF_batch_passive to batch_full() function) [actually discovered on zn]
+**** ERROR: in *NGF_batch_passive.py*, syntax error in params['amp'] --> RESOLVED (period instead of comma) 
+**** ERROR: in *NGF_evol_passive.py* out of range --> Did not fill in min or max params in main code --> RESOLVED
+**** ERROR --> did not throw an error, but *NGF_evol_passive.py* did not work properly for finding finished data files. Fixed this part of the code and tested some parts locally. Try local run again to see if resolved. --> RESOLVED after using .issubset -- was comparing one set of data files which contained .json results files from all candidates in the generation, and then a set of data files with only 1 candidate's results. 
+**** ERROR --> index out of range in line 131 in *NGF_evol_passive.py* --> am currently indexing by the larger set mentioned in the last point; try indexing by the smaller one to see if this resolves. 
+**** ERROR --> another index out of range in *NGF_evol_passive.py* , but this might be caused by syntax problem in subthreshold_deltas definition in main code --> it was; RESOLVED
+*** zn
+*** comet 
 ** TO DO: 
-*** Commit changes, see if it runs on local and zn 
 *** Change comet run so uses shared partition 
 *** mean_responses[i] = steady_state_response
 ### ^^ NEEDS TO BE CHANGED TO BE AFTER DELAY AND ONCE STEADY STATE HAS BEEN REACHED 
