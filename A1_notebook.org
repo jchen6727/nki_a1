@@ -24367,10 +24367,20 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 **** ERROR --> did not throw an error, but *NGF_evol_passive.py* did not work properly for finding finished data files. Fixed this part of the code and tested some parts locally. Try local run again to see if resolved. --> RESOLVED after using .issubset -- was comparing one set of data files which contained .json results files from all candidates in the generation, and then a set of data files with only 1 candidate's results. 
 **** ERROR --> index out of range in line 131 in *NGF_evol_passive.py* --> am currently indexing by the larger set mentioned in the last point; try indexing by the smaller one to see if this resolves. 
 **** ERROR --> another index out of range in *NGF_evol_passive.py* , but this might be caused by syntax problem in subthreshold_deltas definition in main code --> it was; RESOLVED
+**** WORKS -- funkiness occurred with generation because I set the pop sizes and whatnot so low for testing; don't worry about this now. 
+**** CHANGED RUN PARAMS (increased pop sizes and whatnot) -- now test on zn 
 *** zn
+**** pulled all changes listed above 
+**** ssh into zn from no
+**** cd /u/ericag/A1
+**** conda activate py36
+**** screen -L python NGF_evol_passive.py --> RUNNING NOW; DETACH (crtl+a d) 
+**** To return: screen -r 
+**** ERROR --> user error; input 'LOCAL' instead of 'zn' when entering machine_ID -- try again. BUT, fix the thing below first re: mean_responses calculated only after delay 
 *** comet 
 ** TO DO: 
 *** Change comet run so uses shared partition 
 *** mean_responses[i] = steady_state_response
 ### ^^ NEEDS TO BE CHANGED TO BE AFTER DELAY AND ONCE STEADY STATE HAS BEEN REACHED 
 
+** Changed cfg.duration from 1.5*1e3 to 1.1*1e3 (1100 ms accounts for stim delay and stim input) 
