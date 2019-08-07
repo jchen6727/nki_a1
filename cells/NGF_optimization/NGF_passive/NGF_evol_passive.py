@@ -129,11 +129,10 @@ def evaluate_netparams(candidates, args):
 				mean_responses = [None for data in data_files_NEEDED]
 				for i in range(len(data_files_NEEDED)):
 					outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
-					vdata = list(outputData['simData']['V_soma']['cell_0'])
+					vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+					vdata = vdata_total[2000:] # accounts for delay 
 					steady_state_response = mean(vdata)
 					mean_responses[i] = steady_state_response
-				### ^^ NEEDS TO BE CHANGED TO BE AFTER DELAY AND ONCE STEADY STATE HAS BEEN REACHED
-
 
 				###### RMP ######
 				RMP_sim = mean_responses[0]
