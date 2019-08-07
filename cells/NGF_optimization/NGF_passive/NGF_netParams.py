@@ -24,6 +24,6 @@ netParams.stimTargetParams['Input->NGF'] = {'source': 'Input', 'sec':'soma', 'lo
 
 ##########
 # CHANGE THESE!! parameters to be modified 
-cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 
-cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = 
-cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] = 
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3.8826035386091324
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = 79.90870174183883
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  1.1742365971831072
