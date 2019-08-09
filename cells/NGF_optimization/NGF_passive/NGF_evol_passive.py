@@ -176,11 +176,14 @@ global ngen
 ngen = -1
 
 # SET DATA PATH HERE 
-machine_ID = input('COMET or LOCAL or zn?')
+machine_ID = input('COMET or GCP or LOCAL or zn?')
 
 if machine_ID == 'COMET':
 	data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_'
 	runType = 'hpc_slurm'
+elif machine_ID == 'GCP':
+	data_path_stem = '/home/salvadord/A1/cells/NGF/NGF_batch_data_gen_'
+	runType = 'hpc_slurm_gcp'
 elif machine_ID == 'LOCAL':
 	data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
 	runType = 'mpi_bulletin'
@@ -223,11 +226,11 @@ my_ec.terminator = ec.terminators.evaluation_termination  # termination dictated
 #call evolution iterator
 final_pop = my_ec.evolve(generator=generate_netparams,  # assign design parameter generator to iterator parameter generator
                       evaluator=evaluate_netparams,     # assign fitness function to iterator evaluator
-                      pop_size=50,                      # each generation of parameter sets will consist of pop_size individuals
+                      pop_size=96,                      # each generation of parameter sets will consist of pop_size individuals
                       maximize=False,                   # best fitness corresponds to minimum value
                       bounder=ec.Bounder(minParamValues, maxParamValues), # boundaries for parameter set ([probability, weight, delay])
-                      max_evaluations=200,             	# evolutionary algorithm termination at max_evaluations evaluations
-                      num_selected=10,                  	# number of generated parameter sets to be selected for next generation
+                      max_evaluations=96*1000,             	# evolutionary algorithm termination at max_evaluations evaluations
+                      num_selected=50,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
                       num_inputs=3,              		# len([a, b, c, d, ...]) -- number of parameters being varied
                       num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
