@@ -24376,11 +24376,11 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 **** conda activate py36
 **** screen -L python NGF_evol_passive.py --> RUNNING NOW; DETACH (crtl+a d) 
 **** To return: screen -r 
-**** ERROR --> user error; input 'LOCAL' instead of 'zn' when entering machine_ID -- try again. BUT, fix the thing below first re: mean_responses calculated only after delay 
+**** ERROR --> user error; input 'LOCAL' instead of 'zn' when entering machine_ID -- try again. BUT, [DONE] fix the thing below first re: mean_responses calculated only after delay 
+**** Trying again 
 *** comet 
 ** TO DO: 
 *** Change comet run so uses shared partition 
-*** mean_responses[i] = steady_state_response
-### ^^ NEEDS TO BE CHANGED TO BE AFTER DELAY AND ONCE STEADY STATE HAS BEEN REACHED 
+*** [DONE] mean_responses[i] = steady_state_response
 
 ** Changed cfg.duration from 1.5*1e3 to 1.1*1e3 (1100 ms accounts for stim delay and stim input) 
