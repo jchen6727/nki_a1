@@ -28,7 +28,7 @@ def batch_full(icand, ngen, runType):
 								'allocation': 'shs100',
 								'walltime': '00:30:00',
 								'nodes': 1,
-								'coresPerNode': 8,
+								'coresPerNode': 1,
 								'email': 'ericaygriffith@gmail.com',
 								'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive',
 								'script': 'NGF_init.py',
