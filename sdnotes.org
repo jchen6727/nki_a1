@@ -37,7 +37,7 @@ c.2.4 Computational modeling:  Modeling is performed in the NEURON simulation en
 - maybe add star pyramidal: they are present in L3,L4,L6 and have different physiol, different axonal projs, more radial dends, shorter apical dends
 - split IT2 and IT3 - since different connection
 ** Inhibitory types
-- NGF1, PV2/3, PV4, PV5A, PV5B, PV6,	SOM2/3,	SOM4,	SOM,5A,	SOM5B,	VIPL2/3,	VIP4,	VIP5A,	VIP5B,	VIP6
+- NGF1, PV2/3, PV4, PV5A, PV5B, PV6,	SOM2/3,	SOM4,	SOM5A,	SOM5B,	VIPL2/3,	VIP4,	VIP5A,	VIP5B,	VIP6
 ** Allen Brain V1
 http://portal.brain-map.org/explore/models/mv1-all-layers
 
