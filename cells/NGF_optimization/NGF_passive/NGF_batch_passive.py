@@ -34,7 +34,7 @@ def batch_full(icand, ngen, runType):
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
 								'skip': False,
-								'custom': '#SBATCH -p=shared'}
+								'custom': '#SBATCH --partition=shared'}
 
 
 	elif runType == 'mpi_bulletin':
