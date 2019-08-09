@@ -24391,3 +24391,5 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 *** Trying 'custom': '#SBATCH -p=partition' (adding to b.runCfg) [per salva's suggestion]
 *** sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
 *** ^^ shared partition can only use 1 node at a time, I believe (true), and example on comet user guide (https://www.sdsc.edu/support/user_guides/comet.html) shows only using 8 cores per node. Changing this in batch script (from 24 'coresPerNode' to 8) 
+*** With the above changes, seems to be working on *comet* 
+*** Changing 'coresPerNode' from 8 to 1 in b.runCfg for runType == 'hpc_slurm' because should only require one core. 
