@@ -47,8 +47,7 @@ def batch_full(icand, ngen, runType):
             'folder': '/home/salvadord/A1/cells/NGF_optimization/NGF_passive',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'NGF_init.py', 
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
-            'skipCustom': '_raster.png',
-            'custom': '#SBATCH --partition=shared'}
+            'skipCustom': '_raster.png'}
             #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
             # --nodelist=compute1
 
