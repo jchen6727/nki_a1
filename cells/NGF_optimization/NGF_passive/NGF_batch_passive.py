@@ -26,6 +26,7 @@ def batch_full(icand, ngen, runType):
 		b.saveFolder = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + batchLabel  + '_gen_' + str(ngen)
 		b.runCfg = {'type': 'hpc_slurm',
 								'allocation': 'shs100',
+								'partition': 'shared',
 								'walltime': '00:30:00',
 								'nodes': 1,
 								'coresPerNode': 24,
