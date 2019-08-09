@@ -36,7 +36,8 @@ def batch_full(icand, ngen, runType):
                                 'skip': False,
                                 'custom': '#SBATCH --partition=shared'}
                                 
-    elif runType=='hpc_slurm_gcp':
+    elif runType == 'hpc_slurm_gcp':
+        b.saveFolder = '/home/salvadord/A1/cells/NGF_optimization/NGF_passive/' + batchLabel  + '_gen_' + str(ngen)
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
             'walltime': '00:10:00', #'48:00:00',
