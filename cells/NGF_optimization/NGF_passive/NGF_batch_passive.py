@@ -13,7 +13,7 @@ def batch_full(icand, ngen, runType):
 	params=specs.ODict()
 
 	# Fill in with parameters to explore and range of values (key has to coincide with a variable in cfg) 
-	params['amp'] = [0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09. -0.1, -0.11, -0.12]
+	params['amp'] = [0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12]
 
 	# create Batch object with paramaters to modify, and specifying files to use
 	b = Batch(params=params, cfgFile='NGF_cfg.py', netParamsFile='NGF_netParams.py')
@@ -28,12 +28,13 @@ def batch_full(icand, ngen, runType):
 								'allocation': 'shs100',
 								'walltime': '00:30:00',
 								'nodes': 1,
-								'coresPerNode': 24,
+								'coresPerNode': 1,
 								'email': 'ericaygriffith@gmail.com',
 								'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive',
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
-								'skip': False}
+								'skip': False,
+								'custom': '#SBATCH --partition=shared'}
 
 
 	elif runType == 'mpi_bulletin':
