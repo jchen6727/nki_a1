@@ -43,7 +43,7 @@ def batch_full(icand, ngen, runType):
             'nodes': 1,
             'coresPerNode': 1,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
-            'folder': '/home/salvadord/A1/cells/NGF_optimization',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'folder': '/home/salvadord/A1/cells/NGF_optimization/NGF_passive',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'NGF_init.py', 
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'skipCustom': '_raster.png'}
