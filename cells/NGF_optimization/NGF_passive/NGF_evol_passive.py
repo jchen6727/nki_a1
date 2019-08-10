@@ -162,7 +162,7 @@ def evaluate_netparams(candidates, args):
 				print('FITNESS EVALUATIONS FOR CANDIDATE ' + str(cand_index) + ' ARE COMPLETE')
 
 			else:
-				sleep(1)
+				sleep(0.1)
 				print('Candidate ' + str(cand_index) + ' is unfinished')
 
 
