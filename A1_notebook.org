@@ -23720,7 +23720,7 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 ** How to add adaptation? 
 * <2019-06-09 Sun -- NGF cells>
 ** HCN channel 
-* <2019-06-11 Tue - NGF cells>
+* <2019-06-11 Tue -- NGF cells>
 ** Doing tests in ~/Desktop/test_vip_ngf 
 ** using vipcr_cell.hoc as my cell template that I'm importing
 ** Added an A-type potassium channel to induce delay (Kv4?) in first AP spike
@@ -23755,4 +23755,641 @@ Branch 'test_ngf' set up to track remote branch 'test_ngf' from 'origin'.
 **** did rad1 
 **** did rad1 and rad2 
 **** Definitely increasing the firing threshold overall, but there is still an initial depolarization, so adding it to other dendrites isn't the problem 
-* temp
+* <2019-06-12 Wed -- NGF cells>
+** Put in NGF cell updates (repository version control) 
+*** neurosim
+*** github
+*** desktop **TO DO**
+*** comet ** TO DO ** 
+* <2019-07-02 Tue -- optimization debug>
+** Added netParams.version to netParams.py to keep track of version number & major changes -- starting with netParams.version = 1 
+** Version control
+*** laptop
+*** github
+*** comet
+*** neurosim
+** Organize Auditory Cortex Paperpile 
+*** Cortical Connectivity
+*** A1 Cell Type Info
+**** L1 interneurons
+*** Cortical Connectivity
+*** Thalamic Connectivity 
+** RECALL: links to google drive spreadsheets w/ data:
+*** original bitbucket repo: https://docs.google.com/spreadsheets/d/1JoIkf02TWzEXbAA_sfRN8o1VPNi_ai6ZDeBJ5JiRy_o/edit#gid=0
+*** alternative sources: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=972301607
+** Editing A1 params (alternative sources) to include connectivity data:
+*** link: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+*** "Connectivity" is the sheet label 
+** Notes from *Connectivity in mouse A1*
+*** "Spatial Profile of Excitatory and Inhibitory Synaptic Connectivity in Mouse Primary Auditory Cortex" R Levy & A Reyes, NYU, 2012 
+*** Connectivity assessed between *excitatory pyramidal* cells and *FS and non-FS cells* in *L4* 
+*** *connection probability* was *distance dependent*
+*** *synaptic strength* was strongest in *unitary synapses formed by FS cells* and was not distance-dependent 
+* <2019-07-03 Weds -- literature review>
+** Collected more papers -- synced now with paperpile
+* <2019-07-08 Mon -- optimization debug>
+** See claustrum nb (summary: asked #isb, got 2 suggestions -- see below)
+*** change output file/folder for each run
+*** do not use sbatch to submit CS_evol.py, use =screen -L python CS_evol.py=
+* <2019-07-09 Tue -- literature review>
+** Papers already in A1 params (alternative sources) [regarding connectivity):
+*** Spatial profile of E & I ... in Mouse Primary Auditory Cortex
+*** Columnar Connectivity and Laminar Processing in Cat Primary Auditory Cortex
+**** put figure 4G into the spreadsheet 
+*** Layer 6 CT Neurons Activate a Cortical Output Layer, Layer 5a
+** Papers to read today: 
+*** [DONE] Columnar Connectivity and Laminar Processing in Cat Primary Auditory Cortex
+*** [DONE] Layer 6 CT Neurons Activate a Cortical Output Layer, Layer 5a
+** Salva added more papers; see A1 params (alternative sources), tab "conn papers" 
+* <2019-07-10 Weds -- see claustrum for optimization debug>
+** Fixing single cell optimization submission to comet
+* <2019-07-11 Thurs -- see claustrum for optimization debug>
+** Fixing submission on comet 
+* <2019-07-12 Fri -- see clausturm>
+* <2019-07-15 Mon -- Lit Review>
+** Reviewing papers on paperpile for connection info
+** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+** Papers reviewed:
+*** (1) Dense Inhibitory Connectivity in Neocortex
+**** REGION: frontal cortex
+**** ANIMAL: mouse
+**** SUMMARY: Connectivity between sGFP inteneurons (SST+) & pyr cells in L2/3 is a function of distance. Interneurons within a 200 micrometer radius of the pyramidal cells will be densely connected with said pyr cell. Connection probabilility decreases as intersomatic distance increases --> *by what function?*
+*** (2) Synaptic Computation and Sensory Processing in Neocortical L2/3
+**** REGION: S1, V1, A1 (L2/3)
+**** ANIMAL: mouse
+* <2019-07-16 Tues -- Lit Review>
+** Reviewing papers on paperpile for connection info
+** gdoc location: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840
+** Papers reviewed:
+*** "Synaptic Properties of Thalamic Input to the Subgranular Layers of Primary Somatosensory and Auditory Cortices in the Mouse"
+**** REGION: S1 & A1
+**** ANIMAL: Mouse
+*** "Optogenetic Activation of an Inhibitory Network Enhances Feedforward Functional Connectivity in Auditory Cortex"
+**** REGION: Auditory Cortex
+**** ANIMAL: mouse 
+
+* <2019-07-17 Wed -- Lit Review + Optimization debug on comet>
+** Debugging optimization submission on comet -- SEE CLAUSTRUM NOTEBOOK
+** Lit Review Notes:
+*** I put notes on 'Conn papers' tab in A1 params to note if I've reviewed the paper yet or not 
+*** gdoc: https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=600189840)
+*** May have found some new useful papers -- have not added to database yet:
+**** *Cortical connectivity and sensory coding*, Harris & Mrsic-Flogel, 2013 (https://www.ncbi.nlm.nih.gov/pubmed/24201278)
+**** *A synaptic organizing principle for cortical neuronal groups*, Perin Berger & Markram, 2011 (https://www.pnas.org/content/108/13/5419.short)
+**** *Scaling of Topologically Similar Functional Modules Defines Mouse Primary Auditory and Somatosensory Microcircuitry*, Sadovsky & MacLean, 2013 (https://www.jneurosci.org/content/33/35/14048.short)
+**** *Differential tuning and population dynamics of excitatory and inhibitory neurons reflect differences in local intracortical connectivity*, Hofer et al., 2019 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6370002/pdf/emss-35754.pdf)
+** optimization debug: see claustrum notebook (.../claustrum/claustrum_notebook.org)
+** CONNECTIVITY:
+*** go thru M1 code and find the connectivity-related constructs 
+*** M1detailed/cfg.py:
+**** E-->E AMPA to NMDA Ratio
+***** cfg.synWeightFractionEE = [0.5, 0.5] 
+**** E->I AMPA to NMDA ratio
+***** cfg.synWeightFractionEI = [0.5, 0.5] 
+**** SOM -> E GABAASlow to GABAB ratio
+***** cfg.synWeightFractionSOME = [0.9, 0.1] # 
+**** cfg.synsperconn = {'HH_full': 5, 'HH_reduced': 1, 'HH_simple': 1}
+**** cfg.AMPATau2Factor = 1.0
+**** I->E/I layer weights (L2/3+4, L5, L6)
+***** cfg.IEweights = [1.2, 1.2, 1.2]
+***** cfg.IIweights = [0.8, 1.2, 0.8]
+**** NOTE: DID NOT INCLUDE GAIN-RELATED CONSTRUCTS!!
+*** M1detailed/netParams.py:
+**** Line 331 "Local connectivity parameters"
+***** Conn data contained in: *conn/conn.pkl* (according to line 333)
+****** pmat: probability
+****** wmat: weights
+****** bins: ???
+***** E-->E (line 339)
+****** preTypes = [['IT'], ['IT'], ['IT', 'PT'], ['IT','CT'], ['IT','CT']] 
+****** postTypes = ['IT', 'IT', 'PT', 'IT','CT']
+***** E-->I (line 368)
+***** I-->all (line 400) 
+**** Line 487 "Long-range connectivity parameters"
+***** Conn data contained in: *conn/conn_long.pkl* (according to line 234)
+**** Line 520 "Subcellular connectivity (synaptic distribution)"
+** A note about using pickle:
+*** Was trying to load M1detailed/conn/conn.pkl to look at the local connectivity data used in the M1 model
+*** Loaded up python then did =import pickle=
+*** ERRORS with the following code:
+**** with open('conn.pkl','rb') as f:
+*****     conn_data = pickle.load(f)
+**** ERROR: "UnicodeDecodeError: 'ascii' codec can't decode byte 0xb8 in position 0: ordinal not in range(128)"
+*** ERRORS with the next try:
+**** with open('conn.pkl','r') as f: 
+...    data = pickle.load(f)
+**** ERROR: TypeError: a bytes-like object is required, not 'str'
+*** RESOLVED with the following code:
+**** with open('conn.pkl','rb') as f:
+     conn_data = pickle.load(f, encoding='bytes')
+* <2019-07-23 Tue -- NGF cell evol setup> 
+** Created directory for NGF cell optimization:
+*** LOCAL: /Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization
+**** contents include relevant mod files & ngf_cell.hoc
+**** mod files compiled in this dir with nrnivmodl (output below)
+ericagriffith% nrnivmodl
+Creating x86_64 directory for .o files.
+
+/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization
+ch_CavL.mod ch_CavN.mod ch_KCaS.mod ch_Kdrfastngf.mod ch_KvAngf.mod ch_KvCaB.mod ch_Navngf.mod ch_leak.mod iconc_Ca.mod
+ch_CavL.mod ch_CavN.mod ch_KCaS.mod ch_Kdrfastngf.mod ch_KvAngf.mod ch_KvCaB.mod ch_Navngf.mod ch_leak.mod iconc_Ca.mod
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_CavL
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_CavN
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KCaS
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_Kdrfastngf
+Translating ch_Kdrfastngf.mod into ch_Kdrfastngf.c
+Translating ch_CavN.mod into ch_CavN.c
+Translating ch_KCaS.mod into ch_KCaS.c
+Translating ch_CavL.mod into ch_CavL.c
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+Notice: This mechanism cannot be used with CVODE
+Notice: This mechanism cannot be used with CVODE
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_Kdrfastngf.lo ch_Kdrfastngf.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KCaS.lo ch_KCaS.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_CavN.lo ch_CavN.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_CavL.lo ch_CavL.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_CavN.c  -fno-common -DPIC -o .libs/ch_CavN.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_Kdrfastngf.c  -fno-common -DPIC -o .libs/ch_Kdrfastngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KCaS.c  -fno-common -DPIC -o .libs/ch_KCaS.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_CavL.c  -fno-common -DPIC -o .libs/ch_CavL.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KvAngf
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KvCaB
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_Navngf
+Translating ch_KvCaB.mod into ch_KvCaB.c
+Translating ch_KvAngf.mod into ch_KvAngf.c
+Translating ch_Navngf.mod into ch_Navngf.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_leak
+Notice: VERBATIM blocks are not thread safe
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KvCaB.lo ch_KvCaB.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_Navngf.lo ch_Navngf.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KvAngf.lo ch_KvAngf.c
+Translating ch_leak.mod into ch_leak.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_leak.lo ch_leak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KvCaB.c  -fno-common -DPIC -o .libs/ch_KvCaB.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KvAngf.c  -fno-common -DPIC -o .libs/ch_KvAngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_Navngf.c  -fno-common -DPIC -o .libs/ch_Navngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_leak.c  -fno-common -DPIC -o .libs/ch_leak.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" iconc_Ca
+Translating iconc_Ca.mod into iconc_Ca.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o iconc_Ca.lo iconc_Ca.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c iconc_Ca.c  -fno-common -DPIC -o .libs/iconc_Ca.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o mod_func.lo mod_func.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c mod_func.c  -fno-common -DPIC -o .libs/mod_func.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=link gcc -module  -g -O2    -headerpad_max_install_names -o libnrnmech.la -rpath "/Applications/NEURON-7.6/nrn/x86_64/lib"  ch_CavL.lo ch_CavN.lo ch_KCaS.lo ch_Kdrfastngf.lo ch_KvAngf.lo ch_KvCaB.lo ch_Navngf.lo ch_leak.lo iconc_Ca.lo mod_func.lo  -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrnoc -loc -lmemacs  -lscopmath -lsparse13 -lreadline -lncurses -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrniv -livoc -lneuron_gnu -lmeschach -lsundials       
+libtool: link: gcc -Wl,-undefined -Wl,dynamic_lookup -o .libs/libnrnmech.0.so -bundle  .libs/ch_CavL.o .libs/ch_CavN.o .libs/ch_KCaS.o .libs/ch_Kdrfastngf.o .libs/ch_KvAngf.o .libs/ch_KvCaB.o .libs/ch_Navngf.o .libs/ch_leak.o .libs/iconc_Ca.o .libs/mod_func.o   -L/Applications/NEURON-7.6/nrn/x86_64/lib /Applications/NEURON-7.6/nrn/x86_64/lib/libnrnoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/liboc.dylib -L/usr/X11/lib -lX11 /Applications/NEURON-7.6/nrn/x86_64/lib/libmemacs.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libscopmath.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsparse13.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libreadline.dylib -lncurses /Applications/NEURON-7.6/nrn/x86_64/lib/libnrniv.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libivoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libneuron_gnu.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libmeschach.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsundials.dylib  -g -O2  
+libtool: link: (cd ".libs" && rm -f "libnrnmech.so" && ln -s "libnrnmech.0.so" "libnrnmech.so")
+libtool: link: ( cd ".libs" && rm -f "libnrnmech.la" && ln -s "../libnrnmech.la" "libnrnmech.la" )
+Successfully created x86_64/special
+*** updated repo so this now appears in remote repositories as well 
+** Set up evol files in ...A1/cells/NGF_optimization:
+*** [done] NGF_netParams.py
+**** params to be modified needs to be changed still 
+*** [done] NGF_cfg.py
+*** [done] NGF_batch.py 
+*** [done] NGF_init.py
+*** [done] NGF_evol.py 
+*** test_NGF.py??? just to load the individual cell? useful? 
+** New DATA DIRS for NGF OPTIMIZATION DATA:
+*** COMET: /oasis/scratch/comet/eyg42/temp_project/A1/NGF/
+*** LOCAL: ~/NEUROSIM/A1/cells/NGF_optimization/
+*** These changes have been matched in NGF_evol.py 
+* <2019-07-29 Mon -- NGF cell changes>
+** Got CS cells (claustrum) evol script to run on comet (slowly -- depends on queue) and zn 
+** GOAL: Get NGF cells running on zn/comet
+** (1) Make sure that all the scripts are set up to run on zn, comet, and local
+*** Changed NGF_evol.py to have option for machine_ID == 'zn' 
+**** runType = 'mpi_bulletin' 
+**** data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_batch_data_gen_'
+*** Changed NGF_batch.py to request less walltime & fewer nodes for comet run
+**** walltime: 2 hrs --> 00:30 
+**** nodes: 4 --> 1
+** (2) Location & source of data benchmarks for the NGF cells:
+*** From "Electrophysiological Differences Between Neurogliaform Cells From Monkey and Rat Prefrontal Cortex" by Povysheva et al., 2006. 
+*** Table 2, Intrinsic Properties: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/table_2.png]]
+*** Fig 3B, Subthreshold responses [triangles: monkey]: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_3B.png]]
+*** Fig 4E, 1st peak delay: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_4E.png]]
+*** Adaptation-related figures (3): 
+**** Fig 5C, Adaptation ratio: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5C.png]]
+**** Fig 5E, Onset frequency: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5E.png]]
+**** Fig 5F, Steady state frequency: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/data_benchmarks/fig_5F.png]]
+** (3) DATA:
+*** Passive Properties::
+**** RMP: -67 +/- 5 mV (table 2)
+**** Figure 3B (subthreshold responses)
+***** LEGEND:
+****** triangles == monke
+****** empty == steady state, I think?
+***** Used web digitizer to extract data: https://apps.automeris.io/wpd/
+***** DATA POINTS:
+****** -10pA: -6 mV
+****** -20pA: -9 mV
+****** -30pA: -13 mV
+****** -40pA: -16 mV
+****** -50pA: -19 mV
+****** -60pA: -23 mV
+****** -70pA: -27 mV
+****** -80pA: -29 mV
+****** -90pA: -31 mV
+****** -100pA: -35 mV
+****** -110pA: -36 mV
+****** -120pA: -38 mV
+
+*** Spiking properties:
+**** 1st spike latency: 59 +/36 ms  (table 2) 
+**** Spike threshold: -41 +/- 4 mV (table 2)
+**** Spikes @ threshold: 3.1 +/- 1.4  (table 2)
+*** Adaptation: 
+**** Steady state frequency at 2x threshold: 24 +/- 11 Hz (table 2) 
+**** Fig 5F, Steady State Frequency (Hz):
+***** current is pA ABOVE threshold
+***** calculated at the FIRST INTERSPIKE INTERVAL
+***** 40pA: 22 Hz
+***** 50pA: 24 Hz
+***** 60pA: 27 Hz
+***** 70pA: 30 Hz
+***** 80pA: 33 Hz
+***** 90pA: 35 Hz
+***** 100pA: 37 Hz 
+***** 110pA: 39 Hz
+***** 120pA: 41 Hz
+**** Fig 5E, Onset Frequency (Hz):
+***** current is pA ABOVE threshold
+***** calculated as average instantaneous frequency within the last 200ms 
+***** 40pA: 43 Hz
+***** 50pA: 52 Hz
+***** 60pA: 68 Hz
+***** 70pA: 80 Hz
+***** 80pA: 96 Hz
+***** 90pA: 110 Hz
+***** 100pA: 119 Hz
+***** 110pA: 131 Hz
+***** 120pA: 139 Hz
+**** Fig 5C, Adaptation Ratio:
+***** current is pA ABOVE threshold
+***** AR = ratio between first and last ISI 
+***** 40pA: 0.5
+***** 50pA: 0.48
+***** 60pA: 0.44
+***** 70pA: 0.39
+***** 80pA: 0.36
+***** 90pA: 0.32
+***** 100pA: 0.30
+***** 110pA: 0.27
+** (4) Change evol scripts to reflect new data benchmarks
+*** Things to consider:
+**** Fitness functions
+**** Parameters:
+***** cfg file (current injections) 
+***** netParams
+**** V_soma (make sure not soma_0 etc.) --> done, 'soma'
+*** PARAMETERS:
+**** Channel mechanisms present in NGF cell & their accompanying parameters
+***** ch_Navngf
+****** gmax
+****** ena
+***** ch_Kdrfastngf
+****** gmax
+***** ch_leak
+****** gmax
+****** e
+***** ch_KvAngf
+****** gmax
+***** ch_CavN
+****** gmax
+***** ch_CavL
+****** gmax
+***** iconc_Ca
+****** catau
+****** caiinf
+***** ch_KCaS
+****** gmax
+***** ch_KvCaB
+****** gmax
+**** Modifiable geometry parameters: 
+***** cm
+*** Parameters to be modified in evol script & accompanying netParams code: 
+**** netParams.cellParams['NGF_Rule']['secs']['soma']['mechs'][MECH_NAME][PARAM_NAME]
+***** netParams.cellParams --> cellRule[] in netParams.py
+***** cellRule['NGF_Rule']['secs']['soma']['mechs']
+* <2019-07-30 Tue -- NGF cell modifications + connectivity data>
+** NGF cells:
+*** Add Ih to NGF cells
+**** Using Migliore 2010 (h_migliore.mod)
+**** Already present in A1/mod, but added it to cells/NGF_optimization
+**** Recompile with nrnivmodl (rm -r x86_64 --> nrnivmodl) 
+**** Add channel mechanism to ngf_cell.hoc
+***** suffix: hd (found in mod file)
+***** added to ngf_cell.hoc, in proc init(): insert hd, gbar_hd = 0.0001 
+**** Test addition of channel mechanism:
+***** created test_ngf.py on local machine just to see if it loads
+***** python -i test_ngf.py --> WORKS
+***** add test_ngf.py to git repo to test compile success on comet & neurosim
+**** Add both files (ngf_cell.hoc & h_migliore.mod) to git repo
+**** Re-compile in remote directories on COMET and NEUROSIM 
+***** NEUROSIM: nrnivmodl in /u/ericag/A1/cells/NGF_optimization (no need to re-compile in main A1 directory because this mod file is already present) 
+***** COMET: nrnivmodl in /home/eyg42/A1/cells/NGF_optimization 
+***** Test re-compile by running test_ngf.py in .../cells/NGF_optimization subdir on COMET and NEUROSIM
+****** DO NOT FORGET TO DO conda activate py36 in NEUROSIM or else will get outdated version of python 
+****** Works on comet & neurosim (test_ngf.py) 
+**** *NOTE*: Modify gmax only during optimization
+*** Take care of netpyne clone problem for NGF now on COMET and NEUROSIM
+***** cd ~/A1/cells/NGF_optimization
+***** git clone -b development https://github.com/neurosim-lab/netpyne.git
+***** cd netpyne; git checkout development ('Already on 'development'')
+***** cd .. (make sure in ~/A1/cells/NGF_optimization)
+***** mv netpyne netpyne_temp
+***** cd netpyne_temp
+***** mv netpyne ../netpyne
+***** TEST: python, import netpyne, netpyne.__file__ should return: optimization_directory/netpyne/__init__.py --> WORKED on both COMET and NEUROSIM
+*** Extract sag data from Fig 3B of paper mentioned yesterday (see nb entry)
+*** Separate passive and active optimization
+**** Start with passive: do grid search using netpyne
+**** Create new fitness functions for active optimization
+** Connectivity data:
+*** Started new tab in gdrive spreadsheet entitled "FINAL DATA"
+* <2019-08-01 Thu -- netParams changes>
+** Separating L2/3 into L2 and L3 
+*** netParams.py changes:
+**** LAYER BOUNDARIES:
+***** Cell parameters section change:
+****** BEFORE: layer = {....'2': [0.05, 0.475]....{
+****** NOW: layer = {...'2': [0.05, 0.08], '3': [0.08, 0.475]...} 
+****** SOURCE: https://www.frontiersin.org/articles/10.3389/fnana.2014.00081/full
+****** In the above source, L2 is approx 15% of total L2/3 depth, based on proportions found in figures. Thus, made L2 approx 15% of total L2/3 depth as well. 
+***** Population parameters change:
+****** Added ### LAYER 3 section w/ appropriate pops
+****** Changed their names from IT2 --> IT3, etc. (changed name only)
+**** DENSITIES:
+***** '## load densities' loads a cellDensity.pkl file which needs to be modified first. 
+***** Then, pop densities in  ### Layer 2 and ### Layer 3 (in # Population parameters) needs to be modified  
+**** CELL TYPES:
+***** in cellParamLabels, need to add in IT3 cell pops by name
+***** need to also MAKE these pkl files or something?? 
+**** netParams.version = 2
+*** cfg.py changes:
+**** in #Recording section, added the following to allpops: 'IT3', 'SOM3', 'PV3', 'VIP3'
+**** added in Layer 3 pops to cfg.addNetStim in #NetStim inputs section 
+** Added in Layer 1 netstims to cfg.py and L1 pops to 'allpops' also in cfg.py 
+** Adding in L4 Spiny Stellate cells:
+*** Changing IT4 into ITP4 (pyramidal) and ITS4 (stellate)
+*** netParams.py changes:
+**** In '#Population parameters' section, modified ## LAYER 4 so now netParams.popParams['IT4'] --> netParams.popParams['ITP4'] and netParams.popParams['ITS4']
+**** DENSITY FOR THESE NEEDS TO BE CHANGED <-- similarly for L2 and L3 
+*** cfg.py changes:
+**** 'allpops' in #Recording section now includes 'ITP4' and 'ITS4' instead of 'IT4'
+**** netstims --> changed to netstims to IT4 now go to ITP4 and ITS4 
+*** netParams.version = 3
+* <2019-08-02 Fri -- tcshrc changes and NGF passive>
+** Added the following lines to my .tcshrc file on local machine:
+*** ## NEUROSIM ALIAS
+#alias sshtX 'ssh \!:1 -X -S /tmp/%r@%h:%p'
+alias sshtX 'ssh ericag@no -X -S /tmp/no:22'
+alias ssfX 'rm /tmp/no:22; ssh ericag@no -fNXTMS /tmp/no:22'
+#alias ssfX 'rm /tmp/ericag@{\!:1}:22; ssh {\!:1} -fNXTMS /tmp/ericag@{\!:1}:22'
+#alias ssfX 'rm /tmp/$USER@{\!:1}:22; ssh {\!:1} -fNXTMS /tmp/$USER@{\!:1}:22'
+
+#alias scpin   'scp -q -r -o 'ControlPath=/tmp/%r@%h:%p' \!:1\:$cwd/\!:2 .'
+#alias scpout  'scp -r -o 'ControlPath=/tmp/%r@%h:%p' \!:* \!:1\:$cwd'
+*** ## HPC machines ##
+### comet at SDSC
+alias comcon 'rm /tmp/com:+home+eyg42:22; ssh eyg42@comet.sdsc.edu -fNxTMS /tmp/com:+home+eyg42:22'
+alias comx   'ssh eyg42@comet.sdsc.edu -S /tmp/com:+home+eyg42:22'
+alias comin  'scp -q -r -o ControlPath=/tmp/com:+home+eyg42:22 eyg42@comet.sdsc.edu:/home/eyg42/\!:1 \$
+alias comout 'scp -q -r -o ControlPath=/tmp/com:+home+eyg42:22 \!:1 eyg42@comet.sdsc.edu:/home/eyg42/\$
+*** This allows me to do the following:
+**** comcon; comx --> to login to comet
+**** sshtX; ssfX --> to login to neurosim
+**** To pass files back and forth btwn comet & local:
+***** Make a file on local (launch emacs, ^x^f to make a file)
+***** =comout FILENAME= (on local machine)
+***** Go to comet emacs --> file should be in analogous location relative to home dir; edit and save on comet (^x^s for save on emacs)
+***** On local, =comin aa= --> now edits are back on local machine
+** Further .tcshrc changes:
+*** 
+** CONNECTION WEIGHTS (per salva): 
+*** I_con (strength) = p_con (probability) * i_con (unitary connection psp amp or weight)
+*** So, *weight* is *PSP amplitude* --> look for this in datasets
+** NGF passive evol: 
+*** Set up batch for passive
+*** What params need to be modified in channel mechs for PASSIVE? 
+**** gmax_ch_Navngf
+**** gmax_ch_Kdrfastngf
+**** gmax_ch_leak
+**** cm 
+**** What about 'e' values? Leave this alone for now. 
+*** What data needs to be fit? 
+**** This is all from "Electrophysiological Differences Between Neurogliaform Cells From Monkey and Rat Prefrontal Cortex," Povysheva et al., 2006 [https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=984213127]
+**** RMP = -67 +/- 5mV
+**** Subthreshold responses (Fig 3B):
+-10pA: -6 mV
+-20pA: -9 mV
+-30pA: -13 mV
+-40pA: -16 mV
+-50pA: -19 mV
+-60pA: -23 mV
+-70pA: -27 mV
+-80pA: -29 mV
+-90pA: -31 mV
+-100pA: -35 mV
+-110pA: -36 mV
+-120pA: -38 mV
+**** Re: subthreshold responses above, current injections are absolute values I believe, but steady state voltage response is the change from RMP. 
+* <2019-08-05 Mon -- L4 stellate cells & NGF passive>
+** Possible L4 stellate cell models identified on modelDB:
+*** (1) https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=146565&file=/LavzinEtAl2012/l4ss3.hoc#tabs-2
+*** (2) https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=114637&file=/SSC_model/ssc.hoc#tabs-2
+*** (3) https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=2488&file=/cells/cells/j7.hoc#tabs-2
+** L4 Stellate cell model: 
+*** Going to go with Mainen & Sejnowski (1996)
+https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=2488&file=/cells/cells/j7.hoc#tabs-2
+*** Paper is in paperpile: 
+**** LINK: https://paperpile.com/app/shared/YBAvM3
+**** TITLE: "Influence of Dendritic Structure on Firing Pattern in Model Neocortical Neurons" (1996) 
+*** Python version (supplied by samn): 
+**** mainen.py
+**** /usr/local/site/nrniv/python/mainen.py
+*** mod files / channel mechanisms used:
+**** In mainen.py:
+***** /usr/local/site/nrniv/mod 
+***** naz.mod
+***** kv.mod
+***** km.mod
+***** kca.mod
+***** Nca.mod
+***** cadad.mod
+***** pas (no mod file) 
+**** In paper / orig model:
+***** na.mod
+***** kv.mod
+***** km.mod
+***** kca.mod
+***** cad.mod
+***** pas (probably, didn't actually confirm; no mod file) 
+**** mod files used in mainen.py are now located in ~/Desktop/L4S/updated_mods/ directory [laptop]
+**** mod files in mainen.py are currently in ~/Desktop/L4S/ directory [laptop]
+*** From the paper: Layer 4 spiny stellates gave adapting spike trains (no AHP or bursting noted)
+*** Fig 1B is explicitly L4 SS, while Fig. 2C is the closest to replicate it with the reduced model. 
+*** Fig. 2C: adapting spike trains with no AHPs or bursting 
+**** kappa = 0, rho = 400 & 460 both look decent
+**** spike-frequency adaptation varies with the SIZE of the dendritic compartment 
+** Putting L4 into model:
+*** moving mod files over (into ~/Desktop/NEUROSIM/A1/mod):
+**** cadad.mod --> already there
+**** kca.mod --> IMPORTED 
+**** kv.mod --> IMPORTED
+**** km.mod --> IMPORTED 
+**** Nca.mod --> IMPORTED 
+*** added mod files into A1 repo (github, comet, neurosim, laptop)
+*** re-compiled on laptop, comet, and neurosim (with nrnivmodl) 
+*** recall pop['ITP4'] --> PYRAMIDAL CELLS OF L4
+*** pop['ITS4'] --> L4 SPINY STELLATE 
+** Changes to A1 repo:
+*** Added ITS4.py to A1/cells
+*** changes to netParams.py file:
+**** .version = 4
+**** Imported L4 spiny stellate from ITS4.py:
+## IMPORT L4 SPINY STELLATE
+netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+**** changed netParams.popParams['ITS4'] to match cell type and cell model from import:
+netParams.popParams['ITS4'] =	{'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
+*** no changes yet to cfg.py 
+** re-compile mod files like this (from top A1 folder -- e.g. ~/Desktop/NEUROSIM/A1:
+*** CODE:
+rm -r mod/x86_64
+ln -s mod/x86_64 x86_64
+cd mod
+nrnivmodl
+cd ..
+*** done on laptop, comet, neurosim
+** RECALL: to test on neurosim, do =conda activate py36= in /u/ericag/A1 first, or else 'no module named future' error 
+** Changes to ITS4.py:
+*** kappa was 100 --> 0.01 (must be trending towards zero) 
+*** rho was 165 --> going to keep it that way for now 
+*** updated on laptop, comet, neurosim, github 
+* <2019-08-06 Tue -- L1 changes & NGF passive>
+** Get rid of all cells in L1 except for NGF 
+*** netParams.py changes:
+**** .version = 5
+**** commented out then deleted the rest of the popParams in L1:
+***** #netParams.popParams['SOM1'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','SOM')][0]} 
+***** #netParams.popParams['PV1'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','PV')][0]} 
+***** #netParams.popParams['VIP1'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['1'],   'density': density[('A1','VIP')][0]}
+*** cfg.py changes:
+**** In 'Recording' section, removed 'SOM1', 'PV1', and 'VIP1' from allpops 
+**** Added 'NGF1' to allpops
+**** In 'NetStim inputs' section, removed 'SOM1', 'PV1', and 'VIP1' 
+***** cfg.NetStim01 = {'pop': 'SOM1',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+***** cfg.NetStim02 = {'pop': 'PV1', 'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+***** cfg.NetStim03 = {'pop': 'VIP1',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+**** Added 'NGF1' to NetStim inputs & changed the numbers of all the NetStims 
+** Add NGF to L2 - L6 
+*** netParams.py changes:
+**** .version = 6
+**** Uncommented netParams.popParams lines for NGF2, NGF3, NGF4, NGF5A, NGF5B, NGF6
+*** cfg.py changes:
+**** Added 'NGF2' thru 'NGF6' to allpops in 'Recording' section 
+**** Added 'NGF2' thru 'NGF6' to 'NetStim inputs' section then adjusted all the netstim input numbers accordingly 
+** NGF optimization repo --> eventually untrack all these files 
+** NGF active optimization
+*** [on laptop] ~/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_active 
+*** all relevant mod files are in directory (including Ih mechanism)
+*** ngf_cell.hoc is in directory
+** NGF passive optimization:
+*** Basic Setup (create all files, etc.)  
+**** Added Ih channel mechanism to A1/cells/ngf_cell.hoc (main hoc file) 
+**** Created [on laptop] ~/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive
+**** All mod files are in this directory, along with .hoc file (with Ih mechanism), and a test_ngf.py script to ensure it can get properly loaded in (checked -- works)
+**** Created *NGF_evol_passive.py* 
+*** NGF_evol_passive.py changes:
+**** Added 'Optimization Targets' section in main code
+***** subthreshold_deltas = [-6, -9. -13, -16, -19, -23, -27, -29, -30, -35, -36, -38] # changes from RMP in response to subthreshold current step inputs
+***** RMP = -67 #+/- 5mV 
+**** Change paths:
+***** if machine_ID == 'COMET': data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_' --> NEEDS TO BE CREATED *[DONE]*
+***** if machine_ID == 'LOCAL': data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
+***** if machine_ID == 'zn': data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_' --> *DONE* NEEDS A GIT REPO UPDATE ON NEUROSIM TO MEAN ANYTHING
+**** Changed how script determines which data files are completed:
+***** compare data_files_DONE to data_files_NEEDED using sort and == 
+**** Changed fitness functions:
+***** RMP
+****** CODE:
+outputData_RMP = json.load(open(data_path + 'NGF_batch_data_cand' + str(cand_index) + '_0.json'))
+vdata_RMP = list(outputData_RMP['simData']['V_soma']['cell_0'])
+RMP_sim = mean(vdata_RMP)
+RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
+****** squared the difference btwn target and result as well (see above) 
+***** SUBTHRESHOLD RESPONSES fitness changed as well 
+**** added fitnesses to fitnessCandidates 
+*** NGF_batch_passive.py changes:
+**** params['amp'] = [0, -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09. -0.1, -0.11, -0.12]
+**** Change paths: 
+***** in b.runCfg (in runType == hpc_slurm), added NGF_passive to *folder* path --> 'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive' 
+***** in b.saveFolder for hpc_slurm runType --> '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' (formerly last part of path was just 'NGF') 
+*** Compiled mod files in NGF_passive on comet & neurosim & local  
+** TO DO: Change the params being modified by NGF_evol_passive.py!! 
+* <2019-08-07 Wed -- NGF passive>
+** Try writing the fitness functions as actual functions to be called later 
+** What params should be modified? 
+*** Channels present:
+**** ch_Navngf.mod: "sodium channel (voltage dependent, higher threshold)"
+**** ch_Kdrfastngf.mod: "Fast delayed rectifier potassium channel (voltage dependent, for neurogliaform family)"
+**** ch_leak.mod: leak conductance (voltage independent) 
+**** h_migliore.mod: I-h channel from Magee 1998 for distal dendrites
+**** ch_KvAngf.mod: Proximal A-type potassium 
+**** ch_CavN: T-type calcium
+**** ch_CavL: L-type calcium 
+**** iconc_Ca.mod: intracellular calcium accumulation
+**** ch_KCaS: small K+ channel; calcium gated
+**** ch_KvCaB: Big K+ channel; voltage & ca2+ gated
+*** samn: for passive parameters usually fit the *leak channel density/reversal*, and *capacitance*
+*** ^^ Per advice above, should modify: gmax_ch_Navngf, ena, and cm
+** NGF_evol_passive.py changes:
+*** Changed re-write lines to pertain to the correct params and the correct lines in netParams.py
+*** Changed num_inputs to 3 
+** NGF_netParams.py changes:
+*** Added 3 lines at the end for gmax, ena, and cm 
+*** Commented out soma vinit line for now (set to RMP? meh) 
+
+** Committed changes -- try running:
+*** local
+**** ERROR: in *NGF_evol_passive.py* no module named NGF_batch --> RESOLVED; changed to NGF_batch_passive (along with call from NGF_batch_passive to batch_full() function) [actually discovered on zn]
+**** ERROR: in *NGF_batch_passive.py*, syntax error in params['amp'] --> RESOLVED (period instead of comma) 
+**** ERROR: in *NGF_evol_passive.py* out of range --> Did not fill in min or max params in main code --> RESOLVED
+**** ERROR --> did not throw an error, but *NGF_evol_passive.py* did not work properly for finding finished data files. Fixed this part of the code and tested some parts locally. Try local run again to see if resolved. --> RESOLVED after using .issubset -- was comparing one set of data files which contained .json results files from all candidates in the generation, and then a set of data files with only 1 candidate's results. 
+**** ERROR --> index out of range in line 131 in *NGF_evol_passive.py* --> am currently indexing by the larger set mentioned in the last point; try indexing by the smaller one to see if this resolves. 
+**** ERROR --> another index out of range in *NGF_evol_passive.py* , but this might be caused by syntax problem in subthreshold_deltas definition in main code --> it was; RESOLVED
+**** WORKS -- funkiness occurred with generation because I set the pop sizes and whatnot so low for testing; don't worry about this now. 
+**** CHANGED RUN PARAMS (increased pop sizes and whatnot) -- now test on zn 
+*** zn
+**** pulled all changes listed above 
+**** ssh into zn from no
+**** cd /u/ericag/A1
+**** conda activate py36
+**** screen -L python NGF_evol_passive.py --> RUNNING NOW; DETACH (crtl+a d) 
+**** To return: screen -r 
+**** ERROR --> user error; input 'LOCAL' instead of 'zn' when entering machine_ID -- try again. BUT, [DONE] fix the thing below first re: mean_responses calculated only after delay 
+**** Trying again 
+*** comet 
+** TO DO: 
+*** Change comet run so uses shared partition 
+*** [DONE] mean_responses[i] = steady_state_response
+
+** Changed cfg.duration from 1.5*1e3 to 1.1*1e3 (1100 ms accounts for stim delay and stim input) 
+* <2019-08-09 Fri -- NGF passive>
+** Not sure why, but optimization stalled on 'zn' after only 7 runs 
+** Adding a 'partition' option to batch run:
+*** Changing hpc_slurm b.runCfg to add a 'partition' option for 'shared' -- let's see if this works. --> did NOT work 
+*** Trying 'custom': '#SBATCH -p=partition' (adding to b.runCfg) [per salva's suggestion]
+*** sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+*** ^^ shared partition can only use 1 node at a time, I believe (true), and example on comet user guide (https://www.sdsc.edu/support/user_guides/comet.html) shows only using 8 cores per node. Changing this in batch script (from 24 'coresPerNode' to 8) 
+*** With the above changes, seems to be working on *comet* 
+*** Changing 'coresPerNode' from 8 to 1 in b.runCfg for runType == 'hpc_slurm' because should only require one core. 
