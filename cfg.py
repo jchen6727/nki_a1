@@ -67,8 +67,6 @@ cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell position
 
 
 
-
-
 #------------------------------------------------------------------------------
 # Synapses
 #------------------------------------------------------------------------------
@@ -88,6 +86,16 @@ cfg.sizeX = 400.0 # This may change depending on electrode radius
 cfg.sizeZ = 400.0
 cfg.scaleDensity = 0.01 # From M1 --> how to determine appropriate value for this? 
 
+#------------------------------------------------------------------------------
+# Connectivity
+#------------------------------------------------------------------------------
+# factor to multiply all weights for to account for the fact we only have 1 syn contact pero connection (instead of ~5 which is avg in cortex)
+cfg.synsPerConnWeightFactor = 5
+
+cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
+cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
+cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
+
 
 #------------------------------------------------------------------------------
 # Current inputs 
@@ -100,6 +108,9 @@ cfg.addIClamp = 0
 #------------------------------------------------------------------------------
 
 ## Attempt to add Background Noise inputs 
+## salva: this section was meant to provide single netstim inputs to particular populations; 
+## bkg noise inputs can be implemented directly in netParams with just a couple of params in cfg to control strength for eg. E vs I
+
 cfg.addNetStim = 1
 
 ## LAYER 1

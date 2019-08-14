@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 6
+netParams.version = 7
 
 #------------------------------------------------------------------------------
 #
@@ -138,31 +138,17 @@ netParams.popParams['VIP6'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',  
 netParams.popParams['NGF6'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['6'],   'density': density[('A1','nonVIP')][5]}
 
 
+## List of E and I pops to use later on
+Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
 
-################## FROM ORIGINAL A1 GITHUB REPO #########################
-### Cell types listed below come from labels.py -- NOT OFFICIAL YET! 2/15/19
-### numCells should come from mpisim.py, cpernet, see Google Drive doc 
+Ipops = ['NGF1',                            # L1
+        'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+        'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+        'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+        'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+        'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+        'PV6', 'SOM6', 'VIP6', 'NGF6']      # L6 
 
-#### Regular Spiking (RS)
-# netParams.popParams['E2'] = {'cellType': 'RS', 'numCells': 329, 'cellModel': ''}
-# netParams.popParams['E4'] = {'cellType': 'RS', 'numCells': 140, 'cellModel': ''}
-# netParams.popParams['E5R'] = {'cellType': 'RS', 'numCells': 18, 'cellModel': ''}
-# netParams.popParams['E6'] = {'cellType': 'RS', 'numCells': 170, 'cellModel': ''}
-
-#### Fast Spiking (FS)
-# netParams.popParams['I2'] = {'cellType': 'FS', 'numCells': 54, 'cellModel': ''}
-# netParams.popParams['I4'] = {'cellType': 'FS', 'numCells': 23, 'cellModel': ''}
-# netParams.popParams['I5'] = {'cellType': 'FS', 'numCells': 6, 'cellModel': ''}
-# netParams.popParams['I6'] = {'cellType': 'FS', 'numCells': 28, 'cellModel': ''}
-
-#### Low Threshold Spiking (LTS)
-# netParams.popParams['I2L'] = {'cellType': 'LTS', 'numCells': 54, 'cellModel': ''}
-# netParams.popParams['I4L'] = {'cellType': 'LTS', 'numCells': 23, 'cellModel': ''}
-# netParams.popParams['I5L'] = {'cellType': 'LTS', 'numCells': 6, 'cellModel': ''}
-# netParams.popParams['I6L'] = {'cellType': 'LTS', 'numCells': 28, 'cellModel': ''}
-
-#### Burst Firing (Burst)
-# netParams.popParams['E5B'] = {'cellType': 'Burst', 'numCells': 26, 'cellModel': ''}
 
 ### THALAMUS (core)-- excluded for now per samn (2/17/19)
 # netParams.popParams['TC'] = {'cellType': 'thal_core', 'numCells': 0, 'cellModel': ''}
@@ -173,7 +159,6 @@ netParams.popParams['NGF6'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynor
 #netParams.popParams['IREM'] = {'cellType': 'thal_matrix', 'numCells': 0, 'cellModel': ''}
 
 #########################################################################
-
 
 
 
@@ -195,6 +180,60 @@ netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 
 
 
 #------------------------------------------------------------------------------
+# Local connectivity parameters
+#------------------------------------------------------------------------------
+
+## load data from conn pre-processing file
+with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+pmat = connData['pmat']
+wmat = connData['wmat']
+
+#------------------------------------------------------------------------------
+## E -> E
+
+for pre in Epops:
+    for post in Epops:
+        netParams.connParams['EE_pre_post'] = { 
+            'preConds': {'pop': pre}, 
+            'postConds': {'pop': post},
+            'synMech': ['AMPA', 'NMDA'],
+            'probability': pmat[pre][post],
+            'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': 'defaultDelay+dist_2D/propVelocity',
+            'synsPerConn': 1,
+            'sec': 'spiny'}
+
+#------------------------------------------------------------------------------
+## E -> I
+
+for pre in Epops:
+    for post in Ipops:
+        netParams.connParams['EI_pre_post'] = { 
+            'preConds': {'pop': pre}, 
+            'postConds': {'pop': post},
+            'synMech': ['AMPA', 'NMDA'],
+            'probability': pmat[pre][post],
+            'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': 'defaultDelay+dist_2D/propVelocity',
+            'synsPerConn': 1,
+            'sec': 'spiny'}
+
+#------------------------------------------------------------------------------
+## I -> E
+
+#------------------------------------------------------------------------------
+## I -> I
+
+
+#------------------------------------------------------------------------------
+# Subcellular connectivity (synaptic distributions)
+#------------------------------------------------------------------------------  
+
+
+
+#------------------------------------------------------------------------------
 # Current inputs (IClamp)
 #------------------------------------------------------------------------------
 # if cfg.addIClamp:
@@ -211,43 +250,35 @@ netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 
 # 			'conds': {'pop': pop},
 # 			'sec': sec, 
 # 			'loc': loc}
+
 #------------------------------------------------------------------------------
 # NetStim inputs
 #------------------------------------------------------------------------------
-if cfg.addNetStim:
-	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-		params = getattr(cfg, key, None)
-		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+# if cfg.addNetStim:
+# 	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+# 		params = getattr(cfg, key, None)
+# 		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+# 		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
 
-		# add stim source
-		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+# 		# add stim source
+# 		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
 
-		# connect stim source to target 
-		netParams.stimTargetParams[key+'_'+pop] =  {
-			'source': key, 
-			'conds': {'pop': pop, 'ynorm': ynorm},
-			'sec': sec, 
-			'loc': loc,
-			'synMech': synMech,
-			'weight': weight,
-			'synMechWeightFactor': synMechWeightFactor,
-			'delay': delay}
-
-#------------------------------------------------------------------------------
-# Local connectivity parameters
-#------------------------------------------------------------------------------
-
-
-#------------------------------------------------------------------------------
-# Subcellular connectivity (synaptic distributions)
-#------------------------------------------------------------------------------  
-
+# 		# connect stim source to target 
+# 		netParams.stimTargetParams[key+'_'+pop] =  {
+# 			'source': key, 
+# 			'conds': {'pop': pop, 'ynorm': ynorm},
+# 			'sec': sec, 
+# 			'loc': loc,
+# 			'synMech': synMech,
+# 			'weight': weight,
+# 			'synMechWeightFactor': synMechWeightFactor,
+# 			'delay': delay}
 
 #------------------------------------------------------------------------------
 # Description
 #------------------------------------------------------------------------------
 
+netParams.description = """
+v7 - Added template for connectivity
 
-
-
+"""
