@@ -24393,3 +24393,15 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 *** ^^ shared partition can only use 1 node at a time, I believe (true), and example on comet user guide (https://www.sdsc.edu/support/user_guides/comet.html) shows only using 8 cores per node. Changing this in batch script (from 24 'coresPerNode' to 8) 
 *** With the above changes, seems to be working on *comet* 
 *** Changing 'coresPerNode' from 8 to 1 in b.runCfg for runType == 'hpc_slurm' because should only require one core. 
+* <2019-08-11 Sun -- NGF passive on google cloud>
+** Salvador ran ~1000 generations successfully on google cloud
+** Suggestions for improvement:
+*** Ran out of space -- save cfg and netParams to output, but do not plot trace
+**** Commented out in *NGF_cfg.py*: cfg.analysis['plotTraces'] = {'include': [0], 'saveFig': True} 
+*** Turn on logging for each generation 
+**** https://aarongarrett.github.io/inspyred/troubleshooting.html#use-and-consult-the-logs
+**** added 'import logging' to import section of *NGF_evol_passive.py* 
+* <2019-08-15 Thu -- active setup & passive modifications>
+** Sleep interval from 1 to 0.1 (per salva's advice) 
+** Test the above on comet to see if this lowers time/generation
+** TO DO: LOGGER 
