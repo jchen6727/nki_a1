@@ -13,6 +13,7 @@ import tarfile						# to compress data directory
 import shutil						# also necessary to compress data directories
 import datetime						# to label data directories for compression
 from time import sleep,time							# To pause program while batch runs finish
+import logging 						# To log inspyred output for each generation
 
 
 
@@ -137,7 +138,7 @@ def evaluate_netparams(candidates, args):
 				###### RMP ######
 				RMP_sim = mean_responses[0]
 				RMP_fitness = abs(RMP_sim-RMP)**2 # RMP defined in main code
-				outputData_RMP = json.load(open(data_path + data_file_root + '_0.json'))
+				#outputData_RMP = json.load(open(data_path + data_file_root + '_0.json'))
 
 
 				###### SUBTHRESHOLD RESPONSES #####
@@ -162,7 +163,7 @@ def evaluate_netparams(candidates, args):
 				print('FITNESS EVALUATIONS FOR CANDIDATE ' + str(cand_index) + ' ARE COMPLETE')
 
 			else:
-				sleep(1)
+				sleep(0.1)
 				print('Candidate ' + str(cand_index) + ' is unfinished')
 
 
