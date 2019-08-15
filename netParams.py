@@ -265,7 +265,7 @@ for pre in Ipops:
             'preConds': {'pop': pre}, 
             'postConds': {'pop': post},
             'synMech': synMech,
-            'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[pre][post]),
+            'probability': '%f * exp(-dist_3D/probLambda)' % (pmat[pre][post]),
             'weight': pmat[pre][post] * cfg.IIGain * cfg.synsPerConnWeightFactor, 
             'synMechWeightFactor': cfg.synWeightFractionII,
             'delay': 'defaultDelay+dist_2D/propVelocity',

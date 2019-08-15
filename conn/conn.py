@@ -34,32 +34,42 @@ data = loadData()
 # Probabilities 
 
 ## E -> E 
-pmat['IT2'] = {pop: data['prob'] for pop in Epops} 
-pmat['IT3'] = {pop: data['prob'] for pop in Epops} 
-pmat['ITP4'] = {pop: data['prob'] for pop in Epops} 
-pmat['ITS4'] = {pop: data['prob'] for pop in Epops} 
-pmat['IT5A'] = {pop: data['prob'] for pop in Epops} 
-pmat['IT5B'] = {pop: data['prob'] for pop in Epops} 
-pmat['IT6'] = {pop: data['prob'] for pop in Epops} 
+for pop in Epops:
+    pmat['IT2'][pop] = data['prob']  
+    pmat['IT3'][pop] = data['prob']  
+    pmat['ITP4'][pop] = data['prob']  
+    pmat['ITS4'][pop] = data['prob']  
+    pmat['IT5A'][pop] = data['prob']  
+    pmat['IT5B'][pop] = data['prob']  
+    pmat['PT5B'][pop] = data['prob']  
+    pmat['IT6'][pop] = data['prob']  
+    pmat['CT6'][pop] = data['prob']  
+
 
 ## E -> I
-pmat['IT2'] = {pop: data['prob'] for pop in Ipops} 
-pmat['IT3'] = {pop: data['prob'] for pop in Ipops} 
-pmat['ITP4'] = {pop: data['prob'] for pop in Ipops} 
-pmat['ITS4'] = {pop: data['prob'] for pop in Ipops} 
-pmat['IT5A'] = {pop: data['prob'] for pop in Ipops} 
-pmat['IT5B'] = {pop: data['prob'] for pop in Ipops} 
-pmat['IT6'] = {pop: data['prob'] for pop in Ipops} 
+for pop in Ipops:
+    pmat['IT2'][pop] = data['prob']  
+    pmat['IT3'][pop] = data['prob']  
+    pmat['ITP4'][pop] = data['prob']  
+    pmat['ITS4'][pop] = data['prob']  
+    pmat['IT5A'][pop] = data['prob']  
+    pmat['IT5B'][pop] = data['prob']  
+    pmat['PT5B'][pop] = data['prob']  
+    pmat['IT6'][pop] = data['prob']  
+    pmat['CT6'][pop] = data['prob']  
 
 ## I -> E  
 # (here illustrating a different way of populatinf the pmat dict)
-for pop in Ipops: pmat[pop]['IT2'] = data['prob']
-for pop in Ipops: pmat[pop]['IT3'] = data['prob']
-for pop in Ipops: pmat[pop]['ITP4'] = data['prob']
-for pop in Ipops: pmat[pop]['ITS4'] = data['prob']
-for pop in Ipops: pmat[pop]['IT5A'] = data['prob']
-for pop in Ipops: pmat[pop]['IT5B'] = data['prob']
-for pop in Ipops: pmat[pop]['IT6'] = data['prob']
+for pop in Ipops:
+    pmat[pop]['IT2'] = data['prob']
+    pmat[pop]['IT3'] = data['prob']
+    pmat[pop]['ITP4'] = data['prob']
+    pmat[pop]['ITS4'] = data['prob']
+    pmat[pop]['IT5A'] = data['prob']
+    pmat[pop]['IT5B'] = data['prob']
+    pmat[pop]['PT5B'] = data['prob']  
+    pmat[pop]['IT6'] = data['prob']  
+    pmat[pop]['CT6'] = data['prob']  
 
 ## I -> I
 for pre in Ipops:
@@ -71,32 +81,42 @@ for pre in Ipops:
 # Weights (=unitary conn somatic PSP amplitude)
 
 ## E -> E 
-wmat['IT2'] = {pop: data['weight'] for pop in Epops} 
-wmat['IT3'] = {pop: data['weight'] for pop in Epops} 
-wmat['ITP4'] = {pop: data['weight'] for pop in Epops} 
-wmat['ITS4'] = {pop: data['weight'] for pop in Epops} 
-wmat['IT5A'] = {pop: data['weight'] for pop in Epops} 
-wmat['IT5B'] = {pop: data['weight'] for pop in Epops} 
-wmat['IT6'] = {pop: data['weight'] for pop in Epops} 
+for pop in Epops:
+    wmat['IT2'][pop] = data['weight']  
+    wmat['IT3'][pop] = data['weight']  
+    wmat['ITP4'][pop] = data['weight']  
+    wmat['ITS4'][pop] = data['weight']  
+    wmat['IT5A'][pop] = data['weight']  
+    wmat['IT5B'][pop] = data['weight']  
+    wmat['PT5B'][pop] = data['weight']  
+    wmat['IT6'][pop] = data['weight']  
+    wmat['CT6'][pop] = data['weight']  
+
 
 ## E -> I
-wmat['IT2'] = {pop: data['weight'] for pop in Ipops} 
-wmat['IT3'] = {pop: data['weight'] for pop in Ipops} 
-wmat['ITP4'] = {pop: data['weight'] for pop in Ipops} 
-wmat['ITS4'] = {pop: data['weight'] for pop in Ipops} 
-wmat['IT5A'] = {pop: data['weight'] for pop in Ipops} 
-wmat['IT5B'] = {pop: data['weight'] for pop in Ipops} 
-wmat['IT6'] = {pop: data['weight'] for pop in Ipops} 
+for pop in Ipops:
+    wmat['IT2'][pop] = data['weight']  
+    wmat['IT3'][pop] = data['weight']  
+    wmat['ITP4'][pop] = data['weight']  
+    wmat['ITS4'][pop] = data['weight']  
+    wmat['IT5A'][pop] = data['weight']  
+    wmat['IT5B'][pop] = data['weight']  
+    wmat['PT5B'][pop] = data['weight']  
+    wmat['IT6'][pop] = data['weight']  
+    wmat['CT6'][pop] = data['weight']  
 
 ## I -> E  
 # (here illustrating a different way of populatinf the wmat dict)
-for pop in Ipops: wmat[pop]['IT2'] = data['weight']
-for pop in Ipops: wmat[pop]['IT3'] = data['weight']
-for pop in Ipops: wmat[pop]['ITP4'] = data['weight']
-for pop in Ipops: wmat[pop]['ITS4'] = data['weight']
-for pop in Ipops: wmat[pop]['IT5A'] = data['weight']
-for pop in Ipops: wmat[pop]['IT5B'] = data['weight']
-for pop in Ipops: wmat[pop]['IT6'] = data['weight']
+for pop in Ipops:
+    wmat[pop]['IT2'] = data['weight']
+    wmat[pop]['IT3'] = data['weight']
+    wmat[pop]['ITP4'] = data['weight']
+    wmat[pop]['ITS4'] = data['weight']
+    wmat[pop]['IT5A'] = data['weight']
+    wmat[pop]['IT5B'] = data['weight']
+    wmat[pop]['PT5B'] = data['weight']  
+    wmat[pop]['IT6'] = data['weight']  
+    wmat[pop]['CT6'] = data['weight']  
 
 ## I -> I
 for pre in Ipops:

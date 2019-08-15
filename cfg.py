@@ -87,7 +87,8 @@ cfg.scaleDensity = 0.01 # From M1 --> how to determine appropriate value for thi
 #------------------------------------------------------------------------------
 cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
 cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
-cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
+cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
+cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 cfg.synsPerConnWeightFactor = 5  # factor to multiply all weights for given 1 syn contact per conn (instead of ~5 -- avg in cortex)
 
 cfg.EEGain = 1.0
@@ -103,7 +104,7 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 cfg.weightBkg = {'E': 0.5, 'I': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.ratesLong = {'E': [0,5], 'I': [0,2.5]}
+cfg.rateBkg = {'E': 5, 'I': 5}
 
 
 #------------------------------------------------------------------------------
