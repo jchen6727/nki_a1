@@ -13,7 +13,7 @@ cfg.savePickle = False 		# Save params, network and sim output to pickle file
 cfg.saveJson = True
 #cfg.hParams['celsius'] = 24 
 
-cfg.analysis['plotTraces'] = {'include': [0], 'saveFig': True} 
+#cfg.analysis['plotTraces'] = {'include': [0], 'saveFig': True} 
 
 # Variable Parameters (used in netParams)
 cfg.amp = 0.04 # instantiates this as a variable that can be changed in batch file 
