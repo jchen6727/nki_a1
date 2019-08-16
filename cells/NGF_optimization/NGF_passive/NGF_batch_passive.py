@@ -26,7 +26,7 @@ def batch_full(icand, ngen, runType):
 		b.saveFolder = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + batchLabel  + '_gen_' + str(ngen)
 		b.runCfg = {'type': 'hpc_slurm',
 								'allocation': 'shs100',
-								'walltime': '00:30:00',
+								'walltime': '00:15:00',
 								'nodes': 1,
 								'coresPerNode': 1,
 								'email': 'ericaygriffith@gmail.com',
@@ -34,6 +34,7 @@ def batch_full(icand, ngen, runType):
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
 								'skip': False,
+								'sleepInterval': 0.1,
 								'custom': '#SBATCH --partition=shared'}
 
 
