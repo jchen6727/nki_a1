@@ -24402,6 +24402,40 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 **** https://aarongarrett.github.io/inspyred/troubleshooting.html#use-and-consult-the-logs
 **** added 'import logging' to import section of *NGF_evol_passive.py* 
 * <2019-08-15 Thu -- active setup & passive modifications>
-** Sleep interval from 1 to 0.1 (per salva's advice) 
+** Sleep interval changes:
+*** Sleep interval decreased from 1 to 0.1 (per salva's advice) in *NGF_evol_passive.py*
+*** But... salva's advice was for runCfg to be changed, so I changed it in *NGF_cfg.py* as well 
+*** Need to update netpyne to see 
+** Netpyne update (development branch pulled):
+*** http://www.netpyne.org/install.html
+*** =git clone https://github.com/Neurosim-lab/netpyne.git=
+*** =cd netpyne=
+*** =git checkout development=
+
 ** Test the above on comet to see if this lowers time/generation
-** TO DO: LOGGER 
+** ERROR: 
+FITNESS CALCULATIONS FOR CAND 0 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 234, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by $
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 434, in evolve
+    initial_fit = evaluator(candidates=initial_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 133, in evaluate_netparams
+    vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+KeyError: 'cell_0'
+** TO DO:
+*** LOGGER 
+*** [done] update netpyne to latest dev version 
+* <2019-08-16 Fri -- active setup & passive modifications>
+** Salva says that deploying gcloud cluster may be too labor intensive 
+** TO DO FOR COMET RUN MODIFICATIONS:
+*** (0) [done] Update netpyne dev branch version being used 
+*** (1) [done] Shorten sleep interval (cfg & evol?) 
+*** (2) [done] Shorten walltime from 30 minutes to 15 minutes (in *NGF_batch_passive.py*) 
+*** (2) Stop plotting
+**** [done] in *NGF_cfg.py* --> BUT, is this why it stopped populating the json files? 
+**** Uncomment cfg.analysis['plotTraces'] line to see if this rectifies it 
+*** (3) Only save cfg & simData in output  
+*** (4) Add logging 
