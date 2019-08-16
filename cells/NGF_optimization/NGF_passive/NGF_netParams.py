@@ -19,7 +19,7 @@ cellRule = netParams.importCellParams(label = 'NGF_rule', conds = {'cellType': '
 
 ## Add in Stimulation Source (IClamp) 
 netParams.stimSourceParams['Input'] = {'type': 'IClamp', 'del': 100, 'dur': 1000, 'amp': cfg.amp} 
-netParams.stimTargetParams['Input->NGF'] = {'source': 'Input', 'sec':'soma', 'loc': 0.5, 'conds': {'pop':'NGF_pop'}}
+netParams.stimTargetParams['Input->NGF_pop'] = {'source': 'Input', 'sec':'soma', 'loc': 0.5, 'conds': {'pop':'NGF_pop'}}
 
 
 ##########
