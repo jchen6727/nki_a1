@@ -24439,3 +24439,7 @@ KeyError: 'cell_0'
 **** Uncomment cfg.analysis['plotTraces'] line to see if this rectifies it 
 *** (3) Only save cfg & simData in output  
 *** (4) Add logging 
+** SALVA's BRANCHES:
+*** NOTE: salva's branch w/ preprocessing is named 'salva': https://github.com/ericaygriffith/A1/tree/salva
+*** NOTE: salva's gcloud branch is: https://github.com/ericaygriffith/A1/tree/gcloud
+*** Downloaded A1-gcloud.zip and A1-salva.zip 
