@@ -203,7 +203,7 @@ wmat = connData['wmat']
 
 for pre in Epops:
     for post in Epops:
-        netParams.connParams['EE_pre_post'] = { 
+        netParams.connParams['EE_'+pre+'_'+post] = { 
             'preConds': {'pop': pre}, 
             'postConds': {'pop': post},
             'synMech': ESynMech,
@@ -219,7 +219,7 @@ for pre in Epops:
 
 for pre in Epops:
     for post in Ipops:
-        netParams.connParams['EI_pre_post'] = { 
+        netParams.connParams['EI_'+pre+'_'+post] = { 
             'preConds': {'pop': pre}, 
             'postConds': {'pop': post},
             'synMech': ESynMech,
@@ -240,7 +240,7 @@ for pre in Epops:
         synMech = PVSynMech
 
     for post in Ipops:
-        netParams.connParams['IE_pre_post'] = { 
+        netParams.connParams['IE_'+pre+'_'+post] = { 
             'preConds': {'pop': pre}, 
             'postConds': {'pop': post},
             'synMech': synMech,
@@ -261,7 +261,7 @@ for pre in Ipops:
         synMech = PVSynMech
 
     for post in Ipops:
-        netParams.connParams['IE_pre_post'] = { 
+        netParams.connParams['II_'+pre+'_'+post] = { 
             'preConds': {'pop': pre}, 
             'postConds': {'pop': post},
             'synMech': synMech,
@@ -291,8 +291,8 @@ netParams.stimTargetParams['bkgE->E'] =  {
     'synMechWeightFactor': cfg.synWeightFractionEE,
     'delay': cfg.delayBkg}
 
-netParams.stimTargetParams['bkgE->E'] =  {
-    'source': 'bkgE', 
+netParams.stimTargetParams['bkgE->I'] =  {
+    'source': 'bkgI', 
     'conds': {'cellType': ['PV', 'SOM', 'PIV', 'NGF']},
     'sec': 'soma', 
     'loc': 0.5,

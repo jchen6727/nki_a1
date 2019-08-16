@@ -24,7 +24,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
-cfg.verbose = False           	## Show detailed messages
+cfg.verbose = 0         	## Show detailed messages
 
 
 #------------------------------------------------------------------------------
@@ -55,9 +55,9 @@ cfg.saveCellConns = True		## Seen in M1 cfg.py
 # Analysis and plotting 
 #------------------------------------------------------------------------------
 
-#cfg.analysis['plotTraces'] = {} 		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True} # from M1 cfg.py --> leaving off these params for now 'labels': 'overlay', 'popRates': True, 'orderInverse': True, 'timeRange': [0,500], 'popColors': popColors, 'figSize': (6,6), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
-cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
+cfg.analysis['plotTraces'] = {'include': [(pop,0) for pop in allpops]} 		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True,'labels': 'overlay', 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+#cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 #------------------------------------------------------------------------------
 # Cells
@@ -104,7 +104,7 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 cfg.weightBkg = {'E': 0.5, 'I': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 5, 'I': 5}
+cfg.rateBkg = {'E': 100, 'I': 100}
 
 
 #------------------------------------------------------------------------------
