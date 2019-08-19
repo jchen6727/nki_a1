@@ -24498,7 +24498,7 @@ cands_threshold = 0.9
 while cands_completed < int(cands_threshold*total_cands):
 
 ** Version control checkpoint
-*** NOTE: do NOT do git push --mirror or you will eliminate colleagues' branches 
+*** NOTE: do NOT do git push --mirror or you will eliminate colleagues' branche 
 *** Local (laptop): 
 **** cd ~/Dektop/NEUROSIM/A1
 **** git status
@@ -24508,4 +24508,27 @@ while cands_completed < int(cands_threshold*total_cands):
 
 
 
-** (IDEA FOR LATER) change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+
+** Git Notes:
+*** To see all branches: git branches -a
+*** To switch branches: git checkout branch_name
+** Changing git repo structure:
+*** https://github.com/ericaygriffith/A1 IS a bare repository
+*** LOCAL CHANGES:
+**** cd ~/Desktop/NEUROSIM/
+**** mv A1 A1_uncloned
+**** git clone https://github.com/ericaygriffith/A1.git
+
+
+
+
+*** Same changes made on comet & neurosim
+*** Workflow:
+**** make changes in local repository, on e.g. master branch (git checkout master)
+**** git add & commit
+**** git push origin BRANCH_NAME (e.g. git push origin master)
+***** NOTE: origin = where repo was originally cloned from, i.e. https://github.com/ericaygriffith/A1 (or is it A1.git?) 
+ 
+**** on comet or neurosim: cd to A1, git checkout BRANCH_NAME, git pull origin BRANCH_NAME
+** IDEAS FOR LATER:
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
