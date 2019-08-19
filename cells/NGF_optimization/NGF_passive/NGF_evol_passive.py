@@ -13,7 +13,7 @@ import tarfile						# to compress data directory
 import shutil						# also necessary to compress data directories
 import datetime						# to label data directories for compression
 from time import sleep,time							# To pause program while batch runs finish
-import logging 						# To log inspyred output for each generation
+#import logging 						# To log inspyred output for each generation
 
 
 
