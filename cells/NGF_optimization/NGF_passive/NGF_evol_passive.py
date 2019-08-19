@@ -87,8 +87,8 @@ def evaluate_netparams(candidates, args):
 	total_cands = len(candidates)
 	fitnessCandidates = [None for cand in candidates]
 
-
-	while cands_completed < total_cands:
+	cands_threshold = 0.9
+	while cands_completed < int(cands_threshold*total_cands):
 		print(str(cands_completed) + ' / ' + str(total_cands) + ' candidates completed')
 
 		unfinished = [i for i, x in enumerate(fitnessCandidates) if x is None]
@@ -220,15 +220,19 @@ my_ec.replacer = ec.replacers.generational_replacement    # existing generation 
 
 my_ec.terminator = ec.terminators.evaluation_termination  # termination dictated by number of evaluations that have been run
 
+#toggle observers
+my_ec.observer = [ec.observers.stats_observer,  # print evolutionary computation statistics
+                  ec.observers.plot_observer,   # plot output of the evolutionary computation as graph
+                  ec.observers.best_observer]   # print the best individual in the population to screen
 
 #call evolution iterator
 final_pop = my_ec.evolve(generator=generate_netparams,  # assign design parameter generator to iterator parameter generator
                       evaluator=evaluate_netparams,     # assign fitness function to iterator evaluator
-                      pop_size=50,                      # each generation of parameter sets will consist of pop_size individuals
+                      pop_size=96,                      # each generation of parameter sets will consist of pop_size individuals
                       maximize=False,                   # best fitness corresponds to minimum value
                       bounder=ec.Bounder(minParamValues, maxParamValues), # boundaries for parameter set ([probability, weight, delay])
-                      max_evaluations=200,             	# evolutionary algorithm termination at max_evaluations evaluations
-                      num_selected=10,                  	# number of generated parameter sets to be selected for next generation
+                      max_evaluations=96*1000,             	# evolutionary algorithm termination at max_evaluations evaluations
+                      num_selected=50,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
                       num_inputs=3,              		# len([a, b, c, d, ...]) -- number of parameters being varied
                       num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
