@@ -24434,12 +24434,78 @@ KeyError: 'cell_0'
 *** (0) [done] Update netpyne dev branch version being used 
 *** (1) [done] Shorten sleep interval (cfg & evol?) 
 *** (2) [done] Shorten walltime from 30 minutes to 15 minutes (in *NGF_batch_passive.py*) 
-*** (2) Stop plotting
+*** (3) Stop plotting
 **** [done] in *NGF_cfg.py* --> BUT, is this why it stopped populating the json files? 
-**** Uncomment cfg.analysis['plotTraces'] line to see if this rectifies it 
-*** (3) Only save cfg & simData in output  
-*** (4) Add logging 
+**** [done] Uncomment cfg.analysis['plotTraces'] line to see if this rectifies it 
+**** Test this on comet to see if this will work
+***** move old data directory 
+*** (4) Only save cfg & simData in output  
+*** (5) Add logging 
 ** SALVA's BRANCHES:
 *** NOTE: salva's branch w/ preprocessing is named 'salva': https://github.com/ericaygriffith/A1/tree/salva
 *** NOTE: salva's gcloud branch is: https://github.com/ericaygriffith/A1/tree/gcloud
-*** Downloaded A1-gcloud.zip and A1-salva.zip 
+*** Downloaded A1-gcloud.zip and A1-salva.zip as backup 
+* <2019-08-19 Mon -- passive modifications>
+** LOCAL SYSTEM INFO REMINDER: 
+*** OS X El Capitan, Version 10.11.4, MacBook Air, 1.6 GHz intel core i5 (procesor), 8GB 1600MHz DDR3 (Memory -- lol ddr)
+*** Default python: 3.7.0, anaconda || which python --> /Users/ericagriffith/anaconda3/bin/python
+*** 'which nrniv' --> /Applications/NEURON-7.6/nrn/x86_64/bin/nrniv
+*** python --> import netpyne; netpyne.__file__ --> '/anaconda3/lib/python3.7/site-packages/netpyne/__init__.py'
+** Check on comet run:
+*** in /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive there is only the 0th generation, but random sampling showed that [cell_0] is back in the simData struct { data = (json.load(open('FILENAME')) --> simData = data['simData'] --> simData['V_soma']['cell_0']  }
+*** ERROR:
+**** TEXT OF ERROR:
+BATCH RUN FOR CAND 24 IS COMPLETE
+FITNESS CALCULATIONS FOR CAND 24 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 234, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selec$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 434, in evolve
+    initial_fit = evaluator(candidates=initial_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 132, in evaluate_netparams
+    outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 296, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+**** max_evaluations potentially reached, because line 234 is max_evaluations = 200 (now 96*1000) 
+**** POTENTIAL SOLUTION / EXPLANATION: https://www.reddit.com/r/learnpython/comments/42pyyg/jsondecodeerror/
+*** Could the error be from it maxing out evaluations? I checked candidate 24, which supposedly generated the json error, and every candidate was able to be loaded into json without a problem.
+** Add LOGGING lines:
+*** Salva's advice: 
+what needed really is the stat_observer and the best_observer — you can see an example here: http://www.netpyne.org/advanced.html#using-inspyred and here: https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/batch/batch.py#L748
+*** stats_observer: http://www.netpyne.org/advanced.html#using-inspyred 
+*** best_observer: https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/batch/batch.py#L748
+*** Added the following lines: 
+**** #toggle observers
+**** my_ec.observer = [ec.observers.stats_observer,  # print evolutionary computation statistics
+                  ec.observers.plot_observer,   # plot output of the evolutionary computation as graph
+                  ec.observers.best_observer]   # print the best individual in the population to
+                  screen
+** Changed *pop_size* and *max_evaluations* and *num_selected* in line with salva's code: pop_size = 96, max_evaluations = 96*1000, num_selected = 50 
+** Add a cands_threshold like salva: 
+*** ORIG:
+while cands_completed < total_cands: 
+*** NEW:
+cands_threshold = 0.9
+while cands_completed < int(cands_threshold*total_cands):
+
+** Version control checkpoint
+*** NOTE: do NOT do git push --mirror or you will eliminate colleagues' branches 
+*** Local (laptop): 
+**** cd ~/Dektop/NEUROSIM/A1
+**** git status
+**** git add A1_notebook.org
+**** git add cells/NGF_optimization/NGF_passive/NGF_evol_passive.py 
+**** git commit A1_notebook.org -m '
+
+
+
+** (IDEA FOR LATER) change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
