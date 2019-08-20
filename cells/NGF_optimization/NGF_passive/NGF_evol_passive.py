@@ -234,8 +234,8 @@ final_pop = my_ec.evolve(generator=generate_netparams,  # assign design paramete
                       max_evaluations=96*1000,             	# evolutionary algorithm termination at max_evaluations evaluations
                       num_selected=50,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
-                      num_inputs=3,              		# len([a, b, c, d, ...]) -- number of parameters being varied
-                      num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+                      num_inputs=3)              		# len([a, b, c, d, ...]) -- number of parameters being varied
+                      #num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
 
 
 final_arc = my_ec.archive                               # seen this MO examples
