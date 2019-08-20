@@ -24638,6 +24638,19 @@ def my_EMO_observe (population, num_generations, num_evaluations, args):
 **** Added 2 observer lines to main code:
 ***** my_ec.observer = [my_indiv_observe]
 ***** my_ec.observer.append(my_EMO_observe)
+*** Hypothesis 2 (cont): 
+**** my_EMO_observe is throwing an error about 'args' (not surprising; don't understand what this does):
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 257, in <module>
+    num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "NGF_evol_passive.py", line 180, in my_EMO_observe
+    my_ec=args['my_ec']
+KeyError: 'my_ec'
+**** added line 'global my_ec' to main code and commented out args['my_ec'] line 
 ** (2) Fitnesses are the same: 
 *** Evaluate this AFTER fixing (1) 
 ** IDEAS FOR LATER:
