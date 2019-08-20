@@ -176,17 +176,16 @@ def evaluate_netparams(candidates, args):
 ######### OBSERVER FUNCTIONS #########
 # prints stats and saves current archive to binary file (pkl) ## Taken from samn evo.py
 def my_EMO_observe(population, num_generations, num_evaluations, args): 
-	print('gen:',num_generations,'eval:',num_evaluations,\
-    'worst:',population[-1].fitness,'best:',population[0].fitness)
-  my_ec=args['my_ec']
-  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
-  pickle.dump(my_ec.archive,open(fn,'wb'))
+	print('gen:',num_generations,'eval:',num_evaluations,'worst:',population[-1].fitness,'best:',population[0].fitness)
+	my_ec=args['my_ec']
+	fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
+	pickle.dump(my_ec.archive,open(fn,'wb'))
 
 
 # saves individuals in a population to binary file (pkl) ## Taken from samn evo.py
 def my_indiv_observe(population, num_generations, num_evaluations, args):
-  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
-  pickle.dump(population,open(fn,'wb'))
+	fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+	pickle.dump(population,open(fn,'wb'))
 
 
 
