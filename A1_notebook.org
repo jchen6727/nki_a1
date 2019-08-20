@@ -24529,6 +24529,9 @@ while cands_completed < int(cands_threshold*total_cands):
 *** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
 
 * <2019-08-20 Tue -- NGF comet run>
+** VERSION CONTROL: 
+*** 755dbb3 [observers added]
+*** 
 ** PROBLEMS WITH LAST NIGHT'S RUN: 
 *** Traceback (most recent call last):
   File "NGF_evol_passive.py", line 238, in <module>
