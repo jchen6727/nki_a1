@@ -24445,7 +24445,7 @@ KeyError: 'cell_0'
 *** NOTE: salva's branch w/ preprocessing is named 'salva': https://github.com/ericaygriffith/A1/tree/salva
 *** NOTE: salva's gcloud branch is: https://github.com/ericaygriffith/A1/tree/gcloud
 *** Downloaded A1-gcloud.zip and A1-salva.zip as backup 
-* <2019-08-19 Mon -- passive modifications>
+* <2019-08-19 Mon -- passive modifications, 605a253>
 ** LOCAL SYSTEM INFO REMINDER: 
 *** OS X El Capitan, Version 10.11.4, MacBook Air, 1.6 GHz intel core i5 (procesor), 8GB 1600MHz DDR3 (Memory -- lol ddr)
 *** Default python: 3.7.0, anaconda || which python --> /Users/ericagriffith/anaconda3/bin/python
@@ -24508,7 +24508,6 @@ while cands_completed < int(cands_threshold*total_cands):
 
 
 
-
 ** Git Notes:
 *** To see all branches: git branches -a
 *** To switch branches: git checkout branch_name
@@ -24521,7 +24520,6 @@ while cands_completed < int(cands_threshold*total_cands):
 
 
 
-
 *** Same changes made on comet & neurosim
 *** Workflow:
 **** make changes in local repository, on e.g. master branch (git checkout master)
@@ -24529,6 +24527,80 @@ while cands_completed < int(cands_threshold*total_cands):
 **** git push origin BRANCH_NAME (e.g. git push origin master)
 ***** NOTE: origin = where repo was originally cloned from, i.e. https://github.com/ericaygriffith/A1 (or is it A1.git?) 
  
-**** on comet or neurosim: cd to A1, git checkout BRANCH_NAME, git pull origin BRANCH_NAME
+**** on comet & neurosim: cd to A1, git checkout BRANCH_NAME, git pull origin BRANCH_NAME
+*** VERSION ID: 605a253
+
 ** IDEAS FOR LATER:
 *** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+
+
+* <2019-08-20 Tue -- NGF comet run>
+** PROBLEMS WITH LAST NIGHT'S RUN: 
+*** Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 238, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the t$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/observers.py", line 91, in stats_observer
+    worst_fit = '{0:>10}'.format(stats['worst'])[:10]
+TypeError: unsupported format string passed to Pareto.__format__
+
+*** Why are all the fitnesses the exact same? See what is going on. load the json files and do the calculations manually to see if they ARE indeed the exact same. 
+** Potential solutions to the error above: 
+*** ERROR:
+  File "NGF_evol_passive.py", line 238, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the t$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/observers.py", line 91, in stats_observer
+    worst_fit = '{0:>10}'.format(stats['worst'])[:10]
+TypeError: unsupported format string passed to Pareto.__format__
+*** fitnessCandidates have 'None, None, None, None' in them, due to the cands_threshold that salvador added --> get rid of this. 
+*** Comnented out cands_threshold = 0.9 & changed while loop back to "while cands_completed < total_cands" vs. "while cands_completed < int(cands_threshold*total_cands)"
+*** *DIFFERENT SOLUTION* would be to change the indexing, but that may take too long 
+
+** Go over fitness evaluation:
+*** Very suspicious that something is going wrong due to the fitness evaluations appearing to be exactly the same. Go over this. 
+*** Possible sources of error:
+**** Evaluate using candidates 52, 22, and 37 (arbitrary) 
+**** cfg/netParams level error 
+***** Are the same params being used for all candidates? 
+***** [no error] Check .run for paths to netParams and cfg files
+****** cand52 cfg & netParams paths from .run:
+******* Loading file /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_0/NGF_batch_data_cand52_0_cfg.json
+******* Importing netParams from /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_0/NGF_batch_data_cand52_netParams.py
+****** cand52 netParams values from netParams.py above:
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 4.517263692915421
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = 80.89404327157808
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  0.8308996220340148
+***** [no error] Check SBATCH for same thing --> paths here match paths in .run file 
+***** Check candidates themselves for params (look in data struct)
+**** .json loading / analysis level error:
+***** wrong .json being loaded? unlikely. 
+***** analysis is incorrect? 
+***** Loaded (on comet -- in /oasis/ data dir), all 13 current steps for candidates 52, 22, and 37. Looked at mean responses in the same way as its done in the evol script. 
+**** Error when results are appended to fitnessCandidates
+***** same candidate is being attached over and over? unlikely. 
+*** Another possible source of 'error' --> there IS no error, but I am modifying the wrong channel. probably. leak and cm, not sodium. what am I thinking? 
+*** evol script method of looking at mean responses:
+mean_resp3 = [None for i in x]
+>>> for i in range(len(x)):
+...    outputData = json.load(open('NGF_batch_data_cand37_' + str(i) + '.json'))
+...    vdata_toal = list(outputData['simData']['V_soma']['cell_0'])
+...    vdata = vdata_toal[2000:]
+...    steady_state_response = mean(vdata)
+...    mean_resp3[i] = steady_state_response
+** wow, do not modify ch_Navngf --> modify ch_leak (gmax_ch_leak and e_ch_leak) 
+*** Changed last 3 lines of NGF_netParams.py to modify this 
+*** Changed line 66 in NGF_evol_passive.py to reflect this
+*** Changed min and maxParamValues in lines 205, 206 to reflect changes:
+**** minParamValues = [7e-5,-80,0.5]
+**** maxParamValues = [15e-5,-50,2.0]
+** IDEAS FOR LATER:
+*** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+*** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
