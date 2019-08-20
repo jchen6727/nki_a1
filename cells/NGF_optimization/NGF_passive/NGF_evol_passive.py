@@ -63,7 +63,7 @@ def evaluate_netparams(candidates, args):
 
 		## append new lines  
 		with open('NGF_netParams.py', 'a') as fo: # CHANGE THIS TO REFLECT THE MECHANISMS BEING CHANGED
-			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = " + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = " + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  " + str(cand[2]))
+			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = " + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = " + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  " + str(cand[2]))
 
 		# Run batch using the above candidate params
 		NGF_batch_passive.batch_full(icand, ngen, runType)
@@ -87,8 +87,8 @@ def evaluate_netparams(candidates, args):
 	total_cands = len(candidates)
 	fitnessCandidates = [None for cand in candidates]
 
-	cands_threshold = 0.9
-	while cands_completed < int(cands_threshold*total_cands):
+	#cands_threshold = 0.9
+	while cands_completed < total_cands: #int(cands_threshold*total_cands):
 		print(str(cands_completed) + ' / ' + str(total_cands) + ' candidates completed')
 
 		unfinished = [i for i, x in enumerate(fitnessCandidates) if x is None]
@@ -201,9 +201,9 @@ subthreshold_deltas = [-6, -9, -13, -16, -19, -23, -27, -29, -30, -35, -36, -38]
 RMP = -67 #+/- 5mV 
 
 # min and max allowed value for each param optimized:
-#   gmax, ena, cm 
-minParamValues = [3.5,70,0.5]
-maxParamValues = [5.0,90,2.0]
+#   gmax (ch_leak), e (ch_leak), cm 
+minParamValues = [7e-5,-80,0.5]
+maxParamValues = [15e-5,-50,2.0]
 ## ^^ CHANGE THESE TO CHANGE THE PARAM RANGES BEING EXPLORED 
 
 # instantiate MO evolutionary computation algorithm with random seed
