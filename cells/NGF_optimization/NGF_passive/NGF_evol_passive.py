@@ -13,6 +13,7 @@ import tarfile						# to compress data directory
 import shutil						# also necessary to compress data directories
 import datetime						# to label data directories for compression
 from time import sleep,time							# To pause program while batch runs finish
+import pickle
 #import logging 						# To log inspyred output for each generation
 
 
@@ -172,6 +173,23 @@ def evaluate_netparams(candidates, args):
 	return fitnessCandidates
 
 
+######### OBSERVER FUNCTIONS #########
+# prints stats and saves current archive to binary file (pkl) ## Taken from samn evo.py
+def my_EMO_observe(population, num_generations, num_evaluations, args): 
+	print('gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness)
+  my_ec=args['my_ec']
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
+  pickle.dump(my_ec.archive,open(fn,'wb'))
+
+
+# saves individuals in a population to binary file (pkl) ## Taken from samn evo.py
+def my_indiv_observe(population, num_generations, num_evaluations, args):
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'wb'))
+
+
+
 # Generation tracking
 global ngen
 ngen = -1
@@ -221,9 +239,11 @@ my_ec.replacer = ec.replacers.generational_replacement    # existing generation 
 my_ec.terminator = ec.terminators.evaluation_termination  # termination dictated by number of evaluations that have been run
 
 #toggle observers
-my_ec.observer = [ec.observers.stats_observer,  # print evolutionary computation statistics
-                  ec.observers.plot_observer,   # plot output of the evolutionary computation as graph
-                  ec.observers.best_observer]   # print the best individual in the population to screen
+#my_ec.observer = [ec.observers.stats_observer,  # print evolutionary computation statistics
+#                  ec.observers.plot_observer,   # plot output of the evolutionary computation as graph
+#                  ec.observers.best_observer]   # print the best individual in the population to screen
+my_ec.observer = [my_indiv_observe] # saves individuals to pkl file each generation
+my_ec.observer.append(my_EMO_observe)
 
 #call evolution iterator
 final_pop = my_ec.evolve(generator=generate_netparams,  # assign design parameter generator to iterator parameter generator
@@ -234,8 +254,8 @@ final_pop = my_ec.evolve(generator=generate_netparams,  # assign design paramete
                       max_evaluations=96*1000,             	# evolutionary algorithm termination at max_evaluations evaluations
                       num_selected=50,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
-                      num_inputs=3)              		# len([a, b, c, d, ...]) -- number of parameters being varied
-                      #num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+                      num_inputs=3,              		# len([a, b, c, d, ...]) -- number of parameters being varied
+                      num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
 
 
 final_arc = my_ec.archive                               # seen this MO examples
