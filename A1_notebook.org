@@ -24597,10 +24597,48 @@ mean_resp3 = [None for i in x]
 ** Fitness values are still the same & and fitness didn't work. Same error as before. PROBLEMS ARE SAME. 
 ** (1) Fitness error:
 *** Error is same as listed above
-*** Hypothesis 1: It is due to num_elites
+*** [DISCARD] Hypothesis 1: It is due to num_elites
 **** Attempt 1: Commented out num_elites line
-*** Hypothesis 2: It is due to best_observer 
+**** Same error
+*** [CORRECT] Hypothesis 2: It is due to best_observer 
+**** Uncommented num_elites and changed to num_elites = 1
+**** Added 'import pickle' to imports section (see below for reason) 
+**** Added 2 fitness functions (taken from samn's evo.py):
+***** my_indiv_observe:
+****** MINE:
+# saves individuals in a population to binary file (pkl) ## Taken from samn evo.py
+def my_indiv_observe(population, num_generations, num_evaluations, args):
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'wb'))
+****** SAMN:
+# saves individuals in a population to binary file (pkl)
+def my_indiv_observe (population, num_generations, num_evaluations, args):
+  fn = 'data/' + evostr + '/gen_' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'w'))
+***** my_EMO_observe:
+****** MINE:
+def my_EMO_observe(population, num_generations, num_evaluations, args): 
+	print('gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness)
+  my_ec=args['my_ec']
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
+  pickle.dump(my_ec.archive,open(fn,'w'))
+
+****** SAMN: 
+def my_EMO_observe (population, num_generations, num_evaluations, args):
+  print 'gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness
+  es=args['es']
+  fn = 'data/' + evostr + '/ARCH.pkl'
+  pickle.dump(es.archive,open(fn,'w'))
+***** MAJOR DIFFERENCES: 'wb' instead of 'w' for open (py3 vs py2), and my_ec instead of es
+**** Added 2 observer lines to main code:
+***** my_ec.observer = [my_indiv_observe]
+***** my_ec.observer.append(my_EMO_observe)
+** (2) Fitnesses are the same: 
+*** Evaluate this AFTER fixing (1) 
 ** IDEAS FOR LATER:
 *** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
 *** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
 *** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
+*** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
