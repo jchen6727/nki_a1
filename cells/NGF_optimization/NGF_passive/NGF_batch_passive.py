@@ -39,9 +39,9 @@ def batch_full(icand, ngen, runType):
 
 
 	elif runType == 'mpi_bulletin':
-		if not os.path.isdir(batchLabel + '_gen_' + str(ngen)):
-			os.mkdir(batchLabel + '_gen_' + str(ngen))
-		b.saveFolder = batchLabel + '_gen_' + str(ngen)
+		if not os.path.isdir('/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/' + batchLabel + '_gen_' + str(ngen)):
+			os.mkdir('/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/' + batchLabel + '_gen_' + str(ngen))
+		b.saveFolder = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/' + batchLabel + '_gen_' + str(ngen)
 		b.runCfg = {'type': 'mpi_bulletin',
 						'script': 'NGF_init.py',
 						'skip': False}	# Needs to be false so can successfully run batches in optimization scripts -- is this true? 
