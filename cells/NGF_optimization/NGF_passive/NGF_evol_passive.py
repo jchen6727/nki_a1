@@ -205,9 +205,9 @@ elif machine_ID == 'LOCAL':
 	data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
 	runType = 'mpi_bulletin'
 elif machine_ID == 'zn':
-	data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
-	fn_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/gen'
-	fn_EMO = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/OBSERVER.pkl'
+	data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/NGF_batch_data_gen_'
+	fn_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/gen'
+	fn_EMO = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/OBSERVER.pkl'
 	runType = 'mpi_bulletin'
 else:
 	raise Exception("Computing system not recognized")
