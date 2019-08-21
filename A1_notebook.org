@@ -24658,3 +24658,21 @@ KeyError: 'my_ec'
 *** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
 *** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
 *** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
+* <2019-08-21 Wed -- NGF passive run on zn>
+** running on zn because comet is arbitrarily crashing: 
+*** ERROR:
+*** Solutions:
+**** contact help desk
+**** have salva show me how to deploy gcloud cluster 
+** Changes to NGF_evol_passive.py for evol run:
+*** added fn_stem and fn_EMO to 'if machine_ID ==' block for ease of use in the custom observer functions. 
+*** widened the range of gmax param
+
+** Why are all the fitness values the same on the comet run?? Run this on zn for a day and check back in. (the 'g' in ch_leak?) 
+
+** IDEAS FOR LATER:
+*** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+*** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
+*** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
+*** automate data directory clearance before each run 
