@@ -24667,8 +24667,15 @@ KeyError: 'my_ec'
 ** Changes to NGF_evol_passive.py for evol run:
 *** added fn_stem and fn_EMO to 'if machine_ID ==' block for ease of use in the custom observer functions. 
 *** widened the range of gmax param
+** Changes to NGF_evol_passive.py & NGF_batch_passive.py for data dir on zn:
+*** changed runType=='mpi_bulletin' statements about data dirs to include NGF_passive/data/ + batchLabel, etc. (new thing is the 'data' subdir of NGF_passive -- created on neurosim server already) 
+*** Changed corresponding lines in NGF_evol_passive.py 
+** TRANSFERRED REPO TO suny-downstate-medical-center/neurosim (organization/team) for widened access. On each system (comet, no, and local, changed git remote):
+*** (1) git remote -v (to check)
+*** (2) git remote set-url origin https://github.com/suny-downstate-medical-center/A1.git 
+*** (3) git remote -v (to check again)  
 
-** Why are all the fitness values the same on the comet run?? Run this on zn for a day and check back in. (the 'g' in ch_leak?) 
+** *Why* are all the fitness values the same on the comet run?? Run this on zn for a day and check back in. (the 'g' in ch_leak?) 
 
 ** IDEAS FOR LATER:
 *** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
