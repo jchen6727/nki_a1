@@ -113,7 +113,7 @@ def evaluate_netparams(candidates, args):
 			#print('data_files_DONE is below')#CHECK STATEMENT
 			#print(data_files_DONE)
 
-			data_file_root = 'NGF_batch_data_cand' + str(cand_index) 
+			data_file_root = 'NGF_batch_data_cand' + str(cand_index)
 			#print('data_file_root =' + data_file_root)
 			data_files_NEEDED = [data_file_root + '_0.json', data_file_root + '_1.json', data_file_root + '_2.json', data_file_root + '_3.json', data_file_root + '_4.json', data_file_root + '_5.json', data_file_root + '_6.json', data_file_root + '_7.json', data_file_root + '_8.json', data_file_root + '_9.json', data_file_root + '_10.json', data_file_root + '_11.json', data_file_root + '_12.json']
 			data_files_NEEDED.sort()
@@ -176,19 +176,21 @@ def evaluate_netparams(candidates, args):
 ######### OBSERVER FUNCTIONS #########
 # saves individuals in a population to binary file (pkl) ## Taken from samn evo.py
 def my_indiv_observe(population, num_generations, num_evaluations, args):
-	fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+	#fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+	global fn_stem
+	fn = fn_stem + str(num_generations) + '_indiv.pkl'
 	pickle.dump(population,open(fn,'wb'))
 
 # prints stats and saves current archive to binary file (pkl) ## Taken from samn evo.py
 def my_EMO_observe(population, num_generations, num_evaluations, args): 
 	print('gen:',num_generations,'eval:',num_evaluations,'worst:',population[-1].fitness,'best:',population[0].fitness)
-	#my_ec=args['my_ec']
-	fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
-	pickle.dump(my_ec.archive,open(fn,'wb'))
+	#fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
+	global fn_EMO
+	#global my_ec
+	pickle.dump(my_ec.archive,open(fn_EMO,'wb'))
 
 
 # Generation tracking
-global ngen
 ngen = -1
 
 # SET DATA PATH HERE 
@@ -196,18 +198,22 @@ machine_ID = input('COMET or LOCAL or zn?')
 
 if machine_ID == 'COMET':
 	data_path_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_'
+	fn_stem = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/gen'
+	fn_EMO = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl'
 	runType = 'hpc_slurm'
 elif machine_ID == 'LOCAL':
 	data_path_stem = '/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
 	runType = 'mpi_bulletin'
 elif machine_ID == 'zn':
 	data_path_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/NGF_batch_data_gen_'
+	fn_stem = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/gen'
+	fn_EMO = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/OBSERVER.pkl'
 	runType = 'mpi_bulletin'
 else:
 	raise Exception("Computing system not recognized")
 
 
-global my_ec
+#global my_ec
 
 # create random seed for evolutionary computation algorithm --> my_ec = ec.EvolutionaryComputation(rand)
 rand = Random()
@@ -220,7 +226,7 @@ RMP = -67 #+/- 5mV
 # min and max allowed value for each param optimized:
 #   gmax (ch_leak), e (ch_leak), cm 
 minParamValues = [7e-5,-80,0.5]
-maxParamValues = [15e-5,-50,2.0]
+maxParamValues = [7e-4,-50,2.0]
 ## ^^ CHANGE THESE TO CHANGE THE PARAM RANGES BEING EXPLORED 
 
 # instantiate MO evolutionary computation algorithm with random seed
