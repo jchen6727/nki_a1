@@ -58,13 +58,13 @@ def evaluate_netparams(candidates, args):
 		## overwrite old lines
 		fo = open('NGF_netParams.py', 'w')
 		for line in lines: # CHANGE THIS TO MATCH NUMBER OF MODIFIED PARAMS
-			if line != lines[len(lines)-1] and line != lines[len(lines)-2] and line != lines[len(lines)-3]: # requires that there be the desired lines already at the end
+			if line != lines[len(lines)-1] and line != lines[len(lines)-2] and line != lines[len(lines)-3] and line != lines[len(lines)-4]: # requires that there be the desired lines already at the end
 				fo.write(line)
 		fo.close()
 
 		## append new lines  
 		with open('NGF_netParams.py', 'a') as fo: # CHANGE THIS TO REFLECT THE MECHANISMS BEING CHANGED
-			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = " + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = " + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  " + str(cand[2]))
+			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = " + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = " + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = " + str(cand[2]) + "\ncellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  " + str(cand[3]))
 
 		# Run batch using the above candidate params
 		NGF_batch_passive.batch_full(icand, ngen, runType)
@@ -244,9 +244,9 @@ subthreshold_deltas = [-6, -9, -13, -16, -19, -23, -27, -29, -30, -35, -36, -38]
 RMP = -67 #+/- 5mV 
 
 # min and max allowed value for each param optimized:
-#   gmax (ch_leak), e (ch_leak), cm 
-minParamValues = [7e-5,-80,0.5]
-maxParamValues = [7e-4,-50,3]
+#   gmax (ch_leak), e (ch_leak), gbar_hd, cm 
+minParamValues = [7e-5,-80, 0.00001 ,0.5]
+maxParamValues = [7e-4,-50, 0.001, 3]
 ## ^^ CHANGE THESE TO CHANGE THE PARAM RANGES BEING EXPLORED 
 
 # instantiate MO evolutionary computation algorithm with random seed
@@ -279,7 +279,7 @@ final_pop = my_ec.evolve(generator=generate_netparams,  # assign design paramete
                       max_evaluations=96*1000,             	# evolutionary algorithm termination at max_evaluations evaluations
                       num_selected=50,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
-                      num_inputs=3)              		# len([a, b, c, d, ...]) -- number of parameters being varied
+                      num_inputs=4)              		# len([a, b, c, d, ...]) -- number of parameters being varied
                       #num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
 
 
