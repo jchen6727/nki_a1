@@ -34,7 +34,7 @@ def batch_full(icand, ngen, runType):
 								'mpiCommand': 'ibrun',
 								'skip': False,
 								'sleepInterval': 0.5,
-								'custom': '#SBATCH --mail-type=NONE',
+								'email': 'erica.griffith@downstate.edu',
 								'custom': '#SBATCH --partition=shared'}
 
 
