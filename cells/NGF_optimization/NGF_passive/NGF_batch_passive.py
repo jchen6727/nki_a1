@@ -30,6 +30,7 @@ def batch_full(icand, ngen, runType):
 								'nodes': 1,
 								'coresPerNode': 1,
 								'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive',
+								'mail-type': 'NONE',
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
 								'skip': False,
