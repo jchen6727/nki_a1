@@ -24783,3 +24783,4 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 		if mean_responses[x] == None:
 			mean_responses[x] = 10e6 #arbitrary large value 
 ***  Basically, added try-except block then skipped the ones that aren't working, then cull None values from mean_responses
+** still getting email bounces -- added 'mail-type': 'NONE' to b.runCfg for hpc_slurm 
