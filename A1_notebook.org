@@ -24716,6 +24716,70 @@ gbar_hd = 0.0001
 ****** Increase --> 
 ****** Decrease --> 
 * <2019-08-28 Wed -- NGF>
+** GIT VERSION CONTROL NUMBERS:
+*** a599dd8
+*** be123e8
 ** deleted 'email' line for runType hpc_slurm in NGF_batch_passive.py
 ** added 'nodes': 1 and 'coresPerNode': 24 to runType mpi_bulletin in NGF_batch_passive.py 
-** Increased sleepinterval to 0.3 in evol and batch_passive scripts 
+** Increased sleepinterval to 0.3 in evol and batch_passive scripts. 
+** THINGS TO DEAL WITH:
+*** "NONE" values being decoded 
+*** Sleep Interval --> increased from 0.1 to 0.5 in evol and batch
+*** email on comet --> deleted from b.runCfg in batch
+*** num_elites --> go from 1 to 0
+*** final pop print lines? 
+*** pas mechanism: ch_leak or pas? 
+*** add another compartment? (dend)? 
+*** logging? 
+*** ec.observers.stats_observer recoverable in multi-objective? 
+*** no plotting from netpyne -- how to achieve this?  
+*** automate data directory move before each run 
+
+** ERROR:
+FITNESS CALCULATIONS FOR CAND 49 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 257, in <module>
+    num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individua$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 480, in evolve
+    offspring_fit = evaluator(candidates=offspring_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 133, in evaluate_netparams
+    outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 296, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+** The above error is having a problem loading the .json file that does evidently exist. Perhaps it is still being written? Added the following lines to handle that error in case in happens again:
+*** 	current_step_ERRORS = []
+	for current_step in range(len(data_files_NEEDED)):
+		try: 
+			data_test = json.load(open(data_path + data_file_root + '_' + str(current_step) + '.json'))
+		except:
+			print('json file for gen ' + str(ngen) + ', cand ' + str(cand_index) + ', current injection # ' + str(current_step) + ' is not loading properly')
+			current_step_ERRORS.append(current_step)
+
+
+	###### EXTRACT THE MEAN STEADY STATE VOLTAGE RESPONSES ###### 
+	# RMP_ritness = eval_RMP_fitness(ARGS)
+
+	mean_responses = [None for data in data_files_NEEDED]
+	for i in range(len(data_files_NEEDED)):
+		if i in current_step_ERRORS:
+			continue
+		outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+		vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+		vdata = vdata_total[2000:] # accounts for delay 
+		steady_state_response = mean(vdata)
+		mean_responses[i] = steady_state_response
+
+	#Clear mean_responses of any remaining NoneType values
+	for x in range(len(mean_responses)):
+		if mean_responses[x] == None:
+			mean_responses[x] = 10e6 #arbitrary large value 
+***  Basically, added try-except block then skipped the ones that aren't working, then cull None values from mean_responses
