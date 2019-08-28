@@ -29,7 +29,6 @@ def batch_full(icand, ngen, runType):
 								'walltime': '00:15:00',
 								'nodes': 1,
 								'coresPerNode': 1,
-								'email': 'ericaygriffith@gmail.com',
 								'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive',
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
@@ -44,6 +43,8 @@ def batch_full(icand, ngen, runType):
 		b.saveFolder = '/u/ericag/A1/cells/NGF_optimization/NGF_passive/data/' + batchLabel + '_gen_' + str(ngen)
 		b.runCfg = {'type': 'mpi_bulletin',
 						'script': 'NGF_init.py',
+						'nodes': 1,
+						'coresPerNode': 24,
 						'skip': False}	# Needs to be false so can successfully run batches in optimization scripts -- is this true? 
 
 	else:
