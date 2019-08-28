@@ -105,7 +105,7 @@ def evaluate_netparams(candidates, args):
 			
 			data_files_DONE = []
 			for i in temp:
-				if 'batch.json' not in i and 'cfg.json' not in i:
+				if 'batch.json' not in i and 'cfg.json' not in i: # THIS MIGHT NOT BE NECESSARY
 					data_files_DONE.append(i)
 
 
@@ -126,15 +126,32 @@ def evaluate_netparams(candidates, args):
 				print('FITNESS CALCULATIONS FOR CAND ' + str(cand_index) + ' BEGINNING')
 
 			############ FITNESS CALCULATIONS ##########################
+				current_step_ERRORS = []
+				for current_step in range(len(data_files_NEEDED)):
+					try: 
+						data_test = json.load(open(data_path + data_file_root + '_' + str(current_step) + '.json'))
+					except:
+						print('json file for gen ' + str(ngen) + ', cand ' + str(cand_index) + ', current injection # ' + str(current_step) + ' is not loading properly')
+						current_step_ERRORS.append(current_step)
+
+
 				###### EXTRACT THE MEAN STEADY STATE VOLTAGE RESPONSES ###### 
 				# RMP_ritness = eval_RMP_fitness(ARGS)
+
 				mean_responses = [None for data in data_files_NEEDED]
 				for i in range(len(data_files_NEEDED)):
+					if i in current_step_ERRORS:
+						continue
 					outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
 					vdata_total = list(outputData['simData']['V_soma']['cell_0'])
 					vdata = vdata_total[2000:] # accounts for delay 
 					steady_state_response = mean(vdata)
 					mean_responses[i] = steady_state_response
+
+				#Clear mean_responses of any remaining NoneType values
+				for x in range(len(mean_responses)):
+					if mean_responses[x] == None:
+						mean_responses[x] = 10e6 #arbitrary large value 
 
 				###### RMP ######
 				RMP_sim = mean_responses[0]
@@ -145,10 +162,13 @@ def evaluate_netparams(candidates, args):
 				###### SUBTHRESHOLD RESPONSES #####
 				# subthresh_fitness = eval_subthresh_fitness(ARGS)
 				sim_responses = mean_responses[1:]
+				#sim_deltas = [0]*len(sim_responses)
 				sim_deltas = [None for n in sim_responses]
 				for i in range(len(sim_responses)):
 					sim_deltas[i] = sim_responses[i] - RMP_sim
 
+				global subthreshold_deltas
+				#subthresh_comparison = [0]*len(subthreshold_deltas)
 				subthresh_comparison = [None for x in subthreshold_deltas]
 				for i in range(len(sim_deltas)):
 					subthresh_comparison[i] = (sim_deltas[i] - subthreshold_deltas[i])**2
@@ -226,7 +246,7 @@ RMP = -67 #+/- 5mV
 # min and max allowed value for each param optimized:
 #   gmax (ch_leak), e (ch_leak), cm 
 minParamValues = [7e-5,-80,0.5]
-maxParamValues = [7e-4,-50,2.0]
+maxParamValues = [7e-4,-50,3]
 ## ^^ CHANGE THESE TO CHANGE THE PARAM RANGES BEING EXPLORED 
 
 # instantiate MO evolutionary computation algorithm with random seed
@@ -259,8 +279,8 @@ final_pop = my_ec.evolve(generator=generate_netparams,  # assign design paramete
                       max_evaluations=96*1000,             	# evolutionary algorithm termination at max_evaluations evaluations
                       num_selected=50,                  	# number of generated parameter sets to be selected for next generation
                       mutation_rate=0.2,                # rate of mutation
-                      num_inputs=3,              		# len([a, b, c, d, ...]) -- number of parameters being varied
-                      num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+                      num_inputs=3)              		# len([a, b, c, d, ...]) -- number of parameters being varied
+                      #num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
 
 
 final_arc = my_ec.archive                               # seen this MO examples
