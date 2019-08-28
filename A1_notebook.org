@@ -24718,3 +24718,4 @@ gbar_hd = 0.0001
 * <2019-08-28 Wed -- NGF>
 ** deleted 'email' line for runType hpc_slurm in NGF_batch_passive.py
 ** added 'nodes': 1 and 'coresPerNode': 24 to runType mpi_bulletin in NGF_batch_passive.py 
+** Increased sleepinterval to 0.3 in evol and batch_passive scripts 
