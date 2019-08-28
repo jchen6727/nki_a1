@@ -33,7 +33,7 @@ def batch_full(icand, ngen, runType):
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
 								'skip': False,
-								'sleepInterval': 0.1,
+								'sleepInterval': 0.5,
 								'custom': '#SBATCH --partition=shared'}
 
 
