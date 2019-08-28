@@ -24659,6 +24659,9 @@ KeyError: 'my_ec'
 *** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
 *** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
 * <2019-08-21 Wed -- NGF passive run on zn>
+** Git repo version control numbers:
+*** 263a1fb
+*** ba984ba
 ** running on zn because comet is arbitrarily crashing: 
 *** ERROR:
 *** Solutions:
@@ -24676,10 +24679,42 @@ KeyError: 'my_ec'
 *** (3) git remote -v (to check again)  
 
 ** *Why* are all the fitness values the same on the comet run?? Run this on zn for a day and check back in. (the 'g' in ch_leak?) 
-
+** Compiled mod files on 'no' in /u/ericag/A1/cells/NGF_optimization/NGF_passive, using =nrnivmodl=
+** Recall, on 'zn', 2 things necessary to do to the environment:
+*** conda activate py36
+*** ssh -Y into 'zn' (trusted X11 forwarding) 
 ** IDEAS FOR LATER:
 *** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
 *** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
 *** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
 *** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
 *** automate data directory clearance before each run 
+* <2019-08-27 Tue -- NGF cell hand-tuning + connectivity data>
+** Added a paper to the connectivity params
+** Hand-tune NGF cell:
+*** (on laptop) mkdir ~/Desktop/NGF_cell
+*** Populate this directory with the correct files 
+*** nrnivmodl to compile; python -i test_ngf.py to test: WORKING
+*** Modify 
+*** GOALS:
+**** RMP = -67mV 
+***** Took out ch_leak and added 'insert pas' instead
+***** Changed e_pas in ngf_cell.hoc in order to get good RMP 
+**** Get down to -105mV with -0.12 amp input
+***** With params below, -66.99 --> -67.08 with -0.12 nA input
+cm = 1
+
+// LEAK CHANNEL
+e_pas = -67.10
+g_pas = 0.001 //0.001 is default
+
+// Ih for SAG 
+gbar_hd = 0.0001
+***** Change cm:
+****** Increase --> "smoother" changes in voltage (makes sense; holds onto charge better?) 
+***** Change g_pas:
+****** Increase --> 
+****** Decrease --> 
+* <2019-08-28 Wed -- NGF>
+** deleted 'email' line for runType hpc_slurm in NGF_batch_passive.py
+** added 'nodes': 1 and 'coresPerNode': 24 to runType mpi_bulletin in NGF_batch_passive.py 
