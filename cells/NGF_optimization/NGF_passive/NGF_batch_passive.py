@@ -32,7 +32,7 @@ def batch_full(icand, ngen, runType):
 								'folder': '/home/eyg42/A1/cells/NGF_optimization/NGF_passive',
 								'script': 'NGF_init.py',
 								'mpiCommand': 'ibrun',
-								'skip': False,
+								'skip': True,
 								'sleepInterval': 0.5,
 								'email': 'erica.griffith@downstate.edu',
 								'custom': '#SBATCH --partition=shared'}
