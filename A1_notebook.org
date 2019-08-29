@@ -24787,7 +24787,52 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 
 ** WHAT I HAVE TO DO FOR THE REST OF THE DAY:
 *** figures
+**** current_injection = -0.1
+**** PARAMS for NGF_0:
+***** *cm = 1*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_1:
+***** *cm = 0.3*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+***** "sharper" on the bottom 
+**** PARAMS for NGF__1:
+***** *cm = 0.3*, e_ch_leak = -67, *gmax_ch_leak = 9.470825e-05*, gbar_hd = 0.0001
+***** vinit = -65.915
+***** "sharper" on the bottom 
+**** PARAMS for NGF_2:
+***** *cm = 2*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_3:
+***** cm = 1, e_ch_leak = -67, *gmax_ch_leak = 0.01*, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_4:
+***** cm = 1, e_ch_leak = -67, *gmax_ch_leak = 0.0001*, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_5:
+***** cm = 1, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, *gbar_hd = 0.00001*
+***** vinit = -65.915
+**** PARAMS for NGF_6:
+***** cm = 1, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, *gbar_hd = 0.001*
+***** vinit = -65.915
 *** email bounce problem update [done]
-*** data for sam
-*** path to data on comet [done]
+*** add hd gbar to comet run [done]
+*** data for sam from paper -- SEND TO SAM:
+**** RMP = -67mV 
+**** Current steps (nA): -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12
+**** Corresponding Deflection from RMP (mV): -6, -9, -13, -16, -19, -23, -27, -29, -30, -35, -36, -38
+*** path to data on comet -- SEND THIS TO SAMN: 
+**** okay sorry back -- here is a path for evo output on comet: /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive_archive/NGF_passive.aug20
 *** path to cell that can be modified 
+
+
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = 0.000695302349670921
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = -54.2016041361413
+cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.00012968106020774835
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  1.3317379634003228
+
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = 0.00028363025814608827
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = -73.60910610857559
+cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.0006777105190265256
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  2.5942526753849107
+** Appears that the cfg and netParams etc are all different in all scripts and output .json files, but the simData['V_soma']['cell_0'] are the same for all candidates at the same current step
+** Trying 'skip': True in b.runCfg bc that's the only thing I can think of to change 
