@@ -64,7 +64,7 @@ def evaluate_netparams(candidates, args):
 
 		## append new lines  
 		with open('NGF_netParams.py', 'a') as fo: # CHANGE THIS TO REFLECT THE MECHANISMS BEING CHANGED
-			fo.write("cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = " + str(cand[0]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = " + str(cand[1]) + "\ncellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = " + str(cand[2]) + "\ncellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  " + str(cand[3]))
+			fo.write("cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = " + str(cand[0]) + "\ncellRule['secs']['soma']['mechs']['ch_leak']['e'] = " + str(cand[1]) + "\ncellRule['secs']['soma']['mechs']['hd']['gbar'] = " + str(cand[2]) + "\ncellRule['secs']['soma']['geom']['cm'] =  " + str(cand[3]))
 
 		# Run batch using the above candidate params
 		NGF_batch_passive.batch_full(icand, ngen, runType)
@@ -245,8 +245,8 @@ RMP = -67 #+/- 5mV
 
 # min and max allowed value for each param optimized:
 #   gmax (ch_leak), e (ch_leak), gbar_hd, cm 
-minParamValues = [7e-5,-80, 0.00001 ,0.5]
-maxParamValues = [7e-4,-50, 0.001, 3]
+minParamValues = [7e-7,-85, 0.00001 ,0.5]
+maxParamValues = [7e-4,-65, 0.001, 3]
 ## ^^ CHANGE THESE TO CHANGE THE PARAM RANGES BEING EXPLORED 
 
 # instantiate MO evolutionary computation algorithm with random seed
