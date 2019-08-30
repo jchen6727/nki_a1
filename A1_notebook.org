@@ -24836,3 +24836,58 @@ cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.0006777105190265
 cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  2.5942526753849107
 ** Appears that the cfg and netParams etc are all different in all scripts and output .json files, but the simData['V_soma']['cell_0'] are the same for all candidates at the same current step
 ** Trying 'skip': True in b.runCfg bc that's the only thing I can think of to change 
+
+* <2019-08-29 Thu -- NGF overlay expt vs model + saving issues>
+** Saving issues:
+*** Per samn:
+if voltage outputs are identical that might mean that the same core/thread is saving the data
+instead of each individual core/thread
+when you run a parallel program, there are multiple processes running at same time
+each has its own memory/state
+and they coordinate/communicate
+
+** Temp of monkey NGF paper? 
+** Function+fig -- overlay of original model over experimental data 
+*** ~/Desktop/NGF_tests/NGF_overlay
+*** Get original cell into this directory + mod files + test_run python script
+*** orig cell placed in above dir: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=187604&file=/modeldbca1/cells/class_ngfcell.hoc#tabs-2
+*** .hoc file renamed to ngf_cell.hoc 
+*** mod files copied over from ~/Desktop/NGF_tests/NGF_cell
+*** mod files compiled with nrnivmodl 
+*** test_ngf.py copied over from ~/Desktop/NGF_tests/NGF_cell 
+
+** ERROR:
+Saving output as /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_14/NGF_batch_data_cand43_0.json  ...
+--------------------------------------------------------------------------
+An MPI process has executed an operation involving a call to the
+"fork()" system call to create a child process.  Open MPI is currently
+operating in a condition that could result in memory corruption or
+other system errors; your MPI job may hang, crash, or produce silent
+data corruption.  The use of fork() (or system() or other calls that
+create child processes) is strongly discouraged.
+
+The process that invoked fork was:
+
+  Local host:          comet-10-46 (PID 13154)
+  MPI_COMM_WORLD rank: 0
+
+If you are *absolutely sure* that your application will successfully
+and correctly survive a call to fork(), you may disable this warning
+by setting the mpi_warn_on_fork MCA parameter to 0.
+--------------------------------------------------------------------------
+Finished saving!
+  Done; saving time = 0.10 s.
+Plotting recorded cell traces ...
+-------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code.. Per user-direction, the job has been aborted.
+-------------------------------------------------------
+--------------------------------------------------------------------------
+orterun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[1917,1],0]
+  Exit code:    1
+* <2019-08-30 Fri -- NGF>
+** Comet is still running!! (140 gens so far) 
+** Changing min to 7e-7 for gleak
