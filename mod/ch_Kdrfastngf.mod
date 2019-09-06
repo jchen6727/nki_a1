@@ -47,8 +47,8 @@ PARAMETER {
 
 	:ek  (mV)
 	gmax (mho/cm2)
-	offset5=10 (mV)
-	offset6=10 (mv)
+	offset5=17 (mV)
+	offset6=17 (mv)
 	slope5=.07 (1)
 	slope6=.264 (1)
 }
