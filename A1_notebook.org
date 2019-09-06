@@ -24891,3 +24891,871 @@ the job to be terminated. The first process to do so was:
 * <2019-08-30 Fri -- NGF>
 ** Comet is still running!! (140 gens so far) 
 ** Changing min to 7e-7 for gleak
+* <2019-09-02 Mon -- NGF>
+** <Individual: candidate = [7e-07, -85, 1e-05, 1.9586827954380048], fitness = [0.2266541695763965, 2935.2474706564667], birthdate = 1567436399.5798995>
+** Figure_0: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 7e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -90
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_1_0: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 7e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_2: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_3: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1
+** Figure_4: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  0.8
+* <2019-09-03 Tue -- NGF Passive params finalized>
+** Look at passive traces using values from Figure_4
+*** PARAMS:
+cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  0.8
+** changed hParams['celsius'] to 37 
+** other param sets:
+*** TAG: n1.png 
+cellRule['secs']['soma']['vinit'] = -67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** TAG: n2.png
+cellRule['secs']['soma']['vinit'] = -72 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['mechs']['hd']['vhalfl'] = -100
+cellRule['secs']['soma']['mechs']['hd']['ehd'] = -10
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n1.png
+cellRule['secs']['soma']['vinit'] = -67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['soma']['mechs']['hd']['vhalfl'] = -100 
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n2.png:
+cellRule['secs']['soma']['vinit'] = -66 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n3.png:
+cellRule['secs']['soma']['vinit'] = -66 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 3e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n4.png:
+*** Figure_PRE_FINAL.png:
+# cellRule['secs']['soma']['vinit'] = -66 #-67.2
+# cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+# cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+# cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+# cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_FINAL.png:
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+** FINAL PASSIVE PARAMS:
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+* <2019-09-04 Wed -- NGF active>
+** FINAL PASSIVE PARAMS: 
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+** Active param modification process:
+*** (1) Get the data (done)
+**** FIGURE: [[~/Desktop/NGF_tests/NGF_overlay_ACTIVE/active.png]]
+**** DATA (used web plot digitizer: https://apps.automeris.io/wpd/)
+***** Note: all current injections are the amount "above threshold"
+***** Note: this is steady-state frequency
+***** 40pA: 21 Hz
+***** 50pA: 24 Hz
+***** 60pA: 27 Hz 
+***** 70pA: 29 Hz
+***** 80pA: 33 Hz
+***** 90pA: 35 Hz
+***** 100pA: 36 Hz
+***** 110pA: 38 Hz
+***** 120pA: 40 Hz
+*** (2) Get the params to be potentially modified
+*** (3) Set up an overlay script
+**** PSEUDO CODE:
+- run individual_cell.py at current step
+- when len(spkt) == 1; store current step value and break loop
+- cfg.amp then equals ^^ current step + the amt_above thresh
+- run batch using this
+- do data analysis 
+*** (4) Start testing 
+** candidates tried:
+*** TAG: Figure_n0 [6654]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09
+*** TAG: Figure_n1
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01 #0.15514516
+*** TAG: Figure_n2
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 40 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09
+*** TAG: Figure_n3
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.07
+*** TAG: Figure_n4
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.08
+*** TAG: Figure_n5
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 10 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.08
+*** NOW INCREASING KDR AND NA IN PARALLEL
+*** TAG: Figure_n6
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1
+*** TAG: Figure_n7 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.2
+*** TAG: Figure_n8 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n9 [UNSAVED -- 6593 again]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 55 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n10 [6558 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 65 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n11
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 65 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n12 [UNSAVED -- 6558 again, traces ~ unchanged]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 95 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n13 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n14 [UNSAVED]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 5
+*** TAG: Figure_n15 [6558 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 50
+*** TAG: Figure_n16 [5969 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 1000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** NOW TRYING TO HIT BLOCKADE *THEN* INCREASE KDR
+*** TAG: Figure_n17 [5812 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 2000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n18 [5673 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n19 [5524 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 4000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n20 [5483 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 5000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n21 [4952 HOWEVER NOW SEE SPIKING ON ITS OWN]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 10000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] =
+*** ~3000 I see it start to spike on its own --- samn says 
+*** TAG: Figure_n22 [1067 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 400000
+** NOTE: if having python2 to python3 pickle error re: 
+**** ERROR: 
+UnicodeDecodeError: 'ascii' codec can't decode byte 0x89 in position 0: ordinal not in range(128)
+**** SOLUTION:
+with open(mshelffile, 'rb') as f:
+    d = pickle.load(f, encoding='latin1') 
+** GEOMETRY OF SOMA OF OTHER INTERNEURONS:
+*** PV: {nseg: 1, diam: 29.0, L: 27.0, cm: 1.2, Ra: 150.0}
+*** SOM: {nseg: 1, diam: 42.0, L: 42.0, cm: 1.2, Ra: 150.0}
+** GEOMETRY OF DENDS OF OTHER INTERNEURONS:
+*** PV: {nseg: 1, diam: 7.0, L: 44.0, cm: 1.2, Ra: 150.0}
+*** SOM: {nseg: 1, diam: 7.0, L: 176.0, cm: 1.2, Ra: 150.0}
+** SOMA AREA IN NGF PAPER (rat vs. monkey): macaque is ~92+/- 39 micron2
+** Added dend section to ngf_cell.hoc in ~/Desktop/NGF_tests/NGF_overlay_ACTIVE/ngf_cell.hoc 
+** Edited GEOMETRY of soma for ngf:
+*** from default to L = 9.5, diam = 9.5 (per samn) 
+*** NGF paper rat vs. monkey says soma area is ~92 +/- 39 micron2
+** PASSIVE FITTING FOR NEW GEOM + DEND:
+*** TAG: Figure_d0.png
+## SOMA: 
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND:
+#cellRule['secs']['dend']['vinit'] = -65.6 #-67.2
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-7 #7e-7
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+*** Figure_d1.png (UNSAVED)
+**** increase soma gpas only to 5e-6 
+**** Fitness SKYROCKETED (BAD)
+*** Figure_d2.png (UNSAVED)
+**** decrease soma gpas only to 5e-8 
+**** AWFUL fitness
+*** Figure_d3.png 
+**** Turned on cfg.hParams['celsius'] = 37
+**** soma ONLY modified (w/ original params from the other day); dend inserted but unmodified:
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+**** fitness is a little worse than d0, but not by much
+*** Figure_d4.png
+**** changed Ra soma to 100 (from 14), left only soma modified, dend unmodified
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+**** eh, fitness is around same as d3
+*** Figure_d5.png
+**** decrease dend gpas to 5e-7 (from 0.001)
+**** AWFUL fitness
+*** Figure_d6.png
+**** change dend gpas to 5e-6
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+#cellRule['secs']['dend']['vinit'] = -65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+**** not as bad as the worst, better than d5
+*** Figure_d7.png
+**** decreased gpas of soma only
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-8 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+#cellRule['secs']['dend']['vinit'] = -65.6
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+**** not the best not the worst 
+*** Figure_d8.png 
+**** decrease gpas of soma only to 5e-9 
+**** no diff from fitness from 5e-8? 
+*** Figure_d9.png [3909 ]:
+**** knocked out Ih in dend
+**** params (low gpas for soma)
+## SOMA
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-9 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5 
+*** Figure_d10.png:
+**** still have dend Ih knocked out
+**** params (lower gpas for soma: 5e-10) 
+**** no difference from d9? 
+*** Figure_d11.png [1625 ]:
+**** PARAMS:
+## SOMA
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 2e-4
+**** Fiddled around with test_ngf.py, and got good results w/ dend gpas at 2e-4 -- testing full batch. 
+*** Figure_d12.png --> THIS IS THE ONE!! 
+**** Params: same as d11 but changed gpas for dend to 3e-4 
+** PASSIVE PARAM SET FINAL:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+** ACTIVE CANDIDATES: 
+*** PASSIVE PARAMS STAY THE SAME:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+*** hoc file:
+begintemplate ngfcell
+public init
+public soma, dend
+
+create soma, dend
+
+proc topol() {
+	connect dend(0), soma(0)
+}
+
+
+proc init() {
+	topol()
+	soma {
+		Ra = 14
+		nseg = 1
+		cm = 1.8 //1.4
+		L = 9.5
+		diam = 9.5 //diam should be 5.4
+
+
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265 //gNasoma //0.10*gna_scale
+		ena = 55 
+
+		insert hd
+		gbar = 1e-05
+
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516// kdrf 
+
+		insert pas
+
+		insert iconc_Ca
+		catau_iconc_Ca = 10
+		caiinf_iconc_Ca = 5.e-6
+
+		insert ch_KvAngf
+		gmax_ch_KvAngf = 5.2203905e-06 //gKvA
+
+		insert ch_CavN  // HAV-N- Ca channel
+		gmax_ch_CavN =  0.00058169587 // gCavN (N-type)
+
+		insert ch_CavL 
+		gmax_ch_CavL=0.056108352 //gCavL (L-type)
+
+		insert ch_KCaS
+		gmax_ch_KCaS=4.5152237e-07 //gKCaS 
+
+		insert ch_KvCaB
+		gmax_ch_KvCaB =1.0235317e-06 //gKvCaB
+
+		ek=-90
+		eca=130
+	}
+
+	dend {
+		Ra = 14 //100 
+		nseg = 1
+		cm = 1
+		diam = 7 // from PV cell
+		L = 44 // from PV cell 
+
+		// LEAK CHANNEL
+		insert pas
+		e_pas = -67
+		g_pas = 0.001 //0.001 is default
+
+		//Ih for SAG 
+		//insert hd 
+		//gbar_hd = 0.0001				//mho per cm2 //default value in mod file
+
+
+		// Fast Na+ for Spiking 	//gNasoma
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265
+		ena = 55
+
+
+		// Fast K+  	//kdrf 
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516
+		ek = -90
+	}
+
+}
+
+
+
+
+endtemplate ngfcell
+
+
+
+
+
+
+*** cand0.png [146201 ]:
+**** params
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.15514516
+**** fitness 146201
+*** cand1.png [166974 ]
+**** decreasing soma Na+ gmax by 1 order of magnitude (3.78.. --> 0.3) 
+## ACTIVE PARAMS [to be modified]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.15514516 
+
+*** cand2.png [8685 ]
+**** ## ACTIVE PARAMS [to be modified]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.01 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01
+
+### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.01 #3.7860265
+cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01 #0.15514516
+*** cand3.png [154040 ]
+**** PARAMS:
+	### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 1 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 1 #3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1 #0.15514516
+*** cand4.png [226403 ] 
+**** PARAMS:
+	### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+*** cand5.png same as cand0.png [146201 ]
+**** PARAMS: no change to default active + fixed passive
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+
+### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+#cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+#cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+
+### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+#cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+#cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+* <2019-09-05 Thu -- NGF active>
+** FINAL PASSIVE PARAM SET:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+** CANDIDATES IN ORDER OF FITNESS:
+*** active_70: 141
+*** active_69: 294
+*** active_67: 1717
+*** active_65: 1742
+*** active_63: 1777
+*** active_62: 4692
+*** active_61: 10207
+*** active_57: 32902
+*** active_55: 37938
+*** active_51: 46851
+*** active_50: 47210
+*** active_44: 48023
+*** active_33: 142957
+*** active_29: 143266
+*** active_14: 143558
+*** active_28: 143558
+*** active_24: 143809
+*** active_13: 144655
+*** active_23: 144938
+*** active_5:  145595 
+*** active_18: 145595
+*** cand_0:    146201
+*** active_17: 146312
+*** active_20: 146380
+*** active_9:  146677
+*** active_12: 146706
+*** active_2:  146918
+*** active_8:  147726
+*** active_3:  148987 
+*** active_4:  150070
+*** active_16: 153285 
+*** cand3:     154040
+*** active_11: 154416
+*** active_7:  157667
+*** active_10: 160741
+*** active_6:  166336
+*** active_15: 166336
+*** active_0:  166974
+*** active_1:  166974
+** active_0.png [166974 ]:
+*** soma: 0.3 / default, dend: default / default
+**** only decrease soma Na+ gmax (3.7860265 --> 0.3) 
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
+**** worse than w/ higher ? 
+** active_1.png [166974 ]:
+*** soma: 0.03 / default, dend: default / default
+**** decrease soma Na+ gmax more (0.3 --> 0.03) 
+**** same as last cand? 
+** active_2.png [146918 ]:
+*** soma: 5 / default, dend: default / default
+**** Increase soma Na+ gmax, just to see (3 --> 5) 
+**** Is there deploarization block? Is that why it got better? Not that I can see. 
+** active_3.png [148987 ]:
+*** soma: 10 / default, dend: default / default
+**** Increase soma Na+ gmax again (5 --> 10) 
+**** worse than gmax at 5
+** active_4.png [150070 ]:
+*** soma: 5 / 1, dend: default / default
+**** Bring soma Na+ gmax back down to 5
+**** Increase soma K+ gmax from 0.155 --> 1 
+** active_5.png [145595 ]: 
+*** soma: 5 / 0.01, dend: default / default
+**** Keep soma Na+ gmax at 5
+**** Decrease soma K+ gmax to 0.01 
+** active_6.png [166336 ]:
+*** soma: 0.5 / 0.01, dend: default / default
+**** Keep soma K+ gmax at 0.01
+**** Bring down soma Na+ gmax from 5 to 0.5 
+** active_7.png [145595 --> 157667]:
+*** soma: 5 / 0.01, dend: 0.3 / default
+**** Bring soma back to soma Na+ 5 / K+ 0.01 
+**** Uncomment dend mechanisms 
+**** Decrease dend Na+ gmax to 0.3 (from 3.8)
+** active_8.png [157667 --> 147726 ]:
+*** soma: 5 / 0.01, dend: 5 / default
+**** Keep same as before but increase dend Na+ gmax to 5 
+**** worse than active_5, which has same params except slight increase in dend Na+ gmax (soma: 5/0.01, dend: 5/0.155) 
+** active_9.png [146677 ]:
+*** soma: 5 / 0.1, dend:default / default
+**** Increase soma K+ gmax from 0.01 to 0.1 
+** active_10.png [160741 ]:
+*** soma: default / default, dend: 1 / default
+**** best fitness is still with default values
+**** uncomment all and go from here
+**** decrease Na+ of dend relative to Na+ 
+** active_11.png [154416 ]:
+*** soma: default / default, dend: 1 / 0.01 
+**** decrease K+ gmax in dend 
+** active_12.png [146706 ]: 
+*** soma: 7 / 0.01, dend: default / default
+**** start w/ active_5 cands (soma 5 / 0.01) bc best fit so far, and increase gmax 
+**** decreased fitness -- lower soma Na+ gmax below 5 
+** active_13.png [144655 ]:
+*** soma: 3 / 0.01, dend: default / default
+** active_14.png [143558 ]:
+*** soma: 1 / 0.01, dend: default / default
+**** keep lowering soma until fitness gets worse 
+** active_15.png [166336 ]:
+*** soma: 0.9 / 0.01, dend: default / default
+** active_16.png [153285 ]:
+*** soma: 1 / 0.01, dend: 1 / default
+**** Go back to soma 1/0.01 and decrease dend Na+ gmax 
+** active_17.png [146312 ]:
+*** soma: 1 / 0.01, dend: 1 / 0.01 
+**** keep dend Na+ gmax here, but lower K+ gmax dend 
+** active_18.png [145595 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.01 
+**** Lower dend Na+ gmax relative to soma
+** active_19.png [165663 ]:
+*** soma: 1 / 0.01, dend: 0.5 / 0.01
+**** lower dend Na+ gmax more 
+** active_20.png [146380 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.009 
+**** bring dend Na+ back up to 0.9 but lower dend K+ gmax 
+** active_21.png [149470 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.005
+**** lower dend K+ gmax even more 
+** active_22.png [145595 ]:
+*** soma: 0.9 / 0.01, dend: 0.9 / 0.01
+**** bring back to dend 0.9 / 0.01, decrease soma Na+ 
+** active_23.png [144938 ]:
+*** soma: 0.5 / 0.01, dend: 0.9 / 0.01 
+**** lower soma Na+ more 
+** active_24.png [143809 ]:
+*** soma: 0.3 / 0.01, dend: 0.9 / 0.01 
+**** bring down Na+ gmax even more for soma 
+** active_25.png [166336 -- FIG UNSAVED ]:
+*** soma: 0.1 / 0.01, dend: 0.9 / 0.01 
+**** bring down Na+ soma even more 
+** active_26.png [162504 -- FIG UNSAVED ]:
+*** soma: 0.3 / 0.01, dend: 0.5 / 0.01 
+**** bring back to 0.3 for soma Na+ gmax 
+**** lower Na+ gmax for dend 
+** active_27.png [144092 -- FIG UNSAVED ]:
+*** soma: 0.3 / 0.008, dend: 0.9 / 0.01 
+**** bring values back to active_24
+**** lowering dend Na+ didn't go great
+**** lower soma K+ gmax 
+** active_28 [143558 ]:
+*** soma: 0.3 / 0.02, dend: 0.9 / 0.01 
+**** decreasing soma K+ gmax dend made it worse -- increase it instead 
+** active_29 [143266 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.01 
+**** Keep increasing soma K+ gmax 
+** active_30 [144376 ]:
+*** soma: 0.3 / 0.1, dend: 0.9 / 0.01 
+**** keep increasing soma K+ gmax 
+** active_31 [161006 ]:
+*** soma: 0.3 / 0.05, dend: 0.5 / 0.01 
+**** bring back down to active_29 params 
+**** try decreasing dend Na+ gmax 
+** active_32 [143867 ]:
+*** soma: 0.3 / 0.05, dend: 1 / 0.01 
+**** decrease Na+ in dend didn't work -- try increasing 
+**** slightly worse fitness, not the right move 
+** active_33 [142957 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.009
+**** bring back to active_29
+**** lower K+ dend gmax 
+** active_34 [143377 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.005 
+**** keep lowering K+ dend gmax 
+** Try raising soma capacitance --> does help dampen excitability. can change to 1 or 1.5 without sacrificing passive fit --> doing 1.5 for both soma and dend 
+** active_35 [50399 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.009 
+**** cm = 1.5 for both soma and dend for here down 
+** active_36 [60353 ]:
+*** soma: 0.1 / 0.05, dend: 0.9 / 0.009 
+**** samn says to decrease Na+ and increase K+ 
+** active_37 [58359 ]:
+*** soma: 0.1 / 0.08, dend: 0.9 / 0.009
+**** try increasing soma K+ at the same time as decreasing Na+ 
+** active_38 [57880 ]:
+*** soma: 0.1 / 0.1, dend: 0.9 / 0.009 
+**** just try increasing soma K+ more 
+** active_39 [54358 ]:
+*** soma: 0.1 / 0.1, dend: 0.5 / 0.009 
+**** keep soma as is above, and just see if decreasing dend Na+ does anything here 
+**** okay it did bring it down from the previous combo 
+** active_40 [98317 ]:
+*** soma: 0.1 / 0.1, dend: 0.3 / 0.009 
+**** bring dend Na+ conductance down even more 
+** active_41 [98074 ]:
+*** soma: 0.1 / 0.1, dend: 0.3 / 0.01 
+**** try increasing K+ in dend 
+** active_42 [55448 ]:
+*** soma: 0.03 / 0.5, dend: 0.9 / 0.009
+**** go nuts here, just to see. bring values back to active_35 param combo. then lower soma a lot + raise K+ a lot. NEXT TRY RAISING SOMA ALOT. 
+** active_43 [8534 -- but wrong way, too dampened]:
+*** soma: 0.03 / 0.5, dend: 0.1 / 0.01 
+**** now lower Na+ gmax in dend and raise K+ gmax in dend 
+** active_44 [48023 ]:
+*** soma: 0.3 / 0.1, dend: 0.9 / 0.009 
+**** this time go back to active_35 params. then increase K+ in soma. 
+** active_45 [110402 ]:
+*** soma: 0.3 / 0.1, dend: 0.2 / 0.009 
+**** Decrease Na+ in dend to 0.2
+** active_46 [116395 ]:
+*** soma: 0.3 / 0.1, dend: 0.2 / 0.1 
+**** out of curiosity, keep it same as 45 but increase K+ in dend 
+** active_47 [55214 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.009 
+**** decrease dend Na+, just to see
+** active_48 [55214 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.01 
+**** increase K+ dend by a little
+** active_49 [63113 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.05 
+**** didn't make much difference, so increase K+ dend even further --> 0.05 
+** active_50 [47210 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.05 
+**** increase dend Na+ just to see --> to 1
+** active_51 [46851 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1 
+**** Try increasing K+ dend now
+** active_52 [47210 ]:
+*** soma: 0.5 / 0.1, dend: 1 / 0.1 
+**** try increasing soma Na+ conductance, hmm
+** active_53 [56652 ]:
+*** soma: 0.1 / 0.1, dend: 1 / 0.1 
+**** decrease Na+ soma conductance to 0.1 
+** active_54 [46851 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1, 
+*** soma KvAngf gmax --> 5.2e-05
+**** increasing other potassium channels to dampen excitability (1 order of magnitude in this case) 
+** active_55 [37938 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** soma KvAngf gmax --> 5.2e-03
+**** increasing KvAngf 
+** active_56 [37938 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** + gmax_ch_KCaS= 4.5e-06 
+**** increase another K+ channel to see what happens 
+** active_57 [32902 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** ++ gmax_ch_KCaS= 4.5e-04 
+** active_58 [39798 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 
+*** + gmax_ch_KvCaB = 1.02e-05
+** active_59 [8534 -- wrong way ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 
+*** ++ gmax_ch_KvCaB = 1.02e-03
+** active_60 [33003 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 -03? 
+*** - gmax_ch_KvCaB = 1.02e-07
+** active_61 [10207 ] :
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** +gmax_ch_KCaS= 4.5e-04 -03? 
+**** leave gmax_ch_KvCaB alone for now 
+** active_62 [4692 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** +gmax_ch_KvAngf = 5.2e-02 
+*** gmax_ch_KCaS= 4.5e-04 ? -03
+** active_63 [1777 ]: 
+*** soma: 0.3 / 0.1, dend: +default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-04 -03? 
+** active_64 [1821 ]: 
+*** soma: +0.8 / 0.1, dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-04 e-3? 
+** active_65 [1742 ]: 
+*** soma: (-)0.1 / 0.1, dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_66 [1873 ]: 
+*** soma: 0.1 / 0.15(+), dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_67 [1717 ]: 
+*** soma: 0.1 / 0.09(-), dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_68 [1372 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.07 (-)  
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03
+** active_69 [294 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.07 
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** gmax_ch_KCaS = 6e-03 (+)
+** active_70 [141 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.05 (-)  
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 6e-03
+** active_71 [31 ]:
+*** soma: 0.1 / 0.09, dend: default / 0.03 (-) 
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 6e-03
+
+
+** SEEING IF I CAN smooth out those ends a little more:
+*** in ch_Kdrfastngf.mod "slope5=.07 (1)" --> slope5=1.7 (1) -- NOPE
+*** in ch_Kdrfastngf.mod "slope5=.07 (1)" --> slope5=.007 (1)
+***  in ch_Kdrfastngf.mod "offset6=10 (mv)" --> offset6=5
+*** ORIG: offset6 = 10 (mV) offset5=10 (mV)
+
+** ch_Kdrfastngf.mod offset5 and offset6 = 15: fitness 18! 
+** ^^ offset 5 & 6 set to 17 --> fitness 17! 
+** ch_Navngf.mod ORIG mAlphV = 24 (mV) -- don't change
+*** change: mAlphV = 20 (mV)-- NOPE
+** ch_Navngf.mod ORIG mAlphC = -0.34133 (1) -- no diff, don't change 
+*** change: mAlphC = -0.6 (1)
+** ch_Navngf.mod ORIG mBetaV = -4 (mV)
+*** change: mBetaV = 4 (mV) --> made model lower spiking than empirical 
+*** change: mBetaV = -2 (mV) --> nope change back 
+
+
+** ASIDE: comment out all Na+ K+ in dend and soma 
+*** only Na+ soma is active 
+* <2019-09-06 Fri -- Connectivity data>
+** Push NGF cell to A1 model 
+*** Params for NGF are finalized:
+**** PASSIVE:
+	## PASSIVE SOMA PARAMS
+	cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+	cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+	cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+	cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+	cellRule['secs']['soma']['geom']['cm'] = 1.5 #0.5
+	#print(cellRule['secs']['soma']['mechs']['ch_KvAngf']['gmax'])
+
+	## PASSIVE DEND PARAMS
+	cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+	cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+**** ACTIVE:
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.1 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.03
+ 
+*** Use new mod files (1 has been changed) --> ch_Kdrfastngf.mod
+**** see yesterday's entry for new offset values
+**** LOCAL: /Users/ericagriffith/Desktop/NEUROSIM/A1/mod
+**** cd ^^ --> rm ch_Kdrfastngf.mod
+**** cp in new ch_Kdrfastngf.mod file from ~/Desktop/NGF_tests/NGF_overlay_ACTIVE/ch_Kdrfastngf.mod 
+**** re-compile locally 
+***** https://github.com/MetaCell/NetPyNE-UI/blob/master/netpyne_ui/tests/M1detailed/compile
+***** cd ~/Desktop/NEUROSIM/A1 --> rm -r mod/x86_64 --> no such dir
+***** ln -s mod/x86_86 x86_64
+***** cd mod
+***** nrnivmodl
+***** cd .. 
+*** Remove old hoc file and replace w/ new one
+**** rm ~/Desktop/NEUROSIM/A1/cells/ngf_cell.hoc 
+**** put in celsius and v_init into beginning of ngf_cell.hoc and made sure that all params matched with what is in the test_ngf.py and netParams.py files used for testing param combos in ~/Desktop/NGF_tests/NGF_overlay_ACTIVE (dend and soma passive, dend and soma active) 
+**** coped into A1/cells 
+*** added (and commented out, for now) a line in A1/cfg.py --> cfg.hParams['celsius'] = 37
+
