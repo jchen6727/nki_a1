@@ -59,7 +59,12 @@ Itypes = ['PV', 'SOM', 'VIP', 'NGF']
 cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
-layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # normalized layer boundaries  
+layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 0.625], '5A': [0.625, 0.667], '5B': [0.667, 0.775], '6': [0.775, 1]}  # normalized layer boundaries  
+
+# add layer border correction ??
+#netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correctBorderThreshold, cfg.correctBorderThreshold], 
+#                        'yborders': [layer['2'][0], layer['5A'][0], layer['6'][0], layer['6'][1]]}  # correct conn border effect
+
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
@@ -241,22 +246,22 @@ for pre in Epops:
 ## I -> E
 if cfg.addConn and cfg.IEGain > 0.0:
 
-    bins = 'inh'
+    binsLabel = 'inh'
     preTypes = Itypes
-    synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  # Update VIP and NGF syns! 
-    weightFactors = [[1.0], cfg.synWeightFractionSOME, cfg.synWeightFractionVIP, [1.0]] 
+    synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
+    weightFactors = [[1.0], cfg.synWeightFractionSOME, [1.0], cfg.synWeightFractionNGF] 
     secs = ['perisom', 'apicdend', 'apicdend', 'apicdend']
     postTypes = Etypes
     for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
         for ipostType, postType in enumerate(postTypes):
-            for ipreBin, preBin in enumerate(bins):
-                for ipostBin, postBin in enumerate(bins):
+            for ipreBin, preBin in enumerate(bins[binsLabel]):
+                for ipostBin, postBin in enumerate(bins[binsLabel]):
                     ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
                     netParams.connParams[ruleLabel] = {
                         'preConds': {'cellType': preType, 'ynorm': list(preBin)},
                         'postConds': {'cellType': postType, 'ynorm': list(postBin)},
                         'synMech': synMech,
-                        'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, 'E')][ipostBin,ipreBin]),
+                        'probability': '%f * exp(-dist_3D/probLambda)' % (pmat[(preType, 'E')][ipostBin,ipreBin]),
                         'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
                         'synMechWeightFactor': weightFactor,
                         'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -267,20 +272,20 @@ if cfg.addConn and cfg.IEGain > 0.0:
 ## I -> I
 if cfg.addConn and cfg.IIGain > 0.0:
 
-    bins = 'inh'
+    binsLabel = 'inh'
     preTypes = Itypes
     synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
     sec = 'perisom'
     postTypes = Itypes
     for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
         for ipost, postType in enumerate(postTypes):
-            for iBin, bin in enumerate(bins):
+            for iBin, bin in enumerate(bins[binsLabel]):
                 ruleLabel = preType+'_'+postType+'_'+str(iBin)
                 netParams.connParams[ruleLabel] = {
                     'preConds': {'cellType': preType, 'ynorm': bin},
                     'postConds': {'cellType': postType, 'ynorm': bin},
                     'synMech': synMech,
-                    'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, postType)]),
+                    'probability': '%f * exp(-dist_3D/probLambda)' % (pmat[(preType, postType)]),
                     'weight': cfg.IIweights[iBin] * cfg.IIGain,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'sec': sec} # simple I cells used right now only have soma

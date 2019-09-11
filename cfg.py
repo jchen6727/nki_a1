@@ -24,7 +24,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
-cfg.verbose = 0         	## Show detailed messages
+cfg.verbose = 1       	## Show detailed messages
 
 
 #------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ cfg.AMPATau2Factor = 1.0
 cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
 cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
 cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
-cfg.synWeightFractionVIP = [0.5, 0.5] # VIP GABAA to GABAB ratio
+cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 
 
 #------------------------------------------------------------------------------
@@ -95,10 +95,15 @@ cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 cfg.synsPerConnWeightFactor = 5  # factor to multiply all weights for given 1 syn contact per conn (instead of ~5 -- avg in cortex)
 
+cfg.addConn = 1
 cfg.EEGain = 1.0
 cfg.EIGain = 1.0
 cfg.IEGain = 1.0
 cfg.IIGain = 1.0
+
+## I->E/I layer weights (L2/3+4, L5, L6)
+cfg.IEweights = [1.0, 1.0, 1.0]
+cfg.IIweights = [1.0, 1.0, 1.0]
 
 #------------------------------------------------------------------------------
 # Background inputs
