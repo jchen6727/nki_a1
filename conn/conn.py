@@ -26,7 +26,7 @@ Ipops = ['NGF1',                            # L1
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
         'PV6', 'SOM6', 'VIP6', 'NGF6']  # L6 
         
-
+layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # 
 
 # initialize prob and weight matrices
 # format: pmat[presynaptic_pop][postsynaptic_pop] 
@@ -108,6 +108,9 @@ for pop in Ipops:
 # --------------------------------------------------
 ## I -> E
 # --------------------------------------------------
+
+bins =  {}
+bins['inh'] = [[0.0, 0.37], [0.37, 0.8], [0.8,1.0]]
 
 # --------------------------------------------------
 ## Probabilities 
@@ -203,4 +206,4 @@ savePickle = 1
 if savePickle:
     import pickle
     with open('conn.pkl', 'wb') as f:
-        pickle.dump({'pmat': pmat, 'wmat': wmat}, f)
+        pickle.dump({'pmat': pmat, 'wmat': wmat, 'bins': bins}, f)

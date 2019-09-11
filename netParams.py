@@ -202,6 +202,7 @@ NGFSynMech = ['GABAA', 'GABAB']
 with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
 pmat = connData['pmat']
 wmat = connData['wmat']
+bins = connData['bins']
 
 #------------------------------------------------------------------------------
 ## E -> E
@@ -250,18 +251,16 @@ if cfg.addConn and cfg.IEGain > 0.0:
         for ipostType, postType in enumerate(postTypes):
             for ipreBin, preBin in enumerate(bins):
                 for ipostBin, postBin in enumerate(bins):
-                    for cellModel in ['HH_reduced', 'HH_full']:
-                        ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
-                        netParams.connParams[ruleLabel] = {
-                            'preConds': {'cellType': preType, 'ynorm': list(preBin)},
-                            'postConds': {'cellType': postType, 'ynorm': list(postBin)},
-                            'synMech': synMech,
-                            'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, 'E')][ipostBin,ipreBin]),
-                            'weight': cfg.IEweights[ipostBin] * cfg.IEGain / cfg.synsperconn[cellModel],
-                            'synMechWeightFactor': weightFactor,
-                            'synsPerConn': cfg.synsperconn[cellModel],
-                            'delay': 'defaultDelay+dist_3D/propVelocity',
-                            'sec': sec} # simple I cells used right now only have soma
+                    ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
+                    netParams.connParams[ruleLabel] = {
+                        'preConds': {'cellType': preType, 'ynorm': list(preBin)},
+                        'postConds': {'cellType': postType, 'ynorm': list(postBin)},
+                        'synMech': synMech,
+                        'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, 'E')][ipostBin,ipreBin]),
+                        'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
+                        'synMechWeightFactor': weightFactor,
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'sec': sec} # simple I cells used right now only have soma
 
 
 #------------------------------------------------------------------------------
@@ -272,23 +271,19 @@ if cfg.addConn and cfg.IIGain > 0.0:
     preTypes = Itypes
     synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
     sec = 'perisom'
-    postTypes = inhTypes
+    postTypes = Itypes
     for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
         for ipost, postType in enumerate(postTypes):
             for iBin, bin in enumerate(bins):
-                for cellModel in ['HH_simple']:
-                    ruleLabel = preType+'_'+postType+'_'+str(iBin)
-                    netParams.connParams[ruleLabel] = {
-                        'preConds': {'cellType': preType, 'ynorm': bin},
-                        'postConds': {'cellModel': cellModel, 'cellType': postType, 'ynorm': bin},
-                        'synMech': synMech,
-                        'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, postType)]),
-                        'weight': cfg.IIweights[iBin] * cfg.IIGain / cfg.synsperconn[cellModel],
-                        'synsPerConn': cfg.synsperconn[cellModel],
-                        'delay': 'defaultDelay+dist_3D/propVelocity',
-                        'sec': sec} # simple I cells used right now only have soma
-
-
+                ruleLabel = preType+'_'+postType+'_'+str(iBin)
+                netParams.connParams[ruleLabel] = {
+                    'preConds': {'cellType': preType, 'ynorm': bin},
+                    'postConds': {'cellType': postType, 'ynorm': bin},
+                    'synMech': synMech,
+                    'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, postType)]),
+                    'weight': cfg.IIweights[iBin] * cfg.IIGain,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'sec': sec} # simple I cells used right now only have soma
 
 
 #------------------------------------------------------------------------------
