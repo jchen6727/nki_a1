@@ -37,7 +37,7 @@ c.2.4 Computational modeling:  Modeling is performed in the NEURON simulation en
 - maybe add star pyramidal: they are present in L3,L4,L6 and have different physiol, different axonal projs, more radial dends, shorter apical dends
 - split IT2 and IT3 - since different connection
 ** Inhibitory types
-- NGF1, PV2/3, PV4, PV5A, PV5B, PV6,	SOM2/3,	SOM4,	SOM5A,	SOM5B,	VIPL2/3,	VIP4,	VIP5A,	VIP5B,	VIP6
+- NGF1, PV2/3, PV4, PV5A, PV5B, PV6, SOM2/3,	SOM4,	SOM5A,	SOM5B,	VIPL2/3,	VIP4,	VIP5A,	VIP5B,	VIP6
 ** Allen Brain V1
 http://portal.brain-map.org/explore/models/mv1-all-layers
 
@@ -72,3 +72,42 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 ** I-I 
 *** probability
 *** weight
+** Discussion with Sam of I->E/I 
+salvadord 9:55 AM
+in the original M1 we had I->E/I as intralaminar, with distance-dep probability and fixed weight
+
+for A1 I’ve improved several things:
+1) I->E can target deeper layers as well (eg. L2/3 I -> L5 E) since synapsing at apical dends
+2) VIP -> E set to very low prob
+samn 9:59 AM
+#1 very important
+so now not all weights are fixed?
+salvadord 10:00 AM
+3) I -> I adapted probs based on cell type: VIP -> SOM (strong), PV (weak), VIP (very weak); SOM -> FS+VIP (strong); SOM (weak); FS -> FS (strong); SOM+VIP (weak); NGF -> I (medium) (Naka et al 2016;Tremblay, 2016; Sohn, 2016; Pi et al 2013)
+samn 10:00 AM
+thx, i like the level of detail in the interneuron circuitry...important too
+salvadord 10:01 AM
+for now weights are fixed but probs are different
+samn 10:01 AM
+sg
+later on will want to vary the gabaa taus
+(that's discussed in grant), but don't have to for first draft
+salvadord 10:02 AM
+note using the same interpretation of weight as in M1 model, ie. somatic PSP amplitude (mV) in response to single cell input
+gabaa taus - sounds good … we can have a base model to start with and then improve iteratively
+samn 10:03 AM
+so that's good since constrained to the exptl lit
+somatic PSP vs conductance change since more interested in effect at output?
+salvadord 10:05 AM
+harder to get conductance values, specially for dendrite syns
+this is how implemented in Allen V1 model and Solstez CA1 too
+samn 10:05 AM
+ic
+salvadord 10:06 AM
+netpyne then has weightNormalization value that converts ‘weight’ (somatic PSP) to conductance required at each syn
+(need to calculate previously for each cell type and store with cellParasm — weightNorm)
+samn 10:06 AM
+ic, and that's calculated via sim
+in a preprocessing step
+salvadord 10:07 AM
+I have batch netpyne to calcualte for all M1 cell types … will need to adapt for A1 (in future should automate more)

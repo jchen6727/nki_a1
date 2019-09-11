@@ -50,11 +50,12 @@ netParams.propVelocity = 500.0 # propagation velocity (um/ms)
 netParams.probLambda = 100.0  # length constant (lambda) for connection probability decay (um)
 
 
-
 #------------------------------------------------------------------------------
 # Cell parameters
 #------------------------------------------------------------------------------
 
+Etypes = ['IT', 'ITS4', 'PT', 'CT']
+Itypes = ['PV', 'SOM', 'VIP', 'NGF']
 cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
@@ -176,12 +177,16 @@ netParams.synMechParams['NMDA'] = {'mod': 'MyExp2SynNMDABB', 'tau1NMDA': 15, 'ta
 netParams.synMechParams['AMPA'] = {'mod':'MyExp2SynBB', 'tau1': 0.05, 'tau2': 5.3*cfg.AMPATau2Factor, 'e': 0}
 netParams.synMechParams['GABAB'] = {'mod':'MyExp2SynBB', 'tau1': 3.5, 'tau2': 260.9, 'e': -93} 
 netParams.synMechParams['GABAA'] = {'mod':'MyExp2SynBB', 'tau1': 0.07, 'tau2': 18.2, 'e': -80}
+netParams.synMechParams['GABAA_VIP'] = {'mod':'MyExp2SynBB', 'tau1': 0.3, 'tau2': 6.4, 'e': -80}  # Pi et al 2013
 netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 100, 'e': -80}
+netParams.synMechParams['GABAASlowSlow'] = {'mod': 'MyExp2SynBB', 'tau1': 200, 'tau2': 400, 'e': -80}
 
 ESynMech = ['AMPA', 'NMDA']
 SOMESynMech = ['GABAASlow','GABAB']
 SOMISynMech = ['GABAASlow']
 PVSynMech = ['GABAA']
+VIPSynMech = ['GABAA_VIP']
+NGFSynMech = ['GABAA', 'GABAB']
 
 
 #------------------------------------------------------------------------------
@@ -230,47 +235,60 @@ for pre in Epops:
             'synsPerConn': 1,
             'sec': 'perisomatic'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
 
+
 #------------------------------------------------------------------------------
 ## I -> E
+if cfg.addConn and cfg.IEGain > 0.0:
 
-for pre in Epops:
-    if 'SOM' in pre:
-        synMech = SOMESynMech
-    else:
-        synMech = PVSynMech
+    bins = 'inh'
+    preTypes = Itypes
+    synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  # Update VIP and NGF syns! 
+    weightFactors = [[1.0], cfg.synWeightFractionSOME, cfg.synWeightFractionVIP, [1.0]] 
+    secs = ['perisom', 'apicdend', 'apicdend', 'apicdend']
+    postTypes = Etypes
+    for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
+        for ipostType, postType in enumerate(postTypes):
+            for ipreBin, preBin in enumerate(bins):
+                for ipostBin, postBin in enumerate(bins):
+                    for cellModel in ['HH_reduced', 'HH_full']:
+                        ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
+                        netParams.connParams[ruleLabel] = {
+                            'preConds': {'cellType': preType, 'ynorm': list(preBin)},
+                            'postConds': {'cellType': postType, 'ynorm': list(postBin)},
+                            'synMech': synMech,
+                            'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, 'E')][ipostBin,ipreBin]),
+                            'weight': cfg.IEweights[ipostBin] * cfg.IEGain / cfg.synsperconn[cellModel],
+                            'synMechWeightFactor': weightFactor,
+                            'synsPerConn': cfg.synsperconn[cellModel],
+                            'delay': 'defaultDelay+dist_3D/propVelocity',
+                            'sec': sec} # simple I cells used right now only have soma
 
-    for post in Ipops:
-        netParams.connParams['IE_'+pre+'_'+post] = { 
-            'preConds': {'pop': pre}, 
-            'postConds': {'pop': post},
-            'synMech': synMech,
-            'probability': pmat[pre][post],
-            'weight': pmat[pre][post] * cfg.IEGain * cfg.synsPerConnWeightFactor, 
-            'synMechWeightFactor': cfg.synWeightFractionIE,
-            'delay': 'defaultDelay+dist_2D/propVelocity',
-            'synsPerConn': 1,
-            'sec': 'spiny'}
 
 #------------------------------------------------------------------------------
 ## I -> I
+if cfg.addConn and cfg.IIGain > 0.0:
 
-for pre in Ipops:
-    if 'SOM' in pre:
-        synMech = SOMESynMech
-    else:
-        synMech = PVSynMech
+    bins = 'inh'
+    preTypes = Itypes
+    synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
+    sec = 'perisom'
+    postTypes = inhTypes
+    for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
+        for ipost, postType in enumerate(postTypes):
+            for iBin, bin in enumerate(bins):
+                for cellModel in ['HH_simple']:
+                    ruleLabel = preType+'_'+postType+'_'+str(iBin)
+                    netParams.connParams[ruleLabel] = {
+                        'preConds': {'cellType': preType, 'ynorm': bin},
+                        'postConds': {'cellModel': cellModel, 'cellType': postType, 'ynorm': bin},
+                        'synMech': synMech,
+                        'probability': '%f * exp(-dist_3D_border/probLambda)' % (pmat[(preType, postType)]),
+                        'weight': cfg.IIweights[iBin] * cfg.IIGain / cfg.synsperconn[cellModel],
+                        'synsPerConn': cfg.synsperconn[cellModel],
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'sec': sec} # simple I cells used right now only have soma
 
-    for post in Ipops:
-        netParams.connParams['II_'+pre+'_'+post] = { 
-            'preConds': {'pop': pre}, 
-            'postConds': {'pop': post},
-            'synMech': synMech,
-            'probability': '%f * exp(-dist_3D/probLambda)' % (pmat[pre][post]),
-            'weight': pmat[pre][post] * cfg.IIGain * cfg.synsPerConnWeightFactor, 
-            'synMechWeightFactor': cfg.synWeightFractionII,
-            'delay': 'defaultDelay+dist_2D/propVelocity',
-            'synsPerConn': 1,
-            'sec': 'perisomatic'}
+
 
 
 #------------------------------------------------------------------------------
@@ -293,7 +311,7 @@ netParams.stimTargetParams['bkgE->E'] =  {
 
 netParams.stimTargetParams['bkgE->I'] =  {
     'source': 'bkgI', 
-    'conds': {'cellType': ['PV', 'SOM', 'PIV', 'NGF']},
+    'conds': {'cellType': ['PV', 'SOM', 'VIP', 'NGF']},
     'sec': 'soma', 
     'loc': 0.5,
     'synMech': ESynMech,

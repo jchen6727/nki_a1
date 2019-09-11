@@ -68,6 +68,10 @@ cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': Tr
 # Synapses
 #------------------------------------------------------------------------------
 cfg.AMPATau2Factor = 1.0
+cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
+cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
+cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
+cfg.synWeightFractionVIP = [0.5, 0.5] # VIP GABAA to GABAB ratio
 
 
 #------------------------------------------------------------------------------
