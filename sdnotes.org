@@ -58,20 +58,87 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 *** weight
 - L3,4 E -> L3,4 E (Levy & Reyes, 2012)
 
-** E-I
-*** probability
-- L3,4 E -> L3,4 SOM,PV (Levy & Reyes, 2012)
+** E->I
+- Tremblay 2016:
+-- unclear if L2/3 E -> NGF
+-- callosal and thalamic matrix -> NGF
 
-*** weight
-- L3,4 E -> L3,4 SOM,PV (Levy & Reyes, 2012)
-** I-E 
-*** probability
-- L3,4 SOM,PV -> L3,4 E (Levy & Reyes, 2012)
-*** weight
-- L3,4 SOM,PV -> L3,4 E (Levy & Reyes, 2012)
-** I-I 
-*** probability
-*** weight
+- Sohn 2016
+-- E -> L2/3 VIP (apical+basal)
+
+- Budinger et al 2018
+-- L2-5 E -> NGF
+-- thalamic -> VIP (bipolar)
+-- thalamic + cortical -> VIP (bitufted)
+
+- Garcia et al 2015
+-- E -> NGF
+
+- Naka 2016 (fig 1,2) (L5):
+-- E do not target VIP or NGF (only PV+SOM)
+
+- CONCLUSION:
+-- NGF: 
+--- L2-5 E inputs
+--- thalamic matrix inputs (to L1)
+--- thalamic inputs to L2-L5
+
+-- VIP:
+--- E -> VIP
+--- thalamic -> VIP
+** I->E
+- currently distance-dependent
+
+- Tremblay 2016:
+-- NGF -> local E and I
+-- L1 NGF -> L2/3+L5 tuft
+-- L2/3 NGF -> L2/3+L5 distal apical
+-- L5 NGF -> L5 prox apical
+
+- Naka 2016 (fig 1,2) (L5):
+-- L2/3 VIP -> L5 apical trunk (?)
+-- NGF -> L5 apical tuft (same as SOM)
+
+- Budinger 2016 (A1):
+-- L2 NGF -> L2 E (prox apic); L6 E (tuft)
+-- VIP? (not clear which are)
+
+- Pi 2013
+-- VIP -> E (very low; 3/42)
+
+** I->I
+- currently distance-dependant
+
+- Tremblay 2016:
+-- L2/3 VIP -> L2/3+L5 SOM
+-- L5 VIP -> L5 SOM
+-- NGF -> local E and I
+-- L1 NGF -> L1 NGF
+-- L2/3 NGF -> L2/3 I
+-- L5/6 NGF -> L5/6 I
+-- L2/3 PV -> L2/3 PV 
+-- L5/6 PV -> L5/6 PV 
+-- L2/3 PV -> L2/3 I except SOM 
+-- L5/6 PV -> L5/6 I except SOM
+
+- Sohn 2016:
+-- PV -> L2/3 VIP (soma)
+-- SOM -> L2/3 VIP (basal, apical)
+-- VIP -> L2/3 VIP (low overall)
+-- similar to PV/SOM -> E
+
+- Naka 16 (fig1,2) (L5):
+-- all to all (changes in weights)
+-- depends on layer and area
+-- VIP -> VIP (weak); FS,SOM (strong)
+-- SOM -> SOM (weak); FS,VIP (strong)
+-- FS -> FS (strong); SOM,VIP (weak)
+
+- Pi 2013
+-- VIP -> SOM (strong; 14/18)
+-- VIP -> PV (weak; 4/15)
+
+- Overstreet-Wadiche 2015 (mostly CA1)
 ** Discussion with Sam of I->E/I 
 salvadord 9:55 AM
 in the original M1 we had I->E/I as intralaminar, with distance-dep probability and fixed weight
@@ -111,3 +178,26 @@ ic, and that's calculated via sim
 in a preprocessing step
 salvadord 10:07 AM
 I have batch netpyne to calcualte for all M1 cell types … will need to adapt for A1 (in future should automate more)
+
+** Discussion with erica
+
+The IPSC values in [9] are in response to optogenetic stim, which I believe activate >1 presyn neurons, so the IPSC value is conflating both conn prob and weight (weight understood as response to single presyn cell, or unitary connection).
+For M1 I did use IPSC values as strengths to derive conn probs, i.e. strength =  conn prob x weight. By obtaining weights (unitary conn somatic epsp values) from a different source, I was able to obtain prob conns from the the IPSC values (strengths). 
+So, in essence, these values don't represent weights, but the overall conn strength, and so can be used potentially derive the prob conns (by fixing the weight) or the weight (by fixing the prob conn).
+
+salvadord 4:34 PM
+in essence as you can see we are missing most values for I->E and I->I so strategy we used before (M1) is to keep more generic and use intralaminar conn with distance-dep prob conn — for A1 I’ve added several more features based on the data we have (see #auditory) but still quite generic
+
+ericaygriffith:speech_balloon: 4:34 PM
+I see, okay that is good to know
+intralaminar conn w/ distance-dep prob conn -- is there a "generic" source that we use?
+salvadord 4:38 PM
+many papers describing dist-dep (including some used in excel sheet) … one I cited for M1 is this: https://paperpile.com/app/p/a9dea0e7-7075-0628-958a-8e4f5be45ac5
+ericaygriffith:speech_balloon: 4:39 PM
+oh I think I see -- you just mean that non-celltype-specific dist-dep conn data is easier to come by than cell-specific? so going to use that as substitute where we don't have cell-specific data?
+sry if I'm misunderstanding you!
+salvadord 4:42 PM
+yeah… so dist-dep is a feature whether we have cell-type specific data or not
+the little cell-type specific data we have I’ve tried to incorporate on top of the dist-dep
+so e.g. ‘strong’ will be 1.0*exp(-d/L) and ‘weak’ will be 0.35*exp(-d/L)
+anyway you can have a look at the excel, conn.py and netParams.py and let me know what you think

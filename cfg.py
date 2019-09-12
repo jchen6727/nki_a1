@@ -24,7 +24,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
-cfg.verbose = 1       	## Show detailed messages
+cfg.verbose = 0      	## Show detailed messages
 
 
 #------------------------------------------------------------------------------
