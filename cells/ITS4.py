@@ -62,7 +62,7 @@ class ITS4_cell:
     dend.gbar_kca = 3  ## gbar_kca not gmax (check new nrniv/mod??) # slow Ca^2+-activated K+
 
   def config (self):
-    self.dend.L  = self.rho*self.soma.L # dend area is axon area multiplied by rho
+    self.dend.L  = 545 #self.rho*self.soma.L # dend area is axon area multiplied by rho
     self.dend.Ra = self.dend.Ra*self.kappa/self.dend(0.5).ri() # axial resistivity is adjusted to achieve
 
   # resets cell to default values
