@@ -24393,3 +24393,1632 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 *** ^^ shared partition can only use 1 node at a time, I believe (true), and example on comet user guide (https://www.sdsc.edu/support/user_guides/comet.html) shows only using 8 cores per node. Changing this in batch script (from 24 'coresPerNode' to 8) 
 *** With the above changes, seems to be working on *comet* 
 *** Changing 'coresPerNode' from 8 to 1 in b.runCfg for runType == 'hpc_slurm' because should only require one core. 
+* <2019-08-11 Sun -- NGF passive on google cloud>
+** Salvador ran ~1000 generations successfully on google cloud
+** Suggestions for improvement:
+*** Ran out of space -- save cfg and netParams to output, but do not plot trace
+**** Commented out in *NGF_cfg.py*: cfg.analysis['plotTraces'] = {'include': [0], 'saveFig': True} 
+*** Turn on logging for each generation 
+**** https://aarongarrett.github.io/inspyred/troubleshooting.html#use-and-consult-the-logs
+**** added 'import logging' to import section of *NGF_evol_passive.py* 
+* <2019-08-15 Thu -- active setup & passive modifications>
+** Sleep interval changes:
+*** Sleep interval decreased from 1 to 0.1 (per salva's advice) in *NGF_evol_passive.py*
+*** But... salva's advice was for runCfg to be changed, so I changed it in *NGF_cfg.py* as well 
+*** Need to update netpyne to see 
+** Netpyne update (development branch pulled):
+*** http://www.netpyne.org/install.html
+*** =git clone https://github.com/Neurosim-lab/netpyne.git=
+*** =cd netpyne=
+*** =git checkout development=
+
+** Test the above on comet to see if this lowers time/generation
+** ERROR: 
+FITNESS CALCULATIONS FOR CAND 0 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 234, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by $
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 434, in evolve
+    initial_fit = evaluator(candidates=initial_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 133, in evaluate_netparams
+    vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+KeyError: 'cell_0'
+** TO DO:
+*** LOGGER 
+*** [done] update netpyne to latest dev version 
+* <2019-08-16 Fri -- active setup & passive modifications>
+** Salva says that deploying gcloud cluster may be too labor intensive 
+** TO DO FOR COMET RUN MODIFICATIONS:
+*** (0) [done] Update netpyne dev branch version being used 
+*** (1) [done] Shorten sleep interval (cfg & evol?) 
+*** (2) [done] Shorten walltime from 30 minutes to 15 minutes (in *NGF_batch_passive.py*) 
+*** (3) Stop plotting
+**** [done] in *NGF_cfg.py* --> BUT, is this why it stopped populating the json files? 
+**** [done] Uncomment cfg.analysis['plotTraces'] line to see if this rectifies it 
+**** Test this on comet to see if this will work
+***** move old data directory 
+*** (4) Only save cfg & simData in output  
+*** (5) Add logging 
+** SALVA's BRANCHES:
+*** NOTE: salva's branch w/ preprocessing is named 'salva': https://github.com/ericaygriffith/A1/tree/salva
+*** NOTE: salva's gcloud branch is: https://github.com/ericaygriffith/A1/tree/gcloud
+*** Downloaded A1-gcloud.zip and A1-salva.zip as backup 
+* <2019-08-19 Mon -- passive modifications, 605a253>
+** LOCAL SYSTEM INFO REMINDER: 
+*** OS X El Capitan, Version 10.11.4, MacBook Air, 1.6 GHz intel core i5 (procesor), 8GB 1600MHz DDR3 (Memory -- lol ddr)
+*** Default python: 3.7.0, anaconda || which python --> /Users/ericagriffith/anaconda3/bin/python
+*** 'which nrniv' --> /Applications/NEURON-7.6/nrn/x86_64/bin/nrniv
+*** python --> import netpyne; netpyne.__file__ --> '/anaconda3/lib/python3.7/site-packages/netpyne/__init__.py'
+** Check on comet run:
+*** in /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive there is only the 0th generation, but random sampling showed that [cell_0] is back in the simData struct { data = (json.load(open('FILENAME')) --> simData = data['simData'] --> simData['V_soma']['cell_0']  }
+*** ERROR:
+**** TEXT OF ERROR:
+BATCH RUN FOR CAND 24 IS COMPLETE
+FITNESS CALCULATIONS FOR CAND 24 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 234, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selec$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 434, in evolve
+    initial_fit = evaluator(candidates=initial_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 132, in evaluate_netparams
+    outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 296, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+**** max_evaluations potentially reached, because line 234 is max_evaluations = 200 (now 96*1000) 
+**** POTENTIAL SOLUTION / EXPLANATION: https://www.reddit.com/r/learnpython/comments/42pyyg/jsondecodeerror/
+*** Could the error be from it maxing out evaluations? I checked candidate 24, which supposedly generated the json error, and every candidate was able to be loaded into json without a problem.
+** Add LOGGING lines:
+*** Salva's advice: 
+what needed really is the stat_observer and the best_observer — you can see an example here: http://www.netpyne.org/advanced.html#using-inspyred and here: https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/batch/batch.py#L748
+*** stats_observer: http://www.netpyne.org/advanced.html#using-inspyred 
+*** best_observer: https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/batch/batch.py#L748
+*** Added the following lines: 
+**** #toggle observers
+**** my_ec.observer = [ec.observers.stats_observer,  # print evolutionary computation statistics
+                  ec.observers.plot_observer,   # plot output of the evolutionary computation as graph
+                  ec.observers.best_observer]   # print the best individual in the population to
+                  screen
+** Changed *pop_size* and *max_evaluations* and *num_selected* in line with salva's code: pop_size = 96, max_evaluations = 96*1000, num_selected = 50 
+** Add a cands_threshold like salva: 
+*** ORIG:
+while cands_completed < total_cands: 
+*** NEW:
+cands_threshold = 0.9
+while cands_completed < int(cands_threshold*total_cands):
+
+** Version control checkpoint
+*** NOTE: do NOT do git push --mirror or you will eliminate colleagues' branche 
+*** Local (laptop): 
+**** cd ~/Dektop/NEUROSIM/A1
+**** git status
+**** git add A1_notebook.org
+**** git add cells/NGF_optimization/NGF_passive/NGF_evol_passive.py 
+**** git commit A1_notebook.org -m '
+** Git Notes:
+*** To see all branches: git branches -a
+*** To switch branches: git checkout branch_name
+** Changing git repo structure:
+*** https://github.com/ericaygriffith/A1 IS a bare repository
+*** LOCAL CHANGES:
+**** cd ~/Desktop/NEUROSIM/
+**** mv A1 A1_uncloned
+**** git clone https://github.com/ericaygriffith/A1.git
+
+*** Same changes made on comet & neurosim
+*** Workflow:
+**** make changes in local repository, on e.g. master branch (git checkout master)
+**** git add & commit
+**** git push origin BRANCH_NAME (e.g. git push origin master)
+***** NOTE: origin = where repo was originally cloned from, i.e. https://github.com/ericaygriffith/A1 (or is it A1.git?) 
+ 
+**** on comet & neurosim: cd to A1, git checkout BRANCH_NAME, git pull origin BRANCH_NAME
+*** VERSION ID: 605a253
+
+** IDEAS FOR LATER:
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+
+* <2019-08-20 Tue -- NGF comet run>
+** VERSION CONTROL: 
+*** 755dbb3 [observers added]
+*** 
+** PROBLEMS WITH LAST NIGHT'S RUN: 
+*** Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 238, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the t$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/observers.py", line 91, in stats_observer
+    worst_fit = '{0:>10}'.format(stats['worst'])[:10]
+TypeError: unsupported format string passed to Pareto.__format__
+
+*** Why are all the fitnesses the exact same? See what is going on. load the json files and do the calculations manually to see if they ARE indeed the exact same. 
+** Potential solutions to the error above: 
+*** ERROR:
+  File "NGF_evol_passive.py", line 238, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the t$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/observers.py", line 91, in stats_observer
+    worst_fit = '{0:>10}'.format(stats['worst'])[:10]
+TypeError: unsupported format string passed to Pareto.__format__
+*** fitnessCandidates have 'None, None, None, None' in them, due to the cands_threshold that salvador added --> get rid of this. 
+*** Comnented out cands_threshold = 0.9 & changed while loop back to "while cands_completed < total_cands" vs. "while cands_completed < int(cands_threshold*total_cands)"
+*** *DIFFERENT SOLUTION* would be to change the indexing, but that may take too long 
+
+** Go over fitness evaluation:
+*** Very suspicious that something is going wrong due to the fitness evaluations appearing to be exactly the same. Go over this. 
+*** Possible sources of error:
+**** Evaluate using candidates 52, 22, and 37 (arbitrary) 
+**** cfg/netParams level error 
+***** Are the same params being used for all candidates? 
+***** [no error] Check .run for paths to netParams and cfg files
+****** cand52 cfg & netParams paths from .run:
+******* Loading file /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_0/NGF_batch_data_cand52_0_cfg.json
+******* Importing netParams from /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_0/NGF_batch_data_cand52_netParams.py
+****** cand52 netParams values from netParams.py above:
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 4.517263692915421
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = 80.89404327157808
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  0.8308996220340148
+***** [no error] Check SBATCH for same thing --> paths here match paths in .run file 
+***** Check candidates themselves for params (look in data struct)
+**** .json loading / analysis level error:
+***** wrong .json being loaded? unlikely. 
+***** analysis is incorrect? 
+***** Loaded (on comet -- in /oasis/ data dir), all 13 current steps for candidates 52, 22, and 37. Looked at mean responses in the same way as its done in the evol script. 
+**** Error when results are appended to fitnessCandidates
+***** same candidate is being attached over and over? unlikely. 
+*** Another possible source of 'error' --> there IS no error, but I am modifying the wrong channel. probably. leak and cm, not sodium. what am I thinking? 
+*** evol script method of looking at mean responses:
+mean_resp3 = [None for i in x]
+>>> for i in range(len(x)):
+...    outputData = json.load(open('NGF_batch_data_cand37_' + str(i) + '.json'))
+...    vdata_toal = list(outputData['simData']['V_soma']['cell_0'])
+...    vdata = vdata_toal[2000:]
+...    steady_state_response = mean(vdata)
+...    mean_resp3[i] = steady_state_response
+** wow, do not modify ch_Navngf --> modify ch_leak (gmax_ch_leak and e_ch_leak) 
+*** Changed last 3 lines of NGF_netParams.py to modify this 
+*** Changed line 66 in NGF_evol_passive.py to reflect this
+*** Changed min and maxParamValues in lines 205, 206 to reflect changes:
+**** minParamValues = [7e-5,-80,0.5]
+**** maxParamValues = [15e-5,-50,2.0]
+** Fitness values are still the same & and fitness didn't work. Same error as before. PROBLEMS ARE SAME. 
+** (1) Fitness error:
+*** Error is same as listed above
+*** [DISCARD] Hypothesis 1: It is due to num_elites
+**** Attempt 1: Commented out num_elites line
+**** Same error
+*** [CORRECT] Hypothesis 2: It is due to best_observer 
+**** Uncommented num_elites and changed to num_elites = 1
+**** Added 'import pickle' to imports section (see below for reason) 
+**** Added 2 fitness functions (taken from samn's evo.py):
+***** my_indiv_observe:
+****** MINE:
+# saves individuals in a population to binary file (pkl) ## Taken from samn evo.py
+def my_indiv_observe(population, num_generations, num_evaluations, args):
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'wb'))
+****** SAMN:
+# saves individuals in a population to binary file (pkl)
+def my_indiv_observe (population, num_generations, num_evaluations, args):
+  fn = 'data/' + evostr + '/gen_' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'w'))
+***** my_EMO_observe:
+****** MINE:
+def my_EMO_observe(population, num_generations, num_evaluations, args): 
+	print('gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness)
+  my_ec=args['my_ec']
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
+  pickle.dump(my_ec.archive,open(fn,'w'))
+
+****** SAMN: 
+def my_EMO_observe (population, num_generations, num_evaluations, args):
+  print 'gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness
+  es=args['es']
+  fn = 'data/' + evostr + '/ARCH.pkl'
+  pickle.dump(es.archive,open(fn,'w'))
+***** MAJOR DIFFERENCES: 'wb' instead of 'w' for open (py3 vs py2), and my_ec instead of es
+**** Added 2 observer lines to main code:
+***** my_ec.observer = [my_indiv_observe]
+***** my_ec.observer.append(my_EMO_observe)
+*** Hypothesis 2 (cont): 
+**** my_EMO_observe is throwing an error about 'args' (not surprising; don't understand what this does):
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 257, in <module>
+    num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "NGF_evol_passive.py", line 180, in my_EMO_observe
+    my_ec=args['my_ec']
+KeyError: 'my_ec'
+**** added line 'global my_ec' to main code and commented out args['my_ec'] line 
+** (2) Fitnesses are the same: 
+*** Evaluate this AFTER fixing (1) 
+** IDEAS FOR LATER:
+*** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+*** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
+*** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
+* <2019-08-21 Wed -- NGF passive run on zn>
+** Git repo version control numbers:
+*** 263a1fb
+*** ba984ba
+** running on zn because comet is arbitrarily crashing: 
+*** ERROR:
+*** Solutions:
+**** contact help desk
+**** have salva show me how to deploy gcloud cluster 
+** Changes to NGF_evol_passive.py for evol run:
+*** added fn_stem and fn_EMO to 'if machine_ID ==' block for ease of use in the custom observer functions. 
+*** widened the range of gmax param
+** Changes to NGF_evol_passive.py & NGF_batch_passive.py for data dir on zn:
+*** changed runType=='mpi_bulletin' statements about data dirs to include NGF_passive/data/ + batchLabel, etc. (new thing is the 'data' subdir of NGF_passive -- created on neurosim server already) 
+*** Changed corresponding lines in NGF_evol_passive.py 
+** TRANSFERRED REPO TO suny-downstate-medical-center/neurosim (organization/team) for widened access. On each system (comet, no, and local, changed git remote):
+*** (1) git remote -v (to check)
+*** (2) git remote set-url origin https://github.com/suny-downstate-medical-center/A1.git 
+*** (3) git remote -v (to check again)  
+
+** *Why* are all the fitness values the same on the comet run?? Run this on zn for a day and check back in. (the 'g' in ch_leak?) 
+** Compiled mod files on 'no' in /u/ericag/A1/cells/NGF_optimization/NGF_passive, using =nrnivmodl=
+** Recall, on 'zn', 2 things necessary to do to the environment:
+*** conda activate py36
+*** ssh -Y into 'zn' (trusted X11 forwarding) 
+** IDEAS FOR LATER:
+*** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+*** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
+*** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
+*** automate data directory clearance before each run 
+* <2019-08-27 Tue -- NGF cell hand-tuning + connectivity data>
+** Added a paper to the connectivity params
+** Hand-tune NGF cell:
+*** (on laptop) mkdir ~/Desktop/NGF_cell
+*** Populate this directory with the correct files 
+*** nrnivmodl to compile; python -i test_ngf.py to test: WORKING
+*** Modify 
+*** GOALS:
+**** RMP = -67mV 
+***** Took out ch_leak and added 'insert pas' instead
+***** Changed e_pas in ngf_cell.hoc in order to get good RMP 
+**** Get down to -105mV with -0.12 amp input
+***** With params below, -66.99 --> -67.08 with -0.12 nA input
+cm = 1
+
+// LEAK CHANNEL
+e_pas = -67.10
+g_pas = 0.001 //0.001 is default
+
+// Ih for SAG 
+gbar_hd = 0.0001
+***** Change cm:
+****** Increase --> "smoother" changes in voltage (makes sense; holds onto charge better?) 
+***** Change g_pas:
+****** Increase --> 
+****** Decrease --> 
+* <2019-08-28 Wed -- NGF>
+** GIT VERSION CONTROL NUMBERS:
+*** a599dd8
+*** be123e8
+** deleted 'email' line for runType hpc_slurm in NGF_batch_passive.py
+** added 'nodes': 1 and 'coresPerNode': 24 to runType mpi_bulletin in NGF_batch_passive.py 
+** Increased sleepinterval to 0.3 in evol and batch_passive scripts. 
+** THINGS TO DEAL WITH:
+*** "NONE" values being decoded 
+*** Sleep Interval --> increased from 0.1 to 0.5 in evol and batch
+*** email on comet --> deleted from b.runCfg in batch
+*** num_elites --> go from 1 to 0
+*** final pop print lines? 
+*** pas mechanism: ch_leak or pas? 
+*** add another compartment? (dend)? 
+*** logging? 
+*** ec.observers.stats_observer recoverable in multi-objective? 
+*** no plotting from netpyne -- how to achieve this?  
+*** automate data directory move before each run 
+
+** ERROR:
+FITNESS CALCULATIONS FOR CAND 49 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 257, in <module>
+    num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individua$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 480, in evolve
+    offspring_fit = evaluator(candidates=offspring_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 133, in evaluate_netparams
+    outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 296, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+** The above error is having a problem loading the .json file that does evidently exist. Perhaps it is still being written? Added the following lines to handle that error in case in happens again:
+*** 	current_step_ERRORS = []
+	for current_step in range(len(data_files_NEEDED)):
+		try: 
+			data_test = json.load(open(data_path + data_file_root + '_' + str(current_step) + '.json'))
+		except:
+			print('json file for gen ' + str(ngen) + ', cand ' + str(cand_index) + ', current injection # ' + str(current_step) + ' is not loading properly')
+			current_step_ERRORS.append(current_step)
+
+
+	###### EXTRACT THE MEAN STEADY STATE VOLTAGE RESPONSES ###### 
+	# RMP_ritness = eval_RMP_fitness(ARGS)
+
+	mean_responses = [None for data in data_files_NEEDED]
+	for i in range(len(data_files_NEEDED)):
+		if i in current_step_ERRORS:
+			continue
+		outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+		vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+		vdata = vdata_total[2000:] # accounts for delay 
+		steady_state_response = mean(vdata)
+		mean_responses[i] = steady_state_response
+
+	#Clear mean_responses of any remaining NoneType values
+	for x in range(len(mean_responses)):
+		if mean_responses[x] == None:
+			mean_responses[x] = 10e6 #arbitrary large value 
+***  Basically, added try-except block then skipped the ones that aren't working, then cull None values from mean_responses
+** still getting email bounces -- added 'mail-type': 'NONE' to b.runCfg for hpc_slurm 
+
+** WHAT I HAVE TO DO FOR THE REST OF THE DAY:
+*** figures
+**** current_injection = -0.1
+**** PARAMS for NGF_0:
+***** *cm = 1*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_1:
+***** *cm = 0.3*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+***** "sharper" on the bottom 
+**** PARAMS for NGF__1:
+***** *cm = 0.3*, e_ch_leak = -67, *gmax_ch_leak = 9.470825e-05*, gbar_hd = 0.0001
+***** vinit = -65.915
+***** "sharper" on the bottom 
+**** PARAMS for NGF_2:
+***** *cm = 2*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_3:
+***** cm = 1, e_ch_leak = -67, *gmax_ch_leak = 0.01*, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_4:
+***** cm = 1, e_ch_leak = -67, *gmax_ch_leak = 0.0001*, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_5:
+***** cm = 1, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, *gbar_hd = 0.00001*
+***** vinit = -65.915
+**** PARAMS for NGF_6:
+***** cm = 1, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, *gbar_hd = 0.001*
+***** vinit = -65.915
+*** email bounce problem update [done]
+*** add hd gbar to comet run [done]
+*** data for sam from paper -- SEND TO SAM:
+**** RMP = -67mV 
+**** Current steps (nA): -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12
+**** Corresponding Deflection from RMP (mV): -6, -9, -13, -16, -19, -23, -27, -29, -30, -35, -36, -38
+*** path to data on comet -- SEND THIS TO SAMN: 
+**** okay sorry back -- here is a path for evo output on comet: /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive_archive/NGF_passive.aug20
+*** path to cell that can be modified 
+
+
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = 0.000695302349670921
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = -54.2016041361413
+cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.00012968106020774835
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  1.3317379634003228
+
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = 0.00028363025814608827
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = -73.60910610857559
+cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.0006777105190265256
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  2.5942526753849107
+** Appears that the cfg and netParams etc are all different in all scripts and output .json files, but the simData['V_soma']['cell_0'] are the same for all candidates at the same current step
+** Trying 'skip': True in b.runCfg bc that's the only thing I can think of to change 
+
+* <2019-08-29 Thu -- NGF overlay expt vs model + saving issues>
+** Saving issues:
+*** Per samn:
+if voltage outputs are identical that might mean that the same core/thread is saving the data
+instead of each individual core/thread
+when you run a parallel program, there are multiple processes running at same time
+each has its own memory/state
+and they coordinate/communicate
+
+** Temp of monkey NGF paper? 
+** Function+fig -- overlay of original model over experimental data 
+*** ~/Desktop/NGF_tests/NGF_overlay
+*** Get original cell into this directory + mod files + test_run python script
+*** orig cell placed in above dir: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=187604&file=/modeldbca1/cells/class_ngfcell.hoc#tabs-2
+*** .hoc file renamed to ngf_cell.hoc 
+*** mod files copied over from ~/Desktop/NGF_tests/NGF_cell
+*** mod files compiled with nrnivmodl 
+*** test_ngf.py copied over from ~/Desktop/NGF_tests/NGF_cell 
+
+** ERROR:
+Saving output as /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_14/NGF_batch_data_cand43_0.json  ...
+--------------------------------------------------------------------------
+An MPI process has executed an operation involving a call to the
+"fork()" system call to create a child process.  Open MPI is currently
+operating in a condition that could result in memory corruption or
+other system errors; your MPI job may hang, crash, or produce silent
+data corruption.  The use of fork() (or system() or other calls that
+create child processes) is strongly discouraged.
+
+The process that invoked fork was:
+
+  Local host:          comet-10-46 (PID 13154)
+  MPI_COMM_WORLD rank: 0
+
+If you are *absolutely sure* that your application will successfully
+and correctly survive a call to fork(), you may disable this warning
+by setting the mpi_warn_on_fork MCA parameter to 0.
+--------------------------------------------------------------------------
+Finished saving!
+  Done; saving time = 0.10 s.
+Plotting recorded cell traces ...
+-------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code.. Per user-direction, the job has been aborted.
+-------------------------------------------------------
+--------------------------------------------------------------------------
+orterun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[1917,1],0]
+  Exit code:    1
+* <2019-08-30 Fri -- NGF>
+** Comet is still running!! (140 gens so far) 
+** Changing min to 7e-7 for gleak
+* <2019-09-02 Mon -- NGF>
+** <Individual: candidate = [7e-07, -85, 1e-05, 1.9586827954380048], fitness = [0.2266541695763965, 2935.2474706564667], birthdate = 1567436399.5798995>
+** Figure_0: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 7e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -90
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_1_0: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 7e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_2: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_3: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1
+** Figure_4: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  0.8
+* <2019-09-03 Tue -- NGF Passive params finalized>
+** Look at passive traces using values from Figure_4
+*** PARAMS:
+cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  0.8
+** changed hParams['celsius'] to 37 
+** other param sets:
+*** TAG: n1.png 
+cellRule['secs']['soma']['vinit'] = -67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** TAG: n2.png
+cellRule['secs']['soma']['vinit'] = -72 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['mechs']['hd']['vhalfl'] = -100
+cellRule['secs']['soma']['mechs']['hd']['ehd'] = -10
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n1.png
+cellRule['secs']['soma']['vinit'] = -67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['soma']['mechs']['hd']['vhalfl'] = -100 
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n2.png:
+cellRule['secs']['soma']['vinit'] = -66 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n3.png:
+cellRule['secs']['soma']['vinit'] = -66 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 3e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n4.png:
+*** Figure_PRE_FINAL.png:
+# cellRule['secs']['soma']['vinit'] = -66 #-67.2
+# cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+# cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+# cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+# cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_FINAL.png:
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+** FINAL PASSIVE PARAMS:
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+* <2019-09-04 Wed -- NGF active>
+** FINAL PASSIVE PARAMS: 
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+** Active param modification process:
+*** (1) Get the data (done)
+**** FIGURE: [[~/Desktop/NGF_tests/NGF_overlay_ACTIVE/active.png]]
+**** DATA (used web plot digitizer: https://apps.automeris.io/wpd/)
+***** Note: all current injections are the amount "above threshold"
+***** Note: this is steady-state frequency
+***** 40pA: 21 Hz
+***** 50pA: 24 Hz
+***** 60pA: 27 Hz 
+***** 70pA: 29 Hz
+***** 80pA: 33 Hz
+***** 90pA: 35 Hz
+***** 100pA: 36 Hz
+***** 110pA: 38 Hz
+***** 120pA: 40 Hz
+*** (2) Get the params to be potentially modified
+*** (3) Set up an overlay script
+**** PSEUDO CODE:
+- run individual_cell.py at current step
+- when len(spkt) == 1; store current step value and break loop
+- cfg.amp then equals ^^ current step + the amt_above thresh
+- run batch using this
+- do data analysis 
+*** (4) Start testing 
+** candidates tried:
+*** TAG: Figure_n0 [6654]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09
+*** TAG: Figure_n1
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01 #0.15514516
+*** TAG: Figure_n2
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 40 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09
+*** TAG: Figure_n3
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.07
+*** TAG: Figure_n4
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.08
+*** TAG: Figure_n5
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 10 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.08
+*** NOW INCREASING KDR AND NA IN PARALLEL
+*** TAG: Figure_n6
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1
+*** TAG: Figure_n7 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.2
+*** TAG: Figure_n8 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n9 [UNSAVED -- 6593 again]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 55 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n10 [6558 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 65 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n11
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 65 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n12 [UNSAVED -- 6558 again, traces ~ unchanged]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 95 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n13 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n14 [UNSAVED]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 5
+*** TAG: Figure_n15 [6558 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 50
+*** TAG: Figure_n16 [5969 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 1000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** NOW TRYING TO HIT BLOCKADE *THEN* INCREASE KDR
+*** TAG: Figure_n17 [5812 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 2000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n18 [5673 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n19 [5524 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 4000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n20 [5483 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 5000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n21 [4952 HOWEVER NOW SEE SPIKING ON ITS OWN]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 10000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] =
+*** ~3000 I see it start to spike on its own --- samn says 
+*** TAG: Figure_n22 [1067 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 400000
+** NOTE: if having python2 to python3 pickle error re: 
+**** ERROR: 
+UnicodeDecodeError: 'ascii' codec can't decode byte 0x89 in position 0: ordinal not in range(128)
+**** SOLUTION:
+with open(mshelffile, 'rb') as f:
+    d = pickle.load(f, encoding='latin1') 
+** GEOMETRY OF SOMA OF OTHER INTERNEURONS:
+*** PV: {nseg: 1, diam: 29.0, L: 27.0, cm: 1.2, Ra: 150.0}
+*** SOM: {nseg: 1, diam: 42.0, L: 42.0, cm: 1.2, Ra: 150.0}
+** GEOMETRY OF DENDS OF OTHER INTERNEURONS:
+*** PV: {nseg: 1, diam: 7.0, L: 44.0, cm: 1.2, Ra: 150.0}
+*** SOM: {nseg: 1, diam: 7.0, L: 176.0, cm: 1.2, Ra: 150.0}
+** SOMA AREA IN NGF PAPER (rat vs. monkey): macaque is ~92+/- 39 micron2
+** Added dend section to ngf_cell.hoc in ~/Desktop/NGF_tests/NGF_overlay_ACTIVE/ngf_cell.hoc 
+** Edited GEOMETRY of soma for ngf:
+*** from default to L = 9.5, diam = 9.5 (per samn) 
+*** NGF paper rat vs. monkey says soma area is ~92 +/- 39 micron2
+** PASSIVE FITTING FOR NEW GEOM + DEND:
+*** TAG: Figure_d0.png
+## SOMA: 
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND:
+#cellRule['secs']['dend']['vinit'] = -65.6 #-67.2
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-7 #7e-7
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+*** Figure_d1.png (UNSAVED)
+**** increase soma gpas only to 5e-6 
+**** Fitness SKYROCKETED (BAD)
+*** Figure_d2.png (UNSAVED)
+**** decrease soma gpas only to 5e-8 
+**** AWFUL fitness
+*** Figure_d3.png 
+**** Turned on cfg.hParams['celsius'] = 37
+**** soma ONLY modified (w/ original params from the other day); dend inserted but unmodified:
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+**** fitness is a little worse than d0, but not by much
+*** Figure_d4.png
+**** changed Ra soma to 100 (from 14), left only soma modified, dend unmodified
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+**** eh, fitness is around same as d3
+*** Figure_d5.png
+**** decrease dend gpas to 5e-7 (from 0.001)
+**** AWFUL fitness
+*** Figure_d6.png
+**** change dend gpas to 5e-6
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+#cellRule['secs']['dend']['vinit'] = -65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+**** not as bad as the worst, better than d5
+*** Figure_d7.png
+**** decreased gpas of soma only
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-8 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+#cellRule['secs']['dend']['vinit'] = -65.6
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+**** not the best not the worst 
+*** Figure_d8.png 
+**** decrease gpas of soma only to 5e-9 
+**** no diff from fitness from 5e-8? 
+*** Figure_d9.png [3909 ]:
+**** knocked out Ih in dend
+**** params (low gpas for soma)
+## SOMA
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-9 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5 
+*** Figure_d10.png:
+**** still have dend Ih knocked out
+**** params (lower gpas for soma: 5e-10) 
+**** no difference from d9? 
+*** Figure_d11.png [1625 ]:
+**** PARAMS:
+## SOMA
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 2e-4
+**** Fiddled around with test_ngf.py, and got good results w/ dend gpas at 2e-4 -- testing full batch. 
+*** Figure_d12.png --> THIS IS THE ONE!! 
+**** Params: same as d11 but changed gpas for dend to 3e-4 
+** PASSIVE PARAM SET FINAL:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+** ACTIVE CANDIDATES: 
+*** PASSIVE PARAMS STAY THE SAME:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+*** hoc file:
+begintemplate ngfcell
+public init
+public soma, dend
+
+create soma, dend
+
+proc topol() {
+	connect dend(0), soma(0)
+}
+
+
+proc init() {
+	topol()
+	soma {
+		Ra = 14
+		nseg = 1
+		cm = 1.8 //1.4
+		L = 9.5
+		diam = 9.5 //diam should be 5.4
+
+
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265 //gNasoma //0.10*gna_scale
+		ena = 55 
+
+		insert hd
+		gbar = 1e-05
+
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516// kdrf 
+
+		insert pas
+
+		insert iconc_Ca
+		catau_iconc_Ca = 10
+		caiinf_iconc_Ca = 5.e-6
+
+		insert ch_KvAngf
+		gmax_ch_KvAngf = 5.2203905e-06 //gKvA
+
+		insert ch_CavN  // HAV-N- Ca channel
+		gmax_ch_CavN =  0.00058169587 // gCavN (N-type)
+
+		insert ch_CavL 
+		gmax_ch_CavL=0.056108352 //gCavL (L-type)
+
+		insert ch_KCaS
+		gmax_ch_KCaS=4.5152237e-07 //gKCaS 
+
+		insert ch_KvCaB
+		gmax_ch_KvCaB =1.0235317e-06 //gKvCaB
+
+		ek=-90
+		eca=130
+	}
+
+	dend {
+		Ra = 14 //100 
+		nseg = 1
+		cm = 1
+		diam = 7 // from PV cell
+		L = 44 // from PV cell 
+
+		// LEAK CHANNEL
+		insert pas
+		e_pas = -67
+		g_pas = 0.001 //0.001 is default
+
+		//Ih for SAG 
+		//insert hd 
+		//gbar_hd = 0.0001				//mho per cm2 //default value in mod file
+
+
+		// Fast Na+ for Spiking 	//gNasoma
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265
+		ena = 55
+
+
+		// Fast K+  	//kdrf 
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516
+		ek = -90
+	}
+
+}
+
+
+
+
+endtemplate ngfcell
+
+
+
+
+
+
+*** cand0.png [146201 ]:
+**** params
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.15514516
+**** fitness 146201
+*** cand1.png [166974 ]
+**** decreasing soma Na+ gmax by 1 order of magnitude (3.78.. --> 0.3) 
+## ACTIVE PARAMS [to be modified]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.15514516 
+
+*** cand2.png [8685 ]
+**** ## ACTIVE PARAMS [to be modified]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.01 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01
+
+### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.01 #3.7860265
+cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01 #0.15514516
+*** cand3.png [154040 ]
+**** PARAMS:
+	### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 1 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 1 #3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1 #0.15514516
+*** cand4.png [226403 ] 
+**** PARAMS:
+	### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+*** cand5.png same as cand0.png [146201 ]
+**** PARAMS: no change to default active + fixed passive
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+
+### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+#cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+#cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+
+### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+#cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+#cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+* <2019-09-05 Thu -- NGF active>
+** FINAL PASSIVE PARAM SET:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+** CANDIDATES IN ORDER OF FITNESS:
+*** active_70: 141
+*** active_69: 294
+*** active_67: 1717
+*** active_65: 1742
+*** active_63: 1777
+*** active_62: 4692
+*** active_61: 10207
+*** active_57: 32902
+*** active_55: 37938
+*** active_51: 46851
+*** active_50: 47210
+*** active_44: 48023
+*** active_33: 142957
+*** active_29: 143266
+*** active_14: 143558
+*** active_28: 143558
+*** active_24: 143809
+*** active_13: 144655
+*** active_23: 144938
+*** active_5:  145595 
+*** active_18: 145595
+*** cand_0:    146201
+*** active_17: 146312
+*** active_20: 146380
+*** active_9:  146677
+*** active_12: 146706
+*** active_2:  146918
+*** active_8:  147726
+*** active_3:  148987 
+*** active_4:  150070
+*** active_16: 153285 
+*** cand3:     154040
+*** active_11: 154416
+*** active_7:  157667
+*** active_10: 160741
+*** active_6:  166336
+*** active_15: 166336
+*** active_0:  166974
+*** active_1:  166974
+** active_0.png [166974 ]:
+*** soma: 0.3 / default, dend: default / default
+**** only decrease soma Na+ gmax (3.7860265 --> 0.3) 
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
+**** worse than w/ higher ? 
+** active_1.png [166974 ]:
+*** soma: 0.03 / default, dend: default / default
+**** decrease soma Na+ gmax more (0.3 --> 0.03) 
+**** same as last cand? 
+** active_2.png [146918 ]:
+*** soma: 5 / default, dend: default / default
+**** Increase soma Na+ gmax, just to see (3 --> 5) 
+**** Is there deploarization block? Is that why it got better? Not that I can see. 
+** active_3.png [148987 ]:
+*** soma: 10 / default, dend: default / default
+**** Increase soma Na+ gmax again (5 --> 10) 
+**** worse than gmax at 5
+** active_4.png [150070 ]:
+*** soma: 5 / 1, dend: default / default
+**** Bring soma Na+ gmax back down to 5
+**** Increase soma K+ gmax from 0.155 --> 1 
+** active_5.png [145595 ]: 
+*** soma: 5 / 0.01, dend: default / default
+**** Keep soma Na+ gmax at 5
+**** Decrease soma K+ gmax to 0.01 
+** active_6.png [166336 ]:
+*** soma: 0.5 / 0.01, dend: default / default
+**** Keep soma K+ gmax at 0.01
+**** Bring down soma Na+ gmax from 5 to 0.5 
+** active_7.png [145595 --> 157667]:
+*** soma: 5 / 0.01, dend: 0.3 / default
+**** Bring soma back to soma Na+ 5 / K+ 0.01 
+**** Uncomment dend mechanisms 
+**** Decrease dend Na+ gmax to 0.3 (from 3.8)
+** active_8.png [157667 --> 147726 ]:
+*** soma: 5 / 0.01, dend: 5 / default
+**** Keep same as before but increase dend Na+ gmax to 5 
+**** worse than active_5, which has same params except slight increase in dend Na+ gmax (soma: 5/0.01, dend: 5/0.155) 
+** active_9.png [146677 ]:
+*** soma: 5 / 0.1, dend:default / default
+**** Increase soma K+ gmax from 0.01 to 0.1 
+** active_10.png [160741 ]:
+*** soma: default / default, dend: 1 / default
+**** best fitness is still with default values
+**** uncomment all and go from here
+**** decrease Na+ of dend relative to Na+ 
+** active_11.png [154416 ]:
+*** soma: default / default, dend: 1 / 0.01 
+**** decrease K+ gmax in dend 
+** active_12.png [146706 ]: 
+*** soma: 7 / 0.01, dend: default / default
+**** start w/ active_5 cands (soma 5 / 0.01) bc best fit so far, and increase gmax 
+**** decreased fitness -- lower soma Na+ gmax below 5 
+** active_13.png [144655 ]:
+*** soma: 3 / 0.01, dend: default / default
+** active_14.png [143558 ]:
+*** soma: 1 / 0.01, dend: default / default
+**** keep lowering soma until fitness gets worse 
+** active_15.png [166336 ]:
+*** soma: 0.9 / 0.01, dend: default / default
+** active_16.png [153285 ]:
+*** soma: 1 / 0.01, dend: 1 / default
+**** Go back to soma 1/0.01 and decrease dend Na+ gmax 
+** active_17.png [146312 ]:
+*** soma: 1 / 0.01, dend: 1 / 0.01 
+**** keep dend Na+ gmax here, but lower K+ gmax dend 
+** active_18.png [145595 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.01 
+**** Lower dend Na+ gmax relative to soma
+** active_19.png [165663 ]:
+*** soma: 1 / 0.01, dend: 0.5 / 0.01
+**** lower dend Na+ gmax more 
+** active_20.png [146380 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.009 
+**** bring dend Na+ back up to 0.9 but lower dend K+ gmax 
+** active_21.png [149470 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.005
+**** lower dend K+ gmax even more 
+** active_22.png [145595 ]:
+*** soma: 0.9 / 0.01, dend: 0.9 / 0.01
+**** bring back to dend 0.9 / 0.01, decrease soma Na+ 
+** active_23.png [144938 ]:
+*** soma: 0.5 / 0.01, dend: 0.9 / 0.01 
+**** lower soma Na+ more 
+** active_24.png [143809 ]:
+*** soma: 0.3 / 0.01, dend: 0.9 / 0.01 
+**** bring down Na+ gmax even more for soma 
+** active_25.png [166336 -- FIG UNSAVED ]:
+*** soma: 0.1 / 0.01, dend: 0.9 / 0.01 
+**** bring down Na+ soma even more 
+** active_26.png [162504 -- FIG UNSAVED ]:
+*** soma: 0.3 / 0.01, dend: 0.5 / 0.01 
+**** bring back to 0.3 for soma Na+ gmax 
+**** lower Na+ gmax for dend 
+** active_27.png [144092 -- FIG UNSAVED ]:
+*** soma: 0.3 / 0.008, dend: 0.9 / 0.01 
+**** bring values back to active_24
+**** lowering dend Na+ didn't go great
+**** lower soma K+ gmax 
+** active_28 [143558 ]:
+*** soma: 0.3 / 0.02, dend: 0.9 / 0.01 
+**** decreasing soma K+ gmax dend made it worse -- increase it instead 
+** active_29 [143266 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.01 
+**** Keep increasing soma K+ gmax 
+** active_30 [144376 ]:
+*** soma: 0.3 / 0.1, dend: 0.9 / 0.01 
+**** keep increasing soma K+ gmax 
+** active_31 [161006 ]:
+*** soma: 0.3 / 0.05, dend: 0.5 / 0.01 
+**** bring back down to active_29 params 
+**** try decreasing dend Na+ gmax 
+** active_32 [143867 ]:
+*** soma: 0.3 / 0.05, dend: 1 / 0.01 
+**** decrease Na+ in dend didn't work -- try increasing 
+**** slightly worse fitness, not the right move 
+** active_33 [142957 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.009
+**** bring back to active_29
+**** lower K+ dend gmax 
+** active_34 [143377 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.005 
+**** keep lowering K+ dend gmax 
+** Try raising soma capacitance --> does help dampen excitability. can change to 1 or 1.5 without sacrificing passive fit --> doing 1.5 for both soma and dend 
+** active_35 [50399 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.009 
+**** cm = 1.5 for both soma and dend for here down 
+** active_36 [60353 ]:
+*** soma: 0.1 / 0.05, dend: 0.9 / 0.009 
+**** samn says to decrease Na+ and increase K+ 
+** active_37 [58359 ]:
+*** soma: 0.1 / 0.08, dend: 0.9 / 0.009
+**** try increasing soma K+ at the same time as decreasing Na+ 
+** active_38 [57880 ]:
+*** soma: 0.1 / 0.1, dend: 0.9 / 0.009 
+**** just try increasing soma K+ more 
+** active_39 [54358 ]:
+*** soma: 0.1 / 0.1, dend: 0.5 / 0.009 
+**** keep soma as is above, and just see if decreasing dend Na+ does anything here 
+**** okay it did bring it down from the previous combo 
+** active_40 [98317 ]:
+*** soma: 0.1 / 0.1, dend: 0.3 / 0.009 
+**** bring dend Na+ conductance down even more 
+** active_41 [98074 ]:
+*** soma: 0.1 / 0.1, dend: 0.3 / 0.01 
+**** try increasing K+ in dend 
+** active_42 [55448 ]:
+*** soma: 0.03 / 0.5, dend: 0.9 / 0.009
+**** go nuts here, just to see. bring values back to active_35 param combo. then lower soma a lot + raise K+ a lot. NEXT TRY RAISING SOMA ALOT. 
+** active_43 [8534 -- but wrong way, too dampened]:
+*** soma: 0.03 / 0.5, dend: 0.1 / 0.01 
+**** now lower Na+ gmax in dend and raise K+ gmax in dend 
+** active_44 [48023 ]:
+*** soma: 0.3 / 0.1, dend: 0.9 / 0.009 
+**** this time go back to active_35 params. then increase K+ in soma. 
+** active_45 [110402 ]:
+*** soma: 0.3 / 0.1, dend: 0.2 / 0.009 
+**** Decrease Na+ in dend to 0.2
+** active_46 [116395 ]:
+*** soma: 0.3 / 0.1, dend: 0.2 / 0.1 
+**** out of curiosity, keep it same as 45 but increase K+ in dend 
+** active_47 [55214 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.009 
+**** decrease dend Na+, just to see
+** active_48 [55214 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.01 
+**** increase K+ dend by a little
+** active_49 [63113 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.05 
+**** didn't make much difference, so increase K+ dend even further --> 0.05 
+** active_50 [47210 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.05 
+**** increase dend Na+ just to see --> to 1
+** active_51 [46851 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1 
+**** Try increasing K+ dend now
+** active_52 [47210 ]:
+*** soma: 0.5 / 0.1, dend: 1 / 0.1 
+**** try increasing soma Na+ conductance, hmm
+** active_53 [56652 ]:
+*** soma: 0.1 / 0.1, dend: 1 / 0.1 
+**** decrease Na+ soma conductance to 0.1 
+** active_54 [46851 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1, 
+*** soma KvAngf gmax --> 5.2e-05
+**** increasing other potassium channels to dampen excitability (1 order of magnitude in this case) 
+** active_55 [37938 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** soma KvAngf gmax --> 5.2e-03
+**** increasing KvAngf 
+** active_56 [37938 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** + gmax_ch_KCaS= 4.5e-06 
+**** increase another K+ channel to see what happens 
+** active_57 [32902 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** ++ gmax_ch_KCaS= 4.5e-04 
+** active_58 [39798 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 
+*** + gmax_ch_KvCaB = 1.02e-05
+** active_59 [8534 -- wrong way ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 
+*** ++ gmax_ch_KvCaB = 1.02e-03
+** active_60 [33003 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 -03? 
+*** - gmax_ch_KvCaB = 1.02e-07
+** active_61 [10207 ] :
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** +gmax_ch_KCaS= 4.5e-04 -03? 
+**** leave gmax_ch_KvCaB alone for now 
+** active_62 [4692 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** +gmax_ch_KvAngf = 5.2e-02 
+*** gmax_ch_KCaS= 4.5e-04 ? -03
+** active_63 [1777 ]: 
+*** soma: 0.3 / 0.1, dend: +default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-04 -03? 
+** active_64 [1821 ]: 
+*** soma: +0.8 / 0.1, dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-04 e-3? 
+** active_65 [1742 ]: 
+*** soma: (-)0.1 / 0.1, dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_66 [1873 ]: 
+*** soma: 0.1 / 0.15(+), dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_67 [1717 ]: 
+*** soma: 0.1 / 0.09(-), dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_68 [1372 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.07 (-)  
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03
+** active_69 [294 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.07 
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** gmax_ch_KCaS = 6e-03 (+)
+** active_70 [141 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.05 (-)  
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 6e-03
+** active_71 [31 ]:
+*** soma: 0.1 / 0.09, dend: default / 0.03 (-) 
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 6e-03
+
+
+** SEEING IF I CAN smooth out those ends a little more:
+*** in ch_Kdrfastngf.mod "slope5=.07 (1)" --> slope5=1.7 (1) -- NOPE
+*** in ch_Kdrfastngf.mod "slope5=.07 (1)" --> slope5=.007 (1)
+***  in ch_Kdrfastngf.mod "offset6=10 (mv)" --> offset6=5
+*** ORIG: offset6 = 10 (mV) offset5=10 (mV)
+
+** ch_Kdrfastngf.mod offset5 and offset6 = 15: fitness 18! 
+** ^^ offset 5 & 6 set to 17 --> fitness 17! 
+** ch_Navngf.mod ORIG mAlphV = 24 (mV) -- don't change
+*** change: mAlphV = 20 (mV)-- NOPE
+** ch_Navngf.mod ORIG mAlphC = -0.34133 (1) -- no diff, don't change 
+*** change: mAlphC = -0.6 (1)
+** ch_Navngf.mod ORIG mBetaV = -4 (mV)
+*** change: mBetaV = 4 (mV) --> made model lower spiking than empirical 
+*** change: mBetaV = -2 (mV) --> nope change back 
+
+
+** ASIDE: comment out all Na+ K+ in dend and soma 
+*** only Na+ soma is active 
+* <2019-09-06 Fri -- Connectivity data>
+** Push NGF cell to A1 model 
+*** Params for NGF are finalized:
+**** PASSIVE:
+	## PASSIVE SOMA PARAMS
+	cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+	cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+	cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+	cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+	cellRule['secs']['soma']['geom']['cm'] = 1.5 #0.5
+	#print(cellRule['secs']['soma']['mechs']['ch_KvAngf']['gmax'])
+
+	## PASSIVE DEND PARAMS
+	cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+	cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+**** ACTIVE:
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.1 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.03
+ 
+*** Use new mod files (1 has been changed) --> ch_Kdrfastngf.mod
+**** see yesterday's entry for new offset values
+**** LOCAL: /Users/ericagriffith/Desktop/NEUROSIM/A1/mod
+**** cd ^^ --> rm ch_Kdrfastngf.mod
+**** cp in new ch_Kdrfastngf.mod file from ~/Desktop/NGF_tests/NGF_overlay_ACTIVE/ch_Kdrfastngf.mod 
+**** re-compile locally 
+***** https://github.com/MetaCell/NetPyNE-UI/blob/master/netpyne_ui/tests/M1detailed/compile
+***** cd ~/Desktop/NEUROSIM/A1 --> rm -r mod/x86_64 --> no such dir
+***** ln -s mod/x86_86 x86_64
+***** cd mod
+***** nrnivmodl
+***** cd .. 
+*** Remove old hoc file and replace w/ new one
+**** rm ~/Desktop/NEUROSIM/A1/cells/ngf_cell.hoc 
+**** put in celsius and v_init into beginning of ngf_cell.hoc and made sure that all params matched with what is in the test_ngf.py and netParams.py files used for testing param combos in ~/Desktop/NGF_tests/NGF_overlay_ACTIVE (dend and soma passive, dend and soma active) 
+**** coped into A1/cells 
+*** added (and commented out, for now) a line in A1/cfg.py --> cfg.hParams['celsius'] = 37
+*** Remove NGF_optimization directory? Yes
+**** git rm all relevant files
+**** git commit -m 'CHANGES'
+**** git push origin master (check git branch first to make sure on master)
+*** All changes described above pushed to github, neurosim, and comet 
+*** zipped NGF work is on local machine (laptop) in /Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_archived_files_and_figures
+** Work on connectivity data 
+* <2019-09-07 Sat -- Connectivity data>
+** Kato et al., 2017 "Network-level control of frequency tuning in Auditory Cortex"
+*** mouse, A1, has data about IPSCs in L2/3 Pyr cells via PV and SOM in Layers 2/3-6 
+*** Figure 8B has most of the data
+*** Layer boundaries in Fig 8B:
+**** L2/3: 0-155 micrometer
+**** L4: 155 - 258
+**** L5: 258 - 466
+***** For our model, L5A is 28% of L5 and L5B is 72% of L5
+***** This model L5 is 208 microns
+***** 28% is ~58 microns deep
+***** L5A: 258 - 316, L5B: 316 - 466
+**** L6: 466 - 645 
+*** "Normalized IPSCs" in Pyr L2/3, from PV 
+**** PV in L2/3: .7, .9, .7 --> MEAN: 0.77
+**** PV in L4: 0.4, 0.1 --> MEAN: 0.25
+**** PV in L5A: 0.05 --> MEAN: 0.05
+**** PV in L5B: 0.03, 0.02 --> MEAN: 0.025
+**** PV in L6: 0.01, 0.008, 0.008, 0.008 --> MEAN: 0.0085
+*** Normalized PV L2/3 IPSCs from SST:
+**** SST in L2/3: 0.9, 0.9, 0.8 --> MEAN: 0.87
+**** SST in L4: 0.7, 0.6 --> MEAN: 0.65
+**** SST in L5: 0.5, 0.3, 0.2 --> MEAN: 0.33  
+**** SST in L5A: 0.5 --> MEAN: 0.5
+**** SST in L5B: 0.3, 0.2 --> MEAN: 0.25
+**** SST in L6: 0.1, 0.08, 0.06, 0.04 --> MEAN: 0.07 
+** Levy & Reyes, 2012
+*** L4, A1, mouse 
+*** Table 2 & Figure 3
+*** Not sure which to use here -- first PSP?? hm. Ask salva upon return. 
+*** Pyr L4 == ITP4 (pyramidal), G42 == PV, GIN = SST
+*** ITP4 --> ITP4: 0.45 mV
+*** ITP4 --> PV4: 1.29 mV
+*** ITP4 --> SST4: 0.51 mV *facilitating synapse*
+*** PV4 --> ITP4: (-?) 0.64 mV
+*** SST4 --> ITP4: (-?) 0.29 mV
+** Joshi et al., 2017
+*** Mouse, A1, L2/3 --> L5B 
+*** Figure 5 has EPSC amplitudes 
+*** Figure 6C has EPSP amplitudes 
+*** NOTE: coricocallosal (ccal) == IT, corticocollicular (ccol) == PT 
+*** IT2 --> IT5B (ccol): MEAN 1.0 mV 
+*** IT2 --> PT5B (ccal): MEAN 0.85 mV 
+* <2019-09-11 Wed -- Excitatory cell dendrite modifications>
+** samn & rest of group say now we need to extend (apical) dendrites to reach the correct layers then ensure their firing properties are approximately equivalent
+** Figure to reference: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/papers/connectivity/ACX_wiring_diagram.png]] --> From the book /The Mammalian Auditory Pathways: Synaptic Organization and Microcircuits/
+** Populations with apical dendrites, by layer, based on the above figure:
+*** FOR REFERENCE, all pops in this diagram: 
+**** L1 cajal-retzius 
+**** L2 pyramidal (S/M)
+**** L3 pyramidal (S), L3 pyramidal (M/L), L3 star pyramidal
+**** L3/4 Spiny Stellate
+**** L5 Star Pyramidal, L5 Pyramidal (L/XL), L5 pyramidal (S/M)
+**** L5/6 inverted pyramidal
+**** L6 Pyramidal (M/L), L6 Star Pyramidal
+*** Pops with dends in L1:
+**** L2 pyramidal (S/M) [1/1]
+**** L3 pyramidal (M/L) [1/3, not counting star]
+**** L5 pyramidal (L/XL) [1/3, not counting inverted]
+*** Pops with dends in L2:
+**** L2 Pyramidal (S/M) [1/1]
+**** L3 Pyramidal (S) [1/4, counting star]
+**** L3 Pyramidal (M/L) [1/4, counting star]
+**** L3 Star Pyramidal [1/4, counting star]
+**** L5 Pyramidal (L/XL) [1/3, not counting inverted]
+*** Pops with dends in L3:
+**** L3 Pyramidal (M/L) [1/4, counting star]
+**** L3 Star Pyramidal [1/4, counting star]
+**** L3/4 Spiny Stellate 
+**** L5 Star Pyramidal [1/3, not counting inverted]
+**** L5 Pyramidal (L/XL) [1/3, not counting inverted]
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+*** Pops with dends in L4:
+**** L3 Star Pyramidal (Potentially BASAL not apical??)
+**** L3/4 Spiny Stellate (Potentially BASAL not apical??)
+**** L5 Star Pyramidal [1/3, not counting inverted]
+**** L5 Pyramidal (L/XL) [1/3, not counting inverted]
+**** L5 Pyramidal (S/M) [1/3, not counting inverted]
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+*** Pops with dends in L5:
+**** L5 Star Pyramidal (Potentially BASAL not apical??)
+**** L5 Pyramidal (S/M) [1/3, not counting inverted]
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+**** L6 Star Pyramidal [1/2, not counting inverted]
+*** Pops with dends in L6:
+**** L6 fusiform horizontal & tangential pyramidal
+**** L5/6 Inverted Pyramidal
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+**** L6 Star Pyramidal (Apical & Basal??) 
+** Steps:
+*** Figure out how to load .pkl files in A1/cells
+**** (1) python; import pickle; with open('FILENAME.pkl','rb') as fileObj: data = pickle.load(fileObj, encoding='bytes')
+***** The encoding='bytes' resolves the following error: *UnicodeDecodeError: 'ascii' codec can't decode byte 0xfa in position 2: ordinal not in range(128)* 
+**** (2) netParams.loadCellParamsRule(label='CT6_reduced',fileName='CT6_reduced_cellParams.pkl')
+*** Start with modification of L2 Excitatory cells
+**** Excitatory Pop in the model: IT2
+**** IT2 needs apical dendrites in L2 and in L1 
+**** L1 normalized layer boundaries: [0.00, 0.05] --> 0-100
+**** L2 normalized layer boundaries: [0.05, 0.08] --> 100-160
+**** File: A1/cells/IT2_reduced_cellParams.pkl
+***** LOAD file:
+****** with python; import pickle; from netpyne import specs; netParams.loadCellParamsRule(label='IT2_reduced',fileName='IT2_reduced_cellParams.pkl')
+***** 3 apical dendrites & 1 basal dendrite
+***** Current geometry of Adend1:
+****** netParams.cellParams['IT2_reduced']['secs']['Adend1']['geom']
+****** diam = 1.5831889597
+****** L: 96.75
+****** pt3d: [[0, 48.4123467666, 0, 1.5831889597], [0, 145.1623467666, 0, 1.5831889597]]}
+***** Current geometry of Adend2:
+****** diam: 1.5831889597
+****** L: 96.75
+****** pt3d: [[0, 145.1623467666, 0, 1.5831889597], [0, 241.9123467666, 0, 1.5831889597]]
+***** Current geometry of Adend3: 
+****** diam: 1.5831889597
+****** L: 96.75
+****** pt3d: [[0, 241.9123467666, 0, 1.5831889597], [0, 338.66234676659997, 0, 1.5831889597]]
+**** I need IT2 to go from within L2 (100-160, 0.05 - 0.08), up to within L1 (0-100, 0 - 0.05). Max length is therefore 160 (160 --> 0), and min length is ~0 (100-100). If cell body located approximately in the middle of L2 (~130, 0.065) and dendrite extends to approximately middle of L1 (~50, 0.025), then dendrite length would be ~80 (0.065 --> 0.025). 
+**** Shorten pt3d and L for apical dendrites
+*** Questions:
+**** RESOLVED:
+***** What is the total depth of the model? --> *2000*
+***** How to correlate length with normalized layer depth? 
+****** I: 0-100 
+****** II: 100-160
+****** III: 160-950 
+****** IV: 950-1250
+****** VA: 1250-1334
+****** VB: 1334-1550
+****** VI: 1550-2000
+***** What do the values in pt3d correspond to? 
+****** x, y, z, diam
+****** https://www.neuron.yale.edu/neuron/static/py_doc/modelspec/programmatic/topology/geometry.html
+***** How to modify the lengths when there is a pt3d? 
+***** Do I modify all apical dendrites or just one? 
+**** This wiring diagram does not explicitly show pyramidal cell bodies in L4, only sort of spiny stellate.  
+**** What do I do about L5A / L5B? 
+**** For cells that appear to have synapses along the dendrite in multiple superior layers, do I need to just adjust one dendrite to be long enough to reach through all of the layers or do I need to make different ones for each layer that it goes through? Probably just one and have them synapse...? 
+* <2019-09-12 Thu -- dendrite adjustments>
+** All of these changes are happening on laptop in ~/Desktop/cells
+** Using script cell_save.py with function change_geom(cellName,L) which will change pt3d and L (in geom)
+** Pops that need to extend to L1 [L5 pop UNFINISHED]:
+*** IT2
+**** IT2_reduced_cellParams.pkl --> IT2_reduced_new.pkl
+**** midpoint to midpoint strategy as noted by salva: 50 is midpoint of L1, 130 is midpoint of L2, so L = 80
+**** cd ~/Desktop/cells/ ; python ; import cell_save ; cell_save.change_geom('IT2_reduced, 80)
+*** IT3
+**** Does not have a separate pkl file right now
+**** Is there anything in the pkl file for IT2_reduced_cellParams.pkl that would preclude me from copying and renaming it IT3_reduced_cellParams.pkl? *DID THIS IN ~/Desktop/cells*
+**** Midpoint of L3 is 555 (160-950) and midpoint of L1 is 50 --> L = 505
+**** cd ~/Desktop/cells; python; import cell_save; cell_save.geom('IT3_reduced',505)
+**** IT3_reduced_cellParams.pkl --> IT3_reduced_new.pkl
+*** L5 pyramidal L/XL --> IT5A, IT5B, PT5B?? which one, which layer? 
+** Pops that need to extend to L2 
+*** 
+
+** IN light of IT3 modifications (see previous point), I should change *netParams.py* as well, yes? 
+* <2019-09-13 Fri -- dendrite adjustments>
+** Changes being made on local machine in ~/Desktop/cells
+* <2019-09-16 Mon -- dendrite adjustments>
+** Recall layer depths: 
+*** I: 0-100 
+*** II: 100-160
+*** III: 160-950 
+*** IV: 950-1250
+*** VA: 1250-1334
+*** VB: 1334-1550
+*** VI: 1550-2000
+** What about soma? what does pt3d mean? 
+** Cell populations: 
+*** L1 
+**** NGF1
+*** L2
+**** IT2  
+***** Done with morph changes --> now look at ephys
+**** SOM2
+**** PV2
+**** VIP2
+**** NGF2
+*** L3
+**** [check ephys] IT3
+***** done with morph changes
+***** check ephys
+**** SOM3
+**** PV3
+**** VIP3
+**** NGF3
+*** L4
+**** check ephys for both pops below; morph changes complete
+**** [DONE] ITP4 (pyramidal)
+**** [DONE] ITS4 (spiny stellate) --> changed in real dir but untested 
+**** SOM4
+**** PV4
+**** VIP4
+**** NGF4
+*** L5A
+**** [NOT DONE] IT5A
+**** SOM5A
+**** PV5A
+**** VIP5A
+**** NGF5A
+*** L5B
+**** [NOT DONE] IT5B
+**** [NOT DONE] PT5B
+**** SOM5B
+**** PV5B
+**** VIP5B
+**** NGF5B
+*** L6
+**** [NOT DONE] IT6
+**** [NOT DONE] CT6
+**** SOM6
+**** PV6
+**** VIP6
+**** NGF6
+** L4 Spiny Stellate:
+*** ITS4 : cell pop name
+*** ITS4.py 
+*** L4 spiny stellate needs to go from L4 --> L3 
+*** L4 [1100; 950-1250] --> L3 [555; 160-950]
+*** Length = 545 (1100-555) 
+*** In ITS4.py, dend.L = self.rho * self.soma.L
+**** self.rho = 165
+**** self.soma.L = 10
+**** To change length, (1) change rho (2) change soma.L (3) just set dend.L = 545
+*** Tried to change dend.L in ITS4.py in ~/Desktop/cells, but having trouble with ca_ion. Loads fine in ~/Desktop/NEUROSIM/A1 (python -i netParams.py), so I think it's something to do with the mod files. Changing it in the file here, not in temp dir on local desktop. --> works 
+** L6 IT6
+*** IT6 can be subdivided into IT6 and ITC6 (claustrum)
+*** IT6 --> L5
+*** ITC6 --> L1 
+** L6 CT6 
+*** CT6 --> L4
+*** CT6_reduced_cellParams.pkl
+*** L6 [1775; 1550-2000] --> L4 [1100; 950-1250]: L = 675, not counting soma 
+** Now: all pops have been modified
+*** LIST DETAILS NEXT POST
+** Now need to test them 
+* <2019-09-17 Tue -- dendrite modifications>
+** On local machine; have (in ~/Desktop/cells) a few scripts for testing. 
+*** Algorithm: (1) I change netParams_OLD.py and netParams_NEW.py (3 things each -- 'cellType' in netParams.popParams, & label and fileName in cellRule
+*** (2) Change overlay_ACTIVE.py and overlay_PASSIVE.py to have the correct title for each overlay graph
+*** (3) python -i overlay_PASSIVE.py 
+*** (4) Go to terminal, load cell, and look at passive mechs in each section
+**** python
+**** from netpyne import specs; netParams = specs.NetParams()
+**** netParams.loadCellParamsRule(label='IT2_reduced', fileName='IT2_reduced_new_cellParams.pkl') 
+**** netParams.cellParams[netParams.cellParams['IT2_reduced']['secs']['soma']['mechs'].keys() 
+*** (5) go back to netParams_NEW.py and change passive params for each 
+** IT2 tuning:
+*** Mechanisms (soma, Adend1, Adend2, Adend3): kBK, pas, cat, ih, kap, can, kdr, cal, nax, cadad
+*** PASSIVE: pas
+*** e_pas = -87.1335623948
+**** netParams.cellParams['IT2_reduced']['secs']['soma']['mechs']['pas']['e']
+*** g_pas = 9.442294539558377e-05
+**** netParams.cellParams['IT2_reduced']['secs']['soma']['mechs']['pas']['g']
+*** Cm = 2.4998269977
+**** netParams.cellParams['IT2_reduced']['secs']['soma']['geom']['cm']
+*** Do not understand why vinit isn't working...? Have to set for all sections. 
