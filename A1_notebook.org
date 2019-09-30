@@ -26022,3 +26022,109 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** Cm = 2.4998269977
 **** netParams.cellParams['IT2_reduced']['secs']['soma']['geom']['cm']
 *** Do not understand why vinit isn't working...? Have to set for all sections. 
+* <2019-09-19 Thu -- cell pop tuning>
+* <2019-09-20 Fri -- cell pop tuning>
+* <2019-09-26 Thu -- cell pop tuning>
+** Make a git branch for this
+*** git checkout -b cells
+*** OR git branch cells; git checkout cells
+** Populating git branch:
+*** Go to cells branch (=git checkout cells=) 
+*** mkdir dend_edits; cd dend_edits
+*** copied in all mod files; nrnivmodl (to compile) 
+*** NOTE: see 9/17 entry for algorithm on changing dendrite lengths
+*** Copied in (from ~/Desktop/cells --> where I was doing all the edits) the following cell files:
+**** IT2_reduced
+**** IT3_reduced
+**** ITS4.py (spiny stellate)
+**** IT4_reduced
+**** IT5A_reduced
+**** IT5B_reduced
+**** PT5B_reduced 
+**** IT6_reduced (goes to L5) 
+**** CT6_reduced 
+**** ITC6_reduced (goes to L1) 
+*** Also put in netParams_OLD.py, netParams_NEW.py, overlay_ACTIVE.py, and overlay_PASSIVE.py for cell tuning (see below)
+*** Also put in cell_batch.py, cfg.py, and init.py so that scripts listed above can have access to batch (needed for comparison)
+*** Put in test_cell.py in order to do pre-comparison testing
+** Cell tuning algorithm:
+*** (0) Change basics of 2 sets of scripts:
+**** netParams_OLD.py and netParams_NEW.py (3 things for both, 1 extra in NEW):
+***** (i) 'cellType' in netParams.popParams
+***** (ii) label and (iii) fileName in cellRule (netParams.loadCellParamsRule)
+***** *FOR NEW ONLY* (iv) netParams.cellParams[CELLNAME e.g. 'IT3_reduced']
+**** overlay_PASSIVE.py and overlay_ACTIVE.py:
+***** Make sure each overlay graph has the correct title (plt.title, at the end in plotting section) 
+*** (1) Look at existing mechanisms:
+**** cd .../A1/cells/dend_edits
+**** In terminal: python
+**** from netpyne import specs
+**** netParams = specs.NetParams()
+**** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_cellParams.pkl')
+**** *EXPLORE PARAMS*: netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['mechs']
+*** (2) Make a list of which mechanisms should be modified for passive and which for active
+**** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g']
+
+*** (3) Change netParams_NEW.py according to above findings:
+**** Add in lines that will allow you to change param values: 
+**** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g'] = placeholder_value
+**** e.g. v_init sometimes too: 
+***** netParams.cellParams['IT3_reduced']['globals']['v_init'] = -80 #-85.3
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['vinit'] = -80 #-85.3
+*** (4) *PASSIVE FIT* 
+**** Change 
+**** Run python -i overlay_PASSIVE.py 
+**** Adjust params iteratively in netParams_NEW.py until reasonable passive fit is achieved
+****** May also test values in test_cell.py just to see what traces look like 
+****** have to sometimes adjust v_init in test_cell.py for trace visualization 
+*** (5) *ACTIVE FIT* 
+**** use test_cell.py to find rheobase 
+**** change current_steps in overlay_ACTIVE.py so first value is near rheobase
+**** change params['amp'] in batch (if FitType == 'active':\ params['amp'] = [])**** *on first iteration* : Delete data_old (there will be data from last cell in there bc batch doesn't overwrite data_old) 
+**** run python -i overlay_ACTIVE.py 
+**** look at original param values:
+***** python; from netpyne import specs
+***** netParams = specs.NetParams()
+***** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_new_cellParams.pkl')
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs'].keys()
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['nax']
+**** change values (up or down) in netParams_NEW.py (netParams.cellParams[]...)
+**** save figures that you want to save
+*** (6) Make traces
+**** use test_cell.py with the new params
+**** OR look in data_new / data_old directories 
+** Save new cells in .pkl format: save_cell.py (in dend_edits) 
+** Transfer to cells directory 
+
+
+
+* <2019-09-27 Fri -- Tuning continued>
+** IT3 tuning:
+*** PASSIVE:
+**** v_init = -87.15 
+**** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g'] = 8e-05 <--- FOR FINAL FIT!!! Reduced g_pas from 9.44e-05 
+**** PASSIVE FIT IS NOW 0.0207
+**** REDUCED EVEN FURTHER --> g_pas is 7e-05, fitness is 0.019
+**** Figure is in ~/Desktop/IT3_figures
+* <2019-09-30 Mon -- tuning continued>
+** Creating a script called save_cell.py in ~/Desktop/NEUROSIM/A1/cells/dend_edits --> this will allow me to save the tuned cells as .pkl files 
+*** Saves with cellName + '_tuned_cellParams.pkl'
+*** cellName_reduced.pkl : ORIG FILE
+*** cellName_reduced_new_cellParams.pkl: DEND LENGTH MODIFIED
+** IT2 tuning: 
+*** PASSIVE: 
+*** ACTIVE: 
+*** IT2 SUMMARY:
+**** PASSIVE:
+**** ACTIVE:
+**** v_init used in test_cell.py 
+** IT3 tuning:
+*** ACTIVE:
+**** use test_cell.py to find rheobase, with new passive params
+**** rheobase is ~0.25nA 
+**** nax gbar --> 0.048
+*** IT3 SUMMARY:
+**** PASSIVE: g_pas = 7e-05
+**** ACTIVE: nax gbar = 0.048 
+**** v_init used in test_cell.py --> -87.15 
+*** Save cell in .pkl format 
