@@ -26047,14 +26047,17 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** Also put in netParams_OLD.py, netParams_NEW.py, overlay_ACTIVE.py, and overlay_PASSIVE.py for cell tuning (see below)
 *** Also put in cell_batch.py, cfg.py, and init.py so that scripts listed above can have access to batch (needed for comparison)
 *** Put in test_cell.py in order to do pre-comparison testing
+*** git add and commit like usual (making sure on correct branch)
+*** git push origin cells --> to push changes 
 ** Cell tuning algorithm:
-*** (0) Change basics of 2 sets of scripts:
+*** (0) Change basics of 3 sets of scripts:
 **** netParams_OLD.py and netParams_NEW.py (3 things for both, 1 extra in NEW):
 ***** (i) 'cellType' in netParams.popParams
 ***** (ii) label and (iii) fileName in cellRule (netParams.loadCellParamsRule)
-***** *FOR NEW ONLY* (iv) netParams.cellParams[CELLNAME e.g. 'IT3_reduced']
+***** *FOR NEW ONLY* (iv) netParams.cellParams[CELLNAME e.g. 'IT3_reduced'
 **** overlay_PASSIVE.py and overlay_ACTIVE.py:
 ***** Make sure each overlay graph has the correct title (plt.title, at the end in plotting section) 
+**** test_cell.py: change cellType, label, and fileName, along with netParams.cellParams[]
 *** (1) Look at existing mechanisms:
 **** cd .../A1/cells/dend_edits
 **** In terminal: python
@@ -26064,7 +26067,6 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** *EXPLORE PARAMS*: netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['mechs']
 *** (2) Make a list of which mechanisms should be modified for passive and which for active
 **** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g']
-
 *** (3) Change netParams_NEW.py according to above findings:
 **** Add in lines that will allow you to change param values: 
 **** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g'] = placeholder_value
@@ -26072,7 +26074,8 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 ***** netParams.cellParams['IT3_reduced']['globals']['v_init'] = -80 #-85.3
 ***** netParams.cellParams['IT3_reduced']['secs']['soma']['vinit'] = -80 #-85.3
 *** (4) *PASSIVE FIT* 
-**** Change 
+**** Change things above
+**** Delete (on FIRST iteration), data_old (or rename) --> will contain data from last cell fitted 
 **** Run python -i overlay_PASSIVE.py 
 **** Adjust params iteratively in netParams_NEW.py until reasonable passive fit is achieved
 ****** May also test values in test_cell.py just to see what traces look like 
@@ -26080,7 +26083,8 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** (5) *ACTIVE FIT* 
 **** use test_cell.py to find rheobase 
 **** change current_steps in overlay_ACTIVE.py so first value is near rheobase
-**** change params['amp'] in batch (if FitType == 'active':\ params['amp'] = [])**** *on first iteration* : Delete data_old (there will be data from last cell in there bc batch doesn't overwrite data_old) 
+**** change params['amp'] in batch (if FitType == 'active':\ params['amp'] = [])
+**** *on first iteration* : Delete data_old (there will be data from last cell in there bc batch doesn't overwrite data_old) 
 **** run python -i overlay_ACTIVE.py 
 **** look at original param values:
 ***** python; from netpyne import specs
@@ -26112,14 +26116,19 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** cellName_reduced.pkl : ORIG FILE
 *** cellName_reduced_new_cellParams.pkl: DEND LENGTH MODIFIED
 ** IT2 tuning: 
-*** PASSIVE: 
+*** PASSIVE: gpas = 1.5e-04
 *** ACTIVE: 
+**** modifying gbar_nax --> got it up to 0.25 and fit was good but seems like some depolarization block at higher inputs; going to try lower and see what happens
 *** IT2 SUMMARY:
-**** PASSIVE:
+**** PASSIVE: 
+***** g_pas: 1e-04
+***** e_pas: -86
 **** ACTIVE:
-**** v_init used in test_cell.py 
+***** nax_gbar = 0.043
+***** kdr_gbar = 0.017
+***** vhalf = 8
 ** IT3 tuning:
-*** ACTIVE:
+*** ACTIVE (cont):
 **** use test_cell.py to find rheobase, with new passive params
 **** rheobase is ~0.25nA 
 **** nax gbar --> 0.048
@@ -26128,3 +26137,4 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** ACTIVE: nax gbar = 0.048 
 **** v_init used in test_cell.py --> -87.15 
 *** Save cell in .pkl format 
+** Saved both cells using cell_save.py (import save_cell; save_cell.pkl_tuned(cellName)
