@@ -26147,7 +26147,7 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 ** Excitatory cell types in L4:
 *** IT4 --> ITP4
 *** ITS4.py (spiny stellate; python format)
-** IT4 setup / changes:
+** IT4 setup / changes (*NOTE*: IT4 --> ITP4):
 *** PROBLEM:
 **** Seems that something happened such that IT4_reduced_cellParams.pkl cannot be used in A1 or A1_uncloned, and subsequently neither can IT4_reduced_new_cellParams.pkl
 **** by 'not working' I mean that a stim cannot be applied to it; error here: 
@@ -26157,11 +26157,16 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** in A1/cells/dend_edits --> mv IT4_reduced_cellParams.pkl NOT_WORKING_IT4_reduced_cellParams.pkl
 *** Testing if new IT4 cellParams file works --> python -i test_cell.py --> WORKS
 *** Change name to ITP4_reduced_cellParams.pkl (mv IT4_reduced_cellParams.pkl ITP4_reduced_cellParams.pkl) 
+** ITP4 dendrite adjustments:
+*** copied in cell_save.py and renamed to dend_adjust.py (from ~/Desktop/cells)
+*** python; import dend_adjust; dend_adjust.change_geom('ITP4_reduced',970) 
+*** *NOTE*: 970 is the total length for midpoint L4 (950-1250) to midpoint L2 (100-160)
+*** Test that it runs w/ stim --> dend_adjust.test_func('ITP4_reduced','IT',0); also tested with python -i test_cell.py (for both reduced_ and reduced_new) -- *WORKS*
 ** ITP4 tuning: 
 *** Technical details:
 **** Again, doing this on cells branch
 **** Edits occurring in A1/cells/dend_edits directory
-**** Filename: IT4_reduced_new_cellParams.pkl
+**** Filename: ITP4_reduced_new_cellParams.pkl
 
 *** PASSIVE:
 **** ORIG VALUES:
@@ -26169,6 +26174,34 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 ***** mech: pas
 ****** g: 9.442294539558377e-05
 ****** e: -87.1335623948
+**** Raising g_pas to 1e-04 lowered fitness ever so slightly
+**** Try lowering values
+**** Closest fit so far has come from g_pas = 6e-05, e_pas = -87.5 (down from -87.133) 
 
 *** ACTIVE:
+**** Used test_cell.py to find rheobase: ~0.28nA
+**** Run overlay_ACTIVE.py : save fig as ITP4_ORIG_ACTIVE_FIT.png
+**** Original param values: 
+***** gbar_nax = 0.0768253702194
+***** gbar_kdr = 0.00833766634808
+***** vhalfn_kdr = 11.642741384
+**** Make cell less excitable --> lower gbar_nax first (in netParams_NEW.py)
+**** gbar_nax = 0.05  
 *** SUMMARY: 
+**** PASSIVE:
+***** e_pas = -87.5
+***** g_pas = 6e-05
+**** ACTIVE: gbar_nax = 0.05 
+*** Save cell: 
+**** cd A1/cells/dend_edits --> open up save_cell.py 
+**** change netParams.cellParams entries to match the new-found values 
+**** in Terminal --> cd A1/cells/dend_edits --> python; import save_cell --> save_cell.pkl_tuned('ITP4_reduced') 
+**** now in dend_edits there is a file called 'ITP4_reduced_tuned_cellParams.pkl'
+*** Transfer cell to parent 'cells' directory:
+**** copy in 'ITP4_reduced_tuned_cellParams.pkl' to A1/cells
+**** rename file 'ITP4_A1_cellParams.pkl' 
+*** Commit to A1 repo, cells branch:
+**** in Terminal, go to ~/NEUROSIM/A1
+**** git branch (should be on cells)
+**** git status --> then git add/commit as necessary
+**** git push origin cells 
