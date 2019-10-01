@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 6
+netParams.version = 9
 
 #------------------------------------------------------------------------------
 #
@@ -62,7 +62,7 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple'] # list of cell rules to load from file 
+cellParamLabels = ['IT2_reduced', 'ITP4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple'] # list of cell rules to load from file 
 loadCellParams = cellParamLabels
 #saveCellParams = True # This saves the params as a .pkl file
 
@@ -107,8 +107,8 @@ netParams.popParams['NGF3'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynor
 
 
 ### LAYER 4: 
-netParams.popParams['ITP4'] =	{'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
-netParams.popParams['ITS4'] =	{'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # IT4_reduced
+netParams.popParams['ITP4'] =	{'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # ITP4_reduced
+netParams.popParams['ITS4'] =	{'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'], 'density': density[('A1','E')][2]}      ## CHANGE DENSITY # ITP4_reduced
 netParams.popParams['SOM4'] = 	 {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 'density': density[('A1','SOM')][2]}
 netParams.popParams['PV4'] = 	 {'cellType': 'PV', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 'density': density[('A1','PV')][2]}
 netParams.popParams['VIP4'] =	{'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['4'], 'density': density[('A1','VIP')][2]}
