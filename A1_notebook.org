@@ -26099,10 +26099,11 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** use test_cell.py with the new params
 **** OR look in data_new / data_old directories 
 ** Save new cells in .pkl format: save_cell.py (in dend_edits) 
-** Transfer to cells directory 
-
-
-* <2019-09-27 Fri -- Tuning continued>
+** Test ^^ new .pkl file in test_cell 
+*** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
+** Transfer to cells directory and rename
+** Do version control 
+* <2019-09-27 Fri -- IT3 tuning continued>
 ** IT3 tuning:
 *** PASSIVE:
 **** v_init = -87.15 
@@ -26110,7 +26111,7 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** PASSIVE FIT IS NOW 0.0207
 **** REDUCED EVEN FURTHER --> g_pas is 7e-05, fitness is 0.019
 **** Figure is in ~/Desktop/IT3_figures
-* <2019-09-30 Mon -- tuning continued>
+* <2019-09-30 Mon -- IT2 and IT3 tuning>
 ** Creating a script called save_cell.py in ~/Desktop/NEUROSIM/A1/cells/dend_edits --> this will allow me to save the tuned cells as .pkl files 
 *** Saves with cellName + '_tuned_cellParams.pkl'
 *** cellName_reduced.pkl : ORIG FILE
@@ -26138,7 +26139,7 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** v_init used in test_cell.py --> -87.15 
 *** Save cell in .pkl format 
 ** Saved both cells using cell_save.py (import save_cell; save_cell.pkl_tuned(cellName)
-* <2019-10-01 Tue -- tuning continued>
+* <2019-10-01 Tue -- ITP4 tuning>
 ** Layers complete: L1, L2, L3
 ** IT2 and IT3 are complete:
 *** Dend lengths are edited
@@ -26205,3 +26206,381 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** git branch (should be on cells)
 **** git status --> then git add/commit as necessary
 **** git push origin cells 
+* <2019-10-02 Wed -- IT5A tuning>
+**  Same problem as ITP4 --> .pkl file is not working for some reason (try copy-pasting in from M1 detailed again) 
+** nope, copy of IT5A_reduced_cellParams.pkl will load but will not allow stim to be applied
+* <2019-10-03 Thu -- IT5A tuning>
+** Compare IT4_reduced_cellParams.pkl to ITP4_reduced_cellParams.pkl
+** Noticing very big difference in encoding in file
+** Separated non-working pkl files from working pkl files 
+** Test to see if it's a compile error -- in A1/cells/dend_edits =--> NOT A COMPILE ERROR
+** Spoke to samn & salva: 
+*** ericaygriffith 1:24 PM
+so, can't solve my problem -- I'm having trouble with some of the pkl files. I can load them fine with loadCellParamsRule, but (only with some of them) I cannot get an IClamp inserted. here's the error message + an example pkl file that I can successfully run + one that I can't:
+
+Error: 
+ Warning: no valid sec specified for stim on cell gid=0 so using soma or 1st available. Existing secs: []
+
+
+
+CAN insert a stim on this one:
+IT2_reduced_cellParams.pkl 
+ccopy_reg
+_reconstructor
+p0
+(cnetpyne.specs
+Dict
+Click to expand inline (5,878 lines)
+
+
+
+CANNOT insert a stim on this one:
+IT5B_reduced_cellParams.pkl 
+ccopy_reg
+_reconstructor
+p0
+(cnetpyne.specs
+Dict
+Click to expand inline (5,877 lines)
+
+
+
+I've tried   a bunch of stuff to figure it out but so far no headway -- can't find much on this error from previous slack chats or in github, at least not enough to crack the problem
+samn 1:26 PM
+iclamp is for the tuning?
+ericaygriffith 1:26 PM
+I saw a long time ago that you two had a similar issue and there was some kind of Mac-related conversation around this, but it wasn't the same exact error and I had trouble figuring out if it applied here
+yeah, need to do IClamp for tuning
+samn 1:27 PM
+what's diff between the pkl files?
+ericaygriffith 1:28 PM
+I've tried looking at the line-by-line differences and it hasn't shed much light on why one would work and one wouldn't -- I had an IT4 file I was using that didn't work; I copied in an old IT4 from M1 and that worked -- when I did line-by-line comparison only difference was the ynorm values
+but couldn't figure out why that would make such a big difference, but it does seem to
+but again not sure if that's the root of the problem? maybe when changing ynorm an encoding issue happened? but can't tell why or how to fix it, or when it happens vs. when it doesn't?
+just wondering if either of you had seen before -- I am going to keep plugging away but wanted to share the issue
+I know there was some py2 vs py3 stuff with the pkl files, but again -- this error isn't happening for all of them, so I don't know if that's relevant or not
+samn 1:30 PM
+sections specified in same way for the two cell types?
+ericaygriffith 1:30 PM
+yeah they seem to be
+same sections, secLists
+etc.
+samn 1:30 PM
+error seemed to indicate that the section where you wanted to put the clamp doesn't exist, so defaults to soma
+ericaygriffith 1:30 PM
+right
+but both of them, when I load w/ loadCellParamsRule have the same sections
+samn 1:31 PM
+so the difference is a pkl file with parameters or also py file differs?
+ericaygriffith 1:32 PM
+I don't have the .py file for a lot of these bc I started with the M1 .pkl files and have been working with those -- I see in M1detailed there is an ITcell.py but other than that, don't have any .py
+we talked about this awhile ago and concluded it was okay to work with the .pkl files, iirc
+are you able to get an IClamp stim working with both of those files above? if so, then maybe something on my end?
+samn 1:33 PM
+so pkl specifies geometry as well as params...
+ericaygriffith 1:33 PM
+y
+samn 1:33 PM
+i haven't used this feature...if i clone your repo do you have a run sequence i can try?
+ericaygriffith 1:34 PM
+I have a test_cell.py I'll attach here (I haven't added it to the repo bc just for testing this problem) -- let me attach here
+samn 1:34 PM
+ok
+this is up to date? https://github.com/suny-downstate-medical-center/A1
+ericaygriffith 1:35 PM
+yeah should be, I'm working on cells branch
+test_cell.py 
+from netpyne import specs, sim
+​
+netParams = specs.NetParams() 
+netParams.popParams['TestPop'] = {'cellType': 'IT', 'numCells': 1, 'cellModel': 'HH_reduced'} #cellType
+Click to expand inline (33 lines)
+
+
+
+in A1/cells/dend_edits --> keeping these changes contained in that subdir for now
+will clean that up when merging
+sry if not convention to do the way I'm doing; i'm just doing what makes sense as I go along
+samn 1:36 PM
+np
+salvadord 1:40 PM
+I'll have a look in a sec
+samn 1:40 PM
+thx
+salvadord 1:42 PM
+Should be ok to work with pkl... maybe some minor err somewhere so cells not instantiated properly
+ericaygriffith 1:42 PM
+y seems like it -- some of the .pkl files work just fine, some don't. very hard to tell why, but guessing it's some detail that I haven't tracked down eyt
+yet*
+samn 1:42 PM
+cloned repo and set to cells branch
+can you save that test_cells.py file to neurosim?
+ericaygriffith 1:43 PM
+sure thing one sec
+samn 1:44 PM
+oh, i got it
+nevermind
+ericaygriffith 1:45 PM
+great -- let me know if there are issues. the ones that have A1 in the .pkl name have the parameters tuned.
+samn 1:46 PM
+so you run with python3 -i test_cell.py ?
+ericaygriffith 1:46 PM
+so e.g. for me, IT2_A1_cellParams.pkl works, but IT5A_reduced_cellParams.pkl does not work
+y locally that is what I do to test
+samn 1:46 PM
+and compile with mkmod or nrnivmodl?
+ericaygriffith 1:46 PM
+I just change the name in the loadCellParams line
+nrnivmodl at the moment (was wondering if that was the problem but tested and didn't make a diff on my machine yesterday)
+samn 1:47 PM
+k
+IT5B_reduced_cellParams.pkl - where is that?
+ericaygriffith 1:51 PM
+should be in A1/cells
+samn 1:52 PM
+so you do python3 -i cell_test.py A1/cells/IT5B_reduced_cellParams.pkl ?
+what's command you use?
+got error that couldn't find the file when i just ran python3 -i test.py
+ericaygriffith 1:54 PM
+something dumber, I change the line in test_cell.py (the netParams.loadCellParams line) to reflect the right .pkl file, then run "python -i test_cell.py" -- I know I should change so I can just enter the filename sry
+I attached the test_cell.py file above
+samn 1:56 PM
+ok, i was running from A1 dir, have to specify full path to the pkl
+i get same error
+/u/samn/A1/test.py
+ericaygriffith 1:56 PM
+okay so not just me -- are you able to use cells/IT2_A1_cellParams.pkl without getting that error?
+samn 1:56 PM
+lms
+yeah, that one works
+ericaygriffith 1:59 PM
+ok, so same issue... I went back to the M1 repo and grabbed that repo's IT5B_reduced_cellParams.pkl and it didn't work either, so I don't think it was something I did with A1 changes? I'm not sure though. I'm going to keep investigating.
+samn 2:03 PM
+ok, i'll take a look at the pkl files too
+pickle.load gives ascii errors
+suppose you use encoding='ASCII'
+ericaygriffith 2:08 PM
+so encoding I'm not sure -- I remember there was some py2 vs py3 encoding stuff that happened; I can look back in my nb to see if relevant
+samn 2:08 PM
+but that gives UnicodeDecodeError
+ericaygriffith 2:08 PM
+yes I remember that error
+samn 2:09 PM
+how'd you load the pkl files?
+ericaygriffith 2:09 PM
+I think i had to specify encoding... latin1 I think?
+let me look to make sure
+samn 2:09 PM
+ok that worked
+so the idea is to have it human-readable?
+ericaygriffith 2:09 PM
+also used 'bytes' at one point it seems
+i personally don't care if human-readable or not, I was just trying to get them to load bc I wasn't familiar with their contents before, so was just checking them out
+I'll defer to you guys with respect to encoding,e tc.
+samn 2:10 PM
+will try resaving and see if it works
+ericaygriffith 2:11 PM
+good idea -- I have been using .saveCellParamsRule in netpyne to re-save after changes; looking for that function now on github to see if that has something to do with it potentially
+samn 2:11 PM
+didn't help
+ericaygriffith 2:14 PM
+:/ hm, okay -- what did you do to re-save? out of curiosity
+samn 2:14 PM
+ok, so they both have same sections...
+pickle.dump(d5,open('cells/IT5B_new.pkl','wb'))
+and geom
+how'd you compare the dictionaries?
+salvadord 2:17 PM
+if run just python netParams.py should see if any specific errors loading or saving the pkl
+ericaygriffith 2:18 PM
+a few ways... saved them and compared with ==, turned some parts into lists and looked at line-by-line differences, things like that. I was trying a couple approaches to try to get at everything i could think of
+yeah -- so, no errors loading or saving, I can load them okay
+it's when I try to apply an IClamp that it says that there is no sec specified so default to soma, but then it does not default to soma and I get no trace
+samn 2:18 PM
+and can netpyne access the sections without the iclamp?
+ericaygriffith 2:18 PM
+but I can see the sections when I load that .pkl with loadCellParamsRule
+what do you mean by access specifically
+samn 2:19 PM
+are they properly setup/represented
+ericaygriffith 2:19 PM
+like I can load the pkl files into netParams.cellParams['cellName'] and then see the ['secs'] and what not
+I'll try anything else, sorry if I'm not understanding
+salvadord 2:19 PM
+not different to see the sections in netParams (high-level specs) vs in net.cells (instantiated)
+samn 2:20 PM
+so the sections exist
+ericaygriffith 2:20 PM
+oh hmm I haven't looked at that salva, let me see
+samn 2:21 PM
+btw, Nafcr is not part of the repo afaik - got error about vipcr_cell.hoc when run netParams.py
+ericaygriffith 2:21 PM
+oh really? I have it in my mods directory
+samn 2:21 PM
+so netParams and net.cells - those should exist even in the test file erica made?
+ericaygriffith 2:21 PM
+mod* sorry
+samn 2:21 PM
+i see netParams but no net object
+sim.net ?
+mod*?
+ericaygriffith 2:22 PM
+I meant that I have nafcr.mod in the mod subdir
+samn 2:22 PM
+ok, sim.net.cells
+nafcr.mod - right, i see it there...
+not sure how you're running net though, but that's separate issue
+ericaygriffith 2:23 PM
+oh I was just about to ask that lol
+I assumed I had to run netParams.py so I did but then realized I wasn't sure from there; was in the midst of googling
+salvadord 2:24 PM
+looks like not properly instantiated — no secs
+Untitled 
+In [1]: sim.net.cells[0]
+Out[1]: compartCell_IT_HH_reduced_0
+In [2]: sim.net.cells[0].secs
+Out[2]: {_repr_mimebundle_: {}}
+Collapse
+
+
+
+ericaygriffith 2:24 PM
+open to instruction of course
+how do I get to sim.net?
+samn 2:24 PM
+not properly instantiated, so problem found :slightly_smiling_face:
+ok, i see it's empty too
+you have sim object in your test file
+so where'd that pkl file with the problem come from then?
+or...is it correct but there's a problem reading it in netpyne
+salvadord 2:25 PM
+reason is that the ‘conds’ are loaded from pkl and not updated to match your test — i.e. only applied to ynorm: [0.667, 0.775]
+Untitled 
+In [7]: netParams.cellParams['IT5B_reduced']['conds']
+Out[7]: {cellModel: 'HH_reduced', cellType: 'IT', ynorm: [0.667, 0.775]}
+
+
+samn 2:27 PM
+so ynorm is property of that cell class
+and conds for stim target are on TestPop
+salvadord 2:27 PM
+can just add del netParams.cellParams['IT5B_reduced']['conds'] — now works
+samn 2:28 PM
+TestPop separate from IT5B_reduced
+how does netpyne know IT5B_reduced == TestPop?
+salvadord 2:28 PM
+for each cellParams properties there are a set of rules (conds) to decide which cells these properties will be applied to
+netParams.popParams['TestPop'] = {'cellType': 'IT', 'numCells': 1, 'cellModel': 'HH_reduced'}
+ericaygriffith 2:29 PM
+the cellModel and cellType link them together as far as I can tell
+salvadord 2:29 PM
+cells in testPop have the properties cellType and cellModel… exactly
+samn 2:29 PM
+HH_reduced
+is HH_reduced mentioned in the pkl file?
+ericaygriffith 2:29 PM
+y, in pkl file it specifies cellModel is HH_reduced, so I put that in TestPop as well
+pkl file specifies cellType and cellmodel
+samn 2:30 PM
+ic, so if there was > 1 HH_reduced type, it would apply to all of them
+ericaygriffith 2:30 PM
+but only if the cellType was the same as well
+salvadord 2:30 PM
+yeah
+this method can be overkill for simple models… but allows for more flexibility when specifying properties of cells
+ericaygriffith 2:31 PM
+so salva, let me see if I get this -- I figured it was something to do with ynorm bc I was able to break my ITP4 cell by changing ynorm, but you're saying if I just get rid of ynorm in the .pkl files maybe I'll be able to fix this?
+in 'conds'?
+salvadord 2:32 PM
+so this is to solve the specific cell_test.py script you mentioned above
+ericaygriffith 2:32 PM
+y, but at some point I need to have them in order to localize them in the layers right?
+or maybe that can be done another way?
+salvadord 2:33 PM
+generally just need to remember when loading from pkl, the conds/rules are also loaded… so just check that the cellParams ‘conds’ match what you want to do — can still use ‘ynorm’ since needed in network
+ericaygriffith 2:33 PM
+okay I thought so....
+I got to this point last night at least, which is encouraging that I was on the right track
+but i still wasn't able to solve the problem; but now let me look again
+I'm probably overthinking something
+salvadord 2:34 PM
+but in the single test cell script the cell had a y location outside 0.667-0.775, so the cell params didnt apply to it
+ericaygriffith 2:34 PM
+ohhhh, I see I see I see
+so in pt3d you mean
+pt3d conflict with ynorm?
+wasn't sure how that worked bc of normalized vs. non-normalized
+salvadord 2:34 PM
+not pt3d… that separate… in cell[‘tags’][‘y’]
+ericaygriffith 2:34 PM
+oh tags
+oh had no idea that was a thing
+salvadord 2:35 PM
+all cells have x,y,zy when instantiated
+randomly placed in network
+Untitled 
+In [3]: sim.net.cells[0].tags
+Out[3]: 
+{'cellType': 'IT',
+ 'cellModel': 'HH_reduced',
+ 'pop': 'TestPop',
+ 'xnorm': 0.3583531143706401,
+ 'ynorm': 0.3984944342173416,
+ 'znorm': 0.8763654583887277,
+ 'x': 35.83531143706401,
+ 'y': 39.84944342173416,
+ 'z': 87.63654583887276,
+ 'label': ['IT5B_reduced']}
+Collapse
+
+
+
+samn 2:35 PM
+and ynorm and y were inconsistent even though in same pkl?
+salvadord 2:36 PM
+ynorm and y were consistent
+the pkl just stored the high level specs, not the actual location once instantiated … that happens later
+ericaygriffith 2:36 PM
+so the high-level specs (ynorm and y) were in conflict w/ the actual instantiated location
+samn 2:36 PM
+and what set the actual instantiated location?
+ericaygriffith 2:36 PM
+?
+y my next question as well
+salvadord 2:37 PM
+so the high-level specs doesn’t define the ynorm or y … just specified a condition saying “only cells that end being within 0.6-0.7 y loc should rececive these properties’
+once network is instantiated (sim.net.createCells() ) … each cell gets assigned a random location within the network volume
+network volume defined by netParams.sizeX, sizeY, sizeZ … and specific spatial constraints for populations can be specified in netParmas.popParams (eg. ynormRange: [0.3,0.4])
+samn 2:39 PM
+so the network volume didn't include those cell ynorm ranges?
+or something in net was inconsistent so the cell wasn't created properly
+salvadord 2:40 PM
+yeah, but the single cell instantiate in the test_cell.py script happened to be outside that range
+i.e. ‘ynorm’: 0.3984944342173416 not inside [0.6667, 0.775]
+samn 2:40 PM
+and netParams.py was used in that test file via specs.NetParams() ?
+salvadord 2:41 PM
+nope, had its own netParams
+nothing inconsistent, workins as expected
+ericaygriffith 2:41 PM
+is there a reason it's so consistent? like, IT2 always works but IT5B doesn't -- if it's randomly placed, shouldn't it potentially work some of the time and some of the time no?
+either way that is very helpful -- ty as always salva. let me digest this and drink some coffee and fix. ty!!
+salvadord 2:43 PM
+if you instantiate a single cell using same default randomization, will always be placed in same place — so it’s reproducible (so prob happens to match IT2 y range)
+ericaygriffith 2:44 PM
+ohh I see
+makes sense -- ok great, I think I can piece together the solution from here! hopefully! will update
+thank you!!
+salvadord 2:44 PM
+great!
+samn 2:56 PM
+thx!
+** Conclusion for now I believe is just to add =del netParams.cellParams[cellName]['conds']= after the line where the .pkl file is loaded 
+** This will at least enable you to fix the param tuning. Let them know that ynorm / actual instantiation of cell location is up for debate (can look at this later if have time). 
+** Work now on IT5A for now
+*** Files: IT5A_reduced_cellParams.pkl & IT5A_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** fairly easy; lowered g_pas to 3e-05
+*** ACTIVE: 
+**** rheobase is ~0.14 nA
+**** 
