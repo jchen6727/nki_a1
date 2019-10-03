@@ -211,35 +211,36 @@ bins = connData['bins']
 
 #------------------------------------------------------------------------------
 ## E -> E
+if cfg.addConn:
+    for pre in Epops:
+        for post in Epops:
+            netParams.connParams['EE_'+pre+'_'+post] = { 
+                'preConds': {'pop': pre}, 
+                'postConds': {'pop': post},
+                'synMech': ESynMech,
+                'probability': pmat[pre][post],
+                'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
+                'synMechWeightFactor': cfg.synWeightFractionEE,
+                'delay': 'defaultDelay+dist_2D/propVelocity',
+                'synsPerConn': 1,
+                'sec': 'spiny'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
 
-for pre in Epops:
-    for post in Epops:
-        netParams.connParams['EE_'+pre+'_'+post] = { 
-            'preConds': {'pop': pre}, 
-            'postConds': {'pop': post},
-            'synMech': ESynMech,
-            'probability': pmat[pre][post],
-            'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
-            'synMechWeightFactor': cfg.synWeightFractionEE,
-            'delay': 'defaultDelay+dist_2D/propVelocity',
-            'synsPerConn': 1,
-            'sec': 'spiny'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
 
 #------------------------------------------------------------------------------
 ## E -> I
-
-for pre in Epops:
-    for post in Ipops:
-        netParams.connParams['EI_'+pre+'_'+post] = { 
-            'preConds': {'pop': pre}, 
-            'postConds': {'pop': post},
-            'synMech': ESynMech,
-            'probability': pmat[pre][post],
-            'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
-            'synMechWeightFactor': cfg.synWeightFractionEI,
-            'delay': 'defaultDelay+dist_2D/propVelocity',
-            'synsPerConn': 1,
-            'sec': 'perisomatic'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
+if cfg.addConn:
+    for pre in Epops:
+        for post in Ipops:
+            netParams.connParams['EI_'+pre+'_'+post] = { 
+                'preConds': {'pop': pre}, 
+                'postConds': {'pop': post},
+                'synMech': ESynMech,
+                'probability': pmat[pre][post],
+                'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
+                'synMechWeightFactor': cfg.synWeightFractionEI,
+                'delay': 'defaultDelay+dist_2D/propVelocity',
+                'synsPerConn': 1,
+                'sec': 'perisomatic'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
 
 
 #------------------------------------------------------------------------------

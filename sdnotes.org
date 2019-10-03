@@ -25,6 +25,117 @@ c.3.3.4 Computational modeling: We will use our model of the thalamocortical sys
 
 ** Methods
 c.2.4 Computational modeling:  Modeling is performed in the NEURON simulation environment233. Detailed computational modeling methods can be found in our previous publications234-240 and the “Facilities and other resources” section for Brown University.  
+* 19Sep19 NKI poster day
+** Include mostly data sources for cell types, distribution and connectivity
+** Sim diameter=400, densityScale = 0.05
+Creating network of 34 cell populations on 4 hosts...
+  Number of cells on node 0: 606 
+  Number of cells on node 3: 605 
+  Done; cell creation time = 8.15 s.
+Making connections...
+  Number of cells on node 1: 606 
+  Number of cells on node 2: 605 
+  Number of connections on node 0: 262101 
+  Number of synaptic contacts on node 0: 521366 
+  Number of connections on node 2: 261122 
+  Number of synaptic contacts on node 2: 519362 
+  Number of connections on node 1: 262258 
+  Number of synaptic contacts on node 1: 521567 
+  Number of connections on node 3: 261192 
+  Number of synaptic contacts on node 3: 519517 
+  Done; cell connection time = 87.65 s.
+Adding stims...
+  Number of stims on node 1: 1212 
+  Number of stims on node 0: 1212 
+  Number of stims on node 2: 1210 
+  Number of stims on node 3: 1210 
+  Done; cell stims creation time = 0.39 s.
+Recording 2 traces of 1 types on node 2
+Recording 3 traces of 1 types on node 1
+Recording 0 traces of 0 types on node 3
+Recording 26 traces of 1 types on node 0
+
+Running simulation for 500.0 ms...
+  Done; run time = 1747.12 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 60.30 s.
+
+Analyzing...
+>>> >>> 
+
+>>> 
+  Cells: 2422
+  Connections: 1049095 (433.15 per cell)
+  Synaptic contacts: 2086656 (861.54 per cell)
+  Spikes: 14431 (11.92 Hz)
+  Simulated time: 0.5 s; 4 workers
+  Run time: 1747.12 s
+Saving output as model_output.pkl ... 
+Finished saving!
+Saving output as model_output.json  ... 
+Finished saving!
+  Done; saving time = 0.91 s.
+
+- depolarization block
+
+
+
+** Sim diameter=400, densityScale = 0.025
+
+Creating network of 34 cell populations on 4 hosts...
+  Number of cells on node 0: 301 
+  Done; cell creation time = 3.91 s.
+  Number of cells on node 1: 301 
+  Number of cells on node 2: 301 
+  Number of cells on node 3: 301 
+Making connections...
+  Number of connections on node 2: 64832 
+  Number of synaptic contacts on node 2: 128982 
+  Number of connections on node 0: 64584 
+  Number of synaptic contacts on node 0: 128422 
+  Number of connections on node 1: 65322 
+  Number of synaptic contacts on node 1: 129939 
+  Number of connections on node 3: 64826 
+  Number of synaptic contacts on node 3: 129008 
+  Done; cell connection time = 14.51 s.
+Adding stims...
+  Number of stims on node 2: 602 
+  Number of stims on node 1: 602 
+  Number of stims on node 3: 602 
+  Number of stims on node 0: 602 
+  Done; cell stims creation time = 0.11 s.
+Recording 0 traces of 0 types on node 3
+Recording 0 traces of 0 types on node 0
+Recording 0 traces of 0 types on node 1
+Recording 0 traces of 0 types on node 2
+
+Running simulation for 500.0 ms...
+  Done; run time = 747.24 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 10.84 s.
+
+Analyzing...
+>>> >>> 
+
+>>> 
+  Cells: 1204
+  Connections: 260768 (216.58 per cell)
+  Synaptic contacts: 518759 (430.86 per cell)
+  Spikes: 12939 (21.49 Hz)
+  Simulated time: 0.5 s; 4 workers
+  Run time: 747.24 s
+Saving output as model_output.pkl ... 
+Finished saving!
+Saving output as model_output.json  ... 
+Finished saving!
+  Done; saving time = 0.32 s.
+Plotting raster...
+  Done; plotting time = 8.38 s
+
+Total time = 785.50 s
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal

@@ -21,4 +21,8 @@ from netpyne import sim
 from cfg import cfg
 from netParams import netParams
 
+# sim.initialize(netParams, cfg)
+# sim.net.createCells()
+# sim.gatherData()
+# #sim.create(netParams, cfg)
 sim.createSimulateAnalyze(netParams, cfg)
