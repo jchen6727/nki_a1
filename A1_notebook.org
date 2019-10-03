@@ -26022,3 +26022,16 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** Cm = 2.4998269977
 **** netParams.cellParams['IT2_reduced']['secs']['soma']['geom']['cm']
 *** Do not understand why vinit isn't working...? Have to set for all sections. 
+* <2019-09-19 Thu -- cell pop tuning>
+* <2019-09-20 Fri -- cell pop tuning>
+** IT2: 
+** 
+** 
+* <2019-09-26 Thu -- cell pop tuning>
+** Make a git branch for this
+*** git checkout -b cells
+*** OR git branch cells; git checkout cells
+** Cell editing continued:
+*** Go to cells branch (=git checkout cells=) 
+*** mkdir dend_edits; cd dend_edits
+*** 
