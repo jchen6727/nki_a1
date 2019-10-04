@@ -95,7 +95,6 @@ cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
 cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
 cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
-cfg.synsPerConnWeightFactor = 5  # factor to multiply all weights for given 1 syn contact per conn (instead of ~5 -- avg in cortex)
 
 cfg.addConn = 1
 cfg.EEGain = 1.0

@@ -53,7 +53,10 @@ def loadData():
                 headings = row
             else:
                 for ih, h in enumerate(headings[1:]):
-                    data['Allen_V1']['connWeight'][row[0] + '-' + h] = row[ih+1]
+                    try:
+                        data['Allen_V1']['connWeight'][row[0] + '-' + h] = float(row[ih + 1])
+                    except:
+                        data['Allen_V1']['connWeight'][row[0] + '-' + h] = 0.0
                 
     
     # set correspondence between A1 pops and Allen V1 pops 
@@ -82,7 +85,7 @@ def loadData():
 # Params
 # ----------------------------------------------------------------------------------------------------------------
 Etypes = ['IT', 'ITS4', 'PT', 'CT']
-Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT6', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
+Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT6', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
 
 Itypes = ['PV', 'SOM', 'VIP', 'NGF']
 Ipops = ['NGF1',                            # L1
