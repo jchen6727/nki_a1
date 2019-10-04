@@ -206,6 +206,7 @@ NGFSynMech = ['GABAA', 'GABAB']
 ## load data from conn pre-processing file
 with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
 pmat = connData['pmat']
+lmat = connData['pmat']
 wmat = connData['wmat']
 bins = connData['bins']
 
@@ -218,12 +219,12 @@ if cfg.addConn:
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
-                'probability': pmat[pre][post],
-                'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
+                'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                'weight': wmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
                 'synMechWeightFactor': cfg.synWeightFractionEE,
-                'delay': 'defaultDelay+dist_2D/propVelocity',
+                'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
-                'sec': 'spiny'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
+                'sec': 'spiny'}  # 'spiny' should be a secList with spiny dends in each cellParams
 
 
 #------------------------------------------------------------------------------
@@ -235,12 +236,12 @@ if cfg.addConn:
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
-                'probability': pmat[pre][post],
-                'weight': pmat[pre][post] * cfg.EEGain * cfg.synsPerConnWeightFactor, 
+                'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                'weight': wmat[pre][post] * cfg.EIGain * cfg.synsPerConnWeightFactor, 
                 'synMechWeightFactor': cfg.synWeightFractionEI,
-                'delay': 'defaultDelay+dist_2D/propVelocity',
+                'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
-                'sec': 'perisomatic'}  # 'perisomatic' should be a secList with spiny dends in each cellParams
+                'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
 
 
 #------------------------------------------------------------------------------
@@ -262,7 +263,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
                         'preConds': {'cellType': preType, 'ynorm': list(preBin)},
                         'postConds': {'cellType': postType, 'ynorm': list(postBin)},
                         'synMech': synMech,
-                        'probability': '%f * exp(-dist_3D/probLambda)' % (pmat[(preType, 'E')][ipostBin,ipreBin]),
+                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipostBin,ipreBin]),
                         'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
                         'synMechWeightFactor': weightFactor,
                         'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -286,7 +287,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
                     'preConds': {'cellType': preType, 'ynorm': bin},
                     'postConds': {'cellType': postType, 'ynorm': bin},
                     'synMech': synMech,
-                    'probability': '%f * exp(-dist_3D/probLambda)' % (pmat[(preType, postType)]),
+                    'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType][postType]),
                     'weight': cfg.IIweights[iBin] * cfg.IIGain,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'sec': sec} # simple I cells used right now only have soma

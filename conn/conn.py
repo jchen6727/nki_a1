@@ -53,18 +53,18 @@ def loadData():
                 headings = row
             else:
                 for ih, h in enumerate(headings[1:]):
-                    data['Allen_V1']['connWeight'][row[0] + '-' + h] = row[ih]
+                    data['Allen_V1']['connWeight'][row[0] + '-' + h] = row[ih+1]
                 
     
     # set correspondence between A1 pops and Allen V1 pops 
-    data['Allen_V1']['pops'] = {'IT2': 'e2', 'IT3': 'e2', 'ITP4': 'e4', 'ITS4': 'e4', 'IT5A': 'e5', 'IT5B': 'e5', 'PT5B': 'e5', 'IT6': 'e6', 'CT6': 'e6'}  # all layers
-    data['Allen_V1']['pops'] = {'NGF1': 'i1H',                            # L1
-                                'PV2': 'i23P', 'SOM2': 'i23S', 'VIP2': 'i23H', 'NGF2': 'i23H',  # L2/3
-                                'PV3': 'i3P', 'SOM3': 'i3S', 'VIP3': 'i3H', 'NGF3': 'i3H',      # L3
-                                'PV4': 'i4P', 'SOM4': 'i4S', 'VIP4': 'i4H', 'NGF4': 'i4H',      # L4
-                                'PV5A': 'i5P', 'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H',      # L5A
-                                'PV5B': 'i5P', 'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H',      # L5B
-                                'PV6': 'i6P', 'SOM6': 'i6S', 'VIP6': 'i6H', 'NGF6': 'i6H'}      # L6
+    data['Allen_V1']['pops'] = {
+        'NGF1': 'i1H',                                                                              # L1
+        'IT2': 'e2',                'PV2': 'i2P',   'SOM2': 'i2S',  'VIP2': 'i2H',  'NGF2': 'i2H', # L2
+        'IT3': 'e2',                'PV3': 'i2P',   'SOM3': 'i2S',  'VIP3': 'i2H',  'NGF3': 'i2H',  # L3
+        'ITP4': 'e4', 'ITS4': 'e4', 'PV4': 'i4P',   'SOM4': 'i4S',  'VIP4': 'i4H',  'NGF4': 'i4H',  # L4
+        'IT5A': 'e5',               'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H', # L5A
+        'IT5B': 'e5', 'PT5B': 'e5', 'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H', # L5B
+        'IT6': 'e6',  'CT6': 'e6',  'PV6': 'i6P',   'SOM6': 'i6S',  'VIP6': 'i6H',  'NGF6': 'i6H'}  # L6
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ data = loadData()
 
 '''
 Probabilities are distance dependent based on:
-pconn0 * np.exp(- (intersomatic_distance / lambda) ** 2)
+A0 * np.exp(- (intersomatic_distance / lambda) ** 2)
 
-where pconn0 is the probability of connection and distance 0um
+where A0 is the probability of connection and distance 0um
 and lambda is the length constant
 '''
 
@@ -132,7 +132,7 @@ for pre in Epops:
         proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
         pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
         lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
-        wmat[pre][post] = data['Allen_V1']['connWeight']['A0'][proj]
+        wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
 
@@ -144,31 +144,27 @@ for pre in Epops:
 # --------------------------------------------------
 
 # --------------------------------------------------
-## Probabilities 
-for pop in Ipops:
-    pmat['IT2'][pop] = data['test']['prob']  
-    pmat['IT3'][pop] = data['test']['prob']  
-    pmat['ITP4'][pop] = data['test']['prob']  
-    pmat['ITS4'][pop] = data['test']['prob']  
-    pmat['IT5A'][pop] = data['test']['prob']  
-    pmat['IT5B'][pop] = data['test']['prob']  
-    pmat['PT5B'][pop] = data['test']['prob']  
-    pmat['IT6'][pop] = data['test']['prob']  
-    pmat['CT6'][pop] = data['test']['prob']  
+## Probabilities, length constants (lambda), and weights (=unitary conn somatic PSP amplitude)
 
+'''
+Probabilities are distance dependent based on:
+A0 * np.exp(- (intersomatic_distance / lambda) ** 2)
 
-# --------------------------------------------------
-## Weights  (=unitary conn somatic PSP amplitude)
-for pop in Ipops:
-    wmat['IT2'][pop] = data['test']['weight']  
-    wmat['IT3'][pop] = data['test']['weight']  
-    wmat['ITP4'][pop] = data['test']['weight']  
-    wmat['ITS4'][pop] = data['test']['weight']  
-    wmat['IT5A'][pop] = data['test']['weight']  
-    wmat['IT5B'][pop] = data['test']['weight']  
-    wmat['PT5B'][pop] = data['test']['weight']  
-    wmat['IT6'][pop] = data['test']['weight']  
-    wmat['CT6'][pop] = data['test']['weight']
+where A0 is the probability of connection and distance 0um
+and lambda is the length constant
+'''
+
+# start with base data from Allen V1
+for pre in Epops:
+    for post in Ipops:
+        proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+        pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+        lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+        wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+
+# use BBP S1 instead? (has more cell-type specificity)
+
+# modify based on A1 exp data - TO DO
     
 
 # --------------------------------------------------
@@ -185,6 +181,7 @@ bins['inh'] = [[0.0, 0.37], [0.37, 0.8], [0.8,1.0]]
 - I->E/I connections (Tremblay, 2016: Sohn, 2016; Budinger, 2018; Naka et al 2016; Garcia, 2015)
 - Local, intralaminar only; all-to-all but distance-based; high weights
 - Although evidence for L2/3,4,6 -> L5A/B, strongest is intralaminar (Naka16)
+- Consistent with Allen V1, except Allen doesn't show strong L2/3 I -> L5 E
 '''
 
 # I->E particularities:
@@ -193,22 +190,24 @@ bins['inh'] = [[0.0, 0.37], [0.37, 0.8], [0.8,1.0]]
 ## upper layer SOM, VIP, NGF project strongly to deeper E cells (Kato 2017) with exp-decay distance-dep
 
 for pre in ['SOM', 'VIP', 'NGF']:
-    pmat[(pre, 'E')] = np.array([[1.0, 1.0, 1.0],  # from L1+L2/3+L4 to all layers 
+    pmat[pre] = {}
+    pmat[pre]['E'] = np.array([[1.0, 1.0, 1.0],  # from L1+L2/3+L4 to all layers 
                                  [0.25, 1.0, 1.0],  # from L5A+L5B to all layers
                                  [0.25, 0.25, 1.0]])  # from L6 to all layers
 
-## upper layer VP project weakly to deeper E cells (mostly intralaminar) (Kato 2017) with exp-decay distance-dep
+## upper layer PV project weakly to deeper E cells (mostly intralaminar) (Kato 2017) with exp-decay distance-dep
 ## although Naka 2016 shows L2/3 PV -> L5 Pyr
-pmat[('PV', 'E')] = np.array([[1.0, 0.5, 0.25],  # from L1+L2/3+L4 to all layers 
+pmat['PV'] = {}
+pmat['PV']['E'] = np.array([[1.0, 0.5, 0.25],  # from L1+L2/3+L4 to all layers 
                               [0.25, 1.0, 0.5],  # from L5A+L5B to all layers
                               [0.1, 0.25, 1.0]])  # from L6 to all layers
 
 # VIP -> E (very low; 3/42; Pi et al 2013) 
-pmat[('VIP', 'E')] *= 0.1
+pmat['VIP']['E'] *= 0.1
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
-IEweight = 0.5
+IEweight = 1.0
 for pre in Ipops:
     for post in Ipops:
         wmat[pre][post] = IEweight
@@ -221,10 +220,19 @@ for pre in Ipops:
 # --------------------------------------------------
 ## Probabilities 
 
+'''
+- NGF -> all I, local/intralaminar (+ distance-dep)
+- VIP -> SOM (strong; 14/18), PV (weak; 4/15), VIP (very weak -- remove?) (Pi 2013)
+- SOM -> FS+VIP (strong); SOM (weak -- remove?)  (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
+- PV  -> PV (strong); SOM+VIP (weak -- remove?) (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
+- Generally consistent with the more detailed Allen V1 I->I
+'''
+
 ### I->I particularities
 for pre in Itypes:
+    pmat[pre]
     for post in Itypes:
-        pmat[(pre, post)] = 1.0
+        pmat[pre][post] = 1.0
 
 # NGF -> all I, local/intralaminar (+ distance-dep)
 # no change required
@@ -234,27 +242,27 @@ weak = 0.35  # = ~ normalized strong/weak = (4/15) / (14/18)
 veryweak = 0.1
 
 # VIP -> SOM (strong; 14/18), PV (weak; 4/15), VIP (very weak -- remove?) (Pi 2013)
-pmat[('VIP', 'SOM')] = strong
-pmat[('VIP', 'PV')] = weak
-pmat[('VIP', 'VIP')] = veryweak
-pmat[('VIP', 'NGF')] = weak  # unknown; assume weak
+pmat['VIP']['SOM'] = strong
+pmat['VIP']['PV'] = weak
+pmat['VIP']['VIP'] = veryweak
+pmat['VIP']['NGF'] = weak  # unknown; assume weak
 
 # SOM -> FS+VIP (strong); SOM (weak -- remove?)  (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
-pmat[('SOM', 'PV')] = strong
-pmat[('SOM', 'VIP')] = strong
-pmat[('SOM', 'SOM')] = weak
-pmat[('VIP', 'NGF')] = weak  # unknown; assume weak
+pmat['SOM']['PV'] = strong
+pmat['SOM']['VIP'] = strong
+pmat['SOM']['SOM'] = weak
+pmat['VIP']['NGF'] = weak  # unknown; assume weak
  
 # PV  -> PV (strong); SOM+VIP (weak -- remove?) (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
-pmat[('PV', 'PV')] = strong
-pmat[('PV', 'SOM')] = weak
-pmat[('PV', 'VIP')] = weak
-pmat[('PV', 'NGF')] = weak  # unknown; assume weak
+pmat['PV']['PV'] = strong
+pmat['PV']['SOM'] = weak
+pmat['PV']['VIP'] = weak
+pmat['PV']['NGF'] = weak  # unknown; assume weak
 
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
-IIweight = 0.5
+IIweight = 1.0
 for pre in Ipops:
     for post in Ipops:
         wmat[pre][post] = IIweight
