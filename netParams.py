@@ -206,7 +206,7 @@ NGFSynMech = ['GABAA', 'GABAB']
 ## load data from conn pre-processing file
 with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
 pmat = connData['pmat']
-lmat = connData['pmat']
+lmat = connData['lmat']
 wmat = connData['wmat']
 bins = connData['bins']
 

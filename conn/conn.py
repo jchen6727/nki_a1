@@ -283,4 +283,4 @@ savePickle = 1
 if savePickle:
     import pickle
     with open('conn.pkl', 'wb') as f:
-        pickle.dump({'pmat': pmat, 'wmat': wmat, 'bins': bins}, f)
+        pickle.dump({'pmat': pmat, 'lmat': lmat, 'wmat': wmat, 'bins': bins}, f)
