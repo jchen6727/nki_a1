@@ -26700,6 +26700,29 @@ thx!
 *** copy-pasted above file into A1/cells (cells branch) and renamed --> ITC6_A1_cellParams.pkl
 *** version control (git add, commit; git push origin cells (on branch cells)) 
 
+** CT6 tuning: 
+*** Filenames: CT6_reduced_cellParams.pkl & CT6_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** gpas raised to 1.3e-04
+**** v_init used --> -86
+*** *NOTE* DOUBLET !! before fitting passive, with CT6_reduced_new_cellParams.pkl, in ~/Desktop/NEUROSIM/A1/cells/dend_edits on cells branch --> could this be used in claustrum? 
+*** ACTIVE:
+**** rheobase is ~ 0.4nA (high, no?) 
+**** current_steps = [0.37, 0.38, 0.39, 0.40, 0.41, 0.42, 0.43, 0.44]
+**** nax_gbar = 0.116
+**** kdr_gbar = 0.0073
+*** SUMMARY:
+**** gpas = 1.3e-04
+**** v_init --> -86
+**** nax_gbar = 0.116
+**** kdr_gbar = 0.0073
+
+*** saved with save_cell.py --> CT6_reduced_tuned_cellParams.pkl 
+*** test the above .pkl file w/ test_cell.py --> WORKS
+*** Copy-pasted CT6_reduced_tuned_cellParams.pkl from A1/cells/dend_edits to A1/cells & renamed it to CT6_A1_cellParams.pkl (cells branch)
+*** version control 
+
+
 
 ** Cell tuning algorithm:
 *** (0) Change basics of 3 sets of scripts:
@@ -26736,7 +26759,7 @@ thx!
 ****** May also test values in test_cell.py just to see what traces look like 
 ****** have to sometimes adjust v_init in test_cell.py for trace visualization 
 *** (5) *ACTIVE FIT* 
-**** use test_cell.py to find rheobase 
+**** use test_cell.py to find rheobase on ORIGINAL cell file 
 **** change current_steps in overlay_ACTIVE.py so first value is near rheobase
 **** change params['amp'] in batch (if FitType == 'active':\ params['amp'] = [])
 **** *on first iteration* : Delete data_old (there will be data from last cell in there bc batch doesn't overwrite data_old) 
