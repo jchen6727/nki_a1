@@ -161,8 +161,20 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 * CONNECTIVITY
 ** Budinger et al 2018
 - mentions ‘massive thalamic inputs’ target the few pyramidal cells but also interneurons, ‘providing strong FF inhibition’
+** Allen Brain mouse V1
+- http://portal.brain-map.org/explore/models/mv1-all-layers
+- mentions most conn comes from rat S1 (Thomson & Lamy, 2007)
+- https://www.dropbox.com/sh/xb7xasih3d8027u/AABw_eBXymSYJfgSiH-E6th0a/create_recurrent_connections?dl=0&preview=connect_cells.py&subfolder_nav_tracking=1
+- I’m thinking this is better option than using mouse M1 since sensory
+- they have nice table with all the prob conn valuesand weights, measured as somatic PSP amp (mV), same as we use
+- Distance-dependent probabilities
+
+** BBP mouse S1
+https://bbp.epfl.ch/nmc-portal/downloads
 
 ** E-E 
+- Use Allen V1 as base, and then update with any specific A1
+
 *** probability
 - L3,4 E -> L3,4 E (Levy & Reyes, 2012)
  
@@ -170,19 +182,28 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 - L3,4 E -> L3,4 E (Levy & Reyes, 2012)
 
 ** E->I
-- Tremblay 2016:
+- Use Allen V1 as base, and then update with any specific A1
+
+- Apicella 2012 (mouse M1)
+-- E -> intralaminar I
+-- L2/3 E -> L5 LTS (strong)
+-- L5 E -> L5 LTS (weak)
+-- L5 E -> L5 FS (strong)
+-- L2/3 E -> L5 FS (weak)
+
+- Tremblay 2016 (many species):
 -- unclear if L2/3 E -> NGF
 -- callosal and thalamic matrix -> NGF
 
-- Sohn 2016
+- Sohn 2016 (mouse A1)
 -- E -> L2/3 VIP (apical+basal)
 
-- Budinger et al 2018
+- Budinger et al 2018 (A1)
 -- L2-5 E -> NGF
 -- thalamic -> VIP (bipolar)
 -- thalamic + cortical -> VIP (bitufted)
 
-- Garcia et al 2015
+- Garcia et al 2015 ()
 -- E -> NGF
 
 - Naka 2016 (fig 1,2) (L5):
