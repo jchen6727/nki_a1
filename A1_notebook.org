@@ -26209,7 +26209,8 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 * <2019-10-02 Wed -- IT5A tuning>
 **  Same problem as ITP4 --> .pkl file is not working for some reason (try copy-pasting in from M1 detailed again) 
 ** nope, copy of IT5A_reduced_cellParams.pkl will load but will not allow stim to be applied
-* <2019-10-03 Thu -- IT5A & IT5B tuning>
+* <2019-10-03 Thu -- IT5A & IT5B tuning & PT5B tuning>
+** git: 3049a61, c877941
 ** Compare IT4_reduced_cellParams.pkl to ITP4_reduced_cellParams.pkl
 ** Noticing very big difference in encoding in file
 ** Separated non-working pkl files from working pkl files 
@@ -26614,6 +26615,46 @@ thx!
 *** copy-pasted IT5B_reduced_tuned_cellParams.pkl from A1/cells/dend_edits (in cells branch, on local machine), into A1/cells, and renamed file to IT5B_A1_cellParams.pkl
 *** git add, commit, push 
 
+
+** PT5B tuning
+*** filenames: PT5B_reduced_cellParams.pkl & PT5B_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** v init is odd --> something strange at the beginning of the trace but oh well
+**** increased g_pas and lowered e_pas 
+**** g_pas = 6e-05
+**** e_pas = -83
+
+
+
+
+
+*** ACTIVE:
+**** SEE TOMORROW'S ENTRY   
+
+* <2019-10-04 Fri -- PT5B tuning continued>
+** PT5B tuning continued:
+*** ACTIVE:
+**** rheobase is around 0.3nA
+**** testing 0.28 - 0.40 nA: changed in overlay_ACTIVE and cell_batch.py 
+**** nax_gbar lowered to 0.0335
+**** kdr_gbar raised to 0.016
+*** SUMMARY:
+**** v_init --> weird, but -78.2
+**** gpas = 6e-05
+**** epas = -83
+**** nax_gbar = 0.0335
+**** kdr_gbar = 0.016
+*** Save PT5B with save_cell.py 
+**** cd A1/cells/dend_edits on cells branch, local machine
+**** python; import save_cell; save_cell.pkl_tuned('PT5B_reduced')
+**** new file: PT5B_reduced_tuned_cellParams.pkl
+**** tested with test_cell.py ^^ (WORKS)
+**** copy-pasted to A1/cells & renamed to PT5B_A1_cellParams.pkl
+**** version control
+***** on cells branch, local machine, cd A1
+***** git status
+***** git add fileName, git commit fileName -m 'message'
+***** git push origin cells 
 
 
 ** Cell tuning algorithm:
