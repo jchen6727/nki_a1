@@ -26631,7 +26631,7 @@ thx!
 *** ACTIVE:
 **** SEE TOMORROW'S ENTRY   
 
-* <2019-10-04 Fri -- PT5B tuning continued>
+* <2019-10-04 Fri -- PT5B tuning continued & IT6 tuning>
 ** PT5B tuning continued:
 *** ACTIVE:
 **** rheobase is around 0.3nA
@@ -26656,6 +26656,26 @@ thx!
 ***** git add fileName, git commit fileName -m 'message'
 ***** git push origin cells 
 
+** IT6 tuning: 
+*** Filenames: IT6_reduced_cellParams.pkl & IT6_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** can't get this to get as close as I'd like
+**** epas = -77 
+*** ACTIVE:
+**** rheobase is around 0.14 nA (test_cell.py w/ IT6_reduced_new_cellParams.pkl)
+**** current_step = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.23]
+**** nax_gbar = 0.10
+**** kdr_gbar = 0.01
+**** kdr_vhalfn = 14
+*** SUMMARY:
+**** epas = -77
+**** nax_gbar = 0.10
+**** kdr_gbar = 0.01
+**** kdr_vhalfn = 14
+**** v_init --> -80.7
+*** Saved with save_cell.py & above values in 'SUMMARY' --> IT6_reduced_tuned_cellParams.pkl
+*** copy pasted above file to A1/cells (cells branch) and renamed IT6_A1_cellParams.pkl 
+*** version control 
 
 ** Cell tuning algorithm:
 *** (0) Change basics of 3 sets of scripts:
@@ -26674,6 +26694,7 @@ thx!
 **** netParams = specs.NetParams()
 **** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_cellParams.pkl')
 **** *EXPLORE PARAMS*: netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['mechs']
+**** PUT THESE IN COMMENTS In netParams_NEW.py and test_cell.py, for ref
 *** (2) Make a list of which mechanisms should be modified for passive and which for active
 **** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g']
 *** (3) Change netParams_NEW.py according to above findings:
