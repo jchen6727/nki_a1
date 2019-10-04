@@ -26675,7 +26675,31 @@ thx!
 **** v_init --> -80.7
 *** Saved with save_cell.py & above values in 'SUMMARY' --> IT6_reduced_tuned_cellParams.pkl
 *** copy pasted above file to A1/cells (cells branch) and renamed IT6_A1_cellParams.pkl 
-*** version control 
+*** version control (git add, commit; git push origin cells, on cells branch) 
+
+** ITC6 tuning: 
+*** Filenames: ITC6_reduced_cellParams.pkl & ITC6_reduced_new_cellParams.pkl
+*** cellType: 'IT'
+*** PASSIVE:
+**** NO CHANGES --> fit was already ~0.01
+
+
+*** ACTIVE
+**** rheobase for original is around 0.16
+**** current_step = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24]
+**** Need to make this far less excitable. It's going straight to depolarization block (or something that looks like it). 
+**** nax_gbar = 0.2
+**** kdr_gbar = 0.007
+*** SUMMARY:
+**** passive: no changes
+**** nax_gbar = 0.2
+**** kdr_gbar = 0.007
+
+*** Made traces
+*** saved new params w/ save_cell.py (see above for details) --> ITC6_reduced_tuned_cellParams.pkl
+*** copy-pasted above file into A1/cells (cells branch) and renamed --> ITC6_A1_cellParams.pkl
+*** version control (git add, commit; git push origin cells (on branch cells)) 
+
 
 ** Cell tuning algorithm:
 *** (0) Change basics of 3 sets of scripts:
