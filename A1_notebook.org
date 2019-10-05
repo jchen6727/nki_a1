@@ -26723,8 +26723,41 @@ thx!
 *** version control 
 
 
+** ITS4 tuning: 
+*** L4 spiny stellate with dend length 535 
+*** load cell --> test_stellate.py
+**** test_stellate.py loads and adds stim to the cell
+**** netParams.importCellParams(label='ITS4_reduced', conds={'cellType':'ITS', 'cellModel':'HH_reduced'}, fileName = 'ITS4.py', cellName = 'ITS4_cell')
+**** cellType: ITS, cellModel: HH_reduced, cellName = ITS4_cell, label = ITS4_reduced
+**** in ITS4.py in *A1/cells/dend_edits* on cells branch on local machine, set soma_pas from False to True, and uncommented soma_pas lines in def initsoma (self): 
 
-** Cell tuning algorithm:
+*** Changed the way I change the scripts (see above for cellType / cellModel details, etc.) Still using netParams_OLD.py, netParams_NEW.py, etc. 
+*** PASSIVE: 
+**** PARAMS: cm = 0.75,  e_pas = -70, g_pas = 1/3e4
+**** PARAMS_NEW: cm = 0.75, e_pas = -70, g_pas = 3.79e-03
+**** v_init --> -70.4 
+*** ACTIVE: 
+**** use test_stellate.py with ITS4_ORIG.py to find rheobase: ~0.054nA 
+**** PARAMS: gmax_naz = 30000, kv_gbar = 1500
+**** current_steps = [0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.11] 
+**** Mess with DENDRITE CONDUCTANCES:
+***** DIDN'T WORK
+**** okay -- so, basically... added another dendrite (dend1) attached at soma loc 0.3, 1000 in length. same electrophys as the original dendrite. changed soma conductances. changed rho to 53.5 
+**** naz_gmax = 72000
+**** kv_gbar = 1700 
+*** ITS4.py changes:
+**** soma.insert('km') vs. soma.insert('kv') in def initsoma(self) 
+**** commented out soma.gbar_kv in def initsoma(self)
+**** ^ UNDID THESE
+**** added def initdend1() in case want to make another dendrite --> all lines commented out for now 
+
+**** AN INCOMPLETE LIST !! -- see above in ACTIVE subsecton for more details
+
+
+*** save modified ITS4.py 
+
+** Cell tuning algorithm (for .pkl files):
+*** This is all taking place in A1/cells/dend_edits (on cells branch) 
 *** (0) Change basics of 3 sets of scripts:
 **** netParams_OLD.py and netParams_NEW.py (3-4 things for both, 1 extra in NEW):
 ***** (i) 'cellType' in netParams.popParams
@@ -26775,8 +26808,8 @@ thx!
 *** (6) Make traces
 **** use test_cell.py with the new params
 **** OR look in data_new / data_old directories 
-** Save new cells in .pkl format: save_cell.py (in dend_edits) 
-** Test ^^ new .pkl file in test_cell 
-*** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
-** Transfer to cells directory and rename
-** Do version control 
+*** Save new cells in .pkl format: save_cell.py (in dend_edits) 
+*** Test ^^ new .pkl file in test_cell 
+**** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
+*** Transfer to cells directory and rename
+*** Do version control 
