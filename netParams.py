@@ -74,16 +74,24 @@ loadCellParams = cellParamLabels
 
 
 for ruleLabel in loadCellParams:
-	netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/'+ruleLabel+'_cellParams.pkl') # Load cellParams for each of the above cell subtypes
+    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
+    for sec in netParams.cellParams[ruleLabel]['secs']:
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
+        
+    
 
 ## IMPORT VIP 
-netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs = True)
+netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
 
 ## IMPORT NGF 
 netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
 
 ## IMPORT L4 SPINY STELLATE 
 netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+
+for ruleLabel in ['VIP_simple', 'NGF_simple', 'ITS4_simple']:
+    for sec in netParams.cellParams[ruleLabel]['secs']:
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
 
 
 #------------------------------------------------------------------------------
@@ -263,7 +271,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
                         'preConds': {'cellType': preType, 'ynorm': list(preBin)},
                         'postConds': {'cellType': postType, 'ynorm': list(postBin)},
                         'synMech': synMech,
-                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipostBin,ipreBin]),
+                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipreBin,ipostBin]),
                         'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
                         'synMechWeightFactor': weightFactor,
                         'delay': 'defaultDelay+dist_3D/propVelocity',
