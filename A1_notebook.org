@@ -24393,3 +24393,2423 @@ RMP_fitness = abs(RMP_sim-RMP)^2 # RMP defined in main code
 *** ^^ shared partition can only use 1 node at a time, I believe (true), and example on comet user guide (https://www.sdsc.edu/support/user_guides/comet.html) shows only using 8 cores per node. Changing this in batch script (from 24 'coresPerNode' to 8) 
 *** With the above changes, seems to be working on *comet* 
 *** Changing 'coresPerNode' from 8 to 1 in b.runCfg for runType == 'hpc_slurm' because should only require one core. 
+* <2019-08-11 Sun -- NGF passive on google cloud>
+** Salvador ran ~1000 generations successfully on google cloud
+** Suggestions for improvement:
+*** Ran out of space -- save cfg and netParams to output, but do not plot trace
+**** Commented out in *NGF_cfg.py*: cfg.analysis['plotTraces'] = {'include': [0], 'saveFig': True} 
+*** Turn on logging for each generation 
+**** https://aarongarrett.github.io/inspyred/troubleshooting.html#use-and-consult-the-logs
+**** added 'import logging' to import section of *NGF_evol_passive.py* 
+* <2019-08-15 Thu -- active setup & passive modifications>
+** Sleep interval changes:
+*** Sleep interval decreased from 1 to 0.1 (per salva's advice) in *NGF_evol_passive.py*
+*** But... salva's advice was for runCfg to be changed, so I changed it in *NGF_cfg.py* as well 
+*** Need to update netpyne to see 
+** Netpyne update (development branch pulled):
+*** http://www.netpyne.org/install.html
+*** =git clone https://github.com/Neurosim-lab/netpyne.git=
+*** =cd netpyne=
+*** =git checkout development=
+
+** Test the above on comet to see if this lowers time/generation
+** ERROR: 
+FITNESS CALCULATIONS FOR CAND 0 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 234, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by $
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 434, in evolve
+    initial_fit = evaluator(candidates=initial_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 133, in evaluate_netparams
+    vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+KeyError: 'cell_0'
+** TO DO:
+*** LOGGER 
+*** [done] update netpyne to latest dev version 
+* <2019-08-16 Fri -- active setup & passive modifications>
+** Salva says that deploying gcloud cluster may be too labor intensive 
+** TO DO FOR COMET RUN MODIFICATIONS:
+*** (0) [done] Update netpyne dev branch version being used 
+*** (1) [done] Shorten sleep interval (cfg & evol?) 
+*** (2) [done] Shorten walltime from 30 minutes to 15 minutes (in *NGF_batch_passive.py*) 
+*** (3) Stop plotting
+**** [done] in *NGF_cfg.py* --> BUT, is this why it stopped populating the json files? 
+**** [done] Uncomment cfg.analysis['plotTraces'] line to see if this rectifies it 
+**** Test this on comet to see if this will work
+***** move old data directory 
+*** (4) Only save cfg & simData in output  
+*** (5) Add logging 
+** SALVA's BRANCHES:
+*** NOTE: salva's branch w/ preprocessing is named 'salva': https://github.com/ericaygriffith/A1/tree/salva
+*** NOTE: salva's gcloud branch is: https://github.com/ericaygriffith/A1/tree/gcloud
+*** Downloaded A1-gcloud.zip and A1-salva.zip as backup 
+* <2019-08-19 Mon -- passive modifications, 605a253>
+** LOCAL SYSTEM INFO REMINDER: 
+*** OS X El Capitan, Version 10.11.4, MacBook Air, 1.6 GHz intel core i5 (procesor), 8GB 1600MHz DDR3 (Memory -- lol ddr)
+*** Default python: 3.7.0, anaconda || which python --> /Users/ericagriffith/anaconda3/bin/python
+*** 'which nrniv' --> /Applications/NEURON-7.6/nrn/x86_64/bin/nrniv
+*** python --> import netpyne; netpyne.__file__ --> '/anaconda3/lib/python3.7/site-packages/netpyne/__init__.py'
+** Check on comet run:
+*** in /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive there is only the 0th generation, but random sampling showed that [cell_0] is back in the simData struct { data = (json.load(open('FILENAME')) --> simData = data['simData'] --> simData['V_soma']['cell_0']  }
+*** ERROR:
+**** TEXT OF ERROR:
+BATCH RUN FOR CAND 24 IS COMPLETE
+FITNESS CALCULATIONS FOR CAND 24 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 234, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selec$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 434, in evolve
+    initial_fit = evaluator(candidates=initial_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 132, in evaluate_netparams
+    outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 296, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+**** max_evaluations potentially reached, because line 234 is max_evaluations = 200 (now 96*1000) 
+**** POTENTIAL SOLUTION / EXPLANATION: https://www.reddit.com/r/learnpython/comments/42pyyg/jsondecodeerror/
+*** Could the error be from it maxing out evaluations? I checked candidate 24, which supposedly generated the json error, and every candidate was able to be loaded into json without a problem.
+** Add LOGGING lines:
+*** Salva's advice: 
+what needed really is the stat_observer and the best_observer — you can see an example here: http://www.netpyne.org/advanced.html#using-inspyred and here: https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/batch/batch.py#L748
+*** stats_observer: http://www.netpyne.org/advanced.html#using-inspyred 
+*** best_observer: https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/batch/batch.py#L748
+*** Added the following lines: 
+**** #toggle observers
+**** my_ec.observer = [ec.observers.stats_observer,  # print evolutionary computation statistics
+                  ec.observers.plot_observer,   # plot output of the evolutionary computation as graph
+                  ec.observers.best_observer]   # print the best individual in the population to
+                  screen
+** Changed *pop_size* and *max_evaluations* and *num_selected* in line with salva's code: pop_size = 96, max_evaluations = 96*1000, num_selected = 50 
+** Add a cands_threshold like salva: 
+*** ORIG:
+while cands_completed < total_cands: 
+*** NEW:
+cands_threshold = 0.9
+while cands_completed < int(cands_threshold*total_cands):
+
+** Version control checkpoint
+*** NOTE: do NOT do git push --mirror or you will eliminate colleagues' branche 
+*** Local (laptop): 
+**** cd ~/Dektop/NEUROSIM/A1
+**** git status
+**** git add A1_notebook.org
+**** git add cells/NGF_optimization/NGF_passive/NGF_evol_passive.py 
+**** git commit A1_notebook.org -m '
+** Git Notes:
+*** To see all branches: git branches -a
+*** To switch branches: git checkout branch_name
+** Changing git repo structure:
+*** https://github.com/ericaygriffith/A1 IS a bare repository
+*** LOCAL CHANGES:
+**** cd ~/Desktop/NEUROSIM/
+**** mv A1 A1_uncloned
+**** git clone https://github.com/ericaygriffith/A1.git
+
+*** Same changes made on comet & neurosim
+*** Workflow:
+**** make changes in local repository, on e.g. master branch (git checkout master)
+**** git add & commit
+**** git push origin BRANCH_NAME (e.g. git push origin master)
+***** NOTE: origin = where repo was originally cloned from, i.e. https://github.com/ericaygriffith/A1 (or is it A1.git?) 
+ 
+**** on comet & neurosim: cd to A1, git checkout BRANCH_NAME, git pull origin BRANCH_NAME
+*** VERSION ID: 605a253
+
+** IDEAS FOR LATER:
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+
+* <2019-08-20 Tue -- NGF comet run>
+** VERSION CONTROL: 
+*** 755dbb3 [observers added]
+*** 
+** PROBLEMS WITH LAST NIGHT'S RUN: 
+*** Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 238, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the t$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/observers.py", line 91, in stats_observer
+    worst_fit = '{0:>10}'.format(stats['worst'])[:10]
+TypeError: unsupported format string passed to Pareto.__format__
+
+*** Why are all the fitnesses the exact same? See what is going on. load the json files and do the calculations manually to see if they ARE indeed the exact same. 
+** Potential solutions to the error above: 
+*** ERROR:
+  File "NGF_evol_passive.py", line 238, in <module>
+    num_elites=5)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the t$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/observers.py", line 91, in stats_observer
+    worst_fit = '{0:>10}'.format(stats['worst'])[:10]
+TypeError: unsupported format string passed to Pareto.__format__
+*** fitnessCandidates have 'None, None, None, None' in them, due to the cands_threshold that salvador added --> get rid of this. 
+*** Comnented out cands_threshold = 0.9 & changed while loop back to "while cands_completed < total_cands" vs. "while cands_completed < int(cands_threshold*total_cands)"
+*** *DIFFERENT SOLUTION* would be to change the indexing, but that may take too long 
+
+** Go over fitness evaluation:
+*** Very suspicious that something is going wrong due to the fitness evaluations appearing to be exactly the same. Go over this. 
+*** Possible sources of error:
+**** Evaluate using candidates 52, 22, and 37 (arbitrary) 
+**** cfg/netParams level error 
+***** Are the same params being used for all candidates? 
+***** [no error] Check .run for paths to netParams and cfg files
+****** cand52 cfg & netParams paths from .run:
+******* Loading file /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_0/NGF_batch_data_cand52_0_cfg.json
+******* Importing netParams from /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_0/NGF_batch_data_cand52_netParams.py
+****** cand52 netParams values from netParams.py above:
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 4.517263692915421
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_Navngf']['ena'] = 80.89404327157808
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  0.8308996220340148
+***** [no error] Check SBATCH for same thing --> paths here match paths in .run file 
+***** Check candidates themselves for params (look in data struct)
+**** .json loading / analysis level error:
+***** wrong .json being loaded? unlikely. 
+***** analysis is incorrect? 
+***** Loaded (on comet -- in /oasis/ data dir), all 13 current steps for candidates 52, 22, and 37. Looked at mean responses in the same way as its done in the evol script. 
+**** Error when results are appended to fitnessCandidates
+***** same candidate is being attached over and over? unlikely. 
+*** Another possible source of 'error' --> there IS no error, but I am modifying the wrong channel. probably. leak and cm, not sodium. what am I thinking? 
+*** evol script method of looking at mean responses:
+mean_resp3 = [None for i in x]
+>>> for i in range(len(x)):
+...    outputData = json.load(open('NGF_batch_data_cand37_' + str(i) + '.json'))
+...    vdata_toal = list(outputData['simData']['V_soma']['cell_0'])
+...    vdata = vdata_toal[2000:]
+...    steady_state_response = mean(vdata)
+...    mean_resp3[i] = steady_state_response
+** wow, do not modify ch_Navngf --> modify ch_leak (gmax_ch_leak and e_ch_leak) 
+*** Changed last 3 lines of NGF_netParams.py to modify this 
+*** Changed line 66 in NGF_evol_passive.py to reflect this
+*** Changed min and maxParamValues in lines 205, 206 to reflect changes:
+**** minParamValues = [7e-5,-80,0.5]
+**** maxParamValues = [15e-5,-50,2.0]
+** Fitness values are still the same & and fitness didn't work. Same error as before. PROBLEMS ARE SAME. 
+** (1) Fitness error:
+*** Error is same as listed above
+*** [DISCARD] Hypothesis 1: It is due to num_elites
+**** Attempt 1: Commented out num_elites line
+**** Same error
+*** [CORRECT] Hypothesis 2: It is due to best_observer 
+**** Uncommented num_elites and changed to num_elites = 1
+**** Added 'import pickle' to imports section (see below for reason) 
+**** Added 2 fitness functions (taken from samn's evo.py):
+***** my_indiv_observe:
+****** MINE:
+# saves individuals in a population to binary file (pkl) ## Taken from samn evo.py
+def my_indiv_observe(population, num_generations, num_evaluations, args):
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/' + 'gen' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'wb'))
+****** SAMN:
+# saves individuals in a population to binary file (pkl)
+def my_indiv_observe (population, num_generations, num_evaluations, args):
+  fn = 'data/' + evostr + '/gen_' + str(num_generations) + '_indiv.pkl'
+  pickle.dump(population,open(fn,'w'))
+***** my_EMO_observe:
+****** MINE:
+def my_EMO_observe(population, num_generations, num_evaluations, args): 
+	print('gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness)
+  my_ec=args['my_ec']
+  fn = '/oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/OBSERVER.pkl' 
+  pickle.dump(my_ec.archive,open(fn,'w'))
+
+****** SAMN: 
+def my_EMO_observe (population, num_generations, num_evaluations, args):
+  print 'gen:',num_generations,'eval:',num_evaluations,\
+    'worst:',population[-1].fitness,'best:',population[0].fitness
+  es=args['es']
+  fn = 'data/' + evostr + '/ARCH.pkl'
+  pickle.dump(es.archive,open(fn,'w'))
+***** MAJOR DIFFERENCES: 'wb' instead of 'w' for open (py3 vs py2), and my_ec instead of es
+**** Added 2 observer lines to main code:
+***** my_ec.observer = [my_indiv_observe]
+***** my_ec.observer.append(my_EMO_observe)
+*** Hypothesis 2 (cont): 
+**** my_EMO_observe is throwing an error about 'args' (not surprising; don't understand what this does):
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 257, in <module>
+    num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individual selected by the tournament selection
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 456, in evolve
+    obs(population=list(self.population), num_generations=self.num_generations, num_evaluations=self.num_evaluations, args=self._kwargs)
+  File "NGF_evol_passive.py", line 180, in my_EMO_observe
+    my_ec=args['my_ec']
+KeyError: 'my_ec'
+**** added line 'global my_ec' to main code and commented out args['my_ec'] line 
+** (2) Fitnesses are the same: 
+*** Evaluate this AFTER fixing (1) 
+** IDEAS FOR LATER:
+*** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+*** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
+*** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
+* <2019-08-21 Wed -- NGF passive run on zn>
+** Git repo version control numbers:
+*** 263a1fb
+*** ba984ba
+** running on zn because comet is arbitrarily crashing: 
+*** ERROR:
+*** Solutions:
+**** contact help desk
+**** have salva show me how to deploy gcloud cluster 
+** Changes to NGF_evol_passive.py for evol run:
+*** added fn_stem and fn_EMO to 'if machine_ID ==' block for ease of use in the custom observer functions. 
+*** widened the range of gmax param
+** Changes to NGF_evol_passive.py & NGF_batch_passive.py for data dir on zn:
+*** changed runType=='mpi_bulletin' statements about data dirs to include NGF_passive/data/ + batchLabel, etc. (new thing is the 'data' subdir of NGF_passive -- created on neurosim server already) 
+*** Changed corresponding lines in NGF_evol_passive.py 
+** TRANSFERRED REPO TO suny-downstate-medical-center/neurosim (organization/team) for widened access. On each system (comet, no, and local, changed git remote):
+*** (1) git remote -v (to check)
+*** (2) git remote set-url origin https://github.com/suny-downstate-medical-center/A1.git 
+*** (3) git remote -v (to check again)  
+
+** *Why* are all the fitness values the same on the comet run?? Run this on zn for a day and check back in. (the 'g' in ch_leak?) 
+** Compiled mod files on 'no' in /u/ericag/A1/cells/NGF_optimization/NGF_passive, using =nrnivmodl=
+** Recall, on 'zn', 2 things necessary to do to the environment:
+*** conda activate py36
+*** ssh -Y into 'zn' (trusted X11 forwarding) 
+** IDEAS FOR LATER:
+*** DIFFERENT SOLUTION to cands_threshold problem would be to change the indexing, but that may take too long
+*** Change final pop print lines --> see final_pop.sort() business from tut_optimization.py? 
+*** replace ch_leak with pas (why is there just a 'g' in ch_leak set to 0; is this problematic?) 
+*** Can the ec.observers.stats_observer, etc. lines be salvaged if I do something fancy with args?? or is this functionality restricted to single objective optimization? 
+*** automate data directory clearance before each run 
+* <2019-08-27 Tue -- NGF cell hand-tuning + connectivity data>
+** Added a paper to the connectivity params
+** Hand-tune NGF cell:
+*** (on laptop) mkdir ~/Desktop/NGF_cell
+*** Populate this directory with the correct files 
+*** nrnivmodl to compile; python -i test_ngf.py to test: WORKING
+*** Modify 
+*** GOALS:
+**** RMP = -67mV 
+***** Took out ch_leak and added 'insert pas' instead
+***** Changed e_pas in ngf_cell.hoc in order to get good RMP 
+**** Get down to -105mV with -0.12 amp input
+***** With params below, -66.99 --> -67.08 with -0.12 nA input
+cm = 1
+
+// LEAK CHANNEL
+e_pas = -67.10
+g_pas = 0.001 //0.001 is default
+
+// Ih for SAG 
+gbar_hd = 0.0001
+***** Change cm:
+****** Increase --> "smoother" changes in voltage (makes sense; holds onto charge better?) 
+***** Change g_pas:
+****** Increase --> 
+****** Decrease --> 
+* <2019-08-28 Wed -- NGF>
+** GIT VERSION CONTROL NUMBERS:
+*** a599dd8
+*** be123e8
+** deleted 'email' line for runType hpc_slurm in NGF_batch_passive.py
+** added 'nodes': 1 and 'coresPerNode': 24 to runType mpi_bulletin in NGF_batch_passive.py 
+** Increased sleepinterval to 0.3 in evol and batch_passive scripts. 
+** THINGS TO DEAL WITH:
+*** "NONE" values being decoded 
+*** Sleep Interval --> increased from 0.1 to 0.5 in evol and batch
+*** email on comet --> deleted from b.runCfg in batch
+*** num_elites --> go from 1 to 0
+*** final pop print lines? 
+*** pas mechanism: ch_leak or pas? 
+*** add another compartment? (dend)? 
+*** logging? 
+*** ec.observers.stats_observer recoverable in multi-objective? 
+*** no plotting from netpyne -- how to achieve this?  
+*** automate data directory move before each run 
+
+** ERROR:
+FITNESS CALCULATIONS FOR CAND 49 BEGINNING
+Traceback (most recent call last):
+  File "NGF_evol_passive.py", line 257, in <module>
+    num_elites=1)                     # 1 existing individual will survive to next generation if it has better fitness than an individua$
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/emo.py", line 147, in evolve
+    return ec.EvolutionaryComputation.evolve(self, generator, evaluator, pop_size, seeds, maximize, bounder, **args)
+  File "/home/eyg42/.local/lib/python3.7/site-packages/inspyred/ec/ec.py", line 480, in evolve
+    offspring_fit = evaluator(candidates=offspring_cs, args=self._kwargs)
+  File "NGF_evol_passive.py", line 133, in evaluate_netparams
+    outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 296, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/lytton/anaconda3/lib/python3.7/json/__init__.py", line 348, in loads
+    return _default_decoder.decode(s)
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/lytton/anaconda3/lib/python3.7/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+** The above error is having a problem loading the .json file that does evidently exist. Perhaps it is still being written? Added the following lines to handle that error in case in happens again:
+*** 	current_step_ERRORS = []
+	for current_step in range(len(data_files_NEEDED)):
+		try: 
+			data_test = json.load(open(data_path + data_file_root + '_' + str(current_step) + '.json'))
+		except:
+			print('json file for gen ' + str(ngen) + ', cand ' + str(cand_index) + ', current injection # ' + str(current_step) + ' is not loading properly')
+			current_step_ERRORS.append(current_step)
+
+
+	###### EXTRACT THE MEAN STEADY STATE VOLTAGE RESPONSES ###### 
+	# RMP_ritness = eval_RMP_fitness(ARGS)
+
+	mean_responses = [None for data in data_files_NEEDED]
+	for i in range(len(data_files_NEEDED)):
+		if i in current_step_ERRORS:
+			continue
+		outputData = json.load(open(data_path + data_file_root + '_' + str(i) + '.json'))
+		vdata_total = list(outputData['simData']['V_soma']['cell_0'])
+		vdata = vdata_total[2000:] # accounts for delay 
+		steady_state_response = mean(vdata)
+		mean_responses[i] = steady_state_response
+
+	#Clear mean_responses of any remaining NoneType values
+	for x in range(len(mean_responses)):
+		if mean_responses[x] == None:
+			mean_responses[x] = 10e6 #arbitrary large value 
+***  Basically, added try-except block then skipped the ones that aren't working, then cull None values from mean_responses
+** still getting email bounces -- added 'mail-type': 'NONE' to b.runCfg for hpc_slurm 
+
+** WHAT I HAVE TO DO FOR THE REST OF THE DAY:
+*** figures
+**** current_injection = -0.1
+**** PARAMS for NGF_0:
+***** *cm = 1*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_1:
+***** *cm = 0.3*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+***** "sharper" on the bottom 
+**** PARAMS for NGF__1:
+***** *cm = 0.3*, e_ch_leak = -67, *gmax_ch_leak = 9.470825e-05*, gbar_hd = 0.0001
+***** vinit = -65.915
+***** "sharper" on the bottom 
+**** PARAMS for NGF_2:
+***** *cm = 2*, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_3:
+***** cm = 1, e_ch_leak = -67, *gmax_ch_leak = 0.01*, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_4:
+***** cm = 1, e_ch_leak = -67, *gmax_ch_leak = 0.0001*, gbar_hd = 0.0001
+***** vinit = -65.915
+**** PARAMS for NGF_5:
+***** cm = 1, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, *gbar_hd = 0.00001*
+***** vinit = -65.915
+**** PARAMS for NGF_6:
+***** cm = 1, e_ch_leak = -67, gmax_ch_leak = 8.470825e-05, *gbar_hd = 0.001*
+***** vinit = -65.915
+*** email bounce problem update [done]
+*** add hd gbar to comet run [done]
+*** data for sam from paper -- SEND TO SAM:
+**** RMP = -67mV 
+**** Current steps (nA): -0.01, -0.02, -0.03, -0.04, -0.05, -0.06, -0.07, -0.08, -0.09, -0.1, -0.11, -0.12
+**** Corresponding Deflection from RMP (mV): -6, -9, -13, -16, -19, -23, -27, -29, -30, -35, -36, -38
+*** path to data on comet -- SEND THIS TO SAMN: 
+**** okay sorry back -- here is a path for evo output on comet: /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive_archive/NGF_passive.aug20
+*** path to cell that can be modified 
+
+
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = 0.000695302349670921
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = -54.2016041361413
+cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.00012968106020774835
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  1.3317379634003228
+
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['gmax'] = 0.00028363025814608827
+cellRule['NGF_Rule']['secs']['soma']['mechs']['ch_leak']['e'] = -73.60910610857559
+cellRule['NGF_Rule']['secs']['soma']['mechs']['hd']['gbar'] = 0.0006777105190265256
+cellRule['NGF_Rule']['secs']['soma']['geom']['cm'] =  2.5942526753849107
+** Appears that the cfg and netParams etc are all different in all scripts and output .json files, but the simData['V_soma']['cell_0'] are the same for all candidates at the same current step
+** Trying 'skip': True in b.runCfg bc that's the only thing I can think of to change 
+
+* <2019-08-29 Thu -- NGF overlay expt vs model + saving issues>
+** Saving issues:
+*** Per samn:
+if voltage outputs are identical that might mean that the same core/thread is saving the data
+instead of each individual core/thread
+when you run a parallel program, there are multiple processes running at same time
+each has its own memory/state
+and they coordinate/communicate
+
+** Temp of monkey NGF paper? 
+** Function+fig -- overlay of original model over experimental data 
+*** ~/Desktop/NGF_tests/NGF_overlay
+*** Get original cell into this directory + mod files + test_run python script
+*** orig cell placed in above dir: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=187604&file=/modeldbca1/cells/class_ngfcell.hoc#tabs-2
+*** .hoc file renamed to ngf_cell.hoc 
+*** mod files copied over from ~/Desktop/NGF_tests/NGF_cell
+*** mod files compiled with nrnivmodl 
+*** test_ngf.py copied over from ~/Desktop/NGF_tests/NGF_cell 
+
+** ERROR:
+Saving output as /oasis/scratch/comet/eyg42/temp_project/A1/NGF_passive/NGF_batch_data_gen_14/NGF_batch_data_cand43_0.json  ...
+--------------------------------------------------------------------------
+An MPI process has executed an operation involving a call to the
+"fork()" system call to create a child process.  Open MPI is currently
+operating in a condition that could result in memory corruption or
+other system errors; your MPI job may hang, crash, or produce silent
+data corruption.  The use of fork() (or system() or other calls that
+create child processes) is strongly discouraged.
+
+The process that invoked fork was:
+
+  Local host:          comet-10-46 (PID 13154)
+  MPI_COMM_WORLD rank: 0
+
+If you are *absolutely sure* that your application will successfully
+and correctly survive a call to fork(), you may disable this warning
+by setting the mpi_warn_on_fork MCA parameter to 0.
+--------------------------------------------------------------------------
+Finished saving!
+  Done; saving time = 0.10 s.
+Plotting recorded cell traces ...
+-------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code.. Per user-direction, the job has been aborted.
+-------------------------------------------------------
+--------------------------------------------------------------------------
+orterun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[1917,1],0]
+  Exit code:    1
+* <2019-08-30 Fri -- NGF>
+** Comet is still running!! (140 gens so far) 
+** Changing min to 7e-7 for gleak
+* <2019-09-02 Mon -- NGF>
+** <Individual: candidate = [7e-07, -85, 1e-05, 1.9586827954380048], fitness = [0.2266541695763965, 2935.2474706564667], birthdate = 1567436399.5798995>
+** Figure_0: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 7e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -90
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_1_0: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 7e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_2: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1.958
+** Figure_3: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  1
+** Figure_4: cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  0.8
+* <2019-09-03 Tue -- NGF Passive params finalized>
+** Look at passive traces using values from Figure_4
+*** PARAMS:
+cellRule['secs']['soma']['mechs']['ch_leak']['gmax'] = 1e-8
+cellRule['secs']['soma']['mechs']['ch_leak']['e'] = -100
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-06
+cellRule['secs']['soma']['geom']['cm'] =  0.8
+** changed hParams['celsius'] to 37 
+** other param sets:
+*** TAG: n1.png 
+cellRule['secs']['soma']['vinit'] = -67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** TAG: n2.png
+cellRule['secs']['soma']['vinit'] = -72 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['mechs']['hd']['vhalfl'] = -100
+cellRule['secs']['soma']['mechs']['hd']['ehd'] = -10
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n1.png
+cellRule['secs']['soma']['vinit'] = -67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['soma']['mechs']['hd']['vhalfl'] = -100 
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n2.png:
+cellRule['secs']['soma']['vinit'] = -66 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n3.png:
+cellRule['secs']['soma']['vinit'] = -66 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 3e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_n4.png:
+*** Figure_PRE_FINAL.png:
+# cellRule['secs']['soma']['vinit'] = -66 #-67.2
+# cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+# cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+# cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+# cellRule['secs']['soma']['geom']['cm'] = 0.5
+*** Figure_FINAL.png:
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+** FINAL PASSIVE PARAMS:
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+* <2019-09-04 Wed -- NGF active>
+** FINAL PASSIVE PARAMS: 
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+** Active param modification process:
+*** (1) Get the data (done)
+**** FIGURE: [[~/Desktop/NGF_tests/NGF_overlay_ACTIVE/active.png]]
+**** DATA (used web plot digitizer: https://apps.automeris.io/wpd/)
+***** Note: all current injections are the amount "above threshold"
+***** Note: this is steady-state frequency
+***** 40pA: 21 Hz
+***** 50pA: 24 Hz
+***** 60pA: 27 Hz 
+***** 70pA: 29 Hz
+***** 80pA: 33 Hz
+***** 90pA: 35 Hz
+***** 100pA: 36 Hz
+***** 110pA: 38 Hz
+***** 120pA: 40 Hz
+*** (2) Get the params to be potentially modified
+*** (3) Set up an overlay script
+**** PSEUDO CODE:
+- run individual_cell.py at current step
+- when len(spkt) == 1; store current step value and break loop
+- cfg.amp then equals ^^ current step + the amt_above thresh
+- run batch using this
+- do data analysis 
+*** (4) Start testing 
+** candidates tried:
+*** TAG: Figure_n0 [6654]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09
+*** TAG: Figure_n1
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01 #0.15514516
+*** TAG: Figure_n2
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 40 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09
+*** TAG: Figure_n3
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.07
+*** TAG: Figure_n4
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.08
+*** TAG: Figure_n5
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 10 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.08
+*** NOW INCREASING KDR AND NA IN PARALLEL
+*** TAG: Figure_n6
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1
+*** TAG: Figure_n7 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.2
+*** TAG: Figure_n8 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 50 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n9 [UNSAVED -- 6593 again]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 55 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n10 [6558 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 65 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.25
+*** TAG: Figure_n11
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 65 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n12 [UNSAVED -- 6558 again, traces ~ unchanged]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 95 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n13 [6593 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.5
+*** TAG: Figure_n14 [UNSAVED]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 5
+*** TAG: Figure_n15 [6558 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 150 
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 50
+*** TAG: Figure_n16 [5969 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 1000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** NOW TRYING TO HIT BLOCKADE *THEN* INCREASE KDR
+*** TAG: Figure_n17 [5812 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 2000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n18 [5673 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n19 [5524 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 4000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n20 [5483 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 5000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 150
+*** TAG: Figure_n21 [4952 HOWEVER NOW SEE SPIKING ON ITS OWN]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 10000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] =
+*** ~3000 I see it start to spike on its own --- samn says 
+*** TAG: Figure_n22 [1067 ]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3000 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 400000
+** NOTE: if having python2 to python3 pickle error re: 
+**** ERROR: 
+UnicodeDecodeError: 'ascii' codec can't decode byte 0x89 in position 0: ordinal not in range(128)
+**** SOLUTION:
+with open(mshelffile, 'rb') as f:
+    d = pickle.load(f, encoding='latin1') 
+** GEOMETRY OF SOMA OF OTHER INTERNEURONS:
+*** PV: {nseg: 1, diam: 29.0, L: 27.0, cm: 1.2, Ra: 150.0}
+*** SOM: {nseg: 1, diam: 42.0, L: 42.0, cm: 1.2, Ra: 150.0}
+** GEOMETRY OF DENDS OF OTHER INTERNEURONS:
+*** PV: {nseg: 1, diam: 7.0, L: 44.0, cm: 1.2, Ra: 150.0}
+*** SOM: {nseg: 1, diam: 7.0, L: 176.0, cm: 1.2, Ra: 150.0}
+** SOMA AREA IN NGF PAPER (rat vs. monkey): macaque is ~92+/- 39 micron2
+** Added dend section to ngf_cell.hoc in ~/Desktop/NGF_tests/NGF_overlay_ACTIVE/ngf_cell.hoc 
+** Edited GEOMETRY of soma for ngf:
+*** from default to L = 9.5, diam = 9.5 (per samn) 
+*** NGF paper rat vs. monkey says soma area is ~92 +/- 39 micron2
+** PASSIVE FITTING FOR NEW GEOM + DEND:
+*** TAG: Figure_d0.png
+## SOMA: 
+cellRule['secs']['soma']['vinit'] = -65.6 #-67.2
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #7e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND:
+#cellRule['secs']['dend']['vinit'] = -65.6 #-67.2
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-7 #7e-7
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+*** Figure_d1.png (UNSAVED)
+**** increase soma gpas only to 5e-6 
+**** Fitness SKYROCKETED (BAD)
+*** Figure_d2.png (UNSAVED)
+**** decrease soma gpas only to 5e-8 
+**** AWFUL fitness
+*** Figure_d3.png 
+**** Turned on cfg.hParams['celsius'] = 37
+**** soma ONLY modified (w/ original params from the other day); dend inserted but unmodified:
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+**** fitness is a little worse than d0, but not by much
+*** Figure_d4.png
+**** changed Ra soma to 100 (from 14), left only soma modified, dend unmodified
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+**** eh, fitness is around same as d3
+*** Figure_d5.png
+**** decrease dend gpas to 5e-7 (from 0.001)
+**** AWFUL fitness
+*** Figure_d6.png
+**** change dend gpas to 5e-6
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] = 5e-7 #5e-7 
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+#cellRule['secs']['dend']['vinit'] = -65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+**** not as bad as the worst, better than d5
+*** Figure_d7.png
+**** decreased gpas of soma only
+## SOMA
+cellRule['secs']['soma']['vinit'] = -65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-8 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+#cellRule['secs']['dend']['vinit'] = -65.6
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5
+**** not the best not the worst 
+*** Figure_d8.png 
+**** decrease gpas of soma only to 5e-9 
+**** no diff from fitness from 5e-8? 
+*** Figure_d9.png [3909 ]:
+**** knocked out Ih in dend
+**** params (low gpas for soma)
+## SOMA
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-9 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+#cellRule['secs']['dend']['mechs']['pas']['g'] = 5e-6
+#cellRule['secs']['dend']['mechs']['pas']['e'] = -85
+#cellRule['secs']['dend']['mechs']['hd']['gbar'] = 1e-05
+#cellRule['secs']['dend']['geom']['cm'] = 0.5 
+*** Figure_d10.png:
+**** still have dend Ih knocked out
+**** params (lower gpas for soma: 5e-10) 
+**** no difference from d9? 
+*** Figure_d11.png [1625 ]:
+**** PARAMS:
+## SOMA
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## DEND 
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 2e-4
+**** Fiddled around with test_ngf.py, and got good results w/ dend gpas at 2e-4 -- testing full batch. 
+*** Figure_d12.png --> THIS IS THE ONE!! 
+**** Params: same as d11 but changed gpas for dend to 3e-4 
+** PASSIVE PARAM SET FINAL:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+** ACTIVE CANDIDATES: 
+*** PASSIVE PARAMS STAY THE SAME:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+*** hoc file:
+begintemplate ngfcell
+public init
+public soma, dend
+
+create soma, dend
+
+proc topol() {
+	connect dend(0), soma(0)
+}
+
+
+proc init() {
+	topol()
+	soma {
+		Ra = 14
+		nseg = 1
+		cm = 1.8 //1.4
+		L = 9.5
+		diam = 9.5 //diam should be 5.4
+
+
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265 //gNasoma //0.10*gna_scale
+		ena = 55 
+
+		insert hd
+		gbar = 1e-05
+
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516// kdrf 
+
+		insert pas
+
+		insert iconc_Ca
+		catau_iconc_Ca = 10
+		caiinf_iconc_Ca = 5.e-6
+
+		insert ch_KvAngf
+		gmax_ch_KvAngf = 5.2203905e-06 //gKvA
+
+		insert ch_CavN  // HAV-N- Ca channel
+		gmax_ch_CavN =  0.00058169587 // gCavN (N-type)
+
+		insert ch_CavL 
+		gmax_ch_CavL=0.056108352 //gCavL (L-type)
+
+		insert ch_KCaS
+		gmax_ch_KCaS=4.5152237e-07 //gKCaS 
+
+		insert ch_KvCaB
+		gmax_ch_KvCaB =1.0235317e-06 //gKvCaB
+
+		ek=-90
+		eca=130
+	}
+
+	dend {
+		Ra = 14 //100 
+		nseg = 1
+		cm = 1
+		diam = 7 // from PV cell
+		L = 44 // from PV cell 
+
+		// LEAK CHANNEL
+		insert pas
+		e_pas = -67
+		g_pas = 0.001 //0.001 is default
+
+		//Ih for SAG 
+		//insert hd 
+		//gbar_hd = 0.0001				//mho per cm2 //default value in mod file
+
+
+		// Fast Na+ for Spiking 	//gNasoma
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265
+		ena = 55
+
+
+		// Fast K+  	//kdrf 
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516
+		ek = -90
+	}
+
+}
+
+
+
+
+endtemplate ngfcell
+
+
+
+
+
+
+*** cand0.png [146201 ]:
+**** params
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.15514516
+**** fitness 146201
+*** cand1.png [166974 ]
+**** decreasing soma Na+ gmax by 1 order of magnitude (3.78.. --> 0.3) 
+## ACTIVE PARAMS [to be modified]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.15514516 
+
+*** cand2.png [8685 ]
+**** ## ACTIVE PARAMS [to be modified]
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.01 #3.7860265
+cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01
+
+### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.01 #3.7860265
+cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.01 #0.15514516
+*** cand3.png [154040 ]
+**** PARAMS:
+	### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 1 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 1 #3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.1 #0.15514516
+*** cand4.png [226403 ] 
+**** PARAMS:
+	### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+*** cand5.png same as cand0.png [146201 ]
+**** PARAMS: no change to default active + fixed passive
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+
+### SOMA ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+#cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+#cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+
+### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+#cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 0.2 #3.7860265
+#cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.11 #0.15514516
+* <2019-09-05 Thu -- NGF active>
+** FINAL PASSIVE PARAM SET:
+## PASSIVE SOMA PARAMS
+cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+cellRule['secs']['soma']['geom']['cm'] = 0.5
+
+## PASSIVE DEND PARAMS
+cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+** CANDIDATES IN ORDER OF FITNESS:
+*** active_70: 141
+*** active_69: 294
+*** active_67: 1717
+*** active_65: 1742
+*** active_63: 1777
+*** active_62: 4692
+*** active_61: 10207
+*** active_57: 32902
+*** active_55: 37938
+*** active_51: 46851
+*** active_50: 47210
+*** active_44: 48023
+*** active_33: 142957
+*** active_29: 143266
+*** active_14: 143558
+*** active_28: 143558
+*** active_24: 143809
+*** active_13: 144655
+*** active_23: 144938
+*** active_5:  145595 
+*** active_18: 145595
+*** cand_0:    146201
+*** active_17: 146312
+*** active_20: 146380
+*** active_9:  146677
+*** active_12: 146706
+*** active_2:  146918
+*** active_8:  147726
+*** active_3:  148987 
+*** active_4:  150070
+*** active_16: 153285 
+*** cand3:     154040
+*** active_11: 154416
+*** active_7:  157667
+*** active_10: 160741
+*** active_6:  166336
+*** active_15: 166336
+*** active_0:  166974
+*** active_1:  166974
+** active_0.png [166974 ]:
+*** soma: 0.3 / default, dend: default / default
+**** only decrease soma Na+ gmax (3.7860265 --> 0.3) 
+cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
+**** worse than w/ higher ? 
+** active_1.png [166974 ]:
+*** soma: 0.03 / default, dend: default / default
+**** decrease soma Na+ gmax more (0.3 --> 0.03) 
+**** same as last cand? 
+** active_2.png [146918 ]:
+*** soma: 5 / default, dend: default / default
+**** Increase soma Na+ gmax, just to see (3 --> 5) 
+**** Is there deploarization block? Is that why it got better? Not that I can see. 
+** active_3.png [148987 ]:
+*** soma: 10 / default, dend: default / default
+**** Increase soma Na+ gmax again (5 --> 10) 
+**** worse than gmax at 5
+** active_4.png [150070 ]:
+*** soma: 5 / 1, dend: default / default
+**** Bring soma Na+ gmax back down to 5
+**** Increase soma K+ gmax from 0.155 --> 1 
+** active_5.png [145595 ]: 
+*** soma: 5 / 0.01, dend: default / default
+**** Keep soma Na+ gmax at 5
+**** Decrease soma K+ gmax to 0.01 
+** active_6.png [166336 ]:
+*** soma: 0.5 / 0.01, dend: default / default
+**** Keep soma K+ gmax at 0.01
+**** Bring down soma Na+ gmax from 5 to 0.5 
+** active_7.png [145595 --> 157667]:
+*** soma: 5 / 0.01, dend: 0.3 / default
+**** Bring soma back to soma Na+ 5 / K+ 0.01 
+**** Uncomment dend mechanisms 
+**** Decrease dend Na+ gmax to 0.3 (from 3.8)
+** active_8.png [157667 --> 147726 ]:
+*** soma: 5 / 0.01, dend: 5 / default
+**** Keep same as before but increase dend Na+ gmax to 5 
+**** worse than active_5, which has same params except slight increase in dend Na+ gmax (soma: 5/0.01, dend: 5/0.155) 
+** active_9.png [146677 ]:
+*** soma: 5 / 0.1, dend:default / default
+**** Increase soma K+ gmax from 0.01 to 0.1 
+** active_10.png [160741 ]:
+*** soma: default / default, dend: 1 / default
+**** best fitness is still with default values
+**** uncomment all and go from here
+**** decrease Na+ of dend relative to Na+ 
+** active_11.png [154416 ]:
+*** soma: default / default, dend: 1 / 0.01 
+**** decrease K+ gmax in dend 
+** active_12.png [146706 ]: 
+*** soma: 7 / 0.01, dend: default / default
+**** start w/ active_5 cands (soma 5 / 0.01) bc best fit so far, and increase gmax 
+**** decreased fitness -- lower soma Na+ gmax below 5 
+** active_13.png [144655 ]:
+*** soma: 3 / 0.01, dend: default / default
+** active_14.png [143558 ]:
+*** soma: 1 / 0.01, dend: default / default
+**** keep lowering soma until fitness gets worse 
+** active_15.png [166336 ]:
+*** soma: 0.9 / 0.01, dend: default / default
+** active_16.png [153285 ]:
+*** soma: 1 / 0.01, dend: 1 / default
+**** Go back to soma 1/0.01 and decrease dend Na+ gmax 
+** active_17.png [146312 ]:
+*** soma: 1 / 0.01, dend: 1 / 0.01 
+**** keep dend Na+ gmax here, but lower K+ gmax dend 
+** active_18.png [145595 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.01 
+**** Lower dend Na+ gmax relative to soma
+** active_19.png [165663 ]:
+*** soma: 1 / 0.01, dend: 0.5 / 0.01
+**** lower dend Na+ gmax more 
+** active_20.png [146380 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.009 
+**** bring dend Na+ back up to 0.9 but lower dend K+ gmax 
+** active_21.png [149470 ]:
+*** soma: 1 / 0.01, dend: 0.9 / 0.005
+**** lower dend K+ gmax even more 
+** active_22.png [145595 ]:
+*** soma: 0.9 / 0.01, dend: 0.9 / 0.01
+**** bring back to dend 0.9 / 0.01, decrease soma Na+ 
+** active_23.png [144938 ]:
+*** soma: 0.5 / 0.01, dend: 0.9 / 0.01 
+**** lower soma Na+ more 
+** active_24.png [143809 ]:
+*** soma: 0.3 / 0.01, dend: 0.9 / 0.01 
+**** bring down Na+ gmax even more for soma 
+** active_25.png [166336 -- FIG UNSAVED ]:
+*** soma: 0.1 / 0.01, dend: 0.9 / 0.01 
+**** bring down Na+ soma even more 
+** active_26.png [162504 -- FIG UNSAVED ]:
+*** soma: 0.3 / 0.01, dend: 0.5 / 0.01 
+**** bring back to 0.3 for soma Na+ gmax 
+**** lower Na+ gmax for dend 
+** active_27.png [144092 -- FIG UNSAVED ]:
+*** soma: 0.3 / 0.008, dend: 0.9 / 0.01 
+**** bring values back to active_24
+**** lowering dend Na+ didn't go great
+**** lower soma K+ gmax 
+** active_28 [143558 ]:
+*** soma: 0.3 / 0.02, dend: 0.9 / 0.01 
+**** decreasing soma K+ gmax dend made it worse -- increase it instead 
+** active_29 [143266 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.01 
+**** Keep increasing soma K+ gmax 
+** active_30 [144376 ]:
+*** soma: 0.3 / 0.1, dend: 0.9 / 0.01 
+**** keep increasing soma K+ gmax 
+** active_31 [161006 ]:
+*** soma: 0.3 / 0.05, dend: 0.5 / 0.01 
+**** bring back down to active_29 params 
+**** try decreasing dend Na+ gmax 
+** active_32 [143867 ]:
+*** soma: 0.3 / 0.05, dend: 1 / 0.01 
+**** decrease Na+ in dend didn't work -- try increasing 
+**** slightly worse fitness, not the right move 
+** active_33 [142957 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.009
+**** bring back to active_29
+**** lower K+ dend gmax 
+** active_34 [143377 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.005 
+**** keep lowering K+ dend gmax 
+** Try raising soma capacitance --> does help dampen excitability. can change to 1 or 1.5 without sacrificing passive fit --> doing 1.5 for both soma and dend 
+** active_35 [50399 ]:
+*** soma: 0.3 / 0.05, dend: 0.9 / 0.009 
+**** cm = 1.5 for both soma and dend for here down 
+** active_36 [60353 ]:
+*** soma: 0.1 / 0.05, dend: 0.9 / 0.009 
+**** samn says to decrease Na+ and increase K+ 
+** active_37 [58359 ]:
+*** soma: 0.1 / 0.08, dend: 0.9 / 0.009
+**** try increasing soma K+ at the same time as decreasing Na+ 
+** active_38 [57880 ]:
+*** soma: 0.1 / 0.1, dend: 0.9 / 0.009 
+**** just try increasing soma K+ more 
+** active_39 [54358 ]:
+*** soma: 0.1 / 0.1, dend: 0.5 / 0.009 
+**** keep soma as is above, and just see if decreasing dend Na+ does anything here 
+**** okay it did bring it down from the previous combo 
+** active_40 [98317 ]:
+*** soma: 0.1 / 0.1, dend: 0.3 / 0.009 
+**** bring dend Na+ conductance down even more 
+** active_41 [98074 ]:
+*** soma: 0.1 / 0.1, dend: 0.3 / 0.01 
+**** try increasing K+ in dend 
+** active_42 [55448 ]:
+*** soma: 0.03 / 0.5, dend: 0.9 / 0.009
+**** go nuts here, just to see. bring values back to active_35 param combo. then lower soma a lot + raise K+ a lot. NEXT TRY RAISING SOMA ALOT. 
+** active_43 [8534 -- but wrong way, too dampened]:
+*** soma: 0.03 / 0.5, dend: 0.1 / 0.01 
+**** now lower Na+ gmax in dend and raise K+ gmax in dend 
+** active_44 [48023 ]:
+*** soma: 0.3 / 0.1, dend: 0.9 / 0.009 
+**** this time go back to active_35 params. then increase K+ in soma. 
+** active_45 [110402 ]:
+*** soma: 0.3 / 0.1, dend: 0.2 / 0.009 
+**** Decrease Na+ in dend to 0.2
+** active_46 [116395 ]:
+*** soma: 0.3 / 0.1, dend: 0.2 / 0.1 
+**** out of curiosity, keep it same as 45 but increase K+ in dend 
+** active_47 [55214 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.009 
+**** decrease dend Na+, just to see
+** active_48 [55214 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.01 
+**** increase K+ dend by a little
+** active_49 [63113 ]:
+*** soma: 0.3 / 0.1, dend: 0.5 / 0.05 
+**** didn't make much difference, so increase K+ dend even further --> 0.05 
+** active_50 [47210 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.05 
+**** increase dend Na+ just to see --> to 1
+** active_51 [46851 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1 
+**** Try increasing K+ dend now
+** active_52 [47210 ]:
+*** soma: 0.5 / 0.1, dend: 1 / 0.1 
+**** try increasing soma Na+ conductance, hmm
+** active_53 [56652 ]:
+*** soma: 0.1 / 0.1, dend: 1 / 0.1 
+**** decrease Na+ soma conductance to 0.1 
+** active_54 [46851 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1, 
+*** soma KvAngf gmax --> 5.2e-05
+**** increasing other potassium channels to dampen excitability (1 order of magnitude in this case) 
+** active_55 [37938 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** soma KvAngf gmax --> 5.2e-03
+**** increasing KvAngf 
+** active_56 [37938 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** + gmax_ch_KCaS= 4.5e-06 
+**** increase another K+ channel to see what happens 
+** active_57 [32902 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** ++ gmax_ch_KCaS= 4.5e-04 
+** active_58 [39798 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 
+*** + gmax_ch_KvCaB = 1.02e-05
+** active_59 [8534 -- wrong way ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 
+*** ++ gmax_ch_KvCaB = 1.02e-03
+** active_60 [33003 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** gmax_ch_KCaS= 4.5e-04 -03? 
+*** - gmax_ch_KvCaB = 1.02e-07
+** active_61 [10207 ] :
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** gmax_ch_KvAngf = 5.2e-03 
+*** +gmax_ch_KCaS= 4.5e-04 -03? 
+**** leave gmax_ch_KvCaB alone for now 
+** active_62 [4692 ]:
+*** soma: 0.3 / 0.1, dend: 1 / 0.1
+*** +gmax_ch_KvAngf = 5.2e-02 
+*** gmax_ch_KCaS= 4.5e-04 ? -03
+** active_63 [1777 ]: 
+*** soma: 0.3 / 0.1, dend: +default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-04 -03? 
+** active_64 [1821 ]: 
+*** soma: +0.8 / 0.1, dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-04 e-3? 
+** active_65 [1742 ]: 
+*** soma: (-)0.1 / 0.1, dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_66 [1873 ]: 
+*** soma: 0.1 / 0.15(+), dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_67 [1717 ]: 
+*** soma: 0.1 / 0.09(-), dend: default / 0.1
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03 
+** active_68 [1372 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.07 (-)  
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 4.5e-03
+** active_69 [294 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.07 
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** gmax_ch_KCaS = 6e-03 (+)
+** active_70 [141 ]: 
+*** soma: 0.1 / 0.09, dend: default / 0.05 (-)  
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 6e-03
+** active_71 [31 ]:
+*** soma: 0.1 / 0.09, dend: default / 0.03 (-) 
+*** =gmax_ch_KvAngf = 5.2e-02 
+*** =gmax_ch_KCaS = 6e-03
+
+
+** SEEING IF I CAN smooth out those ends a little more:
+*** in ch_Kdrfastngf.mod "slope5=.07 (1)" --> slope5=1.7 (1) -- NOPE
+*** in ch_Kdrfastngf.mod "slope5=.07 (1)" --> slope5=.007 (1)
+***  in ch_Kdrfastngf.mod "offset6=10 (mv)" --> offset6=5
+*** ORIG: offset6 = 10 (mV) offset5=10 (mV)
+
+** ch_Kdrfastngf.mod offset5 and offset6 = 15: fitness 18! 
+** ^^ offset 5 & 6 set to 17 --> fitness 17! 
+** ch_Navngf.mod ORIG mAlphV = 24 (mV) -- don't change
+*** change: mAlphV = 20 (mV)-- NOPE
+** ch_Navngf.mod ORIG mAlphC = -0.34133 (1) -- no diff, don't change 
+*** change: mAlphC = -0.6 (1)
+** ch_Navngf.mod ORIG mBetaV = -4 (mV)
+*** change: mBetaV = 4 (mV) --> made model lower spiking than empirical 
+*** change: mBetaV = -2 (mV) --> nope change back 
+
+
+** ASIDE: comment out all Na+ K+ in dend and soma 
+*** only Na+ soma is active 
+* <2019-09-06 Fri -- Connectivity data>
+** Push NGF cell to A1 model 
+*** Params for NGF are finalized:
+**** PASSIVE:
+	## PASSIVE SOMA PARAMS
+	cellRule['secs']['soma']['vinit'] = -66.9 #-65.6
+	cellRule['secs']['soma']['mechs']['pas']['g'] =  5e-7 #5e-7
+	cellRule['secs']['soma']['mechs']['pas']['e'] = -85
+	cellRule['secs']['soma']['mechs']['hd']['gbar'] = 1e-05
+	cellRule['secs']['soma']['geom']['cm'] = 1.5 #0.5
+	#print(cellRule['secs']['soma']['mechs']['ch_KvAngf']['gmax'])
+
+	## PASSIVE DEND PARAMS
+	cellRule['secs']['dend']['vinit'] = -66.9 #-65.6
+	cellRule['secs']['dend']['mechs']['pas']['g'] = 3e-4
+**** ACTIVE:
+	cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.1 #3.7860265
+	cellRule['secs']['soma']['mechs']['ch_Kdrfastngf']['gmax'] = 0.09 #0.15514516
+
+	### DEND ACTIVE -- MODIFY THESE PARAMS HERE *AND IN NETPARAMS*
+	cellRule['secs']['dend']['mechs']['ch_Navngf']['gmax'] = 3.7860265
+	cellRule['secs']['dend']['mechs']['ch_Kdrfastngf']['gmax'] = 0.03
+ 
+*** Use new mod files (1 has been changed) --> ch_Kdrfastngf.mod
+**** see yesterday's entry for new offset values
+**** LOCAL: /Users/ericagriffith/Desktop/NEUROSIM/A1/mod
+**** cd ^^ --> rm ch_Kdrfastngf.mod
+**** cp in new ch_Kdrfastngf.mod file from ~/Desktop/NGF_tests/NGF_overlay_ACTIVE/ch_Kdrfastngf.mod 
+**** re-compile locally 
+***** https://github.com/MetaCell/NetPyNE-UI/blob/master/netpyne_ui/tests/M1detailed/compile
+***** cd ~/Desktop/NEUROSIM/A1 --> rm -r mod/x86_64 --> no such dir
+***** ln -s mod/x86_86 x86_64
+***** cd mod
+***** nrnivmodl
+***** cd .. 
+*** Remove old hoc file and replace w/ new one
+**** rm ~/Desktop/NEUROSIM/A1/cells/ngf_cell.hoc 
+**** put in celsius and v_init into beginning of ngf_cell.hoc and made sure that all params matched with what is in the test_ngf.py and netParams.py files used for testing param combos in ~/Desktop/NGF_tests/NGF_overlay_ACTIVE (dend and soma passive, dend and soma active) 
+**** coped into A1/cells 
+*** added (and commented out, for now) a line in A1/cfg.py --> cfg.hParams['celsius'] = 37
+*** Remove NGF_optimization directory? Yes
+**** git rm all relevant files
+**** git commit -m 'CHANGES'
+**** git push origin master (check git branch first to make sure on master)
+*** All changes described above pushed to github, neurosim, and comet 
+*** zipped NGF work is on local machine (laptop) in /Users/ericagriffith/Desktop/NEUROSIM/A1/cells/NGF_archived_files_and_figures
+** Work on connectivity data 
+* <2019-09-07 Sat -- Connectivity data>
+** Kato et al., 2017 "Network-level control of frequency tuning in Auditory Cortex"
+*** mouse, A1, has data about IPSCs in L2/3 Pyr cells via PV and SOM in Layers 2/3-6 
+*** Figure 8B has most of the data
+*** Layer boundaries in Fig 8B:
+**** L2/3: 0-155 micrometer
+**** L4: 155 - 258
+**** L5: 258 - 466
+***** For our model, L5A is 28% of L5 and L5B is 72% of L5
+***** This model L5 is 208 microns
+***** 28% is ~58 microns deep
+***** L5A: 258 - 316, L5B: 316 - 466
+**** L6: 466 - 645 
+*** "Normalized IPSCs" in Pyr L2/3, from PV 
+**** PV in L2/3: .7, .9, .7 --> MEAN: 0.77
+**** PV in L4: 0.4, 0.1 --> MEAN: 0.25
+**** PV in L5A: 0.05 --> MEAN: 0.05
+**** PV in L5B: 0.03, 0.02 --> MEAN: 0.025
+**** PV in L6: 0.01, 0.008, 0.008, 0.008 --> MEAN: 0.0085
+*** Normalized PV L2/3 IPSCs from SST:
+**** SST in L2/3: 0.9, 0.9, 0.8 --> MEAN: 0.87
+**** SST in L4: 0.7, 0.6 --> MEAN: 0.65
+**** SST in L5: 0.5, 0.3, 0.2 --> MEAN: 0.33  
+**** SST in L5A: 0.5 --> MEAN: 0.5
+**** SST in L5B: 0.3, 0.2 --> MEAN: 0.25
+**** SST in L6: 0.1, 0.08, 0.06, 0.04 --> MEAN: 0.07 
+** Levy & Reyes, 2012
+*** L4, A1, mouse 
+*** Table 2 & Figure 3
+*** Not sure which to use here -- first PSP?? hm. Ask salva upon return. 
+*** Pyr L4 == ITP4 (pyramidal), G42 == PV, GIN = SST
+*** ITP4 --> ITP4: 0.45 mV
+*** ITP4 --> PV4: 1.29 mV
+*** ITP4 --> SST4: 0.51 mV *facilitating synapse*
+*** PV4 --> ITP4: (-?) 0.64 mV
+*** SST4 --> ITP4: (-?) 0.29 mV
+** Joshi et al., 2017
+*** Mouse, A1, L2/3 --> L5B 
+*** Figure 5 has EPSC amplitudes 
+*** Figure 6C has EPSP amplitudes 
+*** NOTE: coricocallosal (ccal) == IT, corticocollicular (ccol) == PT 
+*** IT2 --> IT5B (ccol): MEAN 1.0 mV 
+*** IT2 --> PT5B (ccal): MEAN 0.85 mV 
+* <2019-09-11 Wed -- Excitatory cell dendrite modifications>
+** samn & rest of group say now we need to extend (apical) dendrites to reach the correct layers then ensure their firing properties are approximately equivalent
+** Figure to reference: [[/Users/ericagriffith/Desktop/NEUROSIM/A1/papers/connectivity/ACX_wiring_diagram.png]] --> From the book /The Mammalian Auditory Pathways: Synaptic Organization and Microcircuits/
+** Populations with apical dendrites, by layer, based on the above figure:
+*** FOR REFERENCE, all pops in this diagram: 
+**** L1 cajal-retzius 
+**** L2 pyramidal (S/M)
+**** L3 pyramidal (S), L3 pyramidal (M/L), L3 star pyramidal
+**** L3/4 Spiny Stellate
+**** L5 Star Pyramidal, L5 Pyramidal (L/XL), L5 pyramidal (S/M)
+**** L5/6 inverted pyramidal
+**** L6 Pyramidal (M/L), L6 Star Pyramidal
+*** Pops with dends in L1:
+**** L2 pyramidal (S/M) [1/1]
+**** L3 pyramidal (M/L) [1/3, not counting star]
+**** L5 pyramidal (L/XL) [1/3, not counting inverted]
+*** Pops with dends in L2:
+**** L2 Pyramidal (S/M) [1/1]
+**** L3 Pyramidal (S) [1/4, counting star]
+**** L3 Pyramidal (M/L) [1/4, counting star]
+**** L3 Star Pyramidal [1/4, counting star]
+**** L5 Pyramidal (L/XL) [1/3, not counting inverted]
+*** Pops with dends in L3:
+**** L3 Pyramidal (M/L) [1/4, counting star]
+**** L3 Star Pyramidal [1/4, counting star]
+**** L3/4 Spiny Stellate 
+**** L5 Star Pyramidal [1/3, not counting inverted]
+**** L5 Pyramidal (L/XL) [1/3, not counting inverted]
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+*** Pops with dends in L4:
+**** L3 Star Pyramidal (Potentially BASAL not apical??)
+**** L3/4 Spiny Stellate (Potentially BASAL not apical??)
+**** L5 Star Pyramidal [1/3, not counting inverted]
+**** L5 Pyramidal (L/XL) [1/3, not counting inverted]
+**** L5 Pyramidal (S/M) [1/3, not counting inverted]
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+*** Pops with dends in L5:
+**** L5 Star Pyramidal (Potentially BASAL not apical??)
+**** L5 Pyramidal (S/M) [1/3, not counting inverted]
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+**** L6 Star Pyramidal [1/2, not counting inverted]
+*** Pops with dends in L6:
+**** L6 fusiform horizontal & tangential pyramidal
+**** L5/6 Inverted Pyramidal
+**** L6 Pyramidal (M/L) [1/2, not counting inverted]
+**** L6 Star Pyramidal (Apical & Basal??) 
+** Steps:
+*** Figure out how to load .pkl files in A1/cells
+**** (1) python; import pickle; with open('FILENAME.pkl','rb') as fileObj: data = pickle.load(fileObj, encoding='bytes')
+***** The encoding='bytes' resolves the following error: *UnicodeDecodeError: 'ascii' codec can't decode byte 0xfa in position 2: ordinal not in range(128)* 
+**** (2) netParams.loadCellParamsRule(label='CT6_reduced',fileName='CT6_reduced_cellParams.pkl')
+*** Start with modification of L2 Excitatory cells
+**** Excitatory Pop in the model: IT2
+**** IT2 needs apical dendrites in L2 and in L1 
+**** L1 normalized layer boundaries: [0.00, 0.05] --> 0-100
+**** L2 normalized layer boundaries: [0.05, 0.08] --> 100-160
+**** File: A1/cells/IT2_reduced_cellParams.pkl
+***** LOAD file:
+****** with python; import pickle; from netpyne import specs; netParams.loadCellParamsRule(label='IT2_reduced',fileName='IT2_reduced_cellParams.pkl')
+***** 3 apical dendrites & 1 basal dendrite
+***** Current geometry of Adend1:
+****** netParams.cellParams['IT2_reduced']['secs']['Adend1']['geom']
+****** diam = 1.5831889597
+****** L: 96.75
+****** pt3d: [[0, 48.4123467666, 0, 1.5831889597], [0, 145.1623467666, 0, 1.5831889597]]}
+***** Current geometry of Adend2:
+****** diam: 1.5831889597
+****** L: 96.75
+****** pt3d: [[0, 145.1623467666, 0, 1.5831889597], [0, 241.9123467666, 0, 1.5831889597]]
+***** Current geometry of Adend3: 
+****** diam: 1.5831889597
+****** L: 96.75
+****** pt3d: [[0, 241.9123467666, 0, 1.5831889597], [0, 338.66234676659997, 0, 1.5831889597]]
+**** I need IT2 to go from within L2 (100-160, 0.05 - 0.08), up to within L1 (0-100, 0 - 0.05). Max length is therefore 160 (160 --> 0), and min length is ~0 (100-100). If cell body located approximately in the middle of L2 (~130, 0.065) and dendrite extends to approximately middle of L1 (~50, 0.025), then dendrite length would be ~80 (0.065 --> 0.025). 
+**** Shorten pt3d and L for apical dendrites
+*** Questions:
+**** RESOLVED:
+***** What is the total depth of the model? --> *2000*
+***** How to correlate length with normalized layer depth? 
+****** I: 0-100 
+****** II: 100-160
+****** III: 160-950 
+****** IV: 950-1250
+****** VA: 1250-1334
+****** VB: 1334-1550
+****** VI: 1550-2000
+***** What do the values in pt3d correspond to? 
+****** x, y, z, diam
+****** https://www.neuron.yale.edu/neuron/static/py_doc/modelspec/programmatic/topology/geometry.html
+***** How to modify the lengths when there is a pt3d? 
+***** Do I modify all apical dendrites or just one? 
+**** This wiring diagram does not explicitly show pyramidal cell bodies in L4, only sort of spiny stellate.  
+**** What do I do about L5A / L5B? 
+**** For cells that appear to have synapses along the dendrite in multiple superior layers, do I need to just adjust one dendrite to be long enough to reach through all of the layers or do I need to make different ones for each layer that it goes through? Probably just one and have them synapse...? 
+* <2019-09-12 Thu -- dendrite adjustments>
+** All of these changes are happening on laptop in ~/Desktop/cells
+** Using script cell_save.py with function change_geom(cellName,L) which will change pt3d and L (in geom)
+** Pops that need to extend to L1 [L5 pop UNFINISHED]:
+*** IT2
+**** IT2_reduced_cellParams.pkl --> IT2_reduced_new.pkl
+**** midpoint to midpoint strategy as noted by salva: 50 is midpoint of L1, 130 is midpoint of L2, so L = 80
+**** cd ~/Desktop/cells/ ; python ; import cell_save ; cell_save.change_geom('IT2_reduced, 80)
+*** IT3
+**** Does not have a separate pkl file right now
+**** Is there anything in the pkl file for IT2_reduced_cellParams.pkl that would preclude me from copying and renaming it IT3_reduced_cellParams.pkl? *DID THIS IN ~/Desktop/cells*
+**** Midpoint of L3 is 555 (160-950) and midpoint of L1 is 50 --> L = 505
+**** cd ~/Desktop/cells; python; import cell_save; cell_save.geom('IT3_reduced',505)
+**** IT3_reduced_cellParams.pkl --> IT3_reduced_new.pkl
+*** L5 pyramidal L/XL --> IT5A, IT5B, PT5B?? which one, which layer? 
+** Pops that need to extend to L2 
+*** 
+
+** IN light of IT3 modifications (see previous point), I should change *netParams.py* as well, yes? 
+* <2019-09-13 Fri -- dendrite adjustments>
+** Changes being made on local machine in ~/Desktop/cells
+* <2019-09-16 Mon -- dendrite adjustments>
+** Recall layer depths: 
+*** I: 0-100 
+*** II: 100-160
+*** III: 160-950 
+*** IV: 950-1250
+*** VA: 1250-1334
+*** VB: 1334-1550
+*** VI: 1550-2000
+** What about soma? what does pt3d mean? 
+** Cell populations: 
+*** L1 
+**** NGF1
+*** L2
+**** IT2  
+***** Done with morph changes --> now look at ephys
+**** SOM2
+**** PV2
+**** VIP2
+**** NGF2
+*** L3
+**** [check ephys] IT3
+***** done with morph changes
+***** check ephys
+**** SOM3
+**** PV3
+**** VIP3
+**** NGF3
+*** L4
+**** check ephys for both pops below; morph changes complete
+**** [DONE] ITP4 (pyramidal)
+**** [DONE] ITS4 (spiny stellate) --> changed in real dir but untested 
+**** SOM4
+**** PV4
+**** VIP4
+**** NGF4
+*** L5A
+**** [NOT DONE] IT5A
+**** SOM5A
+**** PV5A
+**** VIP5A
+**** NGF5A
+*** L5B
+**** [NOT DONE] IT5B
+**** [NOT DONE] PT5B
+**** SOM5B
+**** PV5B
+**** VIP5B
+**** NGF5B
+*** L6
+**** [NOT DONE] IT6
+**** [NOT DONE] CT6
+**** SOM6
+**** PV6
+**** VIP6
+**** NGF6
+** L4 Spiny Stellate:
+*** ITS4 : cell pop name
+*** ITS4.py 
+*** L4 spiny stellate needs to go from L4 --> L3 
+*** L4 [1100; 950-1250] --> L3 [555; 160-950]
+*** Length = 545 (1100-555) 
+*** In ITS4.py, dend.L = self.rho * self.soma.L
+**** self.rho = 165
+**** self.soma.L = 10
+**** To change length, (1) change rho (2) change soma.L (3) just set dend.L = 545
+*** Tried to change dend.L in ITS4.py in ~/Desktop/cells, but having trouble with ca_ion. Loads fine in ~/Desktop/NEUROSIM/A1 (python -i netParams.py), so I think it's something to do with the mod files. Changing it in the file here, not in temp dir on local desktop. --> works 
+** L6 IT6
+*** IT6 can be subdivided into IT6 and ITC6 (claustrum)
+*** IT6 --> L5
+*** ITC6 --> L1 
+** L6 CT6 
+*** CT6 --> L4
+*** CT6_reduced_cellParams.pkl
+*** L6 [1775; 1550-2000] --> L4 [1100; 950-1250]: L = 675, not counting soma 
+** Now: all pops have been modified
+*** LIST DETAILS NEXT POST
+** Now need to test them 
+* <2019-09-17 Tue -- dendrite modifications>
+** On local machine; have (in ~/Desktop/cells) a few scripts for testing. 
+*** Algorithm: (1) I change netParams_OLD.py and netParams_NEW.py (3 things each -- 'cellType' in netParams.popParams, & label and fileName in cellRule
+*** (2) Change overlay_ACTIVE.py and overlay_PASSIVE.py to have the correct title for each overlay graph
+*** (3) python -i overlay_PASSIVE.py 
+*** (4) Go to terminal, load cell, and look at passive mechs in each section
+**** python
+**** from netpyne import specs; netParams = specs.NetParams()
+**** netParams.loadCellParamsRule(label='IT2_reduced', fileName='IT2_reduced_new_cellParams.pkl') 
+**** netParams.cellParams[netParams.cellParams['IT2_reduced']['secs']['soma']['mechs'].keys() 
+*** (5) go back to netParams_NEW.py and change passive params for each 
+** IT2 tuning:
+*** Mechanisms (soma, Adend1, Adend2, Adend3): kBK, pas, cat, ih, kap, can, kdr, cal, nax, cadad
+*** PASSIVE: pas
+*** e_pas = -87.1335623948
+**** netParams.cellParams['IT2_reduced']['secs']['soma']['mechs']['pas']['e']
+*** g_pas = 9.442294539558377e-05
+**** netParams.cellParams['IT2_reduced']['secs']['soma']['mechs']['pas']['g']
+*** Cm = 2.4998269977
+**** netParams.cellParams['IT2_reduced']['secs']['soma']['geom']['cm']
+*** Do not understand why vinit isn't working...? Have to set for all sections. 
+* <2019-09-19 Thu -- cell pop tuning>
+* <2019-09-20 Fri -- cell pop tuning>
+* <2019-09-26 Thu -- cell pop tuning>
+** Make a git branch for this
+*** git checkout -b cells
+*** OR git branch cells; git checkout cells
+** Populating git branch:
+*** Go to cells branch (=git checkout cells=) 
+*** mkdir dend_edits; cd dend_edits
+*** copied in all mod files; nrnivmodl (to compile) 
+*** NOTE: see 9/17 entry for algorithm on changing dendrite lengths
+*** Copied in (from ~/Desktop/cells --> where I was doing all the edits) the following cell files:
+**** IT2_reduced
+**** IT3_reduced
+**** ITS4.py (spiny stellate)
+**** IT4_reduced
+**** IT5A_reduced
+**** IT5B_reduced
+**** PT5B_reduced 
+**** IT6_reduced (goes to L5) 
+**** CT6_reduced 
+**** ITC6_reduced (goes to L1) 
+*** Also put in netParams_OLD.py, netParams_NEW.py, overlay_ACTIVE.py, and overlay_PASSIVE.py for cell tuning (see below)
+*** Also put in cell_batch.py, cfg.py, and init.py so that scripts listed above can have access to batch (needed for comparison)
+*** Put in test_cell.py in order to do pre-comparison testing
+*** git add and commit like usual (making sure on correct branch)
+*** git push origin cells --> to push changes 
+** Cell tuning algorithm:
+*** (0) Change basics of 3 sets of scripts:
+**** netParams_OLD.py and netParams_NEW.py (3 things for both, 1 extra in NEW):
+***** (i) 'cellType' in netParams.popParams
+***** (ii) label and (iii) fileName in cellRule (netParams.loadCellParamsRule)
+***** *FOR NEW ONLY* (iv) netParams.cellParams[CELLNAME e.g. 'IT3_reduced'
+**** overlay_PASSIVE.py and overlay_ACTIVE.py:
+***** Make sure each overlay graph has the correct title (plt.title, at the end in plotting section) 
+**** test_cell.py: change cellType, label, and fileName, along with netParams.cellParams[]
+*** (1) Look at existing mechanisms:
+**** cd .../A1/cells/dend_edits
+**** In terminal: python
+**** from netpyne import specs
+**** netParams = specs.NetParams()
+**** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_cellParams.pkl')
+**** *EXPLORE PARAMS*: netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['mechs']
+*** (2) Make a list of which mechanisms should be modified for passive and which for active
+**** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g']
+*** (3) Change netParams_NEW.py according to above findings:
+**** Add in lines that will allow you to change param values: 
+**** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g'] = placeholder_value
+**** e.g. v_init sometimes too: 
+***** netParams.cellParams['IT3_reduced']['globals']['v_init'] = -80 #-85.3
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['vinit'] = -80 #-85.3
+*** (4) *PASSIVE FIT* 
+**** Change things above
+**** Delete (on FIRST iteration), data_old (or rename) --> will contain data from last cell fitted 
+**** Run python -i overlay_PASSIVE.py 
+**** save fig as cellName_ORIG_PASSIVE_FIT.png 
+**** Adjust params iteratively in netParams_NEW.py until reasonable passive fit is achieved
+****** May also test values in test_cell.py just to see what traces look like 
+****** have to sometimes adjust v_init in test_cell.py for trace visualization 
+*** (5) *ACTIVE FIT* 
+**** use test_cell.py to find rheobase 
+**** change current_steps in overlay_ACTIVE.py so first value is near rheobase
+**** change params['amp'] in batch (if FitType == 'active':\ params['amp'] = [])
+**** *on first iteration* : Delete data_old (there will be data from last cell in there bc batch doesn't overwrite data_old) 
+**** run python -i overlay_ACTIVE.py 
+**** look at original param values:
+***** python; from netpyne import specs
+***** netParams = specs.NetParams()
+***** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_new_cellParams.pkl')
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs'].keys()
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['nax']
+**** change values (up or down) in netParams_NEW.py (netParams.cellParams[]...)
+**** save figures that you want to save
+*** (6) Make traces
+**** use test_cell.py with the new params
+**** OR look in data_new / data_old directories 
+** Save new cells in .pkl format: save_cell.py (in dend_edits) 
+** Test ^^ new .pkl file in test_cell 
+*** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
+** Transfer to cells directory and rename
+** Do version control 
+* <2019-09-27 Fri -- IT3 tuning continued>
+** IT3 tuning:
+*** PASSIVE:
+**** v_init = -87.15 
+**** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g'] = 8e-05 <--- FOR FINAL FIT!!! Reduced g_pas from 9.44e-05 
+**** PASSIVE FIT IS NOW 0.0207
+**** REDUCED EVEN FURTHER --> g_pas is 7e-05, fitness is 0.019
+**** Figure is in ~/Desktop/IT3_figures
+* <2019-09-30 Mon -- IT2 and IT3 tuning>
+** Creating a script called save_cell.py in ~/Desktop/NEUROSIM/A1/cells/dend_edits --> this will allow me to save the tuned cells as .pkl files 
+*** Saves with cellName + '_tuned_cellParams.pkl'
+*** cellName_reduced.pkl : ORIG FILE
+*** cellName_reduced_new_cellParams.pkl: DEND LENGTH MODIFIED
+** IT2 tuning: 
+*** PASSIVE: gpas = 1.5e-04
+*** ACTIVE: 
+**** modifying gbar_nax --> got it up to 0.25 and fit was good but seems like some depolarization block at higher inputs; going to try lower and see what happens
+*** IT2 SUMMARY:
+**** PASSIVE: 
+***** g_pas: 1e-04
+***** e_pas: -86
+**** ACTIVE:
+***** nax_gbar = 0.043
+***** kdr_gbar = 0.017
+***** vhalf = 8
+** IT3 tuning:
+*** ACTIVE (cont):
+**** use test_cell.py to find rheobase, with new passive params
+**** rheobase is ~0.25nA 
+**** nax gbar --> 0.048
+*** IT3 SUMMARY:
+**** PASSIVE: g_pas = 7e-05
+**** ACTIVE: nax gbar = 0.048 
+**** v_init used in test_cell.py --> -87.15 
+*** Save cell in .pkl format 
+** Saved both cells using cell_save.py (import save_cell; save_cell.pkl_tuned(cellName)
+* <2019-10-01 Tue -- ITP4 tuning>
+** Layers complete: L1, L2, L3
+** IT2 and IT3 are complete:
+*** Dend lengths are edited
+*** parameters are tuned
+*** The final .pkl files are in A1/cells/IT2_
+** Excitatory cell types in L4:
+*** IT4 --> ITP4
+*** ITS4.py (spiny stellate; python format)
+** IT4 setup / changes (*NOTE*: IT4 --> ITP4):
+*** PROBLEM:
+**** Seems that something happened such that IT4_reduced_cellParams.pkl cannot be used in A1 or A1_uncloned, and subsequently neither can IT4_reduced_new_cellParams.pkl
+**** by 'not working' I mean that a stim cannot be applied to it; error here: 
+ Warning: no valid sec specified for stim on cell gid=0 so using soma or 1st available. Existing secs: []; params: {'label': 'Input->TestPop', 'source': 'Input', 'sec': 'soma', 'loc': 0.5, 'type': 'IClamp', 'del': 250, 'dur': 1000, 'amp': 0.3}
+**** Going to re-copy in the one from M1 
+*** Going to copy in IT4_reduced_cellParams.pkl frm NEUROSIM/M1detailed
+*** in A1/cells/dend_edits --> mv IT4_reduced_cellParams.pkl NOT_WORKING_IT4_reduced_cellParams.pkl
+*** Testing if new IT4 cellParams file works --> python -i test_cell.py --> WORKS
+*** Change name to ITP4_reduced_cellParams.pkl (mv IT4_reduced_cellParams.pkl ITP4_reduced_cellParams.pkl) 
+** ITP4 dendrite adjustments:
+*** copied in cell_save.py and renamed to dend_adjust.py (from ~/Desktop/cells)
+*** python; import dend_adjust; dend_adjust.change_geom('ITP4_reduced',970) 
+*** *NOTE*: 970 is the total length for midpoint L4 (950-1250) to midpoint L2 (100-160)
+*** Test that it runs w/ stim --> dend_adjust.test_func('ITP4_reduced','IT',0); also tested with python -i test_cell.py (for both reduced_ and reduced_new) -- *WORKS*
+** ITP4 tuning: 
+*** Technical details:
+**** Again, doing this on cells branch
+**** Edits occurring in A1/cells/dend_edits directory
+**** Filename: ITP4_reduced_new_cellParams.pkl
+
+*** PASSIVE:
+**** ORIG VALUES:
+***** cm: 2.4998269977
+***** mech: pas
+****** g: 9.442294539558377e-05
+****** e: -87.1335623948
+**** Raising g_pas to 1e-04 lowered fitness ever so slightly
+**** Try lowering values
+**** Closest fit so far has come from g_pas = 6e-05, e_pas = -87.5 (down from -87.133) 
+
+*** ACTIVE:
+**** Used test_cell.py to find rheobase: ~0.28nA
+**** Run overlay_ACTIVE.py : save fig as ITP4_ORIG_ACTIVE_FIT.png
+**** Original param values: 
+***** gbar_nax = 0.0768253702194
+***** gbar_kdr = 0.00833766634808
+***** vhalfn_kdr = 11.642741384
+**** Make cell less excitable --> lower gbar_nax first (in netParams_NEW.py)
+**** gbar_nax = 0.05  
+*** SUMMARY: 
+**** PASSIVE:
+***** e_pas = -87.5
+***** g_pas = 6e-05
+**** ACTIVE: gbar_nax = 0.05 
+*** Save cell: 
+**** cd A1/cells/dend_edits --> open up save_cell.py 
+**** change netParams.cellParams entries to match the new-found values 
+**** in Terminal --> cd A1/cells/dend_edits --> python; import save_cell --> save_cell.pkl_tuned('ITP4_reduced') 
+**** now in dend_edits there is a file called 'ITP4_reduced_tuned_cellParams.pkl'
+*** Transfer cell to parent 'cells' directory:
+**** copy in 'ITP4_reduced_tuned_cellParams.pkl' to A1/cells
+**** rename file 'ITP4_A1_cellParams.pkl' 
+*** Commit to A1 repo, cells branch:
+**** in Terminal, go to ~/NEUROSIM/A1
+**** git branch (should be on cells)
+**** git status --> then git add/commit as necessary
+**** git push origin cells 
+* <2019-10-02 Wed -- IT5A tuning>
+**  Same problem as ITP4 --> .pkl file is not working for some reason (try copy-pasting in from M1 detailed again) 
+** nope, copy of IT5A_reduced_cellParams.pkl will load but will not allow stim to be applied
+* <2019-10-03 Thu -- IT5A & IT5B tuning & PT5B tuning>
+** git: 3049a61, c877941
+** Compare IT4_reduced_cellParams.pkl to ITP4_reduced_cellParams.pkl
+** Noticing very big difference in encoding in file
+** Separated non-working pkl files from working pkl files 
+** Test to see if it's a compile error -- in A1/cells/dend_edits =--> NOT A COMPILE ERROR
+** Spoke to samn & salva: 
+*** ericaygriffith 1:24 PM
+so, can't solve my problem -- I'm having trouble with some of the pkl files. I can load them fine with loadCellParamsRule, but (only with some of them) I cannot get an IClamp inserted. here's the error message + an example pkl file that I can successfully run + one that I can't:
+
+Error: 
+ Warning: no valid sec specified for stim on cell gid=0 so using soma or 1st available. Existing secs: []
+
+
+
+CAN insert a stim on this one:
+IT2_reduced_cellParams.pkl 
+ccopy_reg
+_reconstructor
+p0
+(cnetpyne.specs
+Dict
+Click to expand inline (5,878 lines)
+
+
+
+CANNOT insert a stim on this one:
+IT5B_reduced_cellParams.pkl 
+ccopy_reg
+_reconstructor
+p0
+(cnetpyne.specs
+Dict
+Click to expand inline (5,877 lines)
+
+
+
+I've tried   a bunch of stuff to figure it out but so far no headway -- can't find much on this error from previous slack chats or in github, at least not enough to crack the problem
+samn 1:26 PM
+iclamp is for the tuning?
+ericaygriffith 1:26 PM
+I saw a long time ago that you two had a similar issue and there was some kind of Mac-related conversation around this, but it wasn't the same exact error and I had trouble figuring out if it applied here
+yeah, need to do IClamp for tuning
+samn 1:27 PM
+what's diff between the pkl files?
+ericaygriffith 1:28 PM
+I've tried looking at the line-by-line differences and it hasn't shed much light on why one would work and one wouldn't -- I had an IT4 file I was using that didn't work; I copied in an old IT4 from M1 and that worked -- when I did line-by-line comparison only difference was the ynorm values
+but couldn't figure out why that would make such a big difference, but it does seem to
+but again not sure if that's the root of the problem? maybe when changing ynorm an encoding issue happened? but can't tell why or how to fix it, or when it happens vs. when it doesn't?
+just wondering if either of you had seen before -- I am going to keep plugging away but wanted to share the issue
+I know there was some py2 vs py3 stuff with the pkl files, but again -- this error isn't happening for all of them, so I don't know if that's relevant or not
+samn 1:30 PM
+sections specified in same way for the two cell types?
+ericaygriffith 1:30 PM
+yeah they seem to be
+same sections, secLists
+etc.
+samn 1:30 PM
+error seemed to indicate that the section where you wanted to put the clamp doesn't exist, so defaults to soma
+ericaygriffith 1:30 PM
+right
+but both of them, when I load w/ loadCellParamsRule have the same sections
+samn 1:31 PM
+so the difference is a pkl file with parameters or also py file differs?
+ericaygriffith 1:32 PM
+I don't have the .py file for a lot of these bc I started with the M1 .pkl files and have been working with those -- I see in M1detailed there is an ITcell.py but other than that, don't have any .py
+we talked about this awhile ago and concluded it was okay to work with the .pkl files, iirc
+are you able to get an IClamp stim working with both of those files above? if so, then maybe something on my end?
+samn 1:33 PM
+so pkl specifies geometry as well as params...
+ericaygriffith 1:33 PM
+y
+samn 1:33 PM
+i haven't used this feature...if i clone your repo do you have a run sequence i can try?
+ericaygriffith 1:34 PM
+I have a test_cell.py I'll attach here (I haven't added it to the repo bc just for testing this problem) -- let me attach here
+samn 1:34 PM
+ok
+this is up to date? https://github.com/suny-downstate-medical-center/A1
+ericaygriffith 1:35 PM
+yeah should be, I'm working on cells branch
+test_cell.py 
+from netpyne import specs, sim
+​
+netParams = specs.NetParams() 
+netParams.popParams['TestPop'] = {'cellType': 'IT', 'numCells': 1, 'cellModel': 'HH_reduced'} #cellType
+Click to expand inline (33 lines)
+
+
+
+in A1/cells/dend_edits --> keeping these changes contained in that subdir for now
+will clean that up when merging
+sry if not convention to do the way I'm doing; i'm just doing what makes sense as I go along
+samn 1:36 PM
+np
+salvadord 1:40 PM
+I'll have a look in a sec
+samn 1:40 PM
+thx
+salvadord 1:42 PM
+Should be ok to work with pkl... maybe some minor err somewhere so cells not instantiated properly
+ericaygriffith 1:42 PM
+y seems like it -- some of the .pkl files work just fine, some don't. very hard to tell why, but guessing it's some detail that I haven't tracked down eyt
+yet*
+samn 1:42 PM
+cloned repo and set to cells branch
+can you save that test_cells.py file to neurosim?
+ericaygriffith 1:43 PM
+sure thing one sec
+samn 1:44 PM
+oh, i got it
+nevermind
+ericaygriffith 1:45 PM
+great -- let me know if there are issues. the ones that have A1 in the .pkl name have the parameters tuned.
+samn 1:46 PM
+so you run with python3 -i test_cell.py ?
+ericaygriffith 1:46 PM
+so e.g. for me, IT2_A1_cellParams.pkl works, but IT5A_reduced_cellParams.pkl does not work
+y locally that is what I do to test
+samn 1:46 PM
+and compile with mkmod or nrnivmodl?
+ericaygriffith 1:46 PM
+I just change the name in the loadCellParams line
+nrnivmodl at the moment (was wondering if that was the problem but tested and didn't make a diff on my machine yesterday)
+samn 1:47 PM
+k
+IT5B_reduced_cellParams.pkl - where is that?
+ericaygriffith 1:51 PM
+should be in A1/cells
+samn 1:52 PM
+so you do python3 -i cell_test.py A1/cells/IT5B_reduced_cellParams.pkl ?
+what's command you use?
+got error that couldn't find the file when i just ran python3 -i test.py
+ericaygriffith 1:54 PM
+something dumber, I change the line in test_cell.py (the netParams.loadCellParams line) to reflect the right .pkl file, then run "python -i test_cell.py" -- I know I should change so I can just enter the filename sry
+I attached the test_cell.py file above
+samn 1:56 PM
+ok, i was running from A1 dir, have to specify full path to the pkl
+i get same error
+/u/samn/A1/test.py
+ericaygriffith 1:56 PM
+okay so not just me -- are you able to use cells/IT2_A1_cellParams.pkl without getting that error?
+samn 1:56 PM
+lms
+yeah, that one works
+ericaygriffith 1:59 PM
+ok, so same issue... I went back to the M1 repo and grabbed that repo's IT5B_reduced_cellParams.pkl and it didn't work either, so I don't think it was something I did with A1 changes? I'm not sure though. I'm going to keep investigating.
+samn 2:03 PM
+ok, i'll take a look at the pkl files too
+pickle.load gives ascii errors
+suppose you use encoding='ASCII'
+ericaygriffith 2:08 PM
+so encoding I'm not sure -- I remember there was some py2 vs py3 encoding stuff that happened; I can look back in my nb to see if relevant
+samn 2:08 PM
+but that gives UnicodeDecodeError
+ericaygriffith 2:08 PM
+yes I remember that error
+samn 2:09 PM
+how'd you load the pkl files?
+ericaygriffith 2:09 PM
+I think i had to specify encoding... latin1 I think?
+let me look to make sure
+samn 2:09 PM
+ok that worked
+so the idea is to have it human-readable?
+ericaygriffith 2:09 PM
+also used 'bytes' at one point it seems
+i personally don't care if human-readable or not, I was just trying to get them to load bc I wasn't familiar with their contents before, so was just checking them out
+I'll defer to you guys with respect to encoding,e tc.
+samn 2:10 PM
+will try resaving and see if it works
+ericaygriffith 2:11 PM
+good idea -- I have been using .saveCellParamsRule in netpyne to re-save after changes; looking for that function now on github to see if that has something to do with it potentially
+samn 2:11 PM
+didn't help
+ericaygriffith 2:14 PM
+:/ hm, okay -- what did you do to re-save? out of curiosity
+samn 2:14 PM
+ok, so they both have same sections...
+pickle.dump(d5,open('cells/IT5B_new.pkl','wb'))
+and geom
+how'd you compare the dictionaries?
+salvadord 2:17 PM
+if run just python netParams.py should see if any specific errors loading or saving the pkl
+ericaygriffith 2:18 PM
+a few ways... saved them and compared with ==, turned some parts into lists and looked at line-by-line differences, things like that. I was trying a couple approaches to try to get at everything i could think of
+yeah -- so, no errors loading or saving, I can load them okay
+it's when I try to apply an IClamp that it says that there is no sec specified so default to soma, but then it does not default to soma and I get no trace
+samn 2:18 PM
+and can netpyne access the sections without the iclamp?
+ericaygriffith 2:18 PM
+but I can see the sections when I load that .pkl with loadCellParamsRule
+what do you mean by access specifically
+samn 2:19 PM
+are they properly setup/represented
+ericaygriffith 2:19 PM
+like I can load the pkl files into netParams.cellParams['cellName'] and then see the ['secs'] and what not
+I'll try anything else, sorry if I'm not understanding
+salvadord 2:19 PM
+not different to see the sections in netParams (high-level specs) vs in net.cells (instantiated)
+samn 2:20 PM
+so the sections exist
+ericaygriffith 2:20 PM
+oh hmm I haven't looked at that salva, let me see
+samn 2:21 PM
+btw, Nafcr is not part of the repo afaik - got error about vipcr_cell.hoc when run netParams.py
+ericaygriffith 2:21 PM
+oh really? I have it in my mods directory
+samn 2:21 PM
+so netParams and net.cells - those should exist even in the test file erica made?
+ericaygriffith 2:21 PM
+mod* sorry
+samn 2:21 PM
+i see netParams but no net object
+sim.net ?
+mod*?
+ericaygriffith 2:22 PM
+I meant that I have nafcr.mod in the mod subdir
+samn 2:22 PM
+ok, sim.net.cells
+nafcr.mod - right, i see it there...
+not sure how you're running net though, but that's separate issue
+ericaygriffith 2:23 PM
+oh I was just about to ask that lol
+I assumed I had to run netParams.py so I did but then realized I wasn't sure from there; was in the midst of googling
+salvadord 2:24 PM
+looks like not properly instantiated — no secs
+Untitled 
+In [1]: sim.net.cells[0]
+Out[1]: compartCell_IT_HH_reduced_0
+In [2]: sim.net.cells[0].secs
+Out[2]: {_repr_mimebundle_: {}}
+Collapse
+
+
+
+ericaygriffith 2:24 PM
+open to instruction of course
+how do I get to sim.net?
+samn 2:24 PM
+not properly instantiated, so problem found :slightly_smiling_face:
+ok, i see it's empty too
+you have sim object in your test file
+so where'd that pkl file with the problem come from then?
+or...is it correct but there's a problem reading it in netpyne
+salvadord 2:25 PM
+reason is that the ‘conds’ are loaded from pkl and not updated to match your test — i.e. only applied to ynorm: [0.667, 0.775]
+Untitled 
+In [7]: netParams.cellParams['IT5B_reduced']['conds']
+Out[7]: {cellModel: 'HH_reduced', cellType: 'IT', ynorm: [0.667, 0.775]}
+
+
+samn 2:27 PM
+so ynorm is property of that cell class
+and conds for stim target are on TestPop
+salvadord 2:27 PM
+can just add del netParams.cellParams['IT5B_reduced']['conds'] — now works
+samn 2:28 PM
+TestPop separate from IT5B_reduced
+how does netpyne know IT5B_reduced == TestPop?
+salvadord 2:28 PM
+for each cellParams properties there are a set of rules (conds) to decide which cells these properties will be applied to
+netParams.popParams['TestPop'] = {'cellType': 'IT', 'numCells': 1, 'cellModel': 'HH_reduced'}
+ericaygriffith 2:29 PM
+the cellModel and cellType link them together as far as I can tell
+salvadord 2:29 PM
+cells in testPop have the properties cellType and cellModel… exactly
+samn 2:29 PM
+HH_reduced
+is HH_reduced mentioned in the pkl file?
+ericaygriffith 2:29 PM
+y, in pkl file it specifies cellModel is HH_reduced, so I put that in TestPop as well
+pkl file specifies cellType and cellmodel
+samn 2:30 PM
+ic, so if there was > 1 HH_reduced type, it would apply to all of them
+ericaygriffith 2:30 PM
+but only if the cellType was the same as well
+salvadord 2:30 PM
+yeah
+this method can be overkill for simple models… but allows for more flexibility when specifying properties of cells
+ericaygriffith 2:31 PM
+so salva, let me see if I get this -- I figured it was something to do with ynorm bc I was able to break my ITP4 cell by changing ynorm, but you're saying if I just get rid of ynorm in the .pkl files maybe I'll be able to fix this?
+in 'conds'?
+salvadord 2:32 PM
+so this is to solve the specific cell_test.py script you mentioned above
+ericaygriffith 2:32 PM
+y, but at some point I need to have them in order to localize them in the layers right?
+or maybe that can be done another way?
+salvadord 2:33 PM
+generally just need to remember when loading from pkl, the conds/rules are also loaded… so just check that the cellParams ‘conds’ match what you want to do — can still use ‘ynorm’ since needed in network
+ericaygriffith 2:33 PM
+okay I thought so....
+I got to this point last night at least, which is encouraging that I was on the right track
+but i still wasn't able to solve the problem; but now let me look again
+I'm probably overthinking something
+salvadord 2:34 PM
+but in the single test cell script the cell had a y location outside 0.667-0.775, so the cell params didnt apply to it
+ericaygriffith 2:34 PM
+ohhhh, I see I see I see
+so in pt3d you mean
+pt3d conflict with ynorm?
+wasn't sure how that worked bc of normalized vs. non-normalized
+salvadord 2:34 PM
+not pt3d… that separate… in cell[‘tags’][‘y’]
+ericaygriffith 2:34 PM
+oh tags
+oh had no idea that was a thing
+salvadord 2:35 PM
+all cells have x,y,zy when instantiated
+randomly placed in network
+Untitled 
+In [3]: sim.net.cells[0].tags
+Out[3]: 
+{'cellType': 'IT',
+ 'cellModel': 'HH_reduced',
+ 'pop': 'TestPop',
+ 'xnorm': 0.3583531143706401,
+ 'ynorm': 0.3984944342173416,
+ 'znorm': 0.8763654583887277,
+ 'x': 35.83531143706401,
+ 'y': 39.84944342173416,
+ 'z': 87.63654583887276,
+ 'label': ['IT5B_reduced']}
+Collapse
+
+
+
+samn 2:35 PM
+and ynorm and y were inconsistent even though in same pkl?
+salvadord 2:36 PM
+ynorm and y were consistent
+the pkl just stored the high level specs, not the actual location once instantiated … that happens later
+ericaygriffith 2:36 PM
+so the high-level specs (ynorm and y) were in conflict w/ the actual instantiated location
+samn 2:36 PM
+and what set the actual instantiated location?
+ericaygriffith 2:36 PM
+?
+y my next question as well
+salvadord 2:37 PM
+so the high-level specs doesn’t define the ynorm or y … just specified a condition saying “only cells that end being within 0.6-0.7 y loc should rececive these properties’
+once network is instantiated (sim.net.createCells() ) … each cell gets assigned a random location within the network volume
+network volume defined by netParams.sizeX, sizeY, sizeZ … and specific spatial constraints for populations can be specified in netParmas.popParams (eg. ynormRange: [0.3,0.4])
+samn 2:39 PM
+so the network volume didn't include those cell ynorm ranges?
+or something in net was inconsistent so the cell wasn't created properly
+salvadord 2:40 PM
+yeah, but the single cell instantiate in the test_cell.py script happened to be outside that range
+i.e. ‘ynorm’: 0.3984944342173416 not inside [0.6667, 0.775]
+samn 2:40 PM
+and netParams.py was used in that test file via specs.NetParams() ?
+salvadord 2:41 PM
+nope, had its own netParams
+nothing inconsistent, workins as expected
+ericaygriffith 2:41 PM
+is there a reason it's so consistent? like, IT2 always works but IT5B doesn't -- if it's randomly placed, shouldn't it potentially work some of the time and some of the time no?
+either way that is very helpful -- ty as always salva. let me digest this and drink some coffee and fix. ty!!
+salvadord 2:43 PM
+if you instantiate a single cell using same default randomization, will always be placed in same place — so it’s reproducible (so prob happens to match IT2 y range)
+ericaygriffith 2:44 PM
+ohh I see
+makes sense -- ok great, I think I can piece together the solution from here! hopefully! will update
+thank you!!
+salvadord 2:44 PM
+great!
+samn 2:56 PM
+thx!
+** Conclusion for now I believe is just to add =del netParams.cellParams[cellName]['conds']= after the line where the .pkl file is loaded 
+** This will at least enable you to fix the param tuning. Let them know that ynorm / actual instantiation of cell location is up for debate (can look at this later if have time). 
+** IT5A tuning
+*** Files: IT5A_reduced_cellParams.pkl & IT5A_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** fairly easy; lowered g_pas to 3e-05
+*** ACTIVE: 
+**** rheobase is ~0.14 nA
+**** nax_gbar --> raised to 0.16 (from 0.146....)
+**** kdr_gbar --> raised to 0.0065 (from 0.00501....) 
+*** SUMMARY: 
+**** vinit = -81.2
+**** gpas = 3e-05
+**** nax_gbar = 0.16
+**** kdr_gbar = 0.0065
+*** Re-saved using save_cell.py; to IT5A_reduced_tuned_cellParams.pkl --> copy pasted this file from A1/cells/dend_edits to A1/cells and renamed to IT5A_A1_cellParams.pkl
+** IT5B tuning 
+*** Filenames: IT5B_reduced_cellParams.pkl, IT5B_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** gpas = 3.4e-05
+**** made example trace, and figs of orig and final fit on ~/Desktop/IT5B_figs
+*** ACTIVE:
+**** VERY narrow window -- orig only fires normally for 0.14 - 0.16 nA, and dend adjustment version only fires normally for 0.15 
+**** current_steps = [0.125, 0.13, 0.135, 0.14, 0.145, 0.15, 0.16]
+**** nax_gbar = 0.16 (raised from 0.1463....)
+**** kdr_gbar = 0.006 (raised from 0.00501206....) 
+*** SUMMARY: 
+**** gpas = 3.4e-05
+**** nax_gbar = 0.16 
+**** kdr_gbar = 0.006
+
+
+
+*** saved using save_cell.py 
+**** change vinit, gpas, nax_gbar, kdr_gbar 
+**** new file: IT5B_reduced_tuned_cellParams.pkl
+*** copy-pasted IT5B_reduced_tuned_cellParams.pkl from A1/cells/dend_edits (in cells branch, on local machine), into A1/cells, and renamed file to IT5B_A1_cellParams.pkl
+*** git add, commit, push 
+
+
+** PT5B tuning
+*** filenames: PT5B_reduced_cellParams.pkl & PT5B_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** v init is odd --> something strange at the beginning of the trace but oh well
+**** increased g_pas and lowered e_pas 
+**** g_pas = 6e-05
+**** e_pas = -83
+
+
+
+
+
+*** ACTIVE:
+**** SEE TOMORROW'S ENTRY   
+
+* <2019-10-04 Fri -- PT5B tuning continued & IT6 tuning>
+** PT5B tuning continued:
+*** ACTIVE:
+**** rheobase is around 0.3nA
+**** testing 0.28 - 0.40 nA: changed in overlay_ACTIVE and cell_batch.py 
+**** nax_gbar lowered to 0.0335
+**** kdr_gbar raised to 0.016
+*** SUMMARY:
+**** v_init --> weird, but -78.2
+**** gpas = 6e-05
+**** epas = -83
+**** nax_gbar = 0.0335
+**** kdr_gbar = 0.016
+*** Save PT5B with save_cell.py 
+**** cd A1/cells/dend_edits on cells branch, local machine
+**** python; import save_cell; save_cell.pkl_tuned('PT5B_reduced')
+**** new file: PT5B_reduced_tuned_cellParams.pkl
+**** tested with test_cell.py ^^ (WORKS)
+**** copy-pasted to A1/cells & renamed to PT5B_A1_cellParams.pkl
+**** version control
+***** on cells branch, local machine, cd A1
+***** git status
+***** git add fileName, git commit fileName -m 'message'
+***** git push origin cells 
+
+** IT6 tuning: 
+*** Filenames: IT6_reduced_cellParams.pkl & IT6_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** can't get this to get as close as I'd like
+**** epas = -77 
+*** ACTIVE:
+**** rheobase is around 0.14 nA (test_cell.py w/ IT6_reduced_new_cellParams.pkl)
+**** current_step = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.23]
+**** nax_gbar = 0.10
+**** kdr_gbar = 0.01
+**** kdr_vhalfn = 14
+*** SUMMARY:
+**** epas = -77
+**** nax_gbar = 0.10
+**** kdr_gbar = 0.01
+**** kdr_vhalfn = 14
+**** v_init --> -80.7
+*** Saved with save_cell.py & above values in 'SUMMARY' --> IT6_reduced_tuned_cellParams.pkl
+*** copy pasted above file to A1/cells (cells branch) and renamed IT6_A1_cellParams.pkl 
+*** version control (git add, commit; git push origin cells, on cells branch) 
+
+** ITC6 tuning: 
+*** Filenames: ITC6_reduced_cellParams.pkl & ITC6_reduced_new_cellParams.pkl
+*** cellType: 'IT'
+*** PASSIVE:
+**** NO CHANGES --> fit was already ~0.01
+
+
+*** ACTIVE
+**** rheobase for original is around 0.16
+**** current_step = [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24]
+**** Need to make this far less excitable. It's going straight to depolarization block (or something that looks like it). 
+**** nax_gbar = 0.2
+**** kdr_gbar = 0.007
+*** SUMMARY:
+**** passive: no changes
+**** nax_gbar = 0.2
+**** kdr_gbar = 0.007
+
+*** Made traces
+*** saved new params w/ save_cell.py (see above for details) --> ITC6_reduced_tuned_cellParams.pkl
+*** copy-pasted above file into A1/cells (cells branch) and renamed --> ITC6_A1_cellParams.pkl
+*** version control (git add, commit; git push origin cells (on branch cells)) 
+
+** CT6 tuning: 
+*** Filenames: CT6_reduced_cellParams.pkl & CT6_reduced_new_cellParams.pkl
+*** PASSIVE:
+**** gpas raised to 1.3e-04
+**** v_init used --> -86
+*** *NOTE* DOUBLET !! before fitting passive, with CT6_reduced_new_cellParams.pkl, in ~/Desktop/NEUROSIM/A1/cells/dend_edits on cells branch --> could this be used in claustrum? 
+*** ACTIVE:
+**** rheobase is ~ 0.4nA (high, no?) 
+**** current_steps = [0.37, 0.38, 0.39, 0.40, 0.41, 0.42, 0.43, 0.44]
+**** nax_gbar = 0.116
+**** kdr_gbar = 0.0073
+*** SUMMARY:
+**** gpas = 1.3e-04
+**** v_init --> -86
+**** nax_gbar = 0.116
+**** kdr_gbar = 0.0073
+
+*** saved with save_cell.py --> CT6_reduced_tuned_cellParams.pkl 
+*** test the above .pkl file w/ test_cell.py --> WORKS
+*** Copy-pasted CT6_reduced_tuned_cellParams.pkl from A1/cells/dend_edits to A1/cells & renamed it to CT6_A1_cellParams.pkl (cells branch)
+*** version control 
+
+
+** ITS4 tuning: 
+*** L4 spiny stellate with dend length 535 
+*** load cell --> test_stellate.py
+**** test_stellate.py loads and adds stim to the cell
+**** netParams.importCellParams(label='ITS4_reduced', conds={'cellType':'ITS', 'cellModel':'HH_reduced'}, fileName = 'ITS4.py', cellName = 'ITS4_cell')
+**** cellType: ITS, cellModel: HH_reduced, cellName = ITS4_cell, label = ITS4_reduced
+**** in ITS4.py in *A1/cells/dend_edits* on cells branch on local machine, set soma_pas from False to True, and uncommented soma_pas lines in def initsoma (self): 
+
+*** Changed the way I change the scripts (see above for cellType / cellModel details, etc.) Still using netParams_OLD.py, netParams_NEW.py, etc. 
+*** PASSIVE: 
+**** PARAMS: cm = 0.75,  e_pas = -70, g_pas = 1/3e4
+**** PARAMS_NEW: cm = 0.75, e_pas = -70, g_pas = 3.79e-03
+**** v_init --> -70.4 
+*** ACTIVE: 
+**** use test_stellate.py with ITS4_ORIG.py to find rheobase: ~0.054nA 
+**** PARAMS: gmax_naz = 30000, kv_gbar = 1500
+**** current_steps = [0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.11] 
+**** Mess with DENDRITE CONDUCTANCES:
+***** DIDN'T WORK
+**** okay -- so, basically... added another dendrite (dend1) attached at soma loc 0.3, 1000 in length. same electrophys as the original dendrite. changed soma conductances. changed rho to 53.5 
+**** naz_gmax = 72000
+**** kv_gbar = 1700 
+*** ITS4.py changes:
+**** soma.insert('km') vs. soma.insert('kv') in def initsoma(self) 
+**** commented out soma.gbar_kv in def initsoma(self)
+**** ^ UNDID THESE
+**** added def initdend1() in case want to make another dendrite --> all lines commented out for now 
+
+**** AN INCOMPLETE LIST !! -- see above in ACTIVE subsecton for more details
+
+
+*** save modified ITS4.py 
+
+** Cell tuning algorithm (for .pkl files):
+*** This is all taking place in A1/cells/dend_edits (on cells branch) 
+*** (0) Change basics of 3 sets of scripts:
+**** netParams_OLD.py and netParams_NEW.py (3-4 things for both, 1 extra in NEW):
+***** (i) 'cellType' in netParams.popParams
+***** (ii) label and (iii) fileName in cellRule (netParams.loadCellParamsRule)
+***** *FOR NEW ONLY* (iv) netParams.cellParams[CELLNAME e.g. 'IT3_reduced'
+***** NOW ALSO CHANGE del conds line!!! 
+**** overlay_PASSIVE.py and overlay_ACTIVE.py:
+***** Make sure each overlay graph has the correct title (plt.title, at the end in plotting section) 
+**** test_cell.py: change cellType, label, and fileName, along with conds and  netParams.cellParams[]
+*** (1) Look at existing mechanisms:
+**** cd .../A1/cells/dend_edits
+**** In terminal: python
+**** from netpyne import specs
+**** netParams = specs.NetParams()
+**** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_cellParams.pkl')
+**** *EXPLORE PARAMS*: netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['mechs']
+**** PUT THESE IN COMMENTS In netParams_NEW.py and test_cell.py, for ref
+*** (2) Make a list of which mechanisms should be modified for passive and which for active
+**** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g']
+*** (3) Change netParams_NEW.py according to above findings:
+**** Add in lines that will allow you to change param values: 
+**** e.g. netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['pas']['g'] = placeholder_value
+**** e.g. v_init sometimes too: 
+***** netParams.cellParams['IT3_reduced']['globals']['v_init'] = -80 #-85.3
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['vinit'] = -80 #-85.3
+*** (4) *PASSIVE FIT* 
+**** Change things above
+**** Delete (on FIRST iteration), data_old (or rename) --> will contain data from last cell fitted 
+**** Run python -i overlay_PASSIVE.py 
+**** save fig as cellName_ORIG_PASSIVE_FIT.png 
+**** Adjust params iteratively in netParams_NEW.py until reasonable passive fit is achieved
+****** May also test values in test_cell.py just to see what traces look like 
+****** have to sometimes adjust v_init in test_cell.py for trace visualization 
+*** (5) *ACTIVE FIT* 
+**** use test_cell.py to find rheobase on ORIGINAL cell file 
+**** change current_steps in overlay_ACTIVE.py so first value is near rheobase
+**** change params['amp'] in batch (if FitType == 'active':\ params['amp'] = [])
+**** *on first iteration* : Delete data_old (there will be data from last cell in there bc batch doesn't overwrite data_old) 
+**** run python -i overlay_ACTIVE.py 
+**** look at original param values:
+***** python; from netpyne import specs
+***** netParams = specs.NetParams()
+***** netParams.loadCellParamsRule(label='IT3_reduced', fileName='IT3_reduced_new_cellParams.pkl')
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs'].keys()
+***** netParams.cellParams['IT3_reduced']['secs']['soma']['mechs']['nax']
+**** change values (up or down) in netParams_NEW.py (netParams.cellParams[]...)
+**** save figures that you want to save
+*** (6) Make traces
+**** use test_cell.py with the new params
+**** OR look in data_new / data_old directories 
+*** Save new cells in .pkl format: save_cell.py (in dend_edits) 
+*** Test ^^ new .pkl file in test_cell 
+**** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
+*** Transfer to cells directory and rename
+*** Do version control 

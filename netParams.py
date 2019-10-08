@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 7
+netParams.version = 9
 
 #------------------------------------------------------------------------------
 #
@@ -68,7 +68,7 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
-cellParamLabels = ['IT2_reduced', 'IT4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple'] # list of cell rules to load from file 
+cellParamLabels = ['IT2_reduced', 'ITP4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple'] # list of cell rules to load from file 
 loadCellParams = cellParamLabels
 #saveCellParams = True # This saves the params as a .pkl file
 
@@ -377,5 +377,6 @@ netParams.stimTargetParams['bkgE->I'] =  {
 
 netParams.description = """
 v7 - Added template for connectivity
-
+v8 - Added cell types
+v9 - Added local connectivity
 """
