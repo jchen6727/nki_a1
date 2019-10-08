@@ -68,30 +68,42 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
-cellParamLabels = ['IT2_reduced', 'ITP4_reduced', 'IT5A_full', 'IT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'IT6_reduced', 'CT6_reduced', 'PV_simple', 'SOM_simple'] # list of cell rules to load from file 
+cellParamLabels = { 'IT2_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': [layer['2'][0],layer['3'][1]]},
+                    'ITP4_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
+                    'IT5A_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
+                    'IT5B_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
+                    'PT5B_A1':  {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
+                    'IT6_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
+                    'CT6_A1':   {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
+                    'PV_simple':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
+                    'SOM_simple': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
+                    
+# list of cell rules to load from file 
 loadCellParams = cellParamLabels
 #saveCellParams = True # This saves the params as a .pkl file
 
 
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
+    netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
+    
+    # remove after updaing weightNorm
     for sec in netParams.cellParams[ruleLabel]['secs']:
         netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
-        
     
 
-## IMPORT VIP 
-netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
+# ## IMPORT VIP 
+# netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
 
-## IMPORT NGF 
-netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
+# ## IMPORT NGF 
+# netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
 
-## IMPORT L4 SPINY STELLATE 
-netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+# ## IMPORT L4 SPINY STELLATE 
+# netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
 
-for ruleLabel in ['VIP_simple', 'NGF_simple', 'ITS4_simple']:
-    for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
+# for ruleLabel in ['VIP_simple', 'NGF_simple', 'ITS4_simple']:
+#     for sec in netParams.cellParams[ruleLabel]['secs']:
+#         netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
 
 
 #------------------------------------------------------------------------------

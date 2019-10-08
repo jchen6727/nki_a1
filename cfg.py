@@ -96,7 +96,7 @@ cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
 cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 
-cfg.addConn = 1
+cfg.addConn = 0
 cfg.EEGain = 1.0
 cfg.EIGain = 1.0
 cfg.IEGain = 1.0
