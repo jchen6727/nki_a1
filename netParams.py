@@ -42,7 +42,7 @@ netParams.shape = 'cylinder' # cylindrical (column-like) volume
 # General connectivity parameters
 #------------------------------------------------------------------------------
 netParams.scaleConnWeight = 1.0 # Connection weight scale factor (default if no model specified)
-netParams.scaleConnWeightModels = {'HH_simple': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
+netParams.scaleConnWeightModels = {'HH_reduced': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
 netParams.scaleConnWeightNetStims = 1.0 #0.5  # scale conn weight factor for NetStims
 netParams.defaultThreshold = 0.0 # spike threshold, 10 mV is NetCon default, lower it for all cells
 netParams.defaultDelay = 2.0 # default conn delay (ms)
@@ -56,7 +56,7 @@ netParams.probLambda = 100.0  # length constant (lambda) for connection probabil
 
 Etypes = ['IT', 'ITS4', 'PT', 'CT']
 Itypes = ['PV', 'SOM', 'VIP', 'NGF']
-cellModels = ['HH_simple', 'HH_reduced', 'HH_full'] # List of cell models
+cellModels = ['HH_reduced', 'HH_full'] # List of cell models
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 0.625], '5A': [0.625, 0.667], '5B': [0.667, 0.775], '6': [0.775, 1]}  # normalized layer boundaries  
@@ -67,7 +67,8 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 
 
 #------------------------------------------------------------------------------
-## Load cell rules previously saved using netpyne format (**** DOES NOT INCLUDE nonVIP CELLS ****)
+## Load cell rules previously saved using netpyne format (DOES NOT INCLUDE VIP, NGF and spiny stellate)
+## include conditions ('conds') for each cellRule
 cellParamLabels = { 'IT2_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': [layer['2'][0],layer['3'][1]]},
                     'ITP4_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
                     'IT5A_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
@@ -75,8 +76,8 @@ cellParamLabels = { 'IT2_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'y
                     'PT5B_A1':  {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
                     'IT6_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
                     'CT6_A1':   {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
-                    'PV_simple':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
-                    'SOM_simple': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
+                    'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
+                    'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
                     
 # list of cell rules to load from file 
 loadCellParams = cellParamLabels
@@ -89,21 +90,24 @@ for ruleLabel in loadCellParams:
     
     # remove after updaing weightNorm
     for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 0.01
     
 
-# ## IMPORT VIP 
-# netParams.importCellParams(label='VIP_simple', conds={'cellType': 'VIP', 'cellModel': 'HH_simple'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
+## IMPORT VIP 
+netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
+netParams.cellParams['VIP_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'VIP', 'ynorm': [layer['2'][0], layer['6'][1]]}
 
-# ## IMPORT NGF 
-# netParams.importCellParams(label='NGF_simple', conds={'cellType': 'NGF', 'cellModel': 'HH_simple'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs = True)
+## IMPORT NGF 
+netParams.importCellParams(label='NGF_reduced', conds={'cellType': 'NGF', 'cellModel': 'HH_reduced'}, fileName='cells/ngf_cell.hoc', cellName='ngfcell', importSynMechs=True)
+netParams.cellParams['NGF_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'NGF', 'ynorm': [layer['1'][0], layer['6'][1]]}
 
-# ## IMPORT L4 SPINY STELLATE 
-# netParams.importCellParams(label='ITS4_simple', conds={'cellType': 'ITS4', 'cellModel': 'HH_simple'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+## IMPORT L4 SPINY STELLATE 
+netParams.importCellParams(label='ITS4_reduced', conds={'cellType': 'ITS4', 'cellModel': 'HH_reduced'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
+netParams.cellParams['ITS4_reduced']['conds'] = cellParamLabels[ruleLabel]
 
-# for ruleLabel in ['VIP_simple', 'NGF_simple', 'ITS4_simple']:
-#     for sec in netParams.cellParams[ruleLabel]['secs']:
-#         netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 1.0
+for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced']:
+    for sec in netParams.cellParams[ruleLabel]['secs']:
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 0.01
 
 
 #------------------------------------------------------------------------------
@@ -115,53 +119,53 @@ with open('cells/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileO
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
 
 ### LAYER 1:
-netParams.popParams['NGF1'] = {'cellType': 'NGF', 'cellModel': 'HH_simple','ynormRange': layer['1'],   'density': density[('A1','nonVIP')][0]}
+netParams.popParams['NGF1'] = {'cellType': 'NGF', 'cellModel': 'HH_reduced','ynormRange': layer['1'],   'density': density[('A1','nonVIP')][0]}
 
 ### LAYER 2:
 netParams.popParams['IT2'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['2'],   'density': density[('A1','E')][1]}     # cfg.cellmod for 'cellModel' in M1 netParams.py 
-netParams.popParams['SOM2'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','SOM')][1]}   
-netParams.popParams['PV2'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','PV')][1]}    
-netParams.popParams['VIP2'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','VIP')][1]}
-netParams.popParams['NGF2'] =    {'cellType': 'NGF', 'cellModel': 'HH_simple',   'ynormRange': layer['2'],   'density': density[('A1','nonVIP')][1]}
+netParams.popParams['SOM2'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',   'ynormRange': layer['2'],   'density': density[('A1','SOM')][1]}   
+netParams.popParams['PV2'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',   'ynormRange': layer['2'],   'density': density[('A1','PV')][1]}    
+netParams.popParams['VIP2'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',   'ynormRange': layer['2'],   'density': density[('A1','VIP')][1]}
+netParams.popParams['NGF2'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['2'],   'density': density[('A1','nonVIP')][1]}
 
 ### LAYER 3:
 netParams.popParams['IT3'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['3'],   'density': density[('A1','E')][1]} ## CHANGE DENSITY
-netParams.popParams['SOM3'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','SOM')][1]} ## CHANGE DENSITY
-netParams.popParams['PV3'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','PV')][1]} ## CHANGE DENSITY
-netParams.popParams['VIP3'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','VIP')][1]} ## CHANGE DENSITY
-netParams.popParams['NGF3'] =    {'cellType': 'NGF', 'cellModel': 'HH_simple',   'ynormRange': layer['3'],   'density': density[('A1','nonVIP')][1]}
+netParams.popParams['SOM3'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',   'ynormRange': layer['3'],   'density': density[('A1','SOM')][1]} ## CHANGE DENSITY
+netParams.popParams['PV3'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',   'ynormRange': layer['3'],   'density': density[('A1','PV')][1]} ## CHANGE DENSITY
+netParams.popParams['VIP3'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',   'ynormRange': layer['3'],   'density': density[('A1','VIP')][1]} ## CHANGE DENSITY
+netParams.popParams['NGF3'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['3'],   'density': density[('A1','nonVIP')][1]}
 
 
 ### LAYER 4: 
 netParams.popParams['ITP4'] =	 {'cellType': 'IT', 'cellModel': 'HH_reduced',  'ynormRange': layer['4'],   'density': 0.5*density[('A1','E')][2]}      ## CHANGE DENSITY #
-netParams.popParams['ITS4'] =	 {'cellType': 'ITS4' , 'cellModel': 'HH_simple', 'ynormRange': layer['4'],  'density': 0.5*density[('A1','E')][2]}      ## CHANGE DENSITY 
-netParams.popParams['SOM4'] = 	 {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['4'],  'density': density[('A1','SOM')][2]}
-netParams.popParams['PV4'] = 	 {'cellType': 'PV', 'cellModel': 'HH_simple',   'ynormRange': layer['4'],   'density': density[('A1','PV')][2]}
-netParams.popParams['VIP4'] =	 {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['4'],  'density': density[('A1','VIP')][2]}
-netParams.popParams['NGF4'] =    {'cellType': 'NGF', 'cellModel': 'HH_simple',   'ynormRange': layer['4'],  'density': density[('A1','nonVIP')][2]}
+netParams.popParams['ITS4'] =	 {'cellType': 'ITS4', 'cellModel': 'HH_reduced', 'ynormRange': layer['4'],  'density': 0.5*density[('A1','E')][2]}      ## CHANGE DENSITY 
+netParams.popParams['SOM4'] = 	 {'cellType': 'SOM', 'cellModel': 'HH_reduced',   'ynormRange': layer['4'],  'density': density[('A1','SOM')][2]}
+netParams.popParams['PV4'] = 	 {'cellType': 'PV', 'cellModel': 'HH_reduced',   'ynormRange': layer['4'],   'density': density[('A1','PV')][2]}
+netParams.popParams['VIP4'] =	 {'cellType': 'VIP', 'cellModel': 'HH_reduced',   'ynormRange': layer['4'],  'density': density[('A1','VIP')][2]}
+netParams.popParams['NGF4'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['4'],  'density': density[('A1','nonVIP')][2]}
 
 ### LAYER 5A: 
 netParams.popParams['IT5A'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'], 	'density': density[('A1','E')][3]}      
-netParams.popParams['SOM5A'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',    'ynormRange': layer['5A'],	'density': density[('A1','SOM')][3]}          
-netParams.popParams['PV5A'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',    'ynormRange': layer['5A'],	'density': density[('A1','PV')][3]}         
-netParams.popParams['VIP5A'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',    'ynormRange': layer['5A'],   'density': density[('A1','VIP')][3]}
-netParams.popParams['NGF5A'] =    {'cellType': 'NGF', 'cellModel': 'HH_simple',    'ynormRange': layer['5A'],   'density': density[('A1','nonVIP')][3]}
+netParams.popParams['SOM5A'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],	'density': density[('A1','SOM')][3]}          
+netParams.popParams['PV5A'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],	'density': density[('A1','PV')][3]}         
+netParams.popParams['VIP5A'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],   'density': density[('A1','VIP')][3]}
+netParams.popParams['NGF5A'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],   'density': density[('A1','nonVIP')][3]}
 
 ### LAYER 5B: 
 netParams.popParams['IT5B'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][4]}  
 netParams.popParams['PT5B'] =     {'cellType': 'PT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][4]}  
-netParams.popParams['SOM5B'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',    'ynormRange': layer['5B'],   'density': density[('A1', 'SOM')][4]}
-netParams.popParams['PV5B'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',    'ynormRange': layer['5B'],	'density': density[('A1','PV')][4]}     
-netParams.popParams['VIP5B'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',    'ynormRange': layer['5B'],   'density': density[('A1','VIP')][4]}
-netParams.popParams['NGF5B'] =    {'cellType': 'NGF', 'cellModel': 'HH_simple',    'ynormRange': layer['5B'],   'density': density[('A1','nonVIP')][4]}
+netParams.popParams['SOM5B'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1', 'SOM')][4]}
+netParams.popParams['PV5B'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],	'density': density[('A1','PV')][4]}     
+netParams.popParams['VIP5B'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1','VIP')][4]}
+netParams.popParams['NGF5B'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1','nonVIP')][4]}
 
 ### LAYER 6:
 netParams.popParams['IT6'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][5]}  
 netParams.popParams['CT6'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][5]} 
-netParams.popParams['SOM6'] =    {'cellType': 'SOM', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','SOM')][5]}   
-netParams.popParams['PV6'] =     {'cellType': 'PV',  'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','PV')][5]}     
-netParams.popParams['VIP6'] =    {'cellType': 'VIP', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','VIP')][5]}
-netParams.popParams['NGF6'] =    {'cellType': 'NGF', 'cellModel': 'HH_simple',   'ynormRange': layer['6'],   'density': density[('A1','nonVIP')][5]}
+netParams.popParams['SOM6'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','SOM')][5]}   
+netParams.popParams['PV6'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','PV')][5]}     
+netParams.popParams['VIP6'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','VIP')][5]}
+netParams.popParams['NGF6'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','nonVIP')][5]}
 
 if cfg.singleCellPops:
     for pop in netParams.popParams.values(): pop['numCells'] = 1
@@ -316,30 +320,37 @@ if cfg.addConn and cfg.IIGain > 0.0:
 #------------------------------------------------------------------------------
 # Subcellular connectivity (synaptic distributions)
 #------------------------------------------------------------------------------  
-# add bkg sources for E and I cells
-netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg, 'number': 1e9}
-netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg, 'number': 1e9}
 
-# connect stim sources to target cells
-netParams.stimTargetParams['bkgE->E'] =  {
-    'source': 'bkgE', 
-    'conds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
-    'sec': 'soma', 
-    'loc': 0.5,
-    'synMech': ESynMech,
-    'weight': cfg.weightBkg['E'],
-    'synMechWeightFactor': cfg.synWeightFractionEE,
-    'delay': cfg.delayBkg}
 
-netParams.stimTargetParams['bkgE->I'] =  {
-    'source': 'bkgI', 
-    'conds': {'cellType': ['PV', 'SOM', 'VIP', 'NGF']},
-    'sec': 'soma', 
-    'loc': 0.5,
-    'synMech': ESynMech,
-    'weight': cfg.weightBkg['I'],
-    'synMechWeightFactor': cfg.synWeightFractionEI,
-    'delay': cfg.delayBkg}
+
+#------------------------------------------------------------------------------
+# Bakcgroudn inputs 
+#------------------------------------------------------------------------------  
+if cfg.addBkgConn:
+    # add bkg sources for E and I cells
+    netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg, 'number': 1e9}
+
+    # connect stim sources to target cells
+    netParams.stimTargetParams['bkgE->E'] =  {
+        'source': 'bkgE', 
+        'conds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
+        'sec': 'soma', 
+        'loc': 0.5,
+        'synMech': ESynMech,
+        'weight': cfg.weightBkg['E'],
+        'synMechWeightFactor': cfg.synWeightFractionEE,
+        'delay': cfg.delayBkg}
+
+    netParams.stimTargetParams['bkgE->I'] =  {
+        'source': 'bkgI', 
+        'conds': {'cellType': ['PV', 'SOM', 'VIP', 'NGF']},
+        'sec': 'soma', 
+        'loc': 0.5,
+        'synMech': ESynMech,
+        'weight': cfg.weightBkg['I'],
+        'synMechWeightFactor': cfg.synWeightFractionEI,
+        'delay': cfg.delayBkg}
 
 
 #------------------------------------------------------------------------------
