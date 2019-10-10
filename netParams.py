@@ -103,11 +103,11 @@ netParams.cellParams['NGF_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 
 ## IMPORT L4 SPINY STELLATE 
 netParams.importCellParams(label='ITS4_reduced', conds={'cellType': 'ITS4', 'cellModel': 'HH_reduced'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
-netParams.cellParams['ITS4_reduced']['conds'] = cellParamLabels[ruleLabel]
+netParams.cellParams['ITS4_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']}
 
 for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced']:
     for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 0.01
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = 0.005
 
 
 #------------------------------------------------------------------------------
