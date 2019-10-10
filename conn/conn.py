@@ -96,7 +96,9 @@ Ipops = ['NGF1',                            # L1
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
         'PV6', 'SOM6', 'VIP6', 'NGF6']  # L6 
         
-layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1]} # 
+TCpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM']
+
+layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1], 'thal': [1.2, 1.4]} # 
 
 
 
@@ -105,7 +107,7 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0
 pmat = {}  # probability of connection matrix
 lmat = {}  # length constant (lambda) for exp decaying prob conn (um) matrix
 wmat = {}  # connection weight matrix = unitary conn somatic PSP (mV)
-for p in Epops + Ipops:
+for p in Epops + Ipops + TCpops:
     pmat[p] = {}
     lmat[p] = {}
     wmat[p] = {}
@@ -275,6 +277,224 @@ for pre in Ipops:
 # Delays
 ## Make distance-dependent for now
 
+
+# --------------------------------------------------
+## INTRATHALAMIC (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+# --------------------------------------------------
+
+# --------------------------------------------------
+## Probabilities 
+pmat['TC']['TC'] =	    0.1
+pmat['HTC']['HTC'] =	0.1
+pmat['TC']['HTC'] =	    0.1
+pmat['HTC']['TC'] =	    0.1
+pmat['TCM']['TCM'] =	0.1
+pmat['IRE']['IRE'] =	0.1
+pmat['IREM']['IREM'] =	0.1
+pmat['IRE']['IREM'] =	0.1
+pmat['IREM']['IRE'] =	0.1
+pmat['TC']['IREM'] =	0.2
+pmat['HTC']['IREM'] =	0.2
+pmat['IREM']['TC'] =	0.1
+pmat['IREM']['HTC'] =	0.1
+pmat['TCM']['IRE'] =	0.2
+pmat['IRE']['TCM'] =	0.1
+pmat['TC']['IRE'] =	    0.4
+pmat['HTC']['IRE'] =	0.4
+pmat['IRE']['TC'] =	    0.3
+pmat['IRE']['HTC'] =	0.3
+pmat['TCM']['IREM'] =	0.4
+pmat['IREM']['TCM'] =	0.3
+
+# --------------------------------------------------
+## Weights  (=unitary conn somatic PSP amplitude)
+wmat['HTC']['HTC'] =    0.1
+wmat['HTC']['TC'] =     0.1
+wmat['TC']['HTC'] =     0.1
+wmat['TC']['TC'] =  	0.1
+wmat['TCM']['TCM'] =    0.1
+wmat['IRE']['IRE'] =    1.5
+wmat['IREM']['IREM'] =  1.5
+wmat['IRE']['IREM'] =   1.5
+wmat['IREM']['IRE'] =   1.5
+wmat['TC']['IREM'] =    0.23
+wmat['HTC']['IREM'] =   0.123
+wmat['IREM']['TC'] =    0.83
+wmat['IREM']['HTC'] =   0.83
+wmat['TCM']['IRE'] =    0.2
+wmat['IRE']['TCM'] =    0.83
+wmat['TC']['IRE'] = 	0.2
+wmat['HTC']['IRE'] =    0.2
+wmat['IRE']['TC'] =     0.83
+wmat['IRE']['HTC'] =    0.83
+wmat['TCM']['IREM'] =   0.2
+wmat['IREM']['TCM'] =   0.83
+
+
+# --------------------------------------------------
+## CORTICOTHALAMIC (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+# --------------------------------------------------
+
+# --------------------------------------------------
+## Probabilities 
+pmat['CT6']['TC']	= 0.1
+pmat['CT6']['HTC']	= 0.1
+pmat['CT6']['IRE']	= 0.1
+pmat['IT5B']['TCM']	= 0.1
+pmat['PT5B']['TCM']	= 0.1
+
+# --------------------------------------------------
+## Weights  (=unitary conn somatic PSP amplitude)
+wmat['CT6']['TC']	= 0.7
+wmat['CT6']['HTC']	= 0.7
+wmat['CT6']['IRE']	= 0.23
+wmat['IT5B']['TCM']	= 0.7
+wmat['PT5B']['TCM']	= 0.7
+
+
+# --------------------------------------------------
+## CORE THALAMOCORTICAL (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+# --------------------------------------------------
+
+# --------------------------------------------------
+## Probabilities 
+
+# note for I cells target PV, SOM and NGF for now
+pmat['TC']['IT4']    = 0.25
+pmat['HTC']['IT4'] = 0.25
+pmat['TC']['IT4S']    = 0.25
+pmat['HTC']['IT4S']   = 0.25
+pmat['TC']['PT5B']   = 0.1   #*thalfctr
+pmat['HTC']['PT5B']  = 0.1   #*thalfctr
+pmat['TC']['IT5A']   = 0.1   #*thalfctr
+pmat['HTC']['IT5A']  = 0.1   #*thalfctr
+pmat['TC']['IT5B']   = 0.1   #*thalfctr
+pmat['HTC']['IT5B']  = 0.1   #*thalfctr
+pmat['TC']['IT6']    = 0.15  #*thalfctr
+pmat['HTC']['IT6']   = 0.15  #*thalfctr
+pmat['TC']['CT6']    = 0.15  #*thalfctr
+pmat['HTC']['CT6']   = 0.15  #*thalfctr
+pmat['TC']['PV4']    = 0.25
+pmat['HTC']['PV4']   = 0.25
+pmat['TC']['SOM4']    = 0.25
+pmat['HTC']['SOM4']   = 0.25
+pmat['TC']['PV5A']    = 0.1   #*thalfctr
+pmat['HTC']['PV5A']   = 0.1   #*thalfctr
+pmat['TC']['SOM5A']   = 0.1   #*thalfctr
+pmat['HTC']['SOM5A']   = 0.1  #*thalfctr
+pmat['TC']['PV5B']    = 0.1   #*thalfctr
+pmat['HTC']['PV5B']   = 0.1   #*thalfctr
+pmat['TC']['SOM5B']   = 0.1   #*thalfctr
+pmat['HTC']['SOM5B']   = 0.1   #*thalfctr
+pmat['TC']['PV6']     = 0.15  #*thalfctr
+pmat['HTC']['PV6']   = 0.15  #*thalfctr
+pmat['TC']['SOM6']     = 0.15  #*thalfctr
+pmat['HTC']['SOM6']   = 0.15  #*thalfctr
+
+
+# --------------------------------------------------
+## Weights  (=unitary conn somatic PSP amplitude)
+wmat['TC']['PT5B']   =	0.6  #* pmat[TC][E5B] / pmat[TC][E4]	
+wmat['HTC']['PT5B'] = 0.6  #* pmat[TC][E5B] / pmat[TC][E4]
+wmat['TC']['IT5A']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['HTC']['IT5A']  =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['TC']['IT5B']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['HTC']['IT5B']  =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['TC']['IT6']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['HTC']['IT6'] = 0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['CT6']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
+wmat['HTC']['CT6']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['PV4']    =	0.23 #	
+wmat['HTC']['PV4']   =	0.23 #	
+wmat['TC']['SOM4']    =	0.23 #	
+wmat['HTC']['SOM4']   =	0.23 #	
+wmat['TC']['NGF4']    =	0.23 #	
+wmat['HTC']['NGF4']   =	0.23 #	
+wmat['TC']['PV5A']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['PV5A']   =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['SOM5A']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['SOM5A'] = 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['NGF5A']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['NGF5A'] = 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['PV5B']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['PV5B']   =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['SOM5B']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['SOM5B'] = 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['NGF5B']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['NGF5B']   =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['PV6']    =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['HTC']['PV6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['TC']['SOM6']    =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['HTC']['SOM6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]
+wmat['TC']['NGF6']    =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['HTC']['NGF6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]
+
+
+# --------------------------------------------------
+## MATRIX THALAMOCORTICAL (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+# --------------------------------------------------
+
+# --------------------------------------------------
+## Probabilities 
+
+# note for I cells target PV, SOM and NGF for now
+pmat['TCM']['IT2']	= 0.25
+pmat['TCM']['IT3']	= 0.25
+pmat['TCM']['IT5A']	= 0.15  #* thalfctr
+pmat['TCM']['IT5B']	= 0.15  #* thalfctr
+pmat['TCM']['PT5B']	= 0.15  #* thalfctr
+pmat['TCM']['IT6']	= 0.05  #* thalfctr
+pmat['TCM']['CT6'] = 0.05  #* thalfctr
+
+pmat['TCM']['NGF1']	= 0.25
+pmat['TCM']['PV2']	= 0.25
+pmat['TCM']['SOM2']	= 0.25
+pmat['TCM']['NGF2']	= 0.25
+pmat['TCM']['PV3']	= 0.25
+pmat['TCM']['SOM3']	= 0.25
+pmat['TCM']['NGF3']	= 0.25
+
+pmat['TCM']['PV5A']	= 0.15  #* thalfctr
+pmat['TCM']['SOM5A']	= 0.15  #* thalfctr
+pmat['TCM']['SOM5B']	= 0.15  #* thalfctr
+pmat['TCM']['PV5B']	= 0.15  #* thalfctr
+pmat['TCM']['SOM5B']	= 0.15  #* thalfctr
+pmat['TCM']['NGF5B']	= 0.15  #* thalfctr
+
+pmat['TCM']['PV6']	= 0.05  #* thalfctr
+pmat['TCM']['SOM6']	= 0.05  #* thalfctr
+pmat['TCM']['NGF6']	= 0.05  #* thalfctr
+
+
+# --------------------------------------------------
+## Weights  (=unitary conn somatic PSP amplitude)
+
+wmat['TCM']['IT2']	= 0.6
+wmat['TCM']['IT3']	= 0.6
+wmat['TCM']['IT5A']	= 0.6  #* thalfctr
+wmat['TCM']['IT5B']	= 0.6  #* thalfctr
+wmat['TCM']['PT5B']	= 0.6  #* thalfctr
+wmat['TCM']['IT6']	= 0.6  #* thalfctr
+wmat['TCM']['CT6'] = 0.6  #* thalfctr
+
+wmat['TCM']['NGF1']	= 0.25
+wmat['TCM']['PV2']	= 0.25
+wmat['TCM']['SOM2']	= 0.25
+wmat['TCM']['NGF2']	= 0.25
+wmat['TCM']['PV3']	= 0.25
+wmat['TCM']['SOM3']	= 0.25
+wmat['TCM']['NGF3']	= 0.25
+
+wmat['TCM']['PV5A']  = 0.25 #* thalfctr
+wmat['TCM']['SOM5A'] = 0.25 #* thalfctr
+wmat['TCM']['SOM5B'] = 0.25 #* thalfctr
+wmat['TCM']['PV5B']	 = 0.25 #* thalfctr
+wmat['TCM']['SOM5B'] = 0.25 #* thalfctr
+wmat['TCM']['NGF5B'] = 0.25 #* thalfctr
+
+wmat['TCM']['PV6']	 = 0.25  #* thalfctr
+wmat['TCM']['SOM6']	 = 0.25  #* thalfctr
+wmat['TCM']['NGF6']	 = 0.25  #* thalfctr
 
 # --------------------------------------------------
 # Save data to pkl file
