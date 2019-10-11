@@ -212,24 +212,11 @@ Ipops = ['NGF1',                            # L1
         'PV6', 'SOM6', 'VIP6', 'NGF6']      # L6 
 
 
-### THALAMUS (core)-- excluded for now per samn (2/17/19)
-# netParams.popParams['TC'] = {'cellType': 'thal_core', 'numCells': 0, 'cellModel': ''}
-# netParams.popParams['HTC'] = {'cellType': 'thal_core', 'numCells': 0, 'cellModel': ''}
-# netParams.popParams['IRE'] = {'cellType': 'thal_core', 'numCells': 0, 'cellModel': ''}
-### THALAMUS (matrix) -- excluded for now per samn (2/17/19)
-#netParams.popParams['TCM'] = {'cellType': 'thal_matrix', 'numCells': 0, 'cellModel': ''}
-#netParams.popParams['IREM'] = {'cellType': 'thal_matrix', 'numCells': 0, 'cellModel': ''}
-
-#########################################################################
 
 
 #------------------------------------------------------------------------------
 # Synaptic mechanism parameters
 #------------------------------------------------------------------------------
-### wmat in mpisim.py & STYP in labels.py  
-#netParams.synMechParams['AM2'] = 
-#netParams.synMechParams['GA'] = 
-#netParams.synMechParams['GA2'] = 
 
 ### From M1 detailed netParams.py 
 netParams.synMechParams['NMDA'] = {'mod': 'MyExp2SynNMDABB', 'tau1NMDA': 15, 'tau2NMDA': 150, 'e': 0}
@@ -348,6 +335,114 @@ if cfg.addConn and cfg.IIGain > 0.0:
 
 
 #------------------------------------------------------------------------------
+# Thalamic connectivity parameters
+#------------------------------------------------------------------------------
+
+
+
+'''
+# setup cell-type-to-cell-type synapse-type information
+def setsyty ():
+  for ty1 in xrange(CTYPi): # go thru presynaptic types
+    for ty2 in xrange(CTYPi): # go thru postsynaptic types
+      syty1[ty1][ty2] = syty2[ty1][ty2] = -1 # initialize to invalid
+      if numc[ty1] <= 0 or numc[ty2] <= 0: continue
+      if ice(ty1): # is presynaptic type inhibitory?
+        if IsLTS(ty1): # LTS or IRE -> X
+          syty1[ty1][ty2] = GA2 # code for dendritic gabaa synapse
+          if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # LTS -> Io or to thalamic E cell
+            sytys1[(ty1,ty2)] = "GABAss"
+          else: # LTS -> E
+            if ty1==I2L and not ice(ty2): # ty2 == E2:
+              syty2[ty1][ty2] = GB2
+              sytys1[(ty1,ty2)] = "GABAss" # longer tau for L2
+              sytys2[(ty1,ty2)] = "GABAB"
+            else:
+              syty2[ty1][ty2] = GB2
+              sytys1[(ty1,ty2)] = "GABAs"
+              sytys2[(ty1,ty2)] = "GABAB"
+        elif ty1==IRE:
+          syty1[ty1][ty2] = GA2 # code for dendritic gabaa synapse
+          if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # LTS -> Io or to thalamic E cell
+            syty2[ty1][ty2] = GB2
+            sytys1[(ty1,ty2)] = "GABAss"
+            sytys2[(ty1,ty2)] = "GABAB"
+          else: # LTS -> E
+            sytys1[(ty1,ty2)] = "GABAs"
+        elif ty1==IREM:
+          syty1[ty1][ty2] = GA2 # code for dendritic gabaa synapse
+          if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # LTS -> Io or to thalamic E cell
+            syty2[ty1][ty2] = GB2
+            sytys1[(ty1,ty2)] = "GABAss"
+            sytys2[(ty1,ty2)] = "GABAB"
+          else: # LTS -> E
+            sytys1[(ty1,ty2)] = "GABAss"
+        else: # BAS -> X
+          syty1[ty1][ty2] = GA # code for somatic gabaa synapse
+          sytys1[(ty1,ty2)] = "GABAf"
+      else: # E -> X
+        syty1[ty1][ty2] = AM2 # code for dendritic ampa synapse
+        syty2[ty1][ty2] = NM2 # code for dendritic nmda synapse
+        if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # E -> I or E -> thalamic E cell
+          sytys1[(ty1,ty2)] = "AMPAf"
+          sytys2[(ty1,ty2)] = "NMDA"
+        else: # E -> cortical E
+          sytys1[(ty1,ty2)] = "AMPAf"
+          sytys2[(ty1,ty2)] = "NMDA"
+'''
+
+#------------------------------------------------------------------------------
+## Intrathalamic 
+
+TCEpops = ['TC', 'TCM', 'HTC']
+TCIpops = ['IRE', 'IREM']
+
+if cfg.addIntraThalamicConn:
+    for pre in TCEpops+TCIpops:
+        for post in TCEpops+TCIpops:
+            if post in pmat[pre]:
+                # for syns use ESynMech, SOMESynMech and SOMISynMech 
+                if pre in TCEpops:     # E->E
+                    syn = ESynMech
+                    synWeightFactor = cfg.synWeightFractionEE
+                elif post in TCEpops:  # I->E
+                    syn = SOMESynMech
+                    synWeightFactor = cfg.synWeightFractionIE
+                else:                  # I->I
+                    syn = SOMISynMech
+                    synWeightFactor = [1.0]
+                    
+                netParams.connParams['ITh_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': syn,
+                    'probability': pmat[pre][post],
+                    'weight': wmat[pre][post] * cfg.intraThalamicGain, 
+                    'synMechWeightFactor': synWeightFactor,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'soma'}  
+
+
+#------------------------------------------------------------------------------
+## Corticothalamic 
+if cfg.addCorticoThalamicConn:
+    pass
+
+
+#------------------------------------------------------------------------------
+## Core thalamocortical 
+if cfg.addCoreThalamoCorticalConn:
+    pass
+
+
+#------------------------------------------------------------------------------
+## Matrix thalamocortical 
+if cfg.addMatrixThalamoCorticalConn:
+    pass
+
+
+#------------------------------------------------------------------------------
 # Subcellular connectivity (synaptic distributions)
 #------------------------------------------------------------------------------  
 
@@ -360,6 +455,8 @@ if cfg.addBkgConn:
     # add bkg sources for E and I cells
     netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg, 'number': 1e9}
     netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['bkgThalE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalE'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['bkgThalI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalI'], 'noise': cfg.noiseBkg, 'number': 1e9}
 
     # connect stim sources to target cells
     netParams.stimTargetParams['bkgE->E'] =  {
@@ -372,7 +469,7 @@ if cfg.addBkgConn:
         'synMechWeightFactor': cfg.synWeightFractionEE,
         'delay': cfg.delayBkg}
 
-    netParams.stimTargetParams['bkgE->I'] =  {
+    netParams.stimTargetParams['bkgI->I'] =  {
         'source': 'bkgI', 
         'conds': {'cellType': ['PV', 'SOM', 'VIP', 'NGF']},
         'sec': 'soma', 
@@ -382,6 +479,25 @@ if cfg.addBkgConn:
         'synMechWeightFactor': cfg.synWeightFractionEI,
         'delay': cfg.delayBkg}
 
+    netParams.stimTargetParams['bkgThalE->ThalE'] =  {
+        'source': 'bkgThalE', 
+        'conds': {'cellType': ['TC', 'HTC']},
+        'sec': 'soma', 
+        'loc': 0.5,
+        'synMech': ESynMech,
+        'weight': cfg.weightBkg['ThalE'],
+        'synMechWeightFactor': cfg.synWeightFractionEE,
+        'delay': cfg.delayBkg}
+
+    netParams.stimTargetParams['bkgThalI->ThalI'] =  {
+        'source': 'bkgThalI', 
+        'conds': {'cellType': ['RE']},
+        'sec': 'soma', 
+        'loc': 0.5,
+        'synMech': ESynMech,
+        'weight': cfg.weightBkg['ThalI'],
+        'synMechWeightFactor': cfg.synWeightFractionEI,
+        'delay': cfg.delayBkg}
 
 #------------------------------------------------------------------------------
 # Current inputs (IClamp)

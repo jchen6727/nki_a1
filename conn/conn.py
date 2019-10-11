@@ -331,6 +331,7 @@ wmat['TCM']['IREM'] =   0.2
 wmat['IREM']['TCM'] =   0.83
 
 
+
 # --------------------------------------------------
 ## CORTICOTHALAMIC (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
 # --------------------------------------------------

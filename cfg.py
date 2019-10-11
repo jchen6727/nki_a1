@@ -96,6 +96,7 @@ cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
 cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 
+# Cortical
 cfg.addConn = 1
 cfg.EEGain = 1.0
 cfg.EIGain = 1.0
@@ -106,6 +107,20 @@ cfg.IIGain = 1.0
 cfg.IEweights = [1.0, 1.0, 1.0]
 cfg.IIweights = [1.0, 1.0, 1.0]
 
+# Thalamic
+cfg.addIntraThalamicConn = 1
+cfg.addIntraThalamicConn = 1
+cfg.addCorticoThalamicConn = 1
+cfg.addCoreThalamoCorticalConn = 1
+cfg.addMatrixThalamoCorticalConn = 1
+
+cfg.intraThalamicGain = 1.0
+cfg.intraThalamicGain = 1.0
+cfg.corticoThalamicGain = 1.0
+cfg.coreThalamoCorticalGain = 1.0
+cfg.matrixThalamoCorticalGain = 1.0
+
+
 #------------------------------------------------------------------------------
 # Background inputs
 #------------------------------------------------------------------------------
@@ -113,8 +128,8 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 0.5*0.1, 'I': 0.5*0.1}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 100, 'I': 100}
+cfg.weightBkg = {'E': 0.5*0.1, 'I': 0.5*0.1, 'ThalE': 0.5*0.1, 'ThalI': 0.5*0.1}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.rateBkg = {'E': 100, 'I': 100, 'ThalE': 100, 'ThalI': 100}
 
 
 #------------------------------------------------------------------------------
