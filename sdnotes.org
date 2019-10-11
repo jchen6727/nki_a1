@@ -135,7 +135,38 @@ Plotting raster...
   Done; plotting time = 8.38 s
 
 Total time = 785.50 s
+* 11Oct2019 Preparing SfN poster
+** added thalamic pops and conn
+** run sim at scale=0.05, size=400um
+Creating network of 39 cell populations on 1 hosts...
+  Number of cells on node 0: 2518 
+  Done; cell creation time = 18.45 s.
+Making connections...
+  Number of connections on node 0: 231802 
+  Number of synaptic contacts on node 0: 420622 
+  Done; cell connection time = 83.43 s.
+Adding stims...
+  Number of stims on node 0: 5036 
+  Done; cell stims creation time = 0.58 s.
+Recording 31 traces of 1 types on node 0
 
+Running simulation for 500.0 ms...
+exp(910.62) out of range, returning exp(700)
+  Done; run time = 4276.86 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 13.35 s.
+
+Analyzing...
+  Cells: 2518
+  Connections: 234320 (93.06 per cell)
+  Synaptic contacts: 425658 (169.05 per cell)
+  Spikes: 4011 (3.19 Hz)
+  Simulated time: 0.5 s; 1 workers
+  Run time: 4276.86 s
+
+- raster shows activity and osc in all layers
+- many cells show depol block
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -313,6 +344,7 @@ I have batch netpyne to calcualte for all M1 cell types … will need to adapt f
 
 ** Discussion with erica
 
+
 The IPSC values in [9] are in response to optogenetic stim, which I believe activate >1 presyn neurons, so the IPSC value is conflating both conn prob and weight (weight understood as response to single presyn cell, or unitary connection).
 For M1 I did use IPSC values as strengths to derive conn probs, i.e. strength =  conn prob x weight. By obtaining weights (unitary conn somatic epsp values) from a different source, I was able to obtain prob conns from the the IPSC values (strengths). 
 So, in essence, these values don't represent weights, but the overall conn strength, and so can be used potentially derive the prob conns (by fixing the weight) or the weight (by fixing the prob conn).
@@ -333,3 +365,5 @@ yeah… so dist-dep is a feature whether we have cell-type specific data or not
 the little cell-type specific data we have I’ve tried to incorporate on top of the dist-dep
 so e.g. ‘strong’ will be 1.0*exp(-d/L) and ‘weak’ will be 0.35*exp(-d/L)
 anyway you can have a look at the excel, conn.py and netParams.py and let me know what you think
+* SIMS
+** v10_manualTune/sim1

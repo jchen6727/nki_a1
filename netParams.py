@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 10
+netParams.version = 11
 
 #------------------------------------------------------------------------------
 #
@@ -105,7 +105,7 @@ netParams.cellParams['NGF_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 
 ## Import L4 Spiny Stellate cell rule from .py file
 netParams.importCellParams(label='ITS4_reduced', conds={'cellType': 'ITS4', 'cellModel': 'HH_reduced'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
-netParams.cellParams['ITS4_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']}
+netParams.cellParams['ITS4_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'ITS4', 'ynorm': layer['4']}
 
 ## Set weightNorm for VIP, NGS ITS4 (temporary fix!)
 for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced']:
@@ -125,7 +125,7 @@ netParams.cellParams['TC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellT
 
 # Import HTC cell rule from .py file 
 netParams.importCellParams(label='HTC_reduced', conds={'cellType': 'HTC', 'cellModel': 'HH_reduced'}, fileName='cells/sHTC.py', cellName='sHTC', importSynMechs=True)
-netParams.cellParams['RE_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'HTC', 'ynorm': layer['thal']}
+netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'HTC', 'ynorm': layer['thal']}
 
 
 
@@ -339,73 +339,21 @@ if cfg.addConn and cfg.IIGain > 0.0:
 #------------------------------------------------------------------------------
 
 
-
-'''
-# setup cell-type-to-cell-type synapse-type information
-def setsyty ():
-  for ty1 in xrange(CTYPi): # go thru presynaptic types
-    for ty2 in xrange(CTYPi): # go thru postsynaptic types
-      syty1[ty1][ty2] = syty2[ty1][ty2] = -1 # initialize to invalid
-      if numc[ty1] <= 0 or numc[ty2] <= 0: continue
-      if ice(ty1): # is presynaptic type inhibitory?
-        if IsLTS(ty1): # LTS or IRE -> X
-          syty1[ty1][ty2] = GA2 # code for dendritic gabaa synapse
-          if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # LTS -> Io or to thalamic E cell
-            sytys1[(ty1,ty2)] = "GABAss"
-          else: # LTS -> E
-            if ty1==I2L and not ice(ty2): # ty2 == E2:
-              syty2[ty1][ty2] = GB2
-              sytys1[(ty1,ty2)] = "GABAss" # longer tau for L2
-              sytys2[(ty1,ty2)] = "GABAB"
-            else:
-              syty2[ty1][ty2] = GB2
-              sytys1[(ty1,ty2)] = "GABAs"
-              sytys2[(ty1,ty2)] = "GABAB"
-        elif ty1==IRE:
-          syty1[ty1][ty2] = GA2 # code for dendritic gabaa synapse
-          if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # LTS -> Io or to thalamic E cell
-            syty2[ty1][ty2] = GB2
-            sytys1[(ty1,ty2)] = "GABAss"
-            sytys2[(ty1,ty2)] = "GABAB"
-          else: # LTS -> E
-            sytys1[(ty1,ty2)] = "GABAs"
-        elif ty1==IREM:
-          syty1[ty1][ty2] = GA2 # code for dendritic gabaa synapse
-          if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # LTS -> Io or to thalamic E cell
-            syty2[ty1][ty2] = GB2
-            sytys1[(ty1,ty2)] = "GABAss"
-            sytys2[(ty1,ty2)] = "GABAB"
-          else: # LTS -> E
-            sytys1[(ty1,ty2)] = "GABAss"
-        else: # BAS -> X
-          syty1[ty1][ty2] = GA # code for somatic gabaa synapse
-          sytys1[(ty1,ty2)] = "GABAf"
-      else: # E -> X
-        syty1[ty1][ty2] = AM2 # code for dendritic ampa synapse
-        syty2[ty1][ty2] = NM2 # code for dendritic nmda synapse
-        if ice(ty2) or ty2==TC or ty2==TCM or ty2==HTC: # E -> I or E -> thalamic E cell
-          sytys1[(ty1,ty2)] = "AMPAf"
-          sytys2[(ty1,ty2)] = "NMDA"
-        else: # E -> cortical E
-          sytys1[(ty1,ty2)] = "AMPAf"
-          sytys2[(ty1,ty2)] = "NMDA"
-'''
-
 #------------------------------------------------------------------------------
 ## Intrathalamic 
 
-TCEpops = ['TC', 'TCM', 'HTC']
-TCIpops = ['IRE', 'IREM']
+TEpops = ['TC', 'TCM', 'HTC']
+TIpops = ['IRE', 'IREM']
 
 if cfg.addIntraThalamicConn:
-    for pre in TCEpops+TCIpops:
-        for post in TCEpops+TCIpops:
+    for pre in TEpops+TIpops:
+        for post in TEpops+TIpops:
             if post in pmat[pre]:
                 # for syns use ESynMech, SOMESynMech and SOMISynMech 
-                if pre in TCEpops:     # E->E
+                if pre in TEpops:     # E->E
                     syn = ESynMech
                     synWeightFactor = cfg.synWeightFractionEE
-                elif post in TCEpops:  # I->E
+                elif post in TEpops:  # I->E
                     syn = SOMESynMech
                     synWeightFactor = cfg.synWeightFractionIE
                 else:                  # I->I
@@ -427,19 +375,48 @@ if cfg.addIntraThalamicConn:
 #------------------------------------------------------------------------------
 ## Corticothalamic 
 if cfg.addCorticoThalamicConn:
-    pass
-
+    for pre in Epops:
+        for post in TEpops+TIpops:
+            if post in pmat[pre]:
+                netParams.connParams['CxTh_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': ESynMech,
+                    'probability': pmat[pre][post],
+                    'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
+                    'synMechWeightFactor': cfg.synWeightFractionEE,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'soma'}  
 
 #------------------------------------------------------------------------------
-## Core thalamocortical 
+## Thalamocortical 
 if cfg.addCoreThalamoCorticalConn:
-    pass
+    for pre in TEpops+TIpops:
+        for post in Epops+Ipops:
+            if post in pmat[pre]:
+                # for syns use ESynMech, SOMESynMech and SOMISynMech 
+                if pre in TEpops:     # E->E
+                    syn = ESynMech
+                    synWeightFactor = cfg.synWeightFractionEE
+                elif post in TEpops:  # I->E
+                    syn = SOMESynMech
+                    synWeightFactor = cfg.synWeightFractionIE
+                else:                  # I->I
+                    syn = SOMISynMech
+                    synWeightFactor = [1.0]
 
+                netParams.connParams['ThCx_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': syn,
+                    'probability': pmat[pre][post],
+                    'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
+                    'synMechWeightFactor': synWeightFactor,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'soma'}  
 
-#------------------------------------------------------------------------------
-## Matrix thalamocortical 
-if cfg.addMatrixThalamoCorticalConn:
-    pass
 
 
 #------------------------------------------------------------------------------
@@ -549,4 +526,5 @@ v7 - Added template for connectivity
 v8 - Added cell types
 v9 - Added local connectivity
 v10 - Added thalamic populations from prev model
+v11 - Added thalamic conn from prev model
 """

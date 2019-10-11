@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.2*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.25*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 #cfg.hParams['celsius'] = 37
@@ -30,7 +30,7 @@ cfg.verbose = False           	## Show detailed messages
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
-allpops = ['NGF1','IT2','PV2','SOM2','VIP2','NGF2','IT3','SOM3','PV3','VIP3','NGF4','ITP4','ITS4','VIP4','IT5A','PV5A','SOM5A','VIP5A','NGF5A','IT5B','PT5B','PV5B','SOM5B','VIP5B','NGF5B','IT6','CT6','PV6','SOM6','VIP6','NGF6']
+allpops = ['NGF1','IT2','PV2','SOM2','VIP2','NGF2','IT3','SOM3','PV3','VIP3','NGF4','ITP4','ITS4','VIP4','IT5A','PV5A','SOM5A','VIP5A','NGF5A','IT5B','PT5B','PV5B','SOM5B','VIP5B','NGF5B','IT6','CT6','PV6','SOM6','VIP6','NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
 
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
@@ -43,7 +43,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-# cfg.filename =                	## Set file output name
+cfg.simLabel = 'v10_sim1'
+cfg.saveFolder = 'data/v10_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
@@ -57,7 +58,7 @@ cfg.saveCellConns = True		## Seen in M1 cfg.py
 #------------------------------------------------------------------------------
 
 cfg.analysis['plotTraces'] = {'include': [(pop,0) for pop in allpops]} 		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True,'labels': 'overlay', 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram']}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
@@ -128,8 +129,8 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 0.5*0.1, 'I': 0.5*0.1, 'ThalE': 0.5*0.1, 'ThalI': 0.5*0.1}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 100, 'I': 100, 'ThalE': 100, 'ThalI': 100}
+cfg.weightBkg = {'E': 0.5*0.05, 'I': 0.5*0.05, 'ThalE': 0.5*0.05, 'ThalI': 0.5*0.05}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.rateBkg = {'E': 50, 'I': 50, 'ThalE': 50, 'ThalI': 50}
 
 
 #------------------------------------------------------------------------------

@@ -44,7 +44,7 @@ class Cell:
           
   def add_comp (self, name, rec):
     self.snames.append( name )
-    self.__dict__[name] = h.Section(cell=self, name=str(self.ty)+'_'+name)
+    self.__dict__[name] = h.Section(cell=self, name=name)
     self.all_sec.append(self.__dict__[name])    
     if rec: # Record voltage
       self.__dict__[name+"_volt"] = h.Vector(int(h.tstop/h.dt)+1)

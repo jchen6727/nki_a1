@@ -96,7 +96,7 @@ Ipops = ['NGF1',                            # L1
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
         'PV6', 'SOM6', 'VIP6', 'NGF6']  # L6 
         
-TCpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM']
+Tpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM']
 
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1], 'thal': [1.2, 1.4]} # 
 
@@ -107,7 +107,7 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0
 pmat = {}  # probability of connection matrix
 lmat = {}  # length constant (lambda) for exp decaying prob conn (um) matrix
 wmat = {}  # connection weight matrix = unitary conn somatic PSP (mV)
-for p in Epops + Ipops + TCpops:
+for p in Epops + Ipops + Tpops:
     pmat[p] = {}
     lmat[p] = {}
     wmat[p] = {}
