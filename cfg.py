@@ -43,8 +43,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v10_sim1'
-cfg.saveFolder = 'data/v10_manualTune/'                	## Set file output name
+cfg.simLabel = 'v11_sim1'
+cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
