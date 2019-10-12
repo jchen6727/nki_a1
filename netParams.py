@@ -69,19 +69,20 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (DOES NOT INCLUDE VIP, NGF and spiny stellate)
 ## include conditions ('conds') for each cellRule
-cellParamLabels = { 'IT2_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': [layer['2'][0],layer['3'][1]]},
-                    'ITP4_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
-                    'IT5A_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
-                    'IT5B_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
-                    'PT5B_A1':  {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
-                    'IT6_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
-                    'CT6_A1':   {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
+cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['2']},
+                    'IT3_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
+                    'IT4_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
+                    'IT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
+                    'IT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
+                    'PT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
+                    'IT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
+                    'CT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
                     
 
 # temporary weightNorm value (temporary fix!)
-weightNorm = 0.0001
+weightNorm = 1.0
 
 # Load cell rules from .pkl file 
 loadCellParams = cellParamLabels
@@ -495,25 +496,25 @@ if cfg.addBkgConn:
 #------------------------------------------------------------------------------
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------
-# if cfg.addNetStim:
-# 	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-# 		params = getattr(cfg, key, None)
-# 		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-# 		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+if cfg.addNetStim:
+	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+		params = getattr(cfg, key, None)
+		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
 
-# 		# add stim source
-# 		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+		# add stim source
+		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
 
-# 		# connect stim source to target 
-# 		netParams.stimTargetParams[key+'_'+pop] =  {
-# 			'source': key, 
-# 			'conds': {'pop': pop, 'ynorm': ynorm},
-# 			'sec': sec, 
-# 			'loc': loc,
-# 			'synMech': synMech,
-# 			'weight': weight,
-# 			'synMechWeightFactor': synMechWeightFactor,
-# 			'delay': delay}
+		# connect stim source to target 
+		netParams.stimTargetParams[key+'_'+pop] =  {
+			'source': key, 
+			'conds': {'pop': pop, 'ynorm': ynorm},
+			'sec': sec, 
+			'loc': loc,
+			'synMech': synMech,
+			'weight': weight,
+			'synMechWeightFactor': synMechWeightFactor,
+			'delay': delay}
 
 #------------------------------------------------------------------------------
 # Description

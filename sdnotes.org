@@ -424,5 +424,20 @@ worse looking shapes
 ** v11_manualTune/sim11
 sim9 with 0.05 density, recordLFP and 1 sec
 
+Cells: 2518
+  Connections: 234320 (93.06 per cell)
+  Synaptic contacts: 425658 (169.05 per cell)
+  Spikes: 9685 (3.85 Hz)
+  Simulated time: 1.0 s; 4 workers
+  Run time: 7274.30 s
+Saving output as data/v11_manualTune//v11_sim11.pkl ... 
+Finished saving!
+Saving output as data/v11_manualTune//v11_sim11.json  ... 
+Finished saving!
+  Done; saving time = 1.59 s.
+Total time = 7370.49 s
+
 - all depol block and many traces blank (not sure why)!
 - should try to calcualte weightNorm
+
+** v11_batch1 - weightNorm for all cells
