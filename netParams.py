@@ -71,7 +71,7 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 ## include conditions ('conds') for each cellRule
 cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['2']},
                     'IT3_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
-                    'IT4_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
+                    'ITP4_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
                     'IT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
                     'IT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
                     'PT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
