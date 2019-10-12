@@ -366,4 +366,63 @@ the little cell-type specific data we have I’ve tried to incorporate on top of
 so e.g. ‘strong’ will be 1.0*exp(-d/L) and ‘weak’ will be 0.35*exp(-d/L)
 anyway you can have a look at the excel, conn.py and netParams.py and let me know what you think
 * SIMS
-** v10_manualTune/sim1
+** v11_manualTune/sim1
+- scale 0.05
+- x,z = 400um
+- tuning params for sfn19 
+- reduced bkg inputs weight and rate since before depol block
+
+- results:
+-- plotting of cell traces based on (pop,index) not working for multiple cores
+-- still some depol block in E and SOM
+
+** v11_manualTune/sim2
+- test only bkg inputs
+- use single core for now to avoid plotting issue
+- voltage traces look better
+- suggests maybe reducing local conn weights
+
+** v11_manualTune/sim3
+- reduced local conn weights by 50%
+- set weightNorm of CT and TC
+- reduced bkg from 50 to 40hz
+
+-results:
+-- still dep block and weird voltage shapes
+
+** v11_manualTune/sim4
+- reduced even more weightNorm (from 0.0025 to 0.001)
+
+- getting better
+
+** v11_manualTune/sim5
+- reduced even more weightNorm (from 0.001 to 0.0005)
+** v11_manualTune/sim6
+- reduced even more weightNorm (from 0.0005 to 0.0001)
+** v11_manualTune/sim7
+- reduced EE/EI gain to 0.25
+** v11_manualTune/sim8
+cfg.EEGain = 1.0 * 0.25
+cfg.EIGain = 1.0 
+cfg.IEGain = 1.0 
+cfg.IIGain = 1.0 
+cfg.weightBkg = {'E': 0.5*0.025, 'I': 0.5*0.025, 'ThalE': 0.5*0.025, 'ThalI': 0.5*0.025}
+
+- better, got some real oscillations
+
+** v11_manualTune/sim9
+cfg.weightBkg = {'E': 0.5*0.01, 'I': 0.5*0.01, 'ThalE': 0.5*0.01, 'ThalI': 0.5*0.01}
+
+** v11_manualTune/sim10
+cfg.EEGain = 1.0 * 0.25
+cfg.EIGain = 1.0 * 0.5
+cfg.IEGain = 1.0 * 1.5
+cfg.IIGain = 1.0 * 1.5
+
+worse looking shapes
+
+** v11_manualTune/sim11
+sim9 with 0.05 density, recordLFP and 1 sec
+
+- all depol block and many traces blank (not sure why)!
+- should try to calcualte weightNorm

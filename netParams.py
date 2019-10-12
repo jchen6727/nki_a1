@@ -81,7 +81,7 @@ cellParamLabels = { 'IT2_A1':   {'cellModel': 'HH_reduced', 'cellType': 'IT', 'y
                     
 
 # temporary weightNorm value (temporary fix!)
-weightNorm = 0.005
+weightNorm = 0.0001
 
 # Load cell rules from .pkl file 
 loadCellParams = cellParamLabels
@@ -107,12 +107,6 @@ netParams.cellParams['NGF_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 netParams.importCellParams(label='ITS4_reduced', conds={'cellType': 'ITS4', 'cellModel': 'HH_reduced'}, fileName='cells/ITS4.py', cellName='ITS4_cell')
 netParams.cellParams['ITS4_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'ITS4', 'ynorm': layer['4']}
 
-## Set weightNorm for VIP, NGS ITS4 (temporary fix!)
-for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced']:
-    for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
-
-
 ## THALAMIC CELL MODELS
 
 # Import RE (reticular) cell rule from .py file 
@@ -128,6 +122,10 @@ netParams.importCellParams(label='HTC_reduced', conds={'cellType': 'HTC', 'cellM
 netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'HTC', 'ynorm': layer['thal']}
 
 
+## Set weightNorm for VIP, NGS ITS4, RE, TC, HTC (temporary fix!)
+for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced', 'RE_reduced', 'TC_reduced', 'HTC_reduced']:
+    for sec in netParams.cellParams[ruleLabel]['secs']:
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
 
 #------------------------------------------------------------------------------
 # Population parameters
