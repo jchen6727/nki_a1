@@ -145,7 +145,7 @@ cfg.addIClamp = 0
 cfg.addNetStim = 1
 
 ## LAYER 1
-cfg.NetStim1 = {'pop': '', 'ynorm': [0, 1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0 / 60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
+cfg.NetStim1 = {'pop': '', 'ynorm': [0, 2], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0 / 60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
 
 # ## LAYER 2
 # cfg.NetStim2 = {'pop': 'IT2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}

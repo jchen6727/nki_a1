@@ -526,3 +526,6 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
         setRunCfg(b, 'mpi_bulletin')
         b.run()  # run batch
         batchIndex += 1
+
+
+    then run analysis/wscale.py
