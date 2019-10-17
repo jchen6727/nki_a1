@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -65,7 +65,7 @@ cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': Tr
 #------------------------------------------------------------------------------
 # Cells
 #------------------------------------------------------------------------------
-
+cfg.weightNormThreshold = 4.0  # maximum weight normalization factor with respect to the soma
 
 #------------------------------------------------------------------------------
 # Synapses
@@ -129,7 +129,7 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 0.5*0.01, 'I': 0.5*0.01, 'ThalE': 0.5*0.01, 'ThalI': 0.5*0.01}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.weightBkg = {'E': 0.5, 'I': 0.5, 'ThalE': 0.5, 'ThalI': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
 
 
@@ -142,7 +142,7 @@ cfg.addIClamp = 0
 # NetStim inputs 
 #------------------------------------------------------------------------------
 
-cfg.addNetStim = 1
+cfg.addNetStim = 0
 
 ## LAYER 1
 cfg.NetStim1 = {'pop': 'NGF1', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}

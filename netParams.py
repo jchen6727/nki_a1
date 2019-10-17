@@ -81,8 +81,6 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
                     
 
-# temporary weightNorm value (temporary fix!)
-weightNorm = 1.0
 
 # Load cell rules from .pkl file 
 loadCellParams = cellParamLabels
@@ -90,10 +88,6 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
-    
-    # set weightNorm (temporary fix!)
-    for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
     
 
 ## Import VIP cell rule from hoc file 
@@ -123,10 +117,10 @@ netParams.importCellParams(label='HTC_reduced', conds={'cellType': 'HTC', 'cellM
 netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'HTC', 'ynorm': layer['thal']}
 
 
-## Set weightNorm for VIP, NGS ITS4, RE, TC, HTC (temporary fix!)
-for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced', 'RE_reduced', 'TC_reduced', 'HTC_reduced']:
-    for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
+## Set weightNorm for each cell type
+for ruleLabel in netParams.cellParams.keys():
+    netParams.addCellParamsWeightNorm(ruleLabel, 'cells/'+ruleLabel+'_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
+
 
 #------------------------------------------------------------------------------
 # Population parameters
