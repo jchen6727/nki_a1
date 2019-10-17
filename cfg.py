@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim19'
+cfg.simLabel = 'v11_sim20'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -128,10 +128,10 @@ cfg.matrixThalamoCorticalGain = 1.0
 # Background inputs
 #------------------------------------------------------------------------------
 cfg.addBkgConn = 1
-cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.5}  # firing rate random noise
+cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.1}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 4.0*4, 'ThalI': 2.0*4}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 4.0*10, 'ThalI': 2.0*1}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 20, 'ThalI': 20}
 
 
