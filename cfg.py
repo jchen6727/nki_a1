@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim21'
+cfg.simLabel = 'v11_sim22'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -59,7 +59,13 @@ cfg.saveCellConns = False		## Seen in M1 cfg.py
 # Analysis and plotting 
 #------------------------------------------------------------------------------
 
-cfg.analysis['plotTraces'] = {'include': [0,100, 1285, 1787,2422, 2464, 2470,30,97,98], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+popGids = [0, 32, 100, 104, 108, 1000, 1012, 1048, 1088, 1120, 1288, 1452, 1456, 1476, 1480,
+        1624, 1632, 1644, 1648, 1788, 1928, 1952, 1976, 1980, 1984, 2184, 2388, 2400, 2416, 2424, 2448, 2476, 2484, 2516]
+
+popGidRecord = [0, 1000, 1012, 1048, 1088, 1120, 1288, 2424, 2448, 2476, 2484, 2516]
+
+
+cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram']}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
@@ -100,7 +106,7 @@ cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 
 # Cortical
-cfg.addConn = 1
+cfg.addConn = 0
 cfg.EEGain = 1.0 
 cfg.EIGain = 0.5
 cfg.IEGain = 0.5
