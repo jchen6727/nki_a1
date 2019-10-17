@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim16'
+cfg.simLabel = 'v11_sim17'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -104,7 +104,7 @@ cfg.addConn = 1
 cfg.EEGain = 3.0 
 cfg.EIGain = 1.0
 cfg.IEGain = 2.0
-cfg.IIGain = 0.5
+cfg.IIGain = 2.0
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
 cfg.IEweights = [1.0, 1.0, 1.0]
