@@ -87,8 +87,8 @@ def EIbalance():
     params['EIGain'] = [0.5, 1.0, 1.5] 
     params['IEGain'] = [0.5, 1.0, 1.5] 
     params['IIGain'] = [0.5, 1.0, 1.5]
-    params[('weightBkg', 'E')] = [1.0, 2.0, 3.0]
-    params[('weightBkg', 'I')] = [1.0, 2.0, 3.0]
+    params[('weightBkg', 'E')] = [2.0, 3.0]
+    params[('weightBkg', 'I')] = [2.0, 3.0]
     
     groupedParams =  []
 
