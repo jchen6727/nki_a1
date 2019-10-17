@@ -181,7 +181,7 @@ netParams.popParams['NGF6'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced', 
 
 
 ### THALAMIC POPULATIONS (from prev model)
-thalDensity = density[('A1','PV')][2]  # temporary estimate (from prev model)
+thalDensity = density[('A1','PV')][2] * 1.25  # temporary estimate (from prev model)
 
 netParams.popParams['TC'] =     {'cellType': 'TC',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.75*thalDensity}  
 netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity} 
