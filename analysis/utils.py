@@ -225,13 +225,13 @@ def plotsFromData(data, textTop = '', raster=True, stats=False, rates=False, syn
     out = None
 
     if raster or plotAll:
-        fig1 = sim.analysis.plotRaster(include=include['raster'], timeRange=timeRange, labels='overlay', popRates=False, orderInverse=True, lw=0, markerSize=5, 
-            marker='.', popColors=popColors, showFig=0, saveFig=0, figSize=(10,8), orderBy=orderBy)
+        fig1 = sim.analysis.plotRaster(include=include['raster'], timeRange=timeRange, popRates=True, orderInverse=True, lw=0, markerSize=10, 
+            marker='.', popColors=popColors, showFig=0, saveFig=0, figSize=(10,11), orderBy=orderBy)
         ax = plt.gca()
         plt.text(0.05, 1.07, textTop, transform=ax.transAxes, fontsize=12, color='k')
         plt.ylabel('Neuron number')
         plt.title('')
-        plt.savefig(cfg.filename+'_raster_%d_%d_%s.png'%(timeRange[0], timeRange[1], orderBy), dpi=600)
+        plt.savefig('../'+cfg.filename+'_raster_%d_%d_%s.png'%(timeRange[0], timeRange[1], orderBy), dpi=600)
 
     if stats or plotAll:
         filename = cfg.filename+'_%d_%d'%(timeRange[0], timeRange[1])
@@ -267,7 +267,7 @@ def plotsFromData(data, textTop = '', raster=True, stats=False, rates=False, syn
 
     if traces or plotAll:
         colors = popColors; colors=['r','b']
-        fig4 = sim.analysis.plotTraces(include=include['traces'], timeRange=timeRange, overlay = True, oneFigPer = 'trace', rerun = False, ylim=[-90, 30], axis='on', figSize = (12,4), saveData = None, saveFig = 1, showFig = 0)
+        fig4 = sim.analysis.plotTraces(include=include['traces'], timeRange=timeRange, overlay = True, oneFigPer = 'trace', rerun = False, ylim=[-90, 30], axis='on', figSize = (12,4), saveData = None, saveFig = '../'+cfg.filename+'_traces.png', showFig = 0)
 
 
     if grang or plotAll:

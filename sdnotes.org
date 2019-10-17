@@ -538,15 +538,24 @@ def EIbalance():
     params['EIGain'] = [0.5, 1.0, 1.5] 
     params['IEGain'] = [0.5, 1.0, 1.5] 
     params['IIGain'] = [0.5, 1.0, 1.5]
-    params[('weightBkg', 'E')] = [0.5, 1.0, 1.5]
-    params[('weightBkg', 'I')] = [0.5, 1.0, 1.5]
+    params[('weightBkg', 'E')] = [2.0, 3.0]
+    params[('weightBkg', 'I')] = [2.0, 3.0]
     
     groupedParams =  []
 
     # initial config
     initCfg = {}
-    initCfg['duration'] = 1.0*1e3
+    initCfg['duration'] = 1.0 * 1e3
+    initCfg['scaleDensity'] = 0.05
     
     b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
 
     return b
+
+*** results
+reasonable rates for most pops (no osc):
+- 10 00 10
+- 11 01 10
+- 12 02 10
+- 22 02 11
+- 22 00 10 - slow osc
