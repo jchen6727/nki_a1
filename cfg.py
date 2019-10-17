@@ -102,9 +102,9 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 # Cortical
 cfg.addConn = 1
 cfg.EEGain = 1.0 
-cfg.EIGain = 1.0 
-cfg.IEGain = 1.0 
-cfg.IIGain = 1.0 
+cfg.EIGain = 0.75
+cfg.IEGain = 0.5
+cfg.IIGain = 0.75 
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
 cfg.IEweights = [1.0, 1.0, 1.0]
@@ -131,7 +131,7 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 2.0, 'I': 2.0, 'ThalE': 2.0, 'ThalI': 2.0}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 3.0, 'ThalI': 2.0}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 80, 'ThalI': 80}
 
 
