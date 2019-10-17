@@ -440,7 +440,7 @@ Total time = 7370.49 s
 - all depol block and many traces blank (not sure why)!
 - should try to calcualte weightNorm
 
-** v11_batch1 - weightNorm for all cells
+** v11_batch1-6 - weightNorm for all cells
 
 # ----------------------------------------------------------------------------------------------
 # Weight Normalization 
@@ -529,3 +529,24 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
 
 
     then run analysis/wscale.py
+
+** v11_batch7 - EI balance
+def EIbalance():
+    params = specs.ODict()
+
+    params['EEGain'] = [0.5, 1.0, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5]
+    params[('weightBkg', 'E')] = [0.5, 1.0, 1.5]
+    params[('weightBkg', 'I')] = [0.5, 1.0, 1.5]
+    
+    groupedParams =  []
+
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 1.0*1e3
+    
+    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+
+    return b

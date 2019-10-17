@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -30,7 +30,9 @@ cfg.hParams['celsius'] = 37
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
-allpops = ['NGF1','IT2','PV2','SOM2','VIP2','NGF2','IT3','SOM3','PV3','VIP3','NGF4','ITP4','ITS4','VIP4','IT5A','PV5A','SOM5A','VIP5A','NGF5A','IT5B','PT5B','PV5B','SOM5B','VIP5B','NGF5B','IT6','CT6','PV6','SOM6','VIP6','NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF4', 'ITP4', 'ITS4', 'VIP4', 'IT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
+
+alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE']
 
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
@@ -50,22 +52,22 @@ cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
 cfg.gatherOnlySimData = False	## Seen in M1 cfg.py 
-cfg.saveCellSecs = True			## Seen in M1 cfg.py 
-cfg.saveCellConns = True		## Seen in M1 cfg.py 
+cfg.saveCellSecs = False			## Seen in M1 cfg.py 
+cfg.saveCellConns = False		## Seen in M1 cfg.py 
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
 #------------------------------------------------------------------------------
 
-cfg.analysis['plotTraces'] = {'include': [(pop,0) for pop in allpops]} 		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+cfg.analysis['plotTraces'] = {'include': [(pop,0) for pop in alltypes], 'saveFig': True, 'showFig': False} 		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram']}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 #------------------------------------------------------------------------------
 # Cells
 #------------------------------------------------------------------------------
-cfg.weightNormThreshold = 4.0  # maximum weight normalization factor with respect to the soma
+cfg.weightNormThreshold = 5.0  # maximum weight normalization factor with respect to the soma
 
 #------------------------------------------------------------------------------
 # Synapses
@@ -86,7 +88,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
-cfg.scaleDensity = 0.01 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.05 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -99,7 +101,7 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 
 # Cortical
 cfg.addConn = 1
-cfg.EEGain = 1.0 * 0.25
+cfg.EEGain = 1.0 
 cfg.EIGain = 1.0 
 cfg.IEGain = 1.0 
 cfg.IIGain = 1.0 
@@ -129,8 +131,8 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 0.5, 'I': 0.5, 'ThalE': 0.5, 'ThalI': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
+cfg.weightBkg = {'E': 2.0, 'I': 2.0, 'ThalE': 2.0, 'ThalI': 2.0}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 80, 'ThalI': 80}
 
 
 #------------------------------------------------------------------------------

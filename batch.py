@@ -83,66 +83,19 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
 def EIbalance():
     params = specs.ODict()
 
-    params[('ratesLong', 'TPO', 1)] = [3, 4] #[2, 4]#[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'TVL', 1)] = [1, 1] #[1, 2]#[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'S1', 1)] =  [3, 4] #[2, 4] #[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'S2', 1)] =  [3, 4] #[2, 4] #[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'cM1', 1)] = [1, 1] #[1, 2]#[2,2,2,4,2,4,4,4]
-    params[('ratesLong', 'M2', 1)] =  [1, 1] #[1, 2] #[2,2,2,4,2,4,4,4]
-        
-    params['EEGain'] = [0.5,0.6] #[0.6, 0.8] #[0.8, 1.0]
-
-    # # L2/3+4
-    params[('IEweights',0)] =  [0.8, 1.0, 1.2]
-    params[('IIweights',0)] =  [0.8, 1.0, 1.2]   
-    # L5
-    params[('IEweights',1)] = [0.8, 1.0, 1.2]   
-    params[('IIweights',1)] =  [0.8, 1.0, 1.2]
-    # L6
-    # params[('IEweights',2)] =  [0.8, 1.0, 1.2]  
-    # params[('IIweights',2)] =  [0.8, 1.0, 1.2]
-
-    params['ihGbar'] = [0.0, 0.25, 1.0]
-
-    groupedParams = [('ratesLong', 'TPO', 1), ('ratesLong', 'TVL', 1),
-                    ('ratesLong', 'S1', 1), ('ratesLong', 'S2', 1),
-                    ('ratesLong', 'cM1', 1), ('ratesLong', 'M2', 1)]# ['IEGain','IIGain'] #'EEGain', 'EPVGain', 'ESOMGain', 'PVEGain', 'SOMEGain', 'PVIGain', 'SOMIGain']
+    params['EEGain'] = [0.5, 1.0, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5]
+    params[('weightBkg', 'E')] = [1.0, 2.0, 3.0]
+    params[('weightBkg', 'I')] = [1.0, 2.0, 3.0]
+    
+    groupedParams =  []
 
     # initial config
     initCfg = {}
-    initCfg['duration'] = 2.0*1e3
-    initCfg['ihModel'] = 'migliore'  # ih model
-
-    initCfg['ihGbarBasal'] = 1.0 # multiplicative factor for ih gbar in PT cells
-    initCfg['ihlkc'] = 0.2 # ih leak param (used in Migliore)
-    initCfg['ihLkcBasal'] = 1.0 # multiplicative factor for ih lk in PT cells
-    initCfg['ihLkcBelowSoma'] = 0.01 # multiplicative factor for ih lk in PT cells
-    initCfg['ihlke'] = -86  # ih leak param (used in Migliore)
-    initCfg['ihSlope'] = 28  # ih leak param (used in Migliore)
-
-    initCfg['somaNa'] = 5.0  # somatic Na conduct
-    initCfg['dendNa'] = 0.3  # dendritic Na conduct (reduced to avoid dend spikes) 
-    initCfg['axonNa'] = 7   # axon Na conduct (increased to compensate) 
-    initCfg['axonRa'] = 0.005
-    initCfg['gpas'] = 0.5
-    initCfg['epas'] = 0.9
-
-    initCfg[('pulse', 'pop')] = 'S2'
-    initCfg[('pulse', 'rate')] = 10.0
-    initCfg[('pulse', 'start')] = 1000.0
-    initCfg[('pulse', 'end')] = 1100.0
-    initCfg[('pulse', 'noise')] = 0.8
-
-    initCfg['IEdisynapticBias'] = None
-
-    initCfg['weightNormThreshold'] = 4.0
-    initCfg['IEGain'] = 1.0
-    initCfg['IIGain'] = 1.0
-    initCfg['IPTGain'] = 1.0
-    initCfg['IIweights'] =  [1.0, 1.0, 1.0]
-
-    initCfg['saveCellSecs'] = False
-    initCfg['saveCellConns'] = False
+    initCfg['duration'] = 1.0 * 1e3
+    initCfg['scaleDensity'] = 0.05
     
     b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
 
@@ -881,8 +834,7 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-     
-    # b = EIbalance()
+    b = EIbalance()
     # b = longBalance()
     # b = longPopStims()
     # b = recordedLongPopStims() 
@@ -892,30 +844,29 @@ if __name__ == '__main__':
     # b = fIcurve()
     # b = EPSPs()
     # b = custom()
-
     #b = evolRates()
 
-    # b.batchLabel = 'v11_batch1' 
-    # b.saveFolder = 'data/'+b.batchLabel
-    # b.method = 'grid'  # evol
-    # setRunCfg(b, 'mpi_bulletin')
-    # b.run() # run batch
+    b.batchLabel = 'v11_batch7' 
+    b.saveFolder = 'data/'+b.batchLabel
+    b.method = 'grid'  # evol
+    setRunCfg(b, 'mpi_bulletin')
+    b.run() # run batch
 
     # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    popsWeightNorm =    {'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-                        'ITS4_reduced': ['ITS4'],
-                        'PV_reduced': ['PV2', 'SOM2'],
-                        'VIP_reduced': ['VIP2'],
-                        'NGF_reduced': ['NGF2'],
-                        'RE_reduced': ['IRE', 'TC', 'HTC']}
+    # popsWeightNorm =    {'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+    #                     'ITS4_reduced': ['ITS4'],
+    #                     'PV_reduced': ['PV2', 'SOM2'],
+    #                     'VIP_reduced': ['VIP2'],
+    #                     'NGF_reduced': ['NGF2'],
+    #                     'RE_reduced': ['IRE', 'TC', 'HTC']}
  
-    batchIndex = 1
-    for k, v in popsWeightNorm.items(): 
-        b = weightNorm(pops=v, rule=k)
-        b.batchLabel = 'v11_batch'+str(batchIndex) 
-        b.saveFolder = 'data/'+b.batchLabel
-        b.method = 'grid'  # evol
-        setRunCfg(b, 'mpi_bulletin')
-        b.run()  # run batch
-        batchIndex += 1
+    # batchIndex = 1
+    # for k, v in popsWeightNorm.items(): 
+    #     b = weightNorm(pops=v, rule=k)
+    #     b.batchLabel = 'v11_batch'+str(batchIndex) 
+    #     b.saveFolder = 'data/'+b.batchLabel
+    #     b.method = 'grid'  # evol
+    #     setRunCfg(b, 'mpi_bulletin')
+    #     b.run()  # run batch
+    #     batchIndex += 1
 
