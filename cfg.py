@@ -120,8 +120,8 @@ cfg.IIweights = [1.0, 1.0, 1.0]
 cfg.addIntraThalamicConn = 1
 cfg.addIntraThalamicConn = 1
 cfg.addCorticoThalamicConn = 1
-cfg.addCoreThalamoCorticalConn = 1
-cfg.addMatrixThalamoCorticalConn = 1
+cfg.addThalamoCorticalConn = 1
+#cfg.addMatrixThalamoCorticalConn = 1
 
 cfg.intraThalamicGain = 1.0
 cfg.intraThalamicGain = 1.0
