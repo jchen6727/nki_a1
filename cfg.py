@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim34'
+cfg.simLabel = 'v11_sim35'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -57,13 +57,12 @@ cfg.saveCellConns = False		## Seen in M1 cfg.py
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
-#------------------------------------------------------------------------------
+#----------------------------------------------------------------------------- 
 
-popGids = [0, 32, 100, 104, 108, 1000, 1012, 1048, 1088, 1120, 1288, 1452, 1456, 1476, 1480,
-        1624, 1632, 1644, 1648, 1788, 1928, 1952, 1976, 1980, 1984, 2184, 2388, 2400, 2416, 2424, 2448, 2476, 2484, 2516]
+cellGids = {'NGF1': 0, 'IT2': 45, 'SOM2': 146, 'PV2': 147, 'VIP2': 151, 'NGF2': 155, 'IT3': 158, 'SOM3': 1496, 'PV3': 1517, 'VIP3': 1569, 'NGF3': 1632, 'ITP4': 1677, 'ITS4': 1928, 'SOM4': 2179, 'PV4': 2186, 'VIP4': 2214, 'NGF4': 2218, 'IT5A': 2222, 'SOM5A': 2437, 'PV5A': 2450, 'VIP5A': 2472, 'NGF5A': 2475, 'IT5B': 2477, 'PT5B': 2689, 'SOM5B': 2901, 'PV5B': 2934, 'VIP5B': 2974, 'NGF5B': 2979, 'IT6': 2986, 'CT6': 3288, 'SOM6': 3590, 'PV6': 3609, 'VIP6': 3634, 'NGF6': 3637, 'TC': 3648, 'TCM': 3683, 'HTC': 3729, 'IRE': 3740, 'IREM': 3786}
 
-popGidRecord = [0, 1000, 1012, 1048, 1088, 1120, 1288, 2424, 2448, 2476, 2484, 2516]
 
+popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
 cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster

@@ -131,7 +131,7 @@ netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
 for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
     netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.5
 for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 3.5
+    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 6
 
 
 #------------------------------------------------------------------------------
