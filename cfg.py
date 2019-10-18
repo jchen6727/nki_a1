@@ -39,7 +39,7 @@ cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-#cfg.recordLFP = [[150,250,150], [150,500,150], [150,750,150], [150,1000,150], [150,1250,150], [150,1500,150], [150,1750,150]]
+#cfg.recordLFP = [[200, y, 200] for y in range(0, 200, 2000)]
 
 #------------------------------------------------------------------------------
 # Saving
@@ -94,7 +94,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
-cfg.scaleDensity = 0.05 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ cfg.IEGain = 0.5
 cfg.IIGain = 0.5
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
-cfg.IEweights = [0.75, 1.0, 0.75]
+cfg.IEweights = [0.75, 0.75, 0.75]
 cfg.IIweights = [1.0, 1.0, 1.0]
 
 # Thalamic
@@ -124,9 +124,9 @@ cfg.addThalamoCorticalConn = 1
 #cfg.addMatrixThalamoCorticalConn = 1
 
 cfg.intraThalamicGain = 1.0
-cfg.intraThalamicGain = 1.0
+cfg.intraThalamicGain = 0.5
 cfg.corticoThalamicGain = 1.0
-cfg.thalamoCorticalGain = 2.0
+cfg.thalamoCorticalGain = 2.5
 #cfg.matrixThalamoCorticalGain = 2.0
 
 
