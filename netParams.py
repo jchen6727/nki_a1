@@ -119,8 +119,11 @@ netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 
 ## Set weightNorm for each cell type
 for ruleLabel in netParams.cellParams.keys():
-    netParams.addCellParamsWeightNorm(ruleLabel, 'cells/'+ruleLabel+'_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
+    netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
 
+# invert TC and HTC weightNorm -- for some reason are negative! (temporary fix!)
+netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'] *= -1
+netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'] *= -1
 
 #------------------------------------------------------------------------------
 # Population parameters

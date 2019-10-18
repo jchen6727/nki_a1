@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim22'
+cfg.simLabel = 'v11_sim23'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -65,7 +65,7 @@ popGids = [0, 32, 100, 104, 108, 1000, 1012, 1048, 1088, 1120, 1288, 1452, 1456,
 popGidRecord = [0, 1000, 1012, 1048, 1088, 1120, 1288, 2424, 2448, 2476, 2484, 2516]
 
 
-cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(8,14)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram']}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
@@ -113,7 +113,7 @@ cfg.IEGain = 0.5
 cfg.IIGain = 0.5
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
-cfg.IEweights = [1.0, 1.0, 1.0]
+cfg.IEweights = [0.5, 1.0, 0.75]
 cfg.IIweights = [1.0, 1.0, 1.0]
 
 # Thalamic
@@ -137,7 +137,7 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.1}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 4.0*10, 'ThalI': 0.0*1}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 4.0*10, 'ThalI': 2.0*10}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 20, 'ThalI': 20}
 
 
