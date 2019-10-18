@@ -361,10 +361,10 @@ wmat['PT5B']['TCM']	= 0.7
 ## Probabilities 
 
 # note for I cells target PV, SOM and NGF for now
-pmat['TC']['IT4']    = 0.25
-pmat['HTC']['IT4'] = 0.25
-pmat['TC']['IT4S']    = 0.25
-pmat['HTC']['IT4S']   = 0.25
+pmat['TC']['ITP4']    = 0.25
+pmat['HTC']['ITP4'] = 0.25
+pmat['TC']['ITS4']    = 0.25
+pmat['HTC']['ITS4']   = 0.25
 pmat['TC']['PT5B']   = 0.1   #*thalfctr
 pmat['HTC']['PT5B']  = 0.1   #*thalfctr
 pmat['TC']['IT5A']   = 0.1   #*thalfctr

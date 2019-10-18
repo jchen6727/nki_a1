@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -39,13 +39,13 @@ cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-#cfg.recordLFP = [[200, y, 200] for y in range(0, 200, 2000)]+[[200, 2500, 200], [200,2700,200]]
+cfg.recordLFP = [[200, y, 200] for y in range(0, 200, 2000)]+[[200, 2500, 200], [200,2700,200]]
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim36'
+cfg.simLabel = 'v11_sim37'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -108,7 +108,7 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.addConn = 1
 cfg.EEGain = 1.0 
 cfg.EIGain = 0.75
-cfg.IEGain = 0.5
+cfg.IEGain = 0.75
 cfg.IIGain = 0.5
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
@@ -122,7 +122,6 @@ cfg.addCorticoThalamicConn = 1
 cfg.addThalamoCorticalConn = 1
 #cfg.addMatrixThalamoCorticalConn = 1
 
-cfg.intraThalamicGain = 1.0
 cfg.intraThalamicGain = 0.5
 cfg.corticoThalamicGain = 1.0
 cfg.thalamoCorticalGain = 2.5

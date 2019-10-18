@@ -126,10 +126,10 @@ netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 
 # increase some weightNorms
-netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 2
+netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 1.5
 netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
 for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.5
+    netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.0
 for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
     netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 3
 
@@ -458,7 +458,7 @@ if cfg.addBkgConn:
         'sec': 'soma', 
         'loc': 0.5,
         'synMech': ESynMech,
-        'weight': cfg.weightBkg['E']*2.0,
+        'weight': cfg.weightBkg['E']*1.0,
         'synMechWeightFactor': cfg.synWeightFractionEE,
         'delay': cfg.delayBkg}
 
