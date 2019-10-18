@@ -39,13 +39,13 @@ cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-#cfg.recordLFP = [[200, y, 200] for y in range(0, 200, 2000)]
+cfg.recordLFP = [[200, y, 200] for y in range(0, 200, 2000)]+[[200, 2500, 200], [200,2700,200]]
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim29'
+cfg.simLabel = 'v11_sim31'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -67,7 +67,7 @@ popGidRecord = [0, 1000, 1012, 1048, 1088, 1120, 1288, 2424, 2448, 2476, 2484, 2
 
 cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
-#cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram']}
+cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 #------------------------------------------------------------------------------
