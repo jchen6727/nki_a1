@@ -126,8 +126,8 @@ netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 
 # increase some weightNorms
-netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 2
-netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 2
+netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 3
+netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
 
 
 
