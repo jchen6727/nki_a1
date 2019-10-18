@@ -122,8 +122,8 @@ for ruleLabel in netParams.cellParams.keys():
     netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
 
 # invert TC and HTC weightNorm -- for some reason are negative! (temporary fix!)
-netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'] *= -1
-netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'] *= -1
+netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'][0] *= -1
+netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 
 #------------------------------------------------------------------------------
 # Population parameters
