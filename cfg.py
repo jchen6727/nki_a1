@@ -30,7 +30,7 @@ cfg.hParams['celsius'] = 37
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF4', 'ITP4', 'ITS4', 'VIP4', 'IT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF3', 'IT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
 
 alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE']
 
@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim23'
+cfg.simLabel = 'v11_sim24'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -65,7 +65,7 @@ popGids = [0, 32, 100, 104, 108, 1000, 1012, 1048, 1088, 1120, 1288, 1452, 1456,
 popGidRecord = [0, 1000, 1012, 1048, 1088, 1120, 1288, 2424, 2448, 2476, 2484, 2516]
 
 
-cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(8,14)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(8,14)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'include': ['timeSeries', 'PSD', 'spectrogram']}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
@@ -106,7 +106,7 @@ cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 
 # Cortical
-cfg.addConn = 0
+cfg.addConn = 1
 cfg.EEGain = 1.0 
 cfg.EIGain = 0.5
 cfg.IEGain = 0.5
@@ -134,10 +134,10 @@ cfg.matrixThalamoCorticalGain = 1.0
 # Background inputs
 #------------------------------------------------------------------------------
 cfg.addBkgConn = 1
-cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.1}  # firing rate random noise
+cfg.noiseBkg = {'A1': 1.0, 'thalamus': 1.0}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 4.0*10, 'ThalI': 2.0*10}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.weightBkg = {'E': 3.0, 'I': 2.0, 'ThalE': 4.0*10, 'ThalI': 1.0*10}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 20, 'ThalI': 20}
 
 
