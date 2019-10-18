@@ -45,7 +45,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim32'
+cfg.simLabel = 'v11_sim33'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -108,12 +108,12 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 # Cortical
 cfg.addConn = 1
 cfg.EEGain = 1.0 
-cfg.EIGain = 1.0
+cfg.EIGain = 0.75
 cfg.IEGain = 0.5
 cfg.IIGain = 0.5
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
-cfg.IEweights = [0.5, 0.75, 0.5]
+cfg.IEweights = [0.75, 0.75, 0.5]
 cfg.IIweights = [1.5, 1.0, 1.0]
 
 # Thalamic

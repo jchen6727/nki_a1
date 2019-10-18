@@ -129,9 +129,9 @@ netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 2.5
 netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
 for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 1.5
+    netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 2.5
 for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 1.5
+    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 2.5
 
 
 #------------------------------------------------------------------------------
