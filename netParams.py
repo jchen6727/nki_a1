@@ -387,15 +387,15 @@ if cfg.addCorticoThalamicConn:
 
 #------------------------------------------------------------------------------
 ## Thalamocortical 
-if cfg.addCoreThalamoCorticalConn:
+if cfg.addThalamoCorticalConn:
     for pre in TEpops+TIpops:
         for post in Epops+Ipops:
             if post in pmat[pre]:
                 # for syns use ESynMech, SOMESynMech and SOMISynMech 
-                if pre in TEpops:     # E->E
+                if pre in TEpops:     # E->E/I
                     syn = ESynMech
                     synWeightFactor = cfg.synWeightFractionEE
-                elif post in TEpops:  # I->E
+                elif post in Epops:  # I->E
                     syn = SOMESynMech
                     synWeightFactor = cfg.synWeightFractionIE
                 else:                  # I->I
@@ -407,7 +407,7 @@ if cfg.addCoreThalamoCorticalConn:
                     'postConds': {'pop': post},
                     'synMech': syn,
                     'probability': pmat[pre][post],
-                    'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
+                    'weight': wmat[pre][post] * cfg.thalamoCorticalGain, 
                     'synMechWeightFactor': synWeightFactor,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,

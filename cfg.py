@@ -126,8 +126,8 @@ cfg.addMatrixThalamoCorticalConn = 1
 cfg.intraThalamicGain = 1.0
 cfg.intraThalamicGain = 1.0
 cfg.corticoThalamicGain = 1.0
-cfg.coreThalamoCorticalGain = 2.0
-cfg.matrixThalamoCorticalGain = 2.0
+cfg.thalamoCorticalGain = 2.0
+#cfg.matrixThalamoCorticalGain = 2.0
 
 
 #------------------------------------------------------------------------------
