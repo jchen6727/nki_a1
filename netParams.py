@@ -131,7 +131,7 @@ netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
 for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
     netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.5
 for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 6
+    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 3
 
 
 #------------------------------------------------------------------------------
@@ -448,6 +448,17 @@ if cfg.addBkgConn:
         'loc': 0.5,
         'synMech': ESynMech,
         'weight': cfg.weightBkg['E'],
+        'synMechWeightFactor': cfg.synWeightFractionEE,
+        'delay': cfg.delayBkg}
+
+    # connect stim sources to target cells
+    netParams.stimTargetParams['bkgE->ITS4'] =  {
+        'source': 'bkgE', 
+        'conds': {'cellType': ['ITS4']},
+        'sec': 'soma', 
+        'loc': 0.5,
+        'synMech': ESynMech,
+        'weight': cfg.weightBkg['E']*2.0,
         'synMechWeightFactor': cfg.synWeightFractionEE,
         'delay': cfg.delayBkg}
 
