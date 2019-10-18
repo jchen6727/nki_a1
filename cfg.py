@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.6*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -39,13 +39,13 @@ cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-cfg.recordLFP = [[200, y, 200] for y in range(0, 200, 2000)]+[[200, 2500, 200], [200,2700,200]]
+cfg.recordLFP = [[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim37'
+cfg.simLabel = 'v11_sim38'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -53,7 +53,7 @@ cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
 cfg.gatherOnlySimData = False	## Seen in M1 cfg.py 
 cfg.saveCellSecs = False			## Seen in M1 cfg.py 
-cfg.saveCellConns = False		## Seen in M1 cfg.py 
+cfg.saveCellConns = 0		## Seen in M1 cfg.py 
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
@@ -65,9 +65,11 @@ cellGids = {'NGF1': 0, 'IT2': 45, 'SOM2': 146, 'PV2': 147, 'VIP2': 151, 'NGF2': 
 popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
 cfg.analysis['plotTraces'] = {'include': popGidRecord, 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (12,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300, 'timeRange':[100,600]}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
+
+
 
 #------------------------------------------------------------------------------
 # Cells

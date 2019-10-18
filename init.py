@@ -26,3 +26,5 @@ cfg, netParams = sim.readCmdLineArgs(simConfigDefault='cfg.py', netParamsDefault
 #sim.create(netParams, cfg)
 #sim.gatherData()
 sim.createSimulateAnalyze(netParams, cfg)
+
+sim.analysis.plotLFP(plots=['timeSeries', 'PSD', 'spectrogram'], timeRange =[100,600], saveFig=True, electrodes=list(range(0,6)))
