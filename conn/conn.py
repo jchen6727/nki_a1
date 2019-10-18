@@ -378,23 +378,36 @@ pmat['HTC']['CT6']   = 0.15  #*thalfctr
 pmat['TC']['PV4']    = 0.25
 pmat['HTC']['PV4']   = 0.25
 pmat['TC']['SOM4']    = 0.25
-pmat['HTC']['SOM4']   = 0.25
+pmat['HTC']['SOM4'] = 0.25
+pmat['TC']['NGF4']    =	0.25 #	
+pmat['HTC']['NGF4']   =	0.25 #	
 pmat['TC']['PV5A']    = 0.1   #*thalfctr
 pmat['HTC']['PV5A']   = 0.1   #*thalfctr
 pmat['TC']['SOM5A']   = 0.1   #*thalfctr
-pmat['HTC']['SOM5A']   = 0.1  #*thalfctr
+pmat['HTC']['SOM5A'] = 0.1  #*thalfctr
+pmat['TC']['NGF5A']    =	0.1 #	
+pmat['HTC']['NGF5A']   =	0.1 #	
 pmat['TC']['PV5B']    = 0.1   #*thalfctr
 pmat['HTC']['PV5B']   = 0.1   #*thalfctr
 pmat['TC']['SOM5B']   = 0.1   #*thalfctr
-pmat['HTC']['SOM5B']   = 0.1   #*thalfctr
+pmat['HTC']['SOM5B'] = 0.1  #*thalfctr
+pmat['TC']['NGF5B']    =	0.1 #	
+pmat['HTC']['NGF5B']   =	0.1 #	
 pmat['TC']['PV6']     = 0.15  #*thalfctr
 pmat['HTC']['PV6']   = 0.15  #*thalfctr
 pmat['TC']['SOM6']     = 0.15  #*thalfctr
-pmat['HTC']['SOM6']   = 0.15  #*thalfctr
+pmat['HTC']['SOM6'] = 0.15  #*thalfctr
+pmat['TC']['NGF6']    =	0.15 #	
+pmat['HTC']['NGF6']   =	0.15 #	
+
 
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
+wmat['TC']['ITP4']    = 0.6
+wmat['HTC']['ITP4'] = 0.6
+wmat['TC']['ITS4']    = 0.6
+wmat['HTC']['ITS4']   = 0.6
 wmat['TC']['PT5B']   =	0.6  #* pmat[TC][E5B] / pmat[TC][E4]	
 wmat['HTC']['PT5B'] = 0.6  #* pmat[TC][E5B] / pmat[TC][E4]
 wmat['TC']['IT5A']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
