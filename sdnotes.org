@@ -135,9 +135,10 @@ Plotting raster...
   Done; plotting time = 8.38 s
 
 Total time = 785.50 s
-* 11Oct2019 Preparing SfN poster
+* 1Oct2019 Preparing SfN poster
 ** added thalamic pops and conn
 ** run sim at scale=0.05, size=400um
+
 Creating network of 39 cell populations on 1 hosts...
   Number of cells on node 0: 2518 
   Done; cell creation time = 18.45 s.
@@ -167,6 +168,27 @@ Analyzing...
 
 - raster shows activity and osc in all layers
 - many cells show depol block
+* 28oct2019 Feedback from Peter on poster
+L5 CT
+Thalamus 30% inhibitors local (disinhibit)
+SOM fire antiphase to PV
+TC->L4 cx FF inh Zador lab (which cell types) - wider projection
+TC->low L3 as well
+TC -> L5 prob not
+TC -> L6 science paper
+TCM -> L1(sure) 3 (don’t know) - discuss with lady in 2 weeks
+Matrix (whole A1) more broadly tuned than core (1-2mm) - can simulate far away region (no core)
+A1 = 8mm wide; core only 1mm; matrix all 
+Low freq vs high freq A1 circuits - different 
+Cx -> thalamus ok
+Dendritic spikes - larkum
+L1 flatter, L3 more oscillator
+Layerwise data  for csd - and spike data but need to sort;  
+Mountain sort - py tool
+Email asking for firing rates papers 
+— supra granular low firing but high gamma (subthres)
+
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
