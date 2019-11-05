@@ -95,7 +95,7 @@ class sTC (Cell):
     self.soma.gkbar_hh2ad = 0.01
     self.soma.gmax_ittc = 2.2e-3
     self.soma.gmax_htc = 2e-5 # low Ih for slow oscillations
-    self.soma.eh = -40.0  # Note: commented out since modified htc.mod (now htc_new.mod) to avoid conflict with prev ih
+    # self.soma.eh = -40.0  # Note: commented out since modified htc.mod (now htc_new.mod) to avoid conflict with prev ih
     self.soma.gmax_ia = 1e-3
     h.erev_kl = self.soma.ek
     self.soma.gmax_kl = 0.012e-3 # 1e-5
