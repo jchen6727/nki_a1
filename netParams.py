@@ -121,18 +121,21 @@ netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 for ruleLabel in netParams.cellParams.keys():
     netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
 
-# invert TC and HTC weightNorm -- for some reason are negative! (temporary fix!)
-netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'][0] *= -1
-netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
 
-# increase some weightNorms
-netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 1.5
-netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
-for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.0
-for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
-    netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 3
+''' Temporary fixes for SfN19 poster
 
+# # invert TC and HTC weightNorm -- for some reason are negative! (temporary fix!)
+# netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'][0] *= -1
+# netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
+
+# # increase some weightNorms
+# netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 1.5
+# netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
+# for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
+#     netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.0
+# for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
+#     netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 3
+'''
 
 #------------------------------------------------------------------------------
 # Population parameters
