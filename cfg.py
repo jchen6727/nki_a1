@@ -53,7 +53,7 @@ cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
 cfg.gatherOnlySimData = False	## Seen in M1 cfg.py 
 cfg.saveCellSecs = False			## Seen in M1 cfg.py 
-cfg.saveCellConns = 0		## Seen in M1 cfg.py 
+cfg.saveCellConns = 1		## Seen in M1 cfg.py 
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
@@ -94,7 +94,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
-cfg.scaleDensity = 0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -108,12 +108,12 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 # Cortical
 cfg.addConn = 1
 cfg.EEGain = 1.0 
-cfg.EIGain = 0.75
-cfg.IEGain = 0.75
-cfg.IIGain = 0.5
+cfg.EIGain = 1.0 #0.75
+cfg.IEGain = 1.0 #0.75
+cfg.IIGain = 1.0 #0.5
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
-cfg.IEweights = [0.75, 0.75, 0.5]
+cfg.IEweights = [1.0, 1.0, 1.0] # [0.75, 0.75, 0.5]
 cfg.IIweights = [1.5, 1.0, 1.0]
 
 # Thalamic
@@ -123,9 +123,9 @@ cfg.addCorticoThalamicConn = 1
 cfg.addThalamoCorticalConn = 1
 #cfg.addMatrixThalamoCorticalConn = 1
 
-cfg.intraThalamicGain = 0.5
+cfg.intraThalamicGain = 1.0 #0.5
 cfg.corticoThalamicGain = 1.0
-cfg.thalamoCorticalGain = 2.5
+cfg.thalamoCorticalGain = 1.0 #2.5
 #cfg.matrixThalamoCorticalGain = 2.0
 
 

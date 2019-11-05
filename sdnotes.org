@@ -170,8 +170,8 @@ Analyzing...
 - many cells show depol block
 * 28oct2019 Feedback from Peter on poster
 L5 CT
-Thalamus 30% inhibitors local (disinhibit)
 SOM fire antiphase to PV
+Thalamus 30% inhibitors local (disinhibit)
 TC->L4 cx FF inh Zador lab (which cell types) - wider projection
 TC->low L3 as well
 TC -> L5 prob not
@@ -187,7 +187,11 @@ Layerwise data  for csd - and spike data but need to sort;
 Mountain sort - py tool
 Email asking for firing rates papers 
 — supra granular low firing but high gamma (subthres)
-
+* 05nov2019 Issues with conn from sfn
+** discrepancy between conn rules and conn matrix
+was due to not using plotConn(synOrConn = 'conn') -- was counting eg AMPA+NMDA, so 2x prob
+** extremely high probs NGF4->VIP5B and NG5B->VIP4
+due to tesiting on very small net, with just 1 or 2 cells in each pop
 
 * CELL TYPES
 ** Budinger et al 2018
