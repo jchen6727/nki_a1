@@ -846,27 +846,27 @@ if __name__ == '__main__':
     # b = custom()
     #b = evolRates()
 
-    b.batchLabel = 'v11_batch7' 
-    b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid'  # evol
-    setRunCfg(b, 'mpi_bulletin')
-    b.run() # run batch
+    # b.batchLabel = 'v11_batch7' 
+    # b.saveFolder = 'data/'+b.batchLabel
+    # b.method = 'grid'  # evol
+    # setRunCfg(b, 'mpi_bulletin')
+    # b.run() # run batch
 
     # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    # popsWeightNorm =    {'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+    popsWeightNorm =    {#'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
     #                     'ITS4_reduced': ['ITS4'],
     #                     'PV_reduced': ['PV2', 'SOM2'],
     #                     'VIP_reduced': ['VIP2'],
     #                     'NGF_reduced': ['NGF2'],
-    #                     'RE_reduced': ['IRE', 'TC', 'HTC']}
+                         'RE_reduced': ['IRE', 'TC', 'HTC']}
  
-    # batchIndex = 1
-    # for k, v in popsWeightNorm.items(): 
-    #     b = weightNorm(pops=v, rule=k)
-    #     b.batchLabel = 'v11_batch'+str(batchIndex) 
-    #     b.saveFolder = 'data/'+b.batchLabel
-    #     b.method = 'grid'  # evol
-    #     setRunCfg(b, 'mpi_bulletin')
-    #     b.run()  # run batch
-    #     batchIndex += 1
+    batchIndex = 6
+    for k, v in popsWeightNorm.items(): 
+        b = weightNorm(pops=v, rule=k)
+        b.batchLabel = 'v11_batch'+str(batchIndex) 
+        b.saveFolder = 'data/'+b.batchLabel
+        b.method = 'grid'  # evol
+        setRunCfg(b, 'mpi_bulletin')
+        b.run()  # run batch
+        batchIndex += 1
 
