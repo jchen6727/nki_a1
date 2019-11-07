@@ -1,0 +1,33 @@
+{
+    "batch": {
+        "batchLabel": "compare_",
+        "cfgFile": "cfg.py",
+        "evolCfg": {
+            "fitnessFunc": "removed"
+        },
+        "initCfg": {},
+        "method": "grid",
+        "netParamsFile": "netParams_OLD.py",
+        "params": [
+            {
+                "label": "amp",
+                "values": [
+                    0.05,
+                    0.06,
+                    0.07,
+                    0.08,
+                    0.09,
+                    0.1,
+                    0.11
+                ]
+            }
+        ],
+        "runCfg": {
+            "script": "init.py",
+            "skip": true,
+            "type": "mpi_bulletin"
+        },
+        "saveFolder": "data_old",
+        "seed": null
+    }
+}

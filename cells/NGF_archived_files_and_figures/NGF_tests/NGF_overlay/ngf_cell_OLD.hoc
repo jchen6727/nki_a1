@@ -1,0 +1,69 @@
+begintemplate ngfcell
+public init
+public soma
+
+create soma
+
+
+proc init() {
+
+	soma {
+		Ra = 14
+		nseg = 1
+		cm = 1.8 //1.4
+
+
+		insert ch_Navngf
+		gmax_ch_Navngf=3.7860265 //gNasoma //0.10*gna_scale
+		ena = 55 
+
+		insert hd
+		gbar = 1e-05
+
+		insert ch_Kdrfastngf
+		gmax_ch_Kdrfastngf=0.15514516// kdrf 
+
+		//insert ch_Kdrslow
+		//gmax_ch_Kdrslow=0.15514516 //kdrf 
+
+		//insert ch_leak
+		//gmax_ch_leak = 8.470825e-05 //gleak
+		//e_ch_leak =-60
+
+		insert pas
+
+		insert iconc_Ca
+		catau_iconc_Ca = 10
+		caiinf_iconc_Ca = 5.e-6
+
+		insert ch_KvAngf
+		gmax_ch_KvAngf = 5.2203905e-06 //gKvA
+
+		insert ch_CavN  // HAV-N- Ca channel
+		gmax_ch_CavN =  0.00058169587 // gCavN
+
+		insert ch_CavL 
+		gmax_ch_CavL=0.056108352 //gCavL
+
+		insert ch_KCaS
+		gmax_ch_KCaS=4.5152237e-07 //gKCaS
+
+		insert ch_KvCaB
+		gmax_ch_KvCaB =1.0235317e-06 //gKvCaB
+
+		ek=-90
+		eca=130
+	}
+
+}
+
+
+
+
+endtemplate ngfcell
+
+
+
+
+
+
