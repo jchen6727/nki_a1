@@ -26816,6 +26816,7 @@ thx!
 ** Version control: 
 *** cells e065977 (resolved merge conflict in netParams.py)
 *** 9390a28..4da8ffc  cells -> cells (CT5B cells)
+*** cells a676dc0 added CT cells to L5A in cellParamLabels and popParams
 ** Merged 'salva' branch into 'cells' branch 
 *** git checkout cells (locally, on laptop, in ~/Desktop/NEUROSIM/A1)
 *** git merge salva
@@ -26858,5 +26859,14 @@ Automatic merge failed; fix conflicts and then commit the result.
 **** (NOTE: untested)
 **** copied CT6_A1_cellParams.pkl and renamed
 **** did not change geom
+** Fixed densities of E cells in L5A & L5B 
+*** netParams.py version 14
+*** in netParams.popParams section
+*** Kept evenly distributed densities (i.e. netParams.popParams['CT5B'] = {... 'density': (1/3)*density[('A1','E')][4])}
+** Added version info at the bottom of netParams.py (v14) 
+** Added CT5A & CT5B to Epops in netParams.py (v14) 
+
+
+
 ** [TO DO] Get new mod mechanisms for RE, TC, and HTC cells
 *** Get them from salva branch of A1 
