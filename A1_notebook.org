@@ -26812,3 +26812,33 @@ thx!
 **** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
 *** Transfer to cells directory and rename
 *** Do version control 
+* <2019-11-07 Thu -- CT5B cells added>
+** Version control: 
+*** cells e065977 (resolved merge conflict in netParams.py)
+** Merged 'salva' branch into 'cells' branch 
+*** git checkout cells (locally, on laptop, in ~/Desktop/NEUROSIM/A1)
+*** git merge salva
+**** ericagriffith% git merge salva
+Removing test_ngf.py
+Auto-merging netParams.py
+CONFLICT (content): Merge conflict in netParams.py
+Removing mod/HCN1.mod
+Removing A1_wire_model.py
+Automatic merge failed; fix conflicts and then commit the result.
+*** ^^ merge conflict with netParams.py (see above)
+*** Opened netParams.py and edited according to: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/resolving-a-merge-conflict-using-the-command-line
+*** git add .
+*** git commit -m 'resolved merge conflict in netParams.py'
+*** cells e065977
+** Add CT cells to L5B:
+*** Added CT5B cells to netParams.py
+**** Added to line 72, cellParamLabels = {...}
+**** 'CT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
+**** Added to netParams.popParams:
+***** netParams.popParams['CT5B'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'],   'density': 0.5*density[('A1','E')][5]}  # density is [5] because we are using same numbers for L5B ad L6 for CT cells? 
+***** did density as [5] because same as L6? see comment above?
+*** Add CT5B_A1_cellParams.pkl to cells subdir 
+**** Copied CT6_A1_cellParams.pkl and renamed to CT5B_A1_cellParams.pkl 
+**** Tested in cells/dend_edits subdir to make sure it works 
+**** no changes to geom -- is that okay? 
+*** version control:  
