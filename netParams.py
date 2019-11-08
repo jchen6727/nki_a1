@@ -90,7 +90,7 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
-    
+
 
 ## Import VIP cell rule from hoc file 
 netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
