@@ -27170,3 +27170,75 @@ make: *** Waiting for unfinished jobs....
 ** GOAL: Get network running locally (on my laptop)
 *** ISSUE #1: mod file access
 **** When I try to load any of the .hoc files, the mod file mechanisms won't load -- what is causing this? 
+**** Big time mod file problems -- not sure why, but nrnivmodl (in A1/mod) is not compiling all of the mod files. 
+**** List of files compiled individually: 
+***** iconc_Ca.mod
+***** iccr.mod
+***** ikscr.mod
+***** ipulse3.mod
+***** kBK.mod
+***** kap_BS.mod
+***** kapcb.mod
+***** kapin.mod
+***** kca.mod
+***** kcaolmw.mod
+***** kctin.mod
+***** kdmc_BS.mod
+***** kdr_BS.mod
+***** kdrbwb.mod (had a .c already, but no .lo -- now has .lo)
+***** kdrcr.mod
+***** kdrin.mod
+***** kl.mod
+***** km.mod
+***** kv.mod
+***** my_exp2syn.mod
+***** na_2.mod
+***** nafx.mod
+***** nap_sidi.mod
+***** nax_BS.mod
+***** naz.mod
+***** pasi.mod
+***** savedist.mod
+***** tia.mod
+***** vecstim.mod
+***** wrap.mod 
+
+**** List of files that will not compile: 
+***** icapr.mod
+Translating icapr.mod into icapr.c
+Couldn't open: aux_fun.inc
+Couldn't open aux_fun.inc
+make: *** [icapr.lo] Error 1
+make: *** Waiting for unfinished jobs....
+***** iholmkop.mod
+Couldn't open: aux_fun.inc
+make: *** [iholmkop.lo] Error 1
+make: *** Waiting for unfinished jobs....
+***** iholmw.mod
+Translating iholmw.mod into iholmw.c
+Couldn't open: aux_fun.inc
+Couldn't open aux_fun.inc
+make: *** [iholmw.lo] Error 1
+make: *** Waiting for unfinished jobs....
+***** ihpyrkop.mod
+***** kahppr.mod
+***** kaolmkop.mod
+***** kapyrkop.mod
+***** kcpr.mod
+***** kdrbwb.mod
+***** kdrolmkop.mod
+***** kdrpr.mod
+***** kdrpyrkop.mod
+***** nafbwb.mod
+***** nafolmkop.mod
+***** nafpr.mod
+***** nafpyrkop.mod
+
+
+**** mod files I'm not sure about: 
+***** libnrnmech.la
+***** mod_func.c and mod_func.lo, but no mod_func.mod? 
+***** nafcr.mod --> looks compiled; did I do this now, or was it like this beforehand??
+***** special --> pretty sure this is used in neuron stuff, created by the software; not going to touch
+
+**** Tried copying mod directory to desktop to see if it works there; don't know why nrnivmodl stops running part of the way through the directory, but it doesn't seem to make it past a certain point (stops due to some kind of error maybe?). Either way, "nrnivmodl <file.mod>" only puts that mechanism into 'special'; this is not a cumulative process. Doing "nrnivmodl <file1.mod> <file2.mod>" will put both file1 and fil2 into special, rendering both of those mechanisms usable. Have to figure out which mod files are causing the issue. 
