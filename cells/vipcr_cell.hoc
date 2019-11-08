@@ -154,9 +154,9 @@ proc biophys() {
 		cm       = 1.2            //microF/cm2
 		g_pas    = 1/20000
 		e_pas    = v_initcr
-		Ra       = 150 
+		Ra       = 150
 
-		insert Nafcr 
+		insert Nafcr
 		gnafbar_Nafcr= soma_nafcr
 
 		insert kdrcr
