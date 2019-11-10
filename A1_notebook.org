@@ -27166,7 +27166,7 @@ make: *** Waiting for unfinished jobs....
 *** Get A1/netParams.py to run???? what's with the mod files?? none of the .hoc files will load (e.g. vircr_cell.hoc)
 *** CT5A & CT5B need weightNorm.pkl files? 
 *** Thalamic interneuron model 
-* <2019-11-08 Fri -- Thal interneuron model >
+* <2019-11-08 Fri -- Fix mod file compile issues >
 ** GOAL: Get network running locally (on my laptop)
 *** ISSUE #1: mod file access
 **** When I try to load any of the .hoc files, the mod file mechanisms won't load -- what is causing this? 
@@ -27242,3 +27242,15 @@ make: *** Waiting for unfinished jobs....
 ***** special --> pretty sure this is used in neuron stuff, created by the software; not going to touch
 
 **** Tried copying mod directory to desktop to see if it works there; don't know why nrnivmodl stops running part of the way through the directory, but it doesn't seem to make it past a certain point (stops due to some kind of error maybe?). Either way, "nrnivmodl <file.mod>" only puts that mechanism into 'special'; this is not a cumulative process. Doing "nrnivmodl <file1.mod> <file2.mod>" will put both file1 and fil2 into special, rendering both of those mechanisms usable. Have to figure out which mod files are causing the issue. 
+
+*** ISSUE 1 FIXED:
+**** Added the file aux_fun.inc to mod and re-compiled. This file was mentioned in all the errors listed above. 
+**** Found this file on modeldb, from a paper from Sam (2011): https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=139421&file=/hpcdemo/aux_fun.inc#tabs-2
+* <2019-11-10 Sun -- Get updated model to run locally>
+** GOAL: Get network running locally (on my laptop) 
+** NEED: CT5A_A1_weightNorm.pkl and CT5B_A1_weightNorm.pkl: 
+*** Copied CT6_A1_weightNorm.pkl & re-named it for CT5A & CT5B
+*** Put these files into A1/cells
+** VERSION CONTROL:
+*** Add aux_fun.inc in A1/mod
+*** Add CT5A_A1_weightNorm.pkl and CT5B_A1_weightNorm.pkl 
