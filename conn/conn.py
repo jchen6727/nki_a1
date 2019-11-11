@@ -65,8 +65,8 @@ def loadData():
         'IT2': 'e2',                'PV2': 'i2P',   'SOM2': 'i2S',  'VIP2': 'i2H',  'NGF2': 'i2H', # L2
         'IT3': 'e2',                'PV3': 'i2P',   'SOM3': 'i2S',  'VIP3': 'i2H',  'NGF3': 'i2H',  # L3
         'ITP4': 'e4', 'ITS4': 'e4', 'PV4': 'i4P',   'SOM4': 'i4S',  'VIP4': 'i4H',  'NGF4': 'i4H',  # L4
-        'IT5A': 'e5',               'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H', # L5A
-        'IT5B': 'e5', 'PT5B': 'e5', 'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H', # L5B
+        'IT5A': 'e5', 'CT5A': 'e5', 'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H', # L5A
+        'IT5B': 'e5', 'PT5B': 'e5', 'CT5B': 'e5',    'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H', # L5B
         'IT6': 'e6',  'CT6': 'e6',  'PV6': 'i6P',   'SOM6': 'i6S',  'VIP6': 'i6H',  'NGF6': 'i6H'}  # L6
 
 
@@ -79,13 +79,25 @@ def loadData():
     with open('../data/conn/BBP_S1_pathways_physiology_factsheets_simplified.json', 'r') as f:
         data['BBP_S1']['connWeight'] = json.load(f)
     
+
+    # set correspondence between A1 pops and Allen V1 pops 
+    data['BBP_S1']['pops'] = {
+        'NGF1': 'i1H',                                                                              # L1
+        'IT2': 'e2',                'PV2': 'i2P',   'SOM2': 'i2S',  'VIP2': 'i2H',  'NGF2': 'i2H', # L2
+        'IT3': 'e2',                'PV3': 'i2P',   'SOM3': 'i2S',  'VIP3': 'i2H',  'NGF3': 'i2H',  # L3
+        'ITP4': 'e4', 'ITS4': 'e4', 'PV4': 'i4P',   'SOM4': 'i4S',  'VIP4': 'i4H',  'NGF4': 'i4H',  # L4
+        'IT5A': 'e5',               'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H', # L5A
+        'IT5B': 'e5', 'PT5B': 'e5', 'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H', # L5B
+        'IT6': 'e6',  'CT6': 'e6',  'PV6': 'i6P',   'SOM6': 'i6S',  'VIP6': 'i6H',  'NGF6': 'i6H'}  # L6
+
+
     return data
 
 # ----------------------------------------------------------------------------------------------------------------
 # Params
 # ----------------------------------------------------------------------------------------------------------------
 Etypes = ['IT', 'ITS4', 'PT', 'CT']
-Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT6', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
+Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT6', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']  # all layers
 
 Itypes = ['PV', 'SOM', 'VIP', 'NGF']
 Ipops = ['NGF1',                            # L1
@@ -338,14 +350,26 @@ wmat['IREM']['TCM'] =   0.83
 
 # --------------------------------------------------
 ## Probabilities 
-pmat['CT6']['TC']	= 0.1
-pmat['CT6']['HTC']	= 0.1
+pmat['CT5A']['TC']	= 0.1
+pmat['CT5A']['HTC']	= 0.1
+pmat['CT5A']['IRE']	= 0.1
+pmat['CT5B']['TC']	= 0.1
+pmat['CT5B']['HTC']	= 0.1
+pmat['CT5B']['IRE']	= 0.1
+pmat['CT5A']['TC']	= 0.1
+pmat['CT5B']['HTC']	= 0.1
 pmat['CT6']['IRE']	= 0.1
 pmat['IT5B']['TCM']	= 0.1
 pmat['PT5B']['TCM']	= 0.1
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
+wmat['CT5A']['TC']	= 0.7
+wmat['CT5A']['HTC']	= 0.7
+wmat['CT5A']['IRE']	= 0.23
+wmat['CT5B']['TC']	= 0.7
+wmat['CT5B']['HTC']	= 0.7
+wmat['CT5B']['IRE']	= 0.23
 wmat['CT6']['TC']	= 0.7
 wmat['CT6']['HTC']	= 0.7
 wmat['CT6']['IRE']	= 0.23
@@ -373,6 +397,10 @@ pmat['TC']['IT5B']   = 0.1   #*thalfctr
 pmat['HTC']['IT5B']  = 0.1   #*thalfctr
 pmat['TC']['IT6']    = 0.15  #*thalfctr
 pmat['HTC']['IT6']   = 0.15  #*thalfctr
+pmat['TC']['CT5A']    = 0.15  #*thalfctr
+pmat['HTC']['CT5A']   = 0.15  #*thalfctr
+pmat['TC']['CT5B']    = 0.15  #*thalfctr
+pmat['HTC']['CT5B']   = 0.15  #*thalfctr
 pmat['TC']['CT6']    = 0.15  #*thalfctr
 pmat['HTC']['CT6']   = 0.15  #*thalfctr
 pmat['TC']['PV4']    = 0.25
@@ -416,6 +444,10 @@ wmat['TC']['IT5B']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]
 wmat['HTC']['IT5B']  =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
 wmat['TC']['IT6']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
 wmat['HTC']['IT6'] = 0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['CT5A']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
+wmat['HTC']['CT5A']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['CT5B']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
+wmat['HTC']['CT5B']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
 wmat['TC']['CT6']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
 wmat['HTC']['CT6']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
 wmat['TC']['PV4']    =	0.23 #	
@@ -458,6 +490,8 @@ pmat['TCM']['IT5A']	= 0.15  #* thalfctr
 pmat['TCM']['IT5B']	= 0.15  #* thalfctr
 pmat['TCM']['PT5B']	= 0.15  #* thalfctr
 pmat['TCM']['IT6']	= 0.05  #* thalfctr
+pmat['TCM']['CT5A'] = 0.05  #* thalfctr
+pmat['TCM']['CT5B'] = 0.05  #* thalfctr
 pmat['TCM']['CT6'] = 0.05  #* thalfctr
 
 pmat['TCM']['NGF1']	= 0.25
@@ -489,6 +523,8 @@ wmat['TCM']['IT5A']	= 0.6  #* thalfctr
 wmat['TCM']['IT5B']	= 0.6  #* thalfctr
 wmat['TCM']['PT5B']	= 0.6  #* thalfctr
 wmat['TCM']['IT6']	= 0.6  #* thalfctr
+wmat['TCM']['CT5A'] = 0.6  #* thalfctr
+wmat['TCM']['CT5B'] = 0.6  #* thalfctr
 wmat['TCM']['CT6'] = 0.6  #* thalfctr
 
 wmat['TCM']['NGF1']	= 0.25
