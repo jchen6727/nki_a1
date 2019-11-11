@@ -272,7 +272,7 @@ if cfg.addConn:
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
-                'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                'probability': pmat[pre][post],#'%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
                 'weight': wmat[pre][post] * cfg.EEGain, 
                 'synMechWeightFactor': cfg.synWeightFractionEE,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -289,7 +289,7 @@ if cfg.addConn:
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
-                'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                'probability': pmat[pre][post], #'%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
                 'weight': wmat[pre][post] * cfg.EIGain, 
                 'synMechWeightFactor': cfg.synWeightFractionEI,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -553,4 +553,5 @@ v11 - Added thalamic conn from prev model
 v12 - Added CT cells to L5B
 v13 - Added CT cells to L5A
 v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
+v15 - Added cortical and thalamic conn to CT5A and CT5B 
 """

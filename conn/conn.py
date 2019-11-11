@@ -73,22 +73,25 @@ def loadData():
     # ----------------------------------------------------------------------------------------------------------------
     # load and pre-process BBP mouse S1 data (Markram et al, 2015; https://bbp.epfl.ch/nmc-portal/downloads
     data['BBP_S1'] = {}
+    # field to use -> data['BBP_S1']['connProb'][projection]['connection_probability']
+    # project format = '[pre pop]:[post pop]' e.g. 'L5_TTPC1:L23_SBC'
     with open('../data/conn/BBP_S1_pathways_anatomy_factsheets_simplified.json', 'r') as f:
-        data['BBP_S1']['connProb'] = json.load(f)
+        data['BBP_S1']['connProb'] = json.load(f) 
 
+    # field to use -> data['BBP_S1']['connWeight'][projection]['epsp_mean']
     with open('../data/conn/BBP_S1_pathways_physiology_factsheets_simplified.json', 'r') as f:
         data['BBP_S1']['connWeight'] = json.load(f)
     
 
     # set correspondence between A1 pops and Allen V1 pops 
     data['BBP_S1']['pops'] = {
-        'NGF1': 'i1H',                                                                              # L1
-        'IT2': 'e2',                'PV2': 'i2P',   'SOM2': 'i2S',  'VIP2': 'i2H',  'NGF2': 'i2H', # L2
-        'IT3': 'e2',                'PV3': 'i2P',   'SOM3': 'i2S',  'VIP3': 'i2H',  'NGF3': 'i2H',  # L3
-        'ITP4': 'e4', 'ITS4': 'e4', 'PV4': 'i4P',   'SOM4': 'i4S',  'VIP4': 'i4H',  'NGF4': 'i4H',  # L4
-        'IT5A': 'e5',               'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H', # L5A
-        'IT5B': 'e5', 'PT5B': 'e5', 'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H', # L5B
-        'IT6': 'e6',  'CT6': 'e6',  'PV6': 'i6P',   'SOM6': 'i6S',  'VIP6': 'i6H',  'NGF6': 'i6H'}  # L6
+        'NGF1': 'L1_NGC-DA',                                                                                                                             # L1
+        'IT2':  'L23_PC',                                             'PV2':  'L23_LBC',   'SOM2': 'L23_MC',  'VIP2': 'L23_BP', 'NGF2':  'L23_NGC-DA', # L2
+        'IT3':  'L23_PC',                                             'PV3':  'L23_LBC',   'SOM3': 'L23_MC',  'VIP3': 'L23_BP', 'NGF3':  'L23_NGC-DA', # L3
+        'ITP4': 'L4_PC',     'ITS4': 'L4_SS',                         'PV4':  'L4_LBC',    'SOM4': 'L4_MC',   'VIP4': 'L4_BP',  'NGF4':  'L4_NGC-DA',  # L4
+        'IT5A': 'L5_UTPC',   'CT5A': 'L6_TPC_L4',                     'PV5A': 'L5_LBC',   'SOM5A': 'L5_MC',  'VIP5A': 'L5_BP',  'NGF5A': 'L5_NGC-DA',  # L5A
+        'IT5B': 'L5_UTPC',   'CT5B': 'L6_TPC_L4', 'PT5B': 'L5_TTPC2', 'PV5B': 'L5_LBC',   'SOM5B': 'L5_MC',  'VIP5B': 'L5_BP',  'NGF5B': 'L5_NGC-DA',  # L5B
+        'IT6':  'L6_TPC_L1', 'CT6':  'L6_TPC_L4',                     'PV6':  'L6_LBC',    'SOM6': 'L6_MC',   'VIP6': 'L6_BP',  'NGF6':  'L6_NGC-DA'}  # L6
 
 
     return data
@@ -127,6 +130,8 @@ for p in Epops + Ipops + Tpops:
 # Load exp data
 data = loadData()
 
+# Set source of conn data
+connDataSource = 'BBP_S1'  # 'Allen_V1' 
 
 # --------------------------------------------------
 ## E -> E 
@@ -144,14 +149,26 @@ and lambda is the length constant
 '''
 
 # start with base data from Allen V1
-for pre in Epops:
-    for post in Epops:
-        proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
-        pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
-        lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
-        wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+if connDataSource ==  'Allen_V1': 
+    for pre in Epops:
+        for post in Epops:
+            proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+            pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+            lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+            wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
+elif connDataSource ==  'BBP_S1': 
+    for pre in Epops:
+        for post in Epops:
+            proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
+            if proj in data['BBP_S1']['connProb']:
+                pmat[pre][post] = data['BBP_S1']['connProb'][proj]['connection_probability']/100.
+                wmat[pre][post] = data['BBP_S1']['connWeight'][proj]['epsp_mean']
+            else:
+                pmat[pre][post] = 0.
+                wmat[pre][post] = 0.
+
 
 # modify based on A1 exp data - TO DO
 
@@ -172,14 +189,25 @@ and lambda is the length constant
 '''
 
 # start with base data from Allen V1
-for pre in Epops:
-    for post in Ipops:
-        proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
-        pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
-        lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
-        wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+if connDataSource ==  'Allen_V1': 
+    for pre in Epops:
+        for post in Ipops:
+            proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+            pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+            lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+            wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
+elif connDataSource ==  'BBP_S1': 
+    for pre in Epops:
+        for post in Ipops:
+            proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
+            if proj in data['BBP_S1']['connProb']:
+                pmat[pre][post] = data['BBP_S1']['connProb'][proj]['connection_probability']/100.0
+                wmat[pre][post] = data['BBP_S1']['connWeight'][proj]['epsp_mean']
+            else:
+                pmat[pre][post] = 0.
+                wmat[pre][post] = 0.
 
 # modify based on A1 exp data - TO DO
     
@@ -553,4 +581,4 @@ savePickle = 1
 if savePickle:
     import pickle
     with open('conn.pkl', 'wb') as f:
-        pickle.dump({'pmat': pmat, 'lmat': lmat, 'wmat': wmat, 'bins': bins}, f)
+        pickle.dump({'pmat': pmat, 'lmat': lmat, 'wmat': wmat, 'bins': bins, 'connDataSource': connDataSource}, f)

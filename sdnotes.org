@@ -227,7 +227,81 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 - Distance-dependent probabilities
 
 ** BBP mouse S1
+*** link
 https://bbp.epfl.ch/nmc-portal/downloads
+*** cell type acronyms
+- List of m-types:
+
+DAC	Descending Axon Cell
+NGC-DA	Neurogliaform Cell with dense axonal arborization
+NGC-SA	Neurogliaform Cell with slender axonal arborization
+HAC	Horizontal Axon Cell
+LAC	Large Axon Cell
+SAC	Small Axon Cell
+MC	Martinotti Cell
+BTC	Bitufted Cell
+DBC	Double Bouquet Cell
+BP	Bipolar Cell
+NGC	Neurogliaform Cell
+LBC	Large Basket Cell
+NBC	Nest Basket Cell
+SBC	Small Basket Cell 
+ChC	Chandelier Cell
+PC	Pyramidal Cell
+SP	Star Pyramidal Cell
+SS	Spiny Stellate Cell
+TTPC1	Thick-tufted Pyramidal Cell with a late bifurcating apical tuft
+TTPC2	Thick-tufted Pyramidal Cell with an early bifurcating apical tuft
+UTPC	Untufted Pyramidal Cell
+STPC	Slender-tufted Pyramidal Cell
+TPC_L4	Tufted Pyramidal Cell with apical dendrites terminating in layer 4
+TPC_L1	Tufted Pyramidal Cell with apical dendrites terminating in layer 1
+IPC	Pyramidal Cell with inverted apical-like dendrites
+BPC	Pyramidal Cell with bipolar apical-like dendrites
+
+- List of e-types:
+
+cADpyr	continuous Accommodating (Adapting) for pyramidal cells
+cAC	continuous Accommodating
+bAC	burst Accommodating
+cNAC	continuous Non-accommodating
+bNAC	burst Non-accommodating
+dNAC	delayed Non-accommodating
+cSTUT	continuous Stuttering
+bSTUT	burst Stuttering
+dSTUT	delayed Stuttering
+cIR	continuous Irregular
+bIR	burst Irregular
+
+*** cell type correspondence
+- see https://bbp.epfl.ch/nmc-portal/web/guest/glossary
+- Markram et al 2004
+- Markram et al 2015
+- Tremblay et al 2016
+
+    # set correspondence between A1 pops and BBP S1 pops  
+    data['BBP_S1']['pops'] = {
+        'NGF1': 'L1_NGC',                                                                                                                              # L1
+        'IT2':  'L2_PC',                                              'PV2':  'L23_LBC',   'SOM2': 'L23_MC',  'VIP2': 'L23_BP', 'NGF2':  'L23_NGC', # L2
+        'IT3':  'L3_PC',                                              'PV3':  'L23_LBC',   'SOM3': 'L23_MC',  'VIP3': 'L23_BP', 'NGF3':  'L23_NGC', # L3
+        'ITP4': 'L4_PC',     'ITS4': 'L4_SS',                         'PV4':  'L4_LBC',    'SOM4': 'L4_MC',   'VIP4': 'L4_BP',  'NGF4':  'L4_NGC',  # L4
+        'IT5A': 'L5_UTPC',   'CT5A': 'L6_TPC_L4',                     'PV5A': 'L5_LBC',   'SOM5A': 'L5_MC',  'VIP5A': 'L5_BP',  'NGF5A': 'L5_NGC',  # L5A
+        'IT5B': 'L5_UTPC',   'CT5B': 'L6_TPC_L4', 'PT5B': 'L5_TTPC2', 'PV5B': 'L5_LBC',   'SOM5B': 'L5_MC',  'VIP5B': 'L5_BP',  'NGF5B': 'L5_NGC',  # L5B
+        'IT6':  'L6_TPC_L1', 'CT6':  'L6_TPC_L4',                     'PV6':  'L6_LBC',    'SOM6': 'L6_MC',   'VIP6': 'L6_BP',  'NGF6':  'L6_NGC'}  # L6
+
+- IT L2,3,4 = PC (=regular pyramidal cell)
+- IT5A,5B = UTPC (=thin-tufted)
+- PT5B = TTPC2 (=thick-tufted with bifurcation, as our PT cell; other thick-tufted TTPC2 would also probably work)
+- CT L5A,5B,6 = TPC_L4 (= CT cell; paper showed CT cells apical only reaches L4; seems they don't have CT cells in L5A,5B)
+- IT6 = TPC_L1 (assume this one to differentiate from CT6)
+- PV = LBC (=large basket; most abundant PV based on Markram 2004)
+- SOM = MC (=martinotti; most abundaant SOM based on Makram 2004)
+- VIP = BP (=bipolar cell; based on Tremblay 2015 classification)
+- NGF = NGC (=neurogliaform)
+
+*** comparison to Allen
+- not distance-dependent
+- more cell-type specificity (different exc types from L4,L5,L6 -- ITP,ITS,PT,CT; and 1 more inh types -- VIP)
 
 ** E-E 
 - Use Allen V1 as base, and then update with any specific A1
