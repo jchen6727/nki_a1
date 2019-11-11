@@ -84,7 +84,6 @@ ENDCOMMENT
 NEURON {
   THREADSAFE
 	SUFFIX htc
-	USEION h READ eh WRITE ih VALENCE 1
     NONSPECIFIC_CURRENT ih
 	USEION ca READ cai
         RANGE gmax, h_inf, tau_s, m, shift, i
