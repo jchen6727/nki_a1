@@ -27254,3 +27254,31 @@ make: *** Waiting for unfinished jobs....
 ** VERSION CONTROL:
 *** Add aux_fun.inc in A1/mod
 *** Add CT5A_A1_weightNorm.pkl and CT5B_A1_weightNorm.pkl 
+* <2019-11-11 Mon -- TC/HTC cells>
+** TC and HTC cells showing subthreshold oscillations 
+*** Check to see if this was present before AND after mod file change to htc.mod
+*** TC cells:
+**** A1/cells/sTC.py
+**** on local machine (laptop): cd ~/Desktop; mkdir TC_test
+**** In TC_test, added py files: sTC.py, sTC_new.py, and test_cell.py
+***** sTC.py gets the orig htc.mod
+***** sTC_new.py gets the htc_new.mod (suffix modified to htc_new, see below), and class renamed to sTC_new 
+**** In TC_test, added mod files: htc.mod (ORIG FILE), htc_new.mod, cadad.mod, HH2.mod, IT.mod, kl.mod, tia.mod
+***** Changed suffix in htc_new.mod to htc_new
+**** Created sTC_new.py, and inserted htc_new into soma 
+**** Compile mod files in TC_test with nrnivmodl (success)
+** Difference between orig and new sTC cells:
+*** Changes to htc.mod file:
+**** ORIG line 87: USEION h READ eh WRITE ih VALENCE 1
+**** NEW  line 87: :USEION h READ eh WRITE ih VALENCE 1
+**** ORIG: NONSPECIFIC_CURRENT ih (NOT PRESENT IN NEW)
+**** NEW: RANGE eh (NOT PRESENT IN ORIG) 
+
+** Salva merge cells w/ some of his edits, need to clean up some unnecessary files causing lots of unimportant differences in branches:
+*** git rm -r cells/dend_edits 
+*** git commit -m 'deleting dend_edits folder'
+*** git rm -r cells/NGF_archived_files_and_figures
+*** got rid of .pyc files as well in __pycache__ dirs throughout the repo 
+
+** TC cells: 
+*** 
