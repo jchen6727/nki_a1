@@ -27281,4 +27281,69 @@ make: *** Waiting for unfinished jobs....
 *** got rid of .pyc files as well in __pycache__ dirs throughout the repo 
 
 ** TC cells: 
-*** 
+*** CONDITIONS BEING TESTED:
+**** (0) Run it as is in A1
+***** sTC.py -> self.soma.insert('htc') from htc_new.mod (range eh)
+***** sTC.py -> #self.soma.eh = -40.0 (COMMENTED OUT)
+***** ran w/ test_cell.py (0pA input)
+***** >>> netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{eh: 0.0, gmax: 2e-05, cac: 0.002, k2: 0.0004, Pc: 0.01, k4: 0.001, nca: 4.0, nexp: 1.0, ginc: 2.0, taum: 20.0, shift: 0.0, exptemp: 36.0}
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'nrn.Section' object has no attribute 'eh'
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh_htc
+0.0
+***** cond_0.png
+**** (1) Run it as is in A1, but uncommenting self.soma.eh
+***** 0pA input for 9s
+***** AttributeError: 'nrn.Section' object has no attribute 'eh' (  File "test_cell.py", line 16, in <module> )
+**** (2) Run it as is in A1, but uncommenting self.soma.eh and changing to --> self.soma.eh_htc
+***** 0pA for 9s
+***** netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{eh: -40.0...}
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'nrn.Section' object has no attribute 'eh'
+
+***** sim.net.cells[0].secs.soma['hObj'].eh_htc
+-40.0
+***** cond_2.png
+**** (3) Import orig htc.mod file into .py file, commenting out self.soma.eh
+***** sim.net.cells[0].secs.soma['hObj'].eh
+0.0
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh_htc
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
+***** >>> netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{gmax: 2e-05, cac: 0.002, k2: 0.0004, Pc: 0.01, k4: 0.001, nca: 4.0, nexp: 1.0, ginc: 2.0, taum: 20.0, shift: 0.0, exptemp: 36.0}
+***** cond_3.png
+**** (4) Import orig htc.mod file into .py file, uncommenting self.soma.eh
+***** >>> netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{gmax: 2e-05, cac: 0.002, k2: 0.0004, Pc: 0.01, k4: 0.001, nca: 4.0, nexp: 1.0, ginc: 2.0, taum: 20.0, shift: 0.0, exptemp: 36.0}
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh
+-40.0
+**** (5) Import orig htc.mod file into .py file, uncommenting self.soma.eh --> self.soma.eh_htc --> won't let me??? 
+**** (6) Import orig htc.mod file into .py file, uncommenting self.soma.eh but set to 0 (vs .-40)
+***** This is identical to Condition 3
+**** (7) Import orig htc.mod file into .py file, uncommenting self.soma.eh but set to -40 
+***** This is identical to Condition 4
+
+
+
+
+
+
+
+*** NOTE: with the new htc.mod file, if I don't set anything, it sets eh_htc to 0, it seems? 
+*** SO ^^, what if I try to set the old one to 0... will that make it oscillate? or maybe it can't because it's a range var in the new one, but not in the orig mod file?? 
+**** can't seem to set it in test_cell.py or in sTC.py -- probably bc not range var, I'm guessing
+
+*** CURRENT TC SETUP in A1 repo: 
+**** mod file being used is htc_new.mod, suffix htc
+**** in sTC.py, self.soma.eh is commented out
+
+
+
