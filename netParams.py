@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 11
+netParams.version = 14
 
 #------------------------------------------------------------------------------
 #
@@ -73,8 +73,10 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
                     'IT3_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
                     'ITP4_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
                     'IT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
+                    'CT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5A']},
                     'IT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
                     'PT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
+                    'CT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
                     'IT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
                     'CT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
@@ -88,7 +90,7 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
-    
+
 
 ## Import VIP cell rule from hoc file 
 netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
@@ -172,15 +174,17 @@ netParams.popParams['VIP4'] =	 {'cellType': 'VIP', 'cellModel': 'HH_reduced',   
 netParams.popParams['NGF4'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['4'],  'density': density[('A1','nonVIP')][2]}
 
 ### LAYER 5A: 
-netParams.popParams['IT5A'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'], 	'density': density[('A1','E')][3]}      
+netParams.popParams['IT5A'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'], 	'density': 0.5*density[('A1','E')][3]}      
+netParams.popParams['CT5A'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'],   'density': 0.5*density[('A1','E')][3]}  # density is [5] because we are using same numbers for L5A and L6 for CT cells? 
 netParams.popParams['SOM5A'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],	'density': density[('A1','SOM')][3]}          
 netParams.popParams['PV5A'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],	'density': density[('A1','PV')][3]}         
 netParams.popParams['VIP5A'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],   'density': density[('A1','VIP')][3]}
 netParams.popParams['NGF5A'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],   'density': density[('A1','nonVIP')][3]}
 
 ### LAYER 5B: 
-netParams.popParams['IT5B'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][4]}  
-netParams.popParams['PT5B'] =     {'cellType': 'PT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][4]}  
+netParams.popParams['IT5B'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': (1/3)*density[('A1','E')][4]}  
+netParams.popParams['CT5B'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'],   'density': (1/3)*density[('A1','E')][4]}  # density is [5] because we are using same numbers for L5B and L6 for CT cells? 
+netParams.popParams['PT5B'] =     {'cellType': 'PT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': (1/3)*density[('A1','E')][4]}  
 netParams.popParams['SOM5B'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1', 'SOM')][4]}
 netParams.popParams['PV5B'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],	'density': density[('A1','PV')][4]}     
 netParams.popParams['VIP5B'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1','VIP')][4]}
@@ -209,7 +213,7 @@ if cfg.singleCellPops:
     for pop in netParams.popParams.values(): pop['numCells'] = 1
 
 ## List of E and I pops to use later on
-Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
+Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 'IT6', 'CT6']  # all layers
 
 Ipops = ['NGF1',                            # L1
         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
@@ -546,4 +550,7 @@ v8 - Added cell types
 v9 - Added local connectivity
 v10 - Added thalamic populations from prev model
 v11 - Added thalamic conn from prev model
+v12 - Added CT cells to L5B
+v13 - Added CT cells to L5A
+v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
 """

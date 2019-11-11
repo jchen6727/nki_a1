@@ -22788,7 +22788,6 @@ ImportError: No module named dicts
 
 **** Commented out all VIP lines in popParams 
 ***** appears that I have already inserted the appropriate densities into cellDensity.pkl, is this true?? --> yes, using cellDensity.py 
-
 **** Try: *netParams.importCellParams(label='VIP_simple_rule', fileName='cells/vipcr_cell.hoc')*
 ***** ERROR:
 Traceback (most recent call last):
@@ -22848,11 +22847,7 @@ globals: {ki0_k_ion: 140.0, celsius: 23.0, ko0_k_ion: 3.82},
 secLists: {all: ['soma', 'rad1', 'rad2', 'ori1', 'ori2']}, 
 conds: {cellModel: 'HH_simple', cellType: 'VIP'}}
 
-
 ***** ^^ Everything appears to be loading properly? 
-
-
-
 **** Uncomment VIP lines in popParams 
 *** Version control checkpoint 
 **** Laptop --> added, committed, pushed to A1_bare
@@ -26655,7 +26650,6 @@ thx!
 ***** git status
 ***** git add fileName, git commit fileName -m 'message'
 ***** git push origin cells 
-
 ** IT6 tuning: 
 *** Filenames: IT6_reduced_cellParams.pkl & IT6_reduced_new_cellParams.pkl
 *** PASSIVE:
@@ -26813,3 +26807,450 @@ thx!
 **** (may need to comment out del netParams.cellParams[...conds] if that's in there) 
 *** Transfer to cells directory and rename
 *** Do version control 
+* <2019-11-07 Thu -- CT5A & CT5B cells added>
+** Version control: 
+*** cells e065977 (resolved merge conflict in netParams.py)
+*** 9390a28..4da8ffc  cells -> cells (CT5B cells)
+*** cells a676dc0 added CT cells to L5A in cellParamLabels and popParams
+*** [cells 3759bc1]
+*** [cells b2ff133]
+** Merged 'salva' branch into 'cells' branch 
+*** git checkout cells (locally, on laptop, in ~/Desktop/NEUROSIM/A1)
+*** git merge salva
+**** ericagriffith% git merge salva
+Removing test_ngf.py
+Auto-merging netParams.py
+CONFLICT (content): Merge conflict in netParams.py
+Removing mod/HCN1.mod
+Removing A1_wire_model.py
+Automatic merge failed; fix conflicts and then commit the result.
+*** ^^ merge conflict with netParams.py (see above)
+*** Opened netParams.py and edited according to: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/resolving-a-merge-conflict-using-the-command-line
+*** git add .
+*** git commit -m 'resolved merge conflict in netParams.py'
+*** cells e065977
+** Add CT cells to L5B:
+*** netParams.version = 12
+*** Added CT5B cells to netParams.py
+**** Added to line 72, cellParamLabels = {...}
+**** 'CT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
+**** Added to netParams.popParams:
+***** netParams.popParams['CT5B'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'],   'density': 0.5*density[('A1','E')][5]}  # density is [5] because we are using same numbers for L5B and L6 for CT cells? 
+***** did density as [5] because same as L6? see comment above?
+*** Add CT5B_A1_cellParams.pkl to cells subdir 
+**** Copied CT6_A1_cellParams.pkl and renamed to CT5B_A1_cellParams.pkl 
+**** Tested in cells/dend_edits subdir to make sure it works 
+**** no changes to geom -- is that okay? 
+*** version control: 
+**** git add, git commit, git push origin cells (from cells branch) 
+**** 9390a28..4da8ffc  cells -> cells
+** Add CT cells to L5A: 
+*** netParams.version = 13
+*** Added CT5A cells to netParams.py
+**** Added to cellParamLabels = {...}
+**** 'CT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5A']},
+**** Added to netParams.popParams:
+***** netParams.popParams['CT5A'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'],   'density': 0.5*density[('A1','E')][5]}  # density is [5] because we are using same numbers for L5A and L6 for CT cells? 
+***** did density as [5] because same as L6? see comment above?
+*** Add CT5A_A1_cellParams.pkl to cells subdir
+**** (NOTE: untested)
+**** copied CT6_A1_cellParams.pkl and renamed
+**** did not change geom
+** Fixed densities of E cells in L5A & L5B 
+*** netParams.py version 14
+*** in netParams.popParams section
+*** Kept evenly distributed densities (i.e. netParams.popParams['CT5B'] = {... 'density': (1/3)*density[('A1','E')][4])}
+** Added version info at the bottom of netParams.py (v14) 
+** Added CT5A & CT5B to Epops in netParams.py (v14) 
+** Compile new mod mechanisms for RE, TC, and HTC cells
+*** When merged cells w/ salva branch (on cells branch -- described above), new mod files came with it
+*** Re-compiled:
+**** on cells branch, locally on laptop, cd ~/Desktop/NEUROSIM/A1
+**** rm -r mod/x86_64
+**** rm x86_64
+**** ln -s mod/x86_64 x86_64
+**** cd mod
+**** nrnivmodl
+**** cd ..
+*** output after nrnivmodl:
+ericagriffith% nrnivmodl
+Creating x86_64 directory for .o files.
+
+/Users/ericagriffith/Desktop/NEUROSIM/A1/mod
+APCounter2.mod CA1ika.mod CA1ikdr.mod CA1ina.mod Cadynamics.mod HH2.mod IC.mod ICal.mod IKM.mod IKsin.mod IT.mod IT2.mod MyExp2SynAlpha.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod Nca.mod ar_traub.mod beforestep_py.mod cad.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod can_mig.mod cancr.mod canin.mod caolmw.mod capr.mod cat_mig.mod cat_traub.mod catcb.mod ch_CavL.mod ch_CavN.mod ch_KCaS.mod ch_Kdrfastngf.mod ch_KvAngf.mod ch_KvCaB.mod ch_Navngf.mod ch_leak.mod gabab.mod h_BS.mod h_harnett.mod h_kole.mod h_migliore.mod hin.mod htc_new.mod ican_sidi.mod icaolmw.mod icapr.mod iccr.mod iconc_Ca.mod iholmkop.mod iholmw.mod ihpyrkop.mod ikscr.mod ipulse3.mod kBK.mod kahppr.mod kaolmkop.mod kap_BS.mod kapcb.mod kapin.mod kapyrkop.mod kca.mod kcaolmw.mod kcpr.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrbwb.mod kdrcr.mod kdrin.mod kdrolmkop.mod kdrpr.mod kdrpyrkop.mod kl.mod km.mod kv.mod my_exp2syn.mod na_2.mod nafbwb.mod nafcr.mod nafolmkop.mod nafpr.mod nafpyrkop.mod nafx.mod nap_sidi.mod nax_BS.mod naz.mod pasi.mod savedist.mod tia.mod vecstim.mod wrap.mod
+APCounter2.mod CA1ika.mod CA1ikdr.mod CA1ina.mod Cadynamics.mod HH2.mod IC.mod ICal.mod IKM.mod IKsin.mod IT.mod IT2.mod MyExp2SynAlpha.mod MyExp2SynBB.mod MyExp2SynNMDABB.mod Nca.mod ar_traub.mod beforestep_py.mod cad.mod cadad.mod cadyn.mod cagk.mod cal_mh.mod cal_mig.mod can_mig.mod cancr.mod canin.mod caolmw.mod capr.mod cat_mig.mod cat_traub.mod catcb.mod ch_CavL.mod ch_CavN.mod ch_KCaS.mod ch_Kdrfastngf.mod ch_KvAngf.mod ch_KvCaB.mod ch_Navngf.mod ch_leak.mod gabab.mod h_BS.mod h_harnett.mod h_kole.mod h_migliore.mod hin.mod htc_new.mod ican_sidi.mod icaolmw.mod icapr.mod iccr.mod iconc_Ca.mod iholmkop.mod iholmw.mod ihpyrkop.mod ikscr.mod ipulse3.mod kBK.mod kahppr.mod kaolmkop.mod kap_BS.mod kapcb.mod kapin.mod kapyrkop.mod kca.mod kcaolmw.mod kcpr.mod kctin.mod kdmc_BS.mod kdr_BS.mod kdrbwb.mod kdrcr.mod kdrin.mod kdrolmkop.mod kdrpr.mod kdrpyrkop.mod kl.mod km.mod kv.mod my_exp2syn.mod na_2.mod nafbwb.mod nafcr.mod nafolmkop.mod nafpr.mod nafpyrkop.mod nafx.mod nap_sidi.mod nax_BS.mod naz.mod pasi.mod savedist.mod tia.mod vecstim.mod wrap.mod
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" APCounter2
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" CA1ika
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" CA1ikdr
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" CA1ina
+Translating APCounter2.mod into APCounter2.c
+Translating CA1ina.mod into CA1ina.c
+Translating CA1ika.mod into CA1ika.c
+Translating CA1ikdr.mod into CA1ikdr.c
+Notice: This mechanism cannot be used with CVODE
+Warning: v undefined. (declared within VERBATIM?)
+Thread Safe
+Thread Safe
+Thread Safe
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o CA1ina.lo CA1ina.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o CA1ikdr.lo CA1ikdr.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o CA1ika.lo CA1ika.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o APCounter2.lo APCounter2.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c CA1ikdr.c  -fno-common -DPIC -o .libs/CA1ikdr.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c APCounter2.c  -fno-common -DPIC -o .libs/APCounter2.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c CA1ina.c  -fno-common -DPIC -o .libs/CA1ina.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c CA1ika.c  -fno-common -DPIC -o .libs/CA1ika.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Cadynamics
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" HH2
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IC
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ICal
+Translating Cadynamics.mod into Cadynamics.c
+Translating HH2.mod into HH2.c
+Translating IC.mod into IC.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Cadynamics.lo Cadynamics.c
+Translating ICal.mod into ICal.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o HH2.lo HH2.c
+Thread Safe
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ICal.lo ICal.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IC.lo IC.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Cadynamics.c  -fno-common -DPIC -o .libs/Cadynamics.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ICal.c  -fno-common -DPIC -o .libs/ICal.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c HH2.c  -fno-common -DPIC -o .libs/HH2.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IC.c  -fno-common -DPIC -o .libs/IC.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IKM
+Translating IKM.mod into IKM.c
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IKM.lo IKM.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IKsin
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IT
+Translating IKsin.mod into IKsin.c
+Translating IT.mod into IT.c
+Thread Safe
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 0.00024 of PARAMETER cai will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IKsin.lo IKsin.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IT.lo IT.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IT2
+Translating IT2.mod into IT2.c
+Warning: celsius undefined. (declared within VERBATIM?)
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IT2.lo IT2.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IT.c  -fno-common -DPIC -o .libs/IT.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IKsin.c  -fno-common -DPIC -o .libs/IKsin.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IKM.c  -fno-common -DPIC -o .libs/IKM.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IT2.c  -fno-common -DPIC -o .libs/IT2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" MyExp2SynAlpha
+Translating MyExp2SynAlpha.mod into MyExp2SynAlpha.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o MyExp2SynAlpha.lo MyExp2SynAlpha.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" MyExp2SynBB
+Translating MyExp2SynBB.mod into MyExp2SynBB.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o MyExp2SynBB.lo MyExp2SynBB.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" MyExp2SynNMDABB
+Translating MyExp2SynNMDABB.mod into MyExp2SynNMDABB.c
+INCLUDEing ghk.inc
+Warning: celsius undefined. (declared within VERBATIM?)
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o MyExp2SynNMDABB.lo MyExp2SynNMDABB.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c MyExp2SynAlpha.c  -fno-common -DPIC -o .libs/MyExp2SynAlpha.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c MyExp2SynBB.c  -fno-common -DPIC -o .libs/MyExp2SynBB.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c MyExp2SynNMDABB.c  -fno-common -DPIC -o .libs/MyExp2SynNMDABB.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Nca
+Translating Nca.mod into Nca.c
+Notice: Assignment to the GLOBAL variable, "tadj", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Nca.lo Nca.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Nca.c  -fno-common -DPIC -o .libs/Nca.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ar_traub
+Translating ar_traub.mod into ar_traub.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" beforestep_py
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ar_traub.lo ar_traub.c
+Translating beforestep_py.mod into beforestep_py.c
+Notice: Use of POINTER is not thread safe.
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o beforestep_py.lo beforestep_py.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cad
+Translating cad.mod into cad.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cad.lo cad.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ar_traub.c  -fno-common -DPIC -o .libs/ar_traub.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c beforestep_py.c  -fno-common -DPIC -o .libs/beforestep_py.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cad.c  -fno-common -DPIC -o .libs/cad.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cadad
+Translating cadad.mod into cadad.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cadad.lo cadad.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cadyn
+Translating cadyn.mod into cadyn.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cadyn.lo cadyn.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cadad.c  -fno-common -DPIC -o .libs/cadad.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cagk
+Translating cagk.mod into cagk.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cagk.lo cagk.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cadyn.c  -fno-common -DPIC -o .libs/cadyn.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cal_mh
+Translating cal_mh.mod into cal_mh.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cal_mh.lo cal_mh.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cal_mig
+Translating cal_mig.mod into cal_mig.c
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cal_mig.lo cal_mig.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cagk.c  -fno-common -DPIC -o .libs/cagk.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cal_mh.c  -fno-common -DPIC -o .libs/cal_mh.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cal_mig.c  -fno-common -DPIC -o .libs/cal_mig.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" can_mig
+Translating can_mig.mod into can_mig.c
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o can_mig.lo can_mig.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c can_mig.c  -fno-common -DPIC -o .libs/can_mig.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cancr
+Translating cancr.mod into cancr.c
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "s_inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cancr.lo cancr.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" canin
+Translating canin.mod into canin.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o canin.lo canin.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" caolmw
+Translating caolmw.mod into caolmw.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o caolmw.lo caolmw.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cancr.c  -fno-common -DPIC -o .libs/cancr.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c canin.c  -fno-common -DPIC -o .libs/canin.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c caolmw.c  -fno-common -DPIC -o .libs/caolmw.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" capr
+Translating capr.mod into capr.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o capr.lo capr.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cat_mig
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cat_traub
+Translating cat_mig.mod into cat_mig.c
+Translating cat_traub.mod into cat_traub.c
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+Warning: Default 25 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cat_mig.lo cat_mig.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cat_traub.lo cat_traub.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" catcb
+Translating catcb.mod into catcb.c
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o catcb.lo catcb.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c capr.c  -fno-common -DPIC -o .libs/capr.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cat_traub.c  -fno-common -DPIC -o .libs/cat_traub.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cat_mig.c  -fno-common -DPIC -o .libs/cat_mig.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c catcb.c  -fno-common -DPIC -o .libs/catcb.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_CavL
+Translating ch_CavL.mod into ch_CavL.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_CavL.lo ch_CavL.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_CavN
+Translating ch_CavN.mod into ch_CavN.c
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_CavN.lo ch_CavN.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KCaS
+Translating ch_KCaS.mod into ch_KCaS.c
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KCaS.lo ch_KCaS.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_CavL.c  -fno-common -DPIC -o .libs/ch_CavL.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_CavN.c  -fno-common -DPIC -o .libs/ch_CavN.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_Kdrfastngf
+Translating ch_Kdrfastngf.mod into ch_Kdrfastngf.c
+Notice: VERBATIM blocks are not thread safe
+Notice: This mechanism cannot be used with CVODE
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_Kdrfastngf.lo ch_Kdrfastngf.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KCaS.c  -fno-common -DPIC -o .libs/ch_KCaS.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_Kdrfastngf.c  -fno-common -DPIC -o .libs/ch_Kdrfastngf.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KvAngf
+Translating ch_KvAngf.mod into ch_KvAngf.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KvAngf.lo ch_KvAngf.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_KvCaB
+Translating ch_KvCaB.mod into ch_KvCaB.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_KvCaB.lo ch_KvCaB.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_Navngf
+Translating ch_Navngf.mod into ch_Navngf.c
+Notice: This mechanism cannot be used with CVODE
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_Navngf.lo ch_Navngf.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ch_leak
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KvAngf.c  -fno-common -DPIC -o .libs/ch_KvAngf.o
+Translating ch_leak.mod into ch_leak.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ch_leak.lo ch_leak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_KvCaB.c  -fno-common -DPIC -o .libs/ch_KvCaB.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_Navngf.c  -fno-common -DPIC -o .libs/ch_Navngf.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ch_leak.c  -fno-common -DPIC -o .libs/ch_leak.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" gabab
+Translating gabab.mod into gabab.c
+Notice: Assignment to the GLOBAL variable, "warn", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o gabab.lo gabab.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" h_BS
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" h_harnett
+Translating h_BS.mod into h_BS.c
+Translating h_harnett.mod into h_harnett.c
+Warning: Default 34 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o h_harnett.lo h_harnett.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o h_BS.lo h_BS.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" h_kole
+Translating h_kole.mod into h_kole.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o h_kole.lo h_kole.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c gabab.c  -fno-common -DPIC -o .libs/gabab.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c h_harnett.c  -fno-common -DPIC -o .libs/h_harnett.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c h_BS.c  -fno-common -DPIC -o .libs/h_BS.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c h_kole.c  -fno-common -DPIC -o .libs/h_kole.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" h_migliore
+Translating h_migliore.mod into h_migliore.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o h_migliore.lo h_migliore.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" hin
+Translating hin.mod into hin.c
+Warning: Default -10 of PARAMETER ehi will be ignored and set by NEURON.
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o hin.lo hin.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" htc_new
+Translating htc_new.mod into htc_new.c
+NEURON's CVode method ignores conservation
+Warning: celsius undefined. (declared within VERBATIM?)
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o htc_new.lo htc_new.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c h_migliore.c  -fno-common -DPIC -o .libs/h_migliore.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c hin.c  -fno-common -DPIC -o .libs/hin.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ican_sidi
+Translating ican_sidi.mod into ican_sidi.c
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ican_sidi.lo ican_sidi.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c htc_new.c  -fno-common -DPIC -o .libs/htc_new.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ican_sidi.c  -fno-common -DPIC -o .libs/ican_sidi.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" icaolmw
+Translating icaolmw.mod into icaolmw.c
+Couldn't open: aux_fun.inc
+Couldn't open aux_fun.inc
+make: *** [icaolmw.lo] Error 1
+make: *** Waiting for unfinished jobs....
+*** potential errors noted from output:
+**** Couldn't open: aux_fun.inc
+**** Couldn't open aux_fun.inc
+**** make: *** [icaolmw.lo] Error 1
+**** make: *** Waiting for unfinished jobs....
+** Test A1/netParams.py to see if CT changes worked & will load 
+*** NEURON syntax error on vipcr_cell.hoc
+*** Can't load in Nafcr --> re-compiled; don't know what's going on :( 
+
+** [TO DO]: 
+*** Get A1/netParams.py to run???? what's with the mod files?? none of the .hoc files will load (e.g. vircr_cell.hoc)
+*** CT5A & CT5B need weightNorm.pkl files? 
+*** Thalamic interneuron model 
+* <2019-11-08 Fri -- Fix mod file compile issues >
+** GOAL: Get network running locally (on my laptop)
+*** ISSUE #1: mod file access
+**** When I try to load any of the .hoc files, the mod file mechanisms won't load -- what is causing this? 
+**** Big time mod file problems -- not sure why, but nrnivmodl (in A1/mod) is not compiling all of the mod files. 
+**** List of files compiled individually: 
+***** iconc_Ca.mod
+***** iccr.mod
+***** ikscr.mod
+***** ipulse3.mod
+***** kBK.mod
+***** kap_BS.mod
+***** kapcb.mod
+***** kapin.mod
+***** kca.mod
+***** kcaolmw.mod
+***** kctin.mod
+***** kdmc_BS.mod
+***** kdr_BS.mod
+***** kdrbwb.mod (had a .c already, but no .lo -- now has .lo)
+***** kdrcr.mod
+***** kdrin.mod
+***** kl.mod
+***** km.mod
+***** kv.mod
+***** my_exp2syn.mod
+***** na_2.mod
+***** nafx.mod
+***** nap_sidi.mod
+***** nax_BS.mod
+***** naz.mod
+***** pasi.mod
+***** savedist.mod
+***** tia.mod
+***** vecstim.mod
+***** wrap.mod 
+
+**** List of files that will not compile: 
+***** icapr.mod
+Translating icapr.mod into icapr.c
+Couldn't open: aux_fun.inc
+Couldn't open aux_fun.inc
+make: *** [icapr.lo] Error 1
+make: *** Waiting for unfinished jobs....
+***** iholmkop.mod
+Couldn't open: aux_fun.inc
+make: *** [iholmkop.lo] Error 1
+make: *** Waiting for unfinished jobs....
+***** iholmw.mod
+Translating iholmw.mod into iholmw.c
+Couldn't open: aux_fun.inc
+Couldn't open aux_fun.inc
+make: *** [iholmw.lo] Error 1
+make: *** Waiting for unfinished jobs....
+***** ihpyrkop.mod
+***** kahppr.mod
+***** kaolmkop.mod
+***** kapyrkop.mod
+***** kcpr.mod
+***** kdrbwb.mod
+***** kdrolmkop.mod
+***** kdrpr.mod
+***** kdrpyrkop.mod
+***** nafbwb.mod
+***** nafolmkop.mod
+***** nafpr.mod
+***** nafpyrkop.mod
+
+
+**** mod files I'm not sure about: 
+***** libnrnmech.la
+***** mod_func.c and mod_func.lo, but no mod_func.mod? 
+***** nafcr.mod --> looks compiled; did I do this now, or was it like this beforehand??
+***** special --> pretty sure this is used in neuron stuff, created by the software; not going to touch
+
+**** Tried copying mod directory to desktop to see if it works there; don't know why nrnivmodl stops running part of the way through the directory, but it doesn't seem to make it past a certain point (stops due to some kind of error maybe?). Either way, "nrnivmodl <file.mod>" only puts that mechanism into 'special'; this is not a cumulative process. Doing "nrnivmodl <file1.mod> <file2.mod>" will put both file1 and fil2 into special, rendering both of those mechanisms usable. Have to figure out which mod files are causing the issue. 
+
+*** ISSUE 1 FIXED:
+**** Added the file aux_fun.inc to mod and re-compiled. This file was mentioned in all the errors listed above. 
+**** Found this file on modeldb, from a paper from Sam (2011): https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=139421&file=/hpcdemo/aux_fun.inc#tabs-2
+* <2019-11-10 Sun -- Get updated model to run locally>
+** GOAL: Get network running locally (on my laptop) 
+** NEED: CT5A_A1_weightNorm.pkl and CT5B_A1_weightNorm.pkl: 
+*** Copied CT6_A1_weightNorm.pkl & re-named it for CT5A & CT5B
+*** Put these files into A1/cells
+** VERSION CONTROL:
+*** Add aux_fun.inc in A1/mod
+*** Add CT5A_A1_weightNorm.pkl and CT5B_A1_weightNorm.pkl 
