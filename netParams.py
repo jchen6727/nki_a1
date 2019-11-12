@@ -262,17 +262,22 @@ pmat = connData['pmat']
 lmat = connData['lmat']
 wmat = connData['wmat']
 bins = connData['bins']
+connDataSource = connData['connDataSource']
 
 #------------------------------------------------------------------------------
 ## E -> E
 if cfg.addConn:
     for pre in Epops:
         for post in Epops:
+            if connDataSource['E->E/I'] == 'Allen_V1':
+                prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+            else:
+                prob = pmat[pre][post]
             netParams.connParams['EE_'+pre+'_'+post] = { 
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
-                'probability': pmat[pre][post],#'%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                'probability': prob,
                 'weight': wmat[pre][post] * cfg.EEGain, 
                 'synMechWeightFactor': cfg.synWeightFractionEE,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -285,11 +290,15 @@ if cfg.addConn:
 if cfg.addConn:
     for pre in Epops:
         for post in Ipops:
+            if connDataSource['E->E/I'] == 'Allen_V1':
+                prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+            else:
+                prob = pmat[pre][post]
             netParams.connParams['EI_'+pre+'_'+post] = { 
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
-                'probability': pmat[pre][post], #'%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                'probability': prob,
                 'weight': wmat[pre][post] * cfg.EIGain, 
                 'synMechWeightFactor': cfg.synWeightFractionEI,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -301,49 +310,87 @@ if cfg.addConn:
 ## I -> E
 if cfg.addConn and cfg.IEGain > 0.0:
 
-    binsLabel = 'inh'
-    preTypes = Itypes
-    synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
-    weightFactors = [[1.0], cfg.synWeightFractionSOME, [1.0], cfg.synWeightFractionNGF] 
-    secs = ['perisom', 'apicdend', 'apicdend', 'apicdend']
-    postTypes = Etypes
-    for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
-        for ipostType, postType in enumerate(postTypes):
-            for ipreBin, preBin in enumerate(bins[binsLabel]):
-                for ipostBin, postBin in enumerate(bins[binsLabel]):
-                    ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
-                    netParams.connParams[ruleLabel] = {
-                        'preConds': {'cellType': preType, 'ynorm': list(preBin)},
-                        'postConds': {'cellType': postType, 'ynorm': list(postBin)},
-                        'synMech': synMech,
-                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipreBin,ipostBin]),
-                        'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
-                        'synMechWeightFactor': weightFactor,
-                        'delay': 'defaultDelay+dist_3D/propVelocity',
-                        'sec': sec} # simple I cells used right now only have soma
-
+    if connDataSource['E->E/I'] == 'custom_A1':
+        binsLabel = 'inh'
+        preTypes = Itypes
+        synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
+        weightFactors = [[1.0], cfg.synWeightFractionSOME, [1.0], cfg.synWeightFractionNGF] 
+        secs = ['perisom', 'apicdend', 'apicdend', 'apicdend']
+        postTypes = Etypes
+        for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
+            for ipostType, postType in enumerate(postTypes):
+                for ipreBin, preBin in enumerate(bins[binsLabel]):
+                    for ipostBin, postBin in enumerate(bins[binsLabel]):
+                        ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
+                        netParams.connParams[ruleLabel] = {
+                            'preConds': {'cellType': preType, 'ynorm': list(preBin)},
+                            'postConds': {'cellType': postType, 'ynorm': list(postBin)},
+                            'synMech': synMech,
+                            'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipreBin,ipostBin]),
+                            'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
+                            'synMechWeightFactor': weightFactor,
+                            'delay': 'defaultDelay+dist_3D/propVelocity',
+                            'sec': sec} # simple I cells used right now only have soma
+    #  BBP_S1 or Allen_V1
+    else: 
+        for pre in Ipops:
+            for post in Epops:
+                if connDataSource['I->E/I'] == 'Allen_V1':
+                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+                else:
+                    prob = pmat[pre][post]
+                netParams.connParams['IE_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': ESynMech,
+                    'probability': prob,
+                    'weight': wmat[pre][post] * cfg.EIGain, 
+                    'synMechWeightFactor': cfg.synWeightFractionEI,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
 
 #------------------------------------------------------------------------------
 ## I -> I
 if cfg.addConn and cfg.IIGain > 0.0:
 
-    binsLabel = 'inh'
-    preTypes = Itypes
-    synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
-    sec = 'perisom'
-    postTypes = Itypes
-    for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
-        for ipost, postType in enumerate(postTypes):
-            for iBin, bin in enumerate(bins[binsLabel]):
-                ruleLabel = preType+'_'+postType+'_'+str(iBin)
-                netParams.connParams[ruleLabel] = {
-                    'preConds': {'cellType': preType, 'ynorm': bin},
-                    'postConds': {'cellType': postType, 'ynorm': bin},
-                    'synMech': synMech,
-                    'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType][postType]),
-                    'weight': cfg.IIweights[iBin] * cfg.IIGain,
+    if connDataSource['I->E/I'] == 'custom_A1':
+        binsLabel = 'inh'
+        preTypes = Itypes
+        synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
+        sec = 'perisom'
+        postTypes = Itypes
+        for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
+            for ipost, postType in enumerate(postTypes):
+                for iBin, bin in enumerate(bins[binsLabel]):
+                    ruleLabel = preType+'_'+postType+'_'+str(iBin)
+                    netParams.connParams[ruleLabel] = {
+                        'preConds': {'cellType': preType, 'ynorm': bin},
+                        'postConds': {'cellType': postType, 'ynorm': bin},
+                        'synMech': synMech,
+                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType][postType]),
+                        'weight': cfg.IIweights[iBin] * cfg.IIGain,
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'sec': sec} # simple I cells used right now only have soma
+
+    #  BBP_S1 or Allen_V1
+    else: 
+        for pre in Ipops:
+            for post in Epops:
+                if connDataSource['I->E/I'] == 'Allen_V1':
+                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+                else:
+                    prob = pmat[pre][post]
+                netParams.connParams['II_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': ESynMech,
+                    'probability': prob,
+                    'weight': wmat[pre][post] * cfg.EIGain, 
+                    'synMechWeightFactor': cfg.synWeightFractionEI,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
-                    'sec': sec} # simple I cells used right now only have soma
+                    'synsPerConn': 1,
+                    'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
 
 
 #------------------------------------------------------------------------------

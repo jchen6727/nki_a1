@@ -116,7 +116,6 @@ Tpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM']
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1], 'thal': [1.2, 1.4]} # 
 
 
-
 # initialize prob and weight matrices
 # format: pmat[presynaptic_pop][postsynaptic_pop] 
 pmat = {}  # probability of connection matrix
@@ -131,7 +130,10 @@ for p in Epops + Ipops + Tpops:
 data = loadData()
 
 # Set source of conn data
-connDataSource = 'BBP_S1'  # 'Allen_V1' 
+connDataSource = {}
+connDataSource['E->E/I'] = 'BBP_S1' #'BBP_S1'  # 'Allen_V1' 
+connDataSource['I->E/I'] = 'BBP_S1' #'BBP_S1'  # 'Allen_V1' 
+
 
 # --------------------------------------------------
 ## E -> E 
@@ -149,7 +151,7 @@ and lambda is the length constant
 '''
 
 # start with base data from Allen V1
-if connDataSource ==  'Allen_V1': 
+if connDataSource['E->E/I'] ==  'Allen_V1': 
     for pre in Epops:
         for post in Epops:
             proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
@@ -158,7 +160,7 @@ if connDataSource ==  'Allen_V1':
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
-elif connDataSource ==  'BBP_S1': 
+elif connDataSource['E->E/I'] ==  'BBP_S1': 
     for pre in Epops:
         for post in Epops:
             proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
@@ -229,33 +231,56 @@ bins['inh'] = [[0.0, 0.37], [0.37, 0.8], [0.8,1.0]]
 - Consistent with Allen V1, except Allen doesn't show strong L2/3 I -> L5 E
 '''
 
-# I->E particularities:
-## inh cells target apical dends (not strictly local to layer) 
-## L1 + L2/3 NGF -> L2/3 E (prox apic) + L5 E (tuft) -- specify target dend in subConnParams
-## upper layer SOM, VIP, NGF project strongly to deeper E cells (Kato 2017) with exp-decay distance-dep
+if connDataSource['I->E/I'] ==  'custom_A1': 
+    # I->E particularities:
+    ## inh cells target apical dends (not strictly local to layer) 
+    ## L1 + L2/3 NGF -> L2/3 E (prox apic) + L5 E (tuft) -- specify target dend in subConnParams
+    ## upper layer SOM, VIP, NGF project strongly to deeper E cells (Kato 2017) with exp-decay distance-dep
 
-for pre in ['SOM', 'VIP', 'NGF']:
-    pmat[pre] = {}
-    pmat[pre]['E'] = np.array([[1.0, 1.0, 1.0],  # from L1+L2/3+L4 to all layers 
-                                 [0.25, 1.0, 1.0],  # from L5A+L5B to all layers
-                                 [0.25, 0.25, 1.0]])  # from L6 to all layers
+    for pre in ['SOM', 'VIP', 'NGF']:
+        pmat[pre] = {}
+        pmat[pre]['E'] = np.array([[1.0, 1.0, 1.0],  # from L1+L2/3+L4 to all layers 
+                                    [0.25, 1.0, 1.0],  # from L5A+L5B to all layers
+                                    [0.25, 0.25, 1.0]])  # from L6 to all layers
 
-## upper layer PV project weakly to deeper E cells (mostly intralaminar) (Kato 2017) with exp-decay distance-dep
-## although Naka 2016 shows L2/3 PV -> L5 Pyr
-pmat['PV'] = {}
-pmat['PV']['E'] = np.array([[1.0, 0.5, 0.25],  # from L1+L2/3+L4 to all layers 
-                              [0.25, 1.0, 0.5],  # from L5A+L5B to all layers
-                              [0.1, 0.25, 1.0]])  # from L6 to all layers
+    ## upper layer PV project weakly to deeper E cells (mostly intralaminar) (Kato 2017) with exp-decay distance-dep
+    ## although Naka 2016 shows L2/3 PV -> L5 Pyr
+    pmat['PV'] = {}
+    pmat['PV']['E'] = np.array([[1.0, 0.5, 0.25],  # from L1+L2/3+L4 to all layers 
+                                [0.25, 1.0, 0.5],  # from L5A+L5B to all layers
+                                [0.1, 0.25, 1.0]])  # from L6 to all layers
 
-# VIP -> E (very low; 3/42; Pi et al 2013) 
-pmat['VIP']['E'] *= 0.1
+    # VIP -> E (very low; 3/42; Pi et al 2013) 
+    pmat['VIP']['E'] *= 0.1
 
-# --------------------------------------------------
-## Weights  (=unitary conn somatic PSP amplitude)
-IEweight = 1.0
-for pre in Ipops:
-    for post in Ipops:
-        wmat[pre][post] = IEweight
+    # --------------------------------------------------
+    ## Weights  (=unitary conn somatic PSP amplitude)
+    IEweight = 1.0
+    for pre in Ipops:
+        for post in Ipops:
+            wmat[pre][post] = IEweight
+
+# Allen V1
+elif connDataSource['I->E/I'] ==  'Allen_V1': 
+    if connDataSource ==  'Allen_V1': 
+        for pre in Ipops:
+            for post in Epops:
+                proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+                pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+                lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+                wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+
+# use BBP S1 instead? (has more cell-type specificity)
+elif connDataSource['I->E/I'] ==  'BBP_S1': 
+    for pre in Ipops:
+        for post in Epops:
+            proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
+            if proj in data['BBP_S1']['connProb']:
+                pmat[pre][post] = data['BBP_S1']['connProb'][proj]['connection_probability']/100.0
+                wmat[pre][post] = data['BBP_S1']['connWeight'][proj]['epsp_mean']
+            else:
+                pmat[pre][post] = 0.
+                wmat[pre][post] = 0.
 
 
 # --------------------------------------------------
@@ -273,44 +298,70 @@ for pre in Ipops:
 - Generally consistent with the more detailed Allen V1 I->I
 '''
 
+if connDataSource['I->E/I'] == 'custom_A1':
+    
 ### I->I particularities
-for pre in Itypes:
-    pmat[pre]
-    for post in Itypes:
-        pmat[pre][post] = 1.0
+    for pre in Itypes:
+        pmat[pre]
+        for post in Itypes:
+            pmat[pre][post] = 1.0
 
-# NGF -> all I, local/intralaminar (+ distance-dep)
-# no change required
+    # NGF -> all I, local/intralaminar (+ distance-dep)
+    # no change required
 
-strong = 1.0
-weak = 0.35  # = ~ normalized strong/weak = (4/15) / (14/18)
-veryweak = 0.1
+    strong = 1.0
+    weak = 0.35  # = ~ normalized strong/weak = (4/15) / (14/18)
+    veryweak = 0.1
 
-# VIP -> SOM (strong; 14/18), PV (weak; 4/15), VIP (very weak -- remove?) (Pi 2013)
-pmat['VIP']['SOM'] = strong
-pmat['VIP']['PV'] = weak
-pmat['VIP']['VIP'] = veryweak
-pmat['VIP']['NGF'] = weak  # unknown; assume weak
+    # VIP -> SOM (strong; 14/18), PV (weak; 4/15), VIP (very weak -- remove?) (Pi 2013)
+    pmat['VIP']['SOM'] = strong
+    pmat['VIP']['PV'] = weak
+    pmat['VIP']['VIP'] = veryweak
+    pmat['VIP']['NGF'] = weak  # unknown; assume weak
 
-# SOM -> FS+VIP (strong); SOM (weak -- remove?)  (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
-pmat['SOM']['PV'] = strong
-pmat['SOM']['VIP'] = strong
-pmat['SOM']['SOM'] = weak
-pmat['VIP']['NGF'] = weak  # unknown; assume weak
- 
-# PV  -> PV (strong); SOM+VIP (weak -- remove?) (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
-pmat['PV']['PV'] = strong
-pmat['PV']['SOM'] = weak
-pmat['PV']['VIP'] = weak
-pmat['PV']['NGF'] = weak  # unknown; assume weak
+    # SOM -> FS+VIP (strong); SOM (weak -- remove?)  (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
+    pmat['SOM']['PV'] = strong
+    pmat['SOM']['VIP'] = strong
+    pmat['SOM']['SOM'] = weak
+    pmat['VIP']['NGF'] = weak  # unknown; assume weak
+    
+    # PV  -> PV (strong); SOM+VIP (weak -- remove?) (Naka et al 2016;Tremblay, 2016; Sohn, 2016)
+    pmat['PV']['PV'] = strong
+    pmat['PV']['SOM'] = weak
+    pmat['PV']['VIP'] = weak
+    pmat['PV']['NGF'] = weak  # unknown; assume weak
 
 
-# --------------------------------------------------
-## Weights  (=unitary conn somatic PSP amplitude)
-IIweight = 1.0
-for pre in Ipops:
-    for post in Ipops:
-        wmat[pre][post] = IIweight
+    # --------------------------------------------------
+    ## Weights  (=unitary conn somatic PSP amplitude)
+    IIweight = 1.0
+    for pre in Ipops:
+        for post in Ipops:
+            wmat[pre][post] = IIweight
+
+
+# Allen V1
+elif connDataSource['I->E/I'] ==  'Allen_V1': 
+    if connDataSource ==  'Allen_V1': 
+        for pre in Ipops:
+            for post in Ipops:
+                proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+                pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+                lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+                wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+
+# use BBP S1 instead? (has more cell-type specificity)
+elif connDataSource['I->E/I'] ==  'BBP_S1': 
+    for pre in Ipops:
+        for post in Ipops:
+            proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
+            if proj in data['BBP_S1']['connProb']:
+                pmat[pre][post] = data['BBP_S1']['connProb'][proj]['connection_probability']/100.0
+                wmat[pre][post] = data['BBP_S1']['connWeight'][proj]['epsp_mean']
+            else:
+                pmat[pre][post] = 0.
+                wmat[pre][post] = 0.
+
 
 
 # --------------------------------------------------
