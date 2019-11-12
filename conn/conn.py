@@ -160,7 +160,7 @@ if connDataSource['E->E/I'] ==  'Allen_V1':
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
-elif connDataSource['E->E/I'] ==  'BBP_S1': 
+elif connDataSource['E->E/I'] == 'BBP_S1': 
     for pre in Epops:
         for post in Epops:
             proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
@@ -191,7 +191,7 @@ and lambda is the length constant
 '''
 
 # start with base data from Allen V1
-if connDataSource ==  'Allen_V1': 
+if connDataSource['E->E/I'] == 'Allen_V1': 
     for pre in Epops:
         for post in Ipops:
             proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
@@ -200,7 +200,7 @@ if connDataSource ==  'Allen_V1':
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
-elif connDataSource ==  'BBP_S1': 
+elif connDataSource['E->E/I'] == 'BBP_S1': 
     for pre in Epops:
         for post in Ipops:
             proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
@@ -231,7 +231,7 @@ bins['inh'] = [[0.0, 0.37], [0.37, 0.8], [0.8,1.0]]
 - Consistent with Allen V1, except Allen doesn't show strong L2/3 I -> L5 E
 '''
 
-if connDataSource['I->E/I'] ==  'custom_A1': 
+if connDataSource['I->E/I'] == 'custom_A1': 
     # I->E particularities:
     ## inh cells target apical dends (not strictly local to layer) 
     ## L1 + L2/3 NGF -> L2/3 E (prox apic) + L5 E (tuft) -- specify target dend in subConnParams
