@@ -261,14 +261,13 @@ if connDataSource['I->E/I'] == 'custom_A1':
             wmat[pre][post] = IEweight
 
 # Allen V1
-elif connDataSource['I->E/I'] ==  'Allen_V1': 
-    if connDataSource ==  'Allen_V1': 
-        for pre in Ipops:
-            for post in Epops:
-                proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
-                pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
-                lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
-                wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+elif connDataSource['I->E/I'] == 'Allen_V1': 
+    for pre in Ipops:
+        for post in Epops:
+            proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+            pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+            lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+            wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
 elif connDataSource['I->E/I'] ==  'BBP_S1': 
@@ -342,13 +341,12 @@ if connDataSource['I->E/I'] == 'custom_A1':
 
 # Allen V1
 elif connDataSource['I->E/I'] ==  'Allen_V1': 
-    if connDataSource ==  'Allen_V1': 
-        for pre in Ipops:
-            for post in Ipops:
-                proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
-                pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
-                lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
-                wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
+    for pre in Ipops:
+        for post in Ipops:
+            proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+            pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+            lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+            wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
 # use BBP S1 instead? (has more cell-type specificity)
 elif connDataSource['I->E/I'] ==  'BBP_S1': 
