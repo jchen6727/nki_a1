@@ -131,8 +131,8 @@ data = loadData()
 
 # Set source of conn data
 connDataSource = {}
-connDataSource['E->E/I'] = 'BBP_S1' #'BBP_S1'  # 'Allen_V1' 
-connDataSource['I->E/I'] = 'BBP_S1' #'BBP_S1'  # 'Allen_V1' 
+connDataSource['E->E/I'] = 'Allen_V1' #'BBP_S1'  # 'Allen_V1' 
+connDataSource['I->E/I'] = 'custom_A1' #'BBP_S1'  # 'Allen_V1' 
 
 
 # --------------------------------------------------

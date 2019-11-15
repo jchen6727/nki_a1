@@ -310,7 +310,7 @@ if cfg.addConn:
 ## I -> E
 if cfg.addConn and cfg.IEGain > 0.0:
 
-    if connDataSource['E->E/I'] == 'custom_A1':
+    if connDataSource['I->E/I'] == 'custom_A1':
         binsLabel = 'inh'
         preTypes = Itypes
         synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
