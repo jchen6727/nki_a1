@@ -1,0 +1,38 @@
+// FROM https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+//* 2 CMP Thalamic interneuron (tTI)
+//** begintemplate tTI
+begintemplate tTI
+  public soma,dend
+  public nmda, ampa, gabaa, gabab, p, inhib, excit, inj
+  public up
+  external fgabaa,fgabab, fampa, fnmda, ftc, fre, finj, fgen
+  objectvar nmda, ampa, gabaa, gabab, inj
+  objref this,up
+
+create soma, dend
+
+proc init () { local i,j
+    create soma, dend
+  
+    soma {
+        gabaa = new GABAA(0.5)
+        gabab = new GABAB(0.5)
+        ampa = new AMPA(0.5)
+        nmda = new NMDA(0.5)
+      }
+    forsec "soma" {
+        nseg = 1
+        diam = 10
+        L = 16
+        cm = 1
+      }
+  forsec "dend" {
+        nseg = 1
+        diam = 50
+        L = 50
+        cm = 3
+      }
+    connect dend(0), soma (1)
+    forall Ra = 50
+  }
+endtemplate tTI
