@@ -507,7 +507,7 @@ if one population gets more inputs due to bbp then another one might need to get
 
 ** Updating E->E/I conn based on BBP subcelltypes
 - Allen does not distinguish E subtypes; and VIP cell type
--
+- Update VIP relative prob -- compared to 
 
 * SIMS
 ** v11_manualTune/sim1

@@ -151,7 +151,7 @@ def compare_conn():
     connCustom = dataCustom['connMatrix']
     feature = 'Probability of connection difference'
 
-    diff_Allen_BBP_E = connAllen # - connBBP
+    diff_Allen_BBP_E = connAllen - connBBP
 
     diff_Custom_BBP_I = connCustom - connBBP
 
@@ -180,16 +180,16 @@ def compare_conn():
     fontsiz = 14
     plt.rcParams.update({'font.size': fontsiz})
 
-    cmap = 'viridis' #bicolormap() # Default ,should work for most things
+    cmap = bicolormap() # Default ,should work for most things
     # cmap = bicolormap(gap=0,mingreen=0,redbluemix=1,epsilon=0) # From pure red to pure blue with white in the middle
     # cmap = bicolormap(gap=0,mingreen=0,redbluemix=0,epsilon=0.1) # Red -> yellow -> gray -> turquoise -> blue
     # cmap = bicolormap(gap=0.3, mingreen=0.2, redbluemix=0, epsilon=0.01)  # Red and blue with a sharp distinction between
 
     connMatrices = [diff_Allen_BBP_E, diff_Custom_BBP_I, diff_Custom_Allen_I]
-    diffConnFilenames = ['Allen_E'] #['diff_Allen_BBP_E', 'diff_Custom_BBP_I', 'diff_Custom_Allen_I']
-    diffConnTitles = ['Allen V1 exc conn'] #['Allen V1 (=current A1) - BBP S1 exc connectivity matrix (difference)',
-                       # 'Custom A1 - BBP S1 inh connectivity matrix (difference)',
-                       # 'Custom A1 - Allen V1 inh connectivity matrix (difference)']
+    diffConnFilenames = ['diff_Allen_BBP_E', 'diff_Custom_BBP_I', 'diff_Custom_Allen_I']
+    diffConnTitles = ['Allen V1 (=current A1) - BBP S1 exc connectivity matrix (difference)',
+                      'Custom A1 - BBP S1 inh connectivity matrix (difference)',
+                      'Custom A1 - Allen V1 inh connectivity matrix (difference)']
     diffPops = [Epops, Ipops, Ipops]
     diffPopInds = [excPopsInds, inhPopsInds, inhPopsInds]
     figYsizes = [8, 12, 12]
@@ -204,11 +204,11 @@ def compare_conn():
         
         vmin = np.nanmin(connMatrix)
         vmax = np.nanmax(connMatrix) 
-        # make symetric
-        # if vmax > vmin:
-        #     vmin = -vmax
-        # else:
-        #     vmax = -vmin
+        #make symetric
+        if vmax > vmin:
+            vmin = -vmax
+        else:
+            vmax = -vmin
     
         plt.figure(figsize=(18 , figYsize))
         h = plt.axes()
