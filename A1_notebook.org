@@ -27347,7 +27347,7 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 *** https://senselab.med.yale.edu/modeldb/ShowModel.cshtml?model=140249&file=/dLGN_modelDB/readme.html#tabs-2
 
 * <2019-11-18 Mon -- Thal interneuron model>
-** in A1/cells -- made dir called 'iTRN' to test out possible TRN interneurons
+** in A1/cells -- made dir called 'iTRN' to test out possible thal interneurons
 *** on cells branch, in local repo (laptop) 
 ** sTI.hoc: 
 *** SOURCE:
@@ -27366,6 +27366,10 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 *** cells/iTRN/sTI2.hoc pushed to repo 
 *** 2 compartments: 1 soma, 1 dend 
 ** Added test_int.py to import hoc files and stim and test 
-** I think sTI2.hoc will end up being the one we use bc 2 compartment + thal interneuron 
-** renamed sTI.hoc --> sTI_too_large.hoc --> then git rm cells/iTRN/sTI.hoc --> git commit -m 'message' --> git push origin cells 
-** 
+** DECISION: 
+*** I think sTI2.hoc will end up being the one we use bc 2 compartment + thal interneuron 
+*** renamed sTI.hoc --> sTI_too_large.hoc --> then git rm cells/iTRN/sTI.hoc --> git commit -m 'message' --> git push origin cells 
+** Thal interneuron model: 
+*** A1/cells/iTRN/sTI.hoc
+*** Added to 'soma' section and dend section in proc init, all the mechanisms listed in params.hoc section of batch_.hoc from modeldb https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+*** 
