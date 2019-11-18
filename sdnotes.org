@@ -465,6 +465,50 @@ yeah… so dist-dep is a feature whether we have cell-type specific data or not
 the little cell-type specific data we have I’ve tried to incorporate on top of the dist-dep
 so e.g. ‘strong’ will be 1.0*exp(-d/L) and ‘weak’ will be 0.35*exp(-d/L)
 anyway you can have a look at the excel, conn.py and netParams.py and let me know what you think
+** Comparison to BBP and Allen conn
+do you have a recommendation based on those differences?
+i'm ok with just using allen since has distant dependent. any strong reason to also incorporate BBP?
+salvadord 12:58 PM
+well there’s 2 diff things to consider: E->E/I and I->E/I
+for E-> E/I (currently using Allen), BBP has advantage of differentiating E pops
+for I->E/I (currently using our own custom based on papers), both Allen and BBP provide alternatives and show weaker probs from upper I (SOM,NGF) to deeper E — which I had increased since papers showed targeting apical dends
+samn 1:00 PM
+OK, so I->E/I custom better than either of Allen/BBP for our purposes?
+and E->E/I, BBP differentiation of E pops - how much of that is based on cortical layer? macro from Allen might be good enough for our purposes
+salvadord 1:03 PM
+I->E/I better - maybe, but fact that allen + bbp so different makes me wonder if I’m misinterpreting papers — I’ll recheck and stick to ours if makes sense (or maybe reduce a bit those strong conns to match allen/bbp better)
+samn 1:03 PM
+sg
+thx
+& E->E/I BBP - large diffs there too compared to what currently have? (on nki network so google drive blocked...only could look via phone)
+I->E/I plan sg anyway, can do 1 step at a time, thx for update
+salvadord 1:21 PM
+PDF 
+A1 conn comparison.pdf
+2 MB PDF — Click to view
+
+
+samn 1:22 PM
+thx
+salvadord 1:26 PM
+btw all conn matrices generated from A1 instantiated model (400 um diameter column; 12k neurons; 25% cell density) so there’s some randomness involved
+samn 1:35 PM
+for E -> E/I is there a way to adjust to take into account the known/existing subtypes we have from BBP and otherwise leave as is?
+one problem then is macro-probabilities could be increased/decreased from what they should be...
+salvadord 2:03 PM
+adjust E subtypes - yeah I was thinking about that; maybe scale based on BBP
+what do u mean by macro-probabilities?
+samn 2:03 PM
+i mean the probabilities from allen that don't take into account the sub-types
+salvadord 2:04 PM
+ok y makes sense
+samn 2:04 PM
+if one population gets more inputs due to bbp then another one might need to get less
+
+** Updating E->E/I conn based on BBP subcelltypes
+- Allen does not distinguish E subtypes; and VIP cell type
+-
+
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05

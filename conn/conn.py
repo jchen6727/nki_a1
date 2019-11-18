@@ -100,7 +100,7 @@ def loadData():
 # Params
 # ----------------------------------------------------------------------------------------------------------------
 Etypes = ['IT', 'ITS4', 'PT', 'CT']
-Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT6', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']  # all layers
+Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']  # all layers
 
 Itypes = ['PV', 'SOM', 'VIP', 'NGF']
 Ipops = ['NGF1',                            # L1
