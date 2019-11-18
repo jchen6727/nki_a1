@@ -1,7 +1,8 @@
 // FROM https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
 //* 2 CMP Thalamic interneuron (tTI)
-//** begintemplate tTI
-begintemplate tTI
+//** begintemplate tTI --> old name; now sTI2 because 2 compartment thalamic interneuron 
+
+begintemplate sTI2
   public soma,dend
   public nmda, ampa, gabaa, gabab, p, inhib, excit, inj
   public up
@@ -35,4 +36,4 @@ proc init () { local i,j
     connect dend(0), soma (1)
     forall Ra = 50
   }
-endtemplate tTI
+endtemplate sTI2
