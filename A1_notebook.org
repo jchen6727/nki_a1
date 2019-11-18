@@ -27348,4 +27348,16 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 
 * <2019-11-18 Mon -- Thal interneuron model>
 ** in A1/cells -- made dir called 'iTRN' to test out possible TRN interneurons
-** Thal interneuron model possibilities: 
+*** on cells branch, in local repo (laptop) 
+** sTI.hoc: 
+*** SOURCE:
+**** From modelDB: Thalamic interneuron multicompartment model (Zhu et al. 1999)
+**** https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+**** in batch_.hoc file in modeldb, there are templates for the different cell types --> I copied the sTI cell template and copy-pasted into A1/cells/iTRN/sTI.hoc file on cells branch locally 
+*** cells/iTRN/sTI.hoc pushed to repo 
+** sTI2.hoc:
+*** SOURCE:
+**** From modelDB: Thalamic interneuron multicompartment model (Zhu et al. 1999)
+**** https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+**** in batch_.hoc file in modeldb, there are templates for the different cell types --> I copied the sTI cell template and copy-pasted into A1/cells/iTRN/sTI.hoc file on cells branch locally 
+*** cells/iTRN/sTI2.hoc pushed to repo 
