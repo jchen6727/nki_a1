@@ -27367,3 +27367,5 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 *** 2 compartments: 1 soma, 1 dend 
 ** Added test_int.py to import hoc files and stim and test 
 ** I think sTI2.hoc will end up being the one we use bc 2 compartment + thal interneuron 
+** renamed sTI.hoc --> sTI_too_large.hoc --> then git rm cells/iTRN/sTI.hoc --> git commit -m 'message' --> git push origin cells 
+** 
