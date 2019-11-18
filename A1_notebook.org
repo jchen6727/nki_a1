@@ -27332,11 +27332,6 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 ***** This is identical to Condition 4
 
 
-
-
-
-
-
 *** NOTE: with the new htc.mod file, if I don't set anything, it sets eh_htc to 0, it seems? 
 *** SO ^^, what if I try to set the old one to 0... will that make it oscillate? or maybe it can't because it's a range var in the new one, but not in the orig mod file?? 
 **** can't seem to set it in test_cell.py or in sTC.py -- probably bc not range var, I'm guessing
@@ -27344,6 +27339,13 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 *** CURRENT TC SETUP in A1 repo: 
 **** mod file being used is htc_new.mod, suffix htc
 **** in sTC.py, self.soma.eh is commented out
+** htc.mod file now being used in A1 is the 'original' htc.mod (without the RANGE eh 'quick fix' made by salva and sam before SfN) --> except now, the USEION h line has been deleted. 
 
+* <2019-11-12 Tue -- Thal interneuron model>
+** Potential models: 
+*** https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+*** https://senselab.med.yale.edu/modeldb/ShowModel.cshtml?model=140249&file=/dLGN_modelDB/readme.html#tabs-2
 
-
+* <2019-11-18 Mon -- Thal interneuron model>
+** in A1/cells -- made dir called 'iTRN' to test out possible TRN interneurons
+** Thal interneuron model possibilities: 
