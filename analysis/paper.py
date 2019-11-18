@@ -170,6 +170,8 @@ def compare_conn():
 
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 
+    popsPost = allpops # NOTE: not sure why CT5B and PT5B order was switched
+
     excPopsInds = [1, 6, 11,12, 17, 18, 23, 24, 25, 30,31]
     inhPopsInds = [0,2,3,4,5,7,8,9,10,13,14,15,16,19,20,21,22,26,27,28,29,32,33,34,35]
 
@@ -184,7 +186,7 @@ def compare_conn():
     # cmap = bicolormap(gap=0.3, mingreen=0.2, redbluemix=0, epsilon=0.01)  # Red and blue with a sharp distinction between
 
     connMatrices = [diff_Allen_BBP_E, diff_Custom_BBP_I, diff_Custom_Allen_I]
-    diffConnFilenames = ['Allen_BBP_E'] #['diff_Allen_BBP_E', 'diff_Custom_BBP_I', 'diff_Custom_Allen_I']
+    diffConnFilenames = ['Allen_E'] #['diff_Allen_BBP_E', 'diff_Custom_BBP_I', 'diff_Custom_Allen_I']
     diffConnTitles = ['Allen V1 exc conn'] #['Allen V1 (=current A1) - BBP S1 exc connectivity matrix (difference)',
                        # 'Custom A1 - BBP S1 inh connectivity matrix (difference)',
                        # 'Custom A1 - Allen V1 inh connectivity matrix (difference)']
