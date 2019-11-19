@@ -82,6 +82,15 @@ def loadData():
     with open('../data/conn/BBP_S1_pathways_physiology_factsheets_simplified.json', 'r') as f:
         data['BBP_S1']['connWeight'] = json.load(f)
     
+    # calculate A0 so can use in combination with Allen 
+    ## note BBP connProb represent "avg probability within 100um"; can approximate as prob at 75um used in Allen (R0)
+    ## need to calculate corresponding A0 (max prob) based on R0 (prob at 75um) for BBP
+    for proj in data['BBP_S1']['connProb']:
+        A_literature = data['BBP_S1']['connProb'][proj]['connection_probability'] / 100.
+        sigma = 75
+        A0 = A_literature / ((sigma / R0)** 2 * (1 - np.exp(-(R0 / sigma)** 2)))
+        if A0 > 1.0: A0 = 1.0  # make max prob = 1.0
+        data['BBP_S1']['connProb'][proj]['A0'] = A0
 
     # set correspondence between A1 pops and Allen V1 pops 
     data['BBP_S1']['pops'] = {
@@ -131,12 +140,12 @@ data = loadData()
 
 # Set source of conn data
 connDataSource = {}
-connDataSource['E->E/I'] = 'Allen_V1' #'BBP_S1'  # 'Allen_V1' 
+connDataSource['E->E/I'] = 'Allen_BBP' #'Allen_V1' #'BBP_S1'  # 'Allen_V1' 
 connDataSource['I->E/I'] = 'custom_A1' #'BBP_S1'  # 'Allen_V1' 
 
 
 # --------------------------------------------------
-## E -> E 
+## E -> E/I 
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -153,16 +162,16 @@ and lambda is the length constant
 # start with base data from Allen V1
 if connDataSource['E->E/I'] ==  'Allen_V1': 
     for pre in Epops:
-        for post in Epops:
+        for post in Epops+Ipops:
             proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
             pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
             lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
-# use BBP S1 instead? (has more cell-type specificity)
+# use BBP S1 instead (has more cell-type specificity)
 elif connDataSource['E->E/I'] == 'BBP_S1': 
     for pre in Epops:
-        for post in Epops:
+        for post in Epops+Ipops:
             proj = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][post])
             if proj in data['BBP_S1']['connProb']:
                 pmat[pre][post] = data['BBP_S1']['connProb'][proj]['connection_probability']/100.
@@ -171,24 +180,54 @@ elif connDataSource['E->E/I'] == 'BBP_S1':
                 pmat[pre][post] = 0.
                 wmat[pre][post] = 0.
 
+# use Allen but update with BBP cell-type specificity
+if connDataSource['E->E/I'] ==  'Allen_BBP': 
+    for pre in Epops:
+        for post in Epops+Ipops:
+            proj = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][post])
+            pmat[pre][post] = data['Allen_V1']['connProb'][proj]['A0']
+            lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
+            wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
-# modify based on A1 exp data - TO DO
+## update all VIP by making proportional to FS (VIP_Allen = (VIP_BBP/FS_BBP) * FS_Allen
+    for pre in Epops:
+        for VIPpop, FSpop in {'VIP2': 'FS2', 'VIP3': 'FS3', 'VIP4': 'FS4', 'VIP5A': 'FS5A', 'VIP5B': 'FS5A', 'VIP6': 'FS6'}.items():
+            projAllen_FS = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][FSpop])
+            projAllen_VIP = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][VIPpop])
+            projBBP_FS = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][FSpop])
+            projBBP_VIP = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][VIPpop])
+
+            FS_Allen = data['Allen_V1']['connProb'][projAllen_FS]
+            FS_BBP = data['BBP_S1']['connProb'][projBBP_FS]['A0']
+            VIP_BBP = data['BBP_S1']['connProb'][projBBP_VIP]['A0']
+            #print(projAllen_VIP, 'VIP_BBP: %.2f'%(VIP_BBP), FS_BBP)
+            pmat[pre][VIPpop] = (VIP_BBP/FS_BBP) * FS_Allen
+
+
+## update L4 E cells (ITP4, ITS4)
+
+## update L5A E cells (IT5A, CT5A)
+
+## update L5B E cells (IT5B, CT5B, PT5B)
+
+# update L5B E cells (IT6, CT6)
 
 
 # --------------------------------------------------
-## E -> I
+## E -> I (COMBINED WITH E->E above)
 # --------------------------------------------------
+'''
+NOTE: combined with E->E above!
 
 # --------------------------------------------------
 ## Probabilities, length constants (lambda), and weights (=unitary conn somatic PSP amplitude)
 
-'''
+
 Probabilities are distance dependent based on:
 A0 * np.exp(- (intersomatic_distance / lambda) ** 2)
 
 where A0 is the probability of connection and distance 0um
 and lambda is the length constant
-'''
 
 # start with base data from Allen V1
 if connDataSource['E->E/I'] == 'Allen_V1': 
@@ -212,7 +251,7 @@ elif connDataSource['E->E/I'] == 'BBP_S1':
                 wmat[pre][post] = 0.
 
 # modify based on A1 exp data - TO DO
-    
+''' 
 
 # --------------------------------------------------
 ## I -> E
