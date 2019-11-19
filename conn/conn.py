@@ -189,28 +189,60 @@ if connDataSource['E->E/I'] ==  'Allen_BBP':
             lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
-## update all VIP by making proportional to FS (VIP_Allen = (VIP_BBP/FS_BBP) * FS_Allen
+    ## update all VIP (fix) by making proportional to PV (ref): VIP_Allen = (VIP_BBP/PV_BBP) * PV_Allen
     for pre in Epops:
-        for VIPpop, FSpop in {'VIP2': 'FS2', 'VIP3': 'FS3', 'VIP4': 'FS4', 'VIP5A': 'FS5A', 'VIP5B': 'FS5A', 'VIP6': 'FS6'}.items():
-            projAllen_FS = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][FSpop])
-            projAllen_VIP = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][VIPpop])
-            projBBP_FS = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][FSpop])
-            projBBP_VIP = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][VIPpop])
+        for fixpop, refpop in {'VIP2': 'PV2', 'VIP3': 'PV3', 'VIP4': 'PV4', 'VIP5A': 'PV5A', 'VIP5B': 'PV5A', 'VIP6': 'PV6'}.items():
+            projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][refpop])
+            projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][refpop])
+            projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][fixpop])
 
-            FS_Allen = data['Allen_V1']['connProb'][projAllen_FS]
-            FS_BBP = data['BBP_S1']['connProb'][projBBP_FS]['A0']
-            VIP_BBP = data['BBP_S1']['connProb'][projBBP_VIP]['A0']
-            #print(projAllen_VIP, 'VIP_BBP: %.2f'%(VIP_BBP), FS_BBP)
-            pmat[pre][VIPpop] = (VIP_BBP/FS_BBP) * FS_Allen
+            # conn probs 
+            ref_Allen = data['Allen_V1']['connProb'][projAllen_ref]['A0'] if projAllen_ref in data['Allen_V1']['connProb'] else 0.
+            ref_BBP = data['BBP_S1']['connProb'][projBBP_ref]['A0'] if projBBP_ref in data['BBP_S1']['connProb'] else 0.
+            fix_BBP = data['BBP_S1']['connProb'][projBBP_fix]['A0'] if projBBP_fix in data['BBP_S1']['connProb'] else 0.
+            if ref_BBP > 0.:
+                #print('Prob %s->%s:'%(pre, fixpop), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
+                pmat[pre][fixpop] = (fix_BBP/ref_BBP) * ref_Allen
 
 
-## update L4 E cells (ITP4, ITS4)
+    ## update L4 E cells: ITS4_Allen = (ITS4_BBP/ITP4_BBP) * ITP4_Allen
+    fixpop = 'ITS4'
+    refpop = 'ITP4'
 
-## update L5A E cells (IT5A, CT5A)
+    ## E -> ITS4
+    for pre in Epops+Ipops:
+        projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][refpop])
+        projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][refpop])
+        projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][pre], data['BBP_S1']['pops'][fixpop])
 
-## update L5B E cells (IT5B, CT5B, PT5B)
+        # conn probs 
+        ref_Allen = data['Allen_V1']['connProb'][projAllen_ref]['A0'] if projAllen_ref in data['Allen_V1']['connProb'] else 0.
+        ref_BBP = data['BBP_S1']['connProb'][projBBP_ref]['A0'] if projBBP_ref in data['BBP_S1']['connProb'] else 0.
+        fix_BBP = data['BBP_S1']['connProb'][projBBP_fix]['A0'] if projBBP_fix in data['BBP_S1']['connProb'] else 0.
+        if ref_BBP > 0.:
+            print('Prob %s->%s:'%(pre, fixpop), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
+            pmat[pre][fixpop] = (fix_BBP / ref_BBP) * ref_Allen
+        
+    ## ITS4 -> E
+    for post in Epops+Ipops:
+        projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][refpop], data['Allen_V1']['pops'][post])
+        projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][refpop], data['BBP_S1']['pops'][post])
+        projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][fixpop], data['BBP_S1']['pops'][post])
 
-# update L5B E cells (IT6, CT6)
+        # conn probs 
+        ref_Allen = data['Allen_V1']['connProb'][projAllen_ref]['A0'] if projAllen_ref in data['Allen_V1']['connProb'] else 0.
+        ref_BBP = data['BBP_S1']['connProb'][projBBP_ref]['A0'] if projBBP_ref in data['BBP_S1']['connProb'] else 0.
+        fix_BBP = data['BBP_S1']['connProb'][projBBP_fix]['A0'] if projBBP_fix in data['BBP_S1']['connProb'] else 0.
+        if ref_BBP > 0.:
+            print('Prob %s->%s:'%(pre, fixpop), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
+            pmat[pre][fixpop] = (fix_BBP/ref_BBP) * ref_Allen
+    
+
+    ## update L5A E cells (IT5A, CT5A)
+
+    ## update L5B E cells (IT5B, CT5B, PT5B)
+
+    # update L5B E cells (IT6, CT6)
 
 
 # --------------------------------------------------
