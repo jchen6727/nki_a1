@@ -27372,4 +27372,347 @@ AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
 ** Thal interneuron model: 
 *** A1/cells/iTRN/sTI.hoc
 *** Added to 'soma' section and dend section in proc init, all the mechanisms listed in params.hoc section of batch_.hoc from modeldb https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
-*** 
+*** Added all .mod files to A1/cells/iTRN in order to test sTI cell 
+*** COMPILE ISSUES: 
+**** nrnivmodl in this dir to compile (output below): 
+[Ericas-Air-3:A1/cells/iTRN] ericagriffith% nrnivmodl
+Creating x86_64 directory for .o files.
+
+/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/iTRN
+AMPA.mod GABAA.mod GABAB.mod HH2.mod IL.mod IL3.mod IT.mod IT2.mod Iahp.mod Ican.mod Ih.mod NMDA.mod cadecay.mod clampex.mod cp.mod cp2.mod kdr2.mod kleak.mod kmbg.mod naf2.mod nap.mod ntIh.mod nthh.mod ntleak.mod ntt.mod pregencv.mod vecst.mod
+AMPA.mod GABAA.mod GABAB.mod HH2.mod IL.mod IL3.mod IT.mod IT2.mod Iahp.mod Ican.mod Ih.mod NMDA.mod cadecay.mod clampex.mod cp.mod cp2.mod kdr2.mod kleak.mod kmbg.mod naf2.mod nap.mod ntIh.mod nthh.mod ntleak.mod ntt.mod pregencv.mod vecst.mod
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" AMPA
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" GABAA
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" GABAB
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" HH2
+Translating HH2.mod into HH2.c
+Translating AMPA.mod into AMPA.c
+Translating GABAA.mod into GABAA.c
+Translating GABAB.mod into GABAB.c
+INCLUDEing netcon.inc
+INCLUDEing netcon.inc
+INCLUDEing netcon.inc
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+Thread Safe
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o HH2.lo HH2.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o GABAA.lo GABAA.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o GABAB.lo GABAB.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o AMPA.lo AMPA.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c HH2.c  -fno-common -DPIC -o .libs/HH2.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c GABAB.c  -fno-common -DPIC -o .libs/GABAB.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c GABAA.c  -fno-common -DPIC -o .libs/GABAA.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c AMPA.c  -fno-common -DPIC -o .libs/AMPA.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IL
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IL3
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IT
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IT2
+Translating IL.mod into IL.c
+Translating IL3.mod into IL3.c
+Translating IT.mod into IT.c
+Translating IT2.mod into IT2.c
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 2 of PARAMETER Cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: celsius undefined. (declared within VERBATIM?)
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 0.00024 of PARAMETER cai will be ignored and set by NEURON.
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 2 of PARAMETER Cao will be ignored and set by NEURON.
+Thread Safe
+Thread Safe
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IL3.lo IL3.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IT2.lo IT2.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IT.lo IT.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IL.lo IL.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IT.c  -fno-common -DPIC -o .libs/IT.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IT2.c  -fno-common -DPIC -o .libs/IT2.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IL3.c  -fno-common -DPIC -o .libs/IL3.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IL.c  -fno-common -DPIC -o .libs/IL.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Iahp
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Ican
+Translating Iahp.mod into Iahp.c
+Translating Ican.mod into Ican.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Iahp.lo Iahp.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Ican.lo Ican.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Ih
+Translating Ih.mod into Ih.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" NMDA
+Notice: VERBATIM blocks are not thread safe
+NEURON's CVode method ignores conservation
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Ih.lo Ih.c
+Translating NMDA.mod into NMDA.c
+INCLUDEing netcon.inc
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o NMDA.lo NMDA.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Iahp.c  -fno-common -DPIC -o .libs/Iahp.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Ican.c  -fno-common -DPIC -o .libs/Ican.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c NMDA.c  -fno-common -DPIC -o .libs/NMDA.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Ih.c  -fno-common -DPIC -o .libs/Ih.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cadecay
+Translating cadecay.mod into cadecay.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cadecay.lo cadecay.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" clampex
+Translating clampex.mod into clampex.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o clampex.lo clampex.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cp
+Translating cp.mod into cp.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cp2
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cp.lo cp.c
+Translating cp2.mod into cp2.c
+Thread Safe
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cadecay.c  -fno-common -DPIC -o .libs/cadecay.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cp2.lo cp2.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c clampex.c  -fno-common -DPIC -o .libs/clampex.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cp.c  -fno-common -DPIC -o .libs/cp.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cp2.c  -fno-common -DPIC -o .libs/cp2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" kdr2
+Translating kdr2.mod into kdr2.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o kdr2.lo kdr2.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" kleak
+Translating kleak.mod into kleak.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o kleak.lo kleak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c kdr2.c  -fno-common -DPIC -o .libs/kdr2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" kmbg
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" naf2
+Translating kmbg.mod into kmbg.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+Translating naf2.mod into naf2.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o kmbg.lo kmbg.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o naf2.lo naf2.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c kleak.c  -fno-common -DPIC -o .libs/kleak.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c kmbg.c  -fno-common -DPIC -o .libs/kmbg.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c naf2.c  -fno-common -DPIC -o .libs/naf2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" nap
+Translating nap.mod into nap.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o nap.lo nap.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ntIh
+Translating ntIh.mod into ntIh.c
+Notice: Assignment to the GLOBAL variable, "h_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_h", is not thread safe
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ntIh.lo ntIh.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c nap.c  -fno-common -DPIC -o .libs/nap.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" nthh
+Translating nthh.mod into nthh.c
+Notice: Assignment to the GLOBAL variable, "h_exp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "h_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "m_exp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "n_exp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "n_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_n", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_h", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: Default -95 of PARAMETER ek will be ignored and set by NEURON.
+Warning: Default 50 of PARAMETER ena will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o nthh.lo nthh.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ntleak
+Translating ntleak.mod into ntleak.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ntleak.lo ntleak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ntIh.c  -fno-common -DPIC -o .libs/ntIh.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c nthh.c  -fno-common -DPIC -o .libs/nthh.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ntleak.c  -fno-common -DPIC -o .libs/ntleak.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ntt
+Translating ntt.mod into ntt.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "h_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "phi_h", is not thread safe
+Notice: Assignment to the GLOBAL variable, "phi_m", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_h", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 2 of PARAMETER Cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ntt.lo ntt.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" pregencv
+Translating pregencv.mod into pregencv.c
+Notice: set_seed is not thread safe
+Notice: exprand is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o pregencv.lo pregencv.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" vecst
+Translating vecst.mod into vecst.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "RES", is not thread safe
+Notice: Assignment to the GLOBAL variable, "VECST_INSTALLED", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o vecst.lo vecst.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ntt.c  -fno-common -DPIC -o .libs/ntt.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o mod_func.lo mod_func.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c pregencv.c  -fno-common -DPIC -o .libs/pregencv.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c vecst.c  -fno-common -DPIC -o .libs/vecst.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c mod_func.c  -fno-common -DPIC -o .libs/mod_func.o
+vecst.c:285:49: warning: format specifies type 'unsigned int' but the argument has type
+      'void *' [-Wformat]
+  printf("Obj*%x Dbl*%x Size: %d Bufsize: %d\n",vv,x,nx,bsz);
+              ~~                                ^~
+vecst.c:285:52: warning: format specifies type 'unsigned int' but the argument has type
+      'double *' [-Wformat]
+  printf("Obj*%x Dbl*%x Size: %d Bufsize: %d\n",vv,x,nx,bsz);
+                     ~~                            ^
+vecst.c:413:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { printf("fewind ERR1 %d %d\n",scr[i],nx);
+                      ~~~~~~^~
+vecst.c:459:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { printf("findx ****ERRE**** **** IND:%d SZ:%d\n",s...
+                      ~~~~~~^~
+vecst.c:496:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { 
+                      ~~~~~~^~
+vecst.c:529:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { 
+                      ~~~~~~^~
+vecst.c:816:1: warning: control may reach end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:835:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:888:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:935:5: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+  } else { vector_resize(vc, j); }
+    ^
+vecst.c:1048:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1059:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1078:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1128:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1188:21: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+          if (scr[i]<0 || scr[i]>=nx) hoc_execerror("nind(): Index out of bounds", 0);
+              ~~~~~~^~
+vecst.c:1209:25: warning: for loop has empty body [-Wempty-body]
+  for (i=0;ifarg(i);i++); i--; // drop back by one to get numarg()
+                        ^
+vecst.c:1209:25: note: put the semicolon on a separate line to silence this warning
+vecst.c:1263:31: warning: implicit declaration of function 'list_vector_px3' is invalid in
+      C99 [-Wimplicit-function-declaration]
+  for (i=0;i<4;i++) { nv[i] = list_vector_px3(ob, i, &vvo[i], &vvl[i]);
+                              ^
+vecst.c:1410:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1546:24: warning: format specifies type 'double' but the argument has type 'int'
+      [-Wformat]
+    printf("%g > %g\n",size,maxsz);
+            ~~         ^~~~
+            %d
+vecst.c:1546:29: warning: format specifies type 'double' but the argument has type 'int'
+      [-Wformat]
+    printf("%g > %g\n",size,maxsz);
+                 ~~         ^~~~~
+                 %d
+vecst.c:1689:72: warning: format specifies type 'int' but the argument has type 'double *'
+      [-Wformat]
+      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB: %d %d %d\n",i,ix,pL->pv[i]); 
+                                                            ~~         ^~~~~~~~~
+vecst.c:1698:73: warning: format specifies type 'int' but the argument has type 'double *'
+      [-Wformat]
+      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB1: %d %d %d\n",i,ix,pL->pv[i]); 
+                                                             ~~         ^~~~~~~~~
+vecst.c:1870:33: warning: implicit declaration of function 'list_vector_px4' is invalid in
+      C99 [-Wimplicit-function-declaration]
+      for (i=0;i<num;i++) if (! list_vector_px4(ob, i, &vvo[i], n)) {
+                                ^
+vecst.c:2125:7: warning: implicit declaration of function 'uniq2' is invalid in C99
+      [-Wimplicit-function-declaration]
+  cnt=uniq2(n,x,y,z);
+      ^
+vecst.c:2191:56: warning: format specifies type 'int' but the argument has type 'double'
+      [-Wformat]
+      } else { printf("nqvt ERRC unhandled type: %d\n",fcd[j]); hxe(); }
+                                                 ~~    ^~~~~~
+                                                 %f
+vecst.c:2555:39: warning: format specifies type 'int' but the argument has type 'size_t'
+      (aka 'unsigned long') [-Wformat]
+  if (DEBUG_VECST) printf("Size %d\n",sz);
+                                ~~    ^~
+                                %zu
+vecst.c:2734:33: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+  if (!ob1) if (!ob2) return 1; else return 0;
+                                ^
+vecst.c:2996:7: warning: implicit declaration of function 'IsList' is invalid in C99
+      [-Wimplicit-function-declaration]
+  if(!IsList(p)){printf("AllocListVec ERRA: arg must be list object!\n"); hxe();}
+      ^
+28 warnings generated.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=link gcc -module  -g -O2    -headerpad_max_install_names -o libnrnmech.la -rpath "/Applications/NEURON-7.6/nrn/x86_64/lib"  AMPA.lo GABAA.lo GABAB.lo HH2.lo IL.lo IL3.lo IT.lo IT2.lo Iahp.lo Ican.lo Ih.lo NMDA.lo cadecay.lo clampex.lo cp.lo cp2.lo kdr2.lo kleak.lo kmbg.lo naf2.lo nap.lo ntIh.lo nthh.lo ntleak.lo ntt.lo pregencv.lo vecst.lo mod_func.lo  -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrnoc -loc -lmemacs  -lscopmath -lsparse13 -lreadline -lncurses -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrniv -livoc -lneuron_gnu -lmeschach -lsundials       
+libtool: link: gcc -Wl,-undefined -Wl,dynamic_lookup -o .libs/libnrnmech.0.so -bundle  .libs/AMPA.o .libs/GABAA.o .libs/GABAB.o .libs/HH2.o .libs/IL.o .libs/IL3.o .libs/IT.o .libs/IT2.o .libs/Iahp.o .libs/Ican.o .libs/Ih.o .libs/NMDA.o .libs/cadecay.o .libs/clampex.o .libs/cp.o .libs/cp2.o .libs/kdr2.o .libs/kleak.o .libs/kmbg.o .libs/naf2.o .libs/nap.o .libs/ntIh.o .libs/nthh.o .libs/ntleak.o .libs/ntt.o .libs/pregencv.o .libs/vecst.o .libs/mod_func.o   -L/Applications/NEURON-7.6/nrn/x86_64/lib /Applications/NEURON-7.6/nrn/x86_64/lib/libnrnoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/liboc.dylib -L/usr/X11/lib -lX11 /Applications/NEURON-7.6/nrn/x86_64/lib/libmemacs.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libscopmath.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsparse13.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libreadline.dylib -lncurses /Applications/NEURON-7.6/nrn/x86_64/lib/libnrniv.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libivoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libneuron_gnu.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libmeschach.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsundials.dylib  -g -O2  
+libtool: link: (cd ".libs" && rm -f "libnrnmech.so" && ln -s "libnrnmech.0.so" "libnrnmech.so")
+libtool: link: ( cd ".libs" && rm -f "libnrnmech.la" && ln -s "../libnrnmech.la" "libnrnmech.la" )
+Successfully created x86_64/special
+**** Trying to run gives me some form of this error: 
+ python -i test_int.py 
+Note: NeuroML import failed; import/export functions for NeuroML will not be available. 
+  To install the pyNeuroML & libNeuroML Python packages visit: https://www.neuroml.org/getneuroml
+NEURON: ClampExData not enough arguments
+ near line 0
+ ^
+        ClampExData()
+      MechanismStandard("ClampExData", 1)
+Traceback (most recent call last):
+  File "test_int.py", line 12, in <module>
+    netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellModel': 'HH_reduced'}, fileName='sTI.hoc', cellName='sTI', importSynMechs=True)
+  File "/anaconda3/lib/python3.7/site-packages/netpyne/specs/netParams.py", line 339, in importCellParams
+    secs, secLists, synMechs, globs = conversion.importCell(fileName, cellName, cellArgs, cellInstance)
+  File "/anaconda3/lib/python3.7/site-packages/netpyne/conversion/neuronPyHoc.py", line 164, in importCell
+    varList = mechVarList()  # list of properties for all density mechanisms and point processes
+  File "/anaconda3/lib/python3.7/site-packages/netpyne/conversion/neuronPyHoc.py", line 81, in mechVarList
+    ms = h.MechanismStandard(msname[0], 1) # PARAMETER (modifiable)
+**** took out all mod files that I don't need, and only included ones explicitly inserted in soma or dend -- all others go to A1/cells/iTRN/mod_graveyard
+**** rm -r x86_64; Compiled again in iTRN subdir with nrnivmodl (on cells branch, local machine laptop). Got errors during compile 'Couldn't open: netcon.inc' --> *adding back in netcon.inc*
+**** rm -r x86_64; compiling again in iTRN subdir with nrnivmodl --> now in x86_64 I see .c .lo and .mod for all mod files that are in iTRN
+**** 
