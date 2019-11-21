@@ -575,11 +575,23 @@ if one population gets more inputs due to bbp then another one might need to get
 - CHECK REFS I USED AND WHETHER THEY ARE FROM A1 OR MACAQUE
 - REDUCE BASED ON ALLEN?
 
+*** E->I
+## Update L2/3 SOM,PV -> deeper E depth-dependent (Kato 2017; Fig 8B); supported by L2/3 PV -> L5 E (Naka 2016, Fig 2)
+
+## Update VIP -> E very low (3/42; Pi et al 2013); but L2/3 VIP -> L5 (Naka 2016, Fig 2)
+## make same as SOM but multiply by ration of VIP3->E5 (Pi 2013) / SOM3->E5 (Kato 2017)
+
+*** I -> I
 - Allen consistent with 'custom_A1'; with minor diffs:
 -- PV -> NGF (0.22) higher than PV -> SOM (0.3); but both lower than PV->PV (0.451) so good
 -- SOM -> NGF (0.77), almost as high as SOM -> PV (0.857)
 -- interlaminar probs very low (~0.03) but not 0
 -- missing VIP (so will use custom_A1 based on existing numbers)
+
+    # VIP uses by default PV weights; need to change the following:
+    # VIP -> SOM = strong (but PV -> SOM = weak)    
+    # VIP -> PV = weak (but PV -> PV = strong)   
+    # VIP -> VIP = weak/veryweak (but PV -> PV = strong) 
 
 * SIMS
 ** v11_manualTune/sim1

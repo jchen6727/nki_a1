@@ -62,12 +62,12 @@ def loadData():
     # set correspondence between A1 pops and Allen V1 pops 
     data['Allen_V1']['pops'] = {
         'NGF1': 'i1H',                                                                              # L1
-        'IT2': 'e2',                'PV2': 'i2P',   'SOM2': 'i2S',  'VIP2': 'i2H',  'NGF2': 'i2H', # L2
-        'IT3': 'e2',                'PV3': 'i2P',   'SOM3': 'i2S',  'VIP3': 'i2H',  'NGF3': 'i2H',  # L3
-        'ITP4': 'e4', 'ITS4': 'e4', 'PV4': 'i4P',   'SOM4': 'i4S',  'VIP4': 'i4H',  'NGF4': 'i4H',  # L4
-        'IT5A': 'e5', 'CT5A': 'e5', 'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5H', 'NGF5A': 'i5H', # L5A
-        'IT5B': 'e5', 'PT5B': 'e5', 'CT5B': 'e5',    'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5H', 'NGF5B': 'i5H', # L5B
-        'IT6': 'e6',  'CT6': 'e6',  'PV6': 'i6P',   'SOM6': 'i6S',  'VIP6': 'i6H',  'NGF6': 'i6H'}  # L6
+        'IT2': 'e2',                'PV2': 'i2P',   'SOM2': 'i2S',  'VIP2': 'i2P',  'NGF2': 'i2H', # L2
+        'IT3': 'e2',                'PV3': 'i2P',   'SOM3': 'i2S',  'VIP3': 'i2P',  'NGF3': 'i2H',  # L3
+        'ITP4': 'e4', 'ITS4': 'e4', 'PV4': 'i4P',   'SOM4': 'i4S',  'VIP4': 'i4P',  'NGF4': 'i4H',  # L4
+        'IT5A': 'e5', 'CT5A': 'e5', 'PV5A': 'i5P',  'SOM5A': 'i5S', 'VIP5A': 'i5P', 'NGF5A': 'i5H', # L5A
+        'IT5B': 'e5', 'PT5B': 'e5', 'CT5B': 'e5',   'PV5B': 'i5P',  'SOM5B': 'i5S', 'VIP5B': 'i5P', 'NGF5B': 'i5H', # L5B
+        'IT6': 'e6',  'CT6': 'e6',  'PV6': 'i6P',   'SOM6': 'i6S',  'VIP6': 'i6P',  'NGF6': 'i6H'}  # L6
 
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -351,9 +351,16 @@ for post in ['ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6
             print('After %s -> %s = %.2f' % ('PV3', post, pmat['PV3'][post]))
 
 
-## Update strong L1 NGF -> L5 and L2/3 VIP -> L5 (Naka 2016, Fig 2)
+## Update strong L1 NGF -> L5; currently at 0.148, so moderately strong already
 
-## Update VIP -> E very low (3/42; Pi et al 2013)
+## Update VIP -> E very low (3/42; Pi et al 2013); but L2/3 VIP -> L5 (Naka 2016, Fig 2)
+## make same as SOM but multiply by ration of VIP3->E5 (Pi 2013) / SOM3->E5 (Kato 2017)
+Pi2013_VIP_E5 = 3. / 42
+ratio_VIP_SOM = Pi2013_VIP_E5 / SOM23_E['L5A'] 
+for prelayer in ['2', '3', '4', '5A', '5B', '6']:
+    for post in Epops:
+        pmat['VIP' + prelayer][post] = pmat['SOM' + prelayer][post] * ratio_VIP_SOM
+        if verbose: print('%s -> %s = %.2f' % ('VIP'+prelayer, post, pmat['VIP'+prelayer][post]))
 
 # --------------------------------------------------
 ## I -> I
@@ -442,11 +449,21 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
             lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
-    #  UPDATE VIP -> SOM (strong; 14/18), PV (weak; 4/15), VIP (very weak -- remove?) (Pi 2013) !!!!
-    pmat['VIP']['SOM'] = strong
-    pmat['VIP']['PV'] = weak
-    pmat['VIP']['VIP'] = veryweak
-    pmat['VIP']['NGF'] = weak  # unknown; assume weak
+    # VIP uses by default PV weights; need to change the following:
+    # VIP -> SOM = strong (but PV -> SOM = weak)    
+    # VIP -> PV = weak (but PV -> PV = strong)   
+    # VIP -> VIP = weak/veryweak (but PV -> PV = strong) 
+    verbose = 0
+    for prelayer in ['2', '3', '4', '5A', '5B', '6']:
+        for post in Ipops:
+            if 'SOM' in post:
+                pmat['VIP' + prelayer][post] = pmat['PV' + prelayer][post.replace('SOM', 'PV')] # replace VIP->SOM with VIP->PV
+            elif 'PV' in post:
+                pmat['VIP' + prelayer][post] = pmat['PV' + prelayer][post.replace('PV', 'SOM')] # replace VIP->PV with VIP->SOM
+            elif 'VIP' in post:
+                pmat['VIP' + prelayer][post] = pmat['PV' + prelayer][post.replace('VIP', 'SOM')] # replace VIP->VIP with VIP->SOM
+                
+            if verbose: print('%s -> %s = %.2f' % ('VIP'+prelayer, post, pmat['VIP' + prelayer][post]))
 
 # --------------------------------------------------
 # Delays
