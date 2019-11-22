@@ -26163,7 +26163,6 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** Again, doing this on cells branch
 **** Edits occurring in A1/cells/dend_edits directory
 **** Filename: ITP4_reduced_new_cellParams.pkl
-
 *** PASSIVE:
 **** ORIG VALUES:
 ***** cm: 2.4998269977
@@ -27715,4 +27714,19 @@ Traceback (most recent call last):
 **** took out all mod files that I don't need, and only included ones explicitly inserted in soma or dend -- all others go to A1/cells/iTRN/mod_graveyard
 **** rm -r x86_64; Compiled again in iTRN subdir with nrnivmodl (on cells branch, local machine laptop). Got errors during compile 'Couldn't open: netcon.inc' --> *adding back in netcon.inc*
 **** rm -r x86_64; compiling again in iTRN subdir with nrnivmodl --> now in x86_64 I see .c .lo and .mod for all mod files that are in iTRN
-**** 
+* <2019-11-20 Wed -- thal interneuron model>
+** primate data is going to be sparse (also none from dan uhlrich)
+** fit 2 compartment model to 15 cmp model
+*** reasoning: the params listed in the batch_.hoc file from modeldb seem to apply to the 15cmp cell
+** How did I fit these cells before? I had a system -- look this up again 
+** STEPS:
+*** (0) Make traces of 15-cmp cells 
+* <2019-11-22 Fri -- thal interneuron model fitting>
+** Set up optimization scripts
+** 9/26/19 describes algorithm 
+*** scripts were in dend_edits subdir -- now on local machine in archive/A1_archive --> unzip this directory
+*** dang, this is empty -- go on github for prev version? 
+*** went to github, found and copied in the following files to A1/cells/tINT:
+**** overlay_ACTIVE.py, overlay_PASSIVE.py
+**** netParams_OLD.py, netParams_NEW.py
+**** test_cell.py 
