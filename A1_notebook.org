@@ -27730,3 +27730,17 @@ Traceback (most recent call last):
 **** overlay_ACTIVE.py, overlay_PASSIVE.py
 **** netParams_OLD.py, netParams_NEW.py
 **** test_cell.py 
+** Algorithm:
+*** netParams_OLD.py imports sTI_large.hoc
+*** netParams_NEW.py imports sTI.hoc
+*** Looked at params; the following should be modified in sTI.hoc:
+**** PASSIVE:
+***** soma 'cm'
+***** soma Pass (from ntleak.mod): g_Pass or erev_Pass 
+***** dend (if needed): cm, g_Pass, erev_Pass 
+**** ACTIVE: 
+***** CURRENTLY TBD
+*** Added in lines corresponding to the above in netParams_NEW.py 
+#netParams.cellParams['sTI_reduced']['secs']['soma']['geom']['cm'] = # ORIG: 1
+#netParams.cellParams['sTI_reduced']['secs']['soma']['mechs']['Pass']['g'] = # ORIG: 18e-6
+#netParams.cellParams['sTI_reduced']['secs']['soma']['mechs']['Pass']['erev'] =  # ORIG: -72.5

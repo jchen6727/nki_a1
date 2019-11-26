@@ -12,6 +12,7 @@ begintemplate sTI
 
 create soma, dend
 
+
 proc init () { local i,j
     create soma, dend
   
@@ -41,8 +42,8 @@ proc init () { local i,j
 
 
         insert Pass // ntleak.mod
-        g_Pass = 18e-6
-        erev_Pass = -72.5
+        g_Pass = 0.00015 //ORIG from 15-cmp model: 18e-6
+        erev_Pass = -75 //ORIG from 15-cmp model: -72.5
       
         insert ical //IL.mod
         pcabar_ical = 9.0e-4
