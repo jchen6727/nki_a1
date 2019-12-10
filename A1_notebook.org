@@ -27969,3 +27969,10 @@ endtemplate sTI
 ***** sh_it2 = 0.5
 ***** hx_it2 = 5.8
 ***** shift1_it2 = -2
+** Adding the following files to A1 cells branch:
+*** cells/sTI.hoc
+*** mod/HH_traub.mod (suffix hh2; HH2.mod already in there, but hh2_ad is the suffix)
+*** mod/IM_cortex.mod (changed suffix to imthal in both mod file and in sTI.hoc) *TEST THIS*
+*** mod/cadecay_destexhe (changed suffix to cadA1 in both mod file and in sTI.hoc) *TEST THIS* 
+*** mod/ntt.mod (IT2.mod has suffix itre and IT.mod has suffix it, so hopefully this is okay) 
+*** mod/IL_gutnick.mod (L-type current)
