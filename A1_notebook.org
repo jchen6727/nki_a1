@@ -27976,3 +27976,11 @@ endtemplate sTI
 *** mod/cadecay_destexhe (changed suffix to cadA1 in both mod file and in sTI.hoc) *TEST THIS* 
 *** mod/ntt.mod (IT2.mod has suffix itre and IT.mod has suffix it, so hopefully this is okay) 
 *** mod/IL_gutnick.mod (L-type current)
+** Testing -- 
+*** have to re-compile mod files 
+*** edited A1/test_cell.py to see if sTI cell will load from main parent directory*** RUNS!!
+** TO NOTE ABOUT THESE CELLS:
+*** soma_0 not soma
+*** celsius is 36
+*** vinit is -84 
+*** ^^ Do not know how to set these last 2 in the hoc file; should I do it in a python file instead? 
