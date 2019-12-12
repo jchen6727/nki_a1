@@ -269,7 +269,7 @@ connDataSource = connData['connDataSource']
 if cfg.addConn:
     for pre in Epops:
         for post in Epops:
-            if connDataSource['E->E/I'] == 'Allen_V1':
+            if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
                 prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
             else:
                 prob = pmat[pre][post]
@@ -290,7 +290,7 @@ if cfg.addConn:
 if cfg.addConn:
     for pre in Epops:
         for post in Ipops:
-            if connDataSource['E->E/I'] == 'Allen_V1':
+            if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
                 prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
             else:
                 prob = pmat[pre][post]
@@ -332,17 +332,35 @@ if cfg.addConn and cfg.IEGain > 0.0:
                             'delay': 'defaultDelay+dist_3D/propVelocity',
                             'sec': sec} # simple I cells used right now only have soma
     #  BBP_S1 or Allen_V1
-    else: 
+    else:
+
+        ESynMech = ['AMPA', 'NMDA']
+        SOMESynMech = ['GABAASlow','GABAB']
+        SOMISynMech = ['GABAASlow']
+        PVSynMech = ['GABAA']
+        VIPSynMech = ['GABAA_VIP']
+        NGFSynMech = ['GABAA', 'GABAB']
+
         for pre in Ipops:
             for post in Epops:
-                if connDataSource['I->E/I'] == 'Allen_V1':
+                if connDataSource['I->E/I'] in ['Allen_V1', 'Allen_custom']:
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
                 else:
                     prob = pmat[pre][post]
+                
+                if 'SOM' in pre:
+                    synMech = SOMESynMech
+                elif 'PV' in pre:
+                    synMech = PVSynMech
+                elif 'VIP' in pre:
+                    synMech = VIPSynMech
+                elif 'NGF' in pre:
+                    synMech = NGFSynMech
+
                 netParams.connParams['IE_'+pre+'_'+post] = { 
                     'preConds': {'pop': pre}, 
                     'postConds': {'pop': post},
-                    'synMech': ESynMech,
+                    'synMech': synMech,
                     'probability': prob,
                     'weight': wmat[pre][post] * cfg.EIGain, 
                     'synMechWeightFactor': cfg.synWeightFractionEI,
@@ -376,18 +394,28 @@ if cfg.addConn and cfg.IIGain > 0.0:
     #  BBP_S1 or Allen_V1
     else: 
         for pre in Ipops:
-            for post in Epops:
-                if connDataSource['I->E/I'] == 'Allen_V1':
+            for post in Ipops:
+                if connDataSource['I->E/I'] in ['Allen_V1', 'Allen_custom']:
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
                 else:
                     prob = pmat[pre][post]
+
+                if 'SOM' in pre:
+                    synMech = SOMISynMech
+                elif 'PV' in pre:
+                    synMech = PVSynMech
+                elif 'VIP' in pre:
+                    synMech = VIPSynMech
+                elif 'NGF' in pre:
+                    synMech = NGFSynMech
+
                 netParams.connParams['II_'+pre+'_'+post] = { 
                     'preConds': {'pop': pre}, 
                     'postConds': {'pop': post},
-                    'synMech': ESynMech,
+                    'synMech': synMech,
                     'probability': prob,
-                    'weight': wmat[pre][post] * cfg.EIGain, 
-                    'synMechWeightFactor': cfg.synWeightFractionEI,
+                    'weight': wmat[pre][post] * cfg.IIGain, 
+                    'synMechWeightFactor': cfg.synWeightFractionII,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,
                     'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams

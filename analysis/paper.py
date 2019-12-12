@@ -249,6 +249,132 @@ def compare_conn():
 
 
 
+def plot_empirical_conn():
+
+    with open('../conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    pmat = connData['pmat']
+    lmat = connData['lmat']
+
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+
+    popsPre = allpops
+    popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
+    
+    connMatrix = np.zeros((len(popsPre), len(popsPost)))
+
+    d = 50
+    for ipre, pre in enumerate(popsPre):
+        for ipost, post in enumerate(popsPost):
+            connMatrix[ipre,ipost] = pmat[pre][post] * np.exp(-d / lmat[pre][post]) ** 2
+
+    # font
+    fontsiz = 14
+    plt.rcParams.update({'font.size': fontsiz})
+
+    # ----------------------- 
+    # conn matrix full
+    #import IPython; IPython.embed()
+
+    vmin = np.nanmin(connMatrix)
+    vmax = np.nanmax(connMatrix)
+        
+    plt.figure(figsize=(12, 12))
+    h = plt.axes()
+    plt.imshow(connMatrix, interpolation='nearest', cmap='viridis', vmin=vmin, vmax=vmax)  #_bicolormap(gap=0)
+
+    for ipop, pop in enumerate(popsPre):
+        plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-',c=(0.7,0.7,0.7))
+    for ipop, pop in enumerate(popsPost):
+        plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-',c=(0.7,0.7,0.7))
+
+    # Make pretty
+    h.set_yticks(list(range(len(popsPre))))
+    h.set_xticks(list(range(len(popsPost))))
+    h.set_yticklabels(popsPre)
+    h.set_xticklabels(popsPost, rotation=90)
+    h.xaxis.set_ticks_position('top')
+    # plt.ylim(-0.5,len(popsPre)-0.5)
+    # plt.xlim(-0.5, len(popsPost) - 0.5)
+
+    plt.grid(False)
+
+    clim = [vmin, vmax]
+    plt.clim(clim[0], clim[1])
+    plt.colorbar(label='probability', shrink=0.8) #.set_label(label='Fitness',size=20,weight='bold')
+    plt.xlabel('Post')
+    plt.ylabel('Pre')
+    title = 'Empirical connection probability matrix'
+    h.xaxis.set_label_coords(0.5, 1.10)
+    plt.title(title, y=1.12, fontWeight='bold')
+    plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
+
+    filename = 'EI->EI_Allen_custom_prob_conn_empirical_0.25.png'
+    plt.savefig('../conn/'+filename, dpi=300)
+
+    #import IPython; IPython.embed()
+
+
+
+def plot_net_conn():
+    # load custom A1 conn
+    with open('../conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl', 'rb') as f:
+        data = pickle.load(f)
+    
+    # prob
+    connMatrix = data['connMatrix']    
+    
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+
+    popsPre = allpops
+    popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
+    
+    # font
+    fontsiz = 14
+    plt.rcParams.update({'font.size': fontsiz})
+
+    # ----------------------- 
+    # conn matrix full
+    #import IPython; IPython.embed()
+
+    vmin = np.nanmin(connMatrix)
+    vmax = 0.5 #np.nanmax(connMatrix)
+        
+    plt.figure(figsize=(12, 12))
+    h = plt.axes()
+    plt.imshow(connMatrix, interpolation='nearest', cmap='viridis', vmin=vmin, vmax=vmax)  #_bicolormap(gap=0)
+
+    for ipop, pop in enumerate(popsPre):
+        plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-',c=(0.7,0.7,0.7))
+    for ipop, pop in enumerate(popsPost):
+        plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-',c=(0.7,0.7,0.7))
+
+    # Make pretty
+    h.set_yticks(list(range(len(popsPre))))
+    h.set_xticks(list(range(len(popsPost))))
+    h.set_yticklabels(popsPre)
+    h.set_xticklabels(popsPost, rotation=90)
+    h.xaxis.set_ticks_position('top')
+    # plt.ylim(-0.5,len(popsPre)-0.5)
+    # plt.xlim(-0.5, len(popsPost) - 0.5)
+
+    plt.grid(False)
+
+    clim = [vmin, vmax]
+    plt.clim(clim[0], clim[1])
+    plt.colorbar(label='probability', shrink=0.8) #.set_label(label='Fitness',size=20,weight='bold')
+    plt.xlabel('Post')
+    plt.ylabel('Pre')
+    title = 'Empirical connection probability matrix'
+    h.xaxis.set_label_coords(0.5, 1.10)
+    plt.title(title, y=1.12, fontWeight='bold')
+    plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
+
+    filename = 'EI->EI_Allen_custom_prob_conn_net_0.25.png'
+    plt.savefig('../conn/'+filename, dpi=300)
+
+
 #### main
 # fig_conn()
-compare_conn()
+# compare_conn()
+# plot_empirical_conn()
+plot_net_conn()

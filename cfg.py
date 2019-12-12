@@ -26,6 +26,8 @@ cfg.duration = 0.6*1e3			## Duration of the sim, in ms -- value from M1 cfg.py
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
+cfg.createNEURONObj = 0
+cfg.createPyStruct = 1
 
 #------------------------------------------------------------------------------
 # Recording 

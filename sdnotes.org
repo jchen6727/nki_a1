@@ -215,6 +215,9 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 0.85	0.15	0.552380952	0.295238095	0.152380952	1
 0.85	0.15	0.485714286	0.428571429	0.085714286	1
 0.85	0.15	0.458333333	0.458333333	0.083333333	1
+** total number of neurons in A1
+1.6 million (https://www.pnas.org/content/107/36/15927)
+
 * CONNECTIVITY
 ** Budinger et al 2018
 - mentions ‘massive thalamic inputs’ target the few pyramidal cells but also interneurons, ‘providing strong FF inhibition’
@@ -592,7 +595,156 @@ if one population gets more inputs due to bbp then another one might need to get
     # VIP -> SOM = strong (but PV -> SOM = weak)    
     # VIP -> PV = weak (but PV -> PV = strong)   
     # VIP -> VIP = weak/veryweak (but PV -> PV = strong) 
+** Checking / fixing diffs between empirical and network instantiated conn matrix
+- bug in netParams.py (II rules)
+- bug in conn.py (avoid double counting BBP adaptation)
+** thalamocortical conn 
+*** current conn (mostly from Bonj12 and Lakatos comments)
+- current TC conn comes from the bazhenov paper (https://www.jneurosci.org/content/32/15/5250.full ; Bonj12) but I don’t see any actual prob or weight values there… @samn do you know how was derived? (edited) 
 
+- only values I see are in a table, which seem to be divergence
+
+*** !Constantinople & Bruno, 2015 (Science); rat S1 (TC->L5/6 pmat+wmat)
+- prob of conn between thalamus and cortical layers / cell type:
+-- L5 thintufted (IT): 17%
+-- L5 thicktufted (PT/CT?): 44%
+-- L6: 9% 
+
+- weight (epsp):
+-- 0.2 - 1.2 mV
+*** !Bruno and Constantinole, 2006; rat S1 (TC->L4)
+- L2/3: 0%
+- L4: 42.5% / 42.8%
+
+- weight (epsp):
+-- 0 - 1. mV
+
+*** !Ji 2016 (mouse A1 MGB -> layers/cell types)
+- no distinction core vs matrix (but most input from MGBv=core; same as allen)
+- normalized amplitude
+- % innervated
+
+% innervated [~= proxy for probability; many presyn axons innervated]
+- L1 cell (12/ 22);
+- Pyramidal cell (11/15 in L2/3; 18/18 in L4; 12/12 in L5; 8/10 in L6); 
+- PV cell (11/14 in L2/3;13/13 in L4; 15/15 in L5; 8/8 in L6); 
+- VIP cell (0/17 in L2/3; 6/16 in L4; 0/10 in L5; 0/6 in L6); 
+- SOM cell (1/12 in L2/3; 5/14 in L4; 0/10 in L5; 0/6 in L6)
+
+
+A1  (adjusted amplitude pA [~= strength = prob * weight]):
+L1 
+L1 22 425 
+
+Pyr 
+L2/3 15 129
+L4 18 418 
+L5 12 195  
+L6 10 132  
+
+PV L2/3 14 269 
+L4 13 962 
+L5 15 426 
+L6 8 426 
+
+SOM L4 14 20 
+
+VIP L4 16 24 
+
+
+*** !check Allen V1 (LGN -> diffrent layers RS/PV; based on Ji2016)
+- LGN -> V1
+- ~18k units
+- no core and matrix
+
+table 2: conns from LGN
+celltype    prob    num syns
+i1Htr       0.588   10
+
+E2/3        0.789   15
+i2/3Pvalb   0.824   15
+VIP/SOM     0
+
+E4          1.000   80
+i4Pvalb     1.0     75
+VIP         0.32
+SOM         0.32
+
+E5          1.0     15
+i5Pvalb     1.0     20 
+VIP/SOM2    0
+
+E6          0.778   15
+i6Pvalb     0.818   10
+VIP/SOM     0
+*** !Cruishcanck 2010 (mouse VB/TRN <-> Barrel cortex L4/5 RS/FS/LTS)
+https://www.sciencedirect.com/science/article/pii/S0896627309010435
+
+- strong T -> RS and PV but not SOM
+- C -> VB and ITRN; ITRN -> VB (but not -> TRN) i.e. "CT activation produced strong inhibition in VB but not in TRN cells"
+
+- "CT projections outnumber TC projections and that CT synapses provide major input to thalamic neurons"
+
+- Data from fig 6B (avg EPSP amplitudes to optogen stim): 
+- L4: 
+-- RS: 11 mV
+-- FS: 20 mV
+-- LTS: 2 mV
+
+- L5: 
+-- RS: 15 mV
+-- FS: 25 mV
+-- LTS: 1 mV
+
+TRN -> TRN: 2.8% prob
+TRN -> VB: 8% prob
+
+
+*** Slater 2019 (A1 L5/6 -> IC; IC->MGB->A1 L5/6; only corticollicular; proportion of L5 vs L6)
+*** Viaene 2011 (nothing) 
+- checked papers but not useful conn data
+
+*** check BBP S1 (peter's rule)
+- VPM based on targeting of fibers (cortical neurons epr fiber)
+- found bruno paper
+
+*** Amsalem segev thalamus (nothing on thalamus)
+*** Allen new database/papers (anatomical; region level; hard to extract)
+- connectivity.brain-map.org ; Harr19
+- anatomical - tracing of axons
+- thalamic vs auditory regions but not cell-type specific
+- general layer info:
+-- core -> L4,5,6a
+-- matrix -> 1,6a (some 2/3,5)
+
+*** check Elisabetta iavarone (nothing)
+- only thalamic cell models
+*** Traub thalamocortical model (convergence values; loosely based on data)
+- no core vs matrix
+
+INPUTS FROM THALAMOCORTICAL RELAY (TCR) CELLS. 
+- Each nRT cell receives input from 40 TCR cells. 
+
+- The following cells each receive input from 10 TCR cells: superficial pyramids (RS, FRB),
+superficial basket and axoaxonic cells, tufted pyramids (RS, IB),
+nontufted RS pyramids, deep axoaxonic cells. 
+
+- Each of the following cells receives input from 20 TCR cells: spiny stellates,
+deep baskets. LTS interneurons do not receive input from TCR
+cells (Gibson et al. 1999). 
+
+INPUTS FROM NUCLEUS RETICULARIS (NRT) CELLS. 
+- TCR cells each receive input from 30 nRT cells; nRT cells each receive input from 10
+nRT cells. 
+
+*** Knox model (oversimplified)
+*** Bhattacharya neural mass model (oversimplified conn; eg 1 pyr pop)
+- https://www.sciencedirect.com/science/article/abs/pii/S0893608011000839?via%3Dihub
+- https://senselab.med.yale.edu/modeldb/ShowModel?model=138970#tabs-1
+*** Budinger 2018 (cites other refs; havent' checked)
+- Huang and Winer 2000
+- Verbny et al. 2006; Lee and Sherman 2008
+- Oviedo et al. 2010; Meng et al. 2015
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -797,3 +949,5 @@ allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', '
 sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_Allen_V1_prob_0.25.png' , saveData='conn/E->EI_Allen_V1_prob_0.25.pkl')
 
 sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_BBP_S1_prob_0.25.png' , saveData='conn/E->EI_BBP_S1_prob_0.25.pkl')
+
+sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn/EI->EI_Allen_custom_prob_0.25_fixed.png' , saveData='conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl')

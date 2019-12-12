@@ -103,6 +103,63 @@ def loadData():
         'IT6':  'L6_TPC_L1', 'CT6':  'L6_TPC_L4',                     'PV6':  'L6_LBC',    'SOM6': 'L6_MC',   'VIP6': 'L6_BP',  'NGF6':  'L6_NGC-DA'}  # L6
 
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # load Thal -> A1 (Ji et al 2016)
+    # mouse A1 MGB -> layers/cell types
+    # no distinction core vs matrix (but most input from MGBv=core; same as allen)
+    # adjusted amplitude pA ~= strength = prob * weight
+    # % innervated ~= proxy for probability; many presyn axons innervated
+
+    data['TC_Ji2016'] = {'innvervated': {}, 'amplitude': {}}
+
+    data['TC_Ji2016']['innervated'] = {
+        'L1': 12. / 22,
+        'L23_Pyr': 11. / 15, 'L23_PV': 11./14, 'L23_SOM': 1./12, 'L23_VIP': 0/17,
+        'L4_Pyr': 18. / 18, 'L4_PV': 13./13, 'L4_SOM': 5./14, 'L4_VIP': 0/10,
+        'L5_Pyr': 12. / 12, 'L5_PV': 15./15, 'L5_SOM': 0/10, 'L5_VIP': 0/6,
+        'L6_Pyr': 8. / 10, 'L6_PV': 8./8., 'L6_SOM': 0/6, 'L6_VIP': 0/6
+        }
+
+    data['TC_Ji2016']['amplitude'] = {
+        'L1': 425,
+        'L23_Pyr': 129, 'L23_PV': 269, 'L23_SOM': 0, 'L23_VIP': 0,
+        'L4_Pyr': 418, 'L4_PV': 962, 'L4_SOM': 20, 'L4_VIP': 24,
+        'L5_Pyr': 195, 'L5_PV': 426, 'L5_SOM': 0, 'L5_VIP': 0,
+        'L6_Pyr': 132, 'L6_PV': 426, 'L6_SOM': 0, 'L6_VIP': 0
+        }
+
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # load Thal -> A1 (Constantinople & Bruno, 2006,2015)
+    # rat S1 (TC->L5/6 pmat+wmat)
+    # prob of conn between thalamus and cortical layers / cell type
+    # weight distribution: 0.2 - 1.2 mV
+    
+    data['TC_Cons2006_2015'] = {'prob': {}}
+    data['TC_Cons2006_2015']['prob']['L23'] = 0.0
+    data['TC_Cons2006_2015']['prob']['L4'] = 0.43
+    data['TC_Cons2006_2015']['prob']['L5_IT'] = 0.17
+    data['TC_Cons2006_2015']['prob']['L5_PT'] = 0.44
+    data['TC_Cons2006_2015']['prob']['L6'] = 0.09
+
+   # ------------------------------------------------------------------------------------------------------------------
+    # Cruishcanck 2010 (mouse VB/TRN <-> Barrel cortex L4/5 RS/FS/LTS)
+    # strong T -> RS and PV but not SOM
+    # C -> VB and ITRN; ITRN -> VB (but not -> TRN) i.e. "CT activation produced strong inhibition in VB but not in TRN cells"
+    # "CT projections outnumber TC projections and that CT synapses provide major input to thalamic neurons"
+
+    # Data from fig 6B (avg EPSP amplitudes to optogen stim): 
+    data['TC_Crui2010'] = {'epsp': {}, 'prob': {}}
+    data['TC_Crui2010']['epsp']['L4_RS'] = 11
+    data['TC_Crui2010']['epsp']['L4_RS'] = 20
+    data['TC_Crui2010']['epsp']['L4_LTS'] = 2
+    data['TC_Crui2010']['epsp']['L5_RS'] = 15
+    data['TC_Crui2010']['epsp']['L5_FS'] = 25 
+    data['TC_Crui2010']['epsp']['L4_LTs'] = 1
+
+    data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
+    data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
+
     return data
 
 # ----------------------------------------------------------------------------------------------------------------
@@ -199,7 +256,7 @@ elif connDataSource['E->E/I'] ==  'Allen_BBP':
     
     basedOnBBPCT6 = [] #'CT5A', 'CT5B']  # pops based on BBP CT6 (since BBP doesn't have CT5A and CT5B) so treated differently (NOT USED)
 
-    fixVerbose = False  # print info messages
+    fixVerbose = 1 #False  # print info messages
     
     ## update all fix pop (e.g. VIP) by making proportional to ref pop (e.g. PV): e.g. VIP_Allen = (VIP_BBP/PV_BBP) * PV_Allen
     for fixpop, refpop in updatePopConnUsingBBP.items():
@@ -208,14 +265,15 @@ elif connDataSource['E->E/I'] ==  'Allen_BBP':
         
         # E -> fixpop
         for pre in Epops:
-            projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][refpop])
-            if fixpop in basedOnBBPCT6:
-                ## Make CT5A <-> L5A E/I and CT5B <-> L5B E/I == CT6 <-> L6 E/I (so based on local conn) (NOT USED)
-                projPre = pre.replace('5A', '6').replace('5B', '6').replace('PT6', 'PT5B')
-            else:
-                projPre = pre
-            projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][projPre], data['BBP_S1']['pops'][refpop])
-            projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][projPre], data['BBP_S1']['pops'][fixpop])
+            if pre not in updatePopConnUsingBBP:
+                projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][refpop])
+                if fixpop in basedOnBBPCT6:
+                    ## Make CT5A <-> L5A E/I and CT5B <-> L5B E/I == CT6 <-> L6 E/I (so based on local conn) (NOT USED)
+                    projPre = pre.replace('5A', '6').replace('5B', '6').replace('PT6', 'PT5B')
+                else:
+                    projPre = pre
+                projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][projPre], data['BBP_S1']['pops'][refpop])
+                projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][projPre], data['BBP_S1']['pops'][fixpop])
 
             # conn probs 
             ref_Allen = data['Allen_V1']['connProb'][projAllen_ref]['A0'] if projAllen_ref in data['Allen_V1']['connProb'] else 0.
@@ -356,7 +414,8 @@ for post in ['ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6
 ## Update VIP -> E very low (3/42; Pi et al 2013); but L2/3 VIP -> L5 (Naka 2016, Fig 2)
 ## make same as SOM but multiply by ration of VIP3->E5 (Pi 2013) / SOM3->E5 (Kato 2017)
 Pi2013_VIP_E5 = 3. / 42
-ratio_VIP_SOM = Pi2013_VIP_E5 / SOM23_E['L5A'] 
+ratio_VIP_SOM = Pi2013_VIP_E5 / SOM23_E['L5A']
+verbose = 0
 for prelayer in ['2', '3', '4', '5A', '5B', '6']:
     for post in Epops:
         pmat['VIP' + prelayer][post] = pmat['SOM' + prelayer][post] * ratio_VIP_SOM
@@ -471,7 +530,7 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
 
 
 # --------------------------------------------------
-## INTRATHALAMIC (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+## INTRATHALAMIC (from old model; based on Bazhenov https://www.jneurosci.org/content/32/15/5250.full Lakatos observations; not checked)
 # --------------------------------------------------
 
 # --------------------------------------------------
