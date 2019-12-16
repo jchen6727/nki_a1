@@ -623,49 +623,82 @@ wmat['PT5B']['TCM']	= 0.7
 # --------------------------------------------------
 ## Probabilities 
 
-# note for I cells target PV, SOM and NGF for now
-pmat['TC']['ITP4']    = 0.25
-pmat['HTC']['ITP4'] = 0.25
-pmat['TC']['ITS4']    = 0.25
-pmat['HTC']['ITS4']   = 0.25
-pmat['TC']['PT5B']   = 0.1   #*thalfctr
-pmat['HTC']['PT5B']  = 0.1   #*thalfctr
-pmat['TC']['IT5A']   = 0.1   #*thalfctr
-pmat['HTC']['IT5A']  = 0.1   #*thalfctr
-pmat['TC']['IT5B']   = 0.1   #*thalfctr
-pmat['HTC']['IT5B']  = 0.1   #*thalfctr
-pmat['TC']['IT6']    = 0.15  #*thalfctr
-pmat['HTC']['IT6']   = 0.15  #*thalfctr
-pmat['TC']['CT5A']    = 0.15  #*thalfctr
-pmat['HTC']['CT5A']   = 0.15  #*thalfctr
-pmat['TC']['CT5B']    = 0.15  #*thalfctr
-pmat['HTC']['CT5B']   = 0.15  #*thalfctr
-pmat['TC']['CT6']    = 0.15  #*thalfctr
-pmat['HTC']['CT6']   = 0.15  #*thalfctr
-pmat['TC']['PV4']    = 0.25
-pmat['HTC']['PV4']   = 0.25
-pmat['TC']['SOM4']    = 0.25
-pmat['HTC']['SOM4'] = 0.25
-pmat['TC']['NGF4']    =	0.25 #	
-pmat['HTC']['NGF4']   =	0.25 #	
-pmat['TC']['PV5A']    = 0.1   #*thalfctr
-pmat['HTC']['PV5A']   = 0.1   #*thalfctr
-pmat['TC']['SOM5A']   = 0.1   #*thalfctr
-pmat['HTC']['SOM5A'] = 0.1  #*thalfctr
-pmat['TC']['NGF5A']    =	0.1 #	
-pmat['HTC']['NGF5A']   =	0.1 #	
-pmat['TC']['PV5B']    = 0.1   #*thalfctr
-pmat['HTC']['PV5B']   = 0.1   #*thalfctr
-pmat['TC']['SOM5B']   = 0.1   #*thalfctr
-pmat['HTC']['SOM5B'] = 0.1  #*thalfctr
-pmat['TC']['NGF5B']    =	0.1 #	
-pmat['HTC']['NGF5B']   =	0.1 #	
-pmat['TC']['PV6']     = 0.15  #*thalfctr
-pmat['HTC']['PV6']   = 0.15  #*thalfctr
-pmat['TC']['SOM6']     = 0.15  #*thalfctr
-pmat['HTC']['SOM6'] = 0.15  #*thalfctr
-pmat['TC']['NGF6']    =	0.15 #	
-pmat['HTC']['NGF6']   =	0.15 #	
+    # data['TC_Ji2016']['innervated'] = {
+    #     'L1': 12. / 22,
+    #     'L23_Pyr': 11. / 15, 'L23_PV': 11./14, 'L23_SOM': 1./12, 'L23_VIP': 0/17,
+    #     'L4_Pyr': 18. / 18, 'L4_PV': 13./13, 'L4_SOM': 5./14, 'L4_VIP': 0/10,
+    #     'L5_Pyr': 12. / 12, 'L5_PV': 15./15, 'L5_SOM': 0/10, 'L5_VIP': 0/6,
+    #     'L6_Pyr': 8. / 10, 'L6_PV': 8./8., 'L6_SOM': 0/6, 'L6_VIP': 0/6
+    #     }
+
+    # data['TC_Ji2016']['amplitude'] = {
+    #     'L1': 425,
+    #     'L23_Pyr': 129, 'L23_PV': 269, 'L23_SOM': 0, 'L23_VIP': 0,
+    #     'L4_Pyr': 418, 'L4_PV': 962, 'L4_SOM': 20, 'L4_VIP': 24,
+    #     'L5_Pyr': 195, 'L5_PV': 426, 'L5_SOM': 0, 'L5_VIP': 0,
+    #     'L6_Pyr': 132, 'L6_PV': 426, 'L6_SOM': 0, 'L6_VIP': 0
+    #     }
+
+
+    # # ------------------------------------------------------------------------------------------------------------------
+    # # load Thal -> A1 (Constantinople & Bruno, 2006,2015)
+    # # rat S1 (TC->L5/6 pmat+wmat)
+    # # prob of conn between thalamus and cortical layers / cell type
+    # # weight distribution: 0.2 - 1.2 mV
+    
+    # data['TC_Cons2006_2015'] = {'prob': {}}
+    # data['TC_Cons2006_2015']['prob']['L23'] = 0.0
+    # data['TC_Cons2006_2015']['prob']['L4'] = 0.43
+    # data['TC_Cons2006_2015']['prob']['L5_IT'] = 0.17
+    # data['TC_Cons2006_2015']['prob']['L5_PT'] = 0.44
+    # data['TC_Cons2006_2015']['prob']['L6'] = 0.09
+
+maxProb = data['TC_Cons2006_2015']['prob']['L4']
+
+# Use conn data from Ji et al 2016; layer and cell-type specific
+# use SOM values for NGF
+pmat['TC']['ITP4']      = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
+pmat['HTC']['ITP4']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
+pmat['TC']['ITS4']      = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
+pmat['HTC']['ITS4']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
+pmat['TC']['PT5B']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   #thalfctr
+pmat['HTC']['PT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
+pmat['TC']['IT5A']      = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.1   
+pmat['HTC']['IT5A']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
+pmat['TC']['IT5B']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
+pmat['HTC']['IT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
+pmat['TC']['IT6']       = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
+pmat['HTC']['IT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TC']['CT5A']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
+pmat['HTC']['CT5A']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TC']['CT5B']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
+pmat['HTC']['CT5B']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TC']['CT6']       = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
+pmat['HTC']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TC']['PV4']       = data['TC_Ji2016']['innervated']['L4_PV'] * maxProb  # orig value: 0.25
+pmat['HTC']['PV4']      = data['TC_Ji2016']['innervated']['L4_PV'] * maxProb  # orig value: 0.25
+pmat['TC']['SOM4']      = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25
+pmat['HTC']['SOM4']     = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25
+pmat['TC']['NGF4']      = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25; use SOM for NGF
+pmat['HTC']['NGF4']     = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25; use SOM for NGF	
+pmat['TC']['PV5A']      = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
+pmat['HTC']['PV5A']     = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
+pmat['TC']['SOM5A']     = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1   
+pmat['HTC']['SOM5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1  
+pmat['TC']['NGF5A']     = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb	# orig value: 0.1 #	
+pmat['HTC']['NGF5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb	# orig value: 0.1 #	
+pmat['TC']['PV5B']      = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
+pmat['HTC']['PV5B']     = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
+pmat['TC']['SOM5B']     = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
+pmat['HTC']['SOM5B']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1  
+pmat['TC']['NGF5B']     = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1 #	
+pmat['HTC']['NGF5B']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1 #	
+pmat['TC']['PV6']       = data['TC_Ji2016']['innervated']['L6_PV'] * maxProb  # orig value: 0.15  
+pmat['HTC']['PV6']      = data['TC_Ji2016']['innervated']['L6_PV'] * maxProb  # orig value: 0.15  
+pmat['TC']['SOM6']      = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb  # orig value: 0.15  
+pmat['HTC']['SOM6']     = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb  # orig value: 0.15  
+pmat['TC']['NGF6']      = data['TC_Ji2016']['innervated']['L6_NGF'] * maxProb  # orig value: 0.15 #	
+pmat['HTC']['NGF6']     = data['TC_Ji2016']['innervated']['L6_NGF'] * maxProb  # orig value: 0.15 #	
 
 
 
@@ -675,7 +708,7 @@ wmat['TC']['ITP4']    = 0.6
 wmat['HTC']['ITP4'] = 0.6
 wmat['TC']['ITS4']    = 0.6
 wmat['HTC']['ITS4']   = 0.6
-wmat['TC']['PT5B']   =	0.6  #* pmat[TC][E5B] / pmat[TC][E4]	
+wmat['TC']['PT5B']   =	0.6  # [TC][E5B] / pmat[TC][E4]	
 wmat['HTC']['PT5B'] = 0.6  #* pmat[TC][E5B] / pmat[TC][E4]
 wmat['TC']['IT5A']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
 wmat['HTC']['IT5A']  =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
@@ -722,35 +755,36 @@ wmat['HTC']['NGF6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]
 # --------------------------------------------------
 ## Probabilities 
 
-# note for I cells target PV, SOM and NGF for now
-pmat['TCM']['IT2']	= 0.25
-pmat['TCM']['IT3']	= 0.25
-pmat['TCM']['IT5A']	= 0.15  #* thalfctr
-pmat['TCM']['IT5B']	= 0.15  #* thalfctr
-pmat['TCM']['PT5B']	= 0.15  #* thalfctr
-pmat['TCM']['IT6']	= 0.05  #* thalfctr
-pmat['TCM']['CT5A'] = 0.05  #* thalfctr
-pmat['TCM']['CT5B'] = 0.05  #* thalfctr
-pmat['TCM']['CT6'] = 0.05  #* thalfctr
+# Use conn data from Ji et al 2016; layer and cell-type specific
+# use SOM values for NGF
+pmat['TCM']['IT2']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * maxProb  # orig value: 0.25
+pmat['TCM']['IT3']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * maxProb  # orig value: 0.25
+pmat['TCM']['IT5A']	    = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TCM']['IT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TCM']['PT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
+pmat['TCM']['IT6']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.05  
+pmat['TCM']['CT5A']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.05  
+pmat['TCM']['CT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.05  
+pmat['TCM']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.05  
 
-pmat['TCM']['NGF1']	= 0.25
-pmat['TCM']['PV2']	= 0.25
-pmat['TCM']['SOM2']	= 0.25
-pmat['TCM']['NGF2']	= 0.25
-pmat['TCM']['PV3']	= 0.25
-pmat['TCM']['SOM3']	= 0.25
-pmat['TCM']['NGF3']	= 0.25
+pmat['TCM']['NGF1']	    = data['TC_Ji2016']['innervated']['L1'] * maxProb  # orig value: 0.25
+pmat['TCM']['PV2']	    = data['TC_Ji2016']['innervated']['L2_PV'] * maxProb  # orig value: 0.25
+pmat['TCM']['SOM2']	    = data['TC_Ji2016']['innervated']['L2_SOM'] * maxProb # orig value: 0.25
+pmat['TCM']['NGF2']	    = data['TC_Ji2016']['innervated']['L2_NGF'] * maxProb # orig value: 0.25
+pmat['TCM']['PV3']	    = data['TC_Ji2016']['innervated']['L23_PV'] * maxProb # orig value: 0.25
+pmat['TCM']['SOM3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * maxProb # orig value: 0.25
+pmat['TCM']['NGF3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * maxProb # orig value: 0.25
 
-pmat['TCM']['PV5A']	= 0.15  #* thalfctr
-pmat['TCM']['SOM5A']	= 0.15  #* thalfctr
-pmat['TCM']['SOM5B']	= 0.15  #* thalfctr
-pmat['TCM']['PV5B']	= 0.15  #* thalfctr
-pmat['TCM']['SOM5B']	= 0.15  #* thalfctr
-pmat['TCM']['NGF5B']	= 0.15  #* thalfctr
+pmat['TCM']['PV5A']	    = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.15  
+pmat['TCM']['SOM5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.15  
+pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb # orig value: 0.15  
+pmat['TCM']['PV5B']	    = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb # orig value: 0.15  
+pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.15  
+pmat['TCM']['NGF5B']	= data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb# orig value: 0.15  
 
-pmat['TCM']['PV6']	= 0.05  #* thalfctr
-pmat['TCM']['SOM6']	= 0.05  #* thalfctr
-pmat['TCM']['NGF6']	= 0.05  #* thalfctr
+pmat['TCM']['PV6']	    = data['TC_Ji2016']['innervated']['L6_PV'] * maxProb # orig value: 0.05  
+pmat['TCM']['SOM6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb # orig value: 0.05  
+pmat['TCM']['NGF6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb # orig value: 0.05  
 
 
 # --------------------------------------------------
