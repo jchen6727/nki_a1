@@ -151,11 +151,11 @@ def loadData():
     # Data from fig 6B (avg EPSP amplitudes to optogen stim): 
     data['TC_Crui2010'] = {'epsp': {}, 'prob': {}}
     data['TC_Crui2010']['epsp']['L4_RS'] = 11
-    data['TC_Crui2010']['epsp']['L4_RS'] = 20
+    data['TC_Crui2010']['epsp']['L4_FS'] = 20
     data['TC_Crui2010']['epsp']['L4_LTS'] = 2
     data['TC_Crui2010']['epsp']['L5_RS'] = 15
     data['TC_Crui2010']['epsp']['L5_FS'] = 25 
-    data['TC_Crui2010']['epsp']['L4_LTs'] = 1
+    data['TC_Crui2010']['epsp']['L5_LTS'] = 1
 
     data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
     data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
@@ -540,22 +540,23 @@ pmat['HTC']['HTC'] =	0.1
 pmat['TC']['HTC'] =	    0.1
 pmat['HTC']['TC'] =	    0.1
 pmat['TCM']['TCM'] =	0.1
-pmat['IRE']['IRE'] =	0.1
-pmat['IREM']['IREM'] =	0.1
-pmat['IRE']['IREM'] =	0.1
-pmat['IREM']['IRE'] =	0.1
+pmat['IRE']['IRE'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
+pmat['IREM']['IREM'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
+pmat['IRE']['IREM'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
+pmat['IREM']['IRE'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
 pmat['TC']['IREM'] =	0.2
 pmat['HTC']['IREM'] =	0.2
-pmat['IREM']['TC'] =	0.1
-pmat['IREM']['HTC'] =	0.1
+pmat['IREM']['TC'] =	0.1  # ~= data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
+pmat['IREM']['HTC'] =	0.1  # ~= data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['TCM']['IRE'] =	0.2
 pmat['IRE']['TCM'] =	0.1
-pmat['TC']['IRE'] =	    0.4
-pmat['HTC']['IRE'] =	0.4
-pmat['IRE']['TC'] =	    0.3
-pmat['IRE']['HTC'] =	0.3
+pmat['TC']['IRE'] =	    0.4  
+pmat['HTC']['IRE'] =	0.4  
+pmat['IRE']['TC'] =	    0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
+pmat['IRE']['HTC'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['TCM']['IREM'] =	0.4
-pmat['IREM']['TCM'] =	0.3
+pmat['IREM']['TCM'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
+
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
@@ -620,132 +621,113 @@ wmat['PT5B']['TCM']	= 0.7
 ## CORE THALAMOCORTICAL (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
 # --------------------------------------------------
 
-# --------------------------------------------------
-## Probabilities 
+# factor to convert amplitudes to probability; normalized max value in  Ji 2016 (amplitude) based on max value in Cons2006 (probability)
+normProb =  data['TC_Cons2006_2015']['prob']['L4'] / data['TC_Ji2016']['amplitude']['L4_PV']
 
-    # data['TC_Ji2016']['innervated'] = {
-    #     'L1': 12. / 22,
-    #     'L23_Pyr': 11. / 15, 'L23_PV': 11./14, 'L23_SOM': 1./12, 'L23_VIP': 0/17,
-    #     'L4_Pyr': 18. / 18, 'L4_PV': 13./13, 'L4_SOM': 5./14, 'L4_VIP': 0/10,
-    #     'L5_Pyr': 12. / 12, 'L5_PV': 15./15, 'L5_SOM': 0/10, 'L5_VIP': 0/6,
-    #     'L6_Pyr': 8. / 10, 'L6_PV': 8./8., 'L6_SOM': 0/6, 'L6_VIP': 0/6
-    #     }
+# Use conn data from Ji et al 2016; layer and cell-type specific (consistent with Constantinople)
+# - use SOM values for NGF 
+# - added inputs to IT3 and PV3 following Ji2016 data and Lakatos suggestion (didn't include SOM, VIP, NGF since very low)
 
-    # data['TC_Ji2016']['amplitude'] = {
-    #     'L1': 425,
-    #     'L23_Pyr': 129, 'L23_PV': 269, 'L23_SOM': 0, 'L23_VIP': 0,
-    #     'L4_Pyr': 418, 'L4_PV': 962, 'L4_SOM': 20, 'L4_VIP': 24,
-    #     'L5_Pyr': 195, 'L5_PV': 426, 'L5_SOM': 0, 'L5_VIP': 0,
-    #     'L6_Pyr': 132, 'L6_PV': 426, 'L6_SOM': 0, 'L6_VIP': 0
-    #     }
-
-
-    # # ------------------------------------------------------------------------------------------------------------------
-    # # load Thal -> A1 (Constantinople & Bruno, 2006,2015)
-    # # rat S1 (TC->L5/6 pmat+wmat)
-    # # prob of conn between thalamus and cortical layers / cell type
-    # # weight distribution: 0.2 - 1.2 mV
-    
-    # data['TC_Cons2006_2015'] = {'prob': {}}
-    # data['TC_Cons2006_2015']['prob']['L23'] = 0.0
-    # data['TC_Cons2006_2015']['prob']['L4'] = 0.43
-    # data['TC_Cons2006_2015']['prob']['L5_IT'] = 0.17
-    # data['TC_Cons2006_2015']['prob']['L5_PT'] = 0.44
-    # data['TC_Cons2006_2015']['prob']['L6'] = 0.09
-
-maxProb = data['TC_Cons2006_2015']['prob']['L4']
-
-# Use conn data from Ji et al 2016; layer and cell-type specific
-# use SOM values for NGF
-pmat['TC']['ITP4']      = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
-pmat['HTC']['ITP4']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
-pmat['TC']['ITS4']      = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
-pmat['HTC']['ITS4']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.25
-pmat['TC']['PT5B']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   #thalfctr
-pmat['HTC']['PT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
-pmat['TC']['IT5A']      = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.1   
-pmat['HTC']['IT5A']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
-pmat['TC']['IT5B']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
-pmat['HTC']['IT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.1   
-pmat['TC']['IT6']       = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
-pmat['HTC']['IT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TC']['CT5A']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
-pmat['HTC']['CT5A']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TC']['CT5B']      = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
-pmat['HTC']['CT5B']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TC']['CT6']       = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
-pmat['HTC']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TC']['PV4']       = data['TC_Ji2016']['innervated']['L4_PV'] * maxProb  # orig value: 0.25
-pmat['HTC']['PV4']      = data['TC_Ji2016']['innervated']['L4_PV'] * maxProb  # orig value: 0.25
-pmat['TC']['SOM4']      = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25
-pmat['HTC']['SOM4']     = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25
-pmat['TC']['NGF4']      = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25; use SOM for NGF
-pmat['HTC']['NGF4']     = data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.25; use SOM for NGF	
-pmat['TC']['PV5A']      = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
-pmat['HTC']['PV5A']     = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
-pmat['TC']['SOM5A']     = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1   
-pmat['HTC']['SOM5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1  
-pmat['TC']['NGF5A']     = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb	# orig value: 0.1 #	
-pmat['HTC']['NGF5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb	# orig value: 0.1 #	
-pmat['TC']['PV5B']      = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
-pmat['HTC']['PV5B']     = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
-pmat['TC']['SOM5B']     = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.1   
-pmat['HTC']['SOM5B']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1  
-pmat['TC']['NGF5B']     = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1 #	
-pmat['HTC']['NGF5B']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.1 #	
-pmat['TC']['PV6']       = data['TC_Ji2016']['innervated']['L6_PV'] * maxProb  # orig value: 0.15  
-pmat['HTC']['PV6']      = data['TC_Ji2016']['innervated']['L6_PV'] * maxProb  # orig value: 0.15  
-pmat['TC']['SOM6']      = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb  # orig value: 0.15  
-pmat['HTC']['SOM6']     = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb  # orig value: 0.15  
-pmat['TC']['NGF6']      = data['TC_Ji2016']['innervated']['L6_NGF'] * maxProb  # orig value: 0.15 #	
-pmat['HTC']['NGF6']     = data['TC_Ji2016']['innervated']['L6_NGF'] * maxProb  # orig value: 0.15 #	
-
+pmat['TC']['IT3']       = data['TC_Ji2016']['amplitude']['L23_Pyr'] * normProb  # orig value: 0.1   
+pmat['HTC']['IT3']      = data['TC_Ji2016']['amplitude']['L23_Pyr'] * normProb  # orig value: 0.1   
+pmat['TC']['ITP4']      = data['TC_Ji2016']['amplitude']['L4_Pyr'] * normProb  # orig value: 0.25
+pmat['HTC']['ITP4']     = data['TC_Ji2016']['amplitude']['L4_Pyr'] * normProb  # orig value: 0.25
+pmat['TC']['ITS4']      = data['TC_Ji2016']['amplitude']['L4_Pyr'] * normProb  # orig value: 0.25
+pmat['HTC']['ITS4']     = data['TC_Ji2016']['amplitude']['L4_Pyr'] * normProb  # orig value: 0.25
+pmat['TC']['PT5B']      = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.1   #thalfctr
+pmat['HTC']['PT5B']     = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.1   
+pmat['TC']['IT5A']      = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.1   
+pmat['HTC']['IT5A']     = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.1   
+pmat['TC']['IT5B']      = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.1   
+pmat['HTC']['IT5B']     = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.1   
+pmat['TC']['IT6']       = data['TC_Ji2016']['amplitude']['L6_Pyr'] * normProb  # orig value: 0.15  
+pmat['HTC']['IT6']      = data['TC_Ji2016']['amplitude']['L6_Pyr'] * normProb  # orig value: 0.15  
+pmat['TC']['CT5A']      = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['HTC']['CT5A']     = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TC']['CT5B']      = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['HTC']['CT5B']     = data['TC_Ji2016']['amplitude']['L4_Pyr'] * normProb  # orig value: 0.15  
+pmat['TC']['CT6']       = data['TC_Ji2016']['amplitude']['L6_Pyr'] * normProb  # orig value: 0.15  
+pmat['HTC']['CT6']      = data['TC_Ji2016']['amplitude']['L6_Pyr'] * normProb  # orig value: 0.15  
+pmat['TC']['PV3']       = data['TC_Ji2016']['amplitude']['L23_PV'] * normProb  # orig value: 0.25
+pmat['HTC']['PV3']      = data['TC_Ji2016']['amplitude']['L23_PV'] * normProb  # orig value: 0.25
+pmat['TC']['PV4']       = data['TC_Ji2016']['amplitude']['L4_PV'] * normProb  # orig value: 0.25
+pmat['HTC']['PV4']      = data['TC_Ji2016']['amplitude']['L4_PV'] * normProb  # orig value: 0.25
+pmat['TC']['SOM4']      = data['TC_Ji2016']['amplitude']['L4_SOM'] * normProb  # orig value: 0.25
+pmat['HTC']['SOM4']     = data['TC_Ji2016']['amplitude']['L4_SOM'] * normProb  # orig value: 0.25
+pmat['TC']['NGF4']      = data['TC_Ji2016']['amplitude']['L4_SOM'] * normProb  # orig value: 0.25
+pmat['HTC']['NGF4']     = data['TC_Ji2016']['amplitude']['L4_SOM'] * normProb  # orig value: 0.25	
+pmat['TC']['PV5A']      = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb  # orig value: 0.1   
+pmat['HTC']['PV5A']     = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb  # orig value: 0.1   
+pmat['TC']['SOM5A']     = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.1   
+pmat['HTC']['SOM5A']    = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.1  
+pmat['TC']['NGF5A']     = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb	# orig value: 0.1 #	
+pmat['HTC']['NGF5A']    = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb	# orig value: 0.1 #	
+pmat['TC']['PV5B']      = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb  # orig value: 0.1   
+pmat['HTC']['PV5B']     = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb  # orig value: 0.1   
+pmat['TC']['SOM5B']     = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb  # orig value: 0.1   
+pmat['HTC']['SOM5B']    = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.1  
+pmat['TC']['NGF5B']     = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.1 #	
+pmat['HTC']['NGF5B']    = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.1 #	
+pmat['TC']['PV6']       = data['TC_Ji2016']['amplitude']['L6_PV'] * normProb  # orig value: 0.15  
+pmat['HTC']['PV6']      = data['TC_Ji2016']['amplitude']['L6_PV'] * normProb  # orig value: 0.15  
+pmat['TC']['SOM6']      = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb  # orig value: 0.15  
+pmat['HTC']['SOM6']     = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb  # orig value: 0.15  
+pmat['TC']['NGF6']      = data['TC_Ji2016']['amplitude']['L6_NGF'] * normProb  # orig value: 0.15 #	
+pmat['HTC']['NGF6']     = data['TC_Ji2016']['amplitude']['L6_NGF'] * normProb  # orig value: 0.15 #	
 
 
 # --------------------------------------------------
-## Weights  (=unitary conn somatic PSP amplitude)
-wmat['TC']['ITP4']    = 0.6
-wmat['HTC']['ITP4'] = 0.6
-wmat['TC']['ITS4']    = 0.6
-wmat['HTC']['ITS4']   = 0.6
-wmat['TC']['PT5B']   =	0.6  # [TC][E5B] / pmat[TC][E4]	
-wmat['HTC']['PT5B'] = 0.6  #* pmat[TC][E5B] / pmat[TC][E4]
-wmat['TC']['IT5A']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
-wmat['HTC']['IT5A']  =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
-wmat['TC']['IT5B']   =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
-wmat['HTC']['IT5B']  =	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
-wmat['TC']['IT6']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
-wmat['HTC']['IT6'] = 0.6  #* pmat[TC][E6] / pmat[TC][E4]	
-wmat['TC']['CT5A']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
-wmat['HTC']['CT5A']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
-wmat['TC']['CT5B']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
-wmat['HTC']['CT5B']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
-wmat['TC']['CT6']    =	0.6  #* pmat[TC][E6] / pmat[TC][E4]
-wmat['HTC']['CT6']   =	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
-wmat['TC']['PV4']    =	0.23 #	
-wmat['HTC']['PV4']   =	0.23 #	
-wmat['TC']['SOM4']    =	0.23 #	
-wmat['HTC']['SOM4']   =	0.23 #	
-wmat['TC']['NGF4']    =	0.23 #	
-wmat['HTC']['NGF4']   =	0.23 #	
-wmat['TC']['PV5A']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['HTC']['PV5A']   =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['TC']['SOM5A']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['HTC']['SOM5A'] = 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['TC']['NGF5A']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['HTC']['NGF5A'] = 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['TC']['PV5B']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['HTC']['PV5B']   =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['TC']['SOM5B']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['HTC']['SOM5B'] = 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['TC']['NGF5B']    =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['HTC']['NGF5B']   =	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
-wmat['TC']['PV6']    =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
-wmat['HTC']['PV6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
-wmat['TC']['SOM6']    =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
-wmat['HTC']['SOM6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]
-wmat['TC']['NGF6']    =	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
-wmat['HTC']['NGF6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]
+# Weights  (=unitary conn somatic PSP amplitude)
+
+# don't have specific exp data so use 0.5mV, which is approx avg in Constantinople, 2016  
+TCweight = 0.5
+
+wmat['TC']['IT3']      = TCweight  #	
+wmat['HTC']['IT3']     = TCweight  #	
+wmat['TC']['ITP4']      = TCweight  # 0.6
+wmat['HTC']['ITP4']     = TCweight  # 0.6
+wmat['TC']['ITS4']      = TCweight  # 0.6
+wmat['HTC']['ITS4']     = TCweight  # 0.6
+wmat['TC']['PT5B']      = TCweight  #	0.6  # [TC][E5B] / pmat[TC][E4]	
+wmat['HTC']['PT5B']     = TCweight  # 0.6  #* pmat[TC][E5B] / pmat[TC][E4]
+wmat['TC']['IT5A']      = TCweight  #	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['HTC']['IT5A']     = TCweight  #	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['TC']['IT5B']      = TCweight  #	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['HTC']['IT5B']     = TCweight  #	0.6  #* pmat[TC][E5R] / pmat[TC][E4]	
+wmat['TC']['IT6']       = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['HTC']['IT6']      = TCweight  # 0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['CT5A']      = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]
+wmat['HTC']['CT5A']     = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['CT5B']      = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]
+wmat['HTC']['CT5B']     = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['CT6']       = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]
+wmat['HTC']['CT6']      = TCweight  #	0.6  #* pmat[TC][E6] / pmat[TC][E4]	
+wmat['TC']['PV3']       = TCweight  #	0.23 #	
+wmat['HTC']['PV3']      = TCweight  #	0.23 #	
+wmat['TC']['PV4']       = TCweight  #	0.23 #	
+wmat['HTC']['PV4']      = TCweight  #	0.23 #	
+wmat['TC']['SOM4']      = TCweight  #	0.23 #	
+wmat['HTC']['SOM4']     = TCweight  #	0.23 #	
+wmat['TC']['NGF4']      = TCweight  #	0.23 #	
+wmat['HTC']['NGF4']     = TCweight  #	0.23 #	
+wmat['TC']['PV5A']      = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['PV5A']     = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['SOM5A']     = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['SOM5A']    = TCweight  # 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['NGF5A']     = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['NGF5A']    = TCweight  # 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['PV5B']      = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['PV5B']     = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['SOM5B']     = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['SOM5B']    = TCweight  # 0.23  # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['NGF5B']     = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['HTC']['NGF5B']    = TCweight  #	0.23 # * pmat[TC][I5] / pmat[TC][I4]	
+wmat['TC']['PV6']       = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['HTC']['PV6']      = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['TC']['SOM6']      = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['HTC']['SOM6']     = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]
+wmat['TC']['NGF6']      = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
+wmat['HTC']['NGF6']     = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]
 
 
 # --------------------------------------------------
@@ -757,67 +739,70 @@ wmat['HTC']['NGF6']   =	0.23 # * pmat[TC][I6] / pmat[TC][I4]
 
 # Use conn data from Ji et al 2016; layer and cell-type specific
 # use SOM values for NGF
-pmat['TCM']['IT2']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * maxProb  # orig value: 0.25
-pmat['TCM']['IT3']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * maxProb  # orig value: 0.25
-pmat['TCM']['IT5A']	    = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TCM']['IT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TCM']['PT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.15  
-pmat['TCM']['IT6']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.05  
-pmat['TCM']['CT5A']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * maxProb  # orig value: 0.05  
-pmat['TCM']['CT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * maxProb  # orig value: 0.05  
-pmat['TCM']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * maxProb  # orig value: 0.05  
+pmat['TCM']['IT2']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * normProb  # orig value: 0.25
+pmat['TCM']['IT3']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * normProb  # orig value: 0.25
+pmat['TCM']['IT5A']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TCM']['IT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TCM']['PT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TCM']['IT6']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT5A']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * normProb  # orig value: 0.05  
 
-pmat['TCM']['NGF1']	    = data['TC_Ji2016']['innervated']['L1'] * maxProb  # orig value: 0.25
-pmat['TCM']['PV2']	    = data['TC_Ji2016']['innervated']['L2_PV'] * maxProb  # orig value: 0.25
-pmat['TCM']['SOM2']	    = data['TC_Ji2016']['innervated']['L2_SOM'] * maxProb # orig value: 0.25
-pmat['TCM']['NGF2']	    = data['TC_Ji2016']['innervated']['L2_NGF'] * maxProb # orig value: 0.25
-pmat['TCM']['PV3']	    = data['TC_Ji2016']['innervated']['L23_PV'] * maxProb # orig value: 0.25
-pmat['TCM']['SOM3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * maxProb # orig value: 0.25
-pmat['TCM']['NGF3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * maxProb # orig value: 0.25
+pmat['TCM']['NGF1']	    = data['TC_Ji2016']['innervated']['L1'] * normProb  # orig value: 0.25
+pmat['TCM']['PV2']	    = data['TC_Ji2016']['innervated']['L2_PV'] * normProb  # orig value: 0.25
+pmat['TCM']['SOM2']	    = data['TC_Ji2016']['innervated']['L2_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['NGF2']	    = data['TC_Ji2016']['innervated']['L2_NGF'] * normProb # orig value: 0.25
+pmat['TCM']['PV3']	    = data['TC_Ji2016']['innervated']['L23_PV'] * normProb # orig value: 0.25
+pmat['TCM']['SOM3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['NGF3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
 
-pmat['TCM']['PV5A']	    = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb  # orig value: 0.15  
-pmat['TCM']['SOM5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * maxProb  # orig value: 0.15  
-pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb # orig value: 0.15  
-pmat['TCM']['PV5B']	    = data['TC_Ji2016']['innervated']['L5_PV'] * maxProb # orig value: 0.15  
-pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb  # orig value: 0.15  
-pmat['TCM']['NGF5B']	= data['TC_Ji2016']['innervated']['L4_SOM'] * maxProb# orig value: 0.15  
+pmat['TCM']['PV5A']	    = data['TC_Ji2016']['innervated']['L5_PV'] * normProb  # orig value: 0.15  
+pmat['TCM']['SOM5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * normProb  # orig value: 0.15  
+pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb # orig value: 0.15  
+pmat['TCM']['PV5B']	    = data['TC_Ji2016']['innervated']['L5_PV'] * normProb # orig value: 0.15  
+pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb  # orig value: 0.15  
+pmat['TCM']['NGF5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb# orig value: 0.15  
 
-pmat['TCM']['PV6']	    = data['TC_Ji2016']['innervated']['L6_PV'] * maxProb # orig value: 0.05  
-pmat['TCM']['SOM6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb # orig value: 0.05  
-pmat['TCM']['NGF6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * maxProb # orig value: 0.05  
+pmat['TCM']['PV6']	    = data['TC_Ji2016']['innervated']['L6_PV'] * normProb # orig value: 0.05  
+pmat['TCM']['SOM6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * normProb # orig value: 0.05  
+pmat['TCM']['NGF6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * normProb # orig value: 0.05  
 
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
 
-wmat['TCM']['IT2']	= 0.6
-wmat['TCM']['IT3']	= 0.6
-wmat['TCM']['IT5A']	= 0.6  #* thalfctr
-wmat['TCM']['IT5B']	= 0.6  #* thalfctr
-wmat['TCM']['PT5B']	= 0.6  #* thalfctr
-wmat['TCM']['IT6']	= 0.6  #* thalfctr
-wmat['TCM']['CT5A'] = 0.6  #* thalfctr
-wmat['TCM']['CT5B'] = 0.6  #* thalfctr
-wmat['TCM']['CT6'] = 0.6  #* thalfctr
+# don't have specific exp data so use 0.5mV, which is approx avg in Constantinople, 2016  
+TCMweight = 0.5
 
-wmat['TCM']['NGF1']	= 0.25
-wmat['TCM']['PV2']	= 0.25
-wmat['TCM']['SOM2']	= 0.25
-wmat['TCM']['NGF2']	= 0.25
-wmat['TCM']['PV3']	= 0.25
-wmat['TCM']['SOM3']	= 0.25
-wmat['TCM']['NGF3']	= 0.25
+wmat['TCM']['IT2']	    = TCMweight  # 0.6
+wmat['TCM']['IT3']	    = TCMweight  # 0.6
+wmat['TCM']['IT5A']	    = TCMweight  # 0.6  #* thalfctr
+wmat['TCM']['IT5B']	    = TCMweight  # 0.6  #* thalfctr
+wmat['TCM']['PT5B']	    = TCMweight  # 0.6  #* thalfctr
+wmat['TCM']['IT6']	    = TCMweight  # 0.6  #* thalfctr
+wmat['TCM']['CT5A']     = TCMweight  # 0.6  #* thalfctr
+wmat['TCM']['CT5B']     = TCMweight  # 0.6  #* thalfctr
+wmat['TCM']['CT6']      = TCMweight  # 0.6  #* thalfctr
 
-wmat['TCM']['PV5A']  = 0.25 #* thalfctr
-wmat['TCM']['SOM5A'] = 0.25 #* thalfctr
-wmat['TCM']['SOM5B'] = 0.25 #* thalfctr
-wmat['TCM']['PV5B']	 = 0.25 #* thalfctr
-wmat['TCM']['SOM5B'] = 0.25 #* thalfctr
-wmat['TCM']['NGF5B'] = 0.25 #* thalfctr
+wmat['TCM']['NGF1']	    = TCMweight  # 0.25
+wmat['TCM']['PV2']	    = TCMweight  # 0.25
+wmat['TCM']['SOM2']	    = TCMweight  # 0.25
+wmat['TCM']['NGF2']	    = TCMweight  # 0.25
+wmat['TCM']['PV3']	    = TCMweight  # 0.25
+wmat['TCM']['SOM3']	    = TCMweight  # 0.25
+wmat['TCM']['NGF3']	    = TCMweight  # 0.25
 
-wmat['TCM']['PV6']	 = 0.25  #* thalfctr
-wmat['TCM']['SOM6']	 = 0.25  #* thalfctr
-wmat['TCM']['NGF6']	 = 0.25  #* thalfctr
+wmat['TCM']['PV5A']     = TCMweight  # 0.25 #* thalfctr
+wmat['TCM']['SOM5A']    = TCMweight  # 0.25 #* thalfctr
+wmat['TCM']['SOM5B']    = TCMweight  # 0.25 #* thalfctr
+wmat['TCM']['PV5B']	    = TCMweight  # 0.25 #* thalfctr
+wmat['TCM']['SOM5B']    = TCMweight  # 0.25 #* thalfctr
+wmat['TCM']['NGF5B']    = TCMweight  # 0.25 #* thalfctr
+
+wmat['TCM']['PV6']	    = TCMweight  # 0.25  #* thalfctr
+wmat['TCM']['SOM6']	    = TCMweight  # 0.25  #* thalfctr
+wmat['TCM']['NGF6']	    = TCMweight  # 0.25  #* thalfctr
 
 # --------------------------------------------------
 # Save data to pkl file
