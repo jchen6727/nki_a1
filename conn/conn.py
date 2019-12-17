@@ -672,8 +672,8 @@ pmat['TC']['PV6']       = data['TC_Ji2016']['amplitude']['L6_PV'] * normProb  # 
 pmat['HTC']['PV6']      = data['TC_Ji2016']['amplitude']['L6_PV'] * normProb  # orig value: 0.15  
 pmat['TC']['SOM6']      = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb  # orig value: 0.15  
 pmat['HTC']['SOM6']     = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb  # orig value: 0.15  
-pmat['TC']['NGF6']      = data['TC_Ji2016']['amplitude']['L6_NGF'] * normProb  # orig value: 0.15 #	
-pmat['HTC']['NGF6']     = data['TC_Ji2016']['amplitude']['L6_NGF'] * normProb  # orig value: 0.15 #	
+pmat['TC']['NGF6']      = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb  # orig value: 0.15 #	
+pmat['HTC']['NGF6']     = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb  # orig value: 0.15 #	
 
 
 # --------------------------------------------------
@@ -750,9 +750,9 @@ pmat['TCM']['CT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  
 pmat['TCM']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * normProb  # orig value: 0.05  
 
 pmat['TCM']['NGF1']	    = data['TC_Ji2016']['innervated']['L1'] * normProb  # orig value: 0.25
-pmat['TCM']['PV2']	    = data['TC_Ji2016']['innervated']['L2_PV'] * normProb  # orig value: 0.25
-pmat['TCM']['SOM2']	    = data['TC_Ji2016']['innervated']['L2_SOM'] * normProb # orig value: 0.25
-pmat['TCM']['NGF2']	    = data['TC_Ji2016']['innervated']['L2_NGF'] * normProb # orig value: 0.25
+pmat['TCM']['PV2']	    = data['TC_Ji2016']['innervated']['L23_PV'] * normProb  # orig value: 0.25
+pmat['TCM']['SOM2']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['NGF2']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
 pmat['TCM']['PV3']	    = data['TC_Ji2016']['innervated']['L23_PV'] * normProb # orig value: 0.25
 pmat['TCM']['SOM3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
 pmat['TCM']['NGF3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
