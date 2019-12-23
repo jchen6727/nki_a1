@@ -187,10 +187,13 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0
 pmat = {}  # probability of connection matrix
 lmat = {}  # length constant (lambda) for exp decaying prob conn (um) matrix
 wmat = {}  # connection weight matrix = unitary conn somatic PSP (mV)
+secmat = {}  # target section matrix
+
 for p in Epops + Ipops + Tpops:
     pmat[p] = {}
     lmat[p] = {}
     wmat[p] = {}
+    secmat[p] = {}
     
 # Load exp data
 data = loadData()
@@ -206,7 +209,7 @@ connDataSource['I->E/I'] = 'Allen_custom' #'custom_A1' #'BBP_S1'  # 'Allen_V1'
 # --------------------------------------------------
 
 # --------------------------------------------------
-## Probabilities, length constants (lambda), and weights (=unitary conn somatic PSP amplitude)
+## Probabilities, length constants (lambda), weights (=unitary conn somatic PSP amplitude), and target sections
 
 '''
 Probabilities are distance dependent based on:
@@ -304,6 +307,31 @@ elif connDataSource['E->E/I'] ==  'Allen_BBP':
                     print(' Prob %s->%s:'%(fixpop,post), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
                 pmat[fixpop][post] = (fix_BBP / ref_BBP) * ref_Allen
         
+'''
+secmat
+E -> E2/3,4: soma,dendrites <200um
+E -> E5,6: soma,dendrites (all)
+E -> I: soma, dendrite (all)
+PV -> E,I: soma, dendrites (<50um)
+SOM -> E,I: dendries (>50um)
+NGF -> E,I: apical dends
+NGF2 - 6 -> E, I: dendrites(50 - 350 um)
+
+categories:
+all
+proximal [soma,bdend,apic1]
+soma
+all_dend [apic1,2,3, bdend]
+tuft_dends [apic3]
+trunk_dends [apic1,apic2]
+lowertrunk_dends [apic1]
+uppertrunk_dends [apic2]
+'''
+
+# target sections (somatodendritic distribution of synapses)
+for pre in Epops:
+    for post in []'IT2', 'IT3', 'ITP4', 'ITS4']:
+        secmat[pre][post] = 'all'
 
 
 # --------------------------------------------------
@@ -530,7 +558,7 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
 
 
 # --------------------------------------------------
-## INTRATHALAMIC (from old model; based on Bazhenov https://www.jneurosci.org/content/32/15/5250.full Lakatos observations; not checked)
+## INTRATHALAMIC (from old model; based on Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full Lakatos observations; not checked)
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -585,7 +613,7 @@ wmat['IREM']['TCM'] =   0.83
 
 
 # --------------------------------------------------
-## CORTICOTHALAMIC (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+## CORTICOTHALAMIC (from old model; partly from Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -596,8 +624,8 @@ pmat['CT5A']['IRE']	= 0.1
 pmat['CT5B']['TC']	= 0.1
 pmat['CT5B']['HTC']	= 0.1
 pmat['CT5B']['IRE']	= 0.1
-pmat['CT5A']['TC']	= 0.1
-pmat['CT5B']['HTC']	= 0.1
+pmat['CT6']['TC']	= 0.1
+pmat['CT6']['HTC']	= 0.1
 pmat['CT6']['IRE']	= 0.1
 pmat['IT5B']['TCM']	= 0.1
 pmat['PT5B']['TCM']	= 0.1
@@ -618,7 +646,7 @@ wmat['PT5B']['TCM']	= 0.7
 
 
 # --------------------------------------------------
-## CORE THALAMOCORTICAL (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+## CORE THALAMOCORTICAL (from old model; partly from Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
 # --------------------------------------------------
 
 # factor to convert amplitudes to probability; normalized max value in  Ji 2016 (amplitude) based on max value in Cons2006 (probability)
@@ -729,9 +757,19 @@ wmat['HTC']['SOM6']     = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]
 wmat['TC']['NGF6']      = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]	
 wmat['HTC']['NGF6']     = TCweight  #	0.23 # * pmat[TC][I6] / pmat[TC][I4]
 
+# --------------------------------------------------
+# Length constant (matrix more broadly tunes spatially than core)
+lmat['TC'] = {}
+lmat['HTC'] = {}
+
+for post in wmat['TC'].keys():
+    lmat['TC'][post] = 500  # um - arbitrary value
+
+for post in wmat['HTC'].keys():
+    lmat['HTC'][post] = 1000  # um - arbitrary value
 
 # --------------------------------------------------
-## MATRIX THALAMOCORTICAL (from old model; partly from Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
+## MATRIX THALAMOCORTICAL (from old model; partly from Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
 # --------------------------------------------------
 
 # --------------------------------------------------
@@ -744,8 +782,8 @@ pmat['TCM']['IT3']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * normProb  
 pmat['TCM']['IT5A']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
 pmat['TCM']['IT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
 pmat['TCM']['PT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
-pmat['TCM']['IT6']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
-pmat['TCM']['CT5A']     = data['TC_Ji2016']['innervated']['L4_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['IT6']	    = data['TC_Ji2016']['innervated']['L6_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT5A']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
 pmat['TCM']['CT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
 pmat['TCM']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * normProb  # orig value: 0.05  
 
@@ -767,6 +805,7 @@ pmat['TCM']['NGF5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb# ori
 pmat['TCM']['PV6']	    = data['TC_Ji2016']['innervated']['L6_PV'] * normProb # orig value: 0.05  
 pmat['TCM']['SOM6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * normProb # orig value: 0.05  
 pmat['TCM']['NGF6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * normProb # orig value: 0.05  
+
 
 
 # --------------------------------------------------
@@ -803,6 +842,13 @@ wmat['TCM']['NGF5B']    = TCMweight  # 0.25 #* thalfctr
 wmat['TCM']['PV6']	    = TCMweight  # 0.25  #* thalfctr
 wmat['TCM']['SOM6']	    = TCMweight  # 0.25  #* thalfctr
 wmat['TCM']['NGF6']	    = TCMweight  # 0.25  #* thalfctr
+
+
+# --------------------------------------------------
+# Length constant (matrix more broadly tunes spatially than core)
+lmat['TCM'] = {}
+for post in wmat['TCM'].keys():
+    lmat['TCM'][post] = 1000  # um - arbitrary value
 
 # --------------------------------------------------
 # Save data to pkl file

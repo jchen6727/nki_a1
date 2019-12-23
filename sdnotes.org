@@ -745,6 +745,36 @@ nRT cells.
 - Huang and Winer 2000
 - Verbny et al. 2006; Lee and Sherman 2008
 - Oviedo et al. 2010; Meng et al. 2015
+** subcellular conn (dendritic distribution of syns)
+*** A1 E/I->E/I
+**** Allen V1 (fig 4F)
+LGN -> E: dendrites >150um
+E -> E2/3,4: soma,dendrites <200um
+E -> E5,6: soma,dendrites (all)
+E -> I: soma, dendrite (all)
+PV -> E,I: soma, dendrites (<50um)
+SOM -> E,I: dendries (>50um)
+NGF -> E,I: apical dends
+NGF2-6 -> E,I: dendrites (50-350um)
+***** Note from Allen: didn't get epsps if target only apical -- take into account for model!
+Note, however, that during our post-synaptic-potential optimization (see below), we had to change the rules of synaptic placement when L1 was the source onto excitatory cells. Our optimization methodology would create 100 target cells of a specific cell model that receive 1 spike at 0.5 seconds and we would record the generated postsynaptic potential (PSP). The weight would be scaled until we were within 1% of the target PSP. We observed that the when L1 was the source impinging on excitatory cells, the targets sections were so far away that the somatic PSP would reach a maximum and never match the target PSP regardless of how strongly the weight was scaled. This was due to the most distal compartments reaching their maximum membrane deviation that is equal to the reversal potential of the synaptic drive. With these distal compartments being at their maximum, and the attenuation that occurs due to dendritic filtering (recall dendrites in our model are passive), the soma would reach a maximum PSP that did not match our target values.
+Thus, to address this issue, we changed the synaptic placement rules for all L1-to-Excitatory neurons so that synapses were placed on dendrites at 50 μm or further from the soma. This is just a highly simplified approximation, but, in terms of reaching closer to the soma than our original rules, it is reasonable since L1 neurogliaform cells are known to bulk release GABA into large volumes and not form well-targeted synapses with post-synaptic cells (Szabadics, Tamás and Soltesz, 2007; Oláh et al., 2009; Tremblay, Lee and Rudy, 2016).
+**** Tremblay 2016 (fig 3)
+- NGF1 -> E2,3,4: apic_tuft
+- NGF2,3,4 -> E2,3,4: apic_trunk
+- SOM2,3,4 -> E2,3,4: all_dend (not close to soma)
+- PV2,3,4 -> E2,3,4: close to soma 
+- SOM5,6 -> E2,3,4: all_dend (not close to soma)
+
+- NGF1 -> E5,6: apic_tuft
+- NGF2,3,4 -> E5,6: apic_uppertrunk
+- NGF5,6 -> E5,6: apic_lowertrunk
+- SOM5,6 -> E5,6: all_dend (not close to soma)
+- PV5,6 -> E5,6: close to soma 
+
+*** TC -> soma + non-apical dends
+*** TCM -> E apical dends
+
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05

@@ -469,7 +469,7 @@ if cfg.addCorticoThalamicConn:
                     'preConds': {'pop': pre}, 
                     'postConds': {'pop': post},
                     'synMech': ESynMech,
-                    'probability': pmat[pre][post],
+                    'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
                     'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
                     'synMechWeightFactor': cfg.synWeightFractionEE,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -513,7 +513,7 @@ if cfg.addThalamoCorticalConn:
 
 
 #------------------------------------------------------------------------------
-# Bakcgroudn inputs 
+# Bakcground inputs 
 #------------------------------------------------------------------------------  
 if cfg.addBkgConn:
     # add bkg sources for E and I cells

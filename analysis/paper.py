@@ -255,8 +255,8 @@ def plot_empirical_conn():
     pmat = connData['pmat']
     lmat = connData['lmat']
 
-    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
+    
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
     
@@ -265,7 +265,15 @@ def plot_empirical_conn():
     d = 50
     for ipre, pre in enumerate(popsPre):
         for ipost, post in enumerate(popsPost):
-            connMatrix[ipre,ipost] = pmat[pre][post] * np.exp(-d / lmat[pre][post]) ** 2
+            print(pre,post)
+            try:
+                if pre in lmat and post in lmat[pre]:
+                    connMatrix[ipre, ipost] = pmat[pre][post] * np.exp(-d / lmat[pre][post])** 2
+                else:
+                    connMatrix[ipre, ipost] = pmat[pre][post]
+            except:
+                connMatrix[ipre, ipost] = 0.0
+                #connMatrix[ipre, ipost] = pmat[pre][post]
 
     # font
     fontsiz = 14
@@ -308,7 +316,8 @@ def plot_empirical_conn():
     plt.title(title, y=1.12, fontWeight='bold')
     plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
 
-    filename = 'EI->EI_Allen_custom_prob_conn_empirical_0.25.png'
+    #filename = 'EI->EI_Allen_custom_prob_conn_empirical_0.25.png'
+    filename = 'Full_Allen_custom_prob_conn_empirical.png'
     plt.savefig('../conn/'+filename, dpi=300)
 
     #import IPython; IPython.embed()
@@ -364,7 +373,7 @@ def plot_net_conn():
     plt.colorbar(label='probability', shrink=0.8) #.set_label(label='Fitness',size=20,weight='bold')
     plt.xlabel('Post')
     plt.ylabel('Pre')
-    title = 'Empirical connection probability matrix'
+    title = 'Network instance connection probability matrix'
     h.xaxis.set_label_coords(0.5, 1.10)
     plt.title(title, y=1.12, fontWeight='bold')
     plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
@@ -376,5 +385,5 @@ def plot_net_conn():
 #### main
 # fig_conn()
 # compare_conn()
-# plot_empirical_conn()
-plot_net_conn()
+plot_empirical_conn()
+# plot_net_conn()
