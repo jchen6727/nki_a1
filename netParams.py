@@ -89,6 +89,33 @@ for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
 
+    # set section lists
+    secLists = {}
+    if ruleLabel in ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1', 'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1']:
+        secLists['all'] = ['soma', 'Adend1', 'Adend2', 'Adend3', 'Bdend']
+        secLists['dend_all'] = ['Adend1', 'Adend2', 'Adend3', 'Bdend']
+        secLists['dend_proximal'] = ['soma', 'bdend', 'apic1']
+        secLists['apic_trunk'] = ['apic1', 'apic2']
+        secLists['apic_lowertrunk'] = ['apic1']
+        secLists['apic_uppertrunk'] = ['apic2']
+        secLists['apic_tuft'] = ['apic3']
+
+    elif ruleLabel in ['ITS4']:
+        secLists['all'] = ['soma', 'dend', 'dend1']
+        secLists['dend_all'] = secLists['dend_proximal'] = secLists['apic_trunk'] = secLists['apic_lowertrunk'] = \
+            secLists['apic_uppertrunk'] = secLists['apic_tuft'] = ['dend', 'dend1']
+
+    elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced']:
+        secLists['all'] = ['soma', 'dend']
+        secLists['dend_all'] = secLists['dend_proximal'] = ['dend']
+
+    elif ruleLabel in ['VIP_reduced']:
+        secLists['all'] = ['soma', 'rad1', 'rad2', 'ori1', 'ori2']
+        secLists['dend_all'] = ['rad1', 'rad2', 'ori1', 'ori2']
+        secLists['dend_proximal'] = [ 'rad1', 'ori1']
+
+    # store secLists in netParams
+    netParams.cellParams[ruleLabel]['secLists'] = dict(secLists)
 
 
 ## Import VIP cell rule from hoc file 

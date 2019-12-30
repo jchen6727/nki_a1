@@ -170,7 +170,7 @@ for label in netParams.cellParams:
                 sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
                 prevL = float(prevL + sec['geom']['L'])
                 sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
-            if secName in ['dend1']:  # set 3d geom of apic dendds
+            if secName in ['dend']:  # set 3d geom of apic dendds
                 sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
                 prevL = float(prevL + sec['geom']['L'])
                 sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
