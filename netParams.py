@@ -81,8 +81,6 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
                     'CT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
-                    
-
 
 # Load cell rules from .pkl file 
 loadCellParams = cellParamLabels
@@ -90,6 +88,7 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
+
 
 
 ## Import VIP cell rule from hoc file 
@@ -469,7 +468,7 @@ if cfg.addCorticoThalamicConn:
                     'preConds': {'pop': pre}, 
                     'postConds': {'pop': post},
                     'synMech': ESynMech,
-                    'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                    'probability': pmat[pre][post],
                     'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
                     'synMechWeightFactor': cfg.synWeightFractionEE,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
@@ -497,7 +496,7 @@ if cfg.addThalamoCorticalConn:
                     'preConds': {'pop': pre}, 
                     'postConds': {'pop': post},
                     'synMech': syn,
-                    'probability': pmat[pre][post],
+                    'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
                     'weight': wmat[pre][post] * cfg.thalamoCorticalGain, 
                     'synMechWeightFactor': synWeightFactor,
                     'delay': 'defaultDelay+dist_3D/propVelocity',

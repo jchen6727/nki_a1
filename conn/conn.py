@@ -330,7 +330,7 @@ uppertrunk_dends [apic2]
 
 # target sections (somatodendritic distribution of synapses)
 for pre in Epops:
-    for post in []'IT2', 'IT3', 'ITP4', 'ITS4']:
+    for post in ['IT2', 'IT3', 'ITP4', 'ITS4']:
         secmat[pre][post] = 'all'
 
 
