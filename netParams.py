@@ -636,7 +636,7 @@ if cfg.addSubConn:
     #------------------------------------------------------------------------------
     #  TCM -> E: apical
     netParams.subConnParams['TC->E'] = {
-        'preConds': {'cellType': ['TCM', 'HTC']}, 
+        'preConds': {'cellType': ['TCM']}, 
         'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
         'sec': 'apic',
         'groupSynMechs': ESynMech, 
