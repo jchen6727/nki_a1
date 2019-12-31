@@ -130,6 +130,7 @@ cfg.corticoThalamicGain = 1.0
 cfg.thalamoCorticalGain = 1.0 #2.5
 #cfg.matrixThalamoCorticalGain = 2.0
 
+cfg.addSubConn = 1
 
 #------------------------------------------------------------------------------
 # Background inputs

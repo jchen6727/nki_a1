@@ -93,26 +93,27 @@ for ruleLabel in loadCellParams:
     secLists = {}
     if ruleLabel in ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1', 'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1']:
         secLists['all'] = ['soma', 'Adend1', 'Adend2', 'Adend3', 'Bdend']
+        secLists['proximal'] = ['soma', 'Bdend', 'Adend1']
         secLists['dend_all'] = ['Adend1', 'Adend2', 'Adend3', 'Bdend']
-        secLists['dend_proximal'] = ['soma', 'bdend', 'apic1']
-        secLists['apic_trunk'] = ['apic1', 'apic2']
-        secLists['apic_lowertrunk'] = ['apic1']
-        secLists['apic_uppertrunk'] = ['apic2']
-        secLists['apic_tuft'] = ['apic3']
+        secLists['apic'] = ['Adend1', 'Adend2', 'Adend3']
+        secLists['apic_trunk'] = ['Adend1', 'Adend2']
+        secLists['apic_lowertrunk'] = ['Adend1']
+        secLists['apic_uppertrunk'] = ['Adend2']
+        secLists['apic_tuft'] = ['Adend3']
 
     elif ruleLabel in ['ITS4']:
-        secLists['all'] = ['soma', 'dend', 'dend1']
-        secLists['dend_all'] = secLists['dend_proximal'] = secLists['apic_trunk'] = secLists['apic_lowertrunk'] = \
+        secLists['all'] = secLists['proximal'] = ['soma', 'dend', 'dend1']
+        secLists['dend_all'] = secLists['apic'] = secLists['apic_trunk'] = secLists['apic_lowertrunk'] = \
             secLists['apic_uppertrunk'] = secLists['apic_tuft'] = ['dend', 'dend1']
 
     elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced']:
-        secLists['all'] = ['soma', 'dend']
-        secLists['dend_all'] = secLists['dend_proximal'] = ['dend']
+        secLists['all'] = secLists['proximal'] = ['soma', 'dend']
+        secLists['dend_all'] = ['dend']
 
     elif ruleLabel in ['VIP_reduced']:
         secLists['all'] = ['soma', 'rad1', 'rad2', 'ori1', 'ori2']
+        secLists['proximal'] = ['soma', 'rad1', 'ori1']
         secLists['dend_all'] = ['rad1', 'rad2', 'ori1', 'ori2']
-        secLists['dend_proximal'] = [ 'rad1', 'ori1']
 
     # store secLists in netParams
     netParams.cellParams[ruleLabel]['secLists'] = dict(secLists)
@@ -536,7 +537,111 @@ if cfg.addThalamoCorticalConn:
 # Subcellular connectivity (synaptic distributions)
 #------------------------------------------------------------------------------  
 
+# Set target sections (somatodendritic distribution of synapses)
+# From Billeh 2019 (Allen V1) (fig 4F) and Tremblay 2016 (fig 3)
 
+
+
+if cfg.addSubConn:
+    #------------------------------------------------------------------------------
+    # E -> E2/3,4: soma,dendrites <200um
+    netParams.subConnParams['E->E2,3,4'] = {
+        'preConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']}, 
+        'postConds': {'pops': ['IT2', 'IT3', 'ITP4', 'ITS4']},
+        'sec': 'proximal',
+        'groupSynMechs': ESynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    # E -> E5,6: soma,dendrites (all)
+    netParams.subConnParams['E->E5,6'] = {
+        'preConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']}, 
+        'postConds': {'pops': ['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']},
+        'sec': 'all',
+        'groupSynMechs': ESynMech, 
+        'density': 'uniform'}
+        
+    #------------------------------------------------------------------------------
+    # E -> I: soma, dendrite (all)
+    netParams.subConnParams['E->I'] = {
+        'preConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']}, 
+        'postConds': {'cellType': ['PV','SOM','NGF', 'VIP']},
+        'sec': 'all',
+        'groupSynMechs': ESynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    # NGF1 -> E: apic_tuft
+    netParams.subConnParams['NGF1->E5,6'] = {
+        'preConds': {'pops': ['NGF1']}, 
+        'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
+        'sec': 'apic_tuft',
+        'groupSynMechs': NGFSynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    # NGF2,3,4 -> E2,3,4: apic_trunk
+    netParams.subConnParams['NGF2,3,4->E2,3,4'] = {
+        'preConds': {'pops': ['NGF2', 'NGF3', 'NGF4']}, 
+        'postConds': {'pops': ['IT2', 'IT3', 'ITP4', 'ITS4']},
+        'sec': 'apic_trunk',
+        'groupSynMechs': NGFSynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    # NGF2,3,4 -> E5,6: apic_uppertrunk
+    netParams.subConnParams['NGF2,3,4->E5,6'] = {
+        'preConds': {'pops': ['NGF2', 'NGF3', 'NGF4']}, 
+        'postConds': {'pops': ['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']},
+        'sec': 'apic_uppertrunk',
+        'groupSynMechs': NGFSynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    # NGF5,6 -> E5,6: apic_lowerrunk
+    netParams.subConnParams['NGF5,6->E5,6'] = {
+        'preConds': {'pops': ['NGF5A', 'NGF5B', 'NGF6']}, 
+        'postConds': {'pops': ['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']},
+        'sec': 'apic_lowertrunk',
+        'groupSynMechs': NGFSynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    #  SOM -> E: all_dend (not close to soma)
+    netParams.subConnParams['SOM->E'] = {
+        'preConds': {'cellType': ['SOM']}, 
+        'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
+        'sec': 'dend_all',
+        'groupSynMechs': SOMESynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    #  PV -> E: proximal
+    netParams.subConnParams['PV->E'] = {
+        'preConds': {'cellType': ['PV']}, 
+        'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
+        'sec': 'proximal',
+        'groupSynMechs': PVSynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    #  TC -> E: proximal
+    netParams.subConnParams['TC->E'] = {
+        'preConds': {'cellType': ['TC', 'HTC']}, 
+        'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
+        'sec': 'proximal',
+        'groupSynMechs': ESynMech, 
+        'density': 'uniform'} 
+
+    #------------------------------------------------------------------------------
+    #  TCM -> E: apical
+    netParams.subConnParams['TC->E'] = {
+        'preConds': {'cellType': ['TCM', 'HTC']}, 
+        'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
+        'sec': 'apic',
+        'groupSynMechs': ESynMech, 
+        'density': 'uniform'}
+        
 
 #------------------------------------------------------------------------------
 # Bakcground inputs 

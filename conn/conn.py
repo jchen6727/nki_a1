@@ -193,7 +193,6 @@ for p in Epops + Ipops + Tpops:
     pmat[p] = {}
     lmat[p] = {}
     wmat[p] = {}
-    secmat[p] = {}
     
 # Load exp data
 data = loadData()
@@ -307,31 +306,7 @@ elif connDataSource['E->E/I'] ==  'Allen_BBP':
                     print(' Prob %s->%s:'%(fixpop,post), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
                 pmat[fixpop][post] = (fix_BBP / ref_BBP) * ref_Allen
         
-'''
-secmat
-E -> E2/3,4: soma,dendrites <200um
-E -> E5,6: soma,dendrites (all)
-E -> I: soma, dendrite (all)
-PV -> E,I: soma, dendrites (<50um)
-SOM -> E,I: dendries (>50um)
-NGF -> E,I: apical dends
-NGF2 - 6 -> E, I: dendrites(50 - 350 um)
 
-categories:
-all
-proximal [soma,bdend,apic1]
-soma
-all_dend [apic1,2,3, bdend]
-tuft_dends [apic3]
-trunk_dends [apic1,apic2]
-lowertrunk_dends [apic1]
-uppertrunk_dends [apic2]
-'''
-
-# target sections (somatodendritic distribution of synapses)
-for pre in Epops:
-    for post in ['IT2', 'IT3', 'ITP4', 'ITS4']:
-        secmat[pre][post] = 'all'
 
 
 # --------------------------------------------------
