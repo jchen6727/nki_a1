@@ -27945,7 +27945,7 @@ proc init () { local i,j
         erev_Pass = -72.5
 
 
-      }
+	}
     connect dend(0), soma (1)
     forall Ra = 50 //ORIG: 50 // 12-03: 113 (migliore table 1)
   }
@@ -27977,10 +27977,18 @@ endtemplate sTI
 *** mod/ntt.mod (IT2.mod has suffix itre and IT.mod has suffix it, so hopefully this is okay) 
 *** mod/IL_gutnick.mod (L-type current)
 ** Testing -- 
-*** have to re-compile mod files 
+*** have to re-compile mod files
+**** rm -r x86_64 (from A1)
+**** rm -r mod/x86_64
+**** ln -s mod/x86_64 x86_64
+**** cd mod
+**** nrnivmodl 
 *** edited A1/test_cell.py to see if sTI cell will load from main parent directory*** RUNS!!
 ** TO NOTE ABOUT THESE CELLS:
 *** soma_0 not soma
 *** celsius is 36
 *** vinit is -84 
 *** ^^ Do not know how to set these last 2 in the hoc file; should I do it in a python file instead? 
+** ea15116
+* <2019-12-11 Wed -- paper draft>
+** /u/billl/papers/thal/inter/jun.pdf 
