@@ -1,0 +1,587 @@
+* Useful links
+** github
+https://github.com/ericaygriffith/A1
+** trello
+** params
+https://docs.google.com/spreadsheets/d/1JoIkf02TWzEXbAA_sfRN8o1VPNi_ai6ZDeBJ5JiRy_o/edit#gid=0 
+https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=972301607
+** data
+https://drive.google.com/drive/u/0/folders/1InN1hUhVfw20JJ8EuyYell4X3ojgMhGu
+** paperpile papers
+https://paperpile.com/shared/OfX9NI
+
+* R01 Grant relevant text
+** Aim 1 
+c.3.1.4 Computational modeling:  We will model flexible cortical oscillations that likely occur in the delta/theta ranges (1-9 Hz) and support auditory information representation, as well as more rigid default oscillations that likely occur at alpha (9-14 Hz) frequencies and higher. This will reveal specific network and cellular properties supporting distinct oscillatory dynamical profiles. For example, rigidity in the alpha oscillations may arise from the strong bidirectional interactions between cortex and thalamus197,198, making it difficult to perturb their properties. We will test this by altering the bidirectional connectivity between cortex and thalamus. We will also stimulate thalamic core/matrix in the model selectively and in combination with pairs of inputs with systematically varied inter-stimulus intervals. We predict that long interstimulus intervals greater than 100 ms will allow the circuitry to adjust its oscillation wavelength to match because sufficient numbers of cortical cells will have time to recover from initially strong stimulation associated with the first input. However, short interstimulus intervals (< 100 ms) will not allow the circuitry sufficient time to adjust its oscillation period, instead only allowing phase resets. This would prohibit the efficient tracking of stimulus structures at these higher rates.
+
+** Aim 2
+c.3.2.4 Computational modeling:  We will use our detailed thalamocortical model to investigate mechanisms of phase reset. The model consists of several thalamic nuclei (MGB, pulvinar), each of which contain core and matrix neurons, and thalamic reticular nucleus (TRN). The auditory cortex model contains multiple neuron types (low-threshold and fast-spiking interneurons, pyramidal neurons, spiny stellate neurons) arranged in 6 cortical layers. Neurons are wired using GABAA/GABAB and AMPA/NMDA synapses with appropriate time constants and connection densities based on the literature150,213,214. Importantly, thalamic matrix neurons primarily project to the supragranular cortical layers while thalamic core neurons project to granular and infragranular layers. Our preliminary modeling suggests that thalamic matrix neurons target supragranular dendrite-targeting interneurons, allowing them to contribute to long-lasting inhibition critical for effective phase reset203. We will use our model to test basic mechanisms of phase reset, including the transition from tonic to burst firing, which could be modeled by adjusting the synaptic gain of thalamic matrix neurons. These manipulations would act as a correlate of changes in attention or pharmacological manipulation and will offer predictions on effective neuromodulation strategies for inducing/preventing phase reset through specific pharmacological manipulation of the matrix.
+
+
+** Aim 3
+c.3.3.4 Computational modeling: We will use our model of the thalamocortical system to investigate mechanisms of auditory stream segregation and parsing and their role in auditory information processing. As a correlate of auditory function, we will test auditory decoding fidelity using model LFP/CSD activity to recover auditory signals15  under conditions hypothesized to contribute to more or less effective stream segregation and parsing. We hypothesize that stream segregation and parsing occur through a process of dynamic competition between distinct neuronal ensembles that represent specific auditory information and those that do not, through dynamically regulated inhibition from MGB and pulvinar. To test mechanisms of stream segregation, we will present two competing streams to the MGB neurons with systematically varying gain levels. We predict that the recovered fidelity of the attended signal will depend on the amplitude ratios of stimulus streams and synaptic gains of MGB neurons. We will also test if tonic activation of pulvinar matrix enhances auditory stimulus parsing, enabling better auditory decoding by inserting strong inhibitory periods in A1 activity between repetitive patterns in sound clouds or words in speech218. We will test under which conditions hyperpolarizing pulvinar matrix neurons causes them to burst and reset phase. This reset would presumably activate supragranular interneurons and suppress cortical activation, creating a neural pause corresponding to auditory stimulus stream related activity, improving stimulus encoding/decoding. Depending on the auditory stimulus spectrotemporal characteristics, our model may not accurately encode auditory information. To compensate for this, model synapses will include inhibitory time constants over a broad range of values within physiological limits, enabling variable-pause durations. We will test whether this manipulation will enhance flexible decoding under attention.
+
+
+
+** Methods
+c.2.4 Computational modeling:  Modeling is performed in the NEURON simulation environment233. Detailed computational modeling methods can be found in our previous publications234-240 and the “Facilities and other resources” section for Brown University.  
+* 19Sep19 NKI poster day
+** Include mostly data sources for cell types, distribution and connectivity
+** Sim diameter=400, densityScale = 0.05
+Creating network of 34 cell populations on 4 hosts...
+  Number of cells on node 0: 606 
+  Number of cells on node 3: 605 
+  Done; cell creation time = 8.15 s.
+Making connections...
+  Number of cells on node 1: 606 
+  Number of cells on node 2: 605 
+  Number of connections on node 0: 262101 
+  Number of synaptic contacts on node 0: 521366 
+  Number of connections on node 2: 261122 
+  Number of synaptic contacts on node 2: 519362 
+  Number of connections on node 1: 262258 
+  Number of synaptic contacts on node 1: 521567 
+  Number of connections on node 3: 261192 
+  Number of synaptic contacts on node 3: 519517 
+  Done; cell connection time = 87.65 s.
+Adding stims...
+  Number of stims on node 1: 1212 
+  Number of stims on node 0: 1212 
+  Number of stims on node 2: 1210 
+  Number of stims on node 3: 1210 
+  Done; cell stims creation time = 0.39 s.
+Recording 2 traces of 1 types on node 2
+Recording 3 traces of 1 types on node 1
+Recording 0 traces of 0 types on node 3
+Recording 26 traces of 1 types on node 0
+
+Running simulation for 500.0 ms...
+  Done; run time = 1747.12 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 60.30 s.
+
+Analyzing...
+>>> >>> 
+
+>>> 
+  Cells: 2422
+  Connections: 1049095 (433.15 per cell)
+  Synaptic contacts: 2086656 (861.54 per cell)
+  Spikes: 14431 (11.92 Hz)
+  Simulated time: 0.5 s; 4 workers
+  Run time: 1747.12 s
+Saving output as model_output.pkl ... 
+Finished saving!
+Saving output as model_output.json  ... 
+Finished saving!
+  Done; saving time = 0.91 s.
+
+- depolarization block
+
+
+
+** Sim diameter=400, densityScale = 0.025
+
+Creating network of 34 cell populations on 4 hosts...
+  Number of cells on node 0: 301 
+  Done; cell creation time = 3.91 s.
+  Number of cells on node 1: 301 
+  Number of cells on node 2: 301 
+  Number of cells on node 3: 301 
+Making connections...
+  Number of connections on node 2: 64832 
+  Number of synaptic contacts on node 2: 128982 
+  Number of connections on node 0: 64584 
+  Number of synaptic contacts on node 0: 128422 
+  Number of connections on node 1: 65322 
+  Number of synaptic contacts on node 1: 129939 
+  Number of connections on node 3: 64826 
+  Number of synaptic contacts on node 3: 129008 
+  Done; cell connection time = 14.51 s.
+Adding stims...
+  Number of stims on node 2: 602 
+  Number of stims on node 1: 602 
+  Number of stims on node 3: 602 
+  Number of stims on node 0: 602 
+  Done; cell stims creation time = 0.11 s.
+Recording 0 traces of 0 types on node 3
+Recording 0 traces of 0 types on node 0
+Recording 0 traces of 0 types on node 1
+Recording 0 traces of 0 types on node 2
+
+Running simulation for 500.0 ms...
+  Done; run time = 747.24 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 10.84 s.
+
+Analyzing...
+>>> >>> 
+
+>>> 
+  Cells: 1204
+  Connections: 260768 (216.58 per cell)
+  Synaptic contacts: 518759 (430.86 per cell)
+  Spikes: 12939 (21.49 Hz)
+  Simulated time: 0.5 s; 4 workers
+  Run time: 747.24 s
+Saving output as model_output.pkl ... 
+Finished saving!
+Saving output as model_output.json  ... 
+Finished saving!
+  Done; saving time = 0.32 s.
+Plotting raster...
+  Done; plotting time = 8.38 s
+
+Total time = 785.50 s
+* 1Oct2019 Preparing SfN poster
+** added thalamic pops and conn
+** run sim at scale=0.05, size=400um
+
+Creating network of 39 cell populations on 1 hosts...
+  Number of cells on node 0: 2518 
+  Done; cell creation time = 18.45 s.
+Making connections...
+  Number of connections on node 0: 231802 
+  Number of synaptic contacts on node 0: 420622 
+  Done; cell connection time = 83.43 s.
+Adding stims...
+  Number of stims on node 0: 5036 
+  Done; cell stims creation time = 0.58 s.
+Recording 31 traces of 1 types on node 0
+
+Running simulation for 500.0 ms...
+exp(910.62) out of range, returning exp(700)
+  Done; run time = 4276.86 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 13.35 s.
+
+Analyzing...
+  Cells: 2518
+  Connections: 234320 (93.06 per cell)
+  Synaptic contacts: 425658 (169.05 per cell)
+  Spikes: 4011 (3.19 Hz)
+  Simulated time: 0.5 s; 1 workers
+  Run time: 4276.86 s
+
+- raster shows activity and osc in all layers
+- many cells show depol block
+* 28oct2019 Feedback from Peter on poster
+L5 CT
+SOM fire antiphase to PV
+Thalamus 30% inhibitors local (disinhibit)
+TC->L4 cx FF inh Zador lab (which cell types) - wider projection
+TC->low L3 as well
+TC -> L5 prob not
+TC -> L6 science paper
+TCM -> L1(sure) 3 (don’t know) - discuss with lady in 2 weeks
+Matrix (whole A1) more broadly tuned than core (1-2mm) - can simulate far away region (no core)
+A1 = 8mm wide; core only 1mm; matrix all 
+Low freq vs high freq A1 circuits - different 
+Cx -> thalamus ok
+Dendritic spikes - larkum
+L1 flatter, L3 more oscillator
+Layerwise data  for csd - and spike data but need to sort;  
+Mountain sort - py tool
+Email asking for firing rates papers 
+— supra granular low firing but high gamma (subthres)
+* 05nov2019 Issues with conn from sfn
+** discrepancy between conn rules and conn matrix
+was due to not using plotConn(synOrConn = 'conn') -- was counting eg AMPA+NMDA, so 2x prob
+** extremely high probs NGF4->VIP5B and NG5B->VIP4
+due to tesiting on very small net, with just 1 or 2 cells in each pop
+
+* CELL TYPES
+** Budinger et al 2018
+- Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
+- large, intrinsically bursting, non adapting pyramidal cells (~PT) found in L5A and L5A/B border
+- medium size pyramidals, regular spiking and adapting (~IT) found throughout L5A and 5B
+- CT cells projecting to thalamus found in both L5 and L6
+- (several differences compared to mouse M1)
+** Excitatory types
+- IT2,	ITP4 (pyramidal),	ITS4 (stellate),	IT5A,	IT5B,	PT5B,	IT6,	CT6
+- maybe add star pyramidal: they are present in L3,L4,L6 and have different physiol, different axonal projs, more radial dends, shorter apical dends
+- split IT2 and IT3 - since different connection
+** Inhibitory types
+- NGF1, PV2/3, PV4, PV5A, PV5B, PV6, SOM2/3,	SOM4,	SOM5A,	SOM5B,	VIPL2/3,	VIP4,	VIP5A,	VIP5B,	VIP6
+** Allen Brain V1
+http://portal.brain-map.org/explore/models/mv1-all-layers
+
+exc frac	inh frac	PV 	SST	5HT3a	Total
+0.85	0.15				
+0.85	0.15	0.295918367	0.214285714	0.489795918	1
+0.85	0.15	0.552380952	0.295238095	0.152380952	1
+0.85	0.15	0.485714286	0.428571429	0.085714286	1
+0.85	0.15	0.458333333	0.458333333	0.083333333	1
+* CONNECTIVITY
+** Budinger et al 2018
+- mentions ‘massive thalamic inputs’ target the few pyramidal cells but also interneurons, ‘providing strong FF inhibition’
+** Allen Brain mouse V1
+- http://portal.brain-map.org/explore/models/mv1-all-layers
+- mentions most conn comes from rat S1 (Thomson & Lamy, 2007)
+- https://www.dropbox.com/sh/xb7xasih3d8027u/AABw_eBXymSYJfgSiH-E6th0a/create_recurrent_connections?dl=0&preview=connect_cells.py&subfolder_nav_tracking=1
+- I’m thinking this is better option than using mouse M1 since sensory
+- they have nice table with all the prob conn valuesand weights, measured as somatic PSP amp (mV), same as we use
+- Distance-dependent probabilities
+
+** BBP mouse S1
+https://bbp.epfl.ch/nmc-portal/downloads
+
+** E-E 
+- Use Allen V1 as base, and then update with any specific A1
+
+*** probability
+- L3,4 E -> L3,4 E (Levy & Reyes, 2012)
+ 
+*** weight
+- L3,4 E -> L3,4 E (Levy & Reyes, 2012)
+
+** E->I
+- Use Allen V1 as base, and then update with any specific A1
+
+- Apicella 2012 (mouse M1)
+-- E -> intralaminar I
+-- L2/3 E -> L5 LTS (strong)
+-- L5 E -> L5 LTS (weak)
+-- L5 E -> L5 FS (strong)
+-- L2/3 E -> L5 FS (weak)
+
+- Tremblay 2016 (many species):
+-- unclear if L2/3 E -> NGF
+-- callosal and thalamic matrix -> NGF
+
+- Sohn 2016 (mouse A1)
+-- E -> L2/3 VIP (apical+basal)
+
+- Budinger et al 2018 (A1)
+-- L2-5 E -> NGF
+-- thalamic -> VIP (bipolar)
+-- thalamic + cortical -> VIP (bitufted)
+
+- Garcia et al 2015 ()
+-- E -> NGF
+
+- Naka 2016 (fig 1,2) (L5):
+-- E do not target VIP or NGF (only PV+SOM)
+
+- CONCLUSION:
+-- NGF: 
+--- L2-5 E inputs
+--- thalamic matrix inputs (to L1)
+--- thalamic inputs to L2-L5
+
+-- VIP:
+--- E -> VIP
+--- thalamic -> VIP
+** I->E
+- currently distance-dependent
+
+- Tremblay 2016:
+-- NGF -> local E and I
+-- L1 NGF -> L2/3+L5 tuft
+-- L2/3 NGF -> L2/3+L5 distal apical
+-- L5 NGF -> L5 prox apical
+
+- Naka 2016 (fig 1,2) (L5):
+-- L2/3 VIP -> L5 apical trunk (?)
+-- NGF -> L5 apical tuft (same as SOM)
+
+- Budinger 2016 (A1):
+-- L2 NGF -> L2 E (prox apic); L6 E (tuft)
+-- VIP? (not clear which are)
+
+- Pi 2013
+-- VIP -> E (very low; 3/42)
+
+** I->I
+- currently distance-dependant
+
+- Tremblay 2016:
+-- L2/3 VIP -> L2/3+L5 SOM
+-- L5 VIP -> L5 SOM
+-- NGF -> local E and I
+-- L1 NGF -> L1 NGF
+-- L2/3 NGF -> L2/3 I
+-- L5/6 NGF -> L5/6 I
+-- L2/3 PV -> L2/3 PV 
+-- L5/6 PV -> L5/6 PV 
+-- L2/3 PV -> L2/3 I except SOM 
+-- L5/6 PV -> L5/6 I except SOM
+
+- Sohn 2016:
+-- PV -> L2/3 VIP (soma)
+-- SOM -> L2/3 VIP (basal, apical)
+-- VIP -> L2/3 VIP (low overall)
+-- similar to PV/SOM -> E
+
+- Naka 16 (fig1,2) (L5):
+-- all to all (changes in weights)
+-- depends on layer and area
+-- VIP -> VIP (weak); FS,SOM (strong)
+-- SOM -> SOM (weak); FS,VIP (strong)
+-- FS -> FS (strong); SOM,VIP (weak)
+
+- Pi 2013
+-- VIP -> SOM (strong; 14/18)
+-- VIP -> PV (weak; 4/15)
+
+- Overstreet-Wadiche 2015 (mostly CA1)
+** Discussion with Sam of I->E/I 
+salvadord 9:55 AM
+in the original M1 we had I->E/I as intralaminar, with distance-dep probability and fixed weight
+
+for A1 I’ve improved several things:
+1) I->E can target deeper layers as well (eg. L2/3 I -> L5 E) since synapsing at apical dends
+2) VIP -> E set to very low prob
+samn 9:59 AM
+#1 very important
+so now not all weights are fixed?
+salvadord 10:00 AM
+3) I -> I adapted probs based on cell type: VIP -> SOM (strong), PV (weak), VIP (very weak); SOM -> FS+VIP (strong); SOM (weak); FS -> FS (strong); SOM+VIP (weak); NGF -> I (medium) (Naka et al 2016;Tremblay, 2016; Sohn, 2016; Pi et al 2013)
+samn 10:00 AM
+thx, i like the level of detail in the interneuron circuitry...important too
+salvadord 10:01 AM
+for now weights are fixed but probs are different
+samn 10:01 AM
+sg
+later on will want to vary the gabaa taus
+(that's discussed in grant), but don't have to for first draft
+salvadord 10:02 AM
+note using the same interpretation of weight as in M1 model, ie. somatic PSP amplitude (mV) in response to single cell input
+gabaa taus - sounds good … we can have a base model to start with and then improve iteratively
+samn 10:03 AM
+so that's good since constrained to the exptl lit
+somatic PSP vs conductance change since more interested in effect at output?
+salvadord 10:05 AM
+harder to get conductance values, specially for dendrite syns
+this is how implemented in Allen V1 model and Solstez CA1 too
+samn 10:05 AM
+ic
+salvadord 10:06 AM
+netpyne then has weightNormalization value that converts ‘weight’ (somatic PSP) to conductance required at each syn
+(need to calculate previously for each cell type and store with cellParasm — weightNorm)
+samn 10:06 AM
+ic, and that's calculated via sim
+in a preprocessing step
+salvadord 10:07 AM
+I have batch netpyne to calcualte for all M1 cell types … will need to adapt for A1 (in future should automate more)
+
+** Discussion with erica
+
+
+The IPSC values in [9] are in response to optogenetic stim, which I believe activate >1 presyn neurons, so the IPSC value is conflating both conn prob and weight (weight understood as response to single presyn cell, or unitary connection).
+For M1 I did use IPSC values as strengths to derive conn probs, i.e. strength =  conn prob x weight. By obtaining weights (unitary conn somatic epsp values) from a different source, I was able to obtain prob conns from the the IPSC values (strengths). 
+So, in essence, these values don't represent weights, but the overall conn strength, and so can be used potentially derive the prob conns (by fixing the weight) or the weight (by fixing the prob conn).
+
+salvadord 4:34 PM
+in essence as you can see we are missing most values for I->E and I->I so strategy we used before (M1) is to keep more generic and use intralaminar conn with distance-dep prob conn — for A1 I’ve added several more features based on the data we have (see #auditory) but still quite generic
+
+ericaygriffith:speech_balloon: 4:34 PM
+I see, okay that is good to know
+intralaminar conn w/ distance-dep prob conn -- is there a "generic" source that we use?
+salvadord 4:38 PM
+many papers describing dist-dep (including some used in excel sheet) … one I cited for M1 is this: https://paperpile.com/app/p/a9dea0e7-7075-0628-958a-8e4f5be45ac5
+ericaygriffith:speech_balloon: 4:39 PM
+oh I think I see -- you just mean that non-celltype-specific dist-dep conn data is easier to come by than cell-specific? so going to use that as substitute where we don't have cell-specific data?
+sry if I'm misunderstanding you!
+salvadord 4:42 PM
+yeah… so dist-dep is a feature whether we have cell-type specific data or not
+the little cell-type specific data we have I’ve tried to incorporate on top of the dist-dep
+so e.g. ‘strong’ will be 1.0*exp(-d/L) and ‘weak’ will be 0.35*exp(-d/L)
+anyway you can have a look at the excel, conn.py and netParams.py and let me know what you think
+* SIMS
+** v11_manualTune/sim1
+- scale 0.05
+- x,z = 400um
+- tuning params for sfn19 
+- reduced bkg inputs weight and rate since before depol block
+
+- results:
+-- plotting of cell traces based on (pop,index) not working for multiple cores
+-- still some depol block in E and SOM
+
+** v11_manualTune/sim2
+- test only bkg inputs
+- use single core for now to avoid plotting issue
+- voltage traces look better
+- suggests maybe reducing local conn weights
+
+** v11_manualTune/sim3
+- reduced local conn weights by 50%
+- set weightNorm of CT and TC
+- reduced bkg from 50 to 40hz
+
+-results:
+-- still dep block and weird voltage shapes
+
+** v11_manualTune/sim4
+- reduced even more weightNorm (from 0.0025 to 0.001)
+
+- getting better
+
+** v11_manualTune/sim5
+- reduced even more weightNorm (from 0.001 to 0.0005)
+** v11_manualTune/sim6
+- reduced even more weightNorm (from 0.0005 to 0.0001)
+** v11_manualTune/sim7
+- reduced EE/EI gain to 0.25
+** v11_manualTune/sim8
+cfg.EEGain = 1.0 * 0.25
+cfg.EIGain = 1.0 
+cfg.IEGain = 1.0 
+cfg.IIGain = 1.0 
+cfg.weightBkg = {'E': 0.5*0.025, 'I': 0.5*0.025, 'ThalE': 0.5*0.025, 'ThalI': 0.5*0.025}
+
+- better, got some real oscillations
+
+** v11_manualTune/sim9
+cfg.weightBkg = {'E': 0.5*0.01, 'I': 0.5*0.01, 'ThalE': 0.5*0.01, 'ThalI': 0.5*0.01}
+
+** v11_manualTune/sim10
+cfg.EEGain = 1.0 * 0.25
+cfg.EIGain = 1.0 * 0.5
+cfg.IEGain = 1.0 * 1.5
+cfg.IIGain = 1.0 * 1.5
+
+worse looking shapes
+
+** v11_manualTune/sim11
+sim9 with 0.05 density, recordLFP and 1 sec
+
+Cells: 2518
+  Connections: 234320 (93.06 per cell)
+  Synaptic contacts: 425658 (169.05 per cell)
+  Spikes: 9685 (3.85 Hz)
+  Simulated time: 1.0 s; 4 workers
+  Run time: 7274.30 s
+Saving output as data/v11_manualTune//v11_sim11.pkl ... 
+Finished saving!
+Saving output as data/v11_manualTune//v11_sim11.json  ... 
+Finished saving!
+  Done; saving time = 1.59 s.
+Total time = 7370.49 s
+
+- all depol block and many traces blank (not sure why)!
+- should try to calcualte weightNorm
+
+** v11_batch1-6 - weightNorm for all cells
+
+# ----------------------------------------------------------------------------------------------
+# Weight Normalization 
+# ----------------------------------------------------------------------------------------------
+def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(np.arange(0.01, 0.2, 0.01)/100.0)):
+
+    # Add params
+    from cfg import cfg
+    from netParams import netParams
+
+    excludeSegs = ['axon']
+    if not segs:
+        secs = []
+        locs = []
+        for secName,sec in netParams.cellParams[rule]['secs'].items():
+            if secName not in excludeSegs:
+                if allSegs:
+                    nseg = sec['geom']['nseg']
+                    for iseg in range(nseg):
+                        secs.append(secName) 
+                        locs.append((iseg+1)*(1.0/(nseg+1)))
+                else:
+                    secs.append(secName) 
+                    locs.append(0.5)
+
+    params = specs.ODict()
+    params[('NetStim1', 'pop')] = pops
+    params[('NetStim1', 'sec')] = secs
+    params[('NetStim1', 'loc')] = locs
+    params[('NetStim1', 'weight')] = weights
+
+    groupedParams = [('NetStim1', 'sec'), ('NetStim1', 'loc')] 
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 1.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg[('analysis','plotTraces','include')] = []
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 1000]
+    
+    ## turn off components not required
+    #initCfg[('analysis', 'plotRaster')] = False
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['addBkgConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = 0
+ 
+    ## set netstim params
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'synMech')] = ['AMPA','NMDA']
+    initCfg[('NetStim1','synMechWeightFactor')] = [0.5,0.5]
+    initCfg[('NetStim1', 'start')] = 700
+    initCfg[('NetStim1', 'interval')] = 1000
+    initCfg[('NetStim1','ynorm')] = [0.0, 1.0]
+    initCfg[('NetStim1', 'noise')] = 0
+    initCfg[('NetStim1', 'number')] = 1
+    initCfg[('NetStim1', 'delay')] = 1
+    
+    
+    b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    return b
+
+    popsWeightNorm =    {'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+                        'ITS4_reduced': ['ITS4'],
+                        'PV_reduced': ['PV2', 'SOM2'],
+                        'VIP_reduced': ['VIP2'],
+                        'NGF2': ['NGF2'],
+                        'RE_reduced': ['RE', 'TC', 'HTC']}
+ 
+    batchIndex = 1
+    for k, v in popsWeightNorm: 
+        b = weightNorm(pops=v, rule=k)
+        b.batchLabel = 'v11_batch'+str(batchIndex) 
+        b.saveFolder = 'data/'+b.batchLabel
+        b.method = 'grid'  # evol
+        setRunCfg(b, 'mpi_bulletin')
+        b.run()  # run batch
+        batchIndex += 1
+
+
+    then run analysis/wscale.py
+
+** v11_batch7 - EI balance
+def EIbalance():
+    params = specs.ODict()
+
+    params['EEGain'] = [0.5, 1.0, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5]
+    params[('weightBkg', 'E')] = [2.0, 3.0]
+    params[('weightBkg', 'I')] = [2.0, 3.0]
+    
+    groupedParams =  []
+
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 1.0 * 1e3
+    initCfg['scaleDensity'] = 0.05
+    
+    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+
+    return b
+
+*** results
+reasonable rates for most pops (no osc):
+- 10 00 10
+- 11 01 10
+- 12 02 10
+- 22 02 11
+- 22 00 10 - slow osc

@@ -136,7 +136,7 @@ proc geom() {
 
 external lambda_f
 proc geom_nseg() {
-  forsec all { nseg = int((L/(0.1*lambda_f(100))+.9)/2)*2 + 1  }
+  forsec all { nseg = 1} //int((L/(0.1*lambda_f(100))+.9)/2)*2 + 1  }
 }
 
 proc biophys() {
@@ -154,9 +154,9 @@ proc biophys() {
 		cm       = 1.2            //microF/cm2
 		g_pas    = 1/20000
 		e_pas    = v_initcr
-		Ra       = 150 
+		Ra       = 150
 
-		insert Nafcr 
+		insert Nafcr
 		gnafbar_Nafcr= soma_nafcr
 
 		insert kdrcr
