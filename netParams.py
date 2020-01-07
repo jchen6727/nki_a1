@@ -151,6 +151,67 @@ for ruleLabel in netParams.cellParams.keys():
     netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
 
 
+## Set 3D geometry for each cell type
+for label in netParams.cellParams:
+    if label in ['PV_reduced', 'SOM_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+            if secName in ['axon']:  # set 3d geom of axon
+                sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset + 0, -sec['geom']['L'], 0, sec['geom']['diam']])
+
+    elif label in ['NGF_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
+                
+    elif label in ['ITS4_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma']:  # set 3d geom of soma 
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
+            if secName in ['dend']:  # set 3d geom of apic dendds
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
+            if secName in ['dend1']:  # set 3d geom of basal dend
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])   
+    elif label in ['RE_reduced', 'TC_reduced', 'HTC_reduced', 'VIP_reduced']:
+        pass
+
+    else: # E cells
+        # set 3D pt geom
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma', 'Adend1', 'Adend2', 'Adend3']:  # set 3d geom of soma and Adends
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+            if secName in ['Bdend']:  # set 3d geom of Bdend
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])        
+            if secName in ['axon']:  # set 3d geom of axon
+                sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0, -sec['geom']['L'], 0, sec['geom']['diam']])   
+
 ''' Temporary fixes for SfN19 poster
 
 # # invert TC and HTC weightNorm -- for some reason are negative! (temporary fix!)
