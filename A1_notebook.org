@@ -26019,17 +26019,18 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 *** Do not understand why vinit isn't working...? Have to set for all sections. 
 * <2019-09-19 Thu -- cell pop tuning>
 * <2019-09-20 Fri -- cell pop tuning>
-<<<<<<< HEAD
-=======
 ** IT2: 
 ** 
 ** 
->>>>>>> master
+=======
+>>>>>>>
 * <2019-09-26 Thu -- cell pop tuning>
 ** Make a git branch for this
 *** git checkout -b cells
 *** OR git branch cells; git checkout cells
-<<<<<<< HEAD
+** Cell editing continued:
+*** Go to cells branch (=git checkout cells=) 
+*** mkdir dend_edits; cd dend_edits
 ** Populating git branch:
 *** Go to cells branch (=git checkout cells=) 
 *** mkdir dend_edits; cd dend_edits
@@ -26170,7 +26171,6 @@ cellRule['secs']['soma']['mechs']['ch_Navngf']['gmax'] = 0.3
 **** Again, doing this on cells branch
 **** Edits occurring in A1/cells/dend_edits directory
 **** Filename: ITP4_reduced_new_cellParams.pkl
-
 *** PASSIVE:
 **** ORIG VALUES:
 ***** cm: 2.4998269977
@@ -27261,9 +27261,743 @@ make: *** Waiting for unfinished jobs....
 ** VERSION CONTROL:
 *** Add aux_fun.inc in A1/mod
 *** Add CT5A_A1_weightNorm.pkl and CT5B_A1_weightNorm.pkl 
-=======
-** Cell editing continued:
-*** Go to cells branch (=git checkout cells=) 
-*** mkdir dend_edits; cd dend_edits
-*** 
->>>>>>> master
+* <2019-11-11 Mon -- TC/HTC cells>
+** TC and HTC cells showing subthreshold oscillations 
+*** Check to see if this was present before AND after mod file change to htc.mod
+*** TC cells:
+**** A1/cells/sTC.py
+**** on local machine (laptop): cd ~/Desktop; mkdir TC_test
+**** In TC_test, added py files: sTC.py, sTC_new.py, and test_cell.py
+***** sTC.py gets the orig htc.mod
+***** sTC_new.py gets the htc_new.mod (suffix modified to htc_new, see below), and class renamed to sTC_new 
+**** In TC_test, added mod files: htc.mod (ORIG FILE), htc_new.mod, cadad.mod, HH2.mod, IT.mod, kl.mod, tia.mod
+***** Changed suffix in htc_new.mod to htc_new
+**** Created sTC_new.py, and inserted htc_new into soma 
+**** Compile mod files in TC_test with nrnivmodl (success)
+** Difference between orig and new sTC cells:
+*** Changes to htc.mod file:
+**** ORIG line 87: USEION h READ eh WRITE ih VALENCE 1
+**** NEW  line 87: :USEION h READ eh WRITE ih VALENCE 1
+**** ORIG: NONSPECIFIC_CURRENT ih (NOT PRESENT IN NEW)
+**** NEW: RANGE eh (NOT PRESENT IN ORIG) 
+
+** Salva merge cells w/ some of his edits, need to clean up some unnecessary files causing lots of unimportant differences in branches:
+*** git rm -r cells/dend_edits 
+*** git commit -m 'deleting dend_edits folder'
+*** git rm -r cells/NGF_archived_files_and_figures
+*** got rid of .pyc files as well in __pycache__ dirs throughout the repo 
+
+** TC cells: 
+*** CONDITIONS BEING TESTED:
+**** (0) Run it as is in A1
+***** sTC.py -> self.soma.insert('htc') from htc_new.mod (range eh)
+***** sTC.py -> #self.soma.eh = -40.0 (COMMENTED OUT)
+***** ran w/ test_cell.py (0pA input)
+***** >>> netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{eh: 0.0, gmax: 2e-05, cac: 0.002, k2: 0.0004, Pc: 0.01, k4: 0.001, nca: 4.0, nexp: 1.0, ginc: 2.0, taum: 20.0, shift: 0.0, exptemp: 36.0}
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'nrn.Section' object has no attribute 'eh'
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh_htc
+0.0
+***** cond_0.png
+**** (1) Run it as is in A1, but uncommenting self.soma.eh
+***** 0pA input for 9s
+***** AttributeError: 'nrn.Section' object has no attribute 'eh' (  File "test_cell.py", line 16, in <module> )
+**** (2) Run it as is in A1, but uncommenting self.soma.eh and changing to --> self.soma.eh_htc
+***** 0pA for 9s
+***** netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{eh: -40.0...}
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'nrn.Section' object has no attribute 'eh'
+
+***** sim.net.cells[0].secs.soma['hObj'].eh_htc
+-40.0
+***** cond_2.png
+**** (3) Import orig htc.mod file into .py file, commenting out self.soma.eh
+***** sim.net.cells[0].secs.soma['hObj'].eh
+0.0
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh_htc
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'nrn.Section' object has no attribute 'eh_htc'
+***** >>> netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{gmax: 2e-05, cac: 0.002, k2: 0.0004, Pc: 0.01, k4: 0.001, nca: 4.0, nexp: 1.0, ginc: 2.0, taum: 20.0, shift: 0.0, exptemp: 36.0}
+***** cond_3.png
+**** (4) Import orig htc.mod file into .py file, uncommenting self.soma.eh
+***** >>> netParams.cellParams['TC_reduced']['secs']['soma']['mechs']['htc']
+{gmax: 2e-05, cac: 0.002, k2: 0.0004, Pc: 0.01, k4: 0.001, nca: 4.0, nexp: 1.0, ginc: 2.0, taum: 20.0, shift: 0.0, exptemp: 36.0}
+***** >>> sim.net.cells[0].secs.soma['hObj'].eh
+-40.0
+**** (5) Import orig htc.mod file into .py file, uncommenting self.soma.eh --> self.soma.eh_htc --> won't let me??? 
+**** (6) Import orig htc.mod file into .py file, uncommenting self.soma.eh but set to 0 (vs .-40)
+***** This is identical to Condition 3
+**** (7) Import orig htc.mod file into .py file, uncommenting self.soma.eh but set to -40 
+***** This is identical to Condition 4
+
+
+*** NOTE: with the new htc.mod file, if I don't set anything, it sets eh_htc to 0, it seems? 
+*** SO ^^, what if I try to set the old one to 0... will that make it oscillate? or maybe it can't because it's a range var in the new one, but not in the orig mod file?? 
+**** can't seem to set it in test_cell.py or in sTC.py -- probably bc not range var, I'm guessing
+
+*** CURRENT TC SETUP in A1 repo: 
+**** mod file being used is htc_new.mod, suffix htc
+**** in sTC.py, self.soma.eh is commented out
+** htc.mod file now being used in A1 is the 'original' htc.mod (without the RANGE eh 'quick fix' made by salva and sam before SfN) --> except now, the USEION h line has been deleted. 
+
+* <2019-11-12 Tue -- Thal interneuron model>
+** Potential models: 
+*** https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+*** https://senselab.med.yale.edu/modeldb/ShowModel.cshtml?model=140249&file=/dLGN_modelDB/readme.html#tabs-2
+
+* <2019-11-18 Mon -- Thal interneuron model>
+** in A1/cells -- made dir called 'iTRN' to test out possible thal interneurons
+*** on cells branch, in local repo (laptop) 
+** sTI.hoc: 
+*** SOURCE:
+**** From modelDB: Thalamic interneuron multicompartment model (Zhu et al. 1999)
+**** https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+**** in batch_.hoc file in modeldb, there are templates for the different cell types --> I copied the sTI cell template and copy-pasted into A1/cells/iTRN/sTI.hoc file on cells branch locally 
+*** Animal model: RAT
+*** cells/iTRN/sTI.hoc pushed to repo 
+*** 15 compartments: 14 dends, 1 soma
+** sTI2.hoc:
+*** SOURCE:
+**** From modelDB: Thalamic interneuron multicompartment model (Zhu et al. 1999)
+**** https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+**** in batch_.hoc file in modeldb, there are templates for the different cell types --> I copied the sTI cell template and copy-pasted into A1/cells/iTRN/sTI.hoc file on cells branch locally 
+*** Animal model: RAT 
+*** cells/iTRN/sTI2.hoc pushed to repo 
+*** 2 compartments: 1 soma, 1 dend 
+** Added test_int.py to import hoc files and stim and test 
+** DECISION: 
+*** I think sTI2.hoc will end up being the one we use bc 2 compartment + thal interneuron 
+*** renamed sTI.hoc --> sTI_too_large.hoc --> then git rm cells/iTRN/sTI.hoc --> git commit -m 'message' --> git push origin cells 
+** Thal interneuron model: 
+*** A1/cells/iTRN/sTI.hoc
+*** Added to 'soma' section and dend section in proc init, all the mechanisms listed in params.hoc section of batch_.hoc from modeldb https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+*** Added all .mod files to A1/cells/iTRN in order to test sTI cell 
+*** COMPILE ISSUES: 
+**** nrnivmodl in this dir to compile (output below): 
+[Ericas-Air-3:A1/cells/iTRN] ericagriffith% nrnivmodl
+Creating x86_64 directory for .o files.
+
+/Users/ericagriffith/Desktop/NEUROSIM/A1/cells/iTRN
+AMPA.mod GABAA.mod GABAB.mod HH2.mod IL.mod IL3.mod IT.mod IT2.mod Iahp.mod Ican.mod Ih.mod NMDA.mod cadecay.mod clampex.mod cp.mod cp2.mod kdr2.mod kleak.mod kmbg.mod naf2.mod nap.mod ntIh.mod nthh.mod ntleak.mod ntt.mod pregencv.mod vecst.mod
+AMPA.mod GABAA.mod GABAB.mod HH2.mod IL.mod IL3.mod IT.mod IT2.mod Iahp.mod Ican.mod Ih.mod NMDA.mod cadecay.mod clampex.mod cp.mod cp2.mod kdr2.mod kleak.mod kmbg.mod naf2.mod nap.mod ntIh.mod nthh.mod ntleak.mod ntt.mod pregencv.mod vecst.mod
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" AMPA
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" GABAA
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" GABAB
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" HH2
+Translating HH2.mod into HH2.c
+Translating AMPA.mod into AMPA.c
+Translating GABAA.mod into GABAA.c
+Translating GABAB.mod into GABAB.c
+INCLUDEing netcon.inc
+INCLUDEing netcon.inc
+INCLUDEing netcon.inc
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+Thread Safe
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o HH2.lo HH2.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o GABAA.lo GABAA.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o GABAB.lo GABAB.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o AMPA.lo AMPA.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c HH2.c  -fno-common -DPIC -o .libs/HH2.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c GABAB.c  -fno-common -DPIC -o .libs/GABAB.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c GABAA.c  -fno-common -DPIC -o .libs/GABAA.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c AMPA.c  -fno-common -DPIC -o .libs/AMPA.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IL
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IL3
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IT
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" IT2
+Translating IL.mod into IL.c
+Translating IL3.mod into IL3.c
+Translating IT.mod into IT.c
+Translating IT2.mod into IT2.c
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 2 of PARAMETER Cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: celsius undefined. (declared within VERBATIM?)
+Warning: Default 2 of PARAMETER cao will be ignored and set by NEURON.
+Warning: Default 0.00024 of PARAMETER cai will be ignored and set by NEURON.
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 2 of PARAMETER Cao will be ignored and set by NEURON.
+Thread Safe
+Thread Safe
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IL3.lo IL3.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IT2.lo IT2.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IT.lo IT.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o IL.lo IL.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IT.c  -fno-common -DPIC -o .libs/IT.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IT2.c  -fno-common -DPIC -o .libs/IT2.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IL3.c  -fno-common -DPIC -o .libs/IL3.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c IL.c  -fno-common -DPIC -o .libs/IL.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Iahp
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Ican
+Translating Iahp.mod into Iahp.c
+Translating Ican.mod into Ican.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Iahp.lo Iahp.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER cai will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Ican.lo Ican.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" Ih
+Translating Ih.mod into Ih.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" NMDA
+Notice: VERBATIM blocks are not thread safe
+NEURON's CVode method ignores conservation
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o Ih.lo Ih.c
+Translating NMDA.mod into NMDA.c
+INCLUDEing netcon.inc
+Notice: Assignment to the GLOBAL variable, "Rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "Rinf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o NMDA.lo NMDA.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Iahp.c  -fno-common -DPIC -o .libs/Iahp.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Ican.c  -fno-common -DPIC -o .libs/Ican.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c NMDA.c  -fno-common -DPIC -o .libs/NMDA.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c Ih.c  -fno-common -DPIC -o .libs/Ih.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cadecay
+Translating cadecay.mod into cadecay.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cadecay.lo cadecay.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" clampex
+Translating clampex.mod into clampex.c
+Notice: VERBATIM blocks are not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o clampex.lo clampex.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cp
+Translating cp.mod into cp.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" cp2
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cp.lo cp.c
+Translating cp2.mod into cp2.c
+Thread Safe
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cadecay.c  -fno-common -DPIC -o .libs/cadecay.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o cp2.lo cp2.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c clampex.c  -fno-common -DPIC -o .libs/clampex.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cp.c  -fno-common -DPIC -o .libs/cp.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c cp2.c  -fno-common -DPIC -o .libs/cp2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" kdr2
+Translating kdr2.mod into kdr2.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o kdr2.lo kdr2.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" kleak
+Translating kleak.mod into kleak.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o kleak.lo kleak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c kdr2.c  -fno-common -DPIC -o .libs/kdr2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" kmbg
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" naf2
+Translating kmbg.mod into kmbg.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+Translating naf2.mod into naf2.c
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o kmbg.lo kmbg.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o naf2.lo naf2.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c kleak.c  -fno-common -DPIC -o .libs/kleak.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c kmbg.c  -fno-common -DPIC -o .libs/kmbg.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c naf2.c  -fno-common -DPIC -o .libs/naf2.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" nap
+Translating nap.mod into nap.c
+INCLUDEing bg_cvode.inc
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "Inf", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o nap.lo nap.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ntIh
+Translating ntIh.mod into ntIh.c
+Notice: Assignment to the GLOBAL variable, "h_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_h", is not thread safe
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ntIh.lo ntIh.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c nap.c  -fno-common -DPIC -o .libs/nap.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" nthh
+Translating nthh.mod into nthh.c
+Notice: Assignment to the GLOBAL variable, "h_exp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "h_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "m_exp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "n_exp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "n_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_n", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_h", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+Warning: Default -95 of PARAMETER ek will be ignored and set by NEURON.
+Warning: Default 50 of PARAMETER ena will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o nthh.lo nthh.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ntleak
+Translating ntleak.mod into ntleak.c
+Thread Safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ntleak.lo ntleak.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ntIh.c  -fno-common -DPIC -o .libs/ntIh.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c nthh.c  -fno-common -DPIC -o .libs/nthh.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ntleak.c  -fno-common -DPIC -o .libs/ntleak.o
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" ntt
+Translating ntt.mod into ntt.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "h_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "m_inf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "phi_h", is not thread safe
+Notice: Assignment to the GLOBAL variable, "phi_m", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_h", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_m", is not thread safe
+Warning: Default 2 of PARAMETER Cao will be ignored and set by NEURON.
+Warning: Default 5e-05 of PARAMETER Cai will be ignored and set by NEURON.
+Warning: Default 36 of PARAMETER celsius will be ignored and set by NEURON.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o ntt.lo ntt.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" pregencv
+Translating pregencv.mod into pregencv.c
+Notice: set_seed is not thread safe
+Notice: exprand is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o pregencv.lo pregencv.c
+"/Applications/NEURON-7.6/nrn/x86_64/bin/nocmodl" vecst
+Translating vecst.mod into vecst.c
+Notice: VERBATIM blocks are not thread safe
+Notice: Assignment to the GLOBAL variable, "RES", is not thread safe
+Notice: Assignment to the GLOBAL variable, "VECST_INSTALLED", is not thread safe
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o vecst.lo vecst.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c ntt.c  -fno-common -DPIC -o .libs/ntt.o
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=compile gcc -DHAVE_CONFIG_H  -I. -I.. -I"/Applications/NEURON-7.6/nrn/include/nrn" -I"/Applications/NEURON-7.6/nrn/x86_64/lib"      -g -O2 -c -o mod_func.lo mod_func.c
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c pregencv.c  -fno-common -DPIC -o .libs/pregencv.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c vecst.c  -fno-common -DPIC -o .libs/vecst.o
+libtool: compile:  gcc -DHAVE_CONFIG_H -I. -I.. -I/Applications/NEURON-7.6/nrn/include/nrn -I/Applications/NEURON-7.6/nrn/x86_64/lib -g -O2 -c mod_func.c  -fno-common -DPIC -o .libs/mod_func.o
+vecst.c:285:49: warning: format specifies type 'unsigned int' but the argument has type
+      'void *' [-Wformat]
+  printf("Obj*%x Dbl*%x Size: %d Bufsize: %d\n",vv,x,nx,bsz);
+              ~~                                ^~
+vecst.c:285:52: warning: format specifies type 'unsigned int' but the argument has type
+      'double *' [-Wformat]
+  printf("Obj*%x Dbl*%x Size: %d Bufsize: %d\n",vv,x,nx,bsz);
+                     ~~                            ^
+vecst.c:413:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { printf("fewind ERR1 %d %d\n",scr[i],nx);
+                      ~~~~~~^~
+vecst.c:459:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { printf("findx ****ERRE**** **** IND:%d SZ:%d\n",s...
+                      ~~~~~~^~
+vecst.c:496:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { 
+                      ~~~~~~^~
+vecst.c:529:29: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+    if (scr[i]>=nx || scr[i]<0) { 
+                      ~~~~~~^~
+vecst.c:816:1: warning: control may reach end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:835:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:888:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:935:5: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+  } else { vector_resize(vc, j); }
+    ^
+vecst.c:1048:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1059:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1078:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1128:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1188:21: warning: comparison of unsigned expression < 0 is always false
+      [-Wtautological-compare]
+          if (scr[i]<0 || scr[i]>=nx) hoc_execerror("nind(): Index out of bounds", 0);
+              ~~~~~~^~
+vecst.c:1209:25: warning: for loop has empty body [-Wempty-body]
+  for (i=0;ifarg(i);i++); i--; // drop back by one to get numarg()
+                        ^
+vecst.c:1209:25: note: put the semicolon on a separate line to silence this warning
+vecst.c:1263:31: warning: implicit declaration of function 'list_vector_px3' is invalid in
+      C99 [-Wimplicit-function-declaration]
+  for (i=0;i<4;i++) { nv[i] = list_vector_px3(ob, i, &vvo[i], &vvl[i]);
+                              ^
+vecst.c:1410:1: warning: control reaches end of non-void function [-Wreturn-type]
+}
+^
+vecst.c:1546:24: warning: format specifies type 'double' but the argument has type 'int'
+      [-Wformat]
+    printf("%g > %g\n",size,maxsz);
+            ~~         ^~~~
+            %d
+vecst.c:1546:29: warning: format specifies type 'double' but the argument has type 'int'
+      [-Wformat]
+    printf("%g > %g\n",size,maxsz);
+                 ~~         ^~~~~
+                 %d
+vecst.c:1689:72: warning: format specifies type 'int' but the argument has type 'double *'
+      [-Wformat]
+      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB: %d %d %d\n",i,ix,pL->pv[i]); 
+                                                            ~~         ^~~~~~~~~
+vecst.c:1698:73: warning: format specifies type 'int' but the argument has type 'double *'
+      [-Wformat]
+      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB1: %d %d %d\n",i,ix,pL->pv[i]); 
+                                                             ~~         ^~~~~~~~~
+vecst.c:1870:33: warning: implicit declaration of function 'list_vector_px4' is invalid in
+      C99 [-Wimplicit-function-declaration]
+      for (i=0;i<num;i++) if (! list_vector_px4(ob, i, &vvo[i], n)) {
+                                ^
+vecst.c:2125:7: warning: implicit declaration of function 'uniq2' is invalid in C99
+      [-Wimplicit-function-declaration]
+  cnt=uniq2(n,x,y,z);
+      ^
+vecst.c:2191:56: warning: format specifies type 'int' but the argument has type 'double'
+      [-Wformat]
+      } else { printf("nqvt ERRC unhandled type: %d\n",fcd[j]); hxe(); }
+                                                 ~~    ^~~~~~
+                                                 %f
+vecst.c:2555:39: warning: format specifies type 'int' but the argument has type 'size_t'
+      (aka 'unsigned long') [-Wformat]
+  if (DEBUG_VECST) printf("Size %d\n",sz);
+                                ~~    ^~
+                                %zu
+vecst.c:2734:33: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+  if (!ob1) if (!ob2) return 1; else return 0;
+                                ^
+vecst.c:2996:7: warning: implicit declaration of function 'IsList' is invalid in C99
+      [-Wimplicit-function-declaration]
+  if(!IsList(p)){printf("AllocListVec ERRA: arg must be list object!\n"); hxe();}
+      ^
+28 warnings generated.
+"/Applications/NEURON-7.6/nrn/share/nrn/libtool" --tag=CC --mode=link gcc -module  -g -O2    -headerpad_max_install_names -o libnrnmech.la -rpath "/Applications/NEURON-7.6/nrn/x86_64/lib"  AMPA.lo GABAA.lo GABAB.lo HH2.lo IL.lo IL3.lo IT.lo IT2.lo Iahp.lo Ican.lo Ih.lo NMDA.lo cadecay.lo clampex.lo cp.lo cp2.lo kdr2.lo kleak.lo kmbg.lo naf2.lo nap.lo ntIh.lo nthh.lo ntleak.lo ntt.lo pregencv.lo vecst.lo mod_func.lo  -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrnoc -loc -lmemacs  -lscopmath -lsparse13 -lreadline -lncurses -L"/Applications/NEURON-7.6/nrn/x86_64/lib" -lnrniv -livoc -lneuron_gnu -lmeschach -lsundials       
+libtool: link: gcc -Wl,-undefined -Wl,dynamic_lookup -o .libs/libnrnmech.0.so -bundle  .libs/AMPA.o .libs/GABAA.o .libs/GABAB.o .libs/HH2.o .libs/IL.o .libs/IL3.o .libs/IT.o .libs/IT2.o .libs/Iahp.o .libs/Ican.o .libs/Ih.o .libs/NMDA.o .libs/cadecay.o .libs/clampex.o .libs/cp.o .libs/cp2.o .libs/kdr2.o .libs/kleak.o .libs/kmbg.o .libs/naf2.o .libs/nap.o .libs/ntIh.o .libs/nthh.o .libs/ntleak.o .libs/ntt.o .libs/pregencv.o .libs/vecst.o .libs/mod_func.o   -L/Applications/NEURON-7.6/nrn/x86_64/lib /Applications/NEURON-7.6/nrn/x86_64/lib/libnrnoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/liboc.dylib -L/usr/X11/lib -lX11 /Applications/NEURON-7.6/nrn/x86_64/lib/libmemacs.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libscopmath.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsparse13.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libreadline.dylib -lncurses /Applications/NEURON-7.6/nrn/x86_64/lib/libnrniv.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libivoc.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libneuron_gnu.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libmeschach.dylib /Applications/NEURON-7.6/nrn/x86_64/lib/libsundials.dylib  -g -O2  
+libtool: link: (cd ".libs" && rm -f "libnrnmech.so" && ln -s "libnrnmech.0.so" "libnrnmech.so")
+libtool: link: ( cd ".libs" && rm -f "libnrnmech.la" && ln -s "../libnrnmech.la" "libnrnmech.la" )
+Successfully created x86_64/special
+**** Trying to run gives me some form of this error: 
+ python -i test_int.py 
+Note: NeuroML import failed; import/export functions for NeuroML will not be available. 
+  To install the pyNeuroML & libNeuroML Python packages visit: https://www.neuroml.org/getneuroml
+NEURON: ClampExData not enough arguments
+ near line 0
+ ^
+        ClampExData()
+      MechanismStandard("ClampExData", 1)
+Traceback (most recent call last):
+  File "test_int.py", line 12, in <module>
+    netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellModel': 'HH_reduced'}, fileName='sTI.hoc', cellName='sTI', importSynMechs=True)
+  File "/anaconda3/lib/python3.7/site-packages/netpyne/specs/netParams.py", line 339, in importCellParams
+    secs, secLists, synMechs, globs = conversion.importCell(fileName, cellName, cellArgs, cellInstance)
+  File "/anaconda3/lib/python3.7/site-packages/netpyne/conversion/neuronPyHoc.py", line 164, in importCell
+    varList = mechVarList()  # list of properties for all density mechanisms and point processes
+  File "/anaconda3/lib/python3.7/site-packages/netpyne/conversion/neuronPyHoc.py", line 81, in mechVarList
+    ms = h.MechanismStandard(msname[0], 1) # PARAMETER (modifiable)
+**** took out all mod files that I don't need, and only included ones explicitly inserted in soma or dend -- all others go to A1/cells/iTRN/mod_graveyard
+**** rm -r x86_64; Compiled again in iTRN subdir with nrnivmodl (on cells branch, local machine laptop). Got errors during compile 'Couldn't open: netcon.inc' --> *adding back in netcon.inc*
+**** rm -r x86_64; compiling again in iTRN subdir with nrnivmodl --> now in x86_64 I see .c .lo and .mod for all mod files that are in iTRN
+* <2019-11-20 Wed -- thal interneuron model>
+** primate data is going to be sparse (also none from dan uhlrich)
+** fit 2 compartment model to 15 cmp model
+*** reasoning: the params listed in the batch_.hoc file from modeldb seem to apply to the 15cmp cell
+** How did I fit these cells before? I had a system -- look this up again 
+** STEPS:
+*** (0) Make traces of 15-cmp cells 
+* <2019-11-22 Fri -- thal interneuron model passive fitting>
+** Set up optimization scripts
+** 9/26/19 describes algorithm 
+*** scripts were in dend_edits subdir -- now on local machine in archive/A1_archive --> unzip this directory
+*** dang, this is empty -- go on github for prev version? 
+*** went to github, found and copied in the following files to A1/cells/tINT:
+**** overlay_ACTIVE.py, overlay_PASSIVE.py
+**** netParams_OLD.py, netParams_NEW.py
+**** test_cell.py 
+** Algorithm:
+*** netParams_OLD.py imports sTI_large.hoc
+*** netParams_NEW.py imports sTI.hoc
+*** Looked at params; the following should be modified in sTI.hoc:
+**** PASSIVE:
+***** soma 'cm'
+***** soma Pass (from ntleak.mod): g_Pass or erev_Pass 
+***** dend (if needed): cm, g_Pass, erev_Pass 
+**** ACTIVE: 
+***** CURRENTLY TBD
+*** Added in lines corresponding to the above in netParams_NEW.py 
+#netParams.cellParams['sTI_reduced']['secs']['soma']['geom']['cm'] = # ORIG: 1
+#netParams.cellParams['sTI_reduced']['secs']['soma']['mechs']['Pass']['g'] = # ORIG: 18e-6
+#netParams.cellParams['sTI_reduced']['secs']['soma']['mechs']['Pass']['erev'] =  # ORIG: -72.5
+* <2019-11-26 Tue -- thal interneurom model active fitting>
+** Added passive params (listed below) from fitting into sTI.hoc file
+*** (in soma) g_Pass = 0.00015
+*** (in soma) erev_Pass = -75
+*** v_init set to -65 for both soma and dend; don't know how to initialize this in a hoc file, but luckily that is the default. won't experiment, for time's sake. 
+** Active algorithm (described in 9/26 entry) 
+*** Use test_int.py to find rheobase
+* <2019-12-02 Mon -- thal interneuron model active fitting>
+** Channel mechanisms in sTI.hoc 
+*** naf2 --> naf2.mod
+**** what channel? doesn't say 
+**** guessing it is fast sodium 
+*** kdr2 --> kdr2.mod
+**** what channel? doesn't say
+**** guessing slow potassium? dr --> delayed rectifier? 
+*** Pass --> leak, ntleak.mod
+*** ical --> L-type Ca2+ channel, High-threshold Ca2+ current, IL.mod
+*** ical3 --> L-type Ca2+ channel, High-threshold Ca2+ current, IL3.mod
+*** it2 --> T-type Ca2+ channel, low-threshold spikes (LTS), ntt.mod
+*** cad --> Decay of internal [Ca2+], cp.mod
+*** Cad --> Decay of internal [Ca2+], cp2.mod
+*** iahp --> Slow Ca2+-dependent K+ current (slow AHP), Iahp.mod
+*** ican --> Slow Ca2+-dependent cation current, Ican.mod
+*** iar --> Anomalous rectifier Ih (*this is HCN then?), ntlh.mod 
+** Channels to adjust for bursting:
+*** HCN:
+**** iar (ntlh.mod) --> HCN -- anomalous rectifier Ih 
+*** L-type:
+**** *RECALL: L-type --> high-threshold Ca2+ current
+**** ical (IL.mod)
+**** ical2 (IL3.mod) 
+*** T-type:
+**** *RECALL: T-type --> LTS (low-threshold spikes) 
+**** it2 (ntt.mod) 
+** Adjusting T-type channels:
+*** it2 (ntt.mod)
+*** gcabar_it2 = 4.0e-4 (in sTI.hoc) 
+*** gcabar = 0.024 (mho/cm2, in ntt.mod) 
+** Adjusting Ican 
+*** mechanism --> ican; Ican.mod
+*** slow Ca2+ dependent cation current (non-specific) 
+** PAPER TO EDIT AND POTENTIALLY PUBLISH: /u/billl/papers/thal/inter/jun.pdf
+* <2019-12-05 Thu -- thal interneuron model>
+** Tried inserting BK channel into soma (KC2) -- didn't help 
+** looking at ntt.mod equations:
+*** m_inf = 1 / (1 + e^[-(v+shift1+50)/4.8])
+**** so if m is activation and m_inf is steady state probability of activation, then I want it to be more likely to activate at a higher voltage than it is now
+**** right now, shift1 = 7 (or 10)
+**** if shift1 = 7:
+***** m_inf = 1 / (1 + e^[-(v + 57)/4.8])
+***** meaning there's 0.5 chance of activation at v = -57mV 
+***** there is ~100% chance of activation as v goes above -57mV 
+***** there is ~0% chance of activation as v goes below -57mV 
+*** h_inf = 1 / (1 + e^[(v+shift2+78) / 4.6])
+**** so if shift2 = 0 like it does now
+**** h_inf = 1 / (1 + e^[(v+78) / 4.6])
+**** so if v = -78 --> h_inf = 0.5 chance of inactivation 
+**** if v = -100 --> h_inf = closer to 1, as voltage decreases below -78
+**** if v = +20 --> h_inf = closer to 0, as voltage increases above -78
+*** I want "% inactivation" to move towards 0 as potential decreases --> or do I? 
+*** I want "% activation" to move towards 1 as potential increases 
+ 
+*** Now, what I want to change is for the % inactivation to go to 0 at a higher voltage than -78. 
+
+*** figure out when they're ~0 and when they intersect to determine window current for these channels 
+**** m_inf = ~0 when:
+***** 0 = 1 / (1 + e^[-(v+shift1+50)/4.8])
+***** epsilon = 1 / (1 + e^-x) --> epsilon * (1 + e^-x) = 1 --> 
+***** epsilon + epsilon * (e^-x) = 1 --> epsilon * (e^-x) = ~1 --> 
+***** e^-x = (1-epsilon) / epsilon --> -x = ~10 (8, 13, etc.)
+***** x = -10 (ish)
+***** (v + shift1 + 50) / 4.8 = -10 (ish) 
+***** v + shift1 + 50 = -50 (ish)
+***** v + shift1 = -100 (ish) --> this is when % activation is close to 0, when v = -100-shift1
+**** when is % activation 0.5? --> when v + shift1 + 50 = 0 --> v + shift1 = -50 --> v = -50-shift1
+**** when is % activation closer to 1? --> 
+*****  m_inf = 1 / 1+e^-x --> when x gets very very large 
+***** x = v+ shift1 + 50 --> let's say e^-10 = epsilon
+***** (v + shift1 + 50) / 4.8 = 10 --> v + shift1 + 50 = 50 --> v + shift1 = 0 --> v = -shift1 
+* <2019-12-09 Mon -- thal interneuron model>
+** model checkpoint
+// FROM https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862&file=/b09jan13/batch_.hoc#tabs-2
+//* 2 CMP Thalamic interneuron (tTI)
+//** begintemplate tTI --> sTI now (not sure why s or T // find out)
+
+begintemplate sTI
+  public soma,dend
+  public nmda, ampa, gabaa, gabab //p, inhib, excit, inj
+  //public up
+  //external fgabaa,fgabab, fampa, fnmda, ftc, fre, finj, fgen
+  objectvar nmda, ampa, gabaa, gabab //inj
+  //objref this,up
+
+create soma, dend
+
+
+proc init () { local i,j
+    create soma, dend
+  
+    soma {
+        gabaa = new GABAA(0.5)
+        gabab = new GABAB(0.5)
+        ampa = new AMPA(0.5)
+        nmda = new NMDA(0.5)
+      }
+    forsec "soma" {
+        nseg = 1
+        diam = 10
+        L = 16
+        cm = 1
+
+
+        insert naf2
+        gmax_naf2     = 0.04 // 0.09: 12-03 (migliore) // 0.04: 12-02 // ORIG: 0.06 
+        mvhalf_naf2   = -40 
+        mvalence_naf2 =  5
+        hvhalf_naf2   = -43 
+        hvalence_naf2 = -6
+
+        insert kdr2
+        gmax_kdr2     =  0.4 //0.09 // 0.37: 12-03 (migliore) //ORIG: 0.07 // RAISE this to get rid of tonic firing? 
+        mvhalf_kdr2   = -31
+        mvalence_kdr2 =  3.8
+
+
+        insert Pass // ntleak.mod
+        g_Pass = 0.00015 //ORIG from 15-cmp model: 18e-6
+        erev_Pass = -75 //ORIG from 15-cmp model: -72.5
+      
+        insert ical //IL.mod // L-type Ca2+ channels (high-thresh)
+        pcabar_ical = 9.0e-4
+        sh1_ical = -10
+        sh2_ical = 0
+      
+        insert ical3 //IL3.mod // L-type Ca2+ channels
+        pcabar_ical3 = 9.0e-4 // RESPONSIBLE FOR SINGLE Ca2+ SPIKE AFTER CALCIUM-mediated burst 
+        sh1_ical3 = -10
+        sh2_ical3 = 0
+      
+        insert it2 // ntt.mod // T-type Ca2+ channels (low-thresh)
+        gcabar_it2 = 0.0024 //0.00717 --> nothing to huge spike? // INITIAL BURSTS GONE WHEN 0 //1.2e-05: 12-03 (migliore) //0.0009: 12-02 // ORIG: 4.0e-4
+        shift1_it2 = -2 //THURS: -2  // 10: 12-02  //ORIG in .mod: -1 // ORIG IN sTI.hoc: 7
+        shift2_it2 = -10.1 //THURS: -10.1 //-5.5 //-5   //ORIG: 0
+        mx_it2 = 3.0
+        hx_it2 = 1.5 //MON: 0.35 //0.6 //ORIG: 1.5 //LOWERING this gets you a stronger burst
+        sm_it2 = 4.8
+        sh_it2 = 4.6 //ORIG: 4.6 // RAISING this makes the cell quite excitable
+      
+        insert cad //cp.mod
+        //kt_cad =  0e-6
+        //kt2_cad = 0e-7
+        k_cad  = 7.5e-3
+        taur_cad  = 150
+        cainf_cad  = 1e-8
+        taur2_cad  = 80
+        cainf2_cad  = 5.2e-5
+        caix_cad  = 5.0e-5
+      
+        insert Cad //cp2.mod
+        //kt_Cad = 0e-6
+        k_Cad  = 7.5e-3
+        taur_Cad  = 150
+        Cainf_Cad  = 1e-8
+        taur2_Cad  = 80
+        Cainf2_Cad  = 5.2e-5
+        Caix_Cad  = 5.0e-5
+      
+        insert iahp
+        gkbar_iahp = 0.04 // 12-03: 6.3e-5 (migliore) // ORIG: 0.4 
+        erev_iahp = -95 // ORIG: -95 // TRIAL LINE, from .mod file
+        beta_iahp = 0.02
+        cac_iahp = 0.8e-3
+        //rat_iahp = 0.2 // DOES THIS LINE MATTER?
+        ratc_iahp = 0.000002 // TRIAL LINE BC I SEE NO rat_iahp
+        ratC_iahp = 0.000002 // TRIAL LINE BC I SEE NO rat_iahp
+      
+        insert ican // Ca2+-dependent nonspecific cation current 
+        gbar_ican = 2e-5 // 2e-8: 12-03 (migliore) //ORIG: 2e-5 
+        beta_ican = 0.003
+        cac_ican = 1.1e-4
+        rat_ican = 0.1
+        x_ican = 8
+      
+        insert iar // ntlh.mod --> Ih current 
+        ghbar_iar = 1.3e-4 // 1.1e-4: 12-03 MIGLIORE TABLE 1 //ORIG: 1.3e-4 
+        shift_iar = -0.0
+        erev_iar = -44
+        stp_iar = 7.4
+      }
+
+  forsec "dend" {
+        nseg = 1
+        diam = 50
+        L = 50
+        cm = 3
+
+        insert Pass
+        g_Pass = 8e-6
+        erev_Pass = -72.5
+
+
+	}
+    connect dend(0), soma (1)
+    forall Ra = 50 //ORIG: 50 // 12-03: 113 (migliore table 1)
+  }
+endtemplate sTI
+
+** TO DO: 
+*** check to see if can get bursting w/ TC cell
+*** see if can get AHP to adjust w/ kt and kt2 and ratc and ratC
+*** read thru paper draft from bill 
+* <2019-12-10 Tue -- thal interneuron model>
+** TC cell 
+*** Can we use this? Does it burst the way we want? 
+*** no --> hm
+** USE THE POSPISCHIL ET AL. 2008 paper: https://senselab.med.yale.edu/ModelDB/ShowModel.cshtml?model=123623&file=/PospischilEtAl2008/demo_PY_IBR.hoc#tabs-2
+*** sPY_br --> repetitive bursting 
+**** Adjusted the cm to 0.29 (fig 5 in paper)
+**** e_pas = -85 (in demo_PY_IBR)
+**** gcabar_ical changed to 0.0002 (IL current --> from bottom panel of fig 5 in paper)
+**** Added T-type channels (ntt.mod):
+***** gcabar_it2 = 0.0003
+***** sh_it2 = 0.5
+***** hx_it2 = 5.8
+***** shift1_it2 = -2
+** Adding the following files to A1 cells branch:
+*** cells/sTI.hoc
+*** mod/HH_traub.mod (suffix hh2; HH2.mod already in there, but hh2_ad is the suffix)
+*** mod/IM_cortex.mod (changed suffix to imthal in both mod file and in sTI.hoc) *TEST THIS*
+*** mod/cadecay_destexhe (changed suffix to cadA1 in both mod file and in sTI.hoc) *TEST THIS* 
+*** mod/ntt.mod (IT2.mod has suffix itre and IT.mod has suffix it, so hopefully this is okay) 
+*** mod/IL_gutnick.mod (L-type current)
+** Testing -- 
+*** have to re-compile mod files
+**** rm -r x86_64 (from A1)
+**** rm -r mod/x86_64
+**** ln -s mod/x86_64 x86_64
+**** cd mod
+**** nrnivmodl 
+*** edited A1/test_cell.py to see if sTI cell will load from main parent directory*** RUNS!!
+** TO NOTE ABOUT THESE CELLS:
+*** soma_0 not soma
+*** celsius is 36
+*** vinit is -84 
+*** ^^ Do not know how to set these last 2 in the hoc file; should I do it in a python file instead? 
+** ea15116
+* <2019-12-11 Wed -- paper draft>
+** /u/billl/papers/thal/inter/jun.pdf 
+>>>>>>> cells

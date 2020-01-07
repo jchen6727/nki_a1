@@ -84,13 +84,12 @@ ENDCOMMENT
 NEURON {
   THREADSAFE
 	SUFFIX htc
-	:USEION h READ eh WRITE ih VALENCE 1
+    NONSPECIFIC_CURRENT ih
 	USEION ca READ cai
         RANGE gmax, h_inf, tau_s, m, shift, i
         RANGE alpha,beta,k1ca,k3p
 	:GLOBAL k2, cac, k4, Pc, nca, nexp, ginc, taum
         RANGE k2, cac, k4, Pc, nca, nexp, ginc, taum, exptemp
-        RANGE eh
 }
 
 UNITS {
@@ -133,7 +132,7 @@ ASSIGNED {
 	v	(mV)
 	cai	(mM)
 	i	(mA/cm2)
-	:ih	(mA/cm2)
+	ih	(mA/cm2)
         gh	(mho/cm2)
 	h_inf
 	tau_s	(ms)
@@ -152,7 +151,7 @@ BREAKPOINT {
 	m = o1 + ginc * o2
 
 	i = gmax * m * (v - eh)
-        :ih=i
+        ih=i
 }
 
 KINETIC ihkin {
