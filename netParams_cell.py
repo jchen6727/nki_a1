@@ -12,15 +12,15 @@ import pickle, json
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
 try:
-	from __main__ import cfg  # import SimConfig object with params from parent module
+    from __main__ import cfg  # import SimConfig object with params from parent module
 except:
-	from cfg import cfg
+    from cfg import cfg
 
 
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 14
+netParams.version = 11
 
 #------------------------------------------------------------------------------
 #
@@ -73,16 +73,16 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
                     'IT3_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
                     'ITP4_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
                     'IT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
-                    'CT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5A']},
                     'IT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
                     'PT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
-                    'CT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
                     'IT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
                     'CT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
                     
 
+# temporary weightNorm value (temporary fix!)
+weightNorm = 1.0
 
 # Load cell rules from .pkl file 
 loadCellParams = cellParamLabels
@@ -90,7 +90,11 @@ loadCellParams = cellParamLabels
 for ruleLabel in loadCellParams:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
-
+    
+    # set weightNorm (temporary fix!)
+    for sec in netParams.cellParams[ruleLabel]['secs']:
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
+    
 
 ## Import VIP cell rule from hoc file 
 netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
@@ -119,25 +123,10 @@ netParams.importCellParams(label='HTC_reduced', conds={'cellType': 'HTC', 'cellM
 netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'HTC', 'ynorm': layer['thal']}
 
 
-## Set weightNorm for each cell type
-for ruleLabel in netParams.cellParams.keys():
-    netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
-
-
-''' Temporary fixes for SfN19 poster
-
-# # invert TC and HTC weightNorm -- for some reason are negative! (temporary fix!)
-# netParams.cellParams['TC_reduced']['secs']['soma']['weightNorm'][0] *= -1
-# netParams.cellParams['HTC_reduced']['secs']['soma']['weightNorm'][0] *= -1
-
-# # increase some weightNorms
-# netParams.cellParams['PV_reduced']['secs']['soma']['weightNorm'][0] *= 1.5
-# netParams.cellParams['NGF_reduced']['secs']['soma']['weightNorm'][0] *= 3
-# for i in range(len(netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'])):
-#     netParams.cellParams['ITP4_A1']['secs']['soma']['weightNorm'][i] *= 3.0
-# for i in range(len(netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'])):
-#     netParams.cellParams['ITS4_reduced']['secs']['soma']['weightNorm'][i] *= 3
-'''
+## Set weightNorm for VIP, NGS ITS4, RE, TC, HTC (temporary fix!)
+for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced', 'RE_reduced', 'TC_reduced', 'HTC_reduced']:
+    for sec in netParams.cellParams[ruleLabel]['secs']:
+        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
 
 #------------------------------------------------------------------------------
 # Population parameters
@@ -146,6 +135,8 @@ for ruleLabel in netParams.cellParams.keys():
 ## load densities
 with open('cells/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileObj)['density']
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
+
+### LAYER 1:
 
 ### LAYER 1:
 netParams.popParams['NGF1'] = {'cellType': 'NGF', 'cellModel': 'HH_reduced','ynormRange': layer['1'],   'density': density[('A1','nonVIP')][0]}
@@ -174,17 +165,15 @@ netParams.popParams['VIP4'] =	 {'cellType': 'VIP', 'cellModel': 'HH_reduced',   
 netParams.popParams['NGF4'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['4'],  'density': density[('A1','nonVIP')][2]}
 
 ### LAYER 5A: 
-netParams.popParams['IT5A'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'], 	'density': 0.5*density[('A1','E')][3]}      
-netParams.popParams['CT5A'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'],   'density': 0.5*density[('A1','E')][3]}  # density is [5] because we are using same numbers for L5A and L6 for CT cells? 
+netParams.popParams['IT5A'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5A'], 	'density': density[('A1','E')][3]}      
 netParams.popParams['SOM5A'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],	'density': density[('A1','SOM')][3]}          
 netParams.popParams['PV5A'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],	'density': density[('A1','PV')][3]}         
 netParams.popParams['VIP5A'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],   'density': density[('A1','VIP')][3]}
 netParams.popParams['NGF5A'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',    'ynormRange': layer['5A'],   'density': density[('A1','nonVIP')][3]}
 
 ### LAYER 5B: 
-netParams.popParams['IT5B'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': (1/3)*density[('A1','E')][4]}  
-netParams.popParams['CT5B'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'],   'density': (1/3)*density[('A1','E')][4]}  # density is [5] because we are using same numbers for L5B and L6 for CT cells? 
-netParams.popParams['PT5B'] =     {'cellType': 'PT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': (1/3)*density[('A1','E')][4]}  
+netParams.popParams['IT5B'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][4]}  
+netParams.popParams['PT5B'] =     {'cellType': 'PT',  'cellModel': 'HH_reduced',   'ynormRange': layer['5B'], 	'density': 0.5*density[('A1','E')][4]}  
 netParams.popParams['SOM5B'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1', 'SOM')][4]}
 netParams.popParams['PV5B'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],	'density': density[('A1','PV')][4]}     
 netParams.popParams['VIP5B'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1','VIP')][4]}
@@ -200,7 +189,7 @@ netParams.popParams['NGF6'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced', 
 
 
 ### THALAMIC POPULATIONS (from prev model)
-thalDensity = density[('A1','PV')][2] * 1.25  # temporary estimate (from prev model)
+thalDensity = density[('A1','PV')][2]  # temporary estimate (from prev model)
 
 netParams.popParams['TC'] =     {'cellType': 'TC',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.75*thalDensity}  
 netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity} 
@@ -208,12 +197,15 @@ netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
 netParams.popParams['IREM'] =   {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}
 
-
 if cfg.singleCellPops:
-    for pop in netParams.popParams.values(): pop['numCells'] = 1
+    for popName,pop in netParams.popParams.items():
+        if cfg.NetStim1['pop'] == popName:
+            pop['numCells'] = 1
+        else:
+            pop['numCells'] = 0
 
 ## List of E and I pops to use later on
-Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 'IT6', 'CT6']  # all layers
+Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
 
 Ipops = ['NGF1',                            # L1
         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
@@ -403,15 +395,15 @@ if cfg.addCorticoThalamicConn:
 
 #------------------------------------------------------------------------------
 ## Thalamocortical 
-if cfg.addThalamoCorticalConn:
+if cfg.addCoreThalamoCorticalConn:
     for pre in TEpops+TIpops:
         for post in Epops+Ipops:
             if post in pmat[pre]:
                 # for syns use ESynMech, SOMESynMech and SOMISynMech 
-                if pre in TEpops:     # E->E/I
+                if pre in TEpops:     # E->E
                     syn = ESynMech
                     synWeightFactor = cfg.synWeightFractionEE
-                elif post in Epops:  # I->E
+                elif post in TEpops:  # I->E
                     syn = SOMESynMech
                     synWeightFactor = cfg.synWeightFractionIE
                 else:                  # I->I
@@ -423,7 +415,7 @@ if cfg.addThalamoCorticalConn:
                     'postConds': {'pop': post},
                     'synMech': syn,
                     'probability': pmat[pre][post],
-                    'weight': wmat[pre][post] * cfg.thalamoCorticalGain, 
+                    'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
                     'synMechWeightFactor': synWeightFactor,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,
@@ -442,10 +434,10 @@ if cfg.addThalamoCorticalConn:
 #------------------------------------------------------------------------------  
 if cfg.addBkgConn:
     # add bkg sources for E and I cells
-    netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg['A1'], 'number': 1e9}
-    netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg['A1'], 'number': 1e9}
-    netParams.stimSourceParams['bkgThalE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalE'], 'noise': cfg.noiseBkg['thalamus'], 'number': 1e9}
-    netParams.stimSourceParams['bkgThalI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalI'], 'noise': cfg.noiseBkg['thalamus'], 'number': 1e9}
+    netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['bkgThalE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalE'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['bkgThalI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalI'], 'noise': cfg.noiseBkg, 'number': 1e9}
 
     # connect stim sources to target cells
     netParams.stimTargetParams['bkgE->E'] =  {
@@ -455,17 +447,6 @@ if cfg.addBkgConn:
         'loc': 0.5,
         'synMech': ESynMech,
         'weight': cfg.weightBkg['E'],
-        'synMechWeightFactor': cfg.synWeightFractionEE,
-        'delay': cfg.delayBkg}
-
-    # connect stim sources to target cells
-    netParams.stimTargetParams['bkgE->ITS4'] =  {
-        'source': 'bkgE', 
-        'conds': {'cellType': ['ITS4']},
-        'sec': 'soma', 
-        'loc': 0.5,
-        'synMech': ESynMech,
-        'weight': cfg.weightBkg['E']*1.0,
         'synMechWeightFactor': cfg.synWeightFractionEE,
         'delay': cfg.delayBkg}
 
@@ -506,10 +487,10 @@ if cfg.addBkgConn:
 #  	for key in [k for k in dir(cfg) if k.startswith('IClamp')]:
 # 		params = getattr(cfg, key, None)
 # 		[pop,sec,loc,start,dur,amp] = [params[s] for s in ['pop','sec','loc','start','dur','amp']]
-		
+        
 #         		# add stim source
 # 		netParams.stimSourceParams[key] = {'type': 'IClamp', 'delay': start, 'dur': dur, 'amp': amp}
-		
+        
 # 		# connect stim source to target
 # 		netParams.stimTargetParams[key+'_'+pop] =  {
 # 			'source': key, 
@@ -521,25 +502,30 @@ if cfg.addBkgConn:
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------
 if cfg.addNetStim:
-	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-		params = getattr(cfg, key, None)
-		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+    for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+        params = getattr(cfg, key, None)
+        [pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+        [params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']]
 
-		# add stim source
-		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+        cfg.analysis['plotTraces']['include'] = [(pop, 0)]
 
-		# connect stim source to target 
-		netParams.stimTargetParams[key+'_'+pop] =  {
-			'source': key, 
-			'conds': {'pop': pop, 'ynorm': ynorm},
-			'sec': sec, 
-			'loc': loc,
-			'synMech': synMech,
-			'weight': weight,
-			'synMechWeightFactor': synMechWeightFactor,
-			'delay': delay}
+        # add stim source
+        netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
 
+        # connect stim source to target 
+        netParams.stimTargetParams[key+'_'+pop] =  {
+            'source': key, 
+            'conds': {'pop': pop, 'ynorm': ynorm},
+            'sec': sec, 
+            'loc': loc,
+            'synMech': synMech,
+            'weight': weight,
+            'synMechWeightFactor': synMechWeightFactor,
+            'delay': delay}
+
+
+
+        
 #------------------------------------------------------------------------------
 # Description
 #------------------------------------------------------------------------------
@@ -550,7 +536,4 @@ v8 - Added cell types
 v9 - Added local connectivity
 v10 - Added thalamic populations from prev model
 v11 - Added thalamic conn from prev model
-v12 - Added CT cells to L5B
-v13 - Added CT cells to L5A
-v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
 """
