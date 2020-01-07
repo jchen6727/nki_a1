@@ -192,7 +192,35 @@ Email asking for firing rates papers
 was due to not using plotConn(synOrConn = 'conn') -- was counting eg AMPA+NMDA, so 2x prob
 ** extremely high probs NGF4->VIP5B and NG5B->VIP4
 due to tesiting on very small net, with just 1 or 2 cells in each pop
+* 29dec2019 Discuss next steps with same
+a1 connectivity looks good
 
+that part mostly done now? next to constrain with data or want to put in auditory signals first?
+salvadord 12:02 PM
+y mostly done, I think just missing some cell types that erica was working on
+salvadord 12:03 PM
+could do pulvinar, auditory inputs or constraining
+samn 12:03 PM
+i like auditory inputs
+since that's more rarely done and brings perception into the picture
+salvadord 12:03 PM
+auditory inputs - me too!
+samn 12:04 PM
+yeah, she's good with grants
+salvadord 12:04 PM
+au inputs also allows to compare better to experiments hopefully
+samn 12:04 PM
+y
+same input so can test outputs, etc.
+salvadord 12:05 PM
+right… though will raise the question of needing A1 tonotopy tuned to different freqs etc
+samn 12:05 PM
+yeah, can pick a best frequency seen from the recordings to start
+salvadord 12:06 PM
+sg
+could also assume sparse density so representing larger region with ~same num cells
+samn 12:06 PM
+good idea
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -215,19 +243,96 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 0.85	0.15	0.552380952	0.295238095	0.152380952	1
 0.85	0.15	0.485714286	0.428571429	0.085714286	1
 0.85	0.15	0.458333333	0.458333333	0.083333333	1
+** total number of neurons in A1
+1.6 million (https://www.pnas.org/content/107/36/15927)
+
 * CONNECTIVITY
 ** Budinger et al 2018
 - mentions ‘massive thalamic inputs’ target the few pyramidal cells but also interneurons, ‘providing strong FF inhibition’
 ** Allen Brain mouse V1
 - http://portal.brain-map.org/explore/models/mv1-all-layers
 - mentions most conn comes from rat S1 (Thomson & Lamy, 2007)
-- https://www.dropbox.com/sh/xb7xasih3d8027u/AABw_eBXymSYJfgSiH-E6th0a/create_recurrent_connections?dl=0&preview=connect_cells.py&subfolder_nav_tracking=1
+- https://www.dropbox.com/sh/xb7xasih3d8027u/AAAbKXe0Zmk86o3_y1iPVPCLa?dl=0
 - I’m thinking this is better option than using mouse M1 since sensory
 - they have nice table with all the prob conn valuesand weights, measured as somatic PSP amp (mV), same as we use
 - Distance-dependent probabilities
 
 ** BBP mouse S1
+*** link
 https://bbp.epfl.ch/nmc-portal/downloads
+*** cell type acronyms
+- List of m-types:
+
+DAC	Descending Axon Cell
+NGC-DA	Neurogliaform Cell with dense axonal arborization
+NGC-SA	Neurogliaform Cell with slender axonal arborization
+HAC	Horizontal Axon Cell
+LAC	Large Axon Cell
+SAC	Small Axon Cell
+MC	Martinotti Cell
+BTC	Bitufted Cell
+DBC	Double Bouquet Cell
+BP	Bipolar Cell
+NGC	Neurogliaform Cell
+LBC	Large Basket Cell
+NBC	Nest Basket Cell
+SBC	Small Basket Cell 
+ChC	Chandelier Cell
+PC	Pyramidal Cell
+SP	Star Pyramidal Cell
+SS	Spiny Stellate Cell
+TTPC1	Thick-tufted Pyramidal Cell with a late bifurcating apical tuft
+TTPC2	Thick-tufted Pyramidal Cell with an early bifurcating apical tuft
+UTPC	Untufted Pyramidal Cell
+STPC	Slender-tufted Pyramidal Cell
+TPC_L4	Tufted Pyramidal Cell with apical dendrites terminating in layer 4
+TPC_L1	Tufted Pyramidal Cell with apical dendrites terminating in layer 1
+IPC	Pyramidal Cell with inverted apical-like dendrites
+BPC	Pyramidal Cell with bipolar apical-like dendrites
+
+- List of e-types:
+
+cADpyr	continuous Accommodating (Adapting) for pyramidal cells
+cAC	continuous Accommodating
+bAC	burst Accommodating
+cNAC	continuous Non-accommodating
+bNAC	burst Non-accommodating
+dNAC	delayed Non-accommodating
+cSTUT	continuous Stuttering
+bSTUT	burst Stuttering
+dSTUT	delayed Stuttering
+cIR	continuous Irregular
+bIR	burst Irregular
+
+*** cell type correspondence
+- see https://bbp.epfl.ch/nmc-portal/web/guest/glossary
+- Markram et al 2004
+- Markram et al 2015
+- Tremblay et al 2016
+
+    # set correspondence between A1 pops and BBP S1 pops  
+    data['BBP_S1']['pops'] = {
+        'NGF1': 'L1_NGC',                                                                                                                              # L1
+        'IT2':  'L2_PC',                                              'PV2':  'L23_LBC',   'SOM2': 'L23_MC',  'VIP2': 'L23_BP', 'NGF2':  'L23_NGC', # L2
+        'IT3':  'L3_PC',                                              'PV3':  'L23_LBC',   'SOM3': 'L23_MC',  'VIP3': 'L23_BP', 'NGF3':  'L23_NGC', # L3
+        'ITP4': 'L4_PC',     'ITS4': 'L4_SS',                         'PV4':  'L4_LBC',    'SOM4': 'L4_MC',   'VIP4': 'L4_BP',  'NGF4':  'L4_NGC',  # L4
+        'IT5A': 'L5_UTPC',   'CT5A': 'L6_TPC_L4',                     'PV5A': 'L5_LBC',   'SOM5A': 'L5_MC',  'VIP5A': 'L5_BP',  'NGF5A': 'L5_NGC',  # L5A
+        'IT5B': 'L5_UTPC',   'CT5B': 'L6_TPC_L4', 'PT5B': 'L5_TTPC2', 'PV5B': 'L5_LBC',   'SOM5B': 'L5_MC',  'VIP5B': 'L5_BP',  'NGF5B': 'L5_NGC',  # L5B
+        'IT6':  'L6_TPC_L1', 'CT6':  'L6_TPC_L4',                     'PV6':  'L6_LBC',    'SOM6': 'L6_MC',   'VIP6': 'L6_BP',  'NGF6':  'L6_NGC'}  # L6
+
+- IT L2,3,4 = PC (=regular pyramidal cell)
+- IT5A,5B = UTPC (=thin-tufted)
+- PT5B = TTPC2 (=thick-tufted with bifurcation, as our PT cell; other thick-tufted TTPC2 would also probably work)
+- CT L5A,5B,6 = TPC_L4 (= CT cell; paper showed CT cells apical only reaches L4; seems they don't have CT cells in L5A,5B)
+- IT6 = TPC_L1 (assume this one to differentiate from CT6)
+- PV = LBC (=large basket; most abundant PV based on Markram 2004)
+- SOM = MC (=martinotti; most abundaant SOM based on Makram 2004)
+- VIP = BP (=bipolar cell; based on Tremblay 2015 classification)
+- NGF = NGC (=neurogliaform)
+
+*** comparison to Allen
+- not distance-dependent
+- more cell-type specificity (different exc types from L4,L5,L6 -- ITP,ITS,PT,CT; and 1 more inh types -- VIP)
 
 ** E-E 
 - Use Allen V1 as base, and then update with any specific A1
@@ -295,6 +400,9 @@ https://bbp.epfl.ch/nmc-portal/downloads
 - Pi 2013
 -- VIP -> E (very low; 3/42)
 
+- Kato 2017
+-- upper SOM -> deeper E strong (graph decay with dist)
+ 
 ** I->I
 - currently distance-dependant
 
@@ -391,6 +499,310 @@ yeah… so dist-dep is a feature whether we have cell-type specific data or not
 the little cell-type specific data we have I’ve tried to incorporate on top of the dist-dep
 so e.g. ‘strong’ will be 1.0*exp(-d/L) and ‘weak’ will be 0.35*exp(-d/L)
 anyway you can have a look at the excel, conn.py and netParams.py and let me know what you think
+** Comparison to BBP and Allen conn
+do you have a recommendation based on those differences?
+i'm ok with just using allen since has distant dependent. any strong reason to also incorporate BBP?
+salvadord 12:58 PM
+well there’s 2 diff things to consider: E->E/I and I->E/I
+for E-> E/I (currently using Allen), BBP has advantage of differentiating E pops
+for I->E/I (currently using our own custom based on papers), both Allen and BBP provide alternatives and show weaker probs from upper I (SOM,NGF) to deeper E — which I had increased since papers showed targeting apical dends
+samn 1:00 PM
+OK, so I->E/I custom better than either of Allen/BBP for our purposes?
+and E->E/I, BBP differentiation of E pops - how much of that is based on cortical layer? macro from Allen might be good enough for our purposes
+salvadord 1:03 PM
+I->E/I better - maybe, but fact that allen + bbp so different makes me wonder if I’m misinterpreting papers — I’ll recheck and stick to ours if makes sense (or maybe reduce a bit those strong conns to match allen/bbp better)
+samn 1:03 PM
+sg
+thx
+& E->E/I BBP - large diffs there too compared to what currently have? (on nki network so google drive blocked...only could look via phone)
+I->E/I plan sg anyway, can do 1 step at a time, thx for update
+salvadord 1:21 PM
+PDF 
+A1 conn comparison.pdf
+2 MB PDF — Click to view
+
+
+samn 1:22 PM
+thx
+salvadord 1:26 PM
+btw all conn matrices generated from A1 instantiated model (400 um diameter column; 12k neurons; 25% cell density) so there’s some randomness involved
+samn 1:35 PM
+for E -> E/I is there a way to adjust to take into account the known/existing subtypes we have from BBP and otherwise leave as is?
+one problem then is macro-probabilities could be increased/decreased from what they should be...
+salvadord 2:03 PM
+adjust E subtypes - yeah I was thinking about that; maybe scale based on BBP
+what do u mean by macro-probabilities?
+samn 2:03 PM
+i mean the probabilities from allen that don't take into account the sub-types
+salvadord 2:04 PM
+ok y makes sense
+samn 2:04 PM
+if one population gets more inputs due to bbp then another one might need to get less
+
+** Updating E->E/I conn based on BBP subcelltypes
+- Allen does not distinguish E subtypes; and VIP cell type
+- Updated VIP, ITS4, CT, PT based on BBP:
+*** code in conn.py
+
+# List of pops to update based on BBP ratios of cell subtypes (key = pop to update; value = pop to use as reference)
+    updatePopConnUsingBBP = {'VIP2': 'PV2', 'VIP3': 'PV3', 'VIP4': 'PV4', 'VIP5A': 'PV5A', 'VIP5B': 'PV5A', 'VIP6': 'PV6',
+                            'ITS4': 'ITP4',
+                            'CT5A': 'IT5A',
+                            'CT5B': 'IT5B',
+                            'PT5B': 'IT5B',
+                            'CT6': 'IT6'}
+    
+    basedOnBBPCT6 = [] #'CT5A', 'CT5B']  # pops based on BBP CT6 (since BBP doesn't have CT5A and CT5B) so treated differently (NOT USED)
+
+    fixVerbose = True  # print info messages
+    
+    ## update all fix pop (e.g. VIP) by making proportional to ref pop (e.g. PV): e.g. VIP_Allen = (VIP_BBP/PV_BBP) * PV_Allen
+    for fixpop, refpop in updatePopConnUsingBBP.items():
+        if fixVerbose:
+            print('\nUpdating conn probability of pop %s using as reference BBP conn probability ratio of %s:%s ...' % (fixpop, fixpop, refpop))
+        
+        # E -> fixpop
+        for pre in Epops:
+            projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][pre], data['Allen_V1']['pops'][refpop])
+            if fixpop in basedOnBBPCT6:
+                ## Make CT5A <-> L5A E/I and CT5B <-> L5B E/I == CT6 <-> L6 E/I (so based on local conn) (NOT USED)
+                projPre = pre.replace('5A', '6').replace('5B', '6').replace('PT6', 'PT5B')
+            else:
+                projPre = pre
+            projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][projPre], data['BBP_S1']['pops'][refpop])
+            projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][projPre], data['BBP_S1']['pops'][fixpop])
+
+            # conn probs 
+            ref_Allen = data['Allen_V1']['connProb'][projAllen_ref]['A0'] if projAllen_ref in data['Allen_V1']['connProb'] else 0.
+            ref_BBP = data['BBP_S1']['connProb'][projBBP_ref]['A0'] if projBBP_ref in data['BBP_S1']['connProb'] else 0.
+            fix_BBP = data['BBP_S1']['connProb'][projBBP_fix]['A0'] if projBBP_fix in data['BBP_S1']['connProb'] else 0.
+            if ref_BBP > 0. and fix_BBP > 0.:
+                if fixVerbose:
+                    print(' Prob %s->%s:'%(pre, fixpop), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
+                pmat[pre][fixpop] = (fix_BBP / ref_BBP) * ref_Allen
+ 
+        # fixpop -> E/I
+        for post in Epops+Ipops:
+            projAllen_ref = '%s-%s' % (data['Allen_V1']['pops'][refpop], data['Allen_V1']['pops'][post])
+            if fixpop in basedOnBBPCT6:
+                ## Make CT5A <-> L5A E/I and CT5B <-> L5B E/I == CT6 <-> L6 E/I (so based on local conn)  (NOT USED)
+                projPost = post.replace('5A', '6').replace('5B', '6').replace('PT6', 'PT5B')
+            else:
+                projPost = post
+            projBBP_ref = '%s:%s' % (data['BBP_S1']['pops'][refpop], data['BBP_S1']['pops'][projPost])
+            projBBP_fix = '%s:%s' % (data['BBP_S1']['pops'][fixpop], data['BBP_S1']['pops'][projPost])
+
+            # conn probs 
+            ref_Allen = data['Allen_V1']['connProb'][projAllen_ref]['A0'] if projAllen_ref in data['Allen_V1']['connProb'] else 0.
+            ref_BBP = data['BBP_S1']['connProb'][projBBP_ref]['A0'] if projBBP_ref in data['BBP_S1']['connProb'] else 0.
+            fix_BBP = data['BBP_S1']['connProb'][projBBP_fix]['A0'] if projBBP_fix in data['BBP_S1']['connProb'] else 0.
+            if ref_BBP > 0. and fix_BBP > 0.:
+                if fixVerbose:
+                    print(' Prob %s->%s:'%(fixpop,post), 'ref_BBP: %.2f'%(ref_BBP), 'fix_BBP: %.2f'%(fix_BBP), 'ref_Allen: %.2f'%(ref_Allen), 'fix_Allen: %.2f'%((fix_BBP/ref_BBP) * ref_Allen))
+                pmat[fixpop][post] = (fix_BBP / ref_BBP) * ref_Allen
+
+** Updating I->E/I based on Allen
+- L2/3 PV and SOM -> L5 Pyr probability is low; <0.05 (based on Jiang et al 2015, Science -- Tolias) -- table S7 and S8 
+- CHECK REFS I USED AND WHETHER THEY ARE FROM A1 OR MACAQUE
+- REDUCE BASED ON ALLEN?
+
+*** E->I
+## Update L2/3 SOM,PV -> deeper E depth-dependent (Kato 2017; Fig 8B); supported by L2/3 PV -> L5 E (Naka 2016, Fig 2)
+
+## Update VIP -> E very low (3/42; Pi et al 2013); but L2/3 VIP -> L5 (Naka 2016, Fig 2)
+## make same as SOM but multiply by ration of VIP3->E5 (Pi 2013) / SOM3->E5 (Kato 2017)
+
+*** I -> I
+- Allen consistent with 'custom_A1'; with minor diffs:
+-- PV -> NGF (0.22) higher than PV -> SOM (0.3); but both lower than PV->PV (0.451) so good
+-- SOM -> NGF (0.77), almost as high as SOM -> PV (0.857)
+-- interlaminar probs very low (~0.03) but not 0
+-- missing VIP (so will use custom_A1 based on existing numbers)
+
+    # VIP uses by default PV weights; need to change the following:
+    # VIP -> SOM = strong (but PV -> SOM = weak)    
+    # VIP -> PV = weak (but PV -> PV = strong)   
+    # VIP -> VIP = weak/veryweak (but PV -> PV = strong) 
+** Checking / fixing diffs between empirical and network instantiated conn matrix
+- bug in netParams.py (II rules)
+- bug in conn.py (avoid double counting BBP adaptation)
+** thalamocortical conn 
+*** current conn (mostly from Bonj12 and Lakatos comments)
+- current TC conn comes from the bazhenov paper (https://www.jneurosci.org/content/32/15/5250.full ; Bonj12) but I don’t see any actual prob or weight values there… @samn do you know how was derived? (edited) 
+
+- only values I see are in a table, which seem to be divergence
+
+*** !Constantinople & Bruno, 2015 (Science); rat S1 (TC->L5/6 pmat+wmat)
+- prob of conn between thalamus and cortical layers / cell type:
+-- L5 thintufted (IT): 17%
+-- L5 thicktufted (PT/CT?): 44%
+-- L6: 9% 
+
+- weight (epsp):
+-- 0.2 - 1.2 mV
+*** !Bruno and Constantinole, 2006; rat S1 (TC->L4)
+- L2/3: 0%
+- L4: 42.5% / 42.8%
+
+- weight (epsp):
+-- 0 - 1. mV
+
+*** !Ji 2016 (mouse A1 MGB -> layers/cell types)
+- no distinction core vs matrix (but most input from MGBv=core; same as allen)
+- normalized amplitude
+- % innervated
+
+% innervated [~= proxy for probability; many presyn axons innervated]
+- L1 cell (12/ 22);
+- Pyramidal cell (11/15 in L2/3; 18/18 in L4; 12/12 in L5; 8/10 in L6); 
+- PV cell (11/14 in L2/3;13/13 in L4; 15/15 in L5; 8/8 in L6); 
+- VIP cell (0/17 in L2/3; 6/16 in L4; 0/10 in L5; 0/6 in L6); 
+- SOM cell (1/12 in L2/3; 5/14 in L4; 0/10 in L5; 0/6 in L6)
+
+
+A1  (adjusted amplitude pA [~= strength = prob * weight]):
+L1 
+L1 22 425 
+
+Pyr 
+L2/3 15 129
+L4 18 418 
+L5 12 195  
+L6 10 132  
+
+PV L2/3 14 269 
+L4 13 962 
+L5 15 426 
+L6 8 426 
+
+SOM L4 14 20 
+
+VIP L4 16 24 
+
+
+*** !check Allen V1 (LGN -> diffrent layers RS/PV; based on Ji2016)
+- LGN -> V1
+- ~18k units
+- no core and matrix
+
+table 2: conns from LGN
+celltype    prob    num syns
+i1Htr       0.588   10
+
+E2/3        0.789   15
+i2/3Pvalb   0.824   15
+VIP/SOM     0
+
+E4          1.000   80
+i4Pvalb     1.0     75
+VIP         0.32
+SOM         0.32
+
+E5          1.0     15
+i5Pvalb     1.0     20 
+VIP/SOM2    0
+
+E6          0.778   15
+i6Pvalb     0.818   10
+VIP/SOM     0
+*** !Cruishcanck 2010 (mouse VB/TRN <-> Barrel cortex L4/5 RS/FS/LTS)
+https://www.sciencedirect.com/science/article/pii/S0896627309010435
+
+- strong T -> RS and PV but not SOM
+- C -> VB and ITRN; ITRN -> VB (but not -> TRN) i.e. "CT activation produced strong inhibition in VB but not in TRN cells"
+
+- "CT projections outnumber TC projections and that CT synapses provide major input to thalamic neurons"
+
+- Data from fig 6B (avg EPSP amplitudes to optogen stim): 
+- L4: 
+-- RS: 11 mV
+-- FS: 20 mV
+-- LTS: 2 mV
+
+- L5: 
+-- RS: 15 mV
+-- FS: 25 mV
+-- LTS: 1 mV
+
+TRN -> TRN: 2.8% prob
+TRN -> VB: 8% prob
+
+
+*** Slater 2019 (A1 L5/6 -> IC; IC->MGB->A1 L5/6; only corticollicular; proportion of L5 vs L6)
+*** Viaene 2011 (nothing) 
+- checked papers but not useful conn data
+
+*** check BBP S1 (peter's rule)
+- VPM based on targeting of fibers (cortical neurons epr fiber)
+- found bruno paper
+
+*** Amsalem segev thalamus (nothing on thalamus)
+*** Allen new database/papers (anatomical; region level; hard to extract)
+- connectivity.brain-map.org ; Harr19
+- anatomical - tracing of axons
+- thalamic vs auditory regions but not cell-type specific
+- general layer info:
+-- core -> L4,5,6a
+-- matrix -> 1,6a (some 2/3,5)
+
+*** check Elisabetta iavarone (nothing)
+- only thalamic cell models
+*** Traub thalamocortical model (convergence values; loosely based on data)
+- no core vs matrix
+
+INPUTS FROM THALAMOCORTICAL RELAY (TCR) CELLS. 
+- Each nRT cell receives input from 40 TCR cells. 
+
+- The following cells each receive input from 10 TCR cells: superficial pyramids (RS, FRB),
+superficial basket and axoaxonic cells, tufted pyramids (RS, IB),
+nontufted RS pyramids, deep axoaxonic cells. 
+
+- Each of the following cells receives input from 20 TCR cells: spiny stellates,
+deep baskets. LTS interneurons do not receive input from TCR
+cells (Gibson et al. 1999). 
+
+INPUTS FROM NUCLEUS RETICULARIS (NRT) CELLS. 
+- TCR cells each receive input from 30 nRT cells; nRT cells each receive input from 10
+nRT cells. 
+
+*** Knox model (oversimplified)
+*** Bhattacharya neural mass model (oversimplified conn; eg 1 pyr pop)
+- https://www.sciencedirect.com/science/article/abs/pii/S0893608011000839?via%3Dihub
+- https://senselab.med.yale.edu/modeldb/ShowModel?model=138970#tabs-1
+*** Budinger 2018 (cites other refs; havent' checked)
+- Huang and Winer 2000
+- Verbny et al. 2006; Lee and Sherman 2008
+- Oviedo et al. 2010; Meng et al. 2015
+** subcellular conn (dendritic distribution of syns)
+*** A1 E/I->E/I
+**** Allen V1 (fig 4F)
+LGN -> E: dendrites >150um
+E -> E2/3,4: soma,dendrites <200um
+E -> E5,6: soma,dendrites (all)
+E -> I: soma, dendrite (all)
+PV -> E,I: soma, dendrites (<50um)
+SOM -> E,I: dendries (>50um)
+NGF -> E,I: apical dends
+NGF2-6 -> E,I: dendrites (50-350um)
+***** Note from Allen: didn't get epsps if target only apical -- take into account for model!
+Note, however, that during our post-synaptic-potential optimization (see below), we had to change the rules of synaptic placement when L1 was the source onto excitatory cells. Our optimization methodology would create 100 target cells of a specific cell model that receive 1 spike at 0.5 seconds and we would record the generated postsynaptic potential (PSP). The weight would be scaled until we were within 1% of the target PSP. We observed that the when L1 was the source impinging on excitatory cells, the targets sections were so far away that the somatic PSP would reach a maximum and never match the target PSP regardless of how strongly the weight was scaled. This was due to the most distal compartments reaching their maximum membrane deviation that is equal to the reversal potential of the synaptic drive. With these distal compartments being at their maximum, and the attenuation that occurs due to dendritic filtering (recall dendrites in our model are passive), the soma would reach a maximum PSP that did not match our target values.
+Thus, to address this issue, we changed the synaptic placement rules for all L1-to-Excitatory neurons so that synapses were placed on dendrites at 50 μm or further from the soma. This is just a highly simplified approximation, but, in terms of reaching closer to the soma than our original rules, it is reasonable since L1 neurogliaform cells are known to bulk release GABA into large volumes and not form well-targeted synapses with post-synaptic cells (Szabadics, Tamás and Soltesz, 2007; Oláh et al., 2009; Tremblay, Lee and Rudy, 2016).
+**** Tremblay 2016 (fig 3)
+- NGF1 -> E2,3,4: apic_tuft
+- NGF2,3,4 -> E2,3,4: apic_trunk
+- SOM2,3,4 -> E2,3,4: all_dend (not close to soma)
+- PV2,3,4 -> E2,3,4: close to soma 
+- SOM5,6 -> E2,3,4: all_dend (not close to soma)
+
+- NGF1 -> E5,6: apic_tuft
+- NGF2,3,4 -> E5,6: apic_uppertrunk
+- NGF5,6 -> E5,6: apic_lowertrunk
+- SOM5,6 -> E5,6: all_dend (not close to soma)
+- PV5,6 -> E5,6: close to soma 
+
+*** TC -> soma + non-apical dends
+*** TCM -> E apical dends
+
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -585,3 +997,15 @@ reasonable rates for most pops (no osc):
 - 12 02 10
 - 22 02 11
 - 22 00 10 - slow osc
+** Comparing conn
+update conn.py with Allen V1 vs BBP S1 vs custom A1 conn options
+
+run sim at 0.25 scale
+
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+
+sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_Allen_V1_prob_0.25.png' , saveData='conn/E->EI_Allen_V1_prob_0.25.pkl')
+
+sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_BBP_S1_prob_0.25.png' , saveData='conn/E->EI_BBP_S1_prob_0.25.pkl')
+
+sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn/EI->EI_Allen_custom_prob_0.25_fixed.png' , saveData='conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl')
