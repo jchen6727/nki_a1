@@ -28001,3 +28001,21 @@ endtemplate sTI
 * <2019-12-11 Wed -- paper draft>
 ** /u/billl/papers/thal/inter/jun.pdf 
 >>>>>>> cells
+* <2020-01-10 Fri -- git branch maintenance / cleanup>
+** Closing off cells branch:
+*** cd ~/Desktop/NEUROSIM/A1
+*** git checkout master
+*** git tag archive/cells cells
+*** git branch -d cells
+*** git push origin :cells
+*** Helpful links:
+**** https://stackoverflow.com/questions/8614112/how-to-close-off-a-git-branch/8614244
+**** https://stackoverflow.com/questions/35738790/how-to-close-a-branch-in-git
+**** https://koukia.ca/delete-a-local-and-a-remote-git-branch-61df0b10d323
+** Creating new branch 'erica' for future edits:
+*** git checkout master
+*** git pull 
+*** git checkout -b erica
+*** git push origin erica 
+**** This ensures that the branch will be pushed to github; remote
+*** Helpful link: https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
