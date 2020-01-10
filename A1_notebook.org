@@ -28019,3 +28019,20 @@ endtemplate sTI
 *** git push origin erica 
 **** This ensures that the branch will be pushed to github; remote
 *** Helpful link: https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
+** Now to push edits from local to remote --> git status, git add, git commit -m 'message', *git push origin erica*
+** brian2hears:
+*** Install process:
+**** pip install brian2 (this went fine!)
+**** pip install --upgrade pip     --> seemed to work, but does not work any longer, apparently?? The upgrade also didn't seem to "take" so, instead use --> *python -m pip install --upgrade pip*
+**** *python -m pip install brian2hears*
+*** repo(s):
+**** https://github.com/brian-team/brian2hears/tree/master/brian2hears
+**** https://github.com/brian-team/brian2hears
+**** ...what's the difference?
+*** Documentation / tutorials: https://brian2hears.readthedocs.io/en/stable/introduction.html
+*** Paper: https://www.frontiersin.org/articles/10.3389/fninf.2011.00009/full
+** Installed pygame 
+*** *python -m pip install pygame*
+*** Enables me to play sounds related to brian2hears
+*** pygame 1.9.6 Hello from the pygame community. https://www.pygame.org/contribute.html 2020-01-10 16:08:40.289 python[38384:8489235] 16:08:40.288 WARNING:  140: This application, or a library it uses, is using the deprecated Carbon Component Manager for hosting Audio Units. Support for this will be removed in a future release. Also, this makes the host incompatible with version 3 audio units. Please transition to the API's in AudioComponent.h.
+** Got through section 2.1 in Paper on brian2hears (link in brian2hears tab above)
