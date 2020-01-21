@@ -8,6 +8,7 @@ def cochlearInputSpikes(freqRange=[9000,11000], # orig: [20, 20000],
                         toneFreq=10000,
                         plotRaster=False): 
 
+    print(' Generating cochlear-like auditory input spikes using Brian Hears ...')
     cfmin, cfmax, cfN = freqRange[0]*Hz, freqRange[1]*Hz, numCells
     cf = erbspace(cfmin, cfmax, cfN)
     sound1 = tone(toneFreq*Hz, duration*ms)
@@ -37,8 +38,6 @@ def cochlearInputSpikes(freqRange=[9000,11000], # orig: [20, 20000],
     spkTimes = [[] for i in range(numCells)] 
     for spkt, spkid in zip(spkts, spkids):
         spkTimes[spkid].append(float(spkt)*1000.)
-        
-    import IPython; IPython.embed()
 
     return spkTimes
 
