@@ -141,7 +141,8 @@ cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 7.5*10, 'ThalI': 1.0*10}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
-
+cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+cfg.cochlearThalInput = {'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3}  # parameters to generate realistic auditory thalamic inputs using Brian Hears 
 
 #------------------------------------------------------------------------------
 # Current inputs 

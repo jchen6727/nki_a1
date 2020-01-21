@@ -193,6 +193,7 @@ was due to not using plotConn(synOrConn = 'conn') -- was counting eg AMPA+NMDA, 
 ** extremely high probs NGF4->VIP5B and NG5B->VIP4
 due to tesiting on very small net, with just 1 or 2 cells in each pop
 * 29dec2019 Discuss next steps with same
+
 a1 connectivity looks good
 
 that part mostly done now? next to constrain with data or want to put in auditory signals first?
@@ -221,6 +222,34 @@ sg
 could also assume sparse density so representing larger region with ~same num cells
 samn 12:06 PM
 good idea
+* 07jan2019 Playing with Brian Hears
+** installed and did intro tuts
+https://brian2hears.readthedocs.io/en/stable/introduction.html
+https://brian2hears.readthedocs.io/en/stable/brian.html
+
+A common model of cochlear filtering is to apply a bank of gammatone filters, and then half wave rectify and compress it (for example, with a 1/3 power law). This can be achieved in Brian hears as follows (for 3000 channels in the human hearing range from 20 Hz to 20 kHz):
+
+cfmin, cfmax, cfN = 20*Hz, 20*kHz, 3000
+cf = erbspace(cfmin, cfmax, cfN)
+sound = Sound('test.wav')
+gfb = GammatoneFilterbank(sound, cf)
+ihc = FunctionFilterbank(gfb, lambda x: clip(x, 0, Inf)**(1.0/3.0))
+
+** need brian2 to generate the spiking output
+- extract python code?
+- just extract spike times to start with:
+In [33]: M.i
+Out[33]: <spikemonitor.i: array([2691, 2788, 2813, ..., 1803, 2045, 2183], dtype=int32)>
+
+In [34]: M.t
+Out[34]: 
+<spikemonitor.t: array([ 0.74829932,  0.79365079,  0.79365079, ..., 99.97732426,
+       99.97732426, 99.97732426]) * msecond>
+** auditory nerve spiking questions:
+- provides direct input to thalamus? or through inferior colliculus? or other?
+- how many cells / netstims do we need? 
+- what frequency range to cover?
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
