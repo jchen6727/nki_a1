@@ -722,7 +722,17 @@ if cfg.addBkgConn:
         cochlearSpkTimes = cochlearInputSpikes(numCells = numCochlearCells,
                                                duration = cfg.duration,
                                                freqRange = cfg.cochlearThalInput['freqRange'],
-                                               toneFreq = cfg.cochlearThalInput['toneFreq'])
+                                               toneFreq=cfg.cochlearThalInput['toneFreq'],
+                                               loudnessDBs=cfg.cochlearThalInput['loudnessDBs'])
+                                               
+
+                                               def cochlearInputSpikes(freqRange=[4800, 5200], #[125, 20000], #[9000, 11000],  
+                        numCenterFreqs=4, #100,
+                        numCells=4*100, #10000,  # should be ~100 * numCFs
+                        duration=1000,
+                        toneFreq=5000,
+                        loudnessDBs=50,
+                        plotRaster=False): 
                                         
         netParams.popParams['cochlea'] = {'cellModel': 'VecStim', 'numCells': numCochlearCells, 'spkTimes': cochlearSpkTimes, 'ynormRange': layer['cochlear']}
 
@@ -786,7 +796,7 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': 0.5, # ?????
+            'probability': 0.25, # ?????
             'weight': cfg.weightBkg['ThalE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
@@ -797,7 +807,7 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': 0.5, # ?????
+            'probability': 0.25, # ?????
             'weight': cfg.weightBkg['ThalI'],
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}  

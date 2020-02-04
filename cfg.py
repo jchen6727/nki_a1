@@ -22,12 +22,13 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.6*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.1*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
-cfg.createNEURONObj = 0
+cfg.createNEURONObj = 1
 cfg.createPyStruct = 1
+cfg.printRunTime = 0.1
 
 #------------------------------------------------------------------------------
 # Recording 
@@ -96,7 +97,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 400.0 # This may change depending on electrode radius 
 cfg.sizeZ = 400.0
-cfg.scaleDensity = 0.1 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -139,10 +140,10 @@ cfg.addBkgConn = 1
 cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.05}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 7.5*10, 'ThalI': 1.0*10}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
 cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
-cfg.cochlearThalInput = {'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3}  # parameters to generate realistic auditory thalamic inputs using Brian Hears 
+cfg.cochlearThalInput = {'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic auditory thalamic inputs using Brian Hears 
 
 #------------------------------------------------------------------------------
 # Current inputs 

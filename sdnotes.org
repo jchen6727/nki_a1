@@ -249,6 +249,132 @@ Out[34]:
 - provides direct input to thalamus? or through inferior colliculus? or other?
 - how many cells / netstims do we need? 
 - what frequency range to cover?
+* 27jan2019 Understanding pathway from cochlea to thalamus
+** pathway
+Cochlea -> superior olivary complex -> inferior colliculus -> thalamus (MGB) (-> A1)
+
+transform sound to spiking activity arriving at MGB
+** Ruben auditory brainstem model
+https://github.com/rat-h/auditory-brainstem-model/blob/master/mainmodel.cfg - has some conn info between SBC->LSO
+https://sites.google.com/site/auditorybsmodel/home
+https://github.com/rat-h/auditory-brainstem-model/blob/master/wiki/HOWTO.md
+
+*** Cell types / populations
+Cochlea:
+- auditory hair cells (AN)
+- ventral cochlear nucleus (VCN):
+-- spherical bushy cells (SBC); type II and type I-c
+-- globular bushy cell (GBC); type I-c
+
+Superior olivary complex:
+- medial nuclei of the trapezoid body (MNTB)
+- lateral superior olive (LSO)
+
+Note: missing inferior colliculus
+
+** paper on auditory nerve model
+https://www.jneurosci.org/content/30/31/10380.long
+
+** Function of areas
+*** Auditory nerve
+- there are around 30,000 auditory nerve fibres in each of the two auditory nerves. 
+- Each fiber is an axon of a spiral ganglion cell that represents a particular frequency of sound, and a particular range of loudness. 
+- Information in each nerve fibre is represented by the rate of action potentials as well as the particular timing of individual action potentials. 
+
+*** cochlear nucleus
+- The particular physiology and morphology of each cochlear nucleus cell type enhances different aspects of sound information.
+- Several tasks are performed in the cochlear nuclei. 
+- By distributing acoustic input to multiple types of principal cells, the auditory pathway is subdivided into parallel ascending pathways, which can simultaneously extract different types of information. 
+- VCN: The cells of the ventral cochlear nucleus extract information that is carried by the auditory nerve in the timing of firing and in the pattern of activation of the population of auditory nerve fibers. 
+- DCN: The cells of the dorsal cochlear nucleus perform a non-linear spectral analysis and place that spectral analysis into the context of the location of the head, ears and shoulders and that separate expected, self-generated spectral cues from more interesting, unexpected spectral cues using igh-level. 
+
+*** Superior olivary complex
+- MTO and LSO
+-- The medial superior olive (MSO) is a specialized nucleus that is believed to measure the time difference of arrival of sounds between the ears (the interaural time difference or ITD).
+-- The lateral superior olive (LSO) is believed to be involved in measuring the difference in sound intensity between the ears (the interaural level difference or ILD).
+
+- MNTB 
+-- neurons plays essentials roles in the localization of sound sources and encoding temporal features of complex sounds
+-- https://www.ncbi.nlm.nih.gov/pubmed/25873865
+
+*** Inferior colliculus
+- Has 3 subdivisions: the central nucleus, the dorsal cortex by which it is surrounded, and an external cortex which is located laterally
+- Receives input from: braistem, MGB, A1, basal ganglia, superior colliculus and otherwise; outputs to MGB
+- Integrative station and switchboard. 
+- Involved in the integration and routing of multi-modal sensory perception, mainly the startle response and vestibulo-ocular reflex. 
+- Responsive to specific amplitude modulation frequencies and this might be responsible for detection of pitch. 
+- Also related to spatial localization by binaural hearing.
+- The receptive fields in inferior colliculus can be seen adapted to handling natural sound transformations.
+
+** email to Sue and Emili
+Hi Sue and Emili,
+ 
+As you know we are developing an auditory thalamocortical model with Peter Lakatos. We are trying to figure out what would be an appropriate model to transform an arbitrary sound input signal to the inputs arriving at thalamus (MGB), including processing at cochlea, superior olivary complex and inferior colliculus.
+ 
+We started looking at Brian Hears (http://www.briansimulator.org/docs/hears), which does some cochlea-like filtering, but we are not sure its output can be directly used as input to MGB. We are also looking at this model of auditory brainstem implemented in NEURON, but this might be too detailed and computationally expensive. Ideally, we are looking for some fast phenomenological model that captures the input pathway transformations and outputs spike that can be fed to MGB.
+ 
+Do you have any insights or suggested models ?
+ 
+Thanks!
+Salva
+** email from Emili
+from Emili: “With regards to your model, in our recent paper, we used a peripheral implementation which is relatively up to date, and pretty fast, not sure if is what you are after but perhaps it is useful.
+https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006820”
+
+I checked the model and it’s in Python (compatible with 2 and 3) … and seems to capture more details than Brian Hears
+
+https://github.com/qtabs/moch 
+
+** email from Sue Denham
+Sue Denham: “Regarding the peripheral model .. there are many out there .. but to be honest i do not think the processing much beyond the cochlea and small aspects in the cochlear nucleus and IC have been modelled well yet. Emili’s suggestion is probably a good one. It depends though on how realistic you want to be. And of course there are also massive feedback projections which are largely ignored .. good luck :-)”
+
+** Emili's model
+https://github.com/qtabs/moch
+https://github.com/mrkrd/cochlea
+https://github.com/mrkrd/thorns
+https://link.springer.com/article/10.1007%2Fs00441-015-2202-z
+
+*** installing cochlea
+[error:fatal error: 'numpy/arrayobject.h' file not found; solved by adding path to CFLAGS]
+setenv CFLAGS "-I/usr/local/lib/python3.7/site-packages/numpy/core/include/"
+pip install cochlea (or git clone and python setup.py install)
+
+** Convergence of cochelar auditory nerve fibers onto MGB (indirect, )
+- from  https://sites.google.com/site/auditorybsmodel/home): 
+
+Table 2.
+
+                        lSBC        sSBC        GBS     D-SC
+
+N                      36600        36600       6300    6300    
+
+Converging ANFs, n      2-3        2-3          ~23     10
+
+
+
+Table 3.
+                        MNTB-PC    LSO-PC
+
+N                       2000-6000  75% of the population
+
+Excitatory  Inputs, n       1      10
+
+- conn: SBC -> LSO and GBC -> LSO
+- convergence ANF to LSO cells = 2-3 * 10 = 20-30 or 23 * 10 = 230; assume first, so 25 ANF inputs per LSO cell  
+
+
+- convergence between LSO cells to MGB cells (Oliv18; chapter 2)
+-- Almost all of the ascending projections to the MG arise in the ipsilateral IC with a small contribution from the contralateral IC
+-- LSO / inferior colliculus has complex circuitry with multiple layers and several morphologically distinct cell populations 
+-- 10-30% of inhibitory projections 
+
+- number of ANFs:
+-- human: 30,000
+-- cat: 50,000
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
+
+- similar tuning in macaques as in humans:
+-- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
 
 * CELL TYPES
 ** Budinger et al 2018

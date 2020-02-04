@@ -1,46 +1,95 @@
 # input.py
-from brian2 import *
-from brian2hears import *
+# Generate cochlear input spikes to use auditory thalamocortical model
 
-def cochlearInputSpikes(freqRange=[9000,11000], # orig: [20, 20000],
-                        numCells=200, # orig: [3000]
+def cochlearInputSpikes(freqRange=[4800, 5200], #[125, 20000], #[9000, 11000],  
+                        numCenterFreqs=4, #100,
+                        numCells=4*100, #10000,  # should be ~100 * numCFs
                         duration=1000,
-                        toneFreq=10000,
+                        toneFreq=5000,
+                        loudnessDBs=50,
                         plotRaster=False): 
 
-    print(' Generating cochlear-like auditory input spikes using Brian Hears ...')
-    cfmin, cfmax, cfN = freqRange[0]*Hz, freqRange[1]*Hz, numCells
-    cf = erbspace(cfmin, cfmax, cfN)
-    sound1 = tone(toneFreq*Hz, duration*ms)
-    sound2 = whitenoise(duration*ms)
-    sound = sound1+sound2
-    sound = sound.ramp()
-    gfb = Gammatone(sound, cf)
-    ihc = FunctionFilterbank(gfb, lambda x: 3 * clip(x, 0, Inf)**(1.0 / 3.0))
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import scipy.signal as dsp
+    import cochlea
 
-    # Leaky integrate-and-fire model with noise and refractoriness
-    eqs = '''
-    dv/dt = (I-v)/(1*ms)+0.2*xi*(2/(1*ms))**.5 : 1 (unless refractory)
-    I : 1
-    '''
-    G = FilterbankGroup(ihc, 'I', eqs, reset='v=0', threshold='v>1', refractory=5*ms, method='euler')
+    fs = 100e3
 
-    # Run, and raster plot of the spikes
-    M = SpikeMonitor(G)
-    run(sound.duration)
+    # Make sound
+    t = np.arange(0, duration/1000.0, 1/fs)
+    s = dsp.chirp(t, toneFreq-100, t[-1], toneFreq+100)
+    s = cochlea.set_dbspl(s, loudnessDBs)
+    pad = np.zeros(int(10e-3 * fs))
+    sound = np.concatenate( (s, pad) )
+
+    # Run model
+    anf = cochlea.run_zilany2014(
+        sound,
+        fs,
+        anf_num=(numCells/numCenterFreqs, 0, 0),  # the desired number of auditory nerve fibers per frequency channel (CF)
+        cf=(freqRange[0], freqRange[1], numCenterFreqs), # the center frequency(s) of the simulated auditory nerve fibers
+        seed=0,
+        powerlaw='approximate',
+        species='human',
+    )
+
+    # Accumulate spike trains
+    #anf_acc = th.accumulate(anf, keep=['cf', 'duration'])
+    #anf_acc.sort_values('cf', ascending=False, inplace=True)
+
+    # Plot auditory nerve response
     if plotRaster:
-        plot(M.t / ms, M.i, '.')
-        plt.show()
+        pass
 
     # generate list of spk times
-    spkts = list(M.t)
-    spkids = list(M.i)
-    spkTimes = [[] for i in range(numCells)] 
-    for spkt, spkid in zip(spkts, spkids):
-        spkTimes[spkid].append(float(spkt)*1000.)
-
+    spkTimes = [list(anf.iloc[i]['spikes']*1000.) for i in range(numCells)]
+    
     return spkTimes
 
 
+# def cochlearInputSpikesBrianHears(freqRange=[9000,11000], # orig: [20, 20000],
+#                         numCells=200, # orig: [3000]
+#                         duration=1000,
+#                         toneFreq=10000,
+#                         plotRaster=False): 
+
+#     from brian2 import *
+#     from brian2hears import *
+
+#     print(' Generating cochlear-like auditory input spikes using Brian Hears ...')
+#     cfmin, cfmax, cfN = freqRange[0]*Hz, freqRange[1]*Hz, numCells
+#     cf = erbspace(cfmin, cfmax, cfN)
+#     sound1 = tone(toneFreq*Hz, duration*ms)
+#     sound2 = whitenoise(duration*ms)
+#     sound = sound1+sound2
+#     sound = sound.ramp()
+#     gfb = Gammatone(sound, cf)
+#     ihc = FunctionFilterbank(gfb, lambda x: 3 * clip(x, 0, Inf)**(1.0 / 3.0))
+
+#     # Leaky integrate-and-fire model with noise and refractoriness
+#     eqs = '''
+#     dv/dt = (I-v)/(1*ms)+0.2*xi*(2/(1*ms))**.5 : 1 (unless refractory)
+#     I : 1
+#     '''
+#     G = FilterbankGroup(ihc, 'I', eqs, reset='v=0', threshold='v>1', refractory=5*ms, method='euler')
+
+#     # Run, and raster plot of the spikes
+#     M = SpikeMonitor(G)
+#     run(sound.duration)
+#     if plotRaster:
+#         plot(M.t / ms, M.i, '.')
+#         plt.show()
+
+#     # generate list of spk times
+#     spkts = list(M.t)
+#     spkids = list(M.i)
+#     spkTimes = [[] for i in range(numCells)] 
+#     for spkt, spkid in zip(spkts, spkids):
+#         spkTimes[spkid].append(float(spkt)*1000.)
+
+#     return spkTimes
+
+
 # main
-# auditoryInputSpikes(plotRaster=1)
+spk=cochlearInputSpikes(plotRaster=1)
