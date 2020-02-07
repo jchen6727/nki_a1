@@ -222,7 +222,7 @@ sg
 could also assume sparse density so representing larger region with ~same num cells
 samn 12:06 PM
 good idea
-* 07jan2019 Playing with Brian Hears
+* 07jan2020 Playing with Brian Hears
 ** installed and did intro tuts
 https://brian2hears.readthedocs.io/en/stable/introduction.html
 https://brian2hears.readthedocs.io/en/stable/brian.html
@@ -249,7 +249,7 @@ Out[34]:
 - provides direct input to thalamus? or through inferior colliculus? or other?
 - how many cells / netstims do we need? 
 - what frequency range to cover?
-* 27jan2019 Understanding pathway from cochlea to thalamus
+* 27jan2020 Understanding pathway from cochlea to thalamus
 ** pathway
 Cochlea -> superior olivary complex -> inferior colliculus -> thalamus (MGB) (-> A1)
 
@@ -375,6 +375,101 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
 
 - similar tuning in macaques as in humans:
 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
+* Feb62020 Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)
+** email from slava
+Hi Everyone,
+Thanks for your interest in the 'auditory-brainstem-model' description. I think, it might also be good to check e.g. the Auditory Modeling Toolbox (AMT) and maybe some implementations might be useful for your project. The AMT collection contains many models for different stages of the auditory system ( + description/documentation and references).
+http://amtoolbox.sourceforge.net/models.php
+>>a low to moderate complexity circuit model 
+Regarding the IC stage and (functional) input transmission to higher centers, maybe it would be interesting to check Nelson and Carney (2004) as a first step for your project. This is a phenomenological CN-IC model with the same-frequency inhibition and excitation implementation, which can be stimulated by the AN model. It is better to use filter implementation (Python or Matlab) which is faster than convolution.
+https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
+Best regards,
+Slava
+** chat with sam
+so I’m gonna check the SOC,IC reduced models he suggested here
+3:22
+and if makes sense probably used those (maybe in combination with the Cochlea package, if they dont have a cochlea built in)
+
+samn  3:22 PM
+ic, sg ... i looked at that page briefly but not at the code it lists
+3:24
+by cns/sfn will prob be able to compare nhp data and model output under speech input
+
+salvadord  4:37 PM
+yes, in theory once I connect the cochlea/SOC/IC, the next step would be to tune the network params to reproduce some physio data… so could start using some data for that
+
+samn  4:44 PM
+sg
+
+salvadord  1:01 PM
+the model suggested by Slava (not Salva!) transforms .wav file to IC output spikes … so looks perfect, except that it’s in Matlab and C++
+image.png 
+image.png
+
+
+1:02
+in theory they say works with Octave, so could potentially just call code from netpyne at start, generate spikes and save the to file, and then read from netpyne
+
+samn  1:02 PM
+ah, wonder if can convert to py or just use to produce spikes
+1:02
+if works in octave sg
+
+salvadord  1:02 PM
+other option would be to convert to py … right … but that might take more time as code doesnt look simple, and has the C++ code embedded
+1:02
+ok, I’ll try the octave option for now
+
+samn  1:02 PM
+sg
+1:02
+thx
+1:03
+want wav files? or just testing first anyway
+
+salvadord  1:03 PM
+if find a brave student could be a nice project to convert to py, and useful for others…
+
+samn  1:03 PM
+yeah
+
+salvadord  1:03 PM
+sure if have experiment wav can share, but not urgent
+** links to Matlab code
+https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
+https://www.urmc.rochester.edu/MediaLibraries/URMCMedia/labs/carney-lab/codes/UR_EAR_v2_1.zip
+** Conversion to Octave
+- installed Octave 4.4.1 for mac (bundled dmg)
+- pkg install -forge control
+- pkg install -forge signal
+- pkg load control
+- pkg load signal
+
+- UR_EAR_v2_1.m - doesn't work -- many missing functions, specially for GUI
+
+- extracted code from UR_EAR_v2_1.m; removing all of GUI components
+- Used the following models:
+-- Which_IC = 2 AN_ModFilt model (Mao et al., 2016)
+-- Which_AN = 1 (Zilany et al., 2014)
+
+** Progress but now stuck (chat)
+installed Octave and tried code but lots of missing functions, specially for GUI stuff which is all mixed in code
+
+
+5:22
+been working on extracting the essential code (without GUI) and replacing missing funcs etc
+5:23
+have first stages working now, but now have issue with some of the C code and compiled mex version, which not working in Octave
+
+billl  5:23 PM
+octave generally a disaster and think has fallen further and further behind -- in fact i asked about it at the review last week and everyone said fuggedaboutit
+
+salvadord  5:24 PM
+will see if can find work around … unfortunately the simple IC model (filter version recommended by Slava) doesnt include the .c code, just the compiled versions, which don’t seem to be recognized by Octave
+5:26
+octave disaster - I was actually quite impressed with how advanced was since last time I tried … version 4.4 and nice GUI, plus many packages available … but yeah, still not matlab
+5:26
+I will keep trying to find solution … otherwise guess potentially could use matlab to generate inputs for now, since available at NKI
 
 * CELL TYPES
 ** Budinger et al 2018
