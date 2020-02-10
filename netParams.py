@@ -729,12 +729,17 @@ if cfg.addBkgConn:
 
     if cfg.ICThalInput:
         # load file with IC output rates
-        
-        ICrates = [[]]  # 2D list with time-dep rates for each cell
-        ICtimes = []  # list with times to set each time-dep rate
-        numICCells = len(ICrates)
-        
-        netParams.popParams['cochlea'] = {'cellModel': 'DynamicNetStim', 'numCells': numICCells, 'ynormRange': layer['cochlear'],
+        from scipy.io import loadmat
+        import numpy as np
+
+        data = loadmat(cfg.ICThalInput['file'])
+        fs = data['RsFs'][0][0]
+        ICrates = data['BE_sout_population'].to_list()
+        ICtimes = list(np.arange(0, cfg.duration, 1000./fs))  # list with times to set each time-dep rate
+        numCells = len(ICrates)
+
+        # create population of DynamicNetStims with time-varying rates
+        netParams.popParams['IC'] = {'cellModel': 'DynamicNetStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'dynamicRates': {'rates': ICrates, 'times': ICtimes}}
 
     # connect stim sources to target cells
@@ -804,6 +809,30 @@ if cfg.addBkgConn:
         
         netParams.connParams['cochlea->ThalI'] = { 
             'preConds': {'pop': 'cochlea'}, 
+            'postConds': {'cellType': ['RE']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': 0.25, # ?????
+            'weight': cfg.weightBkg['ThalI'],
+            'synMechWeightFactor': cfg.synWeightFractionEI,
+            'delay': cfg.delayBkg}  
+
+
+    if cfg.ICThalInput:
+        netParams.connParams['IC->ThalE'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'cellType': ['TC', 'HTC']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': 0.25, # ?????
+            'weight': cfg.weightBkg['ThalE'],
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': cfg.delayBkg}
+        
+        netParams.connParams['IC->ThalI'] = { 
+            'preConds': {'pop': 'IC'}, 
             'postConds': {'cellType': ['RE']},
             'sec': 'soma', 
             'loc': 0.5,

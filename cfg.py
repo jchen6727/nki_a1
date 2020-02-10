@@ -144,7 +144,7 @@ cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  # co
 cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
 cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
 cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
-cfg.ICThalInput = {'file': 'data/ICoutput_sound1.mat'}  # parameters to generate realistic  
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat'}  # parameters to generate realistic  
 
 #------------------------------------------------------------------------------
 # Current inputs 

@@ -1,10 +1,10 @@
 : $Id: nsloc.mod,v 1.7 2013/06/20  salvad $
 : from nrn/src/nrnoc/netstim.mod
-: modified to use as proprioceptive units in arm2dms model
+: modified to use allow for time-dependent intervals 
 
 NEURON	{ 
   ARTIFICIAL_CELL DynamicNetStim
-  RANGE interval, number, start, xloc, yloc, zloc, id, type, subtype, fflag, mlenmin, mlenmax, checkInterval
+  RANGE interval, number, start, id, type, subtype, fflag, mlenmin, mlenmax, checkInterval
   RANGE noise
   THREADSAFE : only true if every instance has its own distinct Random
   POINTER donotuse
@@ -15,9 +15,6 @@ PARAMETER {
 	number	= 3000 <0,1e9>	: number of spikes (independent of noise)
 	start		= 1 (ms)	: start of first spike
 	noise		= 0 <0,1>	: amount of randomness (0.0 - 1.0)
-    xloc = -1 
-    yloc = -1 
-    zloc = -1         : location
     id = -1
     type = -1
     subtype = -1
