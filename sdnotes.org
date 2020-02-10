@@ -440,6 +440,8 @@ https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.asp
 https://www.urmc.rochester.edu/MediaLibraries/URMCMedia/labs/carney-lab/codes/UR_EAR_v2_1.zip
 ** Conversion to Octave
 - installed Octave 4.4.1 for mac (bundled dmg)
+- https://github.com/joyofdata/octave-matlab
+
 - pkg install -forge control
 - pkg install -forge signal
 - pkg load control
@@ -470,6 +472,19 @@ will see if can find work around … unfortunately the simple IC model (filter v
 octave disaster - I was actually quite impressed with how advanced was since last time I tried … version 4.4 and nice GUI, plus many packages available … but yeah, still not matlab
 5:26
 I will keep trying to find solution … otherwise guess potentially could use matlab to generate inputs for now, since available at NKI
+** installed Matlab - all works
+** output of IC is avg firing rate -- how to input in NEURON?
+- vec.play stim into NetStim
+- eg:
+init_amp = 0.0
+peak_amp = 0.24
+ramp_up = np.linspace(init_amp, peak_amp, simConfig.duration/(simConfig.dt))
+t = h.Vector(np.arange(0,simConfig.duration, simConfig.dt))
+amp = h.Vector(ramp_up)
+for cell in sim.net.cells:
+    try:
+        amp.play(cell.stims[0]['hObj']._ref_amp, t, True)
+    except:
 
 * CELL TYPES
 ** Budinger et al 2018

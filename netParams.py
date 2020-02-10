@@ -727,6 +727,16 @@ if cfg.addBkgConn:
                                               
         netParams.popParams['cochlea'] = {'cellModel': 'VecStim', 'numCells': numCochlearCells, 'spkTimes': cochlearSpkTimes, 'ynormRange': layer['cochlear']}
 
+    if cfg.ICThalInput:
+        # load file with IC output rates
+        
+        ICrates = [[]]  # 2D list with time-dep rates for each cell
+        ICtimes = []  # list with times to set each time-dep rate
+        numICCells = len(ICrates)
+        
+        netParams.popParams['cochlea'] = {'cellModel': 'DynamicNetStim', 'numCells': numICCells, 'ynormRange': layer['cochlear'],
+            'dynamicRates': {'rates': ICrates, 'times': ICtimes}}
+
     # connect stim sources to target cells
     netParams.stimTargetParams['bkgE->E'] =  {
         'source': 'bkgE', 
