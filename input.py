@@ -1,5 +1,8 @@
 # input.py
 # Generate cochlear input spikes to use auditory thalamocortical model
+import numpy as np
+
+rng = np.random.RandomState()
 
 def cochlearInputSpikes(freqRange=[4800, 5200], #[125, 20000], #[9000, 11000],  
                         numCenterFreqs=4, #100,
@@ -9,7 +12,7 @@ def cochlearInputSpikes(freqRange=[4800, 5200], #[125, 20000], #[9000, 11000],
                         loudnessDBs=50,
                         plotRaster=False): 
 
-    import numpy as np
+    
     import matplotlib.pyplot as plt
     import scipy.signal as dsp
     import cochlea
@@ -104,7 +107,7 @@ def poisson_generator(rate, t_start=0.0, t_stop=1000.0):
         rate    - the rate of the discharge (in Hz)
         t_start - the beginning of the SpikeTrain (in ms)
         t_stop  - the end of the SpikeTrain (in ms)
-        array   - if True, a numpy array of sorted spikes is returned,
+        array   - if True, a np array of sorted spikes is returned,
                     rather than a SpikeTrain object.
 
     Examples:
@@ -121,21 +124,21 @@ def poisson_generator(rate, t_start=0.0, t_stop=1000.0):
 
     # less wasteful than double length method above
     n = (t_stop-t_start)/1000.0*rate
-    number = numpy.ceil(n+3*numpy.sqrt(n))
+    number = np.ceil(n+3*np.sqrt(n))
     if number<100:
-        number = min(5+numpy.ceil(2*n),100)
+        number = min(5+np.ceil(2*n),100)
 
     if number > 0:
         isi = rng.exponential(1.0/rate, int(number))*1000.0
         if number > 1:
-            spikes = numpy.add.accumulate(isi)
+            spikes = np.add.accumulate(isi)
         else:
             spikes = isi
     else:
-        spikes = numpy.array([])
+        spikes = np.array([])
 
     spikes+=t_start
-    i = numpy.searchsorted(spikes, t_stop)
+    i = np.searchsorted(spikes, t_stop)
 
     extra_spikes = []
     if i==len(spikes):
@@ -147,10 +150,10 @@ def poisson_generator(rate, t_start=0.0, t_stop=1000.0):
             extra_spikes.append(t_last)
             t_last += rng.exponential(1.0/rate, 1)[0]*1000.0
         
-        spikes = numpy.concatenate((spikes,extra_spikes))
+        spikes = np.concatenate((spikes,extra_spikes))
 
     else:
-        spikes = numpy.resize(spikes,(i,))
+        spikes = np.resize(spikes,(i,))
 
     return spikes
 
@@ -167,7 +170,7 @@ def inh_poisson_generator(rate, t, t_stop):
         t      - an array specifying the time bins (in milliseconds) at which to 
                     specify the rate
         t_stop - length of time to simulate process (in ms)
-        array  - if True, a numpy array of sorted spikes is returned,
+        array  - if True, a np array of sorted spikes is returned,
                     rather than a SpikeList object.
 
     Note:
@@ -193,24 +196,24 @@ def inh_poisson_generator(rate, t, t_stop):
         poisson_generator, inh_gamma_generator, inh_adaptingmarkov_generator
     """
 
-    if numpy.shape(t)!=numpy.shape(rate):
+    if np.shape(t)!=np.shape(rate):
         raise ValueError('shape mismatch: t,rate must be of the same shape')
 
     # get max rate and generate poisson process to be thinned
-    rmax = numpy.max(rate)
+    rmax = np.max(rate)
     ps = poisson_generator(rate=rmax, t_start=t[0], t_stop=t_stop)
 
     # return empty if no spikes
     if len(ps) == 0:
-        numpy.array([])
+        np.array([])
         
     # gen uniform rand on 0,1 for each spike
-    rn = numpy.array(rng.uniform(0, 1, len(ps)))
+    rn = np.array(rng.uniform(0, 1, len(ps)))
 
     # instantaneous rate for each spike
-    idx = numpy.searchsorted(t, ps) - 1
+    idx = np.searchsorted(t, ps) - 1
     #spike_rate = rate[idx]
-    spike_rate = numpy.array([rate[i] for i in idx])
+    spike_rate = np.array([rate[i] for i in idx])
 
     # thin and return spikes
     spike_train = ps[rn<spike_rate/rmax]

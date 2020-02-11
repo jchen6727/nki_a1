@@ -20,9 +20,6 @@ Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 from netpyne import sim
 
 cfg, netParams = sim.readCmdLineArgs(simConfigDefault='cfg.py', netParamsDefault='netParams.py')
-# sim.initialize(netParams, cfg)
-# sim.net.createCells()
-# sim.gatherData()
 #sim.create(netParams, cfg)
 #sim.gatherData()
 

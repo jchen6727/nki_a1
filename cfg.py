@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.1*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -33,7 +33,7 @@ cfg.printRunTime = 0.1
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'IC']
 
 alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE']
 
@@ -48,7 +48,7 @@ cfg.recordLFP = [[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim38'
+cfg.simLabel = 'v11_sim39'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -68,7 +68,7 @@ cellGids = {'NGF1': 0, 'IT2': 45, 'SOM2': 146, 'PV2': 147, 'VIP2': 151, 'NGF2': 
 popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
 cfg.analysis['plotTraces'] = {'include': [158, 2689, 3648], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300, 'timeRange':[100,600]}      	## Plot a raster
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
