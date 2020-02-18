@@ -486,6 +486,13 @@ for cell in sim.net.cells:
         amp.play(cell.stims[0]['hObj']._ref_amp, t, True)
     except:
 
+* Feb182020 Preparing to tune model
+** consolidated all cell params in .json files
+including 3d pt morphologies and weightNorm
+** select network size
+diam 200 um = 12856 cells
+diam 300 um = 28897 cells
+diam 400 um = 51344 cells 
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
