@@ -618,7 +618,7 @@ if cfg.addBkgConn:
         'sec': 'soma', 
         'loc': 0.5,
         'synMech': ESynMech,
-        'weight': cfg.weightBkg['E']*1.0,
+        'weight': cfg.weightBkg['E'],
         'synMechWeightFactor': cfg.synWeightFractionEE,
         'delay': cfg.delayBkg}
 
@@ -632,6 +632,7 @@ if cfg.addBkgConn:
         'synMechWeightFactor': cfg.synWeightFractionEI,
         'delay': cfg.delayBkg}
 
+    # connect random thalamic inputs
     if cfg.randomThalInput:
         netParams.stimTargetParams['bkgThalE->ThalE'] =  {
             'source': 'bkgThalE', 
@@ -639,7 +640,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'weight': cfg.weightBkg['ThalE'],
+            'probability': cfg.probInput['ThalE'], 
+            'weight': cfg.weightInput['ThalE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
@@ -649,10 +651,12 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'weight': cfg.weightBkg['ThalI'],
+            'probability': cfg.probInput['ThalE'], 
+            'weight': cfg.weightInput['ThalI'],
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}
 
+    # connect cochlear thalamic input
     if cfg.cochlearThalInput:
         netParams.connParams['cochlea->ThalE'] = { 
             'preConds': {'pop': 'cochlea'}, 
@@ -660,8 +664,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': 0.25, # ?????
-            'weight': cfg.weightBkg['ThalE'],
+            'probability': cfg.probInput['ThalE'], 
+            'weight': cfg.weightInput['ThalE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
         
@@ -671,12 +675,12 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': 0.25, # ?????
-            'weight': cfg.weightBkg['ThalI'],
+            'probability': cfg.probInput['ThalI'], 
+            'weight': cfg.weightInput['ThalI'],
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}  
 
-
+    # connect cochlear + IC thalamic inputs
     if cfg.ICThalInput:
         netParams.connParams['IC->ThalE'] = { 
             'preConds': {'pop': 'IC'}, 
@@ -684,8 +688,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': 0.25, # ?????
-            'weight': cfg.weightBkg['ThalE'],
+            'probability': cfg.probInput['ThalE'],
+            'weight': cfg.weightInput['ThalE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
         
@@ -695,8 +699,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': 0.25, # ?????
-            'weight': cfg.weightBkg['ThalI'],
+            'probability': cfg.probInput['ThalI'], 
+            'weight': cfg.weightInput['ThalI'],
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}  
 

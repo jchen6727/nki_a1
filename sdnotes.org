@@ -493,6 +493,48 @@ including 3d pt morphologies and weightNorm
 diam 200 um = 12856 cells
 diam 300 um = 28897 cells
 diam 400 um = 51344 cells 
+** feedback from blake on evol param optimization
+Thank you, Salva. Those comments are very helpful!
+
+That sounds like a tough problem for M1. I think with HNN we were lucky that the parameter space for each round was constrained to <8 parameters and we knew the timing was most critical. My thoughts go to what I’ve been experimenting lately with for the initial optimization (“bootstrapping”). Another PhD student and I have been looking at Delfi, which does inference by using neural networks for density estimation. I’m still learning about the choices involved in constructing the neural network, but I feel it’s a promising direction for these types of problems.
+https://github.com/mackelab/delfi/
+
+I’ve run Delfi with HNN and the results are interesting. We were able to run 1M simulations because of the shorter runtime with HNN and it gave us a narrow posterior for the input timings, and acceptable ranges for most synaptic strengths. It also correctly identified parameters that have a minimal impact—their posteriors broad were extremely broad. 
+
+Thinking about how to get the most information out of each simulation, training a neural network seems to be a good fit for your problem. Our HNN test with Delfi was really just a sensitivity analysis. We only ran a single round, where the priors were uniform distributions. However, instead of running a single round, I think you’d benefit from fewer simulations, but more rounds. Each of the algorithms implemented in Delfi can run sequential batches (like evolutionary methods), but they also derive value from all previous simulations by using the complete data set for network training. They iteratively update the model in contrast to evolutionary algorithms that are elucidating relationships (successful progeny) from scratch at each round and throwing out the same bad fits over and over.
+
+You may not be looking for an entirely new approach, but just wanted to share this. I’d love to talk more about it.
+
+Best,
+** response to blake
+Hi Blake, thanks, this is really interesting.
+ 
+We recently went through the delfi biorxiv paper in our journal club, and were not totally convinced of it's usefulness, particularly due to the number of sims required. But great to hear you tried it and produced useful results.
+ 
+In the M1 model we have a relativey good idea of the params we are happy to optimize: ~10 connectitvity-related params, within boundaries that were not totally constrained by literature. The main concern is what method to use to find the right parameter values, e.g. multiobjective optim vs evolution strategy, what metaparameters, possibly using some method like the latin hypercube to better explore the param space, …. That said this delfi method seems very useful to verify whether we are selecting suitbale parameters and value ranges; and generally to explore param sensitivity, which we are also interested in doing.
+ 
+Do you have time to chat about this some time on Thursday (Feb 27) ?
+** potential list of parameters to tune
+# overall weights gains 
+cfg.EEGain = 1.0 
+cfg.EIGain = 1.0 
+cfg.IEGain = 1.0 
+cfg.IIGain = 1.0 
+
+# I->E/I weights gains for each layer (L2/3+4, L5, L6)
+cfg.IEweights = [1.0, 1.0, 1.0] 
+cfg.IIweights = [1.5, 1.0, 1.0]
+
+# Weight and rate of background inputs to thal
+cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  
+cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
+
+# weight and prob conn of cochlear+IC inputs to thal
+cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  
+cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  
+
+** fitness function
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
