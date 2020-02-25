@@ -595,6 +595,7 @@ if cfg.addBkgConn:
         # Option 2:
         from input import inh_poisson_generator
 
+        print(ICrates, ICtimes)
         spkTimes = [inh_poisson_generator(ICrates[i][:len(ICtimes)], ICtimes, cfg.duration) for i in range(len(ICrates))]
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}

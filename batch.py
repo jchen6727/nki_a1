@@ -803,7 +803,7 @@ if __name__ == '__main__':
     #                     'PV_reduced': ['PV2', 'SOM2'],
     #                     'VIP_reduced': ['VIP2'],
     #                     'NGF_reduced': ['NGF2'],
-                         'RE_reduced': ['IRE', 'TC', 'HTC']}
+    #                     'RE_reduced': ['IRE', 'TC', 'HTC']}
  
     # batchIndex = 8
     # for k, v in popsWeightNorm.items(): 
