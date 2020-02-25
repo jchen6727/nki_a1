@@ -137,11 +137,11 @@ cfg.addSubConn = 1
 # Background inputs
 #------------------------------------------------------------------------------
 cfg.addBkgConn = 1
-cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.05}  # firing rate random noise
+cfg.noiseBkg = {'A1': 1.0, 'thalamus': 1.0}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
+cfg.weightBkg = {'E': 0.5, 'I': 0.5, 'ThalE': 0.5, 'ThalI': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
+cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
 
 ## options to provide external sensory input
 cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
