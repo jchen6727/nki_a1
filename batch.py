@@ -555,29 +555,16 @@ def custom():
     params = specs.ODict()
 
     params[('ratesLong', 'TPO', 1)] = [5, 5] 	#[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'TVL', 1)] = [2, 2.5] #[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'S1', 1)] =  [5, 5] 	#[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'S2', 1)] =  [5, 5] 	#[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'cM1', 1)] = [2, 2.5] #[2,2,2,4,2,4,4,4]
-    params[('ratesLong', 'M2', 1)] =  [2, 2.5] #[2,2,2,4,2,4,4,4]
-    params[('ratesLong', 'OC', 1)] =  [5, 5]	
+    cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  # corresponds to unitary connection somatic EPSP (mV)
+    cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
 
-    # # L2/3+4
-    params[('IEweights',0)] =  [0.6,0.8]
-    params[('IIweights',0)] =  [1.0,1.2] #[0.8, 1.0]   
-    # L5
-    params[('IEweights',1)] = [0.8] #[0.8, 1.0]   
-    params[('IIweights',1)] = [1.0] #[0.8, 1.0]
-    # L6
-    params[('IEweights',2)] =  [1.0] # [0.8, 1.0]  
-    # params[('IIweights',2)] =  [0.8, 1.0, 1.2]
+    ## options to provide external sensory input
+    cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+    cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
+    cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat'}  # parameters to generate realistic cochlear + IC input
 
-    params[('pulse', 'rate')] = [10.0] # [10.0, 15.0]
-
-    params[('pulse', 'pop')] = ['S2', 'M2'] # ['TPO', 'S1', 'S2', 'TVL', 'cM1', 'M2']
-
-
-    params['ihGbar'] = [0.25, 1.0] #[0.2, 0.25, 0.3, 1.0]
+    cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
+    cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn 
 
     groupedParams = [('ratesLong', 'TPO', 1), ('ratesLong', 'TVL', 1),
                     ('ratesLong', 'S1', 1), ('ratesLong', 'S2', 1),
@@ -587,38 +574,6 @@ def custom():
     # initial config
     initCfg = {}
     initCfg['duration'] = 2.0*1e3
-    initCfg['ihModel'] = 'migliore'  # ih model
-
-    initCfg['ihGbarBasal'] = 1.0 # multiplicative factor for ih gbar in PT cells
-    initCfg['ihlkc'] = 0.2 # ih leak param (used in Migliore)
-    initCfg['ihLkcBasal'] = 1.0 # multiplicative factor for ih lk in PT cells
-    initCfg['ihLkcBelowSoma'] = 0.01 # multiplicative factor for ih lk in PT cells
-    initCfg['ihlke'] = -86  # ih leak param (used in Migliore)
-    initCfg['ihSlope'] = 28  # ih leak param (used in Migliore)
-
-    initCfg['somaNa'] = 5.0  # somatic Na conduct
-    initCfg['dendNa'] = 0.3  # dendritic Na conduct (reduced to avoid dend spikes) 
-    initCfg['axonNa'] = 7   # axon Na conduct (increased to compensate) 
-    initCfg['axonRa'] = 0.005
-    initCfg['gpas'] = 0.5
-    initCfg['epas'] = 0.9
-
-    #initCfg[('pulse', 'pop')] = 'None'
-    #initCfg[('pulse', 'rate')] = 10.0
-    initCfg[('pulse', 'start')] = 1000.0
-    initCfg[('pulse', 'end')] = 1100.0
-    initCfg[('pulse', 'noise')] = 0.8
-
-    initCfg['IEdisynapticBias'] = None
-
-    initCfg['EEGain'] = 0.5 # [0.6, 0.8] #[0.8, 1.0]
-
-    initCfg['weightNormThreshold'] = 4.0
-    initCfg['IEGain'] = 1.0
-    initCfg['IIGain'] = 1.0
-    initCfg['IPTGain'] = 1.0
-    initCfg['IIweights'] =  [1.0, 1.0, 1.0]
-
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
