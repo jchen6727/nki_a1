@@ -46,6 +46,7 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
     # sim and recoring params
     initCfg['duration'] = 1.0 * 1e3
     initCfg['singleCellPops'] = True
+    initCfg['removeWeightNorm'] = True
     initCfg[('analysis','plotTraces','include')] = []
     initCfg[('analysis','plotTraces','timeRange')] = [0, 1000]
     
@@ -860,7 +861,7 @@ if __name__ == '__main__':
     #                     'NGF_reduced': ['NGF2'],
                          'RE_reduced': ['IRE', 'TC', 'HTC']}
  
-    batchIndex = 6
+    batchIndex = 8
     for k, v in popsWeightNorm.items(): 
         b = weightNorm(pops=v, rule=k)
         b.batchLabel = 'v11_batch'+str(batchIndex) 

@@ -493,7 +493,7 @@ including 3d pt morphologies and weightNorm
 diam 200 um = 12856 cells
 diam 300 um = 28897 cells
 diam 400 um = 51344 cells 
-** feedback from blake on evol param optimization
+** feedback from blake on evol param optimization (suggest using delfi; param sensitivity)
 Thank you, Salva. Those comments are very helpful!
 
 That sounds like a tough problem for M1. I think with HNN we were lucky that the parameter space for each round was constrained to <8 parameters and we knew the timing was most critical. My thoughts go to what I’ve been experimenting lately with for the initial optimization (“bootstrapping”). Another PhD student and I have been looking at Delfi, which does inference by using neural networks for density estimation. I’m still learning about the choices involved in constructing the neural network, but I feel it’s a promising direction for these types of problems.
@@ -506,7 +506,7 @@ Thinking about how to get the most information out of each simulation, training 
 You may not be looking for an entirely new approach, but just wanted to share this. I’d love to talk more about it.
 
 Best,
-** response to blake
+** response to blake (explain what we need)
 Hi Blake, thanks, this is really interesting.
  
 We recently went through the delfi biorxiv paper in our journal club, and were not totally convinced of it's usefulness, particularly due to the number of sims required. But great to hear you tried it and produced useful results.
@@ -514,6 +514,16 @@ We recently went through the delfi biorxiv paper in our journal club, and were n
 In the M1 model we have a relativey good idea of the params we are happy to optimize: ~10 connectitvity-related params, within boundaries that were not totally constrained by literature. The main concern is what method to use to find the right parameter values, e.g. multiobjective optim vs evolution strategy, what metaparameters, possibly using some method like the latin hypercube to better explore the param space, …. That said this delfi method seems very useful to verify whether we are selecting suitbale parameters and value ranges; and generally to explore param sensitivity, which we are also interested in doing.
  
 Do you have time to chat about this some time on Thursday (Feb 27) ?
+
+** response from blake (suggest other method)
+
+Oh yes, I can see that you may not get a lot of additional value from Delfi beyond a sensitivity analysis. The “amortization” feature was most interesting to us—can we train a model on a bunch of simulations and provide users with reasonable parameter guesses.
+
+I’m happy to chat Thursday! I’m open any time before 2:30pm.
+
+Another possible consideration that comes to mind is MLSL, but I don’t know if it is implemented in a parallel version anywhere. Here’s the NLopt version:
+https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/#mlsl-multi-level-single-linkage
+
 ** potential list of parameters to tune
 # overall weights gains 
 cfg.EEGain = 1.0 
@@ -534,6 +544,69 @@ cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}
 cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  
 
 ** fitness function
+# fitness is exponential that increases with difference between target and population firing rate
+# parameter 'width' controls sensitivity 
+# parameter 'maxFitness' set the maximum (worst) allowed fitness value
+# parameter v['min'] sets minimum value; if rate is below, then fitness becomes maxFitness
+# perfect fitness = 0
+    fitness = np.mean([min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.iteritems()])
+
+# for each population can then set 'target' firing rate, 'width' (~sensitivity), and 'min' value e.g.
+    pops = {} 
+    Etune = {'target': 10, 'width': 5, 'min': 0.5}
+    pops['IT2'] = Etune
+    pops['IT4'] = Etune
+    pops['IT5A'] = Etune 
+    pops['IT5B'] = Etune  
+    pops['PT5B'] = Etune 
+    pops['IT6'] =  Etune
+    pops['CT6'] =  Etune
+
+    Itune = {'target': 20, 'width': 15, 'min': 0.25}
+    pops['PV2'] = Itune
+    pops['SOM2'] = Itune
+    pops['PV5A'] = Itune
+    pops['SOM5A'] = Itune
+    pops['PV5B'] = Itune
+    pops['SOM5B'] = Itune
+    pops['PV6'] = Itune
+    pops['SOM6'] = Itune
+
+** options for optimization method
+*** custom evol optim (inspyred)
+- using for M1
+- requires deciding metaparameters
+- seems to sometimes get stuck on local minima (but haven't tested this systematically; or compared to others)
+
+-    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 50,
+        'num_elites': 5,
+        'mutation_rate': 0.4,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 100,
+*** 'evolutionary strategy' evol optim (inspyred)
+- used in the past; similar results as custom
+*** multiobjective evol optim (inspyred)
+- used for single cell
+- not integrated into netpyne; but could add
+*** multi-level single-linkage (NLopt)
+- suggested by blake
+- uses NLOpt py package: https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/#mlsl-multi-level-single-linkage
+- not integrated into netpyne
+*** preliminary analysis of param sensitivity/impact (delfi)
+- http://www.mackelab.org/delfi/
+- used by blake on hnn 
+- might be useful to select suitable params and value ranges
+- I think could potentially use existing sims to train
+*** param space sampling using latin hypercube
+- used by Tim Rumbell for single cell optim
+- more homogeneous sampling of the param space 
+
 
 * CELL TYPES
 ** Budinger et al 2018
@@ -1311,6 +1384,8 @@ reasonable rates for most pops (no osc):
 - 12 02 10
 - 22 02 11
 - 22 00 10 - slow osc
+* v11_batch8-10 - weightNorm for thalamic cells after fixing
+**
 ** Comparing conn
 update conn.py with Allen V1 vs BBP S1 vs custom A1 conn options
 

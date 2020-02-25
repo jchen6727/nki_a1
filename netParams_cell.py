@@ -85,7 +85,7 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
 loadCellParams = cellParamLabels
 
 for ruleLabel in loadCellParams:
-    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
+    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
 
 ## Import VIP cell rule from hoc file 
@@ -117,7 +117,13 @@ netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 
 ## Set weightNorm for each cell type and add section lists (used in connectivity)
 for ruleLabel in netParams.cellParams.keys():
-    netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
+    #netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.json', threshold=cfg.weightNormThreshold)  # add weightNorm
+
+    # remove
+    if cfg.removeWeightNorm:
+        for sec in netParams.cellParams[ruleLabel]['secs']:
+            if 'weightNorm' in netParams.cellParams[ruleLabel]['secs'][sec]:    
+                del netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm']
 
     secLists = {}
     if ruleLabel in ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1', 'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1']:
@@ -306,7 +312,7 @@ netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
 netParams.popParams['IREM'] =   {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}
 
-createSinglePopForNetstim = 0
+createSinglePopForNetstim = 1
 
 if cfg.singleCellPops:
     for popName,pop in netParams.popParams.items():
@@ -332,7 +338,7 @@ Ipops = ['NGF1',                            # L1
 
 
 
-'''
+
 #------------------------------------------------------------------------------
 # Synaptic mechanism parameters
 #------------------------------------------------------------------------------
@@ -353,7 +359,7 @@ PVSynMech = ['GABAA']
 VIPSynMech = ['GABAA_VIP']
 NGFSynMech = ['GABAA', 'GABAB']
 
-
+'''
 #------------------------------------------------------------------------------
 # Background inputs
 #------------------------------------------------------------------------------ 
@@ -613,6 +619,7 @@ if cfg.addBkgConn:
 # 			'sec': sec, 
 # 			'loc': loc}
 
+'''
 #------------------------------------------------------------------------------
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------
@@ -639,7 +646,7 @@ if cfg.addNetStim:
             'delay': delay}
 
 
-'''
+
         
 #------------------------------------------------------------------------------
 # Description
