@@ -117,7 +117,12 @@ netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 
 ## Set weightNorm for each cell type and add section lists (used in connectivity)
 for ruleLabel in netParams.cellParams.keys():
-    #netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.json', threshold=cfg.weightNormThreshold)  # add weightNorm
+    
+    try:
+        netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
+        print('   Loaded weightNorm pkl file for %s...' % (ruleLabel))
+    except:
+        pass
 
     # remove
     if cfg.removeWeightNorm:
