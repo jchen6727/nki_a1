@@ -586,6 +586,7 @@ if cfg.addBkgConn:
         fs = data['RsFs'][0][0]
         ICrates = data['BE_sout_population'].tolist()
         ICtimes = list(np.arange(0, cfg.duration, 1000./fs))  # list with times to set each time-dep rate
+        
         numCells = len(ICrates)
 
         # Option 1: create population of DynamicNetStims with time-varying rates
@@ -594,9 +595,9 @@ if cfg.addBkgConn:
 
         # Option 2:
         from input import inh_poisson_generator
-
-        print(ICrates, ICtimes)
-        spkTimes = [inh_poisson_generator(ICrates[i][:len(ICtimes)], ICtimes, cfg.duration) for i in range(len(ICrates))]
+        
+        maxLen = min(len(ICrates[0]), len(ICtimes))
+        spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes, cfg.duration)] for i in range(len(ICrates))]
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
