@@ -28039,4 +28039,10 @@ endtemplate sTI
 * <2020-02-28 Fri -- moving 2-cmp interneuron into A1>
 ** Task #1: merge salva's branch into my branch -- DONE 
 ** Added thal_int.py (previously test_netpyne_two_comp.py from ~/Desktop/NEUROSIM/thal_int_cell) into ~/Desktop/NEUROSIM/A1/cells
-** 
+** Committed -->  e2a50e6..b3dfda0
+*** git branch (made sure was on branch 'erica') 
+*** git add A1_notebook.org
+*** git add cells/thal_int.py
+*** git commit -m 'message'
+*** git push origin erica 
+** Import the file into netParams_cell.py 
