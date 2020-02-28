@@ -28086,6 +28086,19 @@ endtemplate sTI
 ****** changed suffix in ^^ this file from it2 to it2INT
 ****** change suffix in ~/Desktop/NEUROSIM/A1/cells/sTI.py from it2 to it2INT as well 
 ****** re-compile in thal_int_cell and test 
+*** committed (863bdb..c3c3605) 
+** Adding mod files to ~/Desktop/NEUROSIM/A1/mod on erica branch:
+*** ntleak.mod
+*** naf2.mod
+*** kdr2_orig.mod 
+*** ntIh.mod
+*** Ican.mod
+*** Iahp.mod
+*** ntt_int.mod 
+*** cp.mod
+*** cp2.mod 
+*** IL.mod 
+** Changed sTI.py to have cellModel as HH_reduced 
 ** TO DO: 
 *** mod files:
 **** Check for conflicts in the mod files 

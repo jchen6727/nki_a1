@@ -6,7 +6,7 @@ from neuron import h
 netParams = specs.NetParams()
 
 ## CREATE POP 
-netParams.popParams['sTI'] = {'cellModel': 'HH', 'cellType': 'TI', 'numCells': 1} 
+netParams.popParams['sTI'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'numCells': 1} 
 
 #########################
 ###### CREATE CELL ######  
