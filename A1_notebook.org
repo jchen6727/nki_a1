@@ -28036,3 +28036,5 @@ endtemplate sTI
 *** Enables me to play sounds related to brian2hears
 *** pygame 1.9.6 Hello from the pygame community. https://www.pygame.org/contribute.html 2020-01-10 16:08:40.289 python[38384:8489235] 16:08:40.288 WARNING:  140: This application, or a library it uses, is using the deprecated Carbon Component Manager for hosting Audio Units. Support for this will be removed in a future release. Also, this makes the host incompatible with version 3 audio units. Please transition to the API's in AudioComponent.h.
 ** Got through section 2.1 in Paper on brian2hears (link in brian2hears tab above)
+* <2020-02-28 Fri -- moving 2-cmp interneuron into A1>
+** Task #1: merge salva's branch into my branch 
