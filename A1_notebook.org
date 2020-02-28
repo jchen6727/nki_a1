@@ -28049,3 +28049,49 @@ endtemplate sTI
 *** # Import Thalamic Interneuron cell from .py file 
 *** netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellModel': 'HH_reduced'}, fileName='cells/sTI.py', cellName='sTI', importSynMechs=True)
 *** netParams.cellParams['TI_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'ynorm': layer['thal']}
+** Committed --> e29e378..f863bdb 
+** MOD FILE CHECK:
+*** Suffix to watch out for: Pass, naf2, kdr2orig, iar, ican, iahp, it2, cad, ical, Cad
+*** CONFLICTS: 
+**** cad
+***** in thal_int_cell --> cad, from cp.mod
+***** in A1/mod --> cad, from cad.mod 
+***** CHANGE:
+****** cd ~/Desktop/NEUROSIM/thal_int_cell
+****** open up cp.mod --> change suffix to cad_int
+****** open up test_netpyne_two_comp.py --> change cad to cad_int
+****** open up sTI.py in ~/Desktop/NEUROSIM/A1/cells --> same change as above 
+****** re-compile in thal_int_cell and see if it still works 
+***** ^^ Do the same changes for cp2.mod just in case 
+**** ican
+***** in thal_int_cell --> Ican.mod
+***** in A1/mod --> ican_sidi.mod
+***** CHANGE:
+****** in ~/Desktop/NEUROSIM/thal_int_cell/Ican.mod --> change suffix to icanINT
+****** change ican to ican_int in test_netpyne_two_comp.py 
+****** re-compile; test 
+****** made same changes in ~/Desktop/NEUROSIM/A1/sTI.py --> ican to icanINT
+**** ical
+***** in thal_int_cell --> IL.mod
+***** in A1/mod --> IL_gutnick.mod 
+***** CHANGE:
+****** in ~/Desktop/NEUROSIM/thal_int_cell/IL.mod --> change suffix from ical to icalINT
+****** in test_netpyne_two_comp.py --> change ical to icalINT
+****** change the suffix ^^ as well in ~/Desktop/NEUROSIM/A1/sTI.py 
+**** it2
+***** in thal_int_cell --> ntt.mod 
+***** in A1/mod --> ntt.mod 
+***** CHANGE:
+****** changed ~/Desktop/NEUROSIM/thal_int_cell/ntt.mod --> .../ntt_int.mod
+****** changed suffix in ^^ this file from it2 to it2INT
+****** change suffix in ~/Desktop/NEUROSIM/A1/cells/sTI.py from it2 to it2INT as well 
+****** re-compile in thal_int_cell and test 
+** TO DO: 
+*** mod files:
+**** Check for conflicts in the mod files 
+**** Add in the mod files
+**** commit / push 
+*** check 3D configuration
+**** sim.analysis.plotshape --> run init_cell.py
+*** secLists --> most similar to PV/SOM/NGF
+*** which thalamic population -- replacement or additional? (replacement for reticular interneuron?) 
