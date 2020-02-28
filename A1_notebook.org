@@ -28046,3 +28046,6 @@ endtemplate sTI
 *** git commit -m 'message'
 *** git push origin erica 
 ** Import the file into netParams_cell.py 
+*** # Import Thalamic Interneuron cell from .py file 
+*** netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellModel': 'HH_reduced'}, fileName='cells/sTI.py', cellName='sTI', importSynMechs=True)
+*** netParams.cellParams['TI_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'ynorm': layer['thal']}
