@@ -14,7 +14,7 @@ netParams = specs.NetParams()   # object of class NetParams to store the network
 try:
     from __main__ import cfg  # import SimConfig object with params from parent module
 except:
-    from cfg import cfg
+    from cfg_cell import cfg
 
 
 #------------------------------------------------------------------------------
@@ -65,7 +65,6 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 #netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correctBorderThreshold, cfg.correctBorderThreshold], 
 #                        'yborders': [layer['2'][0], layer['5A'][0], layer['6'][0], layer['6'][1]]}  # correct conn border effect
 
-
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (DOES NOT INCLUDE VIP, NGF and spiny stellate)
 ## include conditions ('conds') for each cellRule
@@ -73,28 +72,21 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
                     'IT3_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
                     'ITP4_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
                     'IT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
+                    'CT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5A']},
                     'IT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
                     'PT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
+                    'CT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
                     'IT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
                     'CT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
-                    
-
-# temporary weightNorm value (temporary fix!)
-weightNorm = 1.0
 
 # Load cell rules from .pkl file 
 loadCellParams = cellParamLabels
 
 for ruleLabel in loadCellParams:
-    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.pkl')  # Load cellParams for each of the above cell subtype
+    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
     netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
-    
-    # set weightNorm (temporary fix!)
-    for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
-    
 
 ## Import VIP cell rule from hoc file 
 netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
@@ -123,10 +115,140 @@ netParams.importCellParams(label='HTC_reduced', conds={'cellType': 'HTC', 'cellM
 netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'HTC', 'ynorm': layer['thal']}
 
 
-## Set weightNorm for VIP, NGS ITS4, RE, TC, HTC (temporary fix!)
-for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced', 'RE_reduced', 'TC_reduced', 'HTC_reduced']:
-    for sec in netParams.cellParams[ruleLabel]['secs']:
-        netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm'] = weightNorm
+## Set weightNorm for each cell type and add section lists (used in connectivity)
+for ruleLabel in netParams.cellParams.keys():
+    
+    try:
+        netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
+        print('   Loaded weightNorm pkl file for %s...' % (ruleLabel))
+    except:
+        pass
+
+    # remove
+    if cfg.removeWeightNorm:
+        for sec in netParams.cellParams[ruleLabel]['secs']:
+            if 'weightNorm' in netParams.cellParams[ruleLabel]['secs'][sec]:    
+                del netParams.cellParams[ruleLabel]['secs'][sec]['weightNorm']
+
+    secLists = {}
+    if ruleLabel in ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1', 'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1']:
+        secLists['all'] = ['soma', 'Adend1', 'Adend2', 'Adend3', 'Bdend']
+        secLists['proximal'] = ['soma', 'Bdend', 'Adend1']
+        secLists['dend_all'] = ['Adend1', 'Adend2', 'Adend3', 'Bdend']
+        secLists['apic'] = ['Adend1', 'Adend2', 'Adend3']
+        secLists['apic_trunk'] = ['Adend1', 'Adend2']
+        secLists['apic_lowertrunk'] = ['Adend1']
+        secLists['apic_uppertrunk'] = ['Adend2']
+        secLists['apic_tuft'] = ['Adend3']
+
+    elif ruleLabel in ['ITS4']:
+        secLists['all'] = secLists['proximal'] = ['soma', 'dend', 'dend1']
+        secLists['dend_all'] = secLists['apic'] = secLists['apic_trunk'] = secLists['apic_lowertrunk'] = \
+            secLists['apic_uppertrunk'] = secLists['apic_tuft'] = ['dend', 'dend1']
+
+    elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced']:
+        secLists['all'] = secLists['proximal'] = ['soma', 'dend']
+        secLists['dend_all'] = ['dend']
+
+    elif ruleLabel in ['VIP_reduced']:
+        secLists['all'] = ['soma', 'rad1', 'rad2', 'ori1', 'ori2']
+        secLists['proximal'] = ['soma', 'rad1', 'ori1']
+        secLists['dend_all'] = ['rad1', 'rad2', 'ori1', 'ori2']
+
+    # store secLists in netParams
+    netParams.cellParams[ruleLabel]['secLists'] = dict(secLists)
+
+
+## Set 3D geometry for each cell type
+for label in netParams.cellParams:
+    if label in ['PV_reduced', 'SOM_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+            if secName in ['axon']:  # set 3d geom of axon
+                sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset + 0, -sec['geom']['L'], 0, sec['geom']['diam']])
+
+    elif label in ['NGF_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
+
+    elif label in ['VIP_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma']:  # set 3d geom of soma 
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
+            if secName in ['rad1']:  # set 3d geom of rad1 (radiatum)
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0.5*sec['geom']['L'], +(somaL+0.866*sec['geom']['L']), 0, sec['geom']['diam']])   
+            if secName in ['rad2']:  # set 3d geom of rad2 (radiatum)
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset-0.5*sec['geom']['L'], +(somaL+0.866*sec['geom']['L']), 0, sec['geom']['diam']])   
+            if secName in ['ori1']:  # set 3d geom of ori1 (oriens)
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])   
+            if secName in ['ori2']:  # set 3d geom of ori2 (oriens)
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset-0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])   
+
+
+    elif label in ['ITS4_reduced']:
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma']:  # set 3d geom of soma 
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
+            if secName in ['dend']:  # set 3d geom of apic dendds
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
+            if secName in ['dend1']:  # set 3d geom of basal dend
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])   
+    elif label in ['RE_reduced', 'TC_reduced', 'HTC_reduced', 'VIP_reduced']:
+        pass
+
+    else: # E cells
+        # set 3D pt geom
+        offset, prevL = 0, 0
+        somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
+        for secName, sec in netParams.cellParams[label]['secs'].items():
+            sec['geom']['pt3d'] = []
+            if secName in ['soma', 'Adend1', 'Adend2', 'Adend3']:  # set 3d geom of soma and Adends
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                prevL = float(prevL + sec['geom']['L'])
+                sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+            if secName in ['Bdend']:  # set 3d geom of Bdend
+                sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset+0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])        
+            if secName in ['axon']:  # set 3d geom of axon
+                sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
+                sec['geom']['pt3d'].append([offset + 0, -sec['geom']['L'], 0, sec['geom']['diam']])
+                
+
+# save cellParams rules to .pkl file
+saveCellParams = True
+if saveCellParams:
+    for ruleLabel in netParams.cellParams.keys():
+        netParams.saveCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')
+
 
 #------------------------------------------------------------------------------
 # Population parameters
@@ -135,8 +257,6 @@ for ruleLabel in ['VIP_reduced', 'NGF_reduced', 'ITS4_reduced', 'RE_reduced', 'T
 ## load densities
 with open('cells/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileObj)['density']
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
-
-### LAYER 1:
 
 ### LAYER 1:
 netParams.popParams['NGF1'] = {'cellType': 'NGF', 'cellModel': 'HH_reduced','ynormRange': layer['1'],   'density': density[('A1','nonVIP')][0]}
@@ -197,12 +317,18 @@ netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
 netParams.popParams['IREM'] =   {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}
 
+createSinglePopForNetstim = 1
+
 if cfg.singleCellPops:
     for popName,pop in netParams.popParams.items():
-        if cfg.NetStim1['pop'] == popName:
-            pop['numCells'] = 1
+        if createSinglePopForNetstim:
+            if cfg.NetStim1['pop'] == popName:
+                pop['numCells'] = 1
+            else:
+                pop['numCells'] = 0
         else:
-            pop['numCells'] = 0
+            pop['numCells'] = 1
+
 
 ## List of E and I pops to use later on
 Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']  # all layers
@@ -238,7 +364,7 @@ PVSynMech = ['GABAA']
 VIPSynMech = ['GABAA_VIP']
 NGFSynMech = ['GABAA', 'GABAB']
 
-
+'''
 #------------------------------------------------------------------------------
 # Background inputs
 #------------------------------------------------------------------------------ 
@@ -498,6 +624,7 @@ if cfg.addBkgConn:
 # 			'sec': sec, 
 # 			'loc': loc}
 
+'''
 #------------------------------------------------------------------------------
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------

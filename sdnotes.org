@@ -193,6 +193,7 @@ was due to not using plotConn(synOrConn = 'conn') -- was counting eg AMPA+NMDA, 
 ** extremely high probs NGF4->VIP5B and NG5B->VIP4
 due to tesiting on very small net, with just 1 or 2 cells in each pop
 * 29dec2019 Discuss next steps with same
+
 a1 connectivity looks good
 
 that part mostly done now? next to constrain with data or want to put in auditory signals first?
@@ -221,6 +222,392 @@ sg
 could also assume sparse density so representing larger region with ~same num cells
 samn 12:06 PM
 good idea
+* 07jan2020 Playing with Brian Hears
+** installed and did intro tuts
+https://brian2hears.readthedocs.io/en/stable/introduction.html
+https://brian2hears.readthedocs.io/en/stable/brian.html
+
+A common model of cochlear filtering is to apply a bank of gammatone filters, and then half wave rectify and compress it (for example, with a 1/3 power law). This can be achieved in Brian hears as follows (for 3000 channels in the human hearing range from 20 Hz to 20 kHz):
+
+cfmin, cfmax, cfN = 20*Hz, 20*kHz, 3000
+cf = erbspace(cfmin, cfmax, cfN)
+sound = Sound('test.wav')
+gfb = GammatoneFilterbank(sound, cf)
+ihc = FunctionFilterbank(gfb, lambda x: clip(x, 0, Inf)**(1.0/3.0))
+
+** need brian2 to generate the spiking output
+- extract python code?
+- just extract spike times to start with:
+In [33]: M.i
+Out[33]: <spikemonitor.i: array([2691, 2788, 2813, ..., 1803, 2045, 2183], dtype=int32)>
+
+In [34]: M.t
+Out[34]: 
+<spikemonitor.t: array([ 0.74829932,  0.79365079,  0.79365079, ..., 99.97732426,
+       99.97732426, 99.97732426]) * msecond>
+** auditory nerve spiking questions:
+- provides direct input to thalamus? or through inferior colliculus? or other?
+- how many cells / netstims do we need? 
+- what frequency range to cover?
+* 27jan2020 Understanding pathway from cochlea to thalamus
+** pathway
+Cochlea -> superior olivary complex -> inferior colliculus -> thalamus (MGB) (-> A1)
+
+transform sound to spiking activity arriving at MGB
+** Ruben auditory brainstem model
+https://github.com/rat-h/auditory-brainstem-model/blob/master/mainmodel.cfg - has some conn info between SBC->LSO
+https://sites.google.com/site/auditorybsmodel/home
+https://github.com/rat-h/auditory-brainstem-model/blob/master/wiki/HOWTO.md
+
+*** Cell types / populations
+Cochlea:
+- auditory hair cells (AN)
+- ventral cochlear nucleus (VCN):
+-- spherical bushy cells (SBC); type II and type I-c
+-- globular bushy cell (GBC); type I-c
+
+Superior olivary complex:
+- medial nuclei of the trapezoid body (MNTB)
+- lateral superior olive (LSO)
+
+Note: missing inferior colliculus
+
+** paper on auditory nerve model
+https://www.jneurosci.org/content/30/31/10380.long
+
+** Function of areas
+*** Auditory nerve
+- there are around 30,000 auditory nerve fibres in each of the two auditory nerves. 
+- Each fiber is an axon of a spiral ganglion cell that represents a particular frequency of sound, and a particular range of loudness. 
+- Information in each nerve fibre is represented by the rate of action potentials as well as the particular timing of individual action potentials. 
+
+*** cochlear nucleus
+- The particular physiology and morphology of each cochlear nucleus cell type enhances different aspects of sound information.
+- Several tasks are performed in the cochlear nuclei. 
+- By distributing acoustic input to multiple types of principal cells, the auditory pathway is subdivided into parallel ascending pathways, which can simultaneously extract different types of information. 
+- VCN: The cells of the ventral cochlear nucleus extract information that is carried by the auditory nerve in the timing of firing and in the pattern of activation of the population of auditory nerve fibers. 
+- DCN: The cells of the dorsal cochlear nucleus perform a non-linear spectral analysis and place that spectral analysis into the context of the location of the head, ears and shoulders and that separate expected, self-generated spectral cues from more interesting, unexpected spectral cues using igh-level. 
+
+*** Superior olivary complex
+- MTO and LSO
+-- The medial superior olive (MSO) is a specialized nucleus that is believed to measure the time difference of arrival of sounds between the ears (the interaural time difference or ITD).
+-- The lateral superior olive (LSO) is believed to be involved in measuring the difference in sound intensity between the ears (the interaural level difference or ILD).
+
+- MNTB 
+-- neurons plays essentials roles in the localization of sound sources and encoding temporal features of complex sounds
+-- https://www.ncbi.nlm.nih.gov/pubmed/25873865
+
+*** Inferior colliculus
+- Has 3 subdivisions: the central nucleus, the dorsal cortex by which it is surrounded, and an external cortex which is located laterally
+- Receives input from: braistem, MGB, A1, basal ganglia, superior colliculus and otherwise; outputs to MGB
+- Integrative station and switchboard. 
+- Involved in the integration and routing of multi-modal sensory perception, mainly the startle response and vestibulo-ocular reflex. 
+- Responsive to specific amplitude modulation frequencies and this might be responsible for detection of pitch. 
+- Also related to spatial localization by binaural hearing.
+- The receptive fields in inferior colliculus can be seen adapted to handling natural sound transformations.
+
+** email to Sue and Emili
+Hi Sue and Emili,
+ 
+As you know we are developing an auditory thalamocortical model with Peter Lakatos. We are trying to figure out what would be an appropriate model to transform an arbitrary sound input signal to the inputs arriving at thalamus (MGB), including processing at cochlea, superior olivary complex and inferior colliculus.
+ 
+We started looking at Brian Hears (http://www.briansimulator.org/docs/hears), which does some cochlea-like filtering, but we are not sure its output can be directly used as input to MGB. We are also looking at this model of auditory brainstem implemented in NEURON, but this might be too detailed and computationally expensive. Ideally, we are looking for some fast phenomenological model that captures the input pathway transformations and outputs spike that can be fed to MGB.
+ 
+Do you have any insights or suggested models ?
+ 
+Thanks!
+Salva
+** email from Emili
+from Emili: “With regards to your model, in our recent paper, we used a peripheral implementation which is relatively up to date, and pretty fast, not sure if is what you are after but perhaps it is useful.
+https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1006820”
+
+I checked the model and it’s in Python (compatible with 2 and 3) … and seems to capture more details than Brian Hears
+
+https://github.com/qtabs/moch 
+
+** email from Sue Denham
+Sue Denham: “Regarding the peripheral model .. there are many out there .. but to be honest i do not think the processing much beyond the cochlea and small aspects in the cochlear nucleus and IC have been modelled well yet. Emili’s suggestion is probably a good one. It depends though on how realistic you want to be. And of course there are also massive feedback projections which are largely ignored .. good luck :-)”
+
+** Emili's model
+https://github.com/qtabs/moch
+https://github.com/mrkrd/cochlea
+https://github.com/mrkrd/thorns
+https://link.springer.com/article/10.1007%2Fs00441-015-2202-z
+
+*** installing cochlea
+[error:fatal error: 'numpy/arrayobject.h' file not found; solved by adding path to CFLAGS]
+setenv CFLAGS "-I/usr/local/lib/python3.7/site-packages/numpy/core/include/"
+pip install cochlea (or git clone and python setup.py install)
+
+** Convergence of cochelar auditory nerve fibers onto MGB (indirect, )
+- from  https://sites.google.com/site/auditorybsmodel/home): 
+
+Table 2.
+
+                        lSBC        sSBC        GBS     D-SC
+
+N                      36600        36600       6300    6300    
+
+Converging ANFs, n      2-3        2-3          ~23     10
+
+
+
+Table 3.
+                        MNTB-PC    LSO-PC
+
+N                       2000-6000  75% of the population
+
+Excitatory  Inputs, n       1      10
+
+- conn: SBC -> LSO and GBC -> LSO
+- convergence ANF to LSO cells = 2-3 * 10 = 20-30 or 23 * 10 = 230; assume first, so 25 ANF inputs per LSO cell  
+
+
+- convergence between LSO cells to MGB cells (Oliv18; chapter 2)
+-- Almost all of the ascending projections to the MG arise in the ipsilateral IC with a small contribution from the contralateral IC
+-- LSO / inferior colliculus has complex circuitry with multiple layers and several morphologically distinct cell populations 
+-- 10-30% of inhibitory projections 
+
+- number of ANFs:
+-- human: 30,000
+-- cat: 50,000
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
+
+- similar tuning in macaques as in humans:
+-- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
+* Feb62020 Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)
+** email from slava
+Hi Everyone,
+Thanks for your interest in the 'auditory-brainstem-model' description. I think, it might also be good to check e.g. the Auditory Modeling Toolbox (AMT) and maybe some implementations might be useful for your project. The AMT collection contains many models for different stages of the auditory system ( + description/documentation and references).
+http://amtoolbox.sourceforge.net/models.php
+>>a low to moderate complexity circuit model 
+Regarding the IC stage and (functional) input transmission to higher centers, maybe it would be interesting to check Nelson and Carney (2004) as a first step for your project. This is a phenomenological CN-IC model with the same-frequency inhibition and excitation implementation, which can be stimulated by the AN model. It is better to use filter implementation (Python or Matlab) which is faster than convolution.
+https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
+Best regards,
+Slava
+** chat with sam
+so I’m gonna check the SOC,IC reduced models he suggested here
+3:22
+and if makes sense probably used those (maybe in combination with the Cochlea package, if they dont have a cochlea built in)
+
+samn  3:22 PM
+ic, sg ... i looked at that page briefly but not at the code it lists
+3:24
+by cns/sfn will prob be able to compare nhp data and model output under speech input
+
+salvadord  4:37 PM
+yes, in theory once I connect the cochlea/SOC/IC, the next step would be to tune the network params to reproduce some physio data… so could start using some data for that
+
+samn  4:44 PM
+sg
+
+salvadord  1:01 PM
+the model suggested by Slava (not Salva!) transforms .wav file to IC output spikes … so looks perfect, except that it’s in Matlab and C++
+image.png 
+image.png
+
+
+1:02
+in theory they say works with Octave, so could potentially just call code from netpyne at start, generate spikes and save the to file, and then read from netpyne
+
+samn  1:02 PM
+ah, wonder if can convert to py or just use to produce spikes
+1:02
+if works in octave sg
+
+salvadord  1:02 PM
+other option would be to convert to py … right … but that might take more time as code doesnt look simple, and has the C++ code embedded
+1:02
+ok, I’ll try the octave option for now
+
+samn  1:02 PM
+sg
+1:02
+thx
+1:03
+want wav files? or just testing first anyway
+
+salvadord  1:03 PM
+if find a brave student could be a nice project to convert to py, and useful for others…
+
+samn  1:03 PM
+yeah
+
+salvadord  1:03 PM
+sure if have experiment wav can share, but not urgent
+** links to Matlab code
+https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
+https://www.urmc.rochester.edu/MediaLibraries/URMCMedia/labs/carney-lab/codes/UR_EAR_v2_1.zip
+** Conversion to Octave
+- installed Octave 4.4.1 for mac (bundled dmg)
+- https://github.com/joyofdata/octave-matlab
+
+- pkg install -forge control
+- pkg install -forge signal
+- pkg load control
+- pkg load signal
+
+- UR_EAR_v2_1.m - doesn't work -- many missing functions, specially for GUI
+
+- extracted code from UR_EAR_v2_1.m; removing all of GUI components
+- Used the following models:
+-- Which_IC = 2 AN_ModFilt model (Mao et al., 2016)
+-- Which_AN = 1 (Zilany et al., 2014)
+
+** Progress but now stuck (chat)
+installed Octave and tried code but lots of missing functions, specially for GUI stuff which is all mixed in code
+
+
+5:22
+been working on extracting the essential code (without GUI) and replacing missing funcs etc
+5:23
+have first stages working now, but now have issue with some of the C code and compiled mex version, which not working in Octave
+
+billl  5:23 PM
+octave generally a disaster and think has fallen further and further behind -- in fact i asked about it at the review last week and everyone said fuggedaboutit
+
+salvadord  5:24 PM
+will see if can find work around … unfortunately the simple IC model (filter version recommended by Slava) doesnt include the .c code, just the compiled versions, which don’t seem to be recognized by Octave
+5:26
+octave disaster - I was actually quite impressed with how advanced was since last time I tried … version 4.4 and nice GUI, plus many packages available … but yeah, still not matlab
+5:26
+I will keep trying to find solution … otherwise guess potentially could use matlab to generate inputs for now, since available at NKI
+** installed Matlab - all works
+** output of IC is avg firing rate -- how to input in NEURON?
+- vec.play stim into NetStim
+- eg:
+init_amp = 0.0
+peak_amp = 0.24
+ramp_up = np.linspace(init_amp, peak_amp, simConfig.duration/(simConfig.dt))
+t = h.Vector(np.arange(0,simConfig.duration, simConfig.dt))
+amp = h.Vector(ramp_up)
+for cell in sim.net.cells:
+    try:
+        amp.play(cell.stims[0]['hObj']._ref_amp, t, True)
+    except:
+
+* Feb182020 Preparing to tune model
+** consolidated all cell params in .json files
+including 3d pt morphologies and weightNorm
+** select network size
+diam 200 um = 12856 cells
+diam 300 um = 28897 cells
+diam 400 um = 51344 cells 
+** feedback from blake on evol param optimization (suggest using delfi; param sensitivity)
+Thank you, Salva. Those comments are very helpful!
+
+That sounds like a tough problem for M1. I think with HNN we were lucky that the parameter space for each round was constrained to <8 parameters and we knew the timing was most critical. My thoughts go to what I’ve been experimenting lately with for the initial optimization (“bootstrapping”). Another PhD student and I have been looking at Delfi, which does inference by using neural networks for density estimation. I’m still learning about the choices involved in constructing the neural network, but I feel it’s a promising direction for these types of problems.
+https://github.com/mackelab/delfi/
+
+I’ve run Delfi with HNN and the results are interesting. We were able to run 1M simulations because of the shorter runtime with HNN and it gave us a narrow posterior for the input timings, and acceptable ranges for most synaptic strengths. It also correctly identified parameters that have a minimal impact—their posteriors broad were extremely broad. 
+
+Thinking about how to get the most information out of each simulation, training a neural network seems to be a good fit for your problem. Our HNN test with Delfi was really just a sensitivity analysis. We only ran a single round, where the priors were uniform distributions. However, instead of running a single round, I think you’d benefit from fewer simulations, but more rounds. Each of the algorithms implemented in Delfi can run sequential batches (like evolutionary methods), but they also derive value from all previous simulations by using the complete data set for network training. They iteratively update the model in contrast to evolutionary algorithms that are elucidating relationships (successful progeny) from scratch at each round and throwing out the same bad fits over and over.
+
+You may not be looking for an entirely new approach, but just wanted to share this. I’d love to talk more about it.
+
+Best,
+** response to blake (explain what we need)
+Hi Blake, thanks, this is really interesting.
+ 
+We recently went through the delfi biorxiv paper in our journal club, and were not totally convinced of it's usefulness, particularly due to the number of sims required. But great to hear you tried it and produced useful results.
+ 
+In the M1 model we have a relativey good idea of the params we are happy to optimize: ~10 connectitvity-related params, within boundaries that were not totally constrained by literature. The main concern is what method to use to find the right parameter values, e.g. multiobjective optim vs evolution strategy, what metaparameters, possibly using some method like the latin hypercube to better explore the param space, …. That said this delfi method seems very useful to verify whether we are selecting suitbale parameters and value ranges; and generally to explore param sensitivity, which we are also interested in doing.
+ 
+Do you have time to chat about this some time on Thursday (Feb 27) ?
+
+** response from blake (suggest other method)
+
+Oh yes, I can see that you may not get a lot of additional value from Delfi beyond a sensitivity analysis. The “amortization” feature was most interesting to us—can we train a model on a bunch of simulations and provide users with reasonable parameter guesses.
+
+I’m happy to chat Thursday! I’m open any time before 2:30pm.
+
+Another possible consideration that comes to mind is MLSL, but I don’t know if it is implemented in a parallel version anywhere. Here’s the NLopt version:
+https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/#mlsl-multi-level-single-linkage
+
+** potential list of parameters to tune
+# overall weights gains 
+cfg.EEGain = 1.0 
+cfg.EIGain = 1.0 
+cfg.IEGain = 1.0 
+cfg.IIGain = 1.0 
+
+# I->E/I weights gains for each layer (L2/3+4, L5, L6)
+cfg.IEweights = [1.0, 1.0, 1.0] 
+cfg.IIweights = [1.5, 1.0, 1.0]
+
+# Weight and rate of background inputs to thal
+cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  
+cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
+
+# weight and prob conn of cochlear+IC inputs to thal
+cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  
+cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  
+
+** fitness function
+# fitness is exponential that increases with difference between target and population firing rate
+# parameter 'width' controls sensitivity 
+# parameter 'maxFitness' set the maximum (worst) allowed fitness value
+# parameter v['min'] sets minimum value; if rate is below, then fitness becomes maxFitness
+# perfect fitness = 0
+    fitness = np.mean([min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.iteritems()])
+
+# for each population can then set 'target' firing rate, 'width' (~sensitivity), and 'min' value e.g.
+    pops = {} 
+    Etune = {'target': 10, 'width': 5, 'min': 0.5}
+    pops['IT2'] = Etune
+    pops['IT4'] = Etune
+    pops['IT5A'] = Etune 
+    pops['IT5B'] = Etune  
+    pops['PT5B'] = Etune 
+    pops['IT6'] =  Etune
+    pops['CT6'] =  Etune
+
+    Itune = {'target': 20, 'width': 15, 'min': 0.25}
+    pops['PV2'] = Itune
+    pops['SOM2'] = Itune
+    pops['PV5A'] = Itune
+    pops['SOM5A'] = Itune
+    pops['PV5B'] = Itune
+    pops['SOM5B'] = Itune
+    pops['PV6'] = Itune
+    pops['SOM6'] = Itune
+
+** options for optimization method
+*** custom evol optim (inspyred)
+- using for M1
+- requires deciding metaparameters
+- seems to sometimes get stuck on local minima (but haven't tested this systematically; or compared to others)
+
+-    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 50,
+        'num_elites': 5,
+        'mutation_rate': 0.4,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 100,
+*** 'evolutionary strategy' evol optim (inspyred)
+- used in the past; similar results as custom
+*** multiobjective evol optim (inspyred)
+- used for single cell
+- not integrated into netpyne; but could add
+*** multi-level single-linkage (NLopt)
+- suggested by blake
+- uses NLOpt py package: https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms/#mlsl-multi-level-single-linkage
+- not integrated into netpyne
+*** preliminary analysis of param sensitivity/impact (delfi)
+- http://www.mackelab.org/delfi/
+- used by blake on hnn 
+- might be useful to select suitable params and value ranges
+- I think could potentially use existing sims to train
+*** param space sampling using latin hypercube
+- used by Tim Rumbell for single cell optim
+- more homogeneous sampling of the param space 
+
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -803,6 +1190,19 @@ Thus, to address this issue, we changed the synaptic placement rules for all L1-
 *** TC -> soma + non-apical dends
 *** TCM -> E apical dends
 
+
+
+* VERSIONS
+** v7 - Added template for connectivity
+** v8 - Added cell types
+** v9 - Added local connectivity
+** v10 - Added thalamic populations from prev model
+** v11 - Added thalamic conn from prev model
+** v12 - Added CT cells to L5B
+** v13 - Added CT cells to L5A
+** v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
+** v15 - Added cortical and thalamic conn to CT5A and CT5B 
+** v16 - Updated multiple cell types
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -877,6 +1277,7 @@ Total time = 7370.49 s
 
 - all depol block and many traces blank (not sure why)!
 - should try to calcualte weightNorm
+
 
 ** v11_batch1-6 - weightNorm for all cells
 
@@ -997,6 +1398,77 @@ reasonable rates for most pops (no osc):
 - 12 02 10
 - 22 02 11
 - 22 00 10 - slow osc
+** v11_batch8 - weightNorm for thalamic cells after fixing
+*** note on version
+this should have been v15, not v11
+*** code
+def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(np.arange(0.01, 0.2, 0.01)/100.0)):
+
+    # Add params
+    from cfg_cell import cfg
+    from netParams_cell import netParams
+
+    excludeSegs = ['axon']
+    if not segs:
+        secs = []
+        locs = []
+        for secName,sec in netParams.cellParams[rule]['secs'].items():
+            if secName not in excludeSegs:
+                if allSegs:
+                    nseg = sec['geom']['nseg']
+                    for iseg in range(nseg):
+                        secs.append(secName) 
+                        locs.append((iseg+1)*(1.0/(nseg+1)))
+                else:
+                    secs.append(secName) 
+                    locs.append(0.5)
+
+    params = specs.ODict()
+    params[('NetStim1', 'pop')] = pops
+    params[('NetStim1', 'sec')] = secs
+    params[('NetStim1', 'loc')] = locs
+    params[('NetStim1', 'weight')] = weights
+
+    groupedParams = [('NetStim1', 'sec'), ('NetStim1', 'loc')] 
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 1.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['removeWeightNorm'] = True
+    initCfg[('analysis','plotTraces','include')] = []
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 1000]
+    
+    ## turn off components not required
+    #initCfg[('analysis', 'plotRaster')] = False
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['addBkgConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = 0
+ 
+    ## set netstim params
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'synMech')] = ['AMPA','NMDA']
+    initCfg[('NetStim1','synMechWeightFactor')] = [0.5,0.5]
+    initCfg[('NetStim1', 'start')] = 700
+    initCfg[('NetStim1', 'interval')] = 1000
+    initCfg[('NetStim1','ynorm')] = [0.0, 2.0]
+    initCfg[('NetStim1', 'noise')] = 0
+    initCfg[('NetStim1', 'number')] = 1
+    initCfg[('NetStim1', 'delay')] = 1
+    
+    
+    b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
+*** results
+generated new weightNorm pkl files
+now values are reasonable -- not negative as before
+
 ** Comparing conn
 update conn.py with Allen V1 vs BBP S1 vs custom A1 conn options
 
@@ -1009,3 +1481,27 @@ sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probabil
 sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_BBP_S1_prob_0.25.png' , saveData='conn/E->EI_BBP_S1_prob_0.25.pkl')
 
 sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn/EI->EI_Allen_custom_prob_0.25_fixed.png' , saveData='conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl')
+** v16_batch1 Small parameter on full net 300x300 um (29k cells); to get baseline
+*** code
+def custom():
+    params = specs.ODict()
+
+    params[('weightBkg', 'E')] = [1.0] #[0.1, 0.5, 1.0]
+    params[('weightBkg', 'I')] = [1.0] #[0.1, 0.5, 1.0]
+    params[('weightBkg', 'ThalE')] = [1.0] #[0.1, 0.5, 1.0]
+    params[('weightBkg', 'ThalI')] = [1.0] #[0.1, 0.5, 1.0]
+    
+    params[('weightInput', 'ThalE')] = [0.0, 1.0] #[0.0, 0.5, 1.0]
+    params[('weightInput', 'ThalI')] = [0.0, 1.0] # [0.0, 0.5, 1.0]
+    
+    groupedParams = []
+
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 2.0*1e3
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    return b 

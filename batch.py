@@ -46,6 +46,7 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
     # sim and recoring params
     initCfg['duration'] = 1.0 * 1e3
     initCfg['singleCellPops'] = True
+    initCfg['removeWeightNorm'] = True
     initCfg[('analysis','plotTraces','include')] = []
     initCfg[('analysis','plotTraces','timeRange')] = [0, 1000]
     
@@ -553,75 +554,25 @@ def fIcurve():
 def custom():
     params = specs.ODict()
 
-    params[('ratesLong', 'TPO', 1)] = [5, 5] 	#[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'TVL', 1)] = [2, 2.5] #[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'S1', 1)] =  [5, 5] 	#[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'S2', 1)] =  [5, 5] 	#[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'cM1', 1)] = [2, 2.5] #[2,2,2,4,2,4,4,4]
-    params[('ratesLong', 'M2', 1)] =  [2, 2.5] #[2,2,2,4,2,4,4,4]
-    params[('ratesLong', 'OC', 1)] =  [5, 5]	
-
-    # # L2/3+4
-    params[('IEweights',0)] =  [0.6,0.8]
-    params[('IIweights',0)] =  [1.0,1.2] #[0.8, 1.0]   
-    # L5
-    params[('IEweights',1)] = [0.8] #[0.8, 1.0]   
-    params[('IIweights',1)] = [1.0] #[0.8, 1.0]
-    # L6
-    params[('IEweights',2)] =  [1.0] # [0.8, 1.0]  
-    # params[('IIweights',2)] =  [0.8, 1.0, 1.2]
-
-    params[('pulse', 'rate')] = [10.0] # [10.0, 15.0]
-
-    params[('pulse', 'pop')] = ['S2', 'M2'] # ['TPO', 'S1', 'S2', 'TVL', 'cM1', 'M2']
-
-
-    params['ihGbar'] = [0.25, 1.0] #[0.2, 0.25, 0.3, 1.0]
-
-    groupedParams = [('ratesLong', 'TPO', 1), ('ratesLong', 'TVL', 1),
-                    ('ratesLong', 'S1', 1), ('ratesLong', 'S2', 1),
-                    ('ratesLong', 'cM1', 1), ('ratesLong', 'M2', 1),
-                    ('ratesLong', 'OC', 1)] # ['IEGain','IIGain'] #'EEGain', 'EPVGain', 'ESOMGain', 'PVEGain', 'SOMEGain', 'PVIGain', 'SOMIGain']
+    params[('weightBkg', 'E')] = [1.0] #[0.1, 0.5, 1.0]
+    params[('weightBkg', 'I')] = [1.0] #[0.1, 0.5, 1.0]
+    params[('weightBkg', 'ThalE')] = [1.0] #[0.1, 0.5, 1.0]
+    params[('weightBkg', 'ThalI')] = [1.0] #[0.1, 0.5, 1.0]
+    
+    params[('weightInput', 'ThalE')] = [0.0, 1.0] #[0.0, 0.5, 1.0]
+    params[('weightInput', 'ThalI')] = [0.0, 1.0] # [0.0, 0.5, 1.0]
+    
+    groupedParams = []
 
     # initial config
     initCfg = {}
     initCfg['duration'] = 2.0*1e3
-    initCfg['ihModel'] = 'migliore'  # ih model
-
-    initCfg['ihGbarBasal'] = 1.0 # multiplicative factor for ih gbar in PT cells
-    initCfg['ihlkc'] = 0.2 # ih leak param (used in Migliore)
-    initCfg['ihLkcBasal'] = 1.0 # multiplicative factor for ih lk in PT cells
-    initCfg['ihLkcBelowSoma'] = 0.01 # multiplicative factor for ih lk in PT cells
-    initCfg['ihlke'] = -86  # ih leak param (used in Migliore)
-    initCfg['ihSlope'] = 28  # ih leak param (used in Migliore)
-
-    initCfg['somaNa'] = 5.0  # somatic Na conduct
-    initCfg['dendNa'] = 0.3  # dendritic Na conduct (reduced to avoid dend spikes) 
-    initCfg['axonNa'] = 7   # axon Na conduct (increased to compensate) 
-    initCfg['axonRa'] = 0.005
-    initCfg['gpas'] = 0.5
-    initCfg['epas'] = 0.9
-
-    #initCfg[('pulse', 'pop')] = 'None'
-    #initCfg[('pulse', 'rate')] = 10.0
-    initCfg[('pulse', 'start')] = 1000.0
-    initCfg[('pulse', 'end')] = 1100.0
-    initCfg[('pulse', 'noise')] = 0.8
-
-    initCfg['IEdisynapticBias'] = None
-
-    initCfg['EEGain'] = 0.5 # [0.6, 0.8] #[0.8, 1.0]
-
-    initCfg['weightNormThreshold'] = 4.0
-    initCfg['IEGain'] = 1.0
-    initCfg['IIGain'] = 1.0
-    initCfg['IPTGain'] = 1.0
-    initCfg['IIweights'] =  [1.0, 1.0, 1.0]
-
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
+    return b
 
 # ----------------------------------------------------------------------------------------------
 # Evol
@@ -803,11 +754,11 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_gcp':
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
-            'walltime': '48:00:30', #'48:00:00',
-            'nodes': 16,
-            'coresPerNode': 8,  # comet=24, bridges=28, gcp=32
+            'walltime': '24:00:00', #'48:00:00',
+            'nodes': 1,
+            'coresPerNode': 96,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
-            'folder': '/home/salvadord/m1/sim/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py', 
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'skipCustom': '_raster.png'}
@@ -834,39 +785,33 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    b = EIbalance()
-    # b = longBalance()
-    # b = longPopStims()
-    # b = recordedLongPopStims() 
-    # b = simultLongPopStims()
-    # b = freqStims()
-    # b = localPopStims()
-    # b = fIcurve()
-    # b = EPSPs()
-    # b = custom()
+    b = custom()
     #b = evolRates()
 
-    # b.batchLabel = 'v11_batch7' 
-    # b.saveFolder = 'data/'+b.batchLabel
-    # b.method = 'grid'  # evol
-    # setRunCfg(b, 'mpi_bulletin')
-    # b.run() # run batch
+    b.batchLabel = 'v16_batch1' 
+    b.saveFolder = 'data/'+b.batchLabel
+    b.method = 'grid'  # evol
+    setRunCfg(b, 'mpi_bulletin')
+    b.run() # run batch
+
+
+    ## Submit set of batch sims together
 
     # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    popsWeightNorm =    {#'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+    #popsWeightNorm =    {#'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
     #                     'ITS4_reduced': ['ITS4'],
     #                     'PV_reduced': ['PV2', 'SOM2'],
     #                     'VIP_reduced': ['VIP2'],
     #                     'NGF_reduced': ['NGF2'],
-                         'RE_reduced': ['IRE', 'TC', 'HTC']}
+    #                     'RE_reduced': ['IRE', 'TC', 'HTC']}
  
-    batchIndex = 6
-    for k, v in popsWeightNorm.items(): 
-        b = weightNorm(pops=v, rule=k)
-        b.batchLabel = 'v11_batch'+str(batchIndex) 
-        b.saveFolder = 'data/'+b.batchLabel
-        b.method = 'grid'  # evol
-        setRunCfg(b, 'mpi_bulletin')
-        b.run()  # run batch
-        batchIndex += 1
+    # batchIndex = 8
+    # for k, v in popsWeightNorm.items(): 
+    #     b = weightNorm(pops=v, rule=k)
+    #     b.batchLabel = 'v11_batch'+str(batchIndex) 
+    #     b.saveFolder = 'data/'+b.batchLabel
+    #     b.method = 'grid'  # evol
+    #     setRunCfg(b, 'mpi_bulletin')
+    #     b.run()  # run batch
+    #     batchIndex += 1
 
