@@ -1,206 +1,114 @@
-from netpyne import specs, sim
+## Made by Erica Griffith -- 2 compartment thalamic nucleus interneuron w/ oscillatory bursting 
 from neuron import h
-#import matplotlib.pyplot as plt
 
 
-netParams = specs.NetParams()
+class sTI_cell:
+    def __init__ (self,x=0,y=0,z=0,ID=0,ty=0): 
+      self.x=x
+      self.y=y
+      self.z=z
+      self.ID=ID
+      self.ty=ty
+      self.soma = soma = h.Section(name='soma',cell=self)
+      self.dend = dend = h.Section(name='dend',cell=self)
+      self.dend.connect(self.soma,0,0) #   connect dend(0), soma(0) 
+      for sec in [self.soma,self.dend]:
+        sec.Ra=120
+      self.initsoma()
+      self.initdend()
 
-## CREATE POP 
-netParams.popParams['sTI'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'numCells': 1} 
+    def initsoma (self):
+      soma = self.soma
+      soma.nseg = 1
+      soma.diam = 10
+      soma.L = 16
+      soma.cm = 1
+      ## Passive current
+      soma.insert('Pass') #ntleak.mod
+      soma.g_Pass = 13e-06
+      soma.erev_Pass = -74
+      ## Fast sodium 
+      soma.insert('naf2')
+      soma.gmax_naf2     = 0.1
+      soma.mvhalf_naf2   = -40
+      soma.mvalence_naf2 =  5
+      soma.hvhalf_naf2   = -43
+      soma.hvalence_naf2 = -6
+      ## DELAYED RECTIFIER POTASSIUM 
+      soma.insert('kdr2orig')
+      soma.ek = -95
+      soma.gmax_kdr2orig      = 0.1
+      soma.mvhalf_kdr2orig    = -31
+      soma.mvalence_kdr2orig  =  3.8
+      ## H CURRENT 
+      soma.insert('iar')
+      soma.ghbar_iar = 0.7e-04
+      soma.shift_iar = -0.0
+      ## ICAN current 
+      soma.insert('icanINT')
+      soma.gbar_icanINT =  0.0001
+      h.beta_icanINT = 0.003
+      h.cac_icanINT = 1.1e-04
+      soma.ratc_icanINT = 0.8           # proportion coming from low-thresh pool (IT)
+      soma.ratC_icanINT = 0.1           # proportion coming from high-thresh pool (IL)
+      h.x_icanINT = 8                   # correct re: jun.pdf, if x_ican == "n"
+      ## IAHP current 
+      soma.insert('iahp')
+      soma.gkbar_iahp = 0.45
+      h.beta_iahp = 0.02      # correct re: jun.pdf
+      h.cac_iahp = 8e-04
+      soma.ratc_iahp = 0.2   
+      soma.ratC_iahp = 1 
+      soma.ek2 = -95 
+      ## IT current (low-thresh calcium pool)
+      soma.insert('it2INT')
+      soma.gcabar_it2INT = 0.4e-04  
+      soma.shift1_it2INT = 7    # correct re: jun.pdf
+      h.shift2_it2INT = 0       # correct re: jun.pdf # h used bc GLOBAL var in ntt.mod
+      h.mx_it2INT = 3.0         # correct re: jun.pdf # h used bc GLOBAL var in ntt.mod
+      h.hx_it2INT = 1.5         # correct re: jun.pdf # h used bc GLOBAL var in ntt.mod
+      h.sm_it2INT = 4.8         # correct re: jun.pdf # h used bc GLOBAL var in ntt.mod
+      h.sh_it2INT = 4.6         # correct re: jun.pdf # h used bc GLOBAL var in ntt.mod
+      ## low-thresh calcium pool pump 
+      soma.insert('cad_int')
+      soma.taur_cad_int  = 150              # ORIG: 150 
+      soma.taur2_cad_int  = 80              # ORIG: 80 
+      soma.cainf_cad_int  = 1e-8            # ORIG: 1e-8 
+      soma.cainf2_cad_int  = 5.3e-5         # ORIG: 5.2e-5
+      soma.kt_cad_int = 0                   # ORIG: 0e-6 # <-- should be 0 from thesis 
+      soma.kt2_cad_int = 0                  # ORIG: 0e-7 # <-- should be 0 from thesis 
+      soma.k_cad_int  = 7.5e-3 
+      soma.kd_cad_int = 9e-4                  # doesn't matter if kt is 0
+      h.kd2_cad_int = 9e-4                    # doesn't matter if kt2 is 0
+      ## IL current (high-thresh calcium pool)
+      soma.insert('icalINT')
+      soma.pcabar_icalINT = 0.00009
+      h.sh1_icalINT = -10
+      h.sh2_icalINT = 0
+      ## High-thresh calcium pool pump 
+      soma.insert('Cad_int')
+      soma.taur_Cad_int  = 150 
+      soma.taur2_Cad_int  = 80
+      soma.Cainf_Cad_int  = 1e-8
+      soma.Cainf2_Cad_int  = 5.2e-5
+      soma.kt_Cad_int = 0
+      soma.kt2_Cad_int = 0
+      soma.k_Cad_int  = 5e-3
+      soma.kd_Cad_int = 9e-4 
+      h.kd2_Cad_int = 9e-4
+      h.Cai0_Ca_ion = 5e-5
+      h.Cao0_Ca_ion = 2
 
-#########################
-###### CREATE CELL ######  
-#########################
-cellRule = {'conds': {'cellModel': 'HH', 'cellType': 'TI'}, 'secs':{}, 'globals': {}} # cell rule dict
-
-#### SOMA #### 
-cellRule['secs']['soma'] = {'geom': {}, 'mechs': {}, 'ions': {}}
-cellRule['secs']['soma']['geom'] = {'diam': 10, 'L': 16, 'Ra': 120, 'cm': 1} #Ra: 100 
-
-
-#### PROXIMAL DENDRITES ####
-prox_dends = ['dend_%d' % i for i in range(1)]
-
-for prox_dend in prox_dends:
-	cellRule['secs'][prox_dend] = {'geom':{}, 'mechs':{}} 
-	cellRule['secs'][prox_dend]['geom'] = {'diam': 3.25, 'L': 240, 'Ra': 120, 'cm': 1} #'Ra': 100
-
-cellRule['secs']['dend_0']['topol'] = {'parentSec': 'soma', 'parentX': 0, 'childX': 0}
-# cellRule['secs']['dend_1']['topol'] = {'parentSec': 'soma', 'parentX': 1, 'childX': 0}
-
-
-
-
-
-
-#############################################
-############# INSERT MECHANISMS #############
-#############################################
-
-
-######################
-#### LEAK CURRENT ####
-######################
-## SOMA ## 
-cellRule['secs']['soma']['mechs']['Pass'] ={'g': 13e-06, 'erev':-74}
-## trial values: 
-# cellRule['secs']['soma']['mechs']['Pass']['g'] =   		# ORIG in STI.hoc: 18e-6 ; 'g' from jun.pdf: 8e-03
-# cellRule['secs']['soma']['mechs']['Pass']['erev'] = 		# ORIG in sTI.hoc: -72.5 
-
-## PROXIMAL DENDRITES ## 
-for prox_dend in prox_dends:
-	cellRule['secs'][prox_dend]['mechs']['Pass'] = {'g': 13e-06, 'erev': -74}
-
-
-#####################
-#### FAST SODIUM ####
-#####################
-cellRule['secs']['soma']['mechs']['naf2'] = {'gmax': 0.1, 'mvhalf': -40, 'mvalence': 5, 'hvhalf': -43, 'hvalence': -6}
-## mvhalf in orig sTI.hoc is set to -45, but in thesis, mvhalf = -40 
-## trial line: 
-# cellRule['secs']['soma']['mechs']['naf2']['gmax'] = 		# ORIG?? 
-
-#####################################
-#### POTASSIUM DELAYED RECTIFIER ####
-#####################################
-cellRule['secs']['soma']['mechs']['kdr2orig'] = {'gmax': 0.1, 'mvhalf': -31, 'mvalence': 3.8} # ORIG in thesis: 0.05 # ORIG in sTI.hoc 0.07 
-## USING ORIGINAL 
-# 'mexp': 4 ## SHOULD BE 4, BUT LOOKS LIKE SET TO 1 IF LOOK AT THESIS... 
-# 'mbaserate': 0.0008,
-# 'mgamma': 0.5,
-# 'mbasetau': 10
-cellRule['secs']['soma']['ions']['k'] = {'e': -95, 'i': 54.5, 'o': 2.5} # set Ek = -95 
-
-
-####################
-#### IH current ####
-####################
-cellRule['secs']['soma']['mechs']['iar'] = {'ghbar': 0.7e-04, 'shift': -0.0} # ORIG ghbar: 0.13 mS/cm2; correct re: jun.pdf
-
-
-######################
-#### ICAN current ###
-######################
-cellRule['secs']['soma']['mechs']['icanINT'] = {'gbar': 0.0001, 'ratc': 0.8, 'ratC': 0.1} #gbar: 0.0003 # ratc: proportion coming from low-thresh pool (IT) # ratC: proportion coming from high-thresh pool (IL)
-cellRule['globals']['beta_icanINT'] = 0.003 		# correct re: jun.pdf & thesis (units: ms^-1)
-cellRule['globals']['cac_icanINT'] = 1.1e-04		# alpha = beta / (cac^x), alpha = 1.4e05 ms^-1 microM^-8
-cellRule['globals']['x_icanINT'] = 8				# correct re: jun.pdf, if x_icanINT == "n" (yes)
-## trial line: 
-# cellRule['secs']['soma']['mechs']['icanINT']['gbar'] = 		# ORIG in THESIS: 1mS/cm2 # ORIG in sTI.hoc: 2e-05  #1e-7?? 
-# cellRule['globals']['cac_icanINT'] = 
-
-######################
-#### IAHP current ####
-######################
-cellRule['secs']['soma']['mechs']['iahp'] = {'gkbar': 0.45, 'ratc': 0.2, 'ratC': 1} #gkbar: 0.18
-cellRule['globals']['beta_iahp'] = 0.02 		# correct re: jun.pdf
-cellRule['globals']['cac_iahp'] = 8e-04			
-## trial line: 
-# cellRule['secs']['soma']['mechs']['iahp']['gkbar'] = 		# ORIG in sTI.hoc: 0.4 
-
-
-
-####################
-#### IT current ####
-####################
-cellRule['secs']['soma']['mechs']['it2INT'] = {'gcabar': 0.4e-04, 'shift1': 7}
-cellRule['globals']['shift2_it2INT'] = 0 		# correct re: jun.pdf & thesis 
-cellRule['globals']['mx_it2INT'] = 3.0			# correct re: jun.pdf & thesis
-cellRule['globals']['hx_it2INT'] = 1.5			# correct re: jun.pdf & thesis
-cellRule['globals']['sm_it2INT'] = 4.8 		# correct re: jun.pdf & thesis
-cellRule['globals']['sh_it2INT'] = 4.6			# correct re: jun.pdf & thesis
-## trial line: 
-# cellRule['secs']['soma']['mechs']['it2']['gcabar'] = 		# ORIG in sTI.hoc: 4.0e-04
-
-
-#############################################################
-#### CALCIUM PUMP FOR "ca" ION POOL - associated with IT ####
-#############################################################
-cellRule['secs']['soma']['mechs']['cad_int'] = {'taur': 150, 'taur2': 80, 'cainf': 1e-8, 'cainf2': 5.3e-5, 'kt': 0e-6, 'kt2': 0e-7, 'k': 7.5e-3}
-## TRIAL VALUES: 
-#cellRule['secs']['soma']['mechs']['cad_int']['k'] = 7.5e-3 #50					# ORIG: 7.5e-3
-
-####################
-#### IL current ####
-####################
-cellRule['secs']['soma']['mechs']['icalINT'] = {'pcabar': 0.00009}
-cellRule['globals']['sh1_icalINT'] = -10
-cellRule['globals']['sh2_icalINT'] = 0
-## trial line: 
-# cellRule['secs']['soma']['mechs']['icalINT']['pcabar'] = 			# ORIG: 9.0e-04
-
-##############################################################
-#### CALCIUM PUMP FOR "Ca" ION POOL -- associated with IL ####
-##############################################################
-cellRule['secs']['soma']['mechs']['Cad_int'] = {'taur': 150, 'taur2': 80, 'Cainf': 1e-8, 'Cainf2': 5.2e-5, 'kt': 0e-6, 'kt2': 0e-7, 'k': 5e-3}
-## TRIAL VALUES:
-#cellRule['secs']['soma']['mechs']['Cad_int']['k'] = 7.5e-3 #50					# ORIG: 7.5e-3
-
-
-
-
-
-#############################################
-########### CHANGE ION PARAMETERS ###########
-#############################################
-
-### K2 ION VALUES FOR IAHP CURRENT ### /significance of this is debatable/ ###
-cellRule['secs']['soma']['ions']['k2'] = {'e': -95, 'i': 54.5, 'o': 2.5} # -77 by default, but set to -95 
-cellRule['globals']['k2i0_k2_ion'] = 54.5 			# NEURON: h.k2i0_k2_ion = 54.5
-cellRule['globals']['k2o0_k2_ion'] = 2.5 			# NEURON: h.k2o0_k2_ion = 2.5 
-
-
-### Ca2+ ION VALUES FOR high-thresh pool (Ca) & IL CURRENT ### 
-cellRule['globals']['Cai0_Ca_ion'] = 5e-5			# NEURON: h.Cai0_Ca_ion = 5e-5
-cellRule['globals']['Cao0_Ca_ion'] = 2				# NEURON: h.Cao0_Ca_ion = 2
-
-
-########################################
-## PUT CELLRULE INTO NETPARAMS STRUCT ##
-########################################
-netParams.cellParams['sTI'] = cellRule
-
-
-
-###############################
-######### STIM OBJECT #########
-###############################
-netParams.stimSourceParams['Input'] = {'type': 'IClamp', 'del': 400, 'dur': 1000, 'amp': 0.06}
-netParams.stimTargetParams['Input->sTI'] = {'source': 'Input', 'sec':'soma', 'loc': 0.5, 'conds': {'pop':'sTI'}}
-
-
-
-
-#########################
-######## RUN cfg ########
-#########################
-cfg = specs.SimConfig()					# object of class SimConfig to store simulation configuration
-cfg.duration = 1.8e3 						# Duration of the simulation, in ms
-cfg.dt = 0.025 #0.01 								# Internal integration timestep to use
-cfg.verbose = 1							# Show detailed messages 
-cfg.recordTraces = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}, \
-					#'ina_soma': {'sec':'soma', 'loc':0.5, 'var':'ina'}, \
-					#'ik_soma': {'sec':'soma', 'loc':0.5, 'var':'ik'}}
-					#'IH':{'sec':'soma','loc':0.5,'var':'iother'},\
-					'IT':{'sec':'soma','loc':0.5,'var':'ica'},\
-					'Cai':{'sec':'soma','loc':0.5,'var':'cai'},\
-					'IL':{'sec':'soma','loc':0.5,'var':'iCa'},\
-					'ICAN':{'sec':'soma','loc':0.5,'var':'iother2'},\
-					'cai':{'sec':'soma','loc':0.5,'var':'Cai'},\
-					'IAHP':{'sec':'soma','loc':0.5,'var':'ik2'}} ### SWITCHED cai and Cai labels to be consistent with jun
-cfg.recordStep = 0.025 			
-cfg.filename = 'model_output'  			# Set file output name
-cfg.saveJson = True
-cfg.analysis['plotTraces'] = {'include': [0], 'saveFig': True, 'overlay': False, 'axis':'on'} #, 'oneFigPer':'trace'} # Plot recorded traces for this list of cells
-cfg.hParams = {'celsius': 36} #'v_init': -75}		# celsius from batch_.hoc was 37?
-
-
-
-
-###############################
-### CREATE & RUN SIMULATION ###
-###############################
-sim.createSimulateAnalyze(netParams = netParams, simConfig = cfg)
+    def initdend (self):
+      dend = self.dend
+      dend.nseg = 1
+      dend.diam = 3.25
+      dend.L = 240
+      dend.cm = 1
+      ## Passive current
+      dend.insert('Pass')
+      dend.g_Pass = 13e-06
+      dend.erev_Pass = -74
 
 
 
