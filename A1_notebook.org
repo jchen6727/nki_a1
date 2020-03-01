@@ -28001,3 +28001,110 @@ endtemplate sTI
 * <2019-12-11 Wed -- paper draft>
 ** /u/billl/papers/thal/inter/jun.pdf 
 >>>>>>> cells
+* <2020-01-10 Fri -- git branch maintenance / cleanup>
+** Closing off cells branch:
+*** cd ~/Desktop/NEUROSIM/A1
+*** git checkout master
+*** git tag archive/cells cells
+*** git branch -d cells
+*** git push origin :cells
+*** Helpful links:
+**** https://stackoverflow.com/questions/8614112/how-to-close-off-a-git-branch/8614244
+**** https://stackoverflow.com/questions/35738790/how-to-close-a-branch-in-git
+**** https://koukia.ca/delete-a-local-and-a-remote-git-branch-61df0b10d323
+** Creating new branch 'erica' for future edits:
+*** git checkout master
+*** git pull 
+*** git checkout -b erica
+*** git push origin erica 
+**** This ensures that the branch will be pushed to github; remote
+*** Helpful link: https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches
+** Now to push edits from local to remote --> git status, git add, git commit -m 'message', *git push origin erica*
+** brian2hears:
+*** Install process:
+**** pip install brian2 (this went fine!)
+**** pip install --upgrade pip     --> seemed to work, but does not work any longer, apparently?? The upgrade also didn't seem to "take" so, instead use --> *python -m pip install --upgrade pip*
+**** *python -m pip install brian2hears*
+*** repo(s):
+**** https://github.com/brian-team/brian2hears/tree/master/brian2hears
+**** https://github.com/brian-team/brian2hears
+**** ...what's the difference?
+*** Documentation / tutorials: https://brian2hears.readthedocs.io/en/stable/introduction.html
+*** Paper: https://www.frontiersin.org/articles/10.3389/fninf.2011.00009/full
+** Installed pygame 
+*** *python -m pip install pygame*
+*** Enables me to play sounds related to brian2hears
+*** pygame 1.9.6 Hello from the pygame community. https://www.pygame.org/contribute.html 2020-01-10 16:08:40.289 python[38384:8489235] 16:08:40.288 WARNING:  140: This application, or a library it uses, is using the deprecated Carbon Component Manager for hosting Audio Units. Support for this will be removed in a future release. Also, this makes the host incompatible with version 3 audio units. Please transition to the API's in AudioComponent.h.
+** Got through section 2.1 in Paper on brian2hears (link in brian2hears tab above)
+* <2020-02-28 Fri -- moving 2-cmp interneuron into A1>
+** Task #1: merge salva's branch into my branch -- DONE 
+** Added thal_int.py (previously test_netpyne_two_comp.py from ~/Desktop/NEUROSIM/thal_int_cell) into ~/Desktop/NEUROSIM/A1/cells
+** Committed -->  e2a50e6..b3dfda0
+*** git branch (made sure was on branch 'erica') 
+*** git add A1_notebook.org
+*** git add cells/thal_int.py
+*** git commit -m 'message'
+*** git push origin erica 
+** Import the file into netParams_cell.py 
+*** # Import Thalamic Interneuron cell from .py file 
+*** netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellModel': 'HH_reduced'}, fileName='cells/sTI.py', cellName='sTI', importSynMechs=True)
+*** netParams.cellParams['TI_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'ynorm': layer['thal']}
+** Committed --> e29e378..f863bdb 
+** MOD FILE CHECK:
+*** Suffix to watch out for: Pass, naf2, kdr2orig, iar, ican, iahp, it2, cad, ical, Cad
+*** CONFLICTS: 
+**** cad
+***** in thal_int_cell --> cad, from cp.mod
+***** in A1/mod --> cad, from cad.mod 
+***** CHANGE:
+****** cd ~/Desktop/NEUROSIM/thal_int_cell
+****** open up cp.mod --> change suffix to cad_int
+****** open up test_netpyne_two_comp.py --> change cad to cad_int
+****** open up sTI.py in ~/Desktop/NEUROSIM/A1/cells --> same change as above 
+****** re-compile in thal_int_cell and see if it still works 
+***** ^^ Do the same changes for cp2.mod just in case 
+**** ican
+***** in thal_int_cell --> Ican.mod
+***** in A1/mod --> ican_sidi.mod
+***** CHANGE:
+****** in ~/Desktop/NEUROSIM/thal_int_cell/Ican.mod --> change suffix to icanINT
+****** change ican to ican_int in test_netpyne_two_comp.py 
+****** re-compile; test 
+****** made same changes in ~/Desktop/NEUROSIM/A1/sTI.py --> ican to icanINT
+**** ical
+***** in thal_int_cell --> IL.mod
+***** in A1/mod --> IL_gutnick.mod 
+***** CHANGE:
+****** in ~/Desktop/NEUROSIM/thal_int_cell/IL.mod --> change suffix from ical to icalINT
+****** in test_netpyne_two_comp.py --> change ical to icalINT
+****** change the suffix ^^ as well in ~/Desktop/NEUROSIM/A1/sTI.py 
+**** it2
+***** in thal_int_cell --> ntt.mod 
+***** in A1/mod --> ntt.mod 
+***** CHANGE:
+****** changed ~/Desktop/NEUROSIM/thal_int_cell/ntt.mod --> .../ntt_int.mod
+****** changed suffix in ^^ this file from it2 to it2INT
+****** change suffix in ~/Desktop/NEUROSIM/A1/cells/sTI.py from it2 to it2INT as well 
+****** re-compile in thal_int_cell and test 
+*** committed (863bdb..c3c3605) 
+** Adding mod files to ~/Desktop/NEUROSIM/A1/mod on erica branch:
+*** ntleak.mod
+*** naf2.mod
+*** kdr2_orig.mod 
+*** ntIh.mod
+*** Ican.mod
+*** Iahp.mod
+*** ntt_int.mod 
+*** cp.mod
+*** cp2.mod 
+*** IL.mod 
+** Changed sTI.py to have cellModel as HH_reduced 
+** TO DO: 
+*** mod files:
+**** Check for conflicts in the mod files 
+**** Add in the mod files
+**** commit / push 
+*** check 3D configuration
+**** sim.analysis.plotshape --> run init_cell.py
+*** secLists --> most similar to PV/SOM/NGF
+*** which thalamic population -- replacement or additional? (replacement for reticular interneuron?) 
