@@ -1518,6 +1518,8 @@ worked but subconn bug
 *** tried running 250um (20k cells) on 4*96 cores
 memory error
 *** tried running 250um (20k cells) on 8*96 cores
+memory error
+*** running 200um (12k cells) on 4*96 cores
 
 *** if not try highmem-96
 *** if not try smaller net

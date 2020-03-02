@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 2.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim39'
+cfg.simLabel = 'v11_sim41'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -106,7 +106,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.05# 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ cfg.addSubConn = 1
 #------------------------------------------------------------------------------
 # Background inputs
 #------------------------------------------------------------------------------
-cfg.addBkgConn = 1
+cfg.addBkgConn = 0
 cfg.noiseBkg = {'A1': 1.0, 'thalamus': 1.0}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
@@ -158,7 +158,7 @@ cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], '
 cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500}  # parameters to generate realistic cochlear + IC input
 
 cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
-cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
+cfg.probInput = {'ThalE': 0.0, 'ThalI': 0.0} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
 
 
 #------------------------------------------------------------------------------
