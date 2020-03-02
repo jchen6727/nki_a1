@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 11
+netParams.version = 12
 
 #------------------------------------------------------------------------------
 #
@@ -150,7 +150,7 @@ for ruleLabel in netParams.cellParams.keys():
         secLists['dend_all'] = secLists['apic'] = secLists['apic_trunk'] = secLists['apic_lowertrunk'] = \
             secLists['apic_uppertrunk'] = secLists['apic_tuft'] = ['dend', 'dend1']
 
-    elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced']:
+    elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced', 'TI_reduced']:
         secLists['all'] = secLists['proximal'] = ['soma', 'dend']
         secLists['dend_all'] = ['dend']
 
@@ -165,7 +165,7 @@ for ruleLabel in netParams.cellParams.keys():
 
 ## Set 3D geometry for each cell type
 for label in netParams.cellParams:
-    if label in ['PV_reduced', 'SOM_reduced']:
+    if label in ['PV_reduced', 'SOM_reduced']: 
         offset, prevL = 0, 0
         somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
         for secName, sec in netParams.cellParams[label]['secs'].items():
@@ -178,7 +178,7 @@ for label in netParams.cellParams:
                 sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
                 sec['geom']['pt3d'].append([offset + 0, -sec['geom']['L'], 0, sec['geom']['diam']])
 
-    elif label in ['NGF_reduced']:
+    elif label in ['NGF_reduced', 'TI_reduced']:
         offset, prevL = 0, 0
         somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
         for secName, sec in netParams.cellParams[label]['secs'].items():
@@ -320,6 +320,7 @@ netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  
 netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.25*thalDensity}   
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
 netParams.popParams['IREM'] =   {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}
+netParams.popParams['TI'] =     {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity} ## UNSURE ABOUT thalDensity?? 
 
 createSinglePopForNetstim = 1
 
@@ -667,4 +668,5 @@ v8 - Added cell types
 v9 - Added local connectivity
 v10 - Added thalamic populations from prev model
 v11 - Added thalamic conn from prev model
+v12 - Added in 2-compartment thalamic interneuron model 
 """
