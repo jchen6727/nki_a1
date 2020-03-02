@@ -30,6 +30,15 @@ cfg.createNEURONObj = 1
 cfg.createPyStruct = 1
 cfg.printRunTime = 0.1
 
+cfg.connRandomSecFromList = False  # set to false for reproducibility 
+cfg.cvode_active = False
+cfg.cvode_atol = 1e-6
+cfg.cache_efficient = True
+cfg.printRunTime = 0.1
+cfg.oneSynPerNetcon = True
+cfg.includeParamsLabel = False
+cfg.printPopAvgRates = [500, 1500]
+
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
@@ -67,7 +76,7 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 
 # popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
-cfg.analysis['plotTraces'] = {'include': [(0,pop) for pop in allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+#cfg.analysis['plotTraces'] = {'include': [(0,pop) for pop in allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
