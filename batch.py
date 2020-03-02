@@ -582,31 +582,22 @@ def evolRates():
     # parameters
     params = specs.ODict()
 
-    # long-range inputs
-    params[('ratesLong', 'TPO', 1)] = [2, 5] 	#[2,4,2,2,4,2,4,4]
-    params[('ratesLong', 'TVL', 1)] = [2, 5] #[2,4,2,2,4,2,4,4]
-    #params[('ratesLong', 'S1', 1)] =  [2, 5] 	#[2,2,4,2,4,4,2,4]
-    params[('ratesLong', 'S2', 1)] =  [2, 5] 	#[2,2,4,2,4,4,2,4]
-    #params[('ratesLong', 'cM1', 1)] =  [2, 5] 
-    params[('ratesLong', 'M2', 1)] =  [2, 5] #[2,2,2,4,2,4,4,4]
-    params[('ratesLong', 'OC', 1)] =  [2, 5]	
+    # params['EEGain'] = [0.8, 1.2]  
+    # params['EIGain'] = [0.8, 1.2] 
+    # params['IEGain'] = [0.8, 1.2]
+    # params['IIGain'] = [0.8, 1.2]
 
-    # EEgain
-    params['EEGain'] = [0.5, 1.0] 
+    # # I->E/I weights gains for each layer (L2/3+4, L5, L6)
+    # params['IEweights'] = [1.0, 1.0, 1.0] 
+    # params['IIweights'] = [1.5, 1.0, 1.0]
 
-    # IEgain
-    ## L2/3+4
-    params[('IEweights',0)] =  [0.8, 1.2]
-    ## L5
-    params[('IEweights',1)] = [0.8, 1.2] #[0.8, 1.0]   
-    ## L6
-    params[('IEweights',2)] =  [0.8, 1.2] # [0.8, 1.0]  
+    # bkg inputs
+    #cfg.weightBkg = {'E': 0.5, 'I': 0.5, 'ThalE': 0.5, 'ThalI': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
+    #cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
+    # # 
+    # cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
+    # cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
 
-    # IIGain
-    params['IIGain'] = [0.8, 1.2]
-    
-    # ih - remove
-    #params['ihGbar'] = [0.1, 0.3] #[0.2, 0.25, 0.3, 1.0] 
 
     groupedParams = []
 
@@ -614,34 +605,7 @@ def evolRates():
     # initial config
     initCfg = {}
     initCfg['duration'] = 1.5*1e3
-    initCfg['ihModel'] = 'migliore'  # ih model
-
-    initCfg['ihGbarBasal'] = 1.0 # multiplicative factor for ih gbar in PT cells
-    initCfg['ihlkc'] = 0.2 # ih leak param (used in Migliore)
-    initCfg['ihLkcBasal'] = 1.0 # multiplicative factor for ih lk in PT cells
-    initCfg['ihLkcBelowSoma'] = 0.01 # multiplicative factor for ih lk in PT cells
-    initCfg['ihlke'] = -86  # ih leak param (used in Migliore)
-    initCfg['ihSlope'] = 28  # ih leak param (used in Migliore)
-
-    initCfg['somaNa'] = 5.0  # somatic Na conduct
-    initCfg['dendNa'] = 0.3  # dendritic Na conduct (reduced to avoid dend spikes) 
-    initCfg['axonNa'] = 7   # axon Na conduct (increased to compensate) 
-    initCfg['axonRa'] = 0.005
-    initCfg['gpas'] = 0.5
-    initCfg['epas'] = 0.9
-
-    initCfg[('pulse', 'pop')] = 'None'
-    initCfg[('pulse', 'start')] = 1000.0
-    initCfg[('pulse', 'end')] = 1100.0
-    initCfg[('pulse', 'noise')] = 0.8
-
-    initCfg['IEdisynapticBias'] = None
-
-    initCfg['weightNormThreshold'] = 4.0
-    initCfg['IEGain'] = 1.0
-    initCfg['IPTGain'] = 1.0
-    initCfg['IIweights'] =  [1.0, 1.0, 1.0]
-
+    initCfg['ihGbar'] = 0.75  # ih (for quiet/spont condition)
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
@@ -649,27 +613,25 @@ def evolRates():
     # --------------------------------------------------------
     # fitness function
     fitnessFuncArgs = {}
-        
-    ## complex net
-    pops = {} 
-    Etune = {'target': 10, 'width': 5, 'min': 0.5}
-    pops['IT2'] = Etune
-    pops['IT4'] = Etune
-    pops['IT5A'] = Etune 
-    pops['IT5B'] = Etune  
-    pops['PT5B'] = Etune 
-    pops['IT6'] =  Etune
-    pops['CT6'] =  Etune
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']
 
-    Itune = {'target': 20, 'width': 15, 'min': 0.25}
-    pops['PV2'] = Itune
-    pops['SOM2'] = Itune
-    pops['PV5A'] = Itune
-    pops['SOM5A'] = Itune
-    pops['PV5B'] = Itune
-    pops['SOM5B'] = Itune
-    pops['PV6'] = Itune
-    pops['SOM6'] = Itune
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1', 'PV2', 'SOM2', 'VIP2', 'NGF2',
+            'PV4', 'SOM4', 'VIP4', 'NGF4',
+            'PV5A', 'SOM5A','VIP5A','NGF5A',
+            'PV5B', 'SOM5B','VIP5B','NGF5B',
+            'PV6', 'SOM6', 'VIP6', 'NGF6']
+
+    Itune = {'target': 10, 'width': 15, 'min': 0.25}
+    for pop in Ipops:
+        pops[pop] = Itune
     
     fitnessFuncArgs['pops'] = pops
     fitnessFuncArgs['maxFitness'] = 1000
@@ -680,7 +642,7 @@ def evolRates():
         pops = kwargs['pops']
         maxFitness = kwargs['maxFitness']
         popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
-                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.iteritems()]
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
         fitness = np.mean(popFitness)
 
         popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
@@ -696,16 +658,16 @@ def evolRates():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 30,
-        'num_elites': 2,
+        'pop_size': 50,
+        'num_elites': 5,
         'mutation_rate': 0.4,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
-        'max_generations': 200,
-        'time_sleep': 90*10, # (15 min) wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 48*4, # (48h) max number of times to check if sim is completed (for each generation)
+        'max_generations': 100,
+        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 72, # (6h) max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
-        'scancelUser': 'salvadord'
+        'scancelUser': 'ext_salvadordura_gmail_com'
     }
 
 
@@ -791,7 +753,7 @@ if __name__ == '__main__':
     b.batchLabel = 'v16_batch1' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
-    setRunCfg(b, 'mpi_bulletin')
+    setRunCfg(b, 'hpc_slurm_gcp')
     b.run() # run batch
 
 

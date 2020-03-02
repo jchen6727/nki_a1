@@ -223,4 +223,4 @@ def inh_poisson_generator(rate, t, t_stop):
 
 
 # main
-spk=cochlearInputSpikes(plotRaster=1)
+#spk=cochlearInputSpikes(plotRaster=1)
