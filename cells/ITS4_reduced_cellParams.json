@@ -78,7 +78,10 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 0.5
-            }
+            },
+            "weightNorm": [
+                0.0008816795610044532
+            ]
         },
         "dend1": {
             "geom": {
@@ -148,7 +151,10 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 1.0
-            }
+            },
+            "weightNorm": [
+                0.0008835744110635155
+            ]
         },
         "soma": {
             "geom": {
@@ -201,7 +207,10 @@
                     "g": 3.3333333333333335e-05
                 }
             },
-            "topol": {}
+            "topol": {},
+            "weightNorm": [
+                0.0008816619214628111
+            ]
         }
     }
 }
