@@ -1505,3 +1505,9 @@ def custom():
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b 
+
+*** memory error 
+slurmstepd: error: Detected 700 oom-kill event(s) in step 5304.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
+*** try running on 2*96 cores
+*** if not try highmem-96
+*** if not try smaller net
