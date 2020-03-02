@@ -717,7 +717,7 @@ def setRunCfg(b, type='mpi_bulletin'):
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
             'walltime': '24:00:00', #'48:00:00',
-            'nodes': 4,
+            'nodes': 8,
             'coresPerNode': 96,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
             'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
