@@ -28098,13 +28098,35 @@ endtemplate sTI
 *** cp.mod
 *** cp2.mod 
 *** IL.mod 
-** Changed sTI.py to have cellModel as HH_reduced 
+** Changed sTI.py to have cellModel as HH_reduced in netParams_cell.py
+** CHANGED sTI.py majorly!!!!! Made it a class, so can be properly imported (was having trouble with other formats). *TO DO: CHANGE THIS TO NETPYNE FORMATTING?*
+** [DONE] Compile & check import of new cell:
+*** compile:
+**** cd ~/Desktop/NEUROSIM/A1 
+**** rm -r x86_64
+**** rm -r mod/x86_64
+**** ln -s mod/x86_64 x86_64
+
+*** test! -- error with import sim module
+**** had to change */Users/ericagriffith/anaconda3/lib/python3.7/site-packages/netpyne/specs/netParams.py* --> line 470 under saveCellParamsRule
+**** under line elif ext== 'json' --> had to change "import sim" to "from .. import sim" 
+**** messaged salva! 
+** [DONE] secLists:
+*** elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced', 'TI_reduced']:        ***    secLists['all'] = secLists['proximal'] = ['soma', 'dend']
+***    secLists['dend_all'] = ['dend']
+** 3D configuration -- haven't yet checked w/ sim.analysis.plotShape(): 
+*** Added TI_reduced in line w/ NGF_reduced under '#Set 3D geometry for each cell type' 
+*** adds pt3D for soma & dend 
+** Added netParams.popParams['TI'] to the thalamic population section of population parameters
 ** TO DO: 
-*** mod files:
+*** [DONE] mod files:
 **** Check for conflicts in the mod files 
 **** Add in the mod files
 **** commit / push 
+*** [DONE] secLists --> most similar to PV/SOM/NGF
+*** [DONE] ADDITIONAL *which thalamic population -- replacement or additional? (replacement for reticular interneuron?) 
+*** weight norm? 
 *** check 3D configuration
 **** sim.analysis.plotshape --> run init_cell.py
-*** secLists --> most similar to PV/SOM/NGF
-*** which thalamic population -- replacement or additional? (replacement for reticular interneuron?) 
+* <2020-03-02 Mon -- interneuron connectivity>
+** Merge w/ salva's branch again 
