@@ -1481,7 +1481,7 @@ sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probabil
 sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_BBP_S1_prob_0.25.png' , saveData='conn/E->EI_BBP_S1_prob_0.25.pkl')
 
 sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn/EI->EI_Allen_custom_prob_0.25_fixed.png' , saveData='conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl')
-** v16_batch1 Small parameter on full net 300x300 um (29k cells); to get baseline
+** v16_batch1 - Small parameter on full net 200x200 um (12k cells); to get baseline
 *** code
 def custom():
     params = specs.ODict()
@@ -1519,7 +1519,16 @@ worked but subconn bug
 memory error
 *** tried running 250um (20k cells) on 8*96 cores
 memory error
-*** running 200um (12k cells) on 4*96 cores
+*** running 200um (12k cells) on 4*96 cores - results ok
+- ITS4 really high 250hz
+- ngf pops firing weirdly
 
 *** if not try highmem-96
 *** if not try smaller net
+** v16_batch2 - Small parameter on 200x200 um (12k cells); to get baseline; after fixing bursting
+*** fixed bugs
+- ITS4 v_init
+- weighNorm of multiple cell types; including NGF with wrong filename
+*** tuned params
+- increased bkg weights * 5
+- reduced ITS4 weightNorm * 5

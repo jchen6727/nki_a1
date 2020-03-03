@@ -554,13 +554,15 @@ def fIcurve():
 def custom():
     params = specs.ODict()
 
-    params[('weightBkg', 'E')] = [1.0] #[0.1, 0.5, 1.0]
-    params[('weightBkg', 'I')] = [1.0] #[0.1, 0.5, 1.0]
-    params[('weightBkg', 'ThalE')] = [1.0] #[0.1, 0.5, 1.0]
-    params[('weightBkg', 'ThalI')] = [1.0] #[0.1, 0.5, 1.0]
+    factor = 5
+
+    params[('weightBkg', 'E')] = [1.0*factor, 2.0*factor] #[0.1, 0.5, 1.0*factor]
+    params[('weightBkg', 'I')] = [1.0*factor, 2.0*factor] #[0.1, 0.5, 1.0*factor]
+    params[('weightBkg', 'ThalE')] = [1.0*factor] #[0.1, 0.5, 1.0*factor]
+    params[('weightBkg', 'ThalI')] = [1.0*factor] #[0.1, 0.5, 1.0*factor]
     
-    params[('weightInput', 'ThalE')] = [0.0, 1.0] #[0.0, 0.5, 1.0]
-    params[('weightInput', 'ThalI')] = [0.0, 1.0] # [0.0, 0.5, 1.0]
+    params[('weightInput', 'ThalE')] = [0.0] #,1.0] #[0.0, 0.5, 1.0]
+    params[('weightInput', 'ThalI')] = [0.0]#, 1.0] # [0.0, 0.5, 1.0]
     
     groupedParams = []
 
@@ -750,7 +752,7 @@ if __name__ == '__main__':
     b = custom()
     #b = evolRates()
 
-    b.batchLabel = 'v16_batch1' 
+    b.batchLabel = 'v16_batch2' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp')
