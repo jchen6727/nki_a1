@@ -3,6 +3,8 @@
 from neuron import h
 from math import pi
 
+h.v_init = -75
+
 class ITS4_cell:
   def __init__ (self,ID=0,ty=0,col=0,rho=53.5,kappa=0.01,soma_pas=True): #rho = 165.0 #kappa = 0.01 #kappa =10 --> 0 is fully connected 
     self.ID=ID

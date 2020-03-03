@@ -601,22 +601,10 @@ if cfg.addBkgConn:
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
-
     # connect stim sources to target cells
     netParams.stimTargetParams['bkgE->E'] =  {
         'source': 'bkgE', 
         'conds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
-        'sec': 'soma', 
-        'loc': 0.5,
-        'synMech': ESynMech,
-        'weight': cfg.weightBkg['E'],
-        'synMechWeightFactor': cfg.synWeightFractionEE,
-        'delay': cfg.delayBkg}
-
-    # connect stim sources to target cells
-    netParams.stimTargetParams['bkgE->ITS4'] =  {
-        'source': 'bkgE', 
-        'conds': {'cellType': ['ITS4']},
         'sec': 'soma', 
         'loc': 0.5,
         'synMech': ESynMech,

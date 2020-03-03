@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim42'
+cfg.simLabel = 'v11_sim47'
 cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -145,7 +145,7 @@ cfg.addSubConn = 1
 #------------------------------------------------------------------------------
 # Background inputs
 #------------------------------------------------------------------------------
-cfg.addBkgConn = 0
+cfg.addBkgConn = 1
 cfg.noiseBkg = {'A1': 1.0, 'thalamus': 1.0}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms

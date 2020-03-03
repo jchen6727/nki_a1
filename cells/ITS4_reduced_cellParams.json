@@ -7,7 +7,9 @@
             0.625
         ]
     },
-    "globals": {},
+    "globals": {
+        "v_init": -75.0
+    },
     "secLists": {},
     "secs": {
         "dend": {
@@ -79,6 +81,7 @@
                 "parentSec": "soma",
                 "parentX": 0.5
             },
+            "vinit": -75.0,
             "weightNorm": [
                 0.0008816795610044532
             ]
@@ -152,6 +155,7 @@
                 "parentSec": "soma",
                 "parentX": 1.0
             },
+            "vinit": -75.0,
             "weightNorm": [
                 0.0008835744110635155
             ]
@@ -208,6 +212,7 @@
                 }
             },
             "topol": {},
+            "vinit": -75.0,
             "weightNorm": [
                 0.0008816619214628111
             ]
