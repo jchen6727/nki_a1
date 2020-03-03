@@ -126,7 +126,7 @@ for ruleLabel in netParams.cellParams.keys():
         netParams.addCellParamsWeightNorm(ruleLabel, 'cells/' + ruleLabel + '_weightNorm.pkl', threshold=cfg.weightNormThreshold)  # add weightNorm
         print('   Loaded weightNorm pkl file for %s...' % (ruleLabel))
     except:
-        pass
+        print('   No weightNorm pkl file for %s...' % (ruleLabel))
 
     # remove
     if cfg.removeWeightNorm:
