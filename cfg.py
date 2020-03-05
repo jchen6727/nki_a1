@@ -22,8 +22,8 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 2.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
-cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
+cfg.duration = 200 # 2e3			    ## Duration of the sim, in ms
+cfg.dt = 0.05                   ## Internal Integration Time Step
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
 cfg.createNEURONObj = 1
@@ -106,7 +106,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 1.0 # 0.1 # 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------

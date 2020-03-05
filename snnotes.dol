@@ -18,6 +18,9 @@ now setup laptop to use anaconda with neurosim dir structures
 so, that py3env uses python 3.6 with anaconda ... 
 
 ** compile
+
+nrnivmodl mod
+
 ** run
 
 make a myrun script wrapper
@@ -25,4 +28,127 @@ that contains
 mpiexec -n $1 nrniv -python -mpi init.py
 
 init.py is entry point for network model
+
+which param to scale down so can run on laptop?
+
+sal mentioned:
+cfg.scaleDensity — if you set to 0.025 it's ~400 cells, runs in 60 sec
+
+try out a 2 s sim with scale of 0.025 ...
+
+myrun 8
+
+with scale of 1.0 there are 1607 cells on each node ... for 12856 cells total ... too much
+for lowly laptop ...
+
+with scale of 0.025, 8 cores, ~43-44 cells per node ...
+
+  Done; run time = 28.73 s; real-time ratio: 0.07.
+
+  Cells: 347
+  Connections: 7412 (21.36 per cell)
+  Synaptic contacts: 14473 (41.71 per cell)
+  Spikes: 1830 (2.64 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.083 Hz
+   IT3 : 0.204 Hz
+   SOM3 : 50.000 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.167 Hz
+   ITS4 : 9.633 Hz
+   PV4 : 0.000 Hz
+   IT5A : 3.417 Hz
+   CT5A : 0.083 Hz
+   SOM5A : 38.000 Hz
+   PV5A : 0.000 Hz
+   IT5B : 0.606 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.061 Hz
+   SOM5B : 34.000 Hz
+   PV5B : 0.000 Hz
+   IT6 : 2.213 Hz
+   CT6 : 0.133 Hz
+   SOM6 : 39.333 Hz
+   PV6 : 0.000 Hz
+   TC : 0.000 Hz
+   TCM : 0.000 Hz
+   IRE : 0.000 Hz
+   IREM : 0.000 Hz
+   IC : 11.373 Hz
+  Simulated time: 2.0 s; 8 workers
+  Run time: 28.73 s
+Saving output as data/v11_manualTune//v11_sim52.json  ...
+
+most cells not firing ...
+
+could run scale of 0.1 for ~1300 cells ...
+
+myrun 8
+
+getting lots of these errors: exp(inf) out of range, returning exp(700)
+
+  Cells: 1313
+  Connections: 130037 (99.04 per cell)
+  Synaptic contacts: 253484 (193.06 per cell)
+  Spikes: 4513 (1.72 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.000 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.049 Hz
+   SOM3 : 56.381 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.056 Hz
+   ITS4 : 3.398 Hz
+   SOM4 : 62.667 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.248 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 32.667 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   IT5B : 0.113 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.014 Hz
+   SOM5B : 37.030 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 2.147 Hz
+   CT6 : 0.100 Hz
+   SOM6 : 34.444 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 0.000 Hz
+   NGF6 : 0.000 Hz
+   TC : 0.000 Hz
+   TCM : 0.000 Hz
+   HTC : 0.000 Hz
+   IRE : 0.000 Hz
+   IREM : 0.000 Hz
+   IC : 10.933 Hz
+  Simulated time: 2.0 s; 8 workers
+  Run time: 359.73 s
+Saving output as data/v11_manualTune//v11_sim52.json  ... 
+Finished saving!
+Done; saving time = 1.06 s.
+
+at this scale, have lots of populations not firing at all as well ...
+
+are there exp(inf) warnings for scale of 1 too?
+
+try 200 ms sim at that scale to see ... (the warnings started before sim reached 100 ms)
+
+myrun 8
+
+yeah, looks like get same errors at scale of 1
+exp(inf) out of range, returning exp(700)
+
+takes a while to get network wired, of course ... millions of synapses per node
 
