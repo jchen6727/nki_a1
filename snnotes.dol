@@ -1,0 +1,28 @@
+
+*20mar5 - setting up
+** cloned from https://github.com/NathanKlineInstitute/A1
+
+then made a new branch samn off of salva branch
+for now, will use samn for development ...
+
+** wav files converted to mat to send to model
+
+data is in data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat
+so those are spikes from inferior colliculus
+
+can take a look to see how it looks ...
+
+** make sure using py3env
+
+now setup laptop to use anaconda with neurosim dir structures
+so, that py3env uses python 3.6 with anaconda ... 
+
+** compile
+** run
+
+make a myrun script wrapper
+that contains
+mpiexec -n $1 nrniv -python -mpi init.py
+
+init.py is entry point for network model
+
