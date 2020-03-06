@@ -152,3 +152,382 @@ exp(inf) out of range, returning exp(700)
 
 takes a while to get network wired, of course ... millions of synapses per node
 
+then crashes eventually with out of memory problem ... when it gets to gather:
+
+Gathering data...
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+[samndp7730:13791] *** Process received signal ***
+[samndp7730:13791] Signal: Aborted (6)
+[samndp7730:13791] Signal code:  (-6)
+
+*20mar6 - testing/tuning manually
+** reading code/testing/tuning smaller version of model
+
+in the 0.1 scaledensity simulation, the IC cells are firing ~8 Hz when providing
+the auditory input signal ... but the TC cells are not firing at all
+
+SOM cells fire too much, most other populations do not fire too much
+
+myrun 12
+
+  Cells: 1313
+  Connections: 130037 (99.04 per cell)
+  Synaptic contacts: 253484 (193.06 per cell)
+  Spikes: 4526 (1.72 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.000 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.049 Hz
+   SOM3 : 56.381 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.056 Hz
+   ITS4 : 3.398 Hz
+   SOM4 : 62.667 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.248 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 32.667 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   IT5B : 0.113 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.014 Hz
+   SOM5B : 37.030 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 2.147 Hz
+   CT6 : 0.100 Hz
+   SOM6 : 34.444 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 0.000 Hz
+   NGF6 : 0.000 Hz
+   TC : 0.000 Hz
+   TCM : 0.000 Hz
+   HTC : 0.000 Hz
+   IRE : 0.000 Hz
+   IREM : 0.000 Hz
+   IC : 11.107 Hz
+  Simulated time: 2.0 s; 12 workers
+  Run time: 327.72 s
+  Saving output as data/20mar6//20mar6_A0.pkl ...
+
+so, where is connection from IC -> THAL ?   
+
+in cfg.py have this:
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500}  # parameters to generate realistic cochlear + IC input
+
+and in netParams.py have this:
+if cfg.ICThalInput:
+which loads spikes from file and then creates VecStims like this:
+netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],'spkTimes': spkTimes}
+but, do not see the weight set ...aha, it's set below as
+    # connect cochlear + IC thalamic inputs
+    if cfg.ICThalInput:
+        netParams.connParams['IC->ThalE'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'cellType': ['TC', 'HTC']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': cfg.probInput['ThalE'],
+            'weight': cfg.weightInput['ThalE'],
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': cfg.delayBkg}
+        
+        netParams.connParams['IC->ThalI'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'cellType': ['RE']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': cfg.probInput['ThalI'], 
+            'weight': cfg.weightInput['ThalI'],
+            'synMechWeightFactor': cfg.synWeightFractionEI,
+            'delay': cfg.delayBkg}  
+
+so, to increase weight of those IC inputs just increase cfg.weightInput['ThalE'] and/or cfg.weightInput['ThalI']
+
+try that out . . .
+
+even if that works should have some activity throughout the network in the absence of auditory inputs
+
+hmm, still have 0 TC rates:
+   TC : 0.000 Hz
+   TCM : 0.000 Hz
+   HTC : 0.000 Hz
+   IRE : 0.000 Hz
+   IREM : 0.000 Hz
+   IC : 11.440 Hz
+
+   did not seem to impact TC rates ... or activity
+
+data/20mar6/20mar6_A0_traces_gid_1204.png   
+data/20mar6/20mar6_A0_traces_gid_1215.png
+data/20mar6/20mar6_A0_traces_gid_1230.png
+data/20mar6/20mar6_A0_traces_gid_1233.png
+data/20mar6/20mar6_A0_traces_gid_1248.png
+data/20mar6/20mar6_A0_traces_gid_1263.png
+raster: data/20mar6/20mar6_A0_raster.png
+
+probably because no inputs at all ??
+cfg.probInput = {'ThalE': 0.0, 'ThalI': 0.0} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn
+
+so need to set that to a positive value ...
+
+ok, put those weights back to 0.5 and put the probabilities at 0.25 ... see how it looks
+
+myrun 12
+
+ok, looks a lot different now, though still a lot of types not firing at all:
+
+  Cells: 1313
+  Connections: 130736 (99.57 per cell)
+  Synaptic contacts: 254882 (194.12 per cell)
+  Spikes: 5384 (2.05 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.000 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.054 Hz
+   SOM3 : 57.429 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.056 Hz
+   ITS4 : 3.655 Hz
+   SOM4 : 64.000 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.248 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 32.833 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   IT5B : 0.142 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.014 Hz
+   SOM5B : 39.394 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 2.260 Hz
+   CT6 : 0.113 Hz
+   SOM6 : 34.556 Hz
+   PV6 : 0.083 Hz
+   VIP6 : 0.000 Hz
+   NGF6 : 0.000 Hz
+   TC : 10.727 Hz
+   TCM : 11.156 Hz
+   HTC : 8.222 Hz
+   IRE : 6.089 Hz
+   IREM : 4.800 Hz
+   IC : 11.573 Hz
+  Simulated time: 2.0 s; 12 workers
+  Run time: 353.24 s
+
+data/20mar6/20mar6_A0_traces_gid_1204.png   
+data/20mar6/20mar6_A0_traces_gid_1215.png
+data/20mar6/20mar6_A0_traces_gid_1230.png
+data/20mar6/20mar6_A0_traces_gid_1233.png
+data/20mar6/20mar6_A0_traces_gid_1248.png
+data/20mar6/20mar6_A0_traces_gid_1263.png
+raster: data/20mar6/20mar6_A0_raster.png
+
+seems like SOM cells overactive in every layer ... that's probably leading to suppression of everything else ...
+
+try turning down I -> E gain ... and I -> I gain ... and EIGain (in cfg.py)
+
+cfg.EEGain = 1.0 
+cfg.EIGain = 0.75 # 1.0 #0.75
+cfg.IEGain = 0.75 # 1.0 #0.75
+cfg.IIGain = 0.75 # 1.0 #0.5
+
+cfg.simLabel = '20mar6_A1'
+
+myrun 12
+
+data/20mar6/20mar6_A1_traces_gid_1204.png   
+data/20mar6/20mar6_A1_traces_gid_1215.png
+data/20mar6/20mar6_A1_traces_gid_1230.png
+data/20mar6/20mar6_A1_traces_gid_1233.png
+data/20mar6/20mar6_A1_traces_gid_1248.png
+data/20mar6/20mar6_A1_traces_gid_1263.png
+raster: data/20mar6/20mar6_A1_raster.png
+
+did not make much difference...
+
+SOM still dominating ...
+
+  Cells: 1313
+  Connections: 130736 (99.57 per cell)
+  Synaptic contacts: 254882 (194.12 per cell)
+  Spikes: 5849 (2.23 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.020 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.000 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.139 Hz
+   SOM3 : 60.952 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.185 Hz
+   ITS4 : 5.390 Hz
+   SOM4 : 65.000 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.438 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 34.667 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   IT5B : 0.113 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.014 Hz
+   SOM5B : 41.455 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 2.073 Hz
+   CT6 : 0.147 Hz
+   SOM6 : 34.444 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 0.000 Hz
+   NGF6 : 0.000 Hz
+   TC : 8.364 Hz
+   TCM : 10.711 Hz
+   HTC : 9.111 Hz
+   IRE : 5.956 Hz
+   IREM : 4.800 Hz
+   IC : 11.160 Hz
+
+test with IEGain of 0 to see if E cells activate without the inhib inputs ...
+
+cfg.simLabel = '20mar6_A2'
+cfg.IEGain = 0.0 # 0.75 # 1.0 #0.75
+
+myrun 12
+
+data/20mar6/20mar6_A2_traces_gid_1204.png   
+data/20mar6/20mar6_A2_traces_gid_1215.png
+data/20mar6/20mar6_A2_traces_gid_1230.png
+data/20mar6/20mar6_A2_traces_gid_1233.png
+data/20mar6/20mar6_A2_traces_gid_1248.png
+data/20mar6/20mar6_A2_traces_gid_1263.png
+raster: data/20mar6/20mar6_A2_raster.png
+
+well, it has some impact but E populations are mostly silent ...
+
+  Spikes: 14203 (5.41 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 10.222 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.000 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.555 Hz
+   SOM3 : 105.333 Hz
+   PV3 : 41.882 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 17.839 Hz
+   SOM4 : 96.667 Hz
+   PV4 : 19.704 Hz
+   VIP4 : 0.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 44.667 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   IT5B : 0.000 Hz
+   CT5B : 0.000 Hz
+   PT5B : 1.830 Hz
+   SOM5B : 54.485 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 3.627 Hz
+   CT6 : 0.280 Hz
+   SOM6 : 36.333 Hz
+   PV6 : 7.750 Hz
+   VIP6 : 0.000 Hz
+   NGF6 : 0.000 Hz
+   TC : 7.455 Hz
+   TCM : 8.889 Hz
+   HTC : 3.333 Hz
+   IRE : 6.756 Hz
+   IREM : 5.956 Hz
+   IC : 10.640 Hz
+
+and try another with cortical connectivity turned off ... (may need to adjust the noise inputs)
+cfg.simLabel = '20mar6_A3'   
+cfg.addConn = 0   
+
+myrun 12
+
+  Spikes: 6048 (2.30 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.020 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.000 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.081 Hz
+   SOM3 : 38.190 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.000 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.120 Hz
+   ITS4 : 10.048 Hz
+   SOM4 : 42.333 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 3.048 Hz
+   CT5A : 0.133 Hz
+   SOM5A : 35.833 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   IT5B : 0.922 Hz
+   CT5B : 0.099 Hz
+   PT5B : 0.071 Hz
+   SOM5B : 41.030 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 2.733 Hz
+   CT6 : 0.120 Hz
+   SOM6 : 33.333 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 0.000 Hz
+   NGF6 : 0.000 Hz
+   TC : 8.970 Hz
+   TCM : 8.622 Hz
+   HTC : 5.111 Hz
+   IRE : 6.133 Hz
+   IREM : 5.911 Hz
+   IC : 10.853 Hz
+
+data/20mar6/20mar6_A3_traces_gid_1204.png   
+data/20mar6/20mar6_A3_traces_gid_1215.png
+data/20mar6/20mar6_A3_traces_gid_1230.png
+data/20mar6/20mar6_A3_traces_gid_1233.png
+data/20mar6/20mar6_A3_traces_gid_1248.png
+data/20mar6/20mar6_A3_traces_gid_1263.png
+raster: data/20mar6/20mar6_A3_raster.png
+   
+ok, SOM still firing but not much from the other types ... can adjust noise inputs first;
+to aim for ~1 Hz firing of all types ... ? or perhaps only E types ... 
+

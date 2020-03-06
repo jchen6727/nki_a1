@@ -602,8 +602,7 @@ if cfg.addBkgConn:
         
         maxLen = min(len(ICrates[0]), len(ICtimes))
         spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration)] for i in range(len(ICrates))]
-        netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
-            'spkTimes': spkTimes}
+        netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],'spkTimes': spkTimes}
 
     # connect stim sources to target cells
     netParams.stimTargetParams['bkgE->E'] =  {

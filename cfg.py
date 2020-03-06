@@ -4,7 +4,7 @@ cfg.py
 Simulation configuration for A1 model (using NetPyNE)
 This file has sim configs as well as specification for parameterized values in netParams.py 
 
-Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
+Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com, samnemo@gmail.com
 """
 
 
@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 200 # 2e3			    ## Duration of the sim, in ms
+cfg.duration = 2e3			    ## Duration of the sim, in ms
 cfg.dt = 0.05                   ## Internal Integration Time Step
 cfg.verbose = False           	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -57,10 +57,10 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim52'
-cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
-cfg.savePickle = False         	## Save pkl file
-cfg.saveJson = True           	## Save json file
+cfg.simLabel = '20mar6_A3'
+cfg.saveFolder = 'data/20mar6/'                	## Set file output name
+cfg.savePickle = True         	## Save pkl file
+cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
 cfg.gatherOnlySimData = False	## Seen in M1 cfg.py 
@@ -77,7 +77,7 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 # popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
 cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in allpops], 'oneFigPer': 'cell', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300}      	## Plot a raster
+cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': True, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
@@ -106,7 +106,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 # 0.1 # 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.1 # 0.1 # 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -118,11 +118,12 @@ cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 
 # Cortical
-cfg.addConn = 1
+#cfg.addConn = 1
+cfg.addConn = 0
 cfg.EEGain = 1.0 
-cfg.EIGain = 1.0 #0.75
-cfg.IEGain = 1.0 #0.75
-cfg.IIGain = 1.0 #0.5
+cfg.EIGain = 0.75 # 1.0 #0.75
+cfg.IEGain = 0.0 # 0.75 # 1.0 #0.75
+cfg.IIGain = 0.75 # 1.0 #0.5
 
 ## I->E/I layer weights (L2/3+4, L5, L6)
 cfg.IEweights = [1.0, 1.0, 1.0] # [0.75, 0.75, 0.5]
@@ -160,7 +161,9 @@ cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], '
 cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500}  # parameters to generate realistic cochlear + IC input
 
 cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
-cfg.probInput = {'ThalE': 0.0, 'ThalI': 0.0} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
+#cfg.weightInput = {'ThalE': 5.0, 'ThalI': 5.0}  # weight  ; =unitary connection somatic EPSP (mV)
+#cfg.probInput = {'ThalE': 0., 'ThalI': 0.0} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn
+cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
 
 
 #------------------------------------------------------------------------------
@@ -179,10 +182,4 @@ cfg.NetStim1 = {'pop': 'NGF1', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'syn
 
 # ## LAYER 2
 # cfg.NetStim2 = {'pop': 'IT2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
-
-
-
-
-
-
 
