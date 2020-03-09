@@ -554,24 +554,38 @@ def fIcurve():
 def custom():
     params = specs.ODict()
 
-    factor = 5
+    # bkg inputs
+    factor = 10
+    params[('weightBkg', 'E')] = [0.5*factor]
+    params[('weightBkg', 'I')] = [0.5*factor]
+    params[('weightBkg', 'ThalE')] = [0.5*factor]
+    params[('weightBkg', 'ThalI')] = [0.5*factor]
 
-    params[('weightBkg', 'E')] = [1.0*factor, 2.0*factor] #[0.1, 0.5, 1.0*factor]
-    params[('weightBkg', 'I')] = [1.0*factor, 2.0*factor] #[0.1, 0.5, 1.0*factor]
-    params[('weightBkg', 'ThalE')] = [1.0*factor] #[0.1, 0.5, 1.0*factor]
-    params[('weightBkg', 'ThalI')] = [1.0*factor] #[0.1, 0.5, 1.0*factor]
-    
-    params[('weightInput', 'ThalE')] = [0.0] #,1.0] #[0.0, 0.5, 1.0]
-    params[('weightInput', 'ThalI')] = [0.0]#, 1.0] # [0.0, 0.5, 1.0]
-    
+    params[('rateBkg', 'E')] = [40] #[20, 60]  
+    params[('rateBkg', 'I')] = [40] #
+    params[('rateBkg', 'ThalE')] = [40] #
+    params[('rateBkg', 'ThalI')] = [40] #
+
+    # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
+    params[('weightInput', 'ThalE')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    params[('weightInput', 'ThalI')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    params[('probInput', 'ThalE')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+    params[('probInput', 'ThalI')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+
+    # conn gains
+    params['EEGain'] = [1.0] #[0.5, 1.5] 
+    params['EIGain'] = [1.0] 
+    params['IEGain'] = [1.0] 
+    params['IIGain'] = [1.0] 
+
     groupedParams = []
 
-    # initial config
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 2000
-    initCfg['printPopAvgRates'] = [500, 1000] 
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 1.0
@@ -581,6 +595,8 @@ def custom():
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = False  # test only bkg inputs
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
