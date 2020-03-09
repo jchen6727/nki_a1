@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 16
+netParams.version = 17
 
 #------------------------------------------------------------------------------
 #
@@ -754,4 +754,5 @@ v13 - Added CT cells to L5A
 v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
 v15 - Added cortical and thalamic conn to CT5A and CT5B 
 v16 - Updated multiple cell types
+v17 - Changed NGF -> I prob from strong (1.0) to weak (0.35)
 """

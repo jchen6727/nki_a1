@@ -472,6 +472,11 @@ if connDataSource['I->E/I'] == 'custom_A1':
     pmat['PV']['VIP'] = weak
     pmat['PV']['NGF'] = weak  # unknown; assume weak
 
+    # NGF -> I; unknown, assume weak since most data focuses on NGF -> E
+    pmat['NGF']['PV'] = weak
+    pmat['NGF']['SOM'] = weak
+    pmat['NGF']['VIP'] = weak
+    pmat['NGF']['NGF'] = weak  
 
     # --------------------------------------------------
     ## Weights  (=unitary conn somatic PSP amplitude)
