@@ -567,8 +567,21 @@ def custom():
     groupedParams = []
 
     # initial config
+    # --------------------------------------------------------
+    # initial config
     initCfg = {}
-    initCfg['duration'] = 2.0*1e3
+    initCfg['duration'] = 2000
+    initCfg['printPopAvgRates'] = [500, 1000] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 

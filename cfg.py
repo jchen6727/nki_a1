@@ -22,9 +22,9 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 2.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
-cfg.verbose = False           	## Show detailed messages
+cfg.verbose = 1         	## Show detailed messages
 cfg.hParams['celsius'] = 37
 cfg.createNEURONObj = 1
 cfg.createPyStruct = 1
@@ -57,14 +57,14 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v117_sim52'
+cfg.simLabel = 'v17_sim52'
 cfg.saveFolder = 'data/v17_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
 cfg.gatherOnlySimData = False	## Seen in M1 cfg.py 
-cfg.saveCellSecs = False			## Seen in M1 cfg.py 
+cfg.saveCellSecs = 1 #False			## Seen in M1 cfg.py 
 cfg.saveCellConns = 1		## Seen in M1 cfg.py 
 
 #------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 #0.025 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.1 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
