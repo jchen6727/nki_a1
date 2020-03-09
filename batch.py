@@ -597,30 +597,48 @@ def evolRates():
     # parameters
     params = specs.ODict()
 
-    # params['EEGain'] = [0.8, 1.2]  
-    # params['EIGain'] = [0.8, 1.2] 
-    # params['IEGain'] = [0.8, 1.2]
-    # params['IIGain'] = [0.8, 1.2]
-
-    # # I->E/I weights gains for each layer (L2/3+4, L5, L6)
-    # params['IEweights'] = [1.0, 1.0, 1.0] 
-    # params['IIweights'] = [1.5, 1.0, 1.0]
-
     # bkg inputs
-    #cfg.weightBkg = {'E': 0.5, 'I': 0.5, 'ThalE': 0.5, 'ThalI': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
-    #cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
-    # # 
-    # cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
-    # cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
+    factor = 10
+    params[('weightBkg', 'E')] = [0.25*factor, 0.75*factor]
+    params[('weightBkg', 'I')] = [0.25*factor, 0.75*factor]
+    params[('weightBkg', 'ThalE')] = [0.25*factor, 0.75*factor]
+    params[('weightBkg', 'ThalI')] = [0.25*factor, 0.75*factor]
 
+    params[('rateBkg', 'E')] = [20, 60]  # 40
+    params[('rateBkg', 'I')] = [20, 60]
+    params[('rateBkg', 'ThalE')] = [20, 60]
+    params[('rateBkg', 'ThalI')] = [20, 60]
+
+    # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
+    params[('weightInput', 'ThalE')] = [0.25,  0.75] # 0.5 somatic PSP mV 
+    params[('weightInput', 'ThalI')] = [0.25,  0.75] # 0.5 somatic PSP mV 
+    params[('probInput', 'ThalE')] = [0.1, 0.4] # 0.25 probability of conn  
+    params[('probInput', 'ThalI')] = [0.1, 0.4] # 0.25 probability of conn  
+
+    # conn gains
+    params['EEGain'] = [0.5, 1.5] 
+    params['EIGain'] = [0.5, 1.5] 
+    params['IEGain'] = [0.5, 1.5] 
+    params['IIGain'] = [0.5, 1.5] 
 
     groupedParams = []
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 1.5*1e3
-    initCfg['ihGbar'] = 0.75  # ih (for quiet/spont condition)
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
@@ -631,18 +649,21 @@ def evolRates():
     pops = {}
     
     ## Exc pops
-    Epops = ['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
     for pop in Epops:
         pops[pop] = Etune
     
     ## Inh pops 
-    Ipops = ['NGF1', 'PV2', 'SOM2', 'VIP2', 'NGF2',
-            'PV4', 'SOM4', 'VIP4', 'NGF4',
-            'PV5A', 'SOM5A','VIP5A','NGF5A',
-            'PV5B', 'SOM5B','VIP5B','NGF5B',
-            'PV6', 'SOM6', 'VIP6', 'NGF6']
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6'       # L6
+            'IRE', 'IREM']  # Thal 
 
     Itune = {'target': 10, 'width': 15, 'min': 0.25}
     for pop in Ipops:
@@ -674,17 +695,16 @@ def evolRates():
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'pop_size': 50,
-        'num_elites': 5,
-        'mutation_rate': 0.4,
+        'num_elites': 1,
+        'mutation_rate': 0.5,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
         'max_generations': 100,
         'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 72, # (6h) max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 48, # (6h) max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
-
 
     return b
 

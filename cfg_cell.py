@@ -91,7 +91,7 @@ cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 # Network 
 #------------------------------------------------------------------------------
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
-cfg.singleCellPops = False
+cfg.singleCellPops = 1
 cfg.removeWeightNorm = False
 cfg.scale = 1.0     # Is this what should be used? 
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
@@ -158,7 +158,7 @@ cfg.addIClamp = 0
 cfg.addNetStim = 0
 
 ## LAYER 1
-cfg.NetStim1 = {'pop': 'NGF1', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
+cfg.NetStim1 = {'pop': 'VIP2', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
 
 # ## LAYER 2
 # cfg.NetStim2 = {'pop': 'IT2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
