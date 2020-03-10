@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 11
+netParams.version = 18
 
 #------------------------------------------------------------------------------
 #
@@ -195,6 +195,7 @@ for label in netParams.cellParams:
             sec['geom']['pt3d'] = []
             if secName in ['soma']:  # set 3d geom of soma 
                 sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
+                prevL = float(prevL + sec['geom']['L'])
                 sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
             if secName in ['rad1']:  # set 3d geom of rad1 (radiatum)
                 sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
@@ -667,4 +668,11 @@ v8 - Added cell types
 v9 - Added local connectivity
 v10 - Added thalamic populations from prev model
 v11 - Added thalamic conn from prev model
+v12 - Added CT cells to L5B
+v13 - Added CT cells to L5A
+v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
+v15 - Added cortical and thalamic conn to CT5A and CT5B 
+v16 - Updated multiple cell types
+v17 - Changed NGF -> I prob from strong (1.0) to weak (0.35)
+v18 - Fixed bug in VIP cell morphology
 """
