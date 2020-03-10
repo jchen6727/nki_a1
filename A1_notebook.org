@@ -28162,3 +28162,5 @@ endtemplate sTI
 *** https://reader.elsevier.com/reader/sd/pii/S0896627314000634?token=B21D34D45D21A4A4B6AE6FE95F7D166E5A206FF1F03F9BE1A5EED58BE44971FE6957FD7BA9A88692510AC382F8E87BFA
 *** file:///Users/ericagriffith/Downloads/Rulesofconnectivitybetweengeniculatecellsandsimplecellsincatprimaryvisualcortex2001.pdf
 *** https://pdfs.semanticscholar.org/45ee/02419e455bbcbe63c21e155da34d4c851ebe.pdf?_ga=2.252921099.344536635.1583266360-1315932154.1583266360
+* <2020-03-10 Tue -- correction of VIP>
+** made a correction to netParams_cell.py -- was not accounting for soma length in prevL when setting pt3d of VIP, added in the float() line to change the offset. 
