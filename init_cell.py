@@ -15,7 +15,7 @@ MPI usage:
 Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 """
 
-#import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
+import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
 
 from netpyne import sim
 

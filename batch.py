@@ -731,7 +731,7 @@ def evolRates():
 def setRunCfg(b, type='mpi_bulletin'):
     if type=='mpi_bulletin':
         b.runCfg = {'type': 'mpi_bulletin', 
-            'script': 'init.py', 
+            'script': 'init_cell.py', 
             'skip': True}
 
     elif type=='mpi_direct':
@@ -798,33 +798,34 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    b = custom()
+    # b = custom()
     #b = evolRates()
 
-    b.batchLabel = 'v16_batch2' 
-    b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid'  # evol
-    setRunCfg(b, 'hpc_slurm_gcp')
-    b.run() # run batch
+    # b.batchLabel = 'v16_batch2' 
+    # b.saveFolder = 'data/'+b.batchLabel
+    # b.method = 'grid'  # evol
+    # setRunCfg(b, 'hpc_slurm_gcp')
+    # b.run() # run batch
 
 
-    ## Submit set of batch sims together
+    # Submit set of batch sims together
 
     # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    #popsWeightNorm =    {#'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-    #                     'ITS4_reduced': ['ITS4'],
-    #                     'PV_reduced': ['PV2', 'SOM2'],
-    #                     'VIP_reduced': ['VIP2'],
-    #                     'NGF_reduced': ['NGF2'],
-    #                     'RE_reduced': ['IRE', 'TC', 'HTC']}
+    popsWeightNorm =    { #'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+                        #'ITS4_reduced': ['ITS4'],
+                        #'PV_reduced': ['PV2', 'SOM2'],
+                        #'VIP_reduced': ['VIP2'],
+                        #'NGF_reduced': ['NGF2'],
+                        #'RE_reduced': ['IRE', 'TC', 'HTC'],
+                        'TI_reduced': ['TI']}
  
-    # batchIndex = 8
-    # for k, v in popsWeightNorm.items(): 
-    #     b = weightNorm(pops=v, rule=k)
-    #     b.batchLabel = 'v11_batch'+str(batchIndex) 
-    #     b.saveFolder = 'data/'+b.batchLabel
-    #     b.method = 'grid'  # evol
-    #     setRunCfg(b, 'mpi_bulletin')
-    #     b.run()  # run batch
-    #     batchIndex += 1
+    batchIndex = 1
+    for k, v in popsWeightNorm.items(): 
+        b = weightNorm(pops=v, rule=k)
+        b.batchLabel = 'v18_batch'+str(batchIndex) 
+        b.saveFolder = 'data/'+b.batchLabel
+        b.method = 'grid'  # evol
+        setRunCfg(b, 'mpi_bulletin')
+        b.run()  # run batch
+        batchIndex += 1
 

@@ -61,11 +61,11 @@ cfg.simLabel = 'v17_sim52'
 cfg.saveFolder = 'data/v17_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
-cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
-cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
-cfg.gatherOnlySimData = False	## Seen in M1 cfg.py 
-cfg.saveCellSecs = 1 #False			## Seen in M1 cfg.py 
-cfg.saveCellConns = 1		## Seen in M1 cfg.py 
+cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
+cfg.backupCfgFile = None 		
+cfg.gatherOnlySimData = False	 
+cfg.saveCellSecs = False		 
+cfg.saveCellConns = False		 
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
