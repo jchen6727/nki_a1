@@ -543,6 +543,7 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
 
 # --------------------------------------------------
 ## Probabilities 
+## note: missing values mean 0 probability
 pmat['TC']['TC'] =	    0.1
 pmat['HTC']['HTC'] =	0.1
 pmat['TC']['HTC'] =	    0.1
@@ -564,6 +565,13 @@ pmat['IRE']['TC'] =	    0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['IRE']['HTC'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['TCM']['IREM'] =	0.4
 pmat['IREM']['TCM'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
+pmat['TI']['TC']    =   0.3  # for TI using same values as RE
+pmat['TI']['HTC']   =   0.3
+pmat['TI']['TCM']   =   0.3
+pmat['TC']['TI']    =   0.4
+pmat['HTC']['TI']   =   0.4
+pmat['TCM']['TI']   =   0.4
+pmat['TI']['TI']    =   0.1
 
 
 # --------------------------------------------------
@@ -589,6 +597,14 @@ wmat['IRE']['TC'] =     0.83
 wmat['IRE']['HTC'] =    0.83
 wmat['TCM']['IREM'] =   0.2
 wmat['IREM']['TCM'] =   0.83
+wmat['TI']['TC']    =   0.83  # for TI using same values as RE
+wmat['TI']['HTC']   =   0.83
+wmat['TI']['TCM']   =   0.83
+wmat['TC']['TI']    =   0.2
+wmat['HTC']['TI']   =   0.2
+wmat['TCM']['TI']   =   0.2
+wmat['TCM']['TI']   =   0.2
+wmat['TI']['TI']    =   1.5
 
 
 

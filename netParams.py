@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 19
+netParams.version = 20
 
 #------------------------------------------------------------------------------
 #
@@ -148,8 +148,8 @@ netParams.popParams['TC'] =     {'cellType': 'TC',  'cellModel': 'HH_reduced',  
 netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity} 
 netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.25*thalDensity}   
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
-netParams.popParams['IREM'] =   {'cellType': 'RE', 'cellModel': 'HH_reduced',   'ynormRange': layer['thal'],      'density': thalDensity}
-netParams.popParams['TI'] =     {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.25 * thalDensity} ## assume smaller 
+netParams.popParams['IREM'] =   {'cellType': 'RE', 'cellModel': 'HH_reduced',   'ynormRange': layer['thal'],   'density': thalDensity}
+netParams.popParams['TI'] =     {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 2*0.33 * thalDensity} ## assume smaller 
 
 
 if cfg.singleCellPops:
@@ -373,7 +373,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
 ## Intrathalamic 
 
 TEpops = ['TC', 'TCM', 'HTC']
-TIpops = ['IRE', 'IREM']
+TIpops = ['IRE', 'IREM', 'TI']
 
 if cfg.addIntraThalamicConn:
     for pre in TEpops+TIpops:
@@ -446,7 +446,6 @@ if cfg.addThalamoCorticalConn:
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,
                     'sec': 'soma'}  
-
 
 
 #------------------------------------------------------------------------------
@@ -606,7 +605,7 @@ if cfg.addBkgConn:
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
-    # connect stim sources to target cells
+    # bkgE/I -> cortex
     netParams.stimTargetParams['bkgE->E'] =  {
         'source': 'bkgE', 
         'conds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
@@ -627,7 +626,7 @@ if cfg.addBkgConn:
         'synMechWeightFactor': cfg.synWeightFractionEI,
         'delay': cfg.delayBkg}
 
-    # connect random thalamic inputs
+    # bkgThalE/I -> thal
     if cfg.randomThalInput:
         netParams.stimTargetParams['bkgThalE->ThalE'] =  {
             'source': 'bkgThalE', 
@@ -651,7 +650,7 @@ if cfg.addBkgConn:
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}
 
-    # connect cochlear thalamic input
+    # cochlea -> thal
     if cfg.cochlearThalInput:
         netParams.connParams['cochlea->ThalE'] = { 
             'preConds': {'pop': 'cochlea'}, 
@@ -675,7 +674,7 @@ if cfg.addBkgConn:
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}  
 
-    # connect cochlear + IC thalamic inputs
+    # cochlea/IC -> thal
     if cfg.ICThalInput:
         netParams.connParams['IC->ThalE'] = { 
             'preConds': {'pop': 'IC'}, 
@@ -690,7 +689,7 @@ if cfg.addBkgConn:
         
         netParams.connParams['IC->ThalI'] = { 
             'preConds': {'pop': 'IC'}, 
-            'postConds': {'cellType': ['RE']},
+            'postConds': {'cellType': ['RE', 'TI']},
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
@@ -698,6 +697,7 @@ if cfg.addBkgConn:
             'weight': cfg.weightInput['ThalI'],
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}  
+
 
 #------------------------------------------------------------------------------
 # Current inputs (IClamp)
