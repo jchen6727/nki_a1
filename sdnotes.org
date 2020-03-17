@@ -1189,7 +1189,186 @@ Thus, to address this issue, we changed the synaptic placement rules for all L1-
 
 *** TC -> soma + non-apical dends
 *** TCM -> E apical dends
+** Thalamic interneuron conn
+*** convert data on %syn but not prob conn
+- need total num syns and number of cells on each pop 
+*** num syn contacts (SC) in cat MGBv interneurons
+A "standard" interneuron possesses about
+11,000 SC. Among them, about 5500 SC (1200 of RL
+group, 2600 of RS group, 1200 of F group, and 400 of
+UT group) are localized on the soma and dendrites of
+this cell, while about the same number (5500) of SC are
+the contacts distributed on the P-PST, which are the
+dendritic terminals of the interneuron. Within the latter
+SC population, 1400 SC belong to the RL group, 1000
+to the RS, 200 to the F, 2700 to the P, and 200 to the
+UT group. 
 
+RL --> inferior colliculus: 1200+1400=2600 (24%)
+RS --> axon terminals from A1 neurons: 2600+1000=3600 (33%)
+F --> reticular: 1200+200=1400 (13%)
+P--> thal interneurons: 2700=2700 (25%)
+UT --> unidentified: 400+200=600 (5%)
+TOTAL: 10,900
+
+*** num cells in model with diam 200um; total 12958
+**** cortex - 12187
+NGF1 151
+IT2 338
+SOM2 5
+PV2 13
+VIP2 16
+NGF2 11
+IT3 4461
+SOM3 70
+PV3 176
+VIP3 211
+NGF3 150
+ITP4 837
+ITS4 837
+SOM4 24
+PV4 93
+VIP4 13
+NGF4 14
+IT5A 359
+CT5A 359
+SOM5A 43
+PV5A 73
+VIP5A 10
+NGF5A 8
+IT5B 471
+CT5B 471
+PT5B 471
+SOM5B 112
+PV5B 134
+VIP5B 17
+NGF5B 24
+IT6 1009
+CT6 1009
+SOM6 63
+PV6 84
+VIP6 12
+NGF6 38
+**** thal - 721
+TC 116
+TCM 155
+HTC 38
+IRE 155
+IREM 155
+TI 102
+IC 50
+
+*** prob conn
+equations:
+IC->TI_prob * 50 = 0.24 * TOTAL
+CT->TI_prob * (359+471+1009) = 0.33 * TOTAL
+RE->TI_prob * (155+155) = 0.13 * TOTAL
+TI->TI_prob * 102 = 0.25 * TOTAL 
+
+solving for probs:
+IC->TI_prob = 0.24 * TOTAL / 50
+CT->TI_prob = 0.33 * TOTAL / (359+471+1009)
+RE->TI_prob = 0.13 * TOTAL / (155+155)
+TI->TI_prob = 0.25 * TOTAL / 102
+
+assuming, TOTAL1 = 10900 / 5 contacts/syn * 0.5 (only modeling 200um) = 1090
+IC->TI_prob = 0.24 * 1090 / 50 = 5.2 (!! increase IC to >= 262)
+CT->TI_prob = 0.33 * 1090 / (359+471+1009) =  0.20
+RE->TI_prob = 0.13 * 1090 / (155+155) = 0.46
+TI->TI_prob = 0.25 * 1090 / 102 = 2.67 (!! increase TI >= 273)
+
+assuming, TOTAL2 = 10900 / 5 contacts/syn * 0.2 (only modeling 200um) = 436:
+IC->TI_prob = 0.24 * 436 / 50 = 2.1 (!! increase IC to >=105)
+CT->TI_prob = 0.33 * 436 / (359+471+1009) = 0.078
+RE->TI_prob = 0.13 * 436 / (155+155) = 0.18
+TI->TI_prob = 0.25 * 436 / 102 = 1.06 (!! increase TI to >= 109)
+
+assuming, TOTAL3 = 10900 / 5 contacts/syn * 0.1 (only modeling 200um) = 218:
+IC->TI_prob = 0.24 * 218 / 50 = 1.046 (!! increase IC to >= 53); if increase IC to 200 cells --> 0.26
+CT->TI_prob = 0.33 * 218 / (359+471+1009) = 0.039
+RE->TI_prob = 0.13 * 218 / (155+155) = 0.091
+TI->TI_prob = 0.25 * 218 / 102 = 0.534
+
+note eqns hold for single cell:
+prob = avg_syns_in_single_post_cell / pre_pop_size = (total_syns / post_pop_size) / pre_pop_size = total_syns / (pre_pop_size * post_pop_size)
+
+*** conclusions
+- potentially need to increase ratio of thal cells to conn
+- for A1 column of diam 200um we have 12187 cortical cells and only 721 thal cells 
+- our current ratio of thal:A1 = 16.9:1
+- “Our results suggest an LGN-V1 expansion ratio between 17:1 and 40:1, similar to values reported previously for visual cortex, and other sensory pathways [refs include A1]” (Coen-Cagli et al 2017; F1000Res)
+
+Resulting prob conns with current assumptions:
+- IC->TI: 26%
+- CT->TI: 4%
+- RE->TI: 9%
+- TI->TI: 53%
+
+*** calculate TI -> TC
+calculate:
+TI -> TC based on above num syns TI->TI and following TI outputs:
+- TC relay cell: 92%
+- Thalamic interneurons: ~8% (7+1) 
+
+TI->TI prob = 0.534 -> divergence = 
+
+- prob = nconn / (preN * postN)
+- nconn = 0.534 * (102*102) = 5,556
+- conv = nconn / postN = 5,556 / 102 = 55
+- div = nconn / preN = 55
+
+TI outputs:
+- to TI = 8% = 55
+- to TC = 92% = 55 / 0.08 = 688 (=divergence)
+- note: TC includes TC+TCM+HTC
+
+- TI->TC nconn = div * 102 = 688 * 102 = 70,176
+- TI->TC prob   = nconn / (preN * postN) 
+                = 70,176 / (102 * (116+38+155)) 
+                = 70,176 / (102*309) 
+                = 70,176 / 31,518 
+                = 2.22
+
+*** TI -> TC method 2 :
+- macaque LGN relay cell (TC) — 29/84 (~34.5%) were inhibitory, from local circuit interneuron
+
+9100 SC of different groups are distributed on a single
+"standard" relay neuron of the MGBv of the cat.
+Among them, about 1200, 5200, 1200, 1100, and 400
+SC are formed by RL-, RS-, F-, P-, and UT-terminals,
+respectively. A "standard" interneuron possesses about
+11,000 SC. Among them, about 5500 SC (1200 of RL
+group, 2600 of RS group, 1200 of F group, and 400 of
+UT group) are localized on the soma and dendrites of
+this cell, while about the same number (5500) of SC are
+the contacts distributed on the P-PST, which are the
+dendritic terminals of the interneuron. Within the latter
+SC population, 1400 SC belong to the RL group, 1000
+to the RS, 200 to the F, 2700 to the P, and 200 to the
+UT group.
+
+RL --> inferior colliculus: 1200 (13%)
+RS --> axon terminals from A1 neurons: 5200 (57%)
+F --> reticular: 1200 (13%)
+P--> thal interneurons: 1100 (12%)
+UT --> unidentified: 400 (5%)
+TOTAL = 9100 syns
+
+IC->TC_prob * 50 = 0.13 * TOTAL
+CT->TC_prob * (359+471+1009) = 0.57 * TOTAL
+RE->TC_prob * (155+155) = 0.13 * TOTAL
+TI->TC_prob * 102 = 0.12 * TOTAL 
+
+assuming, TOTAL3 = 9100 / 5 contacts/syn * 0.1 (only modeling 200um) = 182:
+IC->TC_prob = 0.13 * 182 / 50 = 0.47  if increase IC to 200 cells --> 0.12
+CT->TC_prob = 0.57 * 182 / (359+471+1009) = 0.056
+RE->TC_prob = 0.13 * 182 / (155+155) = 0.076
+TI->TC_prob = 0.12 * 182 / 102 = 0.21
+
+- Calculated values approx match what we already had in model:
+RE -> TC = 0.1 (~=0.076)
+CT -> TC = 0.1 (~=0.056)
+IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 
 
 * VERSIONS
