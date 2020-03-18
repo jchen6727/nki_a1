@@ -1329,9 +1329,8 @@ TI outputs:
                 = 70,176 / 31,518 
                 = 2.22
 
-*** TI -> TC method 2 :
-- macaque LGN relay cell (TC) — 29/84 (~34.5%) were inhibitory, from local circuit interneuron
-
+*** TI -> TC method 2:
+- From Serkov 1996:
 9100 SC of different groups are distributed on a single
 "standard" relay neuron of the MGBv of the cat.
 Among them, about 1200, 5200, 1200, 1100, and 400

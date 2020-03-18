@@ -160,7 +160,7 @@ cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], '
 cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500}  # parameters to generate realistic cochlear + IC input
 
 cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
-cfg.probInput = {'ThalE': 0.0, 'ThalI': 0.0} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
+cfg.probInput = {'ThalE': 0.12, 'ThalI': 0.26} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
 
 
 #------------------------------------------------------------------------------

@@ -565,13 +565,15 @@ pmat['IRE']['TC'] =	    0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['IRE']['HTC'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['TCM']['IREM'] =	0.4
 pmat['IREM']['TCM'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
-pmat['TI']['TC']    =   0.3  # for TI using same values as RE
-pmat['TI']['HTC']   =   0.3
-pmat['TI']['TCM']   =   0.3
-pmat['TC']['TI']    =   0.4
-pmat['HTC']['TI']   =   0.4
-pmat['TCM']['TI']   =   0.4
-pmat['TI']['TI']    =   0.1
+pmat['TI']['TC']    =   0.21  # TI values from Serkov 1996
+pmat['TI']['HTC']   =   0.21
+pmat['TI']['TCM']   =   0.21
+pmat['TC']['TI']    =   0.01
+pmat['HTC']['TI']   =   0.01
+pmat['TCM']['TI']   =   0.09
+pmat['IRE']['TI']   =   0.09
+pmat['IREM']['TI']  =	0.3 
+pmat['TI']['TI']    =   0.53
 
 
 # --------------------------------------------------
@@ -604,8 +606,9 @@ wmat['TC']['TI']    =   0.2
 wmat['HTC']['TI']   =   0.2
 wmat['TCM']['TI']   =   0.2
 wmat['TCM']['TI']   =   0.2
-wmat['TI']['TI']    =   1.5
-
+wmat['IRE']['TI']   =   0.5
+wmat['IREM']['TI']  =	0.5 
+wmat['TI']['TI']    =   0.5
 
 
 # --------------------------------------------------
@@ -617,12 +620,15 @@ wmat['TI']['TI']    =   1.5
 pmat['CT5A']['TC']	= 0.1
 pmat['CT5A']['HTC']	= 0.1
 pmat['CT5A']['IRE']	= 0.1
+pmat['CT5A']['TI']	= 0.05
 pmat['CT5B']['TC']	= 0.1
 pmat['CT5B']['HTC']	= 0.1
-pmat['CT5B']['IRE']	= 0.1
+pmat['CT5B']['IRE'] = 0.1
+pmat['CT5B']['TI']  = 0.05
 pmat['CT6']['TC']	= 0.1
 pmat['CT6']['HTC']	= 0.1
 pmat['CT6']['IRE']	= 0.1
+pmat['CT6']['TI']	= 0.05
 pmat['IT5B']['TCM']	= 0.1
 pmat['PT5B']['TCM']	= 0.1
 
@@ -631,12 +637,16 @@ pmat['PT5B']['TCM']	= 0.1
 wmat['CT5A']['TC']	= 0.7
 wmat['CT5A']['HTC']	= 0.7
 wmat['CT5A']['IRE']	= 0.23
+wmat['CT5A']['TI']	= 0.23
 wmat['CT5B']['TC']	= 0.7
 wmat['CT5B']['HTC']	= 0.7
 wmat['CT5B']['IRE']	= 0.23
+wmat['CT5B']['IRE']	= 0.23
+wmat['CT5B']['TI']	= 0.23
 wmat['CT6']['TC']	= 0.7
 wmat['CT6']['HTC']	= 0.7
 wmat['CT6']['IRE']	= 0.23
+wmat['CT6']['TI']	= 0.23
 wmat['IT5B']['TCM']	= 0.7
 wmat['PT5B']['TCM']	= 0.7
 
