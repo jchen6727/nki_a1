@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -35,7 +35,7 @@ cfg.cvode_active = False
 cfg.cvode_atol = 1e-6
 cfg.cache_efficient = True
 cfg.printRunTime = 0.1
-cfg.oneSynPerNetcon = True
+cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
 cfg.printPopAvgRates = [500, cfg.duration]
 

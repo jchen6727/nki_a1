@@ -1708,5 +1708,7 @@ memory error
 - ITS4 v_init
 - weighNorm of multiple cell types; including NGF with wrong filename
 *** tuned params
+
 - increased bkg weights * 5
 - reduced ITS4 weightNorm * 5
+** v20_batch1 - Added TI; testing only bkg and with conn

@@ -555,28 +555,31 @@ def custom():
     params = specs.ODict()
 
     # bkg inputs
-    factor = 10
+    factor = 5
+    
+    params['addConn'] = [0, 1]
+
     params[('weightBkg', 'E')] = [0.5*factor]
     params[('weightBkg', 'I')] = [0.5*factor]
     params[('weightBkg', 'ThalE')] = [0.5*factor]
-    params[('weightBkg', 'ThalI')] = [0.5*factor]
+    params[('weightBkg', 'ThalI')] = [0.5 * factor]
 
-    params[('rateBkg', 'E')] = [40] #[20, 60]  
-    params[('rateBkg', 'I')] = [40] #
-    params[('rateBkg', 'ThalE')] = [40] #
-    params[('rateBkg', 'ThalI')] = [40] #
+    # params[('rateBkg', 'E')] = [40] #[20, 60]  
+    # params[('rateBkg', 'I')] = [40] #
+    # params[('rateBkg', 'ThalE')] = [40] #
+    # params[('rateBkg', 'ThalI')] = [40] #
 
     # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
-    params[('weightInput', 'ThalE')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
-    params[('weightInput', 'ThalI')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
-    params[('probInput', 'ThalE')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
-    params[('probInput', 'ThalI')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+    # params[('weightInput', 'ThalE')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    # params[('weightInput', 'ThalI')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    # params[('probInput', 'ThalE')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+    # params[('probInput', 'ThalI')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
 
-    # conn gains
-    params['EEGain'] = [1.0] #[0.5, 1.5] 
-    params['EIGain'] = [1.0] 
-    params['IEGain'] = [1.0] 
-    params['IIGain'] = [1.0] 
+    # # conn gains
+    # params['EEGain'] = [1.0] #[0.5, 1.5] 
+    # params['EIGain'] = [1.0] 
+    # params['IEGain'] = [1.0] 
+    # params['IIGain'] = [1.0] 
 
     groupedParams = []
 
@@ -798,34 +801,34 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    # b = custom()
+    b = custom()
     #b = evolRates()
 
-    # b.batchLabel = 'v16_batch2' 
-    # b.saveFolder = 'data/'+b.batchLabel
-    # b.method = 'grid'  # evol
-    # setRunCfg(b, 'hpc_slurm_gcp')
-    # b.run() # run batch
+    b.batchLabel = 'v20_batch1' 
+    b.saveFolder = 'data/'+b.batchLabel
+    b.method = 'grid'  # evol
+    setRunCfg(b, 'hpc_slurm_gcp')
+    b.run() # run batch
 
 
     # Submit set of batch sims together
 
-    # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    popsWeightNorm =    { #'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-                        #'ITS4_reduced': ['ITS4'],
-                        #'PV_reduced': ['PV2', 'SOM2'],
-                        #'VIP_reduced': ['VIP2'],
-                        #'NGF_reduced': ['NGF2'],
-                        #'RE_reduced': ['IRE', 'TC', 'HTC'],
-                        'TI_reduced': ['TI']}
+    # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
+    # popsWeightNorm =    { #'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+    #                     #'ITS4_reduced': ['ITS4'],
+    #                     #'PV_reduced': ['PV2', 'SOM2'],
+    #                     #'VIP_reduced': ['VIP2'],
+    #                     #'NGF_reduced': ['NGF2'],
+    #                     #'RE_reduced': ['IRE', 'TC', 'HTC'],
+    #                     'TI_reduced': ['TI']}
  
-    batchIndex = 1
-    for k, v in popsWeightNorm.items(): 
-        b = weightNorm(pops=v, rule=k)
-        b.batchLabel = 'v18_batch'+str(batchIndex) 
-        b.saveFolder = 'data/'+b.batchLabel
-        b.method = 'grid'  # evol
-        setRunCfg(b, 'mpi_bulletin')
-        b.run()  # run batch
-        batchIndex += 1
+    # batchIndex = 1
+    # for k, v in popsWeightNorm.items(): 
+    #     b = weightNorm(pops=v, rule=k)
+    #     b.batchLabel = 'v20_batch'+str(batchIndex) 
+    #     b.saveFolder = 'data/'+b.batchLabel
+    #     b.method = 'grid'  # evol
+    #     setRunCfg(b, 'mpi_bulletin')
+    #     b.run()  # run batch
+    #     batchIndex += 1
 
