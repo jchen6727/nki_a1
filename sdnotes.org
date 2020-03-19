@@ -1708,7 +1708,66 @@ memory error
 - ITS4 v_init
 - weighNorm of multiple cell types; including NGF with wrong filename
 *** tuned params
-
 - increased bkg weights * 5
 - reduced ITS4 weightNorm * 5
 ** v20_batch1 - Added TI; testing only bkg and with conn
+*** notes
+- failed in g1 -- saturated with params?
+- rerunning on g2 (non-preempt)
+*** code
+def custom():
+    params = specs.ODict()
+
+    # bkg inputs
+    factor = 5
+    
+    params['addConn'] = [0, 1]
+
+    params[('weightBkg', 'E')] = [0.5*factor]
+    params[('weightBkg', 'I')] = [0.5*factor]
+    params[('weightBkg', 'ThalE')] = [0.5*factor]
+    params[('weightBkg', 'ThalI')] = [0.5 * factor]
+
+    # params[('rateBkg', 'E')] = [40] #[20, 60]  
+    # params[('rateBkg', 'I')] = [40] #
+    # params[('rateBkg', 'ThalE')] = [40] #
+    # params[('rateBkg', 'ThalI')] = [40] #
+
+    # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
+    # params[('weightInput', 'ThalE')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    # params[('weightInput', 'ThalI')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    # params[('probInput', 'ThalE')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+    # params[('probInput', 'ThalI')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+
+    # # conn gains
+    # params['EEGain'] = [1.0] #[0.5, 1.5] 
+    # params['EIGain'] = [1.0] 
+    # params['IEGain'] = [1.0] 
+    # params['IIGain'] = [1.0] 
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = False  # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    return b
