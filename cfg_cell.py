@@ -58,7 +58,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v21_sim1'
+cfg.simLabel = 'v21_sim7'
 cfg.saveFolder = 'data/v21_manualTune/'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -76,7 +76,7 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 
 # popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
-cfg.analysis['plotTraces'] = {'include': ['allCells'], 'oneFigPer': 'cell', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotTraces'] = {'include': ['allCells'], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 # cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
@@ -151,10 +151,10 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
-factor = 5
-cfg.weightBkg = {'IT': 0.5 * factor, 'ITS4': 0.5 * factor, 'PT': 0.5 * factor, 'CT': 0.5 * factor,
-                'PV': 0.5*factor, 'SOM': 0.5*factor, 'NGF': 0.5 * factor, 'VIP': 0.5*factor,
-                'TC': 0.5*factor, 'HTC': 0.5*factor, 'RE': 0.5*factor, 'TI': 0.5*factor}
+factor = 5*4
+cfg.weightBkg = {'IT': 0.6 * factor, 'ITS4': 0.02 * factor, 'PT': 0.7 * factor, 'CT': 0.7 * factor,
+                'PV': 1.5*factor, 'SOM': 0.3*factor, 'NGF': 5.0 * factor , 'VIP': 0.5*factor,
+                'TC': 0.095*factor, 'HTC': 0.079*factor, 'RE': 0.45*factor, 'TI': 0.18*factor}
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input
