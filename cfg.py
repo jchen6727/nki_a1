@@ -44,7 +44,7 @@ cfg.printPopAvgRates = [0,500] #[500, cfg.duration]
 #------------------------------------------------------------------------------
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'IC']
 
-alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE']
+alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE', 'TI']
 
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
@@ -147,21 +147,22 @@ cfg.addSubConn = 1
 # Background inputs
 #------------------------------------------------------------------------------
 cfg.addBkgConn = 1
-cfg.noiseBkg = {'A1': 1.0, 'thalamus': 1.0}  # firing rate random noise
+cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
 factor = 5
-cfg.weightBkg = {'E': 0.5*factor, 'I': 0.5*factor, 'ThalE': 0.5*factor, 'ThalI': 0.5*factor}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
+cfg.weightBkg = {'IT': 0.5 * factor, 'ITS4': 0.5 * factor, 'PT': 0.5 * factor, 'CT': 0.5 * factor,
+                'PV': 0.5*factor, 'SOM': 0.5*factor, 'NGF': 0.5 * factor, 'VIP': 0.5*factor,
+                'TC': 0.5*factor, 'HTC': 0.5*factor, 'RE': 0.5*factor, 'TI': 0.5*factor}
+cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input
-cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
-cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
-cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500}  # parameters to generate realistic cochlear + IC input
+cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
 
-cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
-cfg.probInput = {'ThalE': 0.12, 'ThalI': 0.26} # {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
+cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
+
+cfg.ICThalInput = None #{'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
 
 
 #------------------------------------------------------------------------------

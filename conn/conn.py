@@ -611,6 +611,7 @@ wmat['IREM']['TI']  =	0.5
 wmat['TI']['TI']    =   0.5
 
 
+
 # --------------------------------------------------
 ## CORTICOTHALAMIC (from old model; partly from Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
 # --------------------------------------------------

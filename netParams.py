@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 20
+netParams.version = 21
 
 #------------------------------------------------------------------------------
 #
@@ -455,8 +455,6 @@ if cfg.addThalamoCorticalConn:
 # Set target sections (somatodendritic distribution of synapses)
 # From Billeh 2019 (Allen V1) (fig 4F) and Tremblay 2016 (fig 3)
 
-
-
 if cfg.addSubConn:
     #------------------------------------------------------------------------------
     # E -> E2/3,4: soma,dendrites <200um
@@ -563,12 +561,8 @@ if cfg.addSubConn:
 #------------------------------------------------------------------------------  
 if cfg.addBkgConn:
     # add bkg sources for E and I cells
-    netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg['A1'], 'number': 1e9}
-    netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg['A1'], 'number': 1e9}
-    
-    if cfg.randomThalInput:
-        netParams.stimSourceParams['bkgThalE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalE'], 'noise': cfg.noiseBkg['thalamus'], 'number': 1e9}
-        netParams.stimSourceParams['bkgThalI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalI'], 'noise': cfg.noiseBkg['thalamus'], 'number': 1e9}
+    netParams.stimSourceParams['excBkg'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['exc'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['inhBkg'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['inh'], 'noise': cfg.noiseBkg, 'number': 1e9}
     
     if cfg.cochlearThalInput:
         from input import cochlearInputSpikes
@@ -608,49 +602,29 @@ if cfg.addBkgConn:
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
-    # bkgE/I -> cortex
-    netParams.stimTargetParams['bkgE->E'] =  {
-        'source': 'bkgE', 
-        'conds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
-        'sec': 'soma', 
-        'loc': 0.5,
-        'synMech': ESynMech,
-        'weight': cfg.weightBkg['E'],
-        'synMechWeightFactor': cfg.synWeightFractionEE,
-        'delay': cfg.delayBkg}
-
-    netParams.stimTargetParams['bkgI->I'] =  {
-        'source': 'bkgI', 
-        'conds': {'cellType': ['PV', 'SOM', 'VIP', 'NGF']},
-        'sec': 'soma', 
-        'loc': 0.5,
-        'synMech': ESynMech,
-        'weight': cfg.weightBkg['I'],
-        'synMechWeightFactor': cfg.synWeightFractionEI,
-        'delay': cfg.delayBkg}
-
-    # bkgThalE/I -> thal
+    # bkgE/I -> thalamus + cortex
+    cellTypes = Etypes+Itypes
     if cfg.randomThalInput:
-        netParams.stimTargetParams['bkgThalE->ThalE'] =  {
-            'source': 'bkgThalE', 
-            'conds': {'cellType': ['TC', 'HTC']},
+        cellTypes += ['TC', 'HTC', 'RE', 'TI']
+
+    for ct in cellTypes:
+        netParams.stimTargetParams['bkgE->'+ct] =  {
+            'source': 'bkgE', 
+            'conds': {'cellType': [ct]},
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': cfg.probInput['ThalE'], 
-            'weight': cfg.weightInput['ThalE'],
+            'weight': cfg.weightBkg[ct],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
-        netParams.stimTargetParams['bkgThalI->ThalI'] =  {
-            'source': 'bkgThalI', 
-            'conds': {'cellType': ['RE']},
+        netParams.stimTargetParams['bkgI->'+ct] =  {
+            'source': 'bkgE', 
+            'conds': {'cellType': [ct]},
             'sec': 'soma', 
             'loc': 0.5,
-            'synMech': ESynMech,
-            'probability': cfg.probInput['ThalE'], 
-            'weight': cfg.weightInput['ThalI'],
-            'synMechWeightFactor': cfg.synWeightFractionEI,
+            'synMech': 'GABAA',
+            'weight': cfg.weightBkg[ct],
             'delay': cfg.delayBkg}
 
     # cochlea -> thal
@@ -685,8 +659,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': cfg.probInput['ThalE'],
-            'weight': cfg.weightInput['ThalE'],
+            'probability': cfg.cfg.ICThalInput['probE'],
+            'weight': cfg.cfg.ICThalInput['weightE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
         
@@ -695,10 +669,9 @@ if cfg.addBkgConn:
             'postConds': {'cellType': ['RE', 'TI']},
             'sec': 'soma', 
             'loc': 0.5,
-            'synMech': ESynMech,
-            'probability': cfg.probInput['ThalI'], 
-            'weight': cfg.weightInput['ThalI'],
-            'synMechWeightFactor': cfg.synWeightFractionEI,
+            'synMech': 'GABAA',
+            'probability': cfg.cfg.ICThalInput['probI'],
+            'weight': cfg.cfg.ICThalInput['weightI'],
             'delay': cfg.delayBkg}  
 
 
