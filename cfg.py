@@ -37,7 +37,7 @@ cfg.cache_efficient = True
 cfg.printRunTime = 0.1
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [500, cfg.duration]
+cfg.printPopAvgRates = [0,500] #[500, cfg.duration]
 
 #------------------------------------------------------------------------------
 # Recording 

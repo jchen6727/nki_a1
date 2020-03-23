@@ -375,7 +375,7 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
 
 - similar tuning in macaques as in humans:
 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
-* Feb62020 Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)
+* 6Feb2020 Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)
 ** email from slava
 Hi Everyone,
 Thanks for your interest in the 'auditory-brainstem-model' description. I think, it might also be good to check e.g. the Auditory Modeling Toolbox (AMT) and maybe some implementations might be useful for your project. The AMT collection contains many models for different stages of the auditory system ( + description/documentation and references).
@@ -486,7 +486,7 @@ for cell in sim.net.cells:
         amp.play(cell.stims[0]['hObj']._ref_amp, t, True)
     except:
 
-* Feb182020 Preparing to tune model
+* 18Feb2020 Preparing to tune model
 ** consolidated all cell params in .json files
 including 3d pt morphologies and weightNorm
 ** select network size
@@ -604,8 +604,16 @@ cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}
 - might be useful to select suitable params and value ranges
 - I think could potentially use existing sims to train
 *** param space sampling using latin hypercube
+
 - used by Tim Rumbell for single cell optim
 - more homogeneous sampling of the param space 
+
+* 23Mar2020 Tuning model
+** tune 1st bkg
+- agreed with sam should tune first bkg to each cell type: maybe ~1 Hz for E and ~4-5 Hz for I
+- add bkg GABAA input - sometimes helps to desynchronize the cells if it's noisy
+- add bkg E and I inputs for each cell type
+- can do this manually since quick sims
 
 
 * CELL TYPES
