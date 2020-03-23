@@ -555,31 +555,14 @@ def custom():
     params = specs.ODict()
 
     # bkg inputs
-    factor = 5
     
     params['addConn'] = [0, 1]
 
-    params[('weightBkg', 'E')] = [0.5*factor]
-    params[('weightBkg', 'I')] = [0.5*factor]
-    params[('weightBkg', 'ThalE')] = [0.5*factor]
-    params[('weightBkg', 'ThalI')] = [0.5 * factor]
-
-    # params[('rateBkg', 'E')] = [40] #[20, 60]  
-    # params[('rateBkg', 'I')] = [40] #
-    # params[('rateBkg', 'ThalE')] = [40] #
-    # params[('rateBkg', 'ThalI')] = [40] #
-
-    # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
-    # params[('weightInput', 'ThalE')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
-    # params[('weightInput', 'ThalI')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
-    # params[('probInput', 'ThalE')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
-    # params[('probInput', 'ThalI')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
-
-    # # conn gains
-    # params['EEGain'] = [1.0] #[0.5, 1.5] 
-    # params['EIGain'] = [1.0] 
-    # params['IEGain'] = [1.0] 
-    # params['IIGain'] = [1.0] 
+    # conn gains
+    params['EEGain'] = [0.75, 1.0, 1.25] #[0.5, 1.5] 
+    params['EIGain'] = [0.75, 1.0, 1.25] 
+    params['IEGain'] = [0.75, 1.0, 1.25] 
+    params['IIGain'] = [0.75, 1.0, 1.25] 
 
     groupedParams = []
 
@@ -804,7 +787,7 @@ if __name__ == '__main__':
     b = custom()
     #b = evolRates()
 
-    b.batchLabel = 'v20_batch1' 
+    b.batchLabel = 'v21_batch1' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp')

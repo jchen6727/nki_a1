@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -37,7 +37,7 @@ cfg.cache_efficient = True
 cfg.printRunTime = 0.1
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [0,500] #[500, cfg.duration]
+cfg.printPopAvgRates = [0, cfg.duration]
 
 #------------------------------------------------------------------------------
 # Recording 
@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v21_sim1'
+cfg.simLabel = 'v21_sim10'
 cfg.saveFolder = 'data/v21_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
