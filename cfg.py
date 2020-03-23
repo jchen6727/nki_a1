@@ -37,7 +37,7 @@ cfg.cache_efficient = True
 cfg.printRunTime = 0.1
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [0, cfg.duration]
+cfg.printPopAvgRates = [500, cfg.duration]
 
 #------------------------------------------------------------------------------
 # Recording 
@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v21_sim10'
+cfg.simLabel = 'v21_sim12'
 cfg.saveFolder = 'data/v21_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -76,7 +76,7 @@ cfg.saveCellConns = 1 #False
 
 # popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
-cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in allpops], 'oneFigPer': 'cell', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
@@ -151,9 +151,9 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
-cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.4, 'PT': 14.0, 'CT': 14.0,
-                'PV': 30.0, 'SOM': 6.0, 'NGF': 100.0, 'VIP': 10.0,
-                'TC': 1.9, 'HTC': 1.58, 'RE': 9.0, 'TI': 3.6}
+cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+                'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+                'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input

@@ -556,13 +556,18 @@ def custom():
 
     # bkg inputs
     
-    params['addConn'] = [0, 1]
+    #params['addConn'] = [0, 1]
 
     # conn gains
     params['EEGain'] = [0.75, 1.0, 1.25] #[0.5, 1.5] 
     params['EIGain'] = [0.75, 1.0, 1.25] 
     params['IEGain'] = [0.75, 1.0, 1.25] 
-    params['IIGain'] = [0.75, 1.0, 1.25] 
+    params['IIGain'] = [0.75, 1.0, 1.25]
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25]  #2.5
+    
+    #params['intraThalamicGain'] = [1.0] #0.5
+    #params['corticoThalamicGain'] = [1.0]
+
 
     groupedParams = []
 
@@ -600,28 +605,20 @@ def evolRates():
     params = specs.ODict()
 
     # bkg inputs
-    factor = 10
-    params[('weightBkg', 'E')] = [0.25*factor, 0.75*factor]
-    params[('weightBkg', 'I')] = [0.25*factor, 0.75*factor]
-    params[('weightBkg', 'ThalE')] = [0.25*factor, 0.75*factor]
-    params[('weightBkg', 'ThalI')] = [0.25*factor, 0.75*factor]
+    params['EEGain'] = [0.75, 1.25]
+    params['EIGain'] = [0.75, 1.25]
 
-    params[('rateBkg', 'E')] = [20, 60]  # 40
-    params[('rateBkg', 'I')] = [20, 60]
-    params[('rateBkg', 'ThalE')] = [20, 60]
-    params[('rateBkg', 'ThalI')] = [20, 60]
+    params[('IEweights', 0)] = [0.75, 1.25]
+    params[('IEweights', 1)] = [0.75, 1.25]
+    params[('IEweights', 2)] = [0.75, 1.25]
 
-    # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
-    params[('weightInput', 'ThalE')] = [0.25,  0.75] # 0.5 somatic PSP mV 
-    params[('weightInput', 'ThalI')] = [0.25,  0.75] # 0.5 somatic PSP mV 
-    params[('probInput', 'ThalE')] = [0.1, 0.4] # 0.25 probability of conn  
-    params[('probInput', 'ThalI')] = [0.1, 0.4] # 0.25 probability of conn  
-
-    # conn gains
-    params['EEGain'] = [0.5, 1.5] 
-    params['EIGain'] = [0.5, 1.5] 
-    params['IEGain'] = [0.5, 1.5] 
-    params['IIGain'] = [0.5, 1.5] 
+    params[('IIweights', 0)] = [0.75, 1.25]
+    params[('IIweights', 1)] = [0.75, 1.25]
+    params[('IIweights', 2)] = [0.75, 1.25]
+    
+    params['thalamoCorticalGain'] = [0.75, 1.25]  
+    params['intraThalamicGain'] = [0.75, 1.25] 
+    params['corticoThalamicGain'] = [0.75, 1.25]
 
     groupedParams = []
 
@@ -638,7 +635,7 @@ def evolRates():
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    
+
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
 
     initCfg['saveCellSecs'] = False
@@ -665,7 +662,7 @@ def evolRates():
             'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
             'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
             'PV6', 'SOM6', 'VIP6', 'NGF6'       # L6
-            'IRE', 'IREM']  # Thal 
+            'IRE', 'IREM', 'TI']  # Thal 
 
     Itune = {'target': 10, 'width': 15, 'min': 0.25}
     for pop in Ipops:
@@ -696,14 +693,14 @@ def evolRates():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 50,
-        'num_elites': 1,
+        'pop_size': 100,
+        'num_elites': 2,
         'mutation_rate': 0.5,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
-        'max_generations': 100,
+        'max_generations': 200,
         'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 48, # (6h) max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 12, # (5h20) max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
