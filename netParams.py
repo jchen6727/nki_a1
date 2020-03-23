@@ -608,8 +608,8 @@ if cfg.addBkgConn:
         cellTypes += ['TC', 'HTC', 'RE', 'TI']
 
     for ct in cellTypes:
-        netParams.stimTargetParams['bkgE->'+ct] =  {
-            'source': 'bkgE', 
+        netParams.stimTargetParams['excBkg->'+ct] =  {
+            'source': 'excBkg', 
             'conds': {'cellType': [ct]},
             'sec': 'soma', 
             'loc': 0.5,
@@ -618,8 +618,8 @@ if cfg.addBkgConn:
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
-        netParams.stimTargetParams['bkgI->'+ct] =  {
-            'source': 'bkgE', 
+        netParams.stimTargetParams['inhBkg->'+ct] =  {
+            'source': 'inhBkg', 
             'conds': {'cellType': [ct]},
             'sec': 'soma', 
             'loc': 0.5,
@@ -735,4 +735,5 @@ v17 - Changed NGF -> I prob from strong (1.0) to weak (0.35)
 v18 - Fixed bug in VIP cell morphology
 v19 - Added in 2-compartment thalamic interneuron model 
 v20 - Added TI conn and updated thal pop
+v21 - Added exc+inh bkg inputs specific to each cell type
 """

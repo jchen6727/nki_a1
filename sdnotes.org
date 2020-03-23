@@ -1389,6 +1389,11 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
 ** v15 - Added cortical and thalamic conn to CT5A and CT5B 
 ** v16 - Updated multiple cell types
+** v17 - Changed NGF -> I prob from strong (1.0) to weak (0.35)
+** v18 - Fixed bug in VIP cell morphology
+** v19 - Added in 2-compartment thalamic interneuron model 
+** v20 - Added TI conn and updated thal pop
+** v21 - Added exc+inh bkg inputs specific to each cell type
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
