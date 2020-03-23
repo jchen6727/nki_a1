@@ -1771,3 +1771,123 @@ def custom():
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b
+
+*** results
+**** only bkg
+Analyzing...
+  Cells: 13108
+  Connections: 0 (0.00 per cell)
+  Spikes: 31237 (1.59 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 13.400 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.688 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.000 Hz
+   SOM3 : 12.229 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.611 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 17.613 Hz
+   SOM4 : 13.125 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.231 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 13.047 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.600 Hz
+   NGF5A : 0.000 Hz
+   IT5B : 0.000 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 13.473 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.941 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 0.012 Hz
+   CT6 : 0.000 Hz
+   SOM6 : 13.159 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 0.583 Hz
+   NGF6 : 0.000 Hz
+   TC : 0.207 Hz
+   TCM : 0.077 Hz
+   HTC : 0.158 Hz
+   IRE : 5.665 Hz
+   IREM : 6.000 Hz
+   TI : 2.029 Hz
+   IC : 14.725 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 85.57 s
+Saving output as data/v20_batch1/v20_batch1_0_0_0_0_0.json  ... 
+Finished saving!
+  Done; saving time = 1.75 s.
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 22.17 s
+Total time = 202.84 s
+**** with bkg+conn
+Analyzing...
+  Cells: 13108
+  Connections: 0 (0.00 per cell)
+  Spikes: 445787 (22.67 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 173.125 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.000 Hz
+   SOM3 : 0.000 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 174.678 Hz
+   NGF3 : 13.647 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 265.471 Hz
+   SOM4 : 0.000 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 93.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 0.000 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 154.800 Hz
+   NGF5A : 468.000 Hz
+   IT5B : 0.000 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 0.000 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 157.471 Hz
+   NGF5B : 487.375 Hz
+   IT6 : 0.000 Hz
+   CT6 : 0.000 Hz
+   SOM6 : 7.905 Hz
+   PV6 : 1.440 Hz
+   VIP6 : 10.083 Hz
+   NGF6 : 0.000 Hz
+   TC : 0.043 Hz
+   TCM : 0.510 Hz
+   HTC : 0.026 Hz
+   IRE : 6.826 Hz
+   IREM : 6.581 Hz
+   TI : 1.863 Hz
+   IC : 14.480 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 785.08 s
+Saving output as data/v20_batch1/v20_batch1_1_0_0_0_0.json  ... 
+Finished saving!
+  Done; saving time = 3.98 s.
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 202.85 s
+Total time = 1798.94 s
+**** conclusions
+looks like generally need more bkg
+and there might be some issue with ITS4 + VIP + NGF conn … I’ll check
+good thing is was pretty fast to run … on 96 cores took 3 min for only bkg, and 30 min for bkg+conn

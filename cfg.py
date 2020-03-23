@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 1.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -57,15 +57,15 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v17_sim52'
-cfg.saveFolder = 'data/v17_manualTune/'                	## Set file output name
+cfg.simLabel = 'v20_sim1'
+cfg.saveFolder = 'data/v20_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
 cfg.backupCfgFile = None 		
 cfg.gatherOnlySimData = False	 
 cfg.saveCellSecs = False		 
-cfg.saveCellConns = False		 
+cfg.saveCellConns = 1 #False		 
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
@@ -106,7 +106,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.2 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -142,6 +142,7 @@ cfg.thalamoCorticalGain = 1.0 #2.5
 
 cfg.addSubConn = 1
 
+
 #------------------------------------------------------------------------------
 # Background inputs
 #------------------------------------------------------------------------------
@@ -150,7 +151,7 @@ cfg.noiseBkg = {'A1': 1.0, 'thalamus': 1.0}  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
-factor = 10
+factor = 5
 cfg.weightBkg = {'E': 0.5*factor, 'I': 0.5*factor, 'ThalE': 0.5*factor, 'ThalI': 0.5*factor}  # corresponds to unitary connection somatic EPSP (mV)
 cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
 
