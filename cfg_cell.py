@@ -151,11 +151,12 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
-factor = 5*4
-cfg.weightBkg = {'IT': 0.6 * factor, 'ITS4': 0.02 * factor, 'PT': 0.7 * factor, 'CT': 0.7 * factor,
-                'PV': 1.5*factor, 'SOM': 0.3*factor, 'NGF': 5.0 * factor , 'VIP': 0.5*factor,
-                'TC': 0.095*factor, 'HTC': 0.079*factor, 'RE': 0.45*factor, 'TI': 0.18*factor}
+# weights tuned to obtain low firing rates on each cell type with only bkg
+cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.4, 'PT': 14.0, 'CT': 14.0,
+                'PV': 30.0, 'SOM': 6.0, 'NGF': 100.0, 'VIP': 10.0,
+                'TC': 1.9, 'HTC': 1.58, 'RE': 9.0, 'TI': 3.6}
 cfg.rateBkg = {'exc': 40, 'inh': 40}
+
 
 ## options to provide external sensory input
 cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 

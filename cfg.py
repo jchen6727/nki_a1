@@ -151,10 +151,9 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
-factor = 5
-cfg.weightBkg = {'IT': 0.5 * factor, 'ITS4': 0.5 * factor, 'PT': 0.5 * factor, 'CT': 0.5 * factor,
-                'PV': 0.5*factor, 'SOM': 0.5*factor, 'NGF': 0.5 * factor, 'VIP': 0.5*factor,
-                'TC': 0.5*factor, 'HTC': 0.5*factor, 'RE': 0.5*factor, 'TI': 0.5*factor}
+cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.4, 'PT': 14.0, 'CT': 14.0,
+                'PV': 30.0, 'SOM': 6.0, 'NGF': 100.0, 'VIP': 10.0,
+                'TC': 1.9, 'HTC': 1.58, 'RE': 9.0, 'TI': 3.6}
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input
