@@ -661,7 +661,7 @@ def evolRates():
             'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
             'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
             'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
-            'PV6', 'SOM6', 'VIP6', 'NGF6'       # L6
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
             'IRE', 'IREM', 'TI']  # Thal 
 
     Itune = {'target': 10, 'width': 15, 'min': 0.25}
