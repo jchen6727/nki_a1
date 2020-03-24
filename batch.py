@@ -781,12 +781,12 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    b = custom()
-    #b = evolRates()
+    #b = custom()
+    b = evolRates()
 
     b.batchLabel = 'v21_batch1' 
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid'  # evol
+    b.method = 'evol' #'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp')
     b.run() # run batch
 
