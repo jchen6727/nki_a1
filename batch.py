@@ -559,11 +559,11 @@ def custom():
     #params['addConn'] = [0, 1]
 
     # conn gains
-    params['EEGain'] = [0.75, 1.0, 1.25] #[0.5, 1.5] 
-    params['EIGain'] = [0.75, 1.0, 1.25] 
-    params['IEGain'] = [0.75, 1.0, 1.25] 
-    params['IIGain'] = [0.75, 1.0, 1.25]
-    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25]  #2.5
+    params['EEGain'] = [0.5, 1.0, 1.5] #[0.5, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5]
+    params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
     
     #params['intraThalamicGain'] = [1.0] #0.5
     #params['corticoThalamicGain'] = [1.0]
@@ -591,6 +591,7 @@ def custom():
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
+
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
@@ -781,12 +782,12 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    #b = custom()
-    b = evolRates()
+    b = custom()
+    #b = evolRates()
 
-    b.batchLabel = 'v21_batch1' 
+    b.batchLabel = 'v21_batch2' 
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'evol' #'grid'  # evol
+    b.method = 'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp')
     b.run() # run batch
 

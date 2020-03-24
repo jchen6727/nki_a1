@@ -1904,3 +1904,121 @@ Total time = 1798.94 s
 looks like generally need more bkg
 and there might be some issue with ITS4 + VIP + NGF conn … I’ll check
 good thing is was pretty fast to run … on 96 cores took 3 min for only bkg, and 30 min for bkg+conn
+** v21_batch1 - Evol optim full net; conn params
+*** code
+def evolRates():
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.75, 1.25]
+    params['EIGain'] = [0.75, 1.25]
+
+    params[('IEweights', 0)] = [0.75, 1.25]
+    params[('IEweights', 1)] = [0.75, 1.25]
+    params[('IEweights', 2)] = [0.75, 1.25]
+
+    params[('IIweights', 0)] = [0.75, 1.25]
+    params[('IIweights', 1)] = [0.75, 1.25]
+    params[('IIweights', 2)] = [0.75, 1.25]
+    
+    params['thalamoCorticalGain'] = [0.75, 1.25]  
+    params['intraThalamicGain'] = [0.75, 1.25] 
+    params['corticoThalamicGain'] = [0.75, 1.25]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 15, 'min': 0.25}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
+        print('  '+popInfo)
+        return fitness
+    
+    #from IPython import embed; embed()
+
+    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+
+    # Set evol alg configuration
+    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 100,
+        'num_elites': 2,
+        'mutation_rate': 0.5,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 200,
+        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 12, # (5h20) max number of times to check if sim is completed (for each generation)
+        'defaultFitness': 1000, # set fitness value in case simulation time is over
+        'scancelUser': 'ext_salvadordura_gmail_com'
+    }
+
+    return b
+*** results
+- 10 generations
+- pops always 0 Hz (14/42): IT2, IT3, ITP4, NGF4, PT5B, CT6, PV2, PV3, PV4, PV6, SOM2, SOM3, SOM4 
+- pops always too high >200Hz (3/42): ITS4, NGF5A, NGF5B 
+- pops sometimes too high >100Hz (6/42): NGF2, NGF3, VIP2, VIP3, VIP5A, VIP5B
+
+cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+                'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+                'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
