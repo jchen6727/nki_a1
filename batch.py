@@ -563,9 +563,9 @@ def custom():
     params['EIGain'] = [0.5, 1.0, 1.5] 
     params['IEGain'] = [0.5, 1.0, 1.5] 
     params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
-    params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    params['thalamoCorticalGain'] = [2.0] #[0.5, 1.0, 1.5]  #2.5
     #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
-    params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+    #params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
 
 
     groupedParams = []
@@ -784,7 +784,7 @@ if __name__ == '__main__':
     b = custom()
     #b = evolRates()
 
-    b.batchLabel = 'v21_batch3' 
+    b.batchLabel = 'v21_batch4' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp')
