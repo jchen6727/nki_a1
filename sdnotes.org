@@ -2022,3 +2022,53 @@ def evolRates():
 cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
                 'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
                 'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
+** v21_batch2 - Param sweep with 5 conn params
+*** results
+raw results - https://console.cloud.google.com/storage/browser/salvadord_data/v21_batch2/?forceOnBucketsSortingFiltering=false&organizationId=728762063943&project=ecas-2019
+
+firing rate as a func of 4 conn params for each of the 41 pops: https://drive.google.com/open?id=1lZQe3YjX2lGCQsLF_lzc3_FKqTImK-sg
+
+so problematic ones are IT2, IT3 and ITP4 since 0 in most, except a couple with 0.00075 Hz
+the trend suggests need to lower more EEGain and increase IIGain
+also noticed the IEGain param is not doing anything, so maybe a bug… I’ll check
+** v21_batch3 - Param sweep 4 conn params; adjusted EEGain and IIGain; fixed bug IEGain
+*** code
+params = specs.ODict()
+
+    # bkg inputs
+    
+    #params['addConn'] = [0, 1]
+
+    # conn gains
+    params['EEGain'] = [0.25, 0.5, 1.0] #[0.5, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [1.0, 1.5, 2.0]
+    #params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    
+    #params['intraThalamicGain'] = [1.0] #0.5
+    #params['corticoThalamicGain'] = [1.0]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = False  # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False

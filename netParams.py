@@ -305,7 +305,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
                     'postConds': {'pop': post},
                     'synMech': synMech,
                     'probability': prob,
-                    'weight': wmat[pre][post] * cfg.EIGain, 
+                    'weight': wmat[pre][post] * cfg.IEGain, 
                     'synMechWeightFactor': cfg.synWeightFractionEI,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,
