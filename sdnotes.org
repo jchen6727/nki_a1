@@ -2031,7 +2031,7 @@ firing rate as a func of 4 conn params for each of the 41 pops: https://drive.go
 so problematic ones are IT2, IT3 and ITP4 since 0 in most, except a couple with 0.00075 Hz
 the trend suggests need to lower more EEGain and increase IIGain
 also noticed the IEGain param is not doing anything, so maybe a bug… I’ll check
-** v21_batch3 - Param sweep 4 conn params; adjusted EEGain and IIGain; fixed bug IEGain
+** v21_batch3 - Param sweep 6 conn params; adjusted EEGain and IIGain; fixed bug IEGain
 *** code
 params = specs.ODict()
 
@@ -2039,15 +2039,14 @@ params = specs.ODict()
     
     #params['addConn'] = [0, 1]
 
-    # conn gains
-    params['EEGain'] = [0.25, 0.5, 1.0] #[0.5, 1.5] 
+    params['EEGain'] = [0.25, 0.5, 1.0, 1.5] #[0.5, 1.5] 
     params['EIGain'] = [0.5, 1.0, 1.5] 
     params['IEGain'] = [0.5, 1.0, 1.5] 
-    params['IIGain'] = [1.0, 1.5, 2.0]
-    #params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
-    
-    #params['intraThalamicGain'] = [1.0] #0.5
-    #params['corticoThalamicGain'] = [1.0]
+    params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
+    params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
+    params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+
 
 
     groupedParams = []
