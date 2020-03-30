@@ -24,32 +24,31 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     from os.path import isfile, join
     from glob import glob
 
-    ranges = {}
-    Erange = [0.2,40]
-    ranges['IT2'] = Erange # [2,25]
-    ranges['IT4'] = Erange # [2,25]
-    ranges['IT5A'] = Erange # [2,25] 
-    ranges['IT5B'] = Erange # [2,25]  
-    ranges['PT5B'] = Erange # [2,25] 
-    ranges['IT6'] =  Erange # [2,25]
-    ranges['CT6'] =  Erange # [2,25]
+    rangesE = {}
+    rangesI = {}
 
-    PVrange = [0.1,130]
-    SOMrange = [0.1,130]
-    ranges['PV2'] = PVrange
-    ranges['SOM2'] = SOMrange
-    ranges['PV5A'] = PVrange
-    ranges['SOM5A'] = SOMrange
-    ranges['PV5B'] = PVrange
-    ranges['SOM5B'] = SOMrange
-    ranges['PV6'] = PVrange
-    ranges['SOM6'] = SOMrange
+    Erange = [0.1,80]
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 'IT6', 'CT6']  # all layers
+    for pop in Epops:
+        rangesE[pop] = Erange
+
+    Irange = [0.1,140]
+    Ipops = ['NGF1',                            # L1
+        'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+        'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+        'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+        'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+        'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+        'PV6', 'SOM6', 'VIP6', 'NGF6']      # L6 
+
+    for pop in Ipops:
+        rangesI[pop] = Irange
 
     conds = []
 
     # check pop rate ranges
     if 'rates' in condlist:
-        for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
+        for k,v in rangesE.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
     
     # check I > E in each layer
     if 'I>E' in condlist:
@@ -73,10 +72,25 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
         conds.append('PV6 > SOM6')
 
     # construct query and apply
-    condStr = ''.join([''.join(str(cond)+' and ') for cond in conds])[:-4]
+    condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+    
+
+    #import IPython; IPython.embed()
+
     dfcond = df.query(condStr)
+
+    conds = []
+    if 'rates' in condlist:
+        for k, v in rangesI.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
+    condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+
+    dfcond = df.query(condStr)
+            
     print('\n Filtering based on: ' + str(condlist) + '\n' + condStr)
+    print(dfcond)
     print(len(dfcond))
+
+
 
     # 
     if copyFolder:
@@ -129,10 +143,10 @@ def applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=True):
     dfpop = dfPopRates(df1)
 
     # filter based on pop rates
-    condLists = [['rates'],
-                ['rates','I>E'],
-                ['rates', 'E5>E6>E2'],
-                ['rates', 'PV>SOM']]
+    condLists = [['rates']]#,
+                # ['rates','I>E'],
+                # ['rates', 'E5>E6>E2'],
+                # ['rates', 'PV>SOM']]
 
                 # [['I>E', 'E5>E6>E2', 'PV>SOM'],
                 # ['I>E'],
@@ -141,6 +155,7 @@ def applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=True):
                 # ['rates']]
                 # ['E5>E6>E2'],
                 # ['PV>SOM']]
+
 
     for i,condList in enumerate(condLists):
         print(len(filterRates(dfpop, condlist=condList, copyFolder='selected_'+str(i), dataFolder=dataFolder, batchLabel=batchLabel, skipDepol=skipDepol)))
