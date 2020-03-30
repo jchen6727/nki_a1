@@ -9,27 +9,24 @@ Contributors: salvadordura@gmail.com
 #import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
 
 #from batchAnalysisFilter import *
-from batchAnalysisPlotSingle import *
-#from batchAnalysisPlotCombined import *
+#from batchAnalysisPlotSingle import *
+from batchAnalysisPlotCombined import *
 
 
 # Main code
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchLabel = 'v11_batch7' # 'v50_batch1' #
-    loadAll = 0
-
-    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF4', 'ITP4', 'ITS4', 'VIP4', 'IT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
-
-    alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE']
+    batchLabel = 'v21_batch3'  # 'v50_batch1' #
+    #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
+    loadAll = 1
 
     # ---------------------------------------------
     # Filtering wrapper funcs
     # ---------------------------------------------
+
+    # df = filterDepolBlock(dataFolder, batchLabel, loadAll, gids=[])
     
-    #applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=0)
-       
-    #df = filterDepolBlock(dataFolder, batchLabel, loadAll, gids=[2931, 5149, 5180, 5234, 5523, 5709])
+    #applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=0)  
     
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
@@ -38,10 +35,13 @@ if __name__ == '__main__':
     # Single sim plot funcs
     # ---------------------------------------------
 
-    include = {}
-    include['raster'] = allpops
-    include['traces'] = [0,100, 1285, 1787,2422, 2464, 2470,30,97,98] #[(pop,0) for pop in alltypes]  # 0,100, 1285, 1787,2422, 2464, 2470,30,97,98
-    sim,data = loadPlot(dataFolder, batchLabel, include=include) 
+    # allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2',
+    #        'IT4', 'PV4', 'SOM4', 'VIP4', 'NGF4',
+    #        'IT5A', 'PV5A', 'SOM5A','VIP5A','NGF5A',
+    #        'IT5B', 'PT5B', 'PV5B', 'SOM5B','VIP5B','NGF5B',
+    #        'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+           
+    # sim,data = loadPlot(dataFolder, batchLabel, include={'raster':allpops}) 
                                                             
     #plotConnFile(dataFolder, batchLabel)
 
@@ -53,8 +53,10 @@ if __name__ == '__main__':
     # ---------------------------------------------
 
     #fIAnalysis(dataFolder, batchLabel, loadAll)
-
-    #df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['IClamp1_amp', 'ihGbar', 'gpas', 'epas'], vals='PT5B', plotLine=False)
+    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
+    
+    for pop in allpops:     
+        df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EEGain', 'EIGain', 'IEGain', 'IIGain'], vals=pop, groupStat='mean', plotLine=False) #thalamoCorticalGain
 
     # df = ihEPSPAnalysis(dataFolder, batchLabel, loadAll, pars=['groupWeight','ihGbar'], vals=['Vpeak_PTih'], zdcomp=0, plotLine=1)#, \
     # query = 'epas == 1.0 and groupWeight > 0.0003')# and axonNa==7 and gpas==0.65') #'ihLkcBasal == 0.01 and excTau2Factor==1.0') #, 'excTau2Factor', 'ihLkcBasal
