@@ -27,12 +27,13 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     rangesE = {}
     rangesI = {}
 
-    Erange = [0.1,80]
-    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 'IT6', 'CT6']  # all layers
+    Erange = [0.01,500]
+    Epops = ['IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6','CT6'] # ['IT2', 'IT3', 'ITP4', 'ITS4'] , 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']  # all layers
+
     for pop in Epops:
         rangesE[pop] = Erange
 
-    Irange = [0.1,140]
+    Irange = [0.01,500]
     Ipops = ['NGF1',                            # L1
         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
@@ -84,7 +85,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
         for k, v in rangesI.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
     condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
 
-    dfcond = df.query(condStr)
+    dfcond = dfcond.query(condStr)
             
     print('\n Filtering based on: ' + str(condlist) + '\n' + condStr)
     print(dfcond)

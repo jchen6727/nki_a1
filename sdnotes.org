@@ -2032,6 +2032,7 @@ so problematic ones are IT2, IT3 and ITP4 since 0 in most, except a couple with 
 the trend suggests need to lower more EEGain and increase IIGain
 also noticed the IEGain param is not doing anything, so maybe a bug… I’ll check
 ** v21_batch3 - Param sweep 6 conn params; adjusted EEGain and IIGain; fixed bug IEGain
+
 *** code
 params = specs.ODict()
 
@@ -2071,3 +2072,113 @@ params = specs.ODict()
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
+*** results
+
+- unfortunately no param combination yet that gives decent firing rates in all… 
+- the problematic ones still IT2, IT3 and ITP4 (upper layer ITs), with close to 0hz rates 
+— I had similar issue with M1 and fixed by tuning gains separate for upper vs lower layers, so will try that next
+- there is one param combination >0, but only ~0.1 hz
+- 0.01 hz in the case of ITP4
+
+- NGF2-6 too high - also possibly and issue; could be affecting E spiking
+- could be result of higher background? 
+-- cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+                'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+                'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
+-- enhanced sensitivity 
+-- maybe tuned based on L1, but L2-6 different, more conn inputs
+
+things to try:
+-- tune NGF L2-6 differently
+-- tune weights of upper IT separately 
+-- VIP 
+** v21_tune - adjusting bkg weights
+- run for 10 sec instead of 1 -- better stats; avoids depending on initial 500ms
+- included all IT cells since different dend lengths
+- included all NGF cells to see variability
+- v21_tune8:
+   NGF1 : 6.100 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 8.900 Hz
+   PV2 : 4.900 Hz
+   VIP2 : 9.100 Hz
+   NGF2 : 8.300 Hz
+   IT3 : 0.000 Hz
+   NGF3 : 7.000 Hz
+   ITP4 : 7.800 Hz
+   ITS4 : 3.000 Hz
+   NGF4 : 8.500 Hz
+   NGF5A : 6.600 Hz
+   PT5B : 0.700 Hz
+   NGF5B : 7.400 Hz
+   IT6 : 0.200 Hz
+   CT6 : 0.700 Hz
+   NGF6 : 8.900 Hz
+   TC : 22.100 Hz
+   HTC : 19.900 Hz
+   IRE : 4.400 Hz
+   TI : 12.600 Hz
+- clearly some fixes required:
+-- reduce NGF a bit (80->60)
+-- increase IT (except ITP4 low) (12->20)
+-- reduce TC (1.8->1.5)
+-- reduce HTC (1.55->1.4)
+-- reduce TI (3.6->3)
+
+- v56_tune10
+-   NGF1 : 0.500 Hz
+   NGF1 : 0.500 Hz
+   IT2 : 2.300 Hz
+   SOM2 : 8.900 Hz
+   PV2 : 4.900 Hz
+   VIP2 : 9.100 Hz
+   NGF2 : 0.700 Hz
+   IT3 : 3.300 Hz
+   NGF3 : 0.500 Hz
+   ITP4 : 14.200 Hz (dep block)
+   ITS4 : 3.000 Hz
+   NGF4 : 1.100 Hz
+   IT5A : 0.800 Hz (dep block)
+   NGF5A : 0.300 Hz
+   IT5B : 0.400 Hz (dep block)
+   PT5B : 1.100 Hz
+   NGF5B : 1.300 Hz
+   IT6 : 1.500 Hz (dep block)
+   CT6 : 1.700 Hz (dep block)
+   NGF6 : 1.400 Hz
+   TC : 19.300 Hz
+   HTC : 18.400 Hz
+   IRE : 5.500 Hz
+   TI : 6.300 Hz
+- changes:
+-- IT down (20->16)
+-- NGF up a bit (60->65)
+-- reduce TC (1.5 -> 1)
+-- reduce HTC  (1.55 -> 1)
+
+- v56_tune11
+   NGF1 : 1.500 Hz
+   IT2 : 0.400 Hz
+   SOM2 : 8.900 Hz
+   PV2 : 4.900 Hz
+   VIP2 : 9.100 Hz
+   NGF2 : 2.300 Hz
+   IT3 : 0.800 Hz
+   NGF3 : 1.800 Hz
+   ITP4 : 14.600 Hz (Dep block)
+   ITS4 : 3.000 Hz
+   NGF4 : 2.400 Hz
+   IT5A : 0.200 Hz (dep block)
+   NGF5A : 1.100 Hz
+   IT5B : 0.200 Hz
+   PT5B : 1.100 Hz
+   NGF5B : 2.300 Hz
+   IT6 : 0.500 Hz (dep block)
+   CT6 : 1.700 Hz (dep block)
+   NGF6 : 3.000 Hz
+   TC : 17.000 Hz
+   HTC : 14.100 Hz
+   IRE : 5.500 Hz
+   TI : 6.300 Hz
+
+- tune automatically for each cell type

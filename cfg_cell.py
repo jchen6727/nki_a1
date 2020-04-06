@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 1.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 10.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 1             	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -43,7 +43,7 @@ cfg.printPopAvgRates = [0, cfg.duration]
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'IC']
+cfg.allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
 
 alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE', 'TI']
 
@@ -58,9 +58,9 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v21_sim7'
+cfg.simLabel = 'v21_sim11'
 cfg.saveFolder = 'data/v21_manualTune/'                	## Set file output name
-cfg.savePickle = True         	## Save pkl file
+cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
@@ -77,7 +77,7 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 # popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
 cfg.analysis['plotTraces'] = {'include': ['allCells'], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-# cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+#cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
 #cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
@@ -102,6 +102,7 @@ cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 #------------------------------------------------------------------------------
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
 cfg.singleCellPops = 1
+cfg.singlePop = ''
 cfg.removeWeightNorm = False
 cfg.scale = 1.0     # Is this what should be used? 
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
@@ -152,9 +153,10 @@ cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
 # weights tuned to obtain low firing rates on each cell type with only bkg
-cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.4, 'PT': 14.0, 'CT': 14.0,
-                'PV': 30.0, 'SOM': 6.0, 'NGF': 100.0, 'VIP': 10.0,
-                'TC': 1.9, 'HTC': 1.58, 'RE': 9.0, 'TI': 3.6}
+cfg.weightBkg = 1
+#  {'IT': 16.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+#                 'PV': 28.0, 'SOM': 5.0, 'NGF': 65.0, 'VIP': 9.0,
+#                 'TC': 1.0, 'HTC': 1.0, 'RE': 9.0, 'TI': 3.0}
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 

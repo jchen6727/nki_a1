@@ -9,6 +9,44 @@ from netpyne.batch import Batch
 from netpyne import specs
 import numpy as np
 
+
+# ----------------------------------------------------------------------------------------------
+# Weight Normalization 
+# ----------------------------------------------------------------------------------------------
+def bkgWeights(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkg'] = weights
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+ 
+
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+
+    return b
+
 # ----------------------------------------------------------------------------------------------
 # Weight Normalization 
 # ----------------------------------------------------------------------------------------------
@@ -563,9 +601,9 @@ def custom():
     params['EIGain'] = [0.5, 1.0, 1.5] 
     params['IEGain'] = [0.5, 1.0, 1.5] 
     params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
-    params['thalamoCorticalGain'] = [2.0] #[0.5, 1.0, 1.5]  #2.5
+    params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
     #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
-    #params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+    params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
 
 
     groupedParams = []
@@ -781,13 +819,17 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    b = custom()
+    #b = custom()
     #b = evolRates()
 
-    b.batchLabel = 'v21_batch4' 
+    bkgWeightPops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
+
+    b = bkgWeights(pops = bkgWeightPops, weights = range(1,50))
+
+    b.batchLabel = 'v22_batch1' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
-    setRunCfg(b, 'hpc_slurm_gcp')
+    setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
     b.run() # run batch
 
 
