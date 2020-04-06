@@ -824,7 +824,7 @@ if __name__ == '__main__':
 
     bkgWeightPops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,50)))
+    b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
 
     b.batchLabel = 'v22_batch1' 
     b.saveFolder = 'data/'+b.batchLabel
