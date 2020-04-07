@@ -2218,4 +2218,4 @@ def bkgWeights(pops=[], weights=list(range(50))):
     return b
 
 ** v22_batch2 - bkg weights for all pops (only E 40hz)
-
+** v22_batch3 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom)

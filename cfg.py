@@ -154,7 +154,7 @@ cfg.startBkg = 0  # start at 0 ms
 cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
                 'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
                 'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
-cfg.rateBkg = {'exc': 40, 'inh': 40}
+cfg.rateBkg = {'exc': 20, 'inh': 40}
 
 ## options to provide external sensory input
 cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
