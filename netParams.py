@@ -736,4 +736,5 @@ v18 - Fixed bug in VIP cell morphology
 v19 - Added in 2-compartment thalamic interneuron model 
 v20 - Added TI conn and updated thal pop
 v21 - Added exc+inh bkg inputs specific to each cell type
+v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
 """

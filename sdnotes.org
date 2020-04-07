@@ -2244,22 +2244,24 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 *** results
 ** v22_batch3 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom)
 *** results
-Bkg weight to get 2.0 Hz in pop IT2 = 19.5
-Bkg weight to get 4.0 Hz in pop PV2 = 26.5
-Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
-Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
-Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
-Bkg weight to get 2.0 Hz in pop IT3 = 18.1
-Bkg weight to get 2.0 Hz in pop ITP4 = 9.4
-Bkg weight to get 2.0 Hz in pop ITS4 = 0.2
-Bkg weight to get 2.0 Hz in pop IT5A = 29.3
-Bkg weight to get 2.0 Hz in pop CT5A = 15.8
-Bkg weight to get 2.0 Hz in pop IT5B = 27.5
-Bkg weight to get 2.0 Hz in pop PT5B = 17.2
-Bkg weight to get 2.0 Hz in pop CT5B = 15.8
-Bkg weight to get 2.0 Hz in pop IT6 = 19.5
-Bkg weight to get 2.0 Hz in pop CT6 = 15.8
-Bkg weight to get 2.0 Hz in pop TC = 0.4
-Bkg weight to get 2.0 Hz in pop HTC = 0.5
-Bkg weight to get 4.0 Hz in pop IRE = 8.5
-Bkg weight to get 4.0 Hz in pop TI = 48.2
+Calculating bkg weights for each pop ...
+Bkg weight to get 2.0 Hz in pop IT2 = 22.0
+Bkg weight to get 4.0 Hz in pop PV2 = 44.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
+Bkg weight to get 4.0 Hz in pop VIP2 = 14.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 101.0
+Bkg weight to get 2.0 Hz in pop IT3 = 11.6
+Bkg weight to get 2.0 Hz in pop ITP4 = 5.4
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.5
+Bkg weight to get 2.0 Hz in pop IT5A = 2.2
+Bkg weight to get 2.0 Hz in pop CT5A = 7.4
+Bkg weight to get 2.0 Hz in pop IT5B = 29.9
+Bkg weight to get 2.0 Hz in pop PT5B = inf
+Bkg weight to get 2.0 Hz in pop CT5B = 7.4
+Bkg weight to get 2.0 Hz in pop IT6 = 6.1
+Bkg weight to get 2.0 Hz in pop CT6 = 7.4
+Bkg weight to get 2.0 Hz in pop TC = 53.3
+Bkg weight to get 2.0 Hz in pop HTC = -64.5
+Bkg weight to get 4.0 Hz in pop IRE = 1.5
+Bkg weight to get 4.0 Hz in pop TI = 5.3
+** v22_batch4 - bkg weights for all pops (E 20hz apicdend 2*weight, I 40 Hz perisom)
