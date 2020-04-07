@@ -225,8 +225,8 @@ if cfg.addConn:
                 'synMechWeightFactor': cfg.synWeightFractionEE,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
-                'sec': 'spiny'}  # 'spiny' should be a secList with spiny dends in each cellParams
-
+                'sec': 'dend_all'}
+                
 
 #------------------------------------------------------------------------------
 ## E -> I
@@ -246,8 +246,8 @@ if cfg.addConn:
                 'synMechWeightFactor': cfg.synWeightFractionEI,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
-                'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
-
+                'sec': 'proximal'}
+                
 
 #------------------------------------------------------------------------------
 ## I -> E
@@ -258,7 +258,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
         preTypes = Itypes
         synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
         weightFactors = [[1.0], cfg.synWeightFractionSOME, [1.0], cfg.synWeightFractionNGF] 
-        secs = ['perisom', 'apicdend', 'apicdend', 'apicdend']
+        secs = ['proximal', 'apic', 'apic', 'apic']
         postTypes = Etypes
         for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
             for ipostType, postType in enumerate(postTypes):
@@ -309,7 +309,8 @@ if cfg.addConn and cfg.IEGain > 0.0:
                     'synMechWeightFactor': cfg.synWeightFractionEI,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,
-                    'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
+                    'sec': 'proximal'}
+                    
 
 #------------------------------------------------------------------------------
 ## I -> I
@@ -361,8 +362,8 @@ if cfg.addConn and cfg.IIGain > 0.0:
                     'synMechWeightFactor': cfg.synWeightFractionII,
                     'delay': 'defaultDelay+dist_3D/propVelocity',
                     'synsPerConn': 1,
-                    'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
-
+                    'sec': 'proximal'}
+                    
 
 #------------------------------------------------------------------------------
 # Thalamic connectivity parameters
@@ -602,29 +603,25 @@ if cfg.addBkgConn:
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
-    # bkgE/I -> thalamus + cortex
-    cellTypes = Etypes+Itypes
-    if cfg.randomThalInput:
-        cellTypes += ['TC', 'HTC', 'RE', 'TI']
-
-    for ct in cellTypes:
-        netParams.stimTargetParams['excBkg->'+ct] =  {
+    # excBkg/I -> thalamus + cortex
+    for pop in cfg.allpops:
+        netParams.stimTargetParams['excBkg->'+pop] =  {
             'source': 'excBkg', 
-            'conds': {'cellType': [ct]},
-            'sec': 'soma', 
+            'conds': {'pop': pop},
+            'sec': 'apic', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'weight': cfg.weightBkg[ct],
+            'weight': 2*cfg.weightBkg, #[pop],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
-        netParams.stimTargetParams['inhBkg->'+ct] =  {
+        netParams.stimTargetParams['inhBkg->'+pop] =  {
             'source': 'inhBkg', 
-            'conds': {'cellType': [ct]},
-            'sec': 'soma', 
+            'conds': {'pop': pop},
+            'sec': 'proximal', 
             'loc': 0.5,
             'synMech': 'GABAA',
-            'weight': cfg.weightBkg[ct],
+            'weight': cfg.weightBkg, #[pop],
             'delay': cfg.delayBkg}
 
     # cochlea -> thal

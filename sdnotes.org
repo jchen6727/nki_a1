@@ -2265,3 +2265,5 @@ Bkg weight to get 2.0 Hz in pop HTC = -64.5
 Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 ** v22_batch4 - bkg weights for all pops (E 20hz apicdend 2*weight, I 40 Hz perisom)
+
+** v22_batch5 - bkg weights for all pops (E 40hz apicdend, I 40 Hz perisom 2*weight)
