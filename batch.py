@@ -30,6 +30,9 @@ def bkgWeights(pops=[], weights=list(range(50))):
     initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
     initCfg[('analysis', 'plotRaster')] = False
 
+    initCfg[('rateBkg', 'exc')] = 20
+    initCfg[('rateBkg', 'inh')] = 40
+
     ## turn off components not required
     initCfg['addBkgConn'] = True
     initCfg['addConn'] = False
