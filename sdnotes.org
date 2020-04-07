@@ -2182,3 +2182,40 @@ things to try:
    TI : 6.300 Hz
 
 - tune automatically for each cell type
+** v22_batch1 - bkg weights for all pops (E+I 40 hz)
+def bkgWeights(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkg'] = weights
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+ 
+
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+
+    return b
+
+** v22_batch2 - bkg weights for all pops (only E 40hz)
+

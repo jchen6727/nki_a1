@@ -826,7 +826,7 @@ if __name__ == '__main__':
 
     b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
 
-    b.batchLabel = 'v22_batch1' 
+    b.batchLabel = 'v22_batch2' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
