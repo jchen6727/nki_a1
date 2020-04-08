@@ -559,11 +559,11 @@ def EPSPs():
 # ----------------------------------------------------------------------------------------------
 # f-I curve
 # ----------------------------------------------------------------------------------------------
-def fIcurve():
+def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     params = specs.ODict()
 
-    params[('IClamp1', 'pop')] = ['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6', 'PV2', 'SOM2']
-    params[('IClamp1', 'amp')] = list(np.arange(0.0, 6.5, 0.5)/10.0) 
+    params['singlePop'] = pops
+    params[('IClamp1', 'amp')] = amps
     #params['ihGbar'] = [0.0, 1.0, 2.0]
     # params['axonNa'] = [5, 6, 7, 8] 
     # params['gpas'] = [0.6, 0.65, 0.70, 0.75] 
@@ -580,11 +580,23 @@ def fIcurve():
     initCfg[('IClamp1','loc')] = 0.5
     initCfg[('IClamp1','start')] = 500
     initCfg[('IClamp1','dur')] = 1000
-    initCfg[('analysis','plotTraces','timeRange')] = [0, 1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 1500]
+
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = False
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addNetStim'] = False
 
     groupedParams = [] 
 
-    b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b
 
@@ -825,11 +837,12 @@ if __name__ == '__main__':
     #b = custom()
     #b = evolRates()
 
-    bkgWeightPops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
+    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
+    #b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
+    b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch6' 
+    b.batchLabel = 'v22_batch7' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')

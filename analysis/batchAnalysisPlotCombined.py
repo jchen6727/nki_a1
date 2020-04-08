@@ -19,7 +19,7 @@ plt.style.use('seaborn-whitegrid')
 # Support funcs
 # ---------------------------------------------------------------------------------
 
-def plotfI(params, data, saveLabel='', showLegend = True, legendLabel ='', pops=None):
+def plotfI(dataFolder, batchLabel, params, data, saveLabel='', showLegend = True, legendLabel ='', pops=None):
     utils.setPlotFormat(numColors = 8)
     
     if pops:
@@ -48,13 +48,6 @@ def plotfI(params, data, saveLabel='', showLegend = True, legendLabel ='', pops=
         json.dump(rates, fileObj)
 
     plt.figure()
-
-    with open('../sim/cells/popColors.pkl', 'r') as fileObj: popColors = pickle.load(fileObj)['popColors']
-    popColors['PV2'] = popColors['PV6']
-    popColors['SOM2'] = popColors['SOM6']
-    colorList = [tuple(popColors[p]) for p in Lvals]
-    from pylab import cycler
-    plt.rc('axes', prop_cycle=(cycler('color', colorList)))
 
     handles = plt.plot(rates, marker='o', markersize=7)
     plt.xlabel('Somatic current injection (nA)')
@@ -296,7 +289,7 @@ def dfEPSPamps(df, numParams=4):
 # ---------------------------------------------------------------------------------
 def fIAnalysis(dataFolder, batchLabel, loadAll):
     params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=None, maxCombs=None) 
-    plotfI(params, data, saveLabel='_I', showLegend=True, pops=['SOM2','PV2']) #['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'])#)
+    plotfI(dataFolder, batchLabel, params, data) #, saveLabel='_I', showLegend=True, pops=['SOM2','PV2']) #['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'])#)
 
 
 def popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['IEweights_0','IIweights_0','IEweights_2','IIweights_2'], 
