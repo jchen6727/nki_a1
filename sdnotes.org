@@ -2265,5 +2265,43 @@ Bkg weight to get 2.0 Hz in pop HTC = -64.5
 Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 ** v22_batch4 - bkg weights for all pops (E 20hz apicdend 2*weight, I 40 Hz perisom)
-
+Bkg weight to get 2.0 Hz in pop IT2 = 9.0
+Bkg weight to get 4.0 Hz in pop PV2 = 19.7
+Bkg weight to get 4.0 Hz in pop SOM2 = 2.9
+Bkg weight to get 4.0 Hz in pop VIP2 = 5.5
+Bkg weight to get 4.0 Hz in pop NGF2 = 42.2
+Bkg weight to get 2.0 Hz in pop IT3 = 5.4
+Bkg weight to get 2.0 Hz in pop ITP4 = 19.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.3
+Bkg weight to get 2.0 Hz in pop IT5A = 20.4
+Bkg weight to get 2.0 Hz in pop CT5A = 3.2
+Bkg weight to get 2.0 Hz in pop IT5B = 27.8
+Bkg weight to get 2.0 Hz in pop PT5B = 24.5
+Bkg weight to get 2.0 Hz in pop CT5B = 3.2
+Bkg weight to get 2.0 Hz in pop IT6 = 6.3
+Bkg weight to get 2.0 Hz in pop CT6 = 3.2
+Bkg weight to get 2.0 Hz in pop TC = -9.3
+Bkg weight to get 2.0 Hz in pop HTC = -8.8
+Bkg weight to get 4.0 Hz in pop IRE = -0.1
+Bkg weight to get 4.0 Hz in pop TI = 2.2
 ** v22_batch5 - bkg weights for all pops (E 40hz apicdend, I 40 Hz perisom 2*weight)
+Bkg weight to get 2.0 Hz in pop IT2 = 25.0
+Bkg weight to get 4.0 Hz in pop PV2 = 32.4
+Bkg weight to get 4.0 Hz in pop SOM2 = 6.9
+Bkg weight to get 4.0 Hz in pop VIP2 = 12.6
+Bkg weight to get 4.0 Hz in pop NGF2 = 89.0
+Bkg weight to get 2.0 Hz in pop IT3 = 8.6
+Bkg weight to get 2.0 Hz in pop ITP4 = 3.3
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.4
+Bkg weight to get 2.0 Hz in pop IT5A = 32.1
+Bkg weight to get 2.0 Hz in pop CT5A = 5.1
+Bkg weight to get 2.0 Hz in pop IT5B = 42.7
+Bkg weight to get 2.0 Hz in pop PT5B = -inf
+Bkg weight to get 2.0 Hz in pop CT5B = 5.1
+Bkg weight to get 2.0 Hz in pop IT6 = 12.7
+Bkg weight to get 2.0 Hz in pop CT6 = 5.1
+Bkg weight to get 2.0 Hz in pop TC = -inf
+Bkg weight to get 2.0 Hz in pop HTC = -54.5
+Bkg weight to get 4.0 Hz in pop IRE = 6.5
+Bkg weight to get 4.0 Hz in pop TI = 53.0
+** v22_batch6- bkg weights for all pops (E 40hz apicdend 1*weight, I 40 Hz perisom 1*weight)
