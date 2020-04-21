@@ -58,13 +58,17 @@ def plotfI(dataFolder, batchLabel, params, data, saveLabel='', maxRate=150, pops
     fontsiz = 5
     plt.rcParams.update({'font.size': fontsiz})
 
-    plt.figure(figsize=(25, 18))
-    fig, ax  = plt.subplots(4, 5, sharey='row', sharex='col')
+    # PLotting format options
+    plt.figure(figsize=(25/5., 18/4.))
+    nrows = 2
+    ncols = 2
+    fig, ax=plt.subplots(nrows, ncols)  #, sharey='row', sharex='col')
+    maxRate = 50
 
     #import IPython; IPython.embed()
 
     for i, pop in enumerate(Lvals):
-        x, y = np.unravel_index(i, (4, 5))
+        x, y = np.unravel_index(i, (nrows, ncols))
         ax[x][y].plot(rates[i], marker='o', markersize=2)
         ax[x][y].set_xticks(list(range(len(Ivals)))[::2])
         ax[x][y].set_xticklabels(Ivals[::2])

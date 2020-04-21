@@ -572,15 +572,16 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
 
     # initial config
     initCfg = {}
-    initCfg['duration'] = 1.5*1e3
+    initCfg['duration'] = 2.0*1e3
     initCfg['addIClamp'] = True
     initCfg['addNetStim'] = False
     initCfg['weightNorm'] = True
     initCfg[('IClamp1','sec')] = 'soma'
     initCfg[('IClamp1','loc')] = 0.5
-    initCfg[('IClamp1','start')] = 500
-    initCfg[('IClamp1','dur')] = 1000
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 1500]
+    initCfg[('IClamp1','start')] = 750
+    initCfg[('IClamp1','dur')] = 1750
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 2000]
+    initCfg['printPopAvgRates'] = [750,1750]
 
 
     ## turn off components not required
