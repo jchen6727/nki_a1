@@ -19,7 +19,14 @@ plt.style.use('seaborn-whitegrid')
 # Support funcs
 # ---------------------------------------------------------------------------------
 
-def plotfI(dataFolder, batchLabel, params, data, saveLabel='', showLegend = True, legendLabel ='', pops=None):
+def axisFontSize(ax, fontsize):
+    for tick in ax.xaxis.get_major_ticks():
+        tick.label.set_fontsize(fontsize) 
+    for tick in ax.yaxis.get_major_ticks():
+        tick.label.set_fontsize(fontsize) 
+
+
+def plotfI(dataFolder, batchLabel, params, data, saveLabel='', maxRate=150, pops=None):
     utils.setPlotFormat(numColors = 8)
     
     if pops:
@@ -31,13 +38,14 @@ def plotfI(dataFolder, batchLabel, params, data, saveLabel='', showLegend = True
     Lvalsdic = {val: i for i,val in enumerate(Lvals)}
     Ivalsdic = {val: i for i,val in enumerate(Ivals)}
 
-    rates = [[0 for x in range(len(Lvals))] for y in range(len(Ivals))] 
+    rates = [[0 for x in range(len(Ivals))] for y in range(len(Lvals))] 
     for key, d in data.items():
         rate = len(d['simData']['spkt'])
         try:
             Lindex = Lvalsdic[d['paramValues'][0]]
             Iindex = Ivalsdic[d['paramValues'][1]]
-            rates[Iindex][Lindex] = rate
+
+            rates[Lindex][Iindex] = rate
             print(d['paramValues'])
             print(rate)
         except:
@@ -47,16 +55,31 @@ def plotfI(dataFolder, batchLabel, params, data, saveLabel='', showLegend = True
     with open(filename, 'w') as fileObj:
         json.dump(rates, fileObj)
 
-    plt.figure()
+    fontsiz = 5
+    plt.rcParams.update({'font.size': fontsiz})
 
-    handles = plt.plot(rates, marker='o', markersize=7)
-    plt.xlabel('Somatic current injection (nA)')
-    plt.xticks(list(range(len(Ivals)))[::2], Ivals[::2])
-    plt.ylabel('Frequency (Hz)')
-    plt.xlim([0,12])
-    if showLegend: plt.legend(handles, Lvals, title = legendLabel, loc=2)
-    plt.savefig('%s/%s/%s_fI%s.png' % (dataFolder, batchLabel, batchLabel, saveLabel))
-    plt.show()
+    plt.figure(figsize=(25, 18))
+    fig, ax  = plt.subplots(4, 5, sharey='row', sharex='col')
+
+    #import IPython; IPython.embed()
+
+    for i, pop in enumerate(Lvals):
+        x, y = np.unravel_index(i, (4, 5))
+        ax[x][y].plot(rates[i], marker='o', markersize=2)
+        ax[x][y].set_xticks(list(range(len(Ivals)))[::2])
+        ax[x][y].set_xticklabels(Ivals[::2])
+
+        if i==0:
+            ax[x][y].set_xlabel('Current amplitude (nA)', fontsize=fontsiz)
+            ax[x][y].set_ylabel('Rate (Hz)', fontsize=fontsiz)
+        ax[x][y].set_title(pop, fontsize=fontsiz*2)
+        ax[x][y].set_ylim(0,maxRate)
+        axisFontSize(ax[x][y], fontsiz)
+
+    #if showLegend: plt.legend(handles, Lvals, title = legendLabel, loc=2)
+    plt.tight_layout()
+    plt.savefig('%s/%s/%s_fI%s.png' % (dataFolder, batchLabel, batchLabel, saveLabel), dpi=600)
+    #plt.show()
 
 
 def plot1Dparams(df, par1, val, valLabel=None, varLabel=None, groupStat='mean', normRange=False, saveFile=None, line=False):
