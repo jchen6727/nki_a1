@@ -579,10 +579,11 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     initCfg[('IClamp1','sec')] = 'soma'
     initCfg[('IClamp1','loc')] = 0.5
     initCfg[('IClamp1','start')] = 750
-    initCfg[('IClamp1','dur')] = 1750
+    initCfg[('IClamp1','dur')] = 1000
     initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 2000]
     initCfg['printPopAvgRates'] = [750,1750]
 
+    initCfg[('hParams', 'celsius')] = 36
 
     ## turn off components not required
     initCfg['addBkgConn'] = False
@@ -843,7 +844,7 @@ if __name__ == '__main__':
     #b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
     b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch8' 
+    b.batchLabel = 'v22_batch9' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
