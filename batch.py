@@ -837,12 +837,12 @@ if __name__ == '__main__':
     #b = custom()
     #b = evolRates()
 
-    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
+    cellTypes = ['ITP4', 'IT5A'] # ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
     #b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
     b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch7' 
+    b.batchLabel = 'v22_batch8' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
