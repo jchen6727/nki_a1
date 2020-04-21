@@ -583,7 +583,7 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 2000]
     initCfg['printPopAvgRates'] = [750,1750]
 
-    initCfg[('hParams', 'celsius')] = 34
+    initCfg[('hParams', 'celsius')] = 36
 
     ## turn off components not required
     initCfg['addBkgConn'] = False
@@ -839,12 +839,12 @@ if __name__ == '__main__':
     #b = custom()
     #b = evolRates()
 
-    cellTypes = ['ITP4', 'IT5A'] # ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
+    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
     #b = bkgWeights(pops = bkgWeightPops, weights = list(range(1,100)))
     b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch10' 
+    b.batchLabel = 'v22_batch11' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
