@@ -583,7 +583,7 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 2000]
     initCfg['printPopAvgRates'] = [750,1750]
 
-    initCfg[('hParams', 'celsius')] = 36
+    initCfg[('hParams', 'celsius')] = 37
 
     ## turn off components not required
     initCfg['addBkgConn'] = False
