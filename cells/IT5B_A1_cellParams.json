@@ -153,10 +153,7 @@
                 "parentSec": "soma",
                 "parentX": 1.0
             },
-            "vinit": -81.2,
-            "weightNorm": [
-                0.0020221269386008654
-            ]
+            "vinit": -81.2
         },
         "Adend2": {
             "geom": {
@@ -260,10 +257,7 @@
                 "parentSec": "Adend1",
                 "parentX": 1.0
             },
-            "vinit": -81.2,
-            "weightNorm": [
-                0.004272372210984603
-            ]
+            "vinit": -81.2
         },
         "Adend3": {
             "geom": {
@@ -367,10 +361,7 @@
                 "parentSec": "Adend2",
                 "parentX": 1.0
             },
-            "vinit": -81.2,
-            "weightNorm": [
-                0.005842496363448593
-            ]
+            "vinit": -81.2
         },
         "Bdend": {
             "geom": {
@@ -474,10 +465,7 @@
                 "parentSec": "soma",
                 "parentX": 0.5
             },
-            "vinit": -81.2,
-            "weightNorm": [
-                0.0013159498157122138
-            ]
+            "vinit": -81.2
         },
         "axon": {
             "geom": {
@@ -626,12 +614,12 @@
                     "vhalfn": 32.7885075379
                 },
                 "kdr": {
-                    "gbar": 0.006,
+                    "gbar": 0.0097,
                     "sh": 0.0,
                     "vhalfn": 11.6427471384
                 },
                 "nax": {
-                    "gbar": 0.16,
+                    "gbar": 0.2,
                     "sh": 0.0
                 },
                 "pas": {
@@ -640,10 +628,7 @@
                 }
             },
             "topol": {},
-            "vinit": -81.2,
-            "weightNorm": [
-                0.0011684992726897186
-            ]
+            "vinit": -81.2
         }
     }
 }
