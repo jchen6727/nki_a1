@@ -59,11 +59,11 @@ def plotfI(dataFolder, batchLabel, params, data, saveLabel='', maxRate=150, pops
     plt.rcParams.update({'font.size': fontsiz})
 
     # PLotting format options
-    plt.figure(figsize=(25/5., 18/4.))
-    nrows = 2
-    ncols = 2
-    fig, ax=plt.subplots(nrows, ncols)  #, sharey='row', sharex='col')
-    maxRate = 50
+    plt.figure(figsize=(25, 18))
+    nrows = 4
+    ncols = 5
+    fig, ax=plt.subplots(nrows, ncols, sharey='row', sharex='col')
+    maxRate = 150
 
     #import IPython; IPython.embed()
 
