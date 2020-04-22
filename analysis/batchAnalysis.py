@@ -18,7 +18,7 @@ if __name__ == '__main__':
     dataFolder = '../data/'
     batchLabel = 'v22_batch12'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
-    loadAll = 1
+    loadAll = 0
 
     # ---------------------------------------------
     # Filtering wrapper funcs
