@@ -102,6 +102,8 @@ cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 #------------------------------------------------------------------------------
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
 cfg.singleCellPops = False
+cfg.singlePop = ''
+cfg.removeWeightNorm = False
 cfg.scale = 1.0     # Is this what should be used? 
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 

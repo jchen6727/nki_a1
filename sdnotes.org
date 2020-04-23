@@ -2326,3 +2326,10 @@ Bkg weight to get 2.0 Hz in pop HTC = 0.5
 Bkg weight to get 4.0 Hz in pop IRE = 8.5
 Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch7 - fI curves for all cell types
+** v22_batch8 - fI for new ITP4, IT5A
+** v22_batch9 - fI with celsius=36
+** v22_batch10 - fI with celsius=34
+** v22_batch11 - fI for all cells with temp=36
+** v22_batch12 - fI new cells with 37C tuned
+** v22_batch13 - weightNorm all cells after retuning+37C
+
