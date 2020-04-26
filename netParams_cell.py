@@ -118,7 +118,7 @@ cellParamLabels =  ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'ITS4_reduced', 'IT5A_A1', 'C
 
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
-    netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
+    #netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
 
 ## Options to add to cellParams
 addSecLists = False
