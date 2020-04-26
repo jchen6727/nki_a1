@@ -2331,5 +2331,5 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch10 - fI with celsius=34
 ** v22_batch11 - fI for all cells with temp=36
 ** v22_batch12 - fI new cells with 37C tuned
-** v22_batch13 - weightNorm all cells after retuning+37C
+** v22_batch13 - weightNorm all cells after retuning
 
