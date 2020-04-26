@@ -81,13 +81,6 @@ cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'yn
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
 
-# Load cell rules from .pkl / .json file 
-loadCellParams = cellParamLabels
-
-for ruleLabel in loadCellParams:
-    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
-    netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
-
 ## Import VIP cell rule from hoc file 
 netParams.importCellParams(label='VIP_reduced', conds={'cellType': 'VIP', 'cellModel': 'HH_reduced'}, fileName='cells/vipcr_cell.hoc', cellName='VIPCRCell_EDITED', importSynMechs=True)
 netParams.cellParams['VIP_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'VIP', 'ynorm': [layer['2'][0], layer['6'][1]]}
@@ -118,6 +111,14 @@ netParams.cellParams['HTC_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cell
 netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellModel': 'HH_reduced'}, fileName='cells/sTI.py', cellName='sTI_cell', importSynMechs=True)
 netParams.cellParams['TI_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'ynorm': layer['thal']}
 
+# Load cell rules from .pkl / .json file 
+cellParamLabels =  ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'ITS4_reduced', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1',  'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1',
+                    'PV_reduced', 'SOM_reduced', 'VIP_reduced', 'NGF_reduced',
+                    'RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']
+
+for ruleLabel in loadCellParams:
+    netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
+    netParams.cellParams[ruleLabel]['conds'] = cellParamLabels[ruleLabel]
 
 ## Options to add to cellParams
 addSecLists = False
