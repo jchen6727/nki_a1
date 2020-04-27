@@ -183,8 +183,8 @@ if __name__ == '__main__':
     b.run() # run batch
     '''
 
-    popSaveLabels = {'IT2': 'IT2_A1', 'IT3': 'IT3_A1', 'ITP4': 'ITP4_A1', 'ITS4': 'ITS4_reduced',
-                     'IT5A': 'IT5A_A1', 'IT5B': 'IT5B_A1', 'PT5B': 'PT5B_A1', 'IT6': 'IT6_A1', 'CT6': 'CT6_A1',
+    popSaveLabels = {'IT2': 'IT2_reduced', 'IT3': 'IT3_reduced', 'ITP4': 'ITP4_reduced', 'ITS4': 'ITS4_reduced',
+                     'IT5A': 'IT5A_reduced', 'IT5B': 'IT5B_reduced', 'PT5B': 'PT5B_reduced', 'IT6': 'IT6_reduced', 'CT6': 'CT6_reduced',
                      'PV2': 'PV_reduced', 'SOM2': 'SOM_reduced', 'VIP2': 'VIP_reduced', 'NGF2': 'NGF_redduced',
                      'IRE': 'RE_reduced', 'TC': 'TC_reduced', 'HTC': 'HTC_reduced', 'TI': 'TI_reduced'}
     

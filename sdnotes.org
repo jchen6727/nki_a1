@@ -2336,7 +2336,7 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch18-19 - weightNorm for TC and HTC and TI
 ** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
 
-** v22_batch21 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom)
+** v22_batch21 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom) - bug, missing weightNorms
 Bkg weight to get 2.0 Hz in pop IT2 = 22.0
 Bkg weight to get 4.0 Hz in pop PV2 = 44.3
 Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
@@ -2359,7 +2359,7 @@ Bkg weight to get 2.0 Hz in pop HTC = 3.9
 Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 
-** v22_batch22 -bkg weights for all pops (E 20hz soma, I 40 Hz soma)
+** v22_batch22 -bkg weights for all pops (E 20hz soma, I 40 Hz soma) - bug, missing weightNorms
 
 Bkg weight to get 2.0 Hz in pop IT2 = 22.0
 Bkg weight to get 4.0 Hz in pop PV2 = 44.3
@@ -2381,4 +2381,4 @@ Bkg weight to get 2.0 Hz in pop HTC = 3.9
 Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 
-** v22_batch23 -bkg weights for all pops (E 40hz soma, I 40 Hz soma)
+** v22_batch23 -bkg weights for all pops (E 40hz soma, I 40 Hz soma) 

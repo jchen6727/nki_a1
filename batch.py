@@ -841,26 +841,26 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = bkgWeights(pops = cellTypes, weights = list(range(1,100)))
-    # b = fIcurve(pops=cellTypes) 
+    # b = bkgWeights(pops = cellTypes, weights = list(range(1,100)))
+    # # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch23' 
-    b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid'  # evol
-    setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
-    b.run() # run batch
+    # b.batchLabel = 'v22_batch23' 
+    # b.saveFolder = 'data/'+b.batchLabel
+    # b.method = 'grid'  # evol
+    # setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
+    # b.run() # run batch
 
 
     # Submit set of batch sims together
 
-    # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    # popsWeightNorm =    { #'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-    #                      'ITS4_reduced': ['ITS4']}
-    # #                     'PV_reduced': ['PV2', 'SOM2'],
-    # #                     'VIP_reduced': ['VIP2'],
-    # #                     'NGF_reduced': ['NGF2']} #,
-    #                     #'RE_reduced': ['IRE', 'TC', 'HTC'],
-    #                     #'TI_reduced': ['TI']}
+    # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
+    popsWeightNorm =    {'IT2_reduced': ['CT5A', 'CT5B']}, #'IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+    #                     'ITS4_reduced': ['ITS4']}
+    #                     'PV_reduced': ['PV2', 'SOM2'],
+    #                     'VIP_reduced': ['VIP2'],
+    #                     'NGF_reduced': ['NGF2']} #,
+                        #'RE_reduced': ['IRE', 'TC', 'HTC'],
+                        #'TI_reduced': ['TI']}
  
     # batchIndex = 20
     # for k, v in popsWeightNorm.items(): 

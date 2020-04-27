@@ -68,16 +68,16 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (DOES NOT INCLUDE VIP, NGF and spiny stellate)
 ## include conditions ('conds') for each cellRule
-cellParamLabels = { 'IT2_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['2']},
-                    'IT3_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
-                    'ITP4_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
-                    'IT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
-                    'CT5A_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5A']},
-                    'IT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
-                    'PT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
-                    'CT5B_A1': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
-                    'IT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
-                    'CT6_A1':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
+cellParamLabels = { 'IT2_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['2']},
+                    'IT3_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['3']},
+                    'ITP4_reduced': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['4']},
+                    'IT5A_reduced': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5A']},
+                    'CT5A_reduced': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5A']},
+                    'IT5B_reduced': {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['5B']},
+                    'PT5B_reduced': {'cellModel': 'HH_reduced', 'cellType': 'PT', 'ynorm': layer['5B']},
+                    'CT5B_reduced': {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['5B']},
+                    'IT6_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'IT', 'ynorm': layer['6']},
+                    'CT6_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'CT', 'ynorm': layer['6']},
                     'PV_reduced':  {'cellModel': 'HH_reduced', 'cellType': 'PV', 'ynorm': [layer['2'][0],layer['6'][1]]},
                     'SOM_reduced': {'cellModel': 'HH_reduced', 'cellType': 'SOM', 'ynorm': [layer['2'][0], layer['6'][1]]}}
 
@@ -112,7 +112,9 @@ netParams.importCellParams(label='TI_reduced', conds={'cellType': 'TI', 'cellMod
 netParams.cellParams['TI_reduced']['conds'] = {'cellModel': 'HH_reduced', 'cellType': 'TI', 'ynorm': layer['thal']}
 
 # Load cell rules from .pkl / .json file 
-cellParamLabels =  ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'ITS4_reduced', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1',  'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1',
+cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
+                    'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',
                     'PV_reduced', 'SOM_reduced', 'VIP_reduced', 'NGF_reduced',
                     'RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']
 
@@ -140,7 +142,7 @@ for ruleLabel in netParams.cellParams.keys():
 
     if addSecLists:
         secLists = {}
-        if ruleLabel in ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1', 'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1']:
+        if ruleLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced', 'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced']:
             secLists['all'] = ['soma', 'Adend1', 'Adend2', 'Adend3', 'Bdend']
             secLists['proximal'] = ['soma', 'Bdend', 'Adend1']
             secLists['dend_all'] = ['Adend1', 'Adend2', 'Adend3', 'Bdend']
@@ -255,7 +257,7 @@ if add3DGeom:
                     
 
 # save cellParams rules to .pkl file
-saveCellParams = False
+saveCellParams = True
 if saveCellParams:
     for ruleLabel in netParams.cellParams.keys():
         netParams.saveCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')
