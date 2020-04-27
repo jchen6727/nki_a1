@@ -2333,5 +2333,7 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch12 - fI new cells with 37C tuned
 ** v22_batch13-17 - weightNorm all cells (Except 2) after retuning
 ** v22_batch14 (overwrote) - fI for all cells
-** TODO v22_batch18 - weightNorm for TC and HTC
+** v22_batch18-19 - weightNorm for TC and HTC and TI
+** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
+
 ** TODO v22_batch19 - bkg weights for all pops ()

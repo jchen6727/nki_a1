@@ -171,7 +171,7 @@ if __name__ == '__main__':
     # run batch E cells
     
     dataFolder = '../data/'
-    batchLabels = ['v22_batch13', 'v22_batch14', 'v22_batch15', 'v22_batch16', 'v22_batch17']
+    batchLabels = ['v22_batch18', 'v22_batch19'] #, 'v22_batch1', 'v22_batch16', 'v22_batch17']
     loadFromFile = 0
 
     ''' run via batch.py
