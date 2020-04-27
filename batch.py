@@ -30,7 +30,7 @@ def bkgWeights(pops=[], weights=list(range(50))):
     initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
     initCfg[('analysis', 'plotRaster')] = False
 
-    initCfg[('rateBkg', 'exc')] = 20
+    initCfg[('rateBkg', 'exc')] = 40
     initCfg[('rateBkg', 'inh')] = 40
 
     ## turn off components not required
@@ -844,7 +844,7 @@ if __name__ == '__main__':
     b = bkgWeights(pops = cellTypes, weights = list(range(1,100)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch22' 
+    b.batchLabel = 'v22_batch23' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')

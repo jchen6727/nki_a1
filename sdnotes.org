@@ -2358,3 +2358,27 @@ Bkg weight to get 2.0 Hz in pop TC = 3.9
 Bkg weight to get 2.0 Hz in pop HTC = 3.9
 Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
+
+** v22_batch22 -bkg weights for all pops (E 20hz soma, I 40 Hz soma)
+
+Bkg weight to get 2.0 Hz in pop IT2 = 22.0
+Bkg weight to get 4.0 Hz in pop PV2 = 44.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
+Bkg weight to get 4.0 Hz in pop VIP2 = 14.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 101.0
+Bkg weight to get 2.0 Hz in pop IT3 = 21.2
+Bkg weight to get 2.0 Hz in pop ITP4 = 2.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.5
+Bkg weight to get 2.0 Hz in pop IT5A = 7.8
+Bkg weight to get 2.0 Hz in pop CT5A = 6.2
+Bkg weight to get 2.0 Hz in pop IT5B = 7.8
+Bkg weight to get 2.0 Hz in pop PT5B = 20.7
+Bkg weight to get 2.0 Hz in pop CT5B = 6.2
+Bkg weight to get 2.0 Hz in pop IT6 = 9.7
+Bkg weight to get 2.0 Hz in pop CT6 = 6.2
+Bkg weight to get 2.0 Hz in pop TC = 3.9
+Bkg weight to get 2.0 Hz in pop HTC = 3.9
+Bkg weight to get 4.0 Hz in pop IRE = 1.5
+Bkg weight to get 4.0 Hz in pop TI = 5.3
+
+** v22_batch23 -bkg weights for all pops (E 40hz soma, I 40 Hz soma)
