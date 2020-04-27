@@ -68,10 +68,7 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 0.0
-            },
-            "weightNorm": [
-                0.000167642970394919
-            ]
+            }
         },
         "soma": {
             "geom": {
@@ -197,10 +194,7 @@
                     "mvhalf": -40.0
                 }
             },
-            "topol": {},
-            "weightNorm": [
-                0.00016693822725094408
-            ]
+            "topol": {}
         }
     }
 }
