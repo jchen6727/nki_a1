@@ -83,7 +83,10 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 0.0
-            }
+            },
+            "weightNorm": [
+                0.0006995693824418555
+            ]
         },
         "ori2": {
             "geom": {
@@ -135,7 +138,10 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 1.0
-            }
+            },
+            "weightNorm": [
+                0.0006995693824418555
+            ]
         },
         "rad1": {
             "geom": {
@@ -187,7 +193,10 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 0.0
-            }
+            },
+            "weightNorm": [
+                0.0007148237473513796
+            ]
         },
         "rad2": {
             "geom": {
@@ -239,7 +248,10 @@
                 "childX": 0.0,
                 "parentSec": "soma",
                 "parentX": 1.0
-            }
+            },
+            "weightNorm": [
+                0.0007148237473513796
+            ]
         },
         "soma": {
             "geom": {
@@ -302,7 +314,10 @@
                     "g": 5e-05
                 }
             },
-            "topol": {}
+            "topol": {},
+            "weightNorm": [
+                0.0006803002813743324
+            ]
         }
     }
 }

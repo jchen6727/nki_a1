@@ -81,7 +81,10 @@
                 "parentSec": "soma",
                 "parentX": 0.5
             },
-            "vinit": -75.0
+            "vinit": -75.0,
+            "weightNorm": [
+                0.0008157245900165227
+            ]
         },
         "dend1": {
             "geom": {
@@ -152,7 +155,10 @@
                 "parentSec": "soma",
                 "parentX": 1.0
             },
-            "vinit": -75.0
+            "vinit": -75.0,
+            "weightNorm": [
+                0.0008157651292235274
+            ]
         },
         "soma": {
             "geom": {
@@ -206,7 +212,10 @@
                 }
             },
             "topol": {},
-            "vinit": -75.0
+            "vinit": -75.0,
+            "weightNorm": [
+                0.0008157078608047597
+            ]
         }
     }
 }

@@ -2382,5 +2382,6 @@ Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 
 ** v22_batch23 - missing weightNorms for CT5A and CT5B 
-** v22_batchX -bkg weights for all pops (E 40hz soma, I 40 Hz soma) 
+** v22_batch24 -bkg weights for all pops (E 40hz soma, I 40 Hz soma) 
+
 
