@@ -69,7 +69,9 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (DOES NOT INCLUDE VIP, NGF and spiny stellate)
 ## include conditions ('conds') for each cellRule
-cellParamLabels =  ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'ITS4_reduced', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1',  'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1',
+cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
+                    'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',
                     'PV_reduced', 'SOM_reduced', 'VIP_reduced', 'NGF_reduced',
                     'RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']
 
