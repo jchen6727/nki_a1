@@ -862,7 +862,7 @@ if __name__ == '__main__':
                         'RE_reduced': ['IRE', 'TC', 'HTC'],
                         'TI_reduced': ['TI']}
  
-    batchIndex = 16
+    batchIndex = 18
     for k, v in popsWeightNorm.items(): 
         b = weightNorm(pops=v, rule=k)
         b.batchLabel = 'v22_batch'+str(batchIndex) 
