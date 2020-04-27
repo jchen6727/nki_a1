@@ -2337,3 +2337,24 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
 
 ** v22_batch21 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom)
+Bkg weight to get 2.0 Hz in pop IT2 = 22.0
+Bkg weight to get 4.0 Hz in pop PV2 = 44.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
+Bkg weight to get 4.0 Hz in pop VIP2 = 14.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 101.0
+Bkg weight to get 2.0 Hz in pop IT3 = 11.6
+Bkg weight to get 2.0 Hz in pop ITP4 = 5.0
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.5
+Bkg weight to get 2.0 Hz in pop IT5A = 2.0
+Bkg weight to get 2.0 Hz in pop CT5A = 9.0
+Bkg weight to get 2.0 Hz in pop IT5B = 1.3
+/usr/local/lib/python3.7/site-packages/scipy/interpolate/interpolate.py:610: RuntimeWarning: divide by zero encountered in true_divide
+  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
+Bkg weight to get 2.0 Hz in pop PT5B = inf
+Bkg weight to get 2.0 Hz in pop CT5B = 9.0
+Bkg weight to get 2.0 Hz in pop IT6 = 23.0
+Bkg weight to get 2.0 Hz in pop CT6 = 9.0
+Bkg weight to get 2.0 Hz in pop TC = 3.9
+Bkg weight to get 2.0 Hz in pop HTC = 3.9
+Bkg weight to get 4.0 Hz in pop IRE = 1.5
+Bkg weight to get 4.0 Hz in pop TI = 5.3

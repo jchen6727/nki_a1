@@ -844,7 +844,7 @@ if __name__ == '__main__':
     b = bkgWeights(pops = cellTypes, weights = list(range(1,100)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch21' 
+    b.batchLabel = 'v22_batch22' 
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
