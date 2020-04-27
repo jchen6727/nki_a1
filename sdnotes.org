@@ -2336,4 +2336,4 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch18-19 - weightNorm for TC and HTC and TI
 ** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
 
-** TODO v22_batch21 - bkg weights for all pops ()
+** v22_batch21 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom)
