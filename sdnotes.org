@@ -2335,7 +2335,6 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch14 (overwrote) - fI for all cells
 ** v22_batch18-19 - weightNorm for TC and HTC and TI
 ** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
-
 ** v22_batch21 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom) - bug, missing weightNorms
 Bkg weight to get 2.0 Hz in pop IT2 = 22.0
 Bkg weight to get 4.0 Hz in pop PV2 = 44.3
@@ -2359,7 +2358,7 @@ Bkg weight to get 2.0 Hz in pop HTC = 3.9
 Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 
-** v22_batch22 -bkg weights for all pops (E 20hz soma, I 40 Hz soma) - bug, missing weightNorms
+** v22_batch22 - bkg weights for all pops (E 20hz soma, I 40 Hz soma) - bug, missing weightNorms
 
 Bkg weight to get 2.0 Hz in pop IT2 = 22.0
 Bkg weight to get 4.0 Hz in pop PV2 = 44.3
@@ -2382,7 +2381,7 @@ Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 
 ** v22_batch23 - missing weightNorms for CT5A and CT5B 
-** v22_batch24 -bkg weights for all pops (E 40hz soma, I 40 Hz soma) - bug, missing NGF weightNorm!
+** v22_batch24 - bkg weights for all pops (E 40hz soma, I 40 Hz soma) - bug, missing NGF weightNorm!
 Bkg weight to get 2.0 Hz in pop IT2 = 17.8
 Bkg weight to get 4.0 Hz in pop PV2 = 26.5
 Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
@@ -2404,3 +2403,31 @@ Bkg weight to get 4.0 Hz in pop IRE = 8.5
 Bkg weight to get 4.0 Hz in pop TI = 48.2
 
 Note: but dynamic range looks better - can probably reduce to max weight 50 and have 0.5 intervals
+** v22_batch25 - fI for missing NGF
+** v22_batch26 - bkg weights for all pops (E 40hz soma, I 40 Hz soma); range 0,50,0.5
+
+Bkg weight to get 2.0 Hz in pop IT2 = 17.8
+Bkg weight to get 4.0 Hz in pop PV2 = 26.6
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.9
+/usr/local/lib/python3.7/site-packages/scipy/interpolate/interpolate.py:610: RuntimeWarning: divide by zero encountered in true_divide
+  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
+Bkg weight to get 4.0 Hz in pop NGF2 = inf
+Bkg weight to get 2.0 Hz in pop IT3 = 16.8
+Bkg weight to get 2.0 Hz in pop ITP4 = 13.5
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.4
+Bkg weight to get 2.0 Hz in pop IT5A = 28.2
+Bkg weight to get 2.0 Hz in pop CT5A = 16.5
+Bkg weight to get 2.0 Hz in pop IT5B = 23.0
+Bkg weight to get 2.0 Hz in pop PT5B = 16.5
+Bkg weight to get 2.0 Hz in pop CT5B = 16.5
+Bkg weight to get 2.0 Hz in pop IT6 = 29.5
+Bkg weight to get 2.0 Hz in pop CT6 = 16.5
+Bkg weight to get 2.0 Hz in pop TC = 10.8
+Bkg weight to get 2.0 Hz in pop HTC = 10.8
+Bkg weight to get 4.0 Hz in pop IRE = 8.7
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+range not enough to get spikes in NGF
+
+** v22_batch27 - bkg weights for all pops (E 40hz soma, I 40 Hz soma); range 0,100

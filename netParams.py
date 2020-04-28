@@ -610,20 +610,20 @@ if cfg.addBkgConn:
         netParams.stimTargetParams['excBkg->'+pop] =  {
             'source': 'excBkg', 
             'conds': {'pop': pop},
-            'sec': 'apic', 
+            'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'weight': 2*cfg.weightBkg, #[pop],
+            'weight': cfg.weightBkg[pop],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
         netParams.stimTargetParams['inhBkg->'+pop] =  {
             'source': 'inhBkg', 
             'conds': {'pop': pop},
-            'sec': 'proximal', 
+            'sec': 'soma', 
             'loc': 0.5,
             'synMech': 'GABAA',
-            'weight': cfg.weightBkg, #[pop],
+            'weight': cfg.weightBkg[pop],
             'delay': cfg.delayBkg}
 
     # cochlea -> thal

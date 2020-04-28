@@ -841,10 +841,10 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,50,0.5)))
+    b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # # # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch26'  
+    b.batchLabel = 'v22_batch27'  
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
