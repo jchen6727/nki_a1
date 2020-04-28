@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 21
+netParams.version = 22
 
 #------------------------------------------------------------------------------
 #
@@ -605,15 +605,20 @@ if cfg.addBkgConn:
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
+    with open('cells/bkgWeightPops.json', 'r') as f:
+        weightBkg = json.load(f)
+
     # excBkg/I -> thalamus + cortex
-    for pop in cfg.allpops:
+    pops = list(cfg.allpops)
+    pops.remove('IC')
+    for pop in pops:
         netParams.stimTargetParams['excBkg->'+pop] =  {
             'source': 'excBkg', 
             'conds': {'pop': pop},
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'weight': cfg.weightBkg[pop],
+            'weight': weightBkg[pop],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
@@ -623,7 +628,7 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': 'GABAA',
-            'weight': cfg.weightBkg[pop],
+            'weight': weightBkg[pop],
             'delay': cfg.delayBkg}
 
     # cochlea -> thal

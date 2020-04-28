@@ -57,8 +57,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v21_sim12'
-cfg.saveFolder = 'data/v21_manualTune/'                	## Set file output name
+cfg.simLabel = 'v22_sim1'
+cfg.saveFolder = 'data/v22_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
@@ -153,9 +153,9 @@ cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
-cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
-                'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
-                'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
+# cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+#                 'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+#                 'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input

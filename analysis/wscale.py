@@ -171,8 +171,8 @@ if __name__ == '__main__':
     # run batch E cells
     
     dataFolder = '../data/'
-    batchLabels = ['v22_batch25'] #, 'v22_batch19'] #, 'v22_batch1', 'v22_batch16', 'v22_batch17']
-    loadFromFile = 0
+    batchLabels = ['v22_batch13'] #, 'v22_batch19'] #, 'v22_batch1', 'v22_batch16', 'v22_batch17']
+    loadFromFile = 1
 
     ''' run via batch.py
     b = batch.weightNormE(pops=['IT2', 'IT4'], rule='IT2_reduced', weight=[0.0001])
@@ -194,6 +194,6 @@ if __name__ == '__main__':
     for batchLabel in batchLabels:
         params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadFromFile, saveAll=1-loadFromFile, vars=[('simData','V_soma')], maxCombs=None) 
         epsp = calculateEPSPsPops(params, data, somaLabel='soma', stimRange=[10*700,10*800], syn='exc')
-        plotEPSPs(epsp, dataFolder, batchLabel, addLegend=0)
+        plotEPSPs(epsp, dataFolder, batchLabel, addLegend=1)
         #plotEPSPs(epsp, dataFolder, batchLabel, addLegend=1, includeSegs=[('apic_28',0.5), ('apic_36',0.5), ('apic_49',0.5), ('apic_56',0.5)])
         weightNorm = calculateWeightNormPops(params, data,  somaLabel='soma', stimRange=[10*700,10*800], popSaveLabels=popSaveLabels, savePath=dataFolder+'/'+batchLabel+'/')
