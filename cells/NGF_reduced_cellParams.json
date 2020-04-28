@@ -80,7 +80,10 @@
                 "parentSec": "soma",
                 "parentX": 0.0
             },
-            "vinit": -67.66
+            "vinit": -67.66,
+            "weightNorm": [
+                0.0002480674001114169
+            ]
         },
         "soma": {
             "geom": {
@@ -170,7 +173,10 @@
                 }
             },
             "topol": {},
-            "vinit": -67.66
+            "vinit": -67.66,
+            "weightNorm": [
+                0.0002480052323912068
+            ]
         }
     }
 }
