@@ -2382,6 +2382,25 @@ Bkg weight to get 4.0 Hz in pop IRE = 1.5
 Bkg weight to get 4.0 Hz in pop TI = 5.3
 
 ** v22_batch23 - missing weightNorms for CT5A and CT5B 
-** v22_batch24 -bkg weights for all pops (E 40hz soma, I 40 Hz soma) 
+** v22_batch24 -bkg weights for all pops (E 40hz soma, I 40 Hz soma) - bug, missing NGF weightNorm!
+Bkg weight to get 2.0 Hz in pop IT2 = 17.8
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = -106.7
+Bkg weight to get 2.0 Hz in pop IT3 = 16.8
+Bkg weight to get 2.0 Hz in pop ITP4 = 13.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.3
+Bkg weight to get 2.0 Hz in pop IT5A = 24.4
+Bkg weight to get 2.0 Hz in pop CT5A = 16.8
+Bkg weight to get 2.0 Hz in pop IT5B = 23.0
+Bkg weight to get 2.0 Hz in pop PT5B = 16.8
+Bkg weight to get 2.0 Hz in pop CT5B = 16.8
+Bkg weight to get 2.0 Hz in pop IT6 = 26.0
+Bkg weight to get 2.0 Hz in pop CT6 = 16.8
+Bkg weight to get 2.0 Hz in pop TC = 10.7
+Bkg weight to get 2.0 Hz in pop HTC = 10.7
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
 
-
+Note: but dynamic range looks better - can probably reduce to max weight 50 and have 0.5 intervals
