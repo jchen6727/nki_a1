@@ -171,7 +171,7 @@ if __name__ == '__main__':
     # run batch E cells
     
     dataFolder = '../data/'
-    batchLabels = ['v22_batch23'] #, 'v22_batch19'] #, 'v22_batch1', 'v22_batch16', 'v22_batch17']
+    batchLabels = ['v22_batch25'] #, 'v22_batch19'] #, 'v22_batch1', 'v22_batch16', 'v22_batch17']
     loadFromFile = 0
 
     ''' run via batch.py
@@ -186,7 +186,7 @@ if __name__ == '__main__':
     popSaveLabels = {'IT2': 'IT2_reduced', 'IT3': 'IT3_reduced', 'ITP4': 'ITP4_reduced', 'ITS4': 'ITS4_reduced',
                      'IT5A': 'IT5A_reduced', 'CT5A': 'CT5A_reduced', 'IT5B': 'IT5B_reduced', 'CT5B': 'CT5B_reduced', 'PT5B': 'PT5B_reduced',
                      'IT6': 'IT6_reduced', 'CT6': 'CT6_reduced',
-                     'PV2': 'PV_reduced', 'SOM2': 'SOM_reduced', 'VIP2': 'VIP_reduced', 'NGF2': 'NGF_redduced',
+                     'PV2': 'PV_reduced', 'SOM2': 'SOM_reduced', 'VIP2': 'VIP_reduced', 'NGF2': 'NGF_reduced',
                      'IRE': 'RE_reduced', 'TC': 'TC_reduced', 'HTC': 'HTC_reduced', 'TI': 'TI_reduced'}
     
 
