@@ -615,7 +615,7 @@ if cfg.addBkgConn:
         netParams.stimTargetParams['excBkg->'+pop] =  {
             'source': 'excBkg', 
             'conds': {'pop': pop},
-            'sec': 'soma', 
+            'sec': 'apic', #'Adend1' if pop=='PT5B' else 'apic', 
             'loc': 0.5,
             'synMech': ESynMech,
             'weight': weightBkg[pop],
@@ -625,7 +625,7 @@ if cfg.addBkgConn:
         netParams.stimTargetParams['inhBkg->'+pop] =  {
             'source': 'inhBkg', 
             'conds': {'pop': pop},
-            'sec': 'soma', 
+            'sec': 'proximal', #'proximal', 
             'loc': 0.5,
             'synMech': 'GABAA',
             'weight': weightBkg[pop],
