@@ -2859,3 +2859,11 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 *** v22_sim9 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
 
    {'ITP4': 1.35, 'ITS4': 2.0, 'IT6': 0.25} 
+
+      ITP4 : 1.730 Hz - ok
+   ITS4 : 0.139 Hz - getting there, increase more
+   IT6 : 0.126 Hz - too low now, increase
+
+*** v22_sim10 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+
+manualScaling = {'ITP4': 1.35, 'ITS4': 2.5, 'IT6': 0.3} 
