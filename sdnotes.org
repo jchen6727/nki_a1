@@ -2849,3 +2849,13 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 
    still depol block
 *** v22_sim7 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 25% IT6, IPT4,ITS4
+   ITP4 : 0.626 Hz
+   ITS4 : 0.000 Hz
+   IT6 : 20.710 Hz
+*** v22_sim8 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 50% IT6, IPT4,ITS4
+   ITP4 : 4.576 Hz
+   ITS4 : 0.000 Hz
+   IT6 : 35.489 Hz
+*** v22_sim9 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+
+   {'ITP4': 1.35, 'ITS4': 2.0, 'IT6': 0.25} 
