@@ -2883,5 +2883,8 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28}
       ITS4 : 1.558 Hz - ok
    IT6 : 0.708 Hz
 
-   *** v22_sim13 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+*** v22_sim13 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
    manualScaling = {'ITP4': 1.35, 'ITS4': 2.75, 'IT6': 0.29} 
+   IT6 : 1.733 Hz
+
+*** v22_sim14 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); after manual tuning IT6, IPT4,ITS4
