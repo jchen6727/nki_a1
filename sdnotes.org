@@ -2871,11 +2871,17 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 2.5, 'IT6': 0.3}
    ITS4 : 0.980 Hz -- increase a but more: 3.0
    IT6 : 2.796 Hz -- decrease - 0.28
 
-*** v22_sim11 (overwrote sim9) - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+*** v22_sim11- bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
 
 manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28} 
    ITS4 : 2.202 Hz
    IT6 : 1.150 Hz
 
-*** v22_sim12 (overwrote sim9) - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+*** v22_sim12 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
    manualScaling = {'ITP4': 1.35, 'ITS4': 2.75, 'IT6': 0.27} 
+
+      ITS4 : 1.558 Hz - ok
+   IT6 : 0.708 Hz
+
+   *** v22_sim13 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+   manualScaling = {'ITP4': 1.35, 'ITS4': 2.75, 'IT6': 0.29} 
