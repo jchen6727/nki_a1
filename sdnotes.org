@@ -2888,3 +2888,51 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28}
    IT6 : 1.733 Hz
 
 *** v22_sim14 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); after manual tuning IT6, IPT4,ITS4
+  Cells: 12908
+  Connections: 12908 (1.00 per cell)
+  Synaptic contacts: 38724 (3.00 per cell)
+  Spikes: 57788 (2.98 Hz)
+   NGF1 : 5.331 Hz
+   IT2 : 1.855 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 3.560 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 1.767 Hz
+   ITS4 : 1.578 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 16.819 Hz
+   CT5A : 2.409 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 11.616 Hz
+   CT5B : 2.650 Hz
+   PT5B : 1.376 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 2.169 Hz
+   CT6 : 2.483 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+  Simulated time: 1.5 s; 4 workers
+  Run time: 852.08 s
