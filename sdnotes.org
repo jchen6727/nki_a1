@@ -636,7 +636,7 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    ITP4 : 0.001 Hz
    ITS4 : 0.000 Hz
    IT6 - depol
-   
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -2651,6 +2651,7 @@ Bkg weight to get 4.0 Hz in pop TI = 2.6
    TI : 4.088 Hz
 
 ** v22_batch28 - bkg weights for all pops (E 40hz apic/adend1, I 40 Hz proximal)
+*** E 2hz
 Bkg weight to get 2.0 Hz in pop IT2 = 17.0
 Bkg weight to get 4.0 Hz in pop PV2 = 26.5
 Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
@@ -2673,7 +2674,7 @@ Bkg weight to get 2.0 Hz in pop HTC = 10.7
 Bkg weight to get 4.0 Hz in pop IRE = 8.5
 Bkg weight to get 4.0 Hz in pop TI = 48.2
 
-if aim for E at 1 Hz then ok: --> v22_sim2
+*** if aim for E at 1 Hz then ok: --> v22_sim2
 Bkg weight to get 1.0 Hz in pop IT2 = 14.7
 Bkg weight to get 4.0 Hz in pop PV2 = 26.5
 Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
@@ -2738,7 +2739,7 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
    TI : 3.108 Hz
 
 
-if aim for E at 1.5 Hz then also ok: --> v22_sim3
+*** if aim for E at 1.5 Hz then also ok: --> v22_sim3
 Bkg weight to get 1.5 Hz in pop IT2 = 16.0
 Bkg weight to get 4.0 Hz in pop PV2 = 26.5
 Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
@@ -2801,3 +2802,50 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
    IRE : 4.258 Hz
    IREM : 4.077 Hz
    TI : 3.108 Hz
+
+*** v22_sim6 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 10% IT6, IPT4,ITS4
+  NGF1 : 5.331 Hz
+   IT2 : 1.855 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 3.560 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 0.102 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 16.819 Hz
+   CT5A : 2.409 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 11.616 Hz
+   CT5B : 2.650 Hz
+   PT5B : 1.376 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 8.822 Hz
+   CT6 : 2.483 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+
+   still depol block
+*** v22_sim7 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 25% IT6, IPT4,ITS4

@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v22_sim6'
+cfg.simLabel = 'v22_sim7'
 cfg.saveFolder = 'data/v22_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -101,7 +101,7 @@ cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 # Network 
 #------------------------------------------------------------------------------
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
-cfg.singleCellPops = False
+cfg.singleCellPops = True # False
 cfg.singlePop = ''
 cfg.removeWeightNorm = False
 cfg.scale = 1.0     # Is this what should be used? 
