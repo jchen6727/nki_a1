@@ -3008,6 +3008,9 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28}
     return b
 ** v22_batch30 - explore NGF2+IT2 response to bkg inputs (4D params)
 *** code
+
+b = bkgWeights2D(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
+
 def bkgWeights2D(pops=[], weights=list(range(50))):
 
     params = specs.ODict()
