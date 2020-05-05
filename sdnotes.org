@@ -3006,3 +3006,5 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28}
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b
+** v22_batch30 - explore NGF2+IT2 response to bkg inputs (4D params)
+ 

@@ -880,7 +880,7 @@ if __name__ == '__main__':
     # b = custom()
     # b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    b = bkgWeights(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
+    b = bkgWeights2D(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
     b.batchLabel = 'v22_batch30'  
