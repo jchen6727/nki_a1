@@ -885,7 +885,7 @@ if __name__ == '__main__':
 
     b.batchLabel = 'v22_batch31'  
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid'  # evol
+    b.method = 'evol' #'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
