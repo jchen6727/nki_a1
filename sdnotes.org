@@ -636,6 +636,30 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    ITP4 : 0.001 Hz
    ITS4 : 0.000 Hz
    IT6 - depol
+** checked bkg (only long-range) rates in M1 model
+  Spikes: 23790 (2.24 Hz)
+   IT2 : 40.600 Hz
+   SOM2 : 76.400 Hz
+   PV2 : 0.000 Hz
+   IT4 : 26.600 Hz
+   IT5A : 54.600 Hz
+   SOM5A : 84.400 Hz
+   PV5A : 0.000 Hz
+   IT5B : 43.800 Hz
+   PT5B : 1.600 Hz
+   SOM5B : 63.200 Hz
+   PV5B : 0.000 Hz
+   IT6 : 30.200 Hz
+   CT6 : 18.600 Hz
+   SOM6 : 48.200 Hz
+   PV6 : 0.000 Hz
+   TPO : 2.524 Hz
+   TVL : 1.156 Hz
+   S1 : 2.541 Hz
+   S2 : 2.542 Hz
+   cM1 : 1.259 Hz
+   M2 : 1.158 Hz
+   OC : 2.462 Hz
 
 * CELL TYPES
 ** Budinger et al 2018
@@ -2942,3 +2966,43 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28}
 -- took quite a bit of manual tuning to fix those 3 cell types, but got nice results now… all spiking ~1-5 hz and no depol block
 
 ** v22_batch29 - Param sweep for conn
+*** code
+    params = specs.ODict()
+
+    # conn gains
+    params['EEGain'] = [0.5, 1.0, 1.5] #[0.5, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
+    #params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
+    #params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    return b

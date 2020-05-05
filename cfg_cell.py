@@ -155,6 +155,9 @@ cfg.startBkg = 0  # start at 0 ms
 
 # weights tuned to obtain low firing rates on each cell type with only bkg
 cfg.weightBkg = 1
+cfg.weightBkgE = 1
+cfg.weightBkgI = 1
+
 #  {'IT': 16.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
 #                 'PV': 28.0, 'SOM': 5.0, 'NGF': 65.0, 'VIP': 9.0,
 #                 'TC': 1.0, 'HTC': 1.0, 'RE': 9.0, 'TI': 3.0}

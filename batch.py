@@ -53,6 +53,49 @@ def bkgWeights(pops=[], weights=list(range(50))):
 # ----------------------------------------------------------------------------------------------
 # Weight Normalization 
 # ----------------------------------------------------------------------------------------------
+def bkgWeights2D(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkgE'] = weights
+    params['weightBkgI'] = weights
+    params[('rateBkg', 'exc')] = [20, 40, 60, 80]
+    params[('rateBkg', 'inh')] = [20, 40, 60, 80]
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    initCfg[('rateBkg', 'exc')] = 40
+    initCfg[('rateBkg', 'inh')] = 40
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+ 
+
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+
+    return b
+
+# ----------------------------------------------------------------------------------------------
+# Weight Normalization 
+# ----------------------------------------------------------------------------------------------
 def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(np.arange(0.01, 0.2, 0.01)/100.0)):
 
     # Add params
@@ -832,15 +875,15 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    b = custom()
-    #b = evolRates()
+    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
-
+    # b = custom()
+    # b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    # # # # b = fIcurve(pops=cellTypes) 
+    b = bkgWeights(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
+    # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch29'  
+    b.batchLabel = 'v22_batch30'  
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp')
