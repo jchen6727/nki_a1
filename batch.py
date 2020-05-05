@@ -609,18 +609,14 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
 def custom():
     params = specs.ODict()
 
-    # bkg inputs
-    
-    #params['addConn'] = [0, 1]
-
     # conn gains
-    params['EEGain'] = [0.25, 0.5, 1.0, 1.5] #[0.5, 1.5] 
+    params['EEGain'] = [0.5, 1.0, 1.5] #[0.5, 1.5] 
     params['EIGain'] = [0.5, 1.0, 1.5] 
     params['IEGain'] = [0.5, 1.0, 1.5] 
     params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
-    params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    #params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
     #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
-    params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+    #params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
 
 
     groupedParams = []
@@ -641,7 +637,7 @@ def custom():
     
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
 
-    initCfg['addConn '] = False  # test only bkg inputs
+    initCfg['addConn '] = True # test only bkg inputs
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -836,18 +832,18 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    #b = custom()
+    b = custom()
     #b = evolRates()
 
-    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
+    # cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    # # # b = fIcurve(pops=cellTypes) 
+    # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
+    # # # # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch28'  
+    b.batchLabel = 'v22_batch29'  
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
-    setRunCfg(b, 'mpi_bulletin') # 'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_gcp')
     b.run() # run batch
 
 
