@@ -3045,4 +3045,18 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['stimSubConn'] = False
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
-  
+** v22_batch31 - evol optim
+*** code
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 1.5]
+    params['EIGain'] = [0.5, 1.5]
+
+    params[('IEweights', 0)] = [0.5, 1.5]
+    params[('IEweights', 1)] = [0.5, 1.5]
+    params[('IEweights', 2)] = [0.5, 1.5]
+
+    params[('IIweights', 0)] = [0.5, 1.5]
+    params[('IIweights', 1)] = [0.5, 1.5]
+    params[('IIweights', 2)] = [0.5, 1.5]

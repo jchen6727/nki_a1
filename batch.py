@@ -699,20 +699,20 @@ def evolRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.75, 1.25]
-    params['EIGain'] = [0.75, 1.25]
+    params['EEGain'] = [0.5, 1.5]
+    params['EIGain'] = [0.5, 1.5]
 
-    params[('IEweights', 0)] = [0.75, 1.25]
-    params[('IEweights', 1)] = [0.75, 1.25]
-    params[('IEweights', 2)] = [0.75, 1.25]
+    params[('IEweights', 0)] = [0.5, 1.5]
+    params[('IEweights', 1)] = [0.5, 1.5]
+    params[('IEweights', 2)] = [0.5, 1.5]
 
-    params[('IIweights', 0)] = [0.75, 1.25]
-    params[('IIweights', 1)] = [0.75, 1.25]
-    params[('IIweights', 2)] = [0.75, 1.25]
+    params[('IIweights', 0)] = [0.5, 1.5]
+    params[('IIweights', 1)] = [0.5, 1.5]
+    params[('IIweights', 2)] = [0.5, 1.5]
     
-    params['thalamoCorticalGain'] = [0.75, 1.25]  
-    params['intraThalamicGain'] = [0.75, 1.25] 
-    params['corticoThalamicGain'] = [0.75, 1.25]
+    # params['thalamoCorticalGain'] = [0.5, 1.5]  
+    # params['intraThalamicGain'] = [0.5, 1.5] 
+    # params['corticoThalamicGain'] = [0.5, 1.5]
 
     groupedParams = []
 
@@ -744,7 +744,7 @@ def evolRates():
     ## Exc pops
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
-    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    Etune = {'target': 5, 'width': 5, 'min': 0.1}
     for pop in Epops:
         pops[pop] = Etune
     
@@ -758,7 +758,7 @@ def evolRates():
             'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
             'IRE', 'IREM', 'TI']  # Thal 
 
-    Itune = {'target': 10, 'width': 15, 'min': 0.25}
+    Itune = {'target': 10, 'width': 20, 'min': 0.1}
     for pop in Ipops:
         pops[pop] = Itune
     
@@ -794,7 +794,7 @@ def evolRates():
         'maximize': False, # maximize fitness function?
         'max_generations': 200,
         'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 12, # (5h20) max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 9, # (45) max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
@@ -878,15 +878,15 @@ if __name__ == '__main__':
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
     # b = custom()
-    # b = evolRates()
+    b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    b = bkgWeights2D(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
+    # b = bkgWeights2D(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch30'  
+    b.batchLabel = 'v22_batch31'  
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid'  # evol
-    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
