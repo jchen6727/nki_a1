@@ -233,11 +233,12 @@ def plot4Dparams(dataFolder, batchLabel, df, par1, par2, par3, par4, val, valLab
     if isinstance(val, list):
         valGroup = list(val)
         for ival in valGroup:
-            plot4Dparams(df, par1, par2, par3, par4, ival, ival+' '+valLabel, groupStat, cluster, normRange)
+            plot4Dparams(dataFolder, batchLabel, df, par1, par2, par3, par4, ival, ival+' '+valLabel, groupStat, cluster, normRange)
         return
 
     if not valLabel: valLabel = val
-    dfsubset = df[[par1,par2,par3,par4,val]] 
+    
+    dfsubset = df[[par1, par2, par3, par4, val]]    
     dfgroup = dfsubset.groupby(by=[par1,par2,par3,par4])
     if groupStat=='first':
         dfgroup2 = dfgroup.first()
@@ -278,10 +279,12 @@ def plot4Dparams(dataFolder, batchLabel, df, par1, par2, par3, par4, val, valLab
     return dfgroup3
 
 
-def dfPopRates(df, numParams=6):
+def dfPopRates(df, numParams=6, pops=[]):
     dfpop = df.iloc[:,0:numParams] # get param columns of all rows
     dfpop['simLabel'] = df['simLabel']
-    for k in list(df.popRates[0].keys()): dfpop[k] = [1.5*r[k] for r in df.popRates] 
+    if not pops: pops = list(df.popRates[0].keys())
+    for k in pops: dfpop[k] = [1.0*r[k] if k in r else 0 for r in df.popRates] 
+
     return dfpop
 
 
@@ -333,7 +336,7 @@ def popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['IEweights_0','IIweig
 
     # convert to pandas and add pop Rates
     df1 = utils.toPandas(params, data)
-    dfpop = dfPopRates(df1, 7)
+    dfpop = dfPopRates(df1, 7, pops=vals)
 
     if query: dfpop = dfpop.query(query)
 
