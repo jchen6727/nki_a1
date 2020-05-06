@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # for pop in allpops:     
     #     df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EEGain', 'EIGain','IEGain', 'IIGain'], vals=pop, groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
 
-    df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['weightBkgE', 'weightBkgI','rateBkg_exc', 'rateBkg_inh'], vals=['IT2'], groupStat='last', plotLine=False) 
+    df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['weightBkgE', 'weightBkgI','rateBkg_exc', 'rateBkg_inh'], vals=['IT2'], groupStat='sum', plotLine=False) 
 
     # df = ihEPSPAnalysis(dataFolder, batchLabel, loadAll, pars=['groupWeight','ihGbar'], vals=['Vpeak_PTih'], zdcomp=0, plotLine=1)#, \
     # query = 'epas == 1.0 and groupWeight > 0.0003')# and axonNa==7 and gpas==0.65') #'ihLkcBasal == 0.01 and excTau2Factor==1.0') #, 'excTau2Factor', 'ihLkcBasal
