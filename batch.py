@@ -65,7 +65,7 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     # set initial config
     initCfg = {}
     # sim and recoring params
-    initCfg['duration'] = 10.0 * 1e3
+    initCfg['duration'] = 3.0 * 1e3
     initCfg['singleCellPops'] = True
     initCfg['singlePopForNetstim'] = True
     initCfg['removeWeightNorm'] = False
