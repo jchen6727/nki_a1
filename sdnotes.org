@@ -3060,3 +3060,42 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     params[('IIweights', 0)] = [0.5, 1.5]
     params[('IIweights', 1)] = [0.5, 1.5]
     params[('IIweights', 2)] = [0.5, 1.5]
+
+** v22_batch32 - explore ITS4 response to bkg inputs (4D params)
+*** code
+b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+
+def bkgWeights2D(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkgE'] = weights
+    params['weightBkgI'] = weights
+    params[('rateBkg', 'exc')] = [20, 40, 60, 80]
+    params[('rateBkg', 'inh')] = [20, 40, 60, 80]
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    initCfg[('rateBkg', 'exc')] = 40
+    initCfg[('rateBkg', 'inh')] = 40
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
