@@ -744,7 +744,7 @@ def evolRates():
     ## Exc pops
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
-    Etune = {'target': 5, 'width': 5, 'min': 0.1}
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
     for pop in Epops:
         pops[pop] = Etune
     
@@ -758,7 +758,7 @@ def evolRates():
             'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
             'IRE', 'IREM', 'TI']  # Thal 
 
-    Itune = {'target': 10, 'width': 20, 'min': 0.1}
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
     for pop in Ipops:
         pops[pop] = Itune
     
@@ -878,12 +878,12 @@ if __name__ == '__main__':
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
     # b = custom()
-    b = evolRates()
+    # b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    # b = bkgWeights2D(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
+    b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch31'  
+    b.batchLabel = 'v22_batch32'  
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'grid'  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

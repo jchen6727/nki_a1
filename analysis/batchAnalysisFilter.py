@@ -28,7 +28,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     rangesI = {}
 
     Erange = [0.001,500]
-    Epops = ['IT2', 'IT3', 'ITP4', 'IT5A', 'CT5A', 'IT5B']#, 'CT5B', 'PT5B', 'IT6','CT6'] # , 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']  # all layers
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6','CT6'] # , 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']  # all layers
 #'ITS4',
     for pop in Epops:
         rangesE[pop] = Erange
