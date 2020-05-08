@@ -72,6 +72,7 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg[('analysis','plotTraces','include')] = [0]
     initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
     initCfg[('analysis', 'plotRaster')] = False
+    initCfg['printPopAvgRates'] = [500, 3000]
 
     initCfg[('rateBkg', 'exc')] = 40
     initCfg[('rateBkg', 'inh')] = 40
