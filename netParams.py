@@ -42,7 +42,7 @@ netParams.shape = 'cylinder' # cylindrical (column-like) volume
 # General connectivity parameters
 #------------------------------------------------------------------------------
 netParams.scaleConnWeight = 1.0 # Connection weight scale factor (default if no model specified)
-netParams.scaleConnWeightModels = {'HH_reduced': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
+netParams.scaleConnWeightModels = { 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
 netParams.scaleConnWeightNetStims = 1.0 #0.5  # scale conn weight factor for NetStims
 netParams.defaultThreshold = 0.0 # spike threshold, 10 mV is NetCon default, lower it for all cells
 netParams.defaultDelay = 2.0 # default conn delay (ms)
