@@ -128,19 +128,17 @@ cfg.IIGain = 1.0 #0.5
 
 ## I->E/I layer weights (L1-3, L4, L5, L6)
 cfg.IELayerGain = {'1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
-cfg.IILayerGain = ['1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
+cfg.IILayerGain = {'1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
 
 # Thalamic
-cfg.addIntraThalamicConn = 1
-cfg.addIntraThalamicConn = 1
-cfg.addCorticoThalamicConn = 1
-cfg.addThalamoCorticalConn = 1
-#cfg.addMatrixThalamoCorticalConn = 1
+cfg.addIntraThalamicConn = 1.0
+cfg.addIntraThalamicConn = 1.0
+cfg.addCorticoThalamicConn = 1.0
+cfg.addThalamoCorticalConn = 1.0
 
-cfg.intraThalamicGain = 1.0 #0.5
+cfg.intraThalamicGain = 1.0 
 cfg.corticoThalamicGain = 1.0
-cfg.thalamoCorticalGain = 1.0 #2.5
-#cfg.matrixThalamoCorticalGain = 2.0
+cfg.thalamoCorticalGain = 1.0 
 
 cfg.addSubConn = 1
 
