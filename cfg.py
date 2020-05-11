@@ -127,8 +127,8 @@ cfg.IEGain = 1.0 #0.75
 cfg.IIGain = 1.0 #0.5
 
 ## I->E/I layer weights (L1-3, L4, L5, L6)
-cfg.IELayerGain = {'1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0] 
-cfg.IILayerGain = ['1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0]
+cfg.IELayerGain = {'1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
+cfg.IILayerGain = ['1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1
