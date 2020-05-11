@@ -700,20 +700,22 @@ def evolRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.5, 1.5]
+    params['EEGain'] = [0.25, 1.0]
     params['EIGain'] = [0.5, 1.5]
 
     params[('IEweights', 0)] = [0.5, 1.5]
     params[('IEweights', 1)] = [0.5, 1.5]
     params[('IEweights', 2)] = [0.5, 1.5]
+    params[('IEweights', 3)] = [0.5, 1.5]
 
     params[('IIweights', 0)] = [0.5, 1.5]
     params[('IIweights', 1)] = [0.5, 1.5]
     params[('IIweights', 2)] = [0.5, 1.5]
+    params[('IIweights', 3)] = [0.5, 1.5]
     
-    # params['thalamoCorticalGain'] = [0.5, 1.5]  
-    # params['intraThalamicGain'] = [0.5, 1.5] 
-    # params['corticoThalamicGain'] = [0.5, 1.5]
+    params['thalamoCorticalGain'] = [0.5, 1.5]  
+    params['intraThalamicGain'] = [0.5, 1.5] 
+    params['corticoThalamicGain'] = [0.5, 1.5]
 
     groupedParams = []
 
@@ -879,19 +881,19 @@ if __name__ == '__main__':
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
     # b = custom()
-    # b = evolRates()
+    b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch32'  
+    b.batchLabel = 'v22_batch33'  
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid' #'evol' #  # evol
+    b.method = 'evol' #'evol' #  # evol
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
-    # Submit set of batch sims together
+    # Submit set of batch sims together (eg. for weight norm)
 
     # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
     # popsWeightNorm =    {#'IT2_reduced': ['CT5A', 'CT5B']}#, #'IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],

@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 22
+netParams.version = 23
 
 #------------------------------------------------------------------------------
 #
@@ -60,6 +60,11 @@ cellModels = ['HH_reduced', 'HH_full'] # List of cell models
 
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 0.625], '5A': [0.625, 0.667], '5B': [0.667, 0.775], '6': [0.775, 1], 'thal': [1.2, 1.4], 'cochlear': [1.6, 1.8]}  # normalized layer boundaries  
+
+layerGroups = { '1-3': [layer['1'][0], layer['3'][1]],  # L1-3
+                '4': layer['4'],                      # L4
+                '5': [layer['5A'][0], layer['5B'][1]],  # L5A-5B
+                '6': layer['6']}                        # L6
 
 # add layer border correction ??
 #netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correctBorderThreshold, cfg.correctBorderThreshold], 
@@ -255,29 +260,7 @@ if cfg.addConn:
 ## I -> E
 if cfg.addConn and cfg.IEGain > 0.0:
 
-    if connDataSource['I->E/I'] == 'custom_A1':
-        binsLabel = 'inh'
-        preTypes = Itypes
-        synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
-        weightFactors = [[1.0], cfg.synWeightFractionSOME, [1.0], cfg.synWeightFractionNGF] 
-        secs = ['proximal', 'apic', 'apic', 'apic']
-        postTypes = Etypes
-        for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
-            for ipostType, postType in enumerate(postTypes):
-                for ipreBin, preBin in enumerate(bins[binsLabel]):
-                    for ipostBin, postBin in enumerate(bins[binsLabel]):
-                        ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
-                        netParams.connParams[ruleLabel] = {
-                            'preConds': {'cellType': preType, 'ynorm': list(preBin)},
-                            'postConds': {'cellType': postType, 'ynorm': list(postBin)},
-                            'synMech': synMech,
-                            'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipreBin,ipostBin]),
-                            'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
-                            'synMechWeightFactor': weightFactor,
-                            'delay': 'defaultDelay+dist_3D/propVelocity',
-                            'sec': sec} # simple I cells used right now only have soma
-    #  BBP_S1 or Allen_V1
-    else:
+    if connDataSource['I->E/I'] == 'Allen_custom':
 
         ESynMech = ['AMPA', 'NMDA']
         SOMESynMech = ['GABAASlow','GABAB']
@@ -285,87 +268,69 @@ if cfg.addConn and cfg.IEGain > 0.0:
         PVSynMech = ['GABAA']
         VIPSynMech = ['GABAA_VIP']
         NGFSynMech = ['GABAA', 'GABAB']
+                        
+        layerGroupLabels = ['1-3', '4', '5', '6']
 
         for pre in Ipops:
             for post in Epops:
-                if connDataSource['I->E/I'] in ['Allen_V1', 'Allen_custom']:
+                for layer in layerGroupLabels:  # used to tune each layer group independently
+                    
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                else:
-                    prob = pmat[pre][post]
-                
-                if 'SOM' in pre:
-                    synMech = SOMESynMech
-                elif 'PV' in pre:
-                    synMech = PVSynMech
-                elif 'VIP' in pre:
-                    synMech = VIPSynMech
-                elif 'NGF' in pre:
-                    synMech = NGFSynMech
+                    
+                    if 'SOM' in pre:
+                        synMech = SOMESynMech
+                    elif 'PV' in pre:
+                        synMech = PVSynMech
+                    elif 'VIP' in pre:
+                        synMech = VIPSynMech
+                    elif 'NGF' in pre:
+                        synMech = NGFSynMech
 
-                netParams.connParams['IE_'+pre+'_'+post] = { 
-                    'preConds': {'pop': pre}, 
-                    'postConds': {'pop': post},
-                    'synMech': synMech,
-                    'probability': prob,
-                    'weight': wmat[pre][post] * cfg.IEGain, 
-                    'synMechWeightFactor': cfg.synWeightFractionEI,
-                    'delay': 'defaultDelay+dist_3D/propVelocity',
-                    'synsPerConn': 1,
-                    'sec': 'proximal'}
+                    netParams.connParams['IE_'+pre+'_'+post] = { 
+                        'preConds': {'pop': pre}, 
+                        'postConds': {'pop': post, 'ynorm': layerGroups[layer]},
+                        'synMech': synMech,
+                        'probability': prob,
+                        'weight': wmat[pre][post] * cfg.IEGain * cfg.IELayerGain[layer], 
+                        'synMechWeightFactor': cfg.synWeightFractionEI,
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'synsPerConn': 1,
+                        'sec': 'proximal'}
                     
 
 #------------------------------------------------------------------------------
 ## I -> I
 if cfg.addConn and cfg.IIGain > 0.0:
 
-    if connDataSource['I->E/I'] == 'custom_A1':
-        binsLabel = 'inh'
-        preTypes = Itypes
-        synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
-        sec = 'perisom'
-        postTypes = Itypes
-        for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
-            for ipost, postType in enumerate(postTypes):
-                for iBin, bin in enumerate(bins[binsLabel]):
-                    ruleLabel = preType+'_'+postType+'_'+str(iBin)
-                    netParams.connParams[ruleLabel] = {
-                        'preConds': {'cellType': preType, 'ynorm': bin},
-                        'postConds': {'cellType': postType, 'ynorm': bin},
-                        'synMech': synMech,
-                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType][postType]),
-                        'weight': cfg.IIweights[iBin] * cfg.IIGain,
-                        'delay': 'defaultDelay+dist_3D/propVelocity',
-                        'sec': sec} # simple I cells used right now only have soma
+    if connDataSource['I->E/I'] == 'Allen_custom':
 
-    #  BBP_S1 or Allen_V1
-    else: 
+        layerGroupLabels = ['1-3', '4', '5', '6']
         for pre in Ipops:
             for post in Ipops:
-                if connDataSource['I->E/I'] in ['Allen_V1', 'Allen_custom']:
-                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                else:
-                    prob = pmat[pre][post]
-
-                if 'SOM' in pre:
-                    synMech = SOMISynMech
-                elif 'PV' in pre:
-                    synMech = PVSynMech
-                elif 'VIP' in pre:
-                    synMech = VIPSynMech
-                elif 'NGF' in pre:
-                    synMech = NGFSynMech
-
-                netParams.connParams['II_'+pre+'_'+post] = { 
-                    'preConds': {'pop': pre}, 
-                    'postConds': {'pop': post},
-                    'synMech': synMech,
-                    'probability': prob,
-                    'weight': wmat[pre][post] * cfg.IIGain, 
-                    'synMechWeightFactor': cfg.synWeightFractionII,
-                    'delay': 'defaultDelay+dist_3D/propVelocity',
-                    'synsPerConn': 1,
-                    'sec': 'proximal'}
+                for layer in layerGroupLabels: 
                     
+                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+
+                    if 'SOM' in pre:
+                        synMech = SOMISynMech
+                    elif 'PV' in pre:
+                        synMech = PVSynMech
+                    elif 'VIP' in pre:
+                        synMech = VIPSynMech
+                    elif 'NGF' in pre:
+                        synMech = NGFSynMech
+
+                    netParams.connParams['II_'+pre+'_'+post] = { 
+                        'preConds': {'pop': pre}, 
+                        'postConds': {'pop': post,  'ynorm': layerGroups[layer]},
+                        'synMech': synMech,
+                        'probability': prob,
+                        'weight': wmat[pre][post] * cfg.IIGain * cfg.IILayerGain[layer], 
+                        'synMechWeightFactor': cfg.synWeightFractionII,
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'synsPerConn': 1,
+                        'sec': 'proximal'}
+                        
 
 #------------------------------------------------------------------------------
 # Thalamic connectivity parameters
@@ -741,4 +706,5 @@ v19 - Added in 2-compartment thalamic interneuron model
 v20 - Added TI conn and updated thal pop
 v21 - Added exc+inh bkg inputs specific to each cell type
 v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
+v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 """

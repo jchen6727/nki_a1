@@ -2377,6 +2377,9 @@ Bkg weight to get 4.0 Hz in pop TI = 48.2
 ** v22_batch11 - fI for all cells with temp=36
 ** v22_batch12 - fI new cells with 37C tuned
 ** v22_batch13-17 - weightNorm all cells (Except 2) after retuning
+*** notes
+13 - ITs
+16 - VIP
 ** v22_batch14 (overwrote) - fI for all cells
 ** v22_batch18-19 - weightNorm for TC and HTC and TI
 ** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
@@ -2448,7 +2451,7 @@ Bkg weight to get 4.0 Hz in pop IRE = 8.5
 Bkg weight to get 4.0 Hz in pop TI = 48.2
 
 Note: but dynamic range looks better - can probably reduce to max weight 50 and have 0.5 intervals
-** v22_batch25 - fI for missing NGF
+** v22_batch25 - wnorm for missing NGF
 ** v22_batch26 - bkg weights for all pops (E 40hz soma, I 40 Hz soma); range 0,50,0.5
 
 Bkg weight to get 2.0 Hz in pop IT2 = 17.8
