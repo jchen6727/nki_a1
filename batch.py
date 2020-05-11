@@ -703,15 +703,15 @@ def evolRates():
     params['EEGain'] = [0.25, 1.0]
     params['EIGain'] = [0.5, 1.5]
 
-    params[('IEweights', 0)] = [0.5, 1.5]
-    params[('IEweights', 1)] = [0.5, 1.5]
-    params[('IEweights', 2)] = [0.5, 1.5]
-    params[('IEweights', 3)] = [0.5, 1.5]
+    params[('IELayerGain', '1-3')] = [0.5, 1.5]
+    params[('IELayerGain', '4')] = [0.5, 1.5]
+    params[('IELayerGain', '5')] = [0.5, 1.5]
+    params[('IELayerGain', '6')] = [0.5, 1.5]
 
-    params[('IIweights', 0)] = [0.5, 1.5]
-    params[('IIweights', 1)] = [0.5, 1.5]
-    params[('IIweights', 2)] = [0.5, 1.5]
-    params[('IIweights', 3)] = [0.5, 1.5]
+    params[('IILayerGain', '1-3')] = [0.5, 1.5]
+    params[('IILayerGain', '4')] = [0.5, 1.5]
+    params[('IILayerGain', '5')] = [0.5, 1.5]
+    params[('IILayerGain', '6')] = [0.5, 1.5]
     
     params['thalamoCorticalGain'] = [0.5, 1.5]  
     params['intraThalamicGain'] = [0.5, 1.5] 
@@ -886,7 +886,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v22_batch33'  
+    b.batchLabel = 'v23_batch1'  
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'evol' #  # evol
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
