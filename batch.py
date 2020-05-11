@@ -727,7 +727,7 @@ def evolRates():
     initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.05
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
