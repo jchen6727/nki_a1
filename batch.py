@@ -700,7 +700,7 @@ def evolRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.25, 1.0]
+    params['EEGain'] = [0.5, 1.5]
     params['EIGain'] = [0.5, 1.5]
 
     params[('IELayerGain', '1-3')] = [0.5, 1.5]
