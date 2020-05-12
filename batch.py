@@ -701,7 +701,7 @@ def evolRates():
 
     # bkg inputs
     params['EEGain'] = [0.1, 0.5]
-    params['EIGain'] = [0.5, 1.5]
+    params['EIGain'] = [0.1, 0.5]
 
     params[('IELayerGain', '1-3')] = [0.5, 1.5]
     params[('IELayerGain', '4')] = [0.5, 1.5]
@@ -886,7 +886,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v23_batch3'
+    b.batchLabel = 'v23_batch4'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
