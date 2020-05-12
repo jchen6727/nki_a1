@@ -703,19 +703,19 @@ def evolRates():
     params['EEGain'] = [0.1, 0.5]
     params['EIGain'] = [0.1, 0.5]
 
-    params[('IELayerGain', '1-3')] = [0.5, 1.5]
-    params[('IELayerGain', '4')] = [0.5, 1.5]
-    params[('IELayerGain', '5')] = [0.5, 1.5]
-    params[('IELayerGain', '6')] = [0.5, 1.5]
+    params[('IELayerGain', '1-3')] = [0.25, 2.0]
+    params[('IELayerGain', '4')] = [0.25, 2.0]
+    params[('IELayerGain', '5')] = [0.25, 2.0]
+    params[('IELayerGain', '6')] = [0.25, 2.0]
 
-    params[('IILayerGain', '1-3')] = [0.5, 1.5]
-    params[('IILayerGain', '4')] = [0.5, 1.5]
-    params[('IILayerGain', '5')] = [0.5, 1.5]
-    params[('IILayerGain', '6')] = [0.5, 1.5]
+    params[('IILayerGain', '1-3')] = [0.25, 2.0]
+    params[('IILayerGain', '4')] = [0.25, 2.0]
+    params[('IILayerGain', '5')] = [0.25, 2.0]
+    params[('IILayerGain', '6')] = [0.25, 2.0]
     
-    params['thalamoCorticalGain'] = [0.5, 1.5]  
-    params['intraThalamicGain'] = [0.5, 1.5] 
-    params['corticoThalamicGain'] = [0.5, 1.5]
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
 
     groupedParams = []
 
@@ -727,7 +727,7 @@ def evolRates():
     initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.05
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -797,7 +797,7 @@ def evolRates():
         'maximize': False, # maximize fitness function?
         'max_generations': 200,
         'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 18, # max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 4, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
@@ -886,7 +886,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v23_batch4'
+    b.batchLabel = 'v23_batch5'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
