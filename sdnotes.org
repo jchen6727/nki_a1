@@ -3065,7 +3065,10 @@ bug in IE,II params
     params[('IIweights', 0)] = [0.5, 1.5]
     params[('IIweights', 1)] = [0.5, 1.5]
     params[('IIweights', 2)] = [0.5, 1.5]
-
+*** results
+gen_0_cand9: 
+- cell 151 (IT2), 489 (SOM2), 494 (PV2), 507 (VIP2) - depol
+- cell 6439 (ITS4) - high rate 
 ** v22_batch32 - explore ITS4 response to bkg inputs (4D params)
 *** code
 b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
@@ -3221,3 +3224,17 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     }
 
     return b
+
+** v23_batch2 - evol optim network - density 50%
+*** note 
+- running with scale density 50% 
+-- small toy nets have all cells spiking
+-- maybe issue is network scale -- cecilia's paper modifies weights by squared of scaling factor
+
+- saving screen output to sim folder: https://stackoverflow.com/questions/54369613/cant-start-linux-screen-with-logging-to-specific-output-file
+*** code
+
+
+** v23_batch3 - evol optim network - lower EE; longer evol timeout
+*** note 
+*** code
