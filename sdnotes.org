@@ -1080,7 +1080,7 @@ if one population gets more inputs due to bbp then another one might need to get
 
 - weight (epsp):
 -- 0.2 - 1.2 mV
-*** !Bruno and Constantinole, 2006; rat S1 (TC->L4)
+*** !Bruno and Constantinople, 2006; rat S1 (TC->L4)
 - L2/3: 0%
 - L4: 42.5% / 42.8%
 
@@ -3242,7 +3242,10 @@ noticed mostly spiking too high or depol blocks; reduce overall excitation
 
 ** v23_batch4 - evol optim network - lower EE+EI (0.1-0.5); longer evol timeout
 *** note
-noticed mostly spiking too high or depol blocks; reduce overall excitation to inh cells too
+- noticed mostly spiking too high or depol blocks; reduce overall excitation to inh cells too
+- fitness 237
+- error when running 2 evol at same time - jobs of longer duration one get cancelled when jobs submitted
+
 
 ** v23_batch5- evol optim network - density 50%; lower EE+EI (0.1-0.5); wider range for IE+II (0.25-2.0)
 *** note
