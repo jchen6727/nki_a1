@@ -3104,7 +3104,13 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['stimSubConn'] = False
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
-** v23_batch1 - evol optim network
+** v23_batch1 - evol optim network - density 50%
+*** note 
+- running with scale density 50% 
+-- small toy nets have all cells spiking
+-- maybe issue is network scale -- cecilia's paper modifies weights by squared of scaling factor
+
+- saving screen output to sim folder: https://stackoverflow.com/questions/54369613/cant-start-linux-screen-with-logging-to-specific-output-file
 *** code
 
   # --------------------------------------------------------
@@ -3139,7 +3145,7 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.05
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
