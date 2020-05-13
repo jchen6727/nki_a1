@@ -273,7 +273,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
 
         for pre in Ipops:
             for post in Epops:
-                for layer in layerGroupLabels:  # used to tune each layer group independently
+                for l in layerGroupLabels:  # used to tune each layer group independently
                     
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
                     
@@ -288,10 +288,10 @@ if cfg.addConn and cfg.IEGain > 0.0:
 
                     netParams.connParams['IE_'+pre+'_'+post] = { 
                         'preConds': {'pop': pre}, 
-                        'postConds': {'pop': post, 'ynorm': layerGroups[layer]},
+                        'postConds': {'pop': post, 'ynorm': layerGroups[l]},
                         'synMech': synMech,
                         'probability': prob,
-                        'weight': wmat[pre][post] * cfg.IEGain * cfg.IELayerGain[layer], 
+                        'weight': wmat[pre][post] * cfg.IEGain * cfg.IELayerGain[l], 
                         'synMechWeightFactor': cfg.synWeightFractionEI,
                         'delay': 'defaultDelay+dist_3D/propVelocity',
                         'synsPerConn': 1,
@@ -307,7 +307,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
         layerGroupLabels = ['1-3', '4', '5', '6']
         for pre in Ipops:
             for post in Ipops:
-                for layer in layerGroupLabels: 
+                for l in layerGroupLabels: 
                     
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
 
@@ -322,10 +322,10 @@ if cfg.addConn and cfg.IIGain > 0.0:
 
                     netParams.connParams['II_'+pre+'_'+post] = { 
                         'preConds': {'pop': pre}, 
-                        'postConds': {'pop': post,  'ynorm': layerGroups[layer]},
+                        'postConds': {'pop': post,  'ynorm': layerGroups[l]},
                         'synMech': synMech,
                         'probability': prob,
-                        'weight': wmat[pre][post] * cfg.IIGain * cfg.IILayerGain[layer], 
+                        'weight': wmat[pre][post] * cfg.IIGain * cfg.IILayerGain[l], 
                         'synMechWeightFactor': cfg.synWeightFractionII,
                         'delay': 'defaultDelay+dist_3D/propVelocity',
                         'synsPerConn': 1,
@@ -628,8 +628,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': cfg.cfg.ICThalInput['probE'],
-            'weight': cfg.cfg.ICThalInput['weightE'],
+            'probability': cfg.ICThalInput['probE'],
+            'weight': cfg.ICThalInput['weightE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
         
@@ -639,8 +639,8 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': 'GABAA',
-            'probability': cfg.cfg.ICThalInput['probI'],
-            'weight': cfg.cfg.ICThalInput['weightI'],
+            'probability': cfg.ICThalInput['probI'],
+            'weight': cfg.ICThalInput['weightI'],
             'delay': cfg.delayBkg}  
 
 

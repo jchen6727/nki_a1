@@ -3107,7 +3107,7 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['stimSubConn'] = False
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
-** v23_batch1 - evol optim network - density 50%
+** v23_batch1 - evol optim network 
 *** note 
 - running with scale density 50% 
 -- small toy nets have all cells spiking
@@ -3148,7 +3148,7 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.05
 
-    initCfg['scaleDensity'] = 0.5
+    initCfg['scaleDensity'] = 1.0
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
