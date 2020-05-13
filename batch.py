@@ -675,8 +675,8 @@ def custom():
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 3000
-    initCfg['printPopAvgRates'] = [500, 3000] 
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -907,7 +907,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v23_batch7'
+    b.batchLabel = 'v23_batch8'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
