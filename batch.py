@@ -720,8 +720,8 @@ def evolRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.1, 0.5]
-    params['EIGain'] = [0.1, 0.5]
+    params['EEGain'] = [0.1, 1.0]
+    params['EIGain'] = [0.1, 1.0]
 
     params[('IELayerGain', '1-3')] = [0.25, 2.0]
     params[('IELayerGain', '4')] = [0.25, 2.0]
@@ -901,15 +901,15 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
-    #b = evolRates()
+    # b = custom()
+    b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v23_batch8'
+    b.batchLabel = 'v23_batch9'
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid' #'evol' #  # evol
+    b.method = 'evol' #'grid' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
