@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v23_sim3' 
+cfg.simLabel = 'v23_sim4' 
 cfg.saveFolder = 'data/v23_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
@@ -140,7 +140,7 @@ cfg.intraThalamicGain = 1.0
 cfg.corticoThalamicGain = 1.0
 cfg.thalamoCorticalGain = 1.0 
 
-cfg.addSubConn = 0
+cfg.addSubConn = 1
 
 
 #------------------------------------------------------------------------------
