@@ -2967,6 +2967,8 @@ manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28}
   Run time: 852.08 s
 
 -- took quite a bit of manual tuning to fix those 3 cell types, but got nice results now… all spiking ~1-5 hz and no depol block
+-- NOT TRUE!!! - IT5A, IT5B higher!
+
 
 ** v22_batch29 - Param sweep for conn
 *** code
