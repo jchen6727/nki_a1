@@ -114,6 +114,7 @@ def calculateBkgWeightPops(pops, weights, rates, targetRates = {}, manualScaling
                 numPoints += numPointsIncrease
 
         if w < 0.0: w = 0.1
+            
 
         bkgWeights[pop] = float(w)
 
@@ -133,6 +134,8 @@ def calculateBkgWeightPops(pops, weights, rates, targetRates = {}, manualScaling
                 popClose = difflib.get_close_matches(pop[:3], bkgWeights.keys())
                 #print(pop,popClose)
                 bkgWeights[pop] = bkgWeights[popClose[0]]
+        
+        for pop in allpops:
             if pop in manualScaling:
                 bkgWeights[pop] *= manualScaling[pop]
         
@@ -174,13 +177,13 @@ if __name__ == '__main__':
     plotRateVsWeight(pops, weights, rates)
     #animateRateVsWeight(dataFolder, batchLabel, params)
 
-    Erate = 1.5  # Hz
-    Irate = 4 # Hz
+    Erate = 1  # Hz
+    Irate = 1 # Hz
     targetRates = {p: Erate for p in ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC']}
     targetRates.update({p: Irate for p in ['PV2', 'SOM2', 'VIP2', 'NGF2', 'IRE', 'TI']})
 
     # manual scaling adjustments based on simulation with automatically calculated bkg weights (finetuning)
-    manualScaling = {'ITP4': 1.35, 'ITS4': 2.75, 'IT6': 0.29}  # for v22_batch28
+    manualScaling = {'NGF2': 0.5, 'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0, 'ITP4': 1.1, 'ITS4': 0.9, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.1, 'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 0.5, 'IT5B': 0.075, 'CT5B': 0.75, 'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.1, 'TI': 1.25}  # for v22_batch28
 
     # run calculation
     bkgWeights = calculateBkgWeightPops(pops, weights, rates, targetRates, manualScaling,
