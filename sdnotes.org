@@ -3252,3 +3252,196 @@ noticed mostly spiking too high or depol blocks; reduce overall excitation
 ** v23_batch5- evol optim network - density 50%; lower EE+EI (0.1-0.5); wider range for IE+II (0.25-2.0)
 *** note
 make more flexible the IE II
+** v23_batch6 - empty
+** v23_batch7 - best soln from v23_batch5; explored thal conn
+*** code
+    params['EEGain'] = [0.10928952347451457, 0.05]
+    params['EIGain'] = [0.13089042807412776, 0.05]
+    params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
+    params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 3000
+    initCfg['printPopAvgRates'] = [250, 3000] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]=1.9475510641094371
+    initCfg[('IELayerGain', '4')]=1.961577378323746
+    initCfg[('IELayerGain', '5')]=0.73154575340036
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.2715789518318394
+    initCfg[('IILayerGain', '4')]=0.5633033925996949
+    initCfg[('IILayerGain', '5')]=1.674448267759582
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+** v23_batch8 - best soln from v23_batch5; explored thal conn (shorter sim)
+*** code
+    params['EEGain'] = [0.10928952347451457, 0.05]
+    params['EIGain'] = [0.13089042807412776, 0.05]
+    params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
+    params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]=1.9475510641094371
+    initCfg[('IELayerGain', '4')]=1.961577378323746
+    initCfg[('IELayerGain', '5')]=0.73154575340036
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.2715789518318394
+    initCfg[('IILayerGain', '4')]=0.5633033925996949
+    initCfg[('IILayerGain', '5')]=1.674448267759582
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+** v23_batch9 - evol optim
+*** code
+def evolRates():
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.1, 1.0]
+    params['EIGain'] = [0.1, 1.0]
+
+    params[('IELayerGain', '1-3')] = [0.25, 2.0]
+    params[('IELayerGain', '4')] = [0.25, 2.0]
+    params[('IELayerGain', '5')] = [0.25, 2.0]
+    params[('IELayerGain', '6')] = [0.25, 2.0]
+
+    params[('IILayerGain', '1-3')] = [0.25, 2.0]
+    params[('IILayerGain', '4')] = [0.25, 2.0]
+    params[('IILayerGain', '5')] = [0.25, 2.0]
+    params[('IILayerGain', '6')] = [0.25, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+best fitness so far
+of course as mentioned fitness only looks at avg rate across 1 sec so not always best measure
+but interesting because starting to show some osc
+if look at this fig it’s clear that best soln’s are for the lowr EE gains — in this case range was 0.1 - 1.0
+since still want to reduce excitability more potentially could reduce range of EEgain explore more (eg. [0.05, 0.25]) … however to avoid scaling down EE so much from orig values, was thinking of also trying to increase the range of IE more — currently [0.5, 2.0] so maybe allowing up to 4.0 or 5.0 … which I think should have similar effect to lowering EE
+** v23_batch10 - evol optim net - density 100%; EE (0.05-0.5); EI (0.5-5.0)
+*** notes
+best fitness so far
+of course as mentioned fitness only looks at avg rate across 1 sec so not always best measure
+but interesting because starting to show some osc
+if look at this fig it’s clear that best soln’s are for the lowr EE gains — in this case range was 0.1 - 1.0
+since still want to reduce excitability more potentially could reduce range of EEgain explore more (eg. [0.05, 0.25]) … however to avoid scaling down EE so much from orig values, was thinking of also trying to increase the range of IE more — currently [0.5, 2.0] so maybe allowing up to 4.0 or 5.0 … which I think should have similar effect to lowering EE
+*** code
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.05, 0.5]
+    params['EIGain'] = [0.1, 1.0]
+
+    params[('IELayerGain', '1-3')] = [0.25, 5.0]
+    params[('IELayerGain', '4')] = [0.25, 5.0]
+    params[('IELayerGain', '5')] = [0.25, 5.0]
+    params[('IELayerGain', '6')] = [0.25, 5.0]
+
+    params[('IILayerGain', '1-3')] = [0.25, 2.0]
+    params[('IILayerGain', '4')] = [0.25, 2.0]
+    params[('IILayerGain', '5')] = [0.25, 2.0]
+    params[('IILayerGain', '6')] = [0.25, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+

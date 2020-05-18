@@ -6,6 +6,8 @@ import pandas as pd
 import csv
 import json
 import seaborn as sns
+import IPython as ipy
+import os
 
 def getParamLabels(dataFolder, batchSim):
     # get param labels
@@ -130,7 +132,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
 
     ranges = {}
-    Erange = [0.5,80]
+    Erange = [0.5,60]
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6','CT6', 'TC', 'TCM', 'HTC']
     for pop in Epops:
         ranges[pop] = Erange
@@ -143,7 +145,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     dfcond = df.query(condStr)
 
     ranges = {}
-    Irange = [1.0,180]
+    Irange = [0.1,180]
     Ipops = ['NGF1',                        # L1
         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
@@ -207,7 +209,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
             if skipDepol:
                 sourceFile1 = dataFolder+batchLabel+'/noDepol/'+batchLabel+row['simLabel']+'*.png'  
             else:
-                sourceFile1 = dataFolder+batchLabel+'/'+batchLabel+row['simLabel']+'*.png'   
+                sourceFile1 = dataFolder+batchLabel+'/gen_'+i.split('_')[0]+'/gen_'+i.split('_')[0]+'_cand_'+i.split('_')[1]+'_*raster*.png'   
             #sourceFile2 = dataFolder+batchLabel+'/'+batchLabel+row['simLabel']+'.json'
             if len(glob(sourceFile1))>0:
                 cpcmd = 'cp ' + sourceFile1 + ' ' + targetFolder + '/.'
@@ -223,7 +225,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
 # Main code
 # -----------------------------------------------------------------------------
 dataFolder = '../data/'
-batchSim = 'v23_batch5' 
+batchSim = 'v23_batch9' 
 
 # set font size
 plt.rcParams.update({'font.size': 18})
@@ -237,13 +239,13 @@ dfGens, dfParams, dfPops = loadData(dataFolder, batchSim, paramLabels)
 # # plot fitness evolution across generations
 # plotFitnessEvol(dataFolder, batchSim, dfGens)
 
-# # # plot param dsitributions
+# # # # plot param dsitributions
 # plotParams(dataFolder, batchSim, dfParams, paramLabels, excludeAbove=1000)
 # plotParams2D(dataFolder, batchSim, dfParams, paramLabels)
 
-# # # # plot pop fit dsitributions
+# # # # # plot pop fit dsitributions
 # plotPopRates(dataFolder, batchSim, dfPops)
 # plotPopRates(dataFolder, batchSim, dfPops, 50)
 
 # filter results by pop rates
-dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder=None, dataFolder=None, batchLabel=None, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder='best', dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
