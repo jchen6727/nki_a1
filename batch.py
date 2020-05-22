@@ -744,10 +744,10 @@ def evolRates():
     initCfg = {}
     initCfg = {}
     initCfg['duration'] = 1500
-    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
     initCfg['dt'] = 0.05
 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -757,7 +757,6 @@ def evolRates():
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
-
 
 
     # --------------------------------------------------------
@@ -788,19 +787,29 @@ def evolRates():
     
     fitnessFuncArgs['pops'] = pops
     fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
 
 
     def fitnessFunc(simData, **kwargs):
         import numpy as np
         pops = kwargs['pops']
         maxFitness = kwargs['maxFitness']
-        popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
-                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k][(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k][(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
         fitness = np.mean(popFitness)
 
-        popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
-        print('  '+popInfo)
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
         return fitness
+
     
     #from IPython import embed; embed()
 
@@ -811,7 +820,7 @@ def evolRates():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 100,
+        'pop_size': 10,
         'num_elites': 2,
         'mutation_rate': 0.5,
         'crossover': 0.5,
@@ -907,7 +916,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v23_batch10'
+    b.batchLabel = 'v23_batch11'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'grid' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
