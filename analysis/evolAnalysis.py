@@ -8,6 +8,8 @@ import json
 import seaborn as sns
 import IPython as ipy
 import os
+import utils
+from pprint import pprint
 
 def getParamLabels(dataFolder, batchSim):
     # get param labels
@@ -220,32 +222,127 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
 
     return dfcond
 
+def testFitness(file, timeRange):
+    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 
+    'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+    'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC'] 
+    
+    sim = utils.loadFromFile(file, allpops)
 
+    spkts, spkids = zip(*[(t,i) for t,i in zip(sim.allSimData['spkt'], sim.allSimData['spkid']) if timeRange[0] <= t <= timeRange[1]])
+    
+    isicv = {}
+    for pop in allpops:
+        try:
+            spkt = [t for t, i in zip(spkts, spkids) if i in sim.net.pops[pop].cellGids]
+            spkt.insert(0, timeRange[0])
+            spkt.append(timeRange[1])
+            isimat = [t - s for s, t in zip(spkt, spkt[1:])]
+            isicv[pop] = np.std(isimat) / np.mean(isimat)
+            if np.isnan(isicv[pop]):
+                print('Not enough spikes for pop %s; setting to 50' % (pop))
+                print(pop, spkt, isimat, isicv[pop])
+                isicv[pop] = 50
+        except:
+            print('Exception processing pop %s' % (pop))
+            #print(pop,spkt,isimat,isicv)
+
+    for pop in allpops:
+        try:
+            print('%s: %.2f' % (pop, isicv[pop]))
+        except:
+            pass
+
+    return isicv
+
+
+def testFitness2(file, timeRange):
+    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 
+    'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+    'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC'] 
+    
+    sim = utils.loadFromFile(file, allpops)
+    
+    tranges = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    sim.allSimData['popRates'] = sim.analysis.popAvgRates(tranges)
+
+    simData = sim.allSimData
+    
+    #fitness func
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    
+    maxFitness = 1000
+    popFitnessAll = []
+
+    for trange in tranges:
+        popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k][(trange[0], trange[1])])/v['width']), maxFitness) 
+            if simData['popRates'][k][(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+    
+    popFitness = np.mean(np.array(popFitnessAll), axis=0)
+    fitness = np.mean(popFitness)
+
+    popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+    print('  ' + popInfo)
+    print(fitness)
+        
+    return fitness
+
+
+fitness = testFitness2('../data/v23_batch10/gen_5/gen_5_cand_34.json', [500, 1500])
+#isicv28 = testFitness2('../data/v23_batch10/gen_5/gen_5_cand_28.json', [500, 1500])
+
+
+'''
 # -----------------------------------------------------------------------------
 # Main code
 # -----------------------------------------------------------------------------
-dataFolder = '../data/'
-batchSim = 'v23_batch9' 
+if __name__ == '__main__': 
+    dataFolder = '../data/'
+    batchSim = 'v23_batch10' 
 
-# set font size
-plt.rcParams.update({'font.size': 18})
+    # set font size
+    plt.rcParams.update({'font.size': 18})
 
-# get param labels
-paramLabels = getParamLabels(dataFolder, batchSim)
+    # get param labels
+    paramLabels = getParamLabels(dataFolder, batchSim)
 
-# load evol data from files
-dfGens, dfParams, dfPops = loadData(dataFolder, batchSim, paramLabels)
+    # load evol data from files
+    dfGens, dfParams, dfPops = loadData(dataFolder, batchSim, paramLabels)
 
-# # plot fitness evolution across generations
-# plotFitnessEvol(dataFolder, batchSim, dfGens)
+    # plot fitness evolution across generations
+    plotFitnessEvol(dataFolder, batchSim, dfGens)
 
-# # # # plot param dsitributions
-# plotParams(dataFolder, batchSim, dfParams, paramLabels, excludeAbove=1000)
-# plotParams2D(dataFolder, batchSim, dfParams, paramLabels)
+    # # # plot param dsitributions
+    plotParams(dataFolder, batchSim, dfParams, paramLabels, excludeAbove=1000)
+    plotParams2D(dataFolder, batchSim, dfParams, paramLabels)
 
-# # # # # plot pop fit dsitributions
-# plotPopRates(dataFolder, batchSim, dfPops)
-# plotPopRates(dataFolder, batchSim, dfPops, 50)
+    # # # # plot pop fit dsitributions
+    plotPopRates(dataFolder, batchSim, dfPops)
+    plotPopRates(dataFolder, batchSim, dfPops, 50)
 
-# filter results by pop rates
-dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder='best', dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+    # filter results by pop rates
+    dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder='best', dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+'''

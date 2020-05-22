@@ -14,6 +14,7 @@ import pandas as pd
 import seaborn as sb
 import os
 from batchAnalysisPlotCombined import dfPopRates
+import IPython as ipy
 plt.style.use('seaborn-whitegrid')
 
 # ---------------------------------------------------------------------------------
@@ -141,6 +142,8 @@ def applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=True):
     var = [('simData','popRates')]
     params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
  
+    ipy.embed()
+
     # convert to pandas and add pop Rates
     df1 = utils.toPandas(params, data)
     dfpop = dfPopRates(df1)

@@ -721,7 +721,7 @@ def evolRates():
 
     # bkg inputs
     params['EEGain'] = [0.05, 0.5]
-    params['EIGain'] = [0.1, 1.0]
+    params['EIGain'] = [0.1, 2.0]
 
     params[('IELayerGain', '1-3')] = [0.25, 5.0]
     params[('IELayerGain', '4')] = [0.25, 5.0]
