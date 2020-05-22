@@ -750,8 +750,8 @@ def evolRates():
     initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
 
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
 
