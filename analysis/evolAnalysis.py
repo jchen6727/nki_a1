@@ -311,17 +311,17 @@ def testFitness2(file, timeRange):
     return fitness
 
 
-fitness = testFitness2('../data/v23_batch10/gen_5/gen_5_cand_34.json', [500, 1500])
+#fitness = testFitness2('../data/v23_batch10/gen_5/gen_5_cand_34.json', [500, 1500])
 #isicv28 = testFitness2('../data/v23_batch10/gen_5/gen_5_cand_28.json', [500, 1500])
 
 
-'''
+
 # -----------------------------------------------------------------------------
 # Main code
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v23_batch10' 
+    batchSim = 'v23_batch11' 
 
     # set font size
     plt.rcParams.update({'font.size': 18})
@@ -345,4 +345,3 @@ if __name__ == '__main__':
 
     # filter results by pop rates
     dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder='best', dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
-'''

@@ -723,15 +723,15 @@ def evolRates():
     params['EEGain'] = [0.05, 0.5]
     params['EIGain'] = [0.1, 2.0]
 
-    params[('IELayerGain', '1-3')] = [0.25, 5.0]
-    params[('IELayerGain', '4')] = [0.25, 5.0]
-    params[('IELayerGain', '5')] = [0.25, 5.0]
-    params[('IELayerGain', '6')] = [0.25, 5.0]
+    params[('IELayerGain', '1-3')] = [0.1, 10.0]
+    params[('IELayerGain', '4')] = [0.1, 10.0]
+    params[('IELayerGain', '5')] = [0.1, 10.0]
+    params[('IELayerGain', '6')] = [0.1, 10.0]
 
-    params[('IILayerGain', '1-3')] = [0.25, 2.0]
-    params[('IILayerGain', '4')] = [0.25, 2.0]
-    params[('IILayerGain', '5')] = [0.25, 2.0]
-    params[('IILayerGain', '6')] = [0.25, 2.0]
+    params[('IILayerGain', '1-3')] = [0.1, 10.0]
+    params[('IILayerGain', '4')] = [0.1, 10.0]
+    params[('IILayerGain', '5')] = [0.1, 10.0]
+    params[('IILayerGain', '6')] = [0.1, 10.0]
     
     params['thalamoCorticalGain'] = [0.25, 2.0]  
     params['intraThalamicGain'] = [0.25, 2.0] 
@@ -821,14 +821,14 @@ def evolRates():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 10,
+        'pop_size': 100,
         'num_elites': 2,
         'mutation_rate': 0.5,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
         'max_generations': 200,
-        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 9, # max number of times to check if sim is completed (for each generation)
+        'time_sleep': 150, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 4, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
@@ -917,7 +917,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v23_batch11'
+    b.batchLabel = 'v23_batch12'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'grid' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

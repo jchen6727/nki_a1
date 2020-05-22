@@ -3567,3 +3567,28 @@ def evolRates():
     }
 
     return b
+
+** v23_batch12 - evol optim, new fitness func, 50% density; increased ranges
+*** notes
+- can increase weight ranges because not taking into account num syns / conn
+- total weight = syn weight * num syns * electrotonic -- many unknown variables == allowed variability 
+*** code
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.05, 0.5]
+    params['EIGain'] = [0.1, 2.0]
+
+    params[('IELayerGain', '1-3')] = [0.1, 10.0]
+    params[('IELayerGain', '4')] = [0.1, 10.0]
+    params[('IELayerGain', '5')] = [0.1, 10.0]
+    params[('IELayerGain', '6')] = [0.1, 10.0]
+
+    params[('IILayerGain', '1-3')] = [0.1, 10.0]
+    params[('IILayerGain', '4')] = [0.1, 10.0]
+    params[('IILayerGain', '5')] = [0.1, 10.0]
+    params[('IILayerGain', '6')] = [0.1, 10.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
