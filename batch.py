@@ -720,22 +720,22 @@ def evolRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.1, 1.0]
-    params['EIGain'] = [0.2, 5.0]
+    params['EEGain'] = [0.5, 2.0]
+    params['EIGain'] = [0.5, 2.0]
 
-    params[('IELayerGain', '1-3')] = [0.2, 5.0]
-    params[('IELayerGain', '4')] = [0.2, 5.0]
-    params[('IELayerGain', '5')] = [0.2, 5.0]
-    params[('IELayerGain', '6')] = [0.2, 5.0]
+    params[('IELayerGain', '1-3')] = [0.5, 2.0]
+    params[('IELayerGain', '4')] = [0.5, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0]
+    params[('IELayerGain', '6')] = [0.5, 2.0]
 
-    params[('IILayerGain', '1-3')] = [0.2, 5.0]
-    params[('IILayerGain', '4')] = [0.2, 5.0]
-    params[('IILayerGain', '5')] = [0.2, 5.0]
-    params[('IILayerGain', '6')] = [0.2, 5.0]
+    params[('IILayerGain', '1-3')] = [0.5, 2.0]
+    params[('IILayerGain', '4')] = [0.5, 2.0]
+    params[('IILayerGain', '5')] = [0.5, 2.0]
+    params[('IILayerGain', '6')] = [0.5, 2.0]
     
-    params['thalamoCorticalGain'] = [0.2, 5.0]  
-    params['intraThalamicGain'] = [0.2, 5.0] 
-    params['corticoThalamicGain'] = [0.2, 5.0]
+    params['thalamoCorticalGain'] = [0.5, 2.0]  
+    params['intraThalamicGain'] = [0.5, 2.0] 
+    params['corticoThalamicGain'] = [0.5, 2.0]
 
     groupedParams = []
 
@@ -917,7 +917,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v24_batch1'
+    b.batchLabel = 'v24_batch2'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol' #'grid' #'evol' #  # evol
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

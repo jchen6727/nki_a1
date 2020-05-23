@@ -321,7 +321,7 @@ def testFitness2(file, timeRange):
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v23_batch12' 
+    batchSim = 'v24_batch1' 
 
     # set font size
     plt.rcParams.update({'font.size': 18})
