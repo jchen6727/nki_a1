@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 23
+netParams.version = 24
 
 #------------------------------------------------------------------------------
 #
@@ -286,7 +286,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
                     elif 'NGF' in pre:
                         synMech = NGFSynMech
 
-                    netParams.connParams['IE_'+pre+'_'+post] = { 
+                    netParams.connParams['IE_'+pre+'_'+post+'_'+l] = { 
                         'preConds': {'pop': pre}, 
                         'postConds': {'pop': post, 'ynorm': layerGroups[l]},
                         'synMech': synMech,
@@ -320,7 +320,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
                     elif 'NGF' in pre:
                         synMech = NGFSynMech
 
-                    netParams.connParams['II_'+pre+'_'+post] = { 
+                    netParams.connParams['II_'+pre+'_'+post+'_'+l] = { 
                         'preConds': {'pop': pre}, 
                         'postConds': {'pop': post,  'ynorm': layerGroups[l]},
                         'synMech': synMech,
@@ -707,4 +707,5 @@ v20 - Added TI conn and updated thal pop
 v21 - Added exc+inh bkg inputs specific to each cell type
 v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
 v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
+v24 - Fixed bug in IE/II specific layer gains
 """

@@ -19,8 +19,8 @@ import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
 
 from netpyne import sim
 
-cfg, netParams = sim.readCmdLineArgs(simConfigDefault='cfg_cell.py', netParamsDefault='netParams_cell.py')
-#sim.create(netParams, cfg)
-#sim.gatherData()
+cfg, netParams = sim.readCmdLineArgs(simConfigDefault='cfg_cell.py', netParamsDefault='netParams_gui.py')
+sim.create(netParams, cfg)
+sim.gatherData()
 
-sim.createSimulateAnalyze(netParams, cfg)
+#sim.createSimulateAnalyze(netParams, cfg)
