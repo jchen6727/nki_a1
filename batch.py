@@ -828,7 +828,7 @@ def evolRates():
         'maximize': False, # maximize fitness function?
         'max_generations': 200,
         'time_sleep': 150, # 2.5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 4, # max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 5, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
