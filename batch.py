@@ -654,14 +654,14 @@ def custom():
     params = specs.ODict()
 
     # conn gains
-    params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
-    params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
-    params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
-    params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
-    #params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
-    #params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
-    #params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    params['thalamoCorticalGain'] = [1.434715802, 2.0]
+    #params[('ICThalInput', 'probE')] = [0.12, 0.25]#, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.12, 0.25]#, 0.5]
     
     groupedParams = [('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -678,7 +678,7 @@ def custom():
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
 
@@ -690,10 +690,10 @@ def custom():
     initCfg['EEGain'] = 1.7930365644528616
     initCfg['EIGain'] = 1.301292631	
     
-    initCfg[('IELayerGain', '1-3')] = 1.9609935	
-    initCfg[('IELayerGain', '4')] = 1.973369532	
-    initCfg[('IELayerGain', '5')] = 0.547478256	
-    initCfg[('IELayerGain', '6')] = 0.817050621	
+    initCfg[('IELayerGain', '1-3')] = 1.9609935 - 0.15
+    initCfg[('IELayerGain', '4')] = 1.973369532	- 0.15
+    initCfg[('IELayerGain', '5')] = 0.547478256	- 0.15
+    initCfg[('IELayerGain', '6')] = 0.817050621	- 0.15
 
     initCfg[('IILayerGain', '1-3')] = 0.575910457
     initCfg[('IILayerGain', '4')] = 0.506134474	
@@ -915,7 +915,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v24_batch3'
+    b.batchLabel = 'v24_batch5'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid' #'grid' #'evol' #  # evol
     setRunCfg(b, 'mpi_direct') #hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

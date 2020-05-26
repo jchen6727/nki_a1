@@ -3727,12 +3727,15 @@ CT 1.354024353042513
 
 
 ** v24_batch3 - param sweep starting from a good solution (run on my)
+*** note
+ran manually on my
+modified param set 2, to be -0.3 instead of -0.2
 *** code 
     # conn gains
-    params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
-    params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
-    params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
-    params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.3] 
+    params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.3]
+    params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.3]	
+    params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.3]
     
     #params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
     #params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
@@ -3780,7 +3783,7 @@ CT 1.354024353042513
     initCfg['corticoThalamicGain'] = 1.354024353042513
 
 *** results
-**** 0
+**** 0 (IE orig)
   Cells: 6442
   Connections: 0 (0.00 per cell)
   Spikes: 28832 (2.98 Hz)
@@ -3829,6 +3832,108 @@ CT 1.354024353042513
   Simulated time: 1.5 s; 96 workers
   Run time: 1269.69 s
 Saving output as data/v24_batch3/v24_batch3_0_0_0_0.json  ... 
+**** 1 (IE -0.1)
+  Cells: 6442
+  Connections: 0 (0.00 per cell)
+  Spikes: 31700 (3.28 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 38.500 Hz
+   PV2 : 3.667 Hz
+   VIP2 : 33.000 Hz
+   NGF2 : 1.200 Hz
+   IT3 : 0.065 Hz
+   SOM3 : 37.714 Hz
+   PV3 : 5.489 Hz
+   VIP3 : 34.181 Hz
+   NGF3 : 0.067 Hz
+   ITP4 : 0.002 Hz
+   ITS4 : 0.100 Hz
+   SOM4 : 14.250 Hz
+   PV4 : 4.239 Hz
+   VIP4 : 85.000 Hz
+   NGF4 : 1.286 Hz
+   IT5A : 1.564 Hz
+   CT5A : 12.486 Hz
+   SOM5A : 41.857 Hz
+   PV5A : 1.417 Hz
+   VIP5A : 2.000 Hz
+   NGF5A : 0.500 Hz
+   IT5B : 1.230 Hz
+   CT5B : 12.460 Hz
+   PT5B : 0.123 Hz
+   SOM5B : 44.482 Hz
+   PV5B : 0.955 Hz
+   VIP5B : 2.250 Hz
+   NGF5B : 0.500 Hz
+   IT6 : 3.988 Hz
+   CT6 : 15.157 Hz
+   SOM6 : 85.161 Hz
+   PV6 : 0.524 Hz
+   VIP6 : 11.667 Hz
+   NGF6 : 71.263 Hz
+   TC : 7.517 Hz
+   TCM : 0.442 Hz
+   HTC : 8.105 Hz
+   IRE : 8.091 Hz
+   IREM : 0.870 Hz
+   TI : 2.863 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 1320.76 s
+Saving output as data/v24_batch3/v24_batch3_1_1_1_1.json  ... 
+Finished saving!
+  Done; saving time = 2.22 s.
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 101.98 s
+
+Total time = 3079.45 s
+**** 2 (IE -0.3)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 68.500 Hz
+   PV2 : 0.333 Hz
+   VIP2 : 8.250 Hz
+   NGF2 : 0.400 Hz
+   IT3 : 0.000 Hz
+   SOM3 : 61.943 Hz
+   PV3 : 0.864 Hz
+   VIP3 : 12.143 Hz
+   NGF3 : 0.013 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 19.000 Hz
+   PV4 : 5.413 Hz
+   VIP4 : 87.333 Hz
+   NGF4 : 4.286 Hz
+   IT5A : 1.380 Hz
+   CT5A : 17.514 Hz
+   SOM5A : 54.857 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   NGF5A : 0.000 Hz
+   IT5B : 1.064 Hz
+   CT5B : 18.817 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 62.964 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 0.000 Hz
+   CT6 : 15.942 Hz
+   SOM6 : 91.226 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 5.167 Hz
+   NGF6 : 84.789 Hz
+   TC : 8.345 Hz
+   TCM : 0.000 Hz
+   HTC : 11.842 Hz
+   IRE : 8.156 Hz
+   IREM : 0.844 Hz
+   TI : 3.392 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 1261.80 s
+
 ** v24_batch4 - v24_batch3 with IC inputs; running 'manually' on NSG
 *** code
 **** v24_batch4_0
