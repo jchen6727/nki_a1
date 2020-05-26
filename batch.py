@@ -663,7 +663,6 @@ def custom():
     #params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
     #params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
     
-
     groupedParams = [('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------

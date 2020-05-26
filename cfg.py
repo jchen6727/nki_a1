@@ -57,8 +57,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v23_sim6' 
-cfg.saveFolder = 'data/v23_manualTune/'                	## Set file output name
+cfg.simLabel = 'v24_batch4_0' 
+cfg.saveFolder = '.'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
@@ -108,7 +108,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.5 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -121,14 +121,15 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 
 # Cortical
 cfg.addConn = 1
-cfg.EEGain = 1.0 
-cfg.EIGain = 1.0 #0.75
+
+cfg.EEGain = 1.7930365644528616 
+cfg.EIGain = 1.301292631	
 cfg.IEGain = 1.0 #0.75
 cfg.IIGain = 1.0 #0.5
 
 ## I->E/I layer weights (L1-3, L4, L5, L6)
-cfg.IELayerGain = {'1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
-cfg.IILayerGain = {'1-3': 1.0, '4': 1.0, '5': 1.0, '6': 1.0}
+cfg.IELayerGain = {'1-3': 1.9609935, '4': 1.973369532, '5': 0.547478256, '6': 0.817050621}
+cfg.IILayerGain = {'1-3': 0.575910457, '4': 0.506134474, '5': 1.140789303, '6': 1.999973065}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1.0
@@ -136,9 +137,9 @@ cfg.addIntraThalamicConn = 1.0
 cfg.addCorticoThalamicConn = 1.0
 cfg.addThalamoCorticalConn = 1.0
 
-cfg.intraThalamicGain = 1.0 
-cfg.corticoThalamicGain = 1.0
-cfg.thalamoCorticalGain = 1.0 
+cfg.thalamoCorticalGain = 1.434715802
+cfg.intraThalamicGain = 1.987386358	
+cfg.corticoThalamicGain = 1.354024353042513
 
 cfg.addSubConn = 1
 
@@ -161,7 +162,7 @@ cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thal
 
 cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
 
-cfg.ICThalInput = None #'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
 
 
 #------------------------------------------------------------------------------

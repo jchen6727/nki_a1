@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 10.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0                	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -34,10 +34,9 @@ cfg.connRandomSecFromList = False  # set to false for reproducibility
 cfg.cvode_active = False
 cfg.cvode_atol = 1e-6
 cfg.cache_efficient = True
-cfg.printRunTime = 0.1
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [500, cfg.duration]
+cfg.printPopAvgRates = [0, cfg.duration]
 
 
 #------------------------------------------------------------------------------
@@ -50,16 +49,16 @@ alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', '
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
-cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
+cfg.recordStep = 1.0            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-# cfg.recordLFP = [[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
+cfg.recordLFP = [[-15, 500, 100]] #[[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v22_sim11'
-cfg.saveFolder = 'data/v21_manualTune/'                	## Set file output name
+cfg.simLabel = 'v24_sim1'
+cfg.saveFolder = 'data/v24_manualTune/'                	## Set file output name
 cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
@@ -78,8 +77,8 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 
 cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in cfg.allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 
-#cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
-#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
+cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'locations'], 'saveData': False, 'saveFig':1}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 

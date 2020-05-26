@@ -198,11 +198,6 @@ NGFSynMech = ['GABAA', 'GABAB']
 
 
 #------------------------------------------------------------------------------
-# Background inputs
-#------------------------------------------------------------------------------ 
-
-
-#------------------------------------------------------------------------------
 # Local connectivity parameters
 #------------------------------------------------------------------------------
 
@@ -570,10 +565,11 @@ if cfg.addBkgConn:
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
-    with open('cells/bkgWeightPops.json', 'r') as f:
-        weightBkg = json.load(f)
+
 
     # excBkg/I -> thalamus + cortex
+    with open('cells/bkgWeightPops.json', 'r') as f:
+        weightBkg = json.load(f)
     pops = list(cfg.allpops)
     pops.remove('IC')
     for pop in pops:
