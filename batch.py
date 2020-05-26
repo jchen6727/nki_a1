@@ -919,7 +919,7 @@ if __name__ == '__main__':
     b.batchLabel = 'v24_batch3'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid' #'grid' #'evol' #  # evol
-    setRunCfg(b, 'mpi_bulletin') #hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'mpi_direct') #hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
