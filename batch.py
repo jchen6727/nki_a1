@@ -846,8 +846,8 @@ def setRunCfg(b, type='mpi_bulletin'):
 
     elif type=='mpi_direct':
         b.runCfg = {'type': 'mpi_direct',
-            'cores': 4,
-            'script': 'init_cell.py',
+            'cores': 96,
+            'script': 'init.py',
             'mpiCommand': 'mpirun',
             'skip': True}
 
