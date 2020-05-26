@@ -3592,3 +3592,137 @@ def evolRates():
     params['thalamoCorticalGain'] = [0.25, 2.0]  
     params['intraThalamicGain'] = [0.25, 2.0] 
     params['corticoThalamicGain'] = [0.25, 2.0]
+*** results
+gen_63_cand_19 - fitness 148.92
+
+ EE 0.3303517319869238	
+ EI 0.100023011	
+ IE13 9.186950686 (1.0)
+ IE4 6.160878748 (1.0)	
+ IE5 1.729074111 (1.0)
+ IE6 8.10671124 
+ II1-3 8.454681919 (1.0)
+ II4 9.44874377 (1.0)
+ II5 2.310556658 (1.0)
+ II6 1.578557048 
+ TC 1.99495686	
+ IT 0.521592918	 
+ CT 1.6131164721326399]
+
+ 
+** v24_batch1 - evol optim after fixing IE, II
+*** note
+only IE and II in L6 were working 
+*** code
+    # bkg inputs
+    params['EEGain'] = [0.1, 1.0]
+    params['EIGain'] = [0.2, 5.0]
+
+    params[('IELayerGain', '1-3')] = [0.2, 5.0]
+    params[('IELayerGain', '4')] = [0.2, 5.0]
+    params[('IELayerGain', '5')] = [0.2, 5.0]
+    params[('IELayerGain', '6')] = [0.2, 5.0]
+
+    params[('IILayerGain', '1-3')] = [0.2, 5.0]
+    params[('IILayerGain', '4')] = [0.2, 5.0]
+    params[('IILayerGain', '5')] = [0.2, 5.0]
+    params[('IILayerGain', '6')] = [0.2, 5.0]
+    
+    params['thalamoCorticalGain'] = [0.2, 5.0]  
+    params['intraThalamicGain'] = [0.2, 5.0] 
+    params['corticoThalamicGain'] = [0.2, 5.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+gen 38 cand 28 - fitness = 275.8
+
+ EE 0.824146321526465	
+ EI 0.200942767	
+ IE13 3.751053243	
+ IE4 4.780020172	
+ IE5 0.200490707	
+ IE6 4.742310303	
+ II13 0.201356072	
+ II4 1.846409498	
+ II5 4.904555212	
+ II6 2.374453718	
+ TC 1.820561507	
+ IT 0.852553584	 
+ CT 3.077182476923463
+** v24_batch2 -  evol optim with narrower range of params
+*** code
+    params['EEGain'] = [0.5, 2.0]
+    params['EIGain'] = [0.5, 2.0]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0]
+    params[('IELayerGain', '4')] = [0.5, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0]
+    params[('IELayerGain', '6')] = [0.5, 2.0]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0]
+    params[('IILayerGain', '4')] = [0.5, 2.0]
+    params[('IILayerGain', '5')] = [0.5, 2.0]
+    params[('IILayerGain', '6')] = [0.5, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0]  
+    params['intraThalamicGain'] = [0.5, 2.0] 
+    params['corticoThalamicGain'] = [0.5, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+gen 66 cand 8 - fitness = 311
+ EE 1.7930365644528616	
+ EI 1.301292631	
+ IE 13, 4, 5, 6 
+    1.9609935	
+    1.973369532	
+    0.547478256	
+    0.817050621	
+ II 13, 4, 5, 6
+    0.575910457	
+    0.506134474	
+    1.140789303	
+    1.999973065	
+TC 1.434715802	
+IT  1.987386358	 
+CT 1.354024353042513
+** v24_batch3 - param sweep starting from a good solution (run on my)
+*** code 

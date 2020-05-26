@@ -654,29 +654,24 @@ def custom():
     params = specs.ODict()
 
     # conn gains
-    #params['EEGain'] = [0.5, 1.0, 1.5] #[0.5, 1.5] 
-    #params['EIGain'] = [0.5, 1.0, 1.5] 
-    #params['IEGain'] = [0.5, 1.0, 1.5] 
-    #params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
-    #params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
-    #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
-    #params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
-
-    params['EEGain'] = [0.10928952347451457, 0.05]
-    params['EIGain'] = [0.13089042807412776, 0.05]
-    params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
-    params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
-    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    
+    #params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
+    #params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
     
 
-    groupedParams = []
+    groupedParams = [('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 1750
-    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -693,19 +688,23 @@ def custom():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
-    initCfg['EEGain']=0.10928952347451457
-    initCfg['EIGain']=0.13089042807412776
-    initCfg[('IELayerGain', '1-3')]=1.9475510641094371
-    initCfg[('IELayerGain', '4')]=1.961577378323746
-    initCfg[('IELayerGain', '5')]=0.73154575340036
-    initCfg[('IELayerGain', '6')]=1.5743753119276733
-    initCfg[('IILayerGain', '1-3')]=1.2715789518318394
-    initCfg[('IILayerGain', '4')]=0.5633033925996949
-    initCfg[('IILayerGain', '5')]=1.674448267759582
-    initCfg[('IILayerGain', '6')]=0.8550747910383769
-    initCfg['thalamoCorticalGain']=1.964478741362849
-    initCfg['intraThalamicGain']=0.35778625557189936
-    initCfg['corticoThalamicGain'] = 1.4715575641214615
+    initCfg['EEGain'] = 1.7930365644528616
+    initCfg['EIGain'] = 1.301292631	
+    
+    initCfg[('IELayerGain', '1-3')] = 1.9609935	
+    initCfg[('IELayerGain', '4')] = 1.973369532	
+    initCfg[('IELayerGain', '5')] = 0.547478256	
+    initCfg[('IELayerGain', '6')] = 0.817050621	
+
+    initCfg[('IILayerGain', '1-3')] = 0.575910457
+    initCfg[('IILayerGain', '4')] = 0.506134474	
+    initCfg[('IILayerGain', '5')] = 1.140789303	
+    initCfg[('IILayerGain', '6')] = 1.999973065	
+
+    initCfg['thalamoCorticalGain'] = 1.434715802
+    initCfg['intraThalamicGain'] = 1.987386358	
+    initCfg['corticoThalamicGain'] = 1.354024353042513
+
     
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
@@ -911,16 +910,16 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
-    b = evolRates()
+    b = custom()
+    # b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v24_batch2'
+    b.batchLabel = 'v24_batch3'
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'evol' #'grid' #'evol' #  # evol
-    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    b.method = 'grid' #'grid' #'evol' #  # evol
+    setRunCfg(b, 'mpi_bulletin') #hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
