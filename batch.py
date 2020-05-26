@@ -659,18 +659,18 @@ def custom():
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
-    params['thalamoCorticalGain'] = [1.434715802, 2.0]
+    #params['thalamoCorticalGain'] = [1.434715802, 2.0]
     #params[('ICThalInput', 'probE')] = [0.12, 0.25]#, 0.5]
-    #params[('ICThalInput', 'probI')] = [0.12, 0.25]#, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
     
-    groupedParams = [('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 1500
-    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -687,6 +687,24 @@ def custom():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
+
+    ''' from v23_batch8'''
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]= 1.0
+    initCfg[('IELayerGain', '4')]=1.0
+    initCfg[('IELayerGain', '5')]=1.0
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.0
+    initCfg[('IILayerGain', '4')]=1.0 
+    initCfg[('IILayerGain', '5')]=1.0
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+    
+
+    ''' from v24_batch3
     initCfg['EEGain'] = 1.7930365644528616
     initCfg['EIGain'] = 1.301292631	
     
@@ -703,6 +721,7 @@ def custom():
     initCfg['thalamoCorticalGain'] = 1.434715802
     initCfg['intraThalamicGain'] = 1.987386358	
     initCfg['corticoThalamicGain'] = 1.354024353042513
+    '''
 
     
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
