@@ -934,10 +934,10 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=cellTypes) 
 
-    b.batchLabel = 'v24_batch5'
+    b.batchLabel = 'v24_batch6'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid' #'grid' #'evol' #  # evol
-    setRunCfg(b, 'mpi_direct') #hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
