@@ -928,34 +928,34 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    #b = custom()
     # b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    # b = fIcurve(pops=cellTypes) 
+    b = fIcurve(pops=['VIP2', 'ITS4']) 
 
-    b.batchLabel = 'v24_batch6'
+    b.batchLabel = 'v24_batch7'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid' #'grid' #'evol' #  # evol
-    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
-    # Submit set of batch sims together (eg. for weight norm)
+    # #Submit set of batch sims together (eg. for weight norm)
 
     # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
     # popsWeightNorm =    {#'IT2_reduced': ['CT5A', 'CT5B']}#, #'IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-    # # #                     'ITS4_reduced': ['ITS4']}
+    #                      'ITS4_reduced': ['ITS4']}
     # # #                     'PV_reduced': ['PV2', 'SOM2'],
-    # # #                     'VIP_reduced': ['VIP2'],
-    #                      'NGF_reduced': ['NGF2']} #,
+    #                      'VIP_reduced': ['VIP2'],
+    #                      #'NGF_reduced': ['NGF2']} #,
     # #                     #'RE_reduced': ['IRE', 'TC', 'HTC'],
     # #                     #'TI_reduced': ['TI']}
  
-    # batchIndex = 25
+    # batchIndex = 7
     # for k, v in popsWeightNorm.items(): 
     #     b = weightNorm(pops=v, rule=k)
-    #     b.batchLabel = 'v22_batch'+str(batchIndex) 
+    #     b.batchLabel = 'v24_batch'+str(batchIndex) 
     #     b.saveFolder = 'data/'+b.batchLabel
     #     b.method = 'grid'  # evol
     #     setRunCfg(b, 'mpi_bulletin')

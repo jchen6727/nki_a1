@@ -51,7 +51,7 @@ cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 1.0            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-cfg.recordLFP = [[-15, 500, 100]] #[[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
+#cfg.recordLFP = [[-15, 500, 100]] #[[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
 
 #------------------------------------------------------------------------------
 # Saving
@@ -77,8 +77,8 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 
 cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in cfg.allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 
-cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
-cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'locations'], 'saveData': False, 'saveFig':1}
+#cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'locations'], 'saveData': False, 'saveFig':1}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 
