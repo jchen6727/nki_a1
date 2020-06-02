@@ -124,7 +124,7 @@ for ruleLabel in cellParamLabels:
 
 ## Options to add to cellParams
 addSecLists = False
-add3DGeom = False
+add3DGeom = True
 
 ## Set weightNorm for each cell type and add section lists (used in connectivity)
 for ruleLabel in netParams.cellParams.keys():
