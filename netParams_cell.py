@@ -176,12 +176,14 @@ if add3DGeom:
         if label in ['PV_reduced', 'SOM_reduced']: 
             offset, prevL = 0, 0
             somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
-            for secName, sec in netParams.cellParams[label]['secs'].items():
+            for secName in ['soma', 'dend', 'axon']: 
+                sec = netParams.cellParams[label]['secs'][secName]
                 sec['geom']['pt3d'] = []
-                if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends
+                if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends                    
                     sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
                     prevL = float(prevL + sec['geom']['L'])
-                    sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
+                    sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
+                    print(label, secName, sec['geom']['pt3d'])
                 if secName in ['axon']:  # set 3d geom of axon
                     sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
                     sec['geom']['pt3d'].append([offset + 0, -sec['geom']['L'], 0, sec['geom']['diam']])
@@ -189,7 +191,8 @@ if add3DGeom:
         elif label in ['NGF_reduced', 'TI_reduced']:
             offset, prevL = 0, 0
             somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
-            for secName, sec in netParams.cellParams[label]['secs'].items():
+            for secName in ['soma', 'dend']:
+                sec = netParams.cellParams[label]['secs'][secName]
                 sec['geom']['pt3d'] = []
                 if secName in ['soma', 'dend']:  # set 3d geom of soma and Adends
                     sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
@@ -199,12 +202,13 @@ if add3DGeom:
         elif label in ['VIP_reduced']:
             offset, prevL = 0, 0
             somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
-            for secName, sec in netParams.cellParams[label]['secs'].items():
+            for secName in ['soma', 'rad1', 'rad2', 'ori1', 'ori2']:
+                sec = netParams.cellParams[label]['secs'][secName]
                 sec['geom']['pt3d'] = []
                 if secName in ['soma']:  # set 3d geom of soma 
-                    sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
+                    sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
                     prevL = float(prevL + sec['geom']['L'])
-                    sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
+                    sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
                 if secName in ['rad1']:  # set 3d geom of rad1 (radiatum)
                     sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
                     sec['geom']['pt3d'].append([offset+0.5*sec['geom']['L'], +(somaL+0.866*sec['geom']['L']), 0, sec['geom']['diam']])   
@@ -222,12 +226,13 @@ if add3DGeom:
         elif label in ['ITS4_reduced']:
             offset, prevL = 0, 0
             somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
-            for secName, sec in netParams.cellParams[label]['secs'].items():
+            for secName in ['soma', 'dend', 'dend1']:
+                sec = netParams.cellParams[label]['secs'][secName]
                 sec['geom']['pt3d'] = []
                 if secName in ['soma']:  # set 3d geom of soma 
-                    sec['geom']['pt3d'].append([offset+0, prevL, 0, 25])
+                    sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
                     prevL = float(prevL + sec['geom']['L'])
-                    sec['geom']['pt3d'].append([offset + 0, prevL, 0, 25])
+                    sec['geom']['pt3d'].append([offset + 0, prevL, 0, sec['geom']['diam']])
                 if secName in ['dend']:  # set 3d geom of apic dendds
                     sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])
                     prevL = float(prevL + sec['geom']['L'])
@@ -235,14 +240,19 @@ if add3DGeom:
                 if secName in ['dend1']:  # set 3d geom of basal dend
                     sec['geom']['pt3d'].append([offset+0, somaL, 0, sec['geom']['diam']])
                     sec['geom']['pt3d'].append([offset+0.707*sec['geom']['L'], -(somaL+0.707*sec['geom']['L']), 0, sec['geom']['diam']])   
-        elif label in ['RE_reduced', 'TC_reduced', 'HTC_reduced', 'VIP_reduced']:
-            pass
+        
+        elif label in ['RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']:
+            sec = netParams.cellParams[label]['secs']['soma']
+            sec['geom']['pt3d'] = []
+            sec['geom']['pt3d'].append([offset+0, 0, 0, sec['geom']['diam']])
+            sec['geom']['pt3d'].append([offset+0, sec['geom']['L'], 0, sec['geom']['diam']])
 
         else: # E cells
             # set 3D pt geom
             offset, prevL = 0, 0
             somaL = netParams.cellParams[label]['secs']['soma']['geom']['L']
-            for secName, sec in netParams.cellParams[label]['secs'].items():
+            for secName in ['soma', 'Adend1', 'Adend2', 'Adend3', 'Bdend', 'axon']:
+                sec = netParams.cellParams[label]['secs'][secName]
                 sec['geom']['pt3d'] = []
                 if secName in ['soma', 'Adend1', 'Adend2', 'Adend3']:  # set 3d geom of soma and Adends
                     sec['geom']['pt3d'].append([offset+0, prevL, 0, sec['geom']['diam']])

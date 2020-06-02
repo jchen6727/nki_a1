@@ -15,11 +15,11 @@ MPI usage:
 Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 """
 
-import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
+#import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
 
 from netpyne import sim
 
-cfg, netParams = sim.readCmdLineArgs(simConfigDefault='cfg_cell.py', netParamsDefault='netParams_bkg.py')
+cfg, netParams = sim.readCmdLineArgs(simConfigDefault='cfg_cell.py', netParamsDefault='netParams_gui.py')
 sim.create(netParams, cfg)
 sim.gatherData()
 
