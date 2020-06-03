@@ -28098,13 +28098,69 @@ endtemplate sTI
 *** cp.mod
 *** cp2.mod 
 *** IL.mod 
-** Changed sTI.py to have cellModel as HH_reduced 
+** Changed sTI.py to have cellModel as HH_reduced in netParams_cell.py
+** CHANGED sTI.py majorly!!!!! Made it a class, so can be properly imported (was having trouble with other formats). *TO DO: CHANGE THIS TO NETPYNE FORMATTING?*
+** [DONE] Compile & check import of new cell:
+*** compile:
+**** cd ~/Desktop/NEUROSIM/A1 
+**** rm -r x86_64
+**** rm -r mod/x86_64
+**** ln -s mod/x86_64 x86_64
+
+*** test! -- error with import sim module
+**** had to change */Users/ericagriffith/anaconda3/lib/python3.7/site-packages/netpyne/specs/netParams.py* --> line 470 under saveCellParamsRule
+**** under line elif ext== 'json' --> had to change "import sim" to "from .. import sim" 
+**** messaged salva! 
+** [DONE] secLists:
+*** elif ruleLabel in ['PV_reduced', 'SOM_reduced', 'NGF_reduced', 'TI_reduced']:        ***    secLists['all'] = secLists['proximal'] = ['soma', 'dend']
+***    secLists['dend_all'] = ['dend']
+** 3D configuration -- haven't yet checked w/ sim.analysis.plotShape(): 
+*** Added TI_reduced in line w/ NGF_reduced under '#Set 3D geometry for each cell type' 
+*** adds pt3D for soma & dend 
+** Added netParams.popParams['TI'] to the thalamic population section of population parameters
 ** TO DO: 
-*** mod files:
+*** [DONE] mod files:
 **** Check for conflicts in the mod files 
 **** Add in the mod files
 **** commit / push 
+*** [DONE] secLists --> most similar to PV/SOM/NGF
+*** [DONE] ADDITIONAL *which thalamic population -- replacement or additional? (replacement for reticular interneuron?) 
+*** weight norm? 
 *** check 3D configuration
 **** sim.analysis.plotshape --> run init_cell.py
-*** secLists --> most similar to PV/SOM/NGF
-*** which thalamic population -- replacement or additional? (replacement for reticular interneuron?) 
+* <2020-03-02 Mon -- interneuron connectivity>
+** Merge w/ salva's branch again 
+* <2020-03-06 Fri -- sources>
+** FOR JOURNAL CLUB: 
+*** https://www.pnas.org/content/99/5/3318.short
+*** https://asa.scitation.org/doi/abs/10.1121/1.1771711
+*** https://ieeexplore.ieee.org/abstract/document/1045281
+*** https://www.sciencedirect.com/science/article/pii/S0378595510002042
+*** https://asa.scitation.org/doi/abs/10.1121/1.1557211
+** interneuron connectivity: 
+*** https://link.springer.com/article/10.1007/BF00237322
+*** https://www.sciencedirect.com/science/article/abs/pii/0304394086901692?via%3Dihub
+*** https://link.springer.com/article/10.1007/BF00968547
+*** https://link.springer.com/article/10.1007/BF00228950
+*** https://www.ncbi.nlm.nih.gov/pubmed/4030427
+*** https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.902890113
+*** https://www.ncbi.nlm.nih.gov/pubmed/28965520
+*** http://mcb.berkeley.edu/labs/winer/publications_files/hua99.pdf
+*** https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.902970103
+*** https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.10387
+*** https://www.ncbi.nlm.nih.gov/pubmed/12357431
+*** http://mcb.berkeley.edu/labs/winer/publications_files/hua99.pdf
+*** https://www.jneurosci.org/content/jneuro/9/8/2931.full.pdf
+*** https://www.pnas.org/content/93/7/3083.short
+*** https://onlinelibrary.wiley.com/doi/abs/10.1002/(SICI)1096-9861(19981026)400:3%3C349::AID-CNE5%3E3.0.CO;2-8
+*** https://www.sciencedirect.com/science/article/pii/S0378595598002160
+
+** retrogeniculate / IC: 
+*** https://journals.physiology.org/doi/pdf/10.1152/jn.1977.40.2.410
+*** https://www.sciencedirect.com/science/article/abs/pii/S0959438803000965
+*** https://www.cambridge.org/core/journals/visual-neuroscience/article/how-much-feedback-from-visual-cortex-to-lateral-geniculate-nucleus-in-cat-a-perspective/AB571B3250D41732BC295225FA943310
+*** https://reader.elsevier.com/reader/sd/pii/S0896627314000634?token=B21D34D45D21A4A4B6AE6FE95F7D166E5A206FF1F03F9BE1A5EED58BE44971FE6957FD7BA9A88692510AC382F8E87BFA
+*** file:///Users/ericagriffith/Downloads/Rulesofconnectivitybetweengeniculatecellsandsimplecellsincatprimaryvisualcortex2001.pdf
+*** https://pdfs.semanticscholar.org/45ee/02419e455bbcbe63c21e155da34d4c851ebe.pdf?_ga=2.252921099.344536635.1583266360-1315932154.1583266360
+* <2020-03-10 Tue -- correction of VIP>
+** made a correction to netParams_cell.py -- was not accounting for soma length in prevL when setting pt3d of VIP, added in the float() line to change the offset. 

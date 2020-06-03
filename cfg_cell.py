@@ -24,33 +24,42 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 cfg.duration = 0.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
-cfg.verbose = 0             	## Show detailed messages
+cfg.verbose = 0                	## Show detailed messages
 cfg.hParams['celsius'] = 37
 cfg.createNEURONObj = 1
 cfg.createPyStruct = 1
 cfg.printRunTime = 0.1
 
+cfg.connRandomSecFromList = False  # set to false for reproducibility 
+cfg.cvode_active = False
+cfg.cvode_atol = 1e-6
+cfg.cache_efficient = True
+cfg.oneSynPerNetcon = False
+cfg.includeParamsLabel = False
+cfg.printPopAvgRates = [0, cfg.duration]
+
+
 #------------------------------------------------------------------------------
 # Recording 
 #------------------------------------------------------------------------------
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'IC']
+cfg.allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
 
-alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE']
+alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE', 'TI']
 
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
-cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
+cfg.recordStep = 1.0            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-# cfg.recordLFP = [[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
+#cfg.recordLFP = [[-15, 500, 100]] #[[200, y, 200] for y in range(0, 2000, 400)]+[[200, 2500, 200], [200,2700,200]]
 
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v11_sim39'
-cfg.saveFolder = 'data/v11_manualTune/'                	## Set file output name
-cfg.savePickle = True         	## Save pkl file
+cfg.simLabel = 'v24_sim1'
+cfg.saveFolder = 'data/v24_manualTune/'                	## Set file output name
+cfg.savePickle = False         	## Save pkl file
 cfg.saveJson = True           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] ## seen in M1 cfg.py (line 58)
 cfg.backupCfgFile = None 		## Seen in M1 cfg.py 
@@ -66,9 +75,10 @@ cfg.saveCellConns = 1		## Seen in M1 cfg.py
 
 # popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
 
-cfg.analysis['plotTraces'] = {'include': [0], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-# cfg.analysis['plotRaster'] = {'include': allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
-#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': True}
+cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in cfg.allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+
+#cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize':10, 'marker': '.', 'dpi': 300}      	## Plot a raster
+#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'locations'], 'saveData': False, 'saveFig':1}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 
@@ -91,7 +101,8 @@ cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 # Network 
 #------------------------------------------------------------------------------
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
-cfg.singleCellPops = False
+cfg.singleCellPops = 1
+cfg.singlePop = ''
 cfg.removeWeightNorm = False
 cfg.scale = 1.0     # Is this what should be used? 
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
@@ -120,10 +131,10 @@ cfg.IEweights = [1.0, 1.0, 1.0] # [0.75, 0.75, 0.5]
 cfg.IIweights = [1.5, 1.0, 1.0]
 
 # Thalamic
-cfg.addIntraThalamicConn = 1
-cfg.addIntraThalamicConn = 1
-cfg.addCorticoThalamicConn = 1
-cfg.addThalamoCorticalConn = 1
+cfg.addIntraThalamicConn = 0
+cfg.addIntraThalamicConn = 0
+cfg.addCorticoThalamicConn = 0
+cfg.addThalamoCorticalConn = 0
 #cfg.addMatrixThalamoCorticalConn = 1
 
 cfg.intraThalamicGain = 1.0 #0.5
@@ -137,19 +148,35 @@ cfg.addSubConn = 0
 # Background inputs
 #------------------------------------------------------------------------------
 cfg.addBkgConn = 1
-cfg.noiseBkg = {'A1': 1.0, 'thalamus': 0.05}  # firing rate random noise
+cfg.noiseBkg = 1.0  # firing rate random noise
 cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
-cfg.weightBkg = {'E': 3.5, 'I': 2.0, 'ThalE': 1.0*1e-2, 'ThalI': 1.0*1e-2}  # corresponds to unitary connection somatic EPSP (mV)
-cfg.rateBkg = {'E': 80, 'I': 80, 'ThalE': 15, 'ThalI': 15}
-cfg.randomThalInput = False  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+
+# weights tuned to obtain low firing rates on each cell type with only bkg
+cfg.weightBkg = 1
+cfg.weightBkgE = 1
+cfg.weightBkgI = 1
+
+#  {'IT': 16.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+#                 'PV': 28.0, 'SOM': 5.0, 'NGF': 65.0, 'VIP': 9.0,
+#                 'TC': 1.0, 'HTC': 1.0, 'RE': 9.0, 'TI': 3.0}
+cfg.rateBkg = {'exc': 40, 'inh': 40}
+
+
+## options to provide external sensory input
+cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+
 cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
-cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat'}  # parameters to generate realistic  
+
+cfg.ICThalInput = None #{'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
+
 
 #------------------------------------------------------------------------------
 # Current inputs 
 #------------------------------------------------------------------------------
 cfg.addIClamp = 0
+
+cfg.IClamp1 = {'pop': '', 'sec': 'soma', 'loc': 0.5, 'start': 100, 'dur': 400, 'amp': 0.4}
 
 #------------------------------------------------------------------------------
 # NetStim inputs 
@@ -158,7 +185,7 @@ cfg.addIClamp = 0
 cfg.addNetStim = 0
 
 ## LAYER 1
-cfg.NetStim1 = {'pop': 'NGF1', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
+cfg.NetStim1 = {'pop': 'VIP2', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
 
 # ## LAYER 2
 # cfg.NetStim2 = {'pop': 'IT2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}

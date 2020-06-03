@@ -9,6 +9,91 @@ from netpyne.batch import Batch
 from netpyne import specs
 import numpy as np
 
+
+# ----------------------------------------------------------------------------------------------
+# Weight Normalization 
+# ----------------------------------------------------------------------------------------------
+def bkgWeights(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkg'] = weights
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    initCfg[('rateBkg', 'exc')] = 40
+    initCfg[('rateBkg', 'inh')] = 40
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+ 
+
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+
+    return b
+
+# ----------------------------------------------------------------------------------------------
+# Weight Normalization 
+# ----------------------------------------------------------------------------------------------
+def bkgWeights2D(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkgE'] = weights
+    params['weightBkgI'] = weights
+    params[('rateBkg', 'exc')] = [20, 40, 60, 80]
+    params[('rateBkg', 'inh')] = [20, 40, 60, 80]
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 3.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+    initCfg['printPopAvgRates'] = [500, 3000]
+
+    initCfg[('rateBkg', 'exc')] = 40
+    initCfg[('rateBkg', 'inh')] = 40
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+ 
+
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+
+    return b
+
 # ----------------------------------------------------------------------------------------------
 # Weight Normalization 
 # ----------------------------------------------------------------------------------------------
@@ -518,11 +603,11 @@ def EPSPs():
 # ----------------------------------------------------------------------------------------------
 # f-I curve
 # ----------------------------------------------------------------------------------------------
-def fIcurve():
+def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     params = specs.ODict()
 
-    params[('IClamp1', 'pop')] = ['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6', 'PV2', 'SOM2']
-    params[('IClamp1', 'amp')] = list(np.arange(0.0, 6.5, 0.5)/10.0) 
+    params['singlePop'] = pops
+    params[('IClamp1', 'amp')] = amps
     #params['ihGbar'] = [0.0, 1.0, 2.0]
     # params['axonNa'] = [5, 6, 7, 8] 
     # params['gpas'] = [0.6, 0.65, 0.70, 0.75] 
@@ -531,15 +616,29 @@ def fIcurve():
 
     # initial config
     initCfg = {}
-    initCfg['duration'] = 1.5*1e3
+    initCfg['duration'] = 2.0*1e3
     initCfg['addIClamp'] = True
     initCfg['addNetStim'] = False
     initCfg['weightNorm'] = True
     initCfg[('IClamp1','sec')] = 'soma'
     initCfg[('IClamp1','loc')] = 0.5
-    initCfg[('IClamp1','start')] = 500
+    initCfg[('IClamp1','start')] = 750
     initCfg[('IClamp1','dur')] = 1000
-    initCfg[('analysis','plotTraces','timeRange')] = [0, 1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, 2000]
+    initCfg['printPopAvgRates'] = [750,1750]
+
+    initCfg[('hParams', 'celsius')] = 37
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = False
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addNetStim'] = False
 
     groupedParams = [] 
 
@@ -554,24 +653,77 @@ def fIcurve():
 def custom():
     params = specs.ODict()
 
-    factor = 5
-
-    params[('weightBkg', 'E')] = [1.0*factor, 2.0*factor] #[0.1, 0.5, 1.0*factor]
-    params[('weightBkg', 'I')] = [1.0*factor, 2.0*factor] #[0.1, 0.5, 1.0*factor]
-    params[('weightBkg', 'ThalE')] = [1.0*factor] #[0.1, 0.5, 1.0*factor]
-    params[('weightBkg', 'ThalI')] = [1.0*factor] #[0.1, 0.5, 1.0*factor]
+    # conn gains
+    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
-    params[('weightInput', 'ThalE')] = [0.0] #,1.0] #[0.0, 0.5, 1.0]
-    params[('weightInput', 'ThalI')] = [0.0]#, 1.0] # [0.0, 0.5, 1.0]
+    #params['thalamoCorticalGain'] = [1.434715802, 2.0]
+    #params[('ICThalInput', 'probE')] = [0.12, 0.25]#, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
     
-    groupedParams = []
+    groupedParams = [] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
+    # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 2.0*1e3
+    initCfg = {}
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
+
+    ''' from v23_batch8'''
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]= 1.0
+    initCfg[('IELayerGain', '4')]=1.0
+    initCfg[('IELayerGain', '5')]=1.0
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.0
+    initCfg[('IILayerGain', '4')]=1.0 
+    initCfg[('IILayerGain', '5')]=1.0
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+    
+
+    ''' from v24_batch3
+    initCfg['EEGain'] = 1.7930365644528616
+    initCfg['EIGain'] = 1.301292631	
+    
+    initCfg[('IELayerGain', '1-3')] = 1.9609935 - 0.15
+    initCfg[('IELayerGain', '4')] = 1.973369532	- 0.15
+    initCfg[('IELayerGain', '5')] = 0.547478256	- 0.15
+    initCfg[('IELayerGain', '6')] = 0.817050621	- 0.15
+
+    initCfg[('IILayerGain', '1-3')] = 0.575910457
+    initCfg[('IILayerGain', '4')] = 0.506134474	
+    initCfg[('IILayerGain', '5')] = 1.140789303	
+    initCfg[('IILayerGain', '6')] = 1.999973065	
+
+    initCfg['thalamoCorticalGain'] = 1.434715802
+    initCfg['intraThalamicGain'] = 1.987386358	
+    initCfg['corticoThalamicGain'] = 1.354024353042513
+    '''
+
+    
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
 
     return b
@@ -584,30 +736,42 @@ def evolRates():
     # parameters
     params = specs.ODict()
 
-    # params['EEGain'] = [0.8, 1.2]  
-    # params['EIGain'] = [0.8, 1.2] 
-    # params['IEGain'] = [0.8, 1.2]
-    # params['IIGain'] = [0.8, 1.2]
-
-    # # I->E/I weights gains for each layer (L2/3+4, L5, L6)
-    # params['IEweights'] = [1.0, 1.0, 1.0] 
-    # params['IIweights'] = [1.5, 1.0, 1.0]
-
     # bkg inputs
-    #cfg.weightBkg = {'E': 0.5, 'I': 0.5, 'ThalE': 0.5, 'ThalI': 0.5}  # corresponds to unitary connection somatic EPSP (mV)
-    #cfg.rateBkg = {'E': 40, 'I': 40, 'ThalE': 40, 'ThalI': 40}
-    # # 
-    # cfg.weightInput = {'ThalE': 0.5, 'ThalI': 0.5}  # weight  ; =unitary connection somatic EPSP (mV)
-    # cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}  # probability of conn  
+    params['EEGain'] = [0.5, 2.0]
+    params['EIGain'] = [0.5, 2.0]
 
+    params[('IELayerGain', '1-3')] = [0.5, 2.0]
+    params[('IELayerGain', '4')] = [0.5, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0]
+    params[('IELayerGain', '6')] = [0.5, 2.0]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0]
+    params[('IILayerGain', '4')] = [0.5, 2.0]
+    params[('IILayerGain', '5')] = [0.5, 2.0]
+    params[('IILayerGain', '6')] = [0.5, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0]  
+    params['intraThalamicGain'] = [0.5, 2.0] 
+    params['corticoThalamicGain'] = [0.5, 2.0]
 
     groupedParams = []
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 1.5*1e3
-    initCfg['ihGbar'] = 0.75  # ih (for quiet/spont condition)
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
@@ -618,38 +782,52 @@ def evolRates():
     pops = {}
     
     ## Exc pops
-    Epops = ['IT2', 'IT4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6']
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
-    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
     for pop in Epops:
         pops[pop] = Etune
     
     ## Inh pops 
-    Ipops = ['NGF1', 'PV2', 'SOM2', 'VIP2', 'NGF2',
-            'PV4', 'SOM4', 'VIP4', 'NGF4',
-            'PV5A', 'SOM5A','VIP5A','NGF5A',
-            'PV5B', 'SOM5B','VIP5B','NGF5B',
-            'PV6', 'SOM6', 'VIP6', 'NGF6']
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
 
-    Itune = {'target': 10, 'width': 15, 'min': 0.25}
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
     for pop in Ipops:
         pops[pop] = Itune
     
     fitnessFuncArgs['pops'] = pops
     fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
 
 
     def fitnessFunc(simData, **kwargs):
         import numpy as np
         pops = kwargs['pops']
         maxFitness = kwargs['maxFitness']
-        popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
-                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
         fitness = np.mean(popFitness)
 
-        popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
-        print('  '+popInfo)
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
         return fitness
+
     
     #from IPython import embed; embed()
 
@@ -660,18 +838,17 @@ def evolRates():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 50,
-        'num_elites': 5,
-        'mutation_rate': 0.4,
+        'pop_size': 100,
+        'num_elites': 2,
+        'mutation_rate': 0.5,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
-        'max_generations': 100,
-        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 72, # (6h) max number of times to check if sim is completed (for each generation)
+        'max_generations': 200,
+        'time_sleep': 150, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 5, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
         'scancelUser': 'ext_salvadordura_gmail_com'
     }
-
 
     return b
 
@@ -682,13 +859,13 @@ def evolRates():
 def setRunCfg(b, type='mpi_bulletin'):
     if type=='mpi_bulletin':
         b.runCfg = {'type': 'mpi_bulletin', 
-            'script': 'init.py', 
+            'script': 'init_cell.py', 
             'skip': True}
 
     elif type=='mpi_direct':
         b.runCfg = {'type': 'mpi_direct',
-            'cores': 4,
-            'script': 'init_cell.py',
+            'cores': 96,
+            'script': 'init.py',
             'mpiCommand': 'mpirun',
             'skip': True}
 
@@ -749,30 +926,36 @@ def setRunCfg(b, type='mpi_bulletin'):
 
 if __name__ == '__main__':
 
-    b = custom()
-    #b = evolRates()
+    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b.batchLabel = 'v16_batch2' 
+    #b = custom()
+    # b = evolRates()
+    # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
+    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    b = fIcurve(pops=['VIP2', 'ITS4']) 
+
+    b.batchLabel = 'v24_batch7'
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid'  # evol
-    setRunCfg(b, 'hpc_slurm_gcp')
+    b.method = 'grid' #'grid' #'evol' #  # evol
+    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
-    ## Submit set of batch sims together
+    # #Submit set of batch sims together (eg. for weight norm)
 
-    # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    #popsWeightNorm =    {#'IT2_A1': ['IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-    #                     'ITS4_reduced': ['ITS4'],
-    #                     'PV_reduced': ['PV2', 'SOM2'],
-    #                     'VIP_reduced': ['VIP2'],
-    #                     'NGF_reduced': ['NGF2'],
-    #                     'RE_reduced': ['IRE', 'TC', 'HTC']}
+    # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
+    # popsWeightNorm =    {#'IT2_reduced': ['CT5A', 'CT5B']}#, #'IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
+    #                      'ITS4_reduced': ['ITS4']}
+    # # #                     'PV_reduced': ['PV2', 'SOM2'],
+    #                      'VIP_reduced': ['VIP2'],
+    #                      #'NGF_reduced': ['NGF2']} #,
+    # #                     #'RE_reduced': ['IRE', 'TC', 'HTC'],
+    # #                     #'TI_reduced': ['TI']}
  
-    # batchIndex = 8
+    # batchIndex = 7
     # for k, v in popsWeightNorm.items(): 
     #     b = weightNorm(pops=v, rule=k)
-    #     b.batchLabel = 'v11_batch'+str(batchIndex) 
+    #     b.batchLabel = 'v24_batch'+str(batchIndex) 
     #     b.saveFolder = 'data/'+b.batchLabel
     #     b.method = 'grid'  # evol
     #     setRunCfg(b, 'mpi_bulletin')

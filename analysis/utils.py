@@ -167,6 +167,46 @@ def readBatchData(dataFolder, batchLabel, loadAll=False, saveAll=True, vars=None
         
         return params, data
 
+def loadFromFile(filename, pops=None):
+    from netpyne import specs,sim
+    import collections
+
+    with open(filename, 'rb') as fileObj:
+        data = json.load(fileObj, object_pairs_hook=OrderedDict)
+
+    cfg = specs.SimConfig(data['simConfig'])
+    cfg.createNEURONObj = False
+
+    sim.initialize()  # create network object and set cfg and net params
+    sim.loadAll('', data=data, instantiate=False)
+    sim.setSimCfg(cfg)
+
+    if pops:    
+        temp = collections.OrderedDict()
+
+        # order pops by keys in popColors
+        for k in pops:
+            if k in sim.net.params.popParams:
+                temp[k] = sim.net.params.popParams.pop(k)
+
+        # add remaining pops at the end
+        for k in list(sim.net.params.popParams.keys()):
+            temp[k] = sim.net.params.popParams.pop(k)
+        
+        sim.net.params.popParams = temp
+    
+    try:
+        print('Cells created: ',len(sim.net.allCells))
+    except:
+        sim.net.createPops()     
+        sim.net.createCells()
+        sim.setupRecording()
+        sim.gatherData() 
+
+    sim.allSimData = data['simData']
+
+    return sim
+
 
 
 def plotsFromFile(filename, raster=True, stats=True, rates=False, syncs=False, hist=True, psd=True, grang=True, traces=True, plotAll=False, 

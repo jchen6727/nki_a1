@@ -172,7 +172,7 @@ proc biophys() {
 		//gkabar_kadcr= soma_kadcr
 
 		insert cancr
-		gcatbar_cancr=soma_cancr
+		gcabar_cancr=soma_cancr //gcabar_cancr not gcatbar_cancr
 
 		insert cadyn
 		// TO DO: cadyn_new, compile,insert, and verify the validation tests

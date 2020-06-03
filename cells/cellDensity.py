@@ -71,20 +71,6 @@ density[('A1','nonVIP')] = [(density[('A1','I')][i])*(nonVIP[i]) for i in range(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # save density data in pickle object 
 savePickle = 1
 

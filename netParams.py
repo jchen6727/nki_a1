@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 16
+netParams.version = 24
 
 #------------------------------------------------------------------------------
 #
@@ -42,7 +42,7 @@ netParams.shape = 'cylinder' # cylindrical (column-like) volume
 # General connectivity parameters
 #------------------------------------------------------------------------------
 netParams.scaleConnWeight = 1.0 # Connection weight scale factor (default if no model specified)
-netParams.scaleConnWeightModels = {'HH_reduced': 1.0, 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
+netParams.scaleConnWeightModels = { 'HH_reduced': 1.0, 'HH_full': 1.0} #scale conn weight factor for each cell model
 netParams.scaleConnWeightNetStims = 1.0 #0.5  # scale conn weight factor for NetStims
 netParams.defaultThreshold = 0.0 # spike threshold, 10 mV is NetCon default, lower it for all cells
 netParams.defaultDelay = 2.0 # default conn delay (ms)
@@ -61,6 +61,11 @@ cellModels = ['HH_reduced', 'HH_full'] # List of cell models
 # II: 100-950, IV: 950-1250, V: 1250-1550, VI: 1550-2000 
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 0.625], '5A': [0.625, 0.667], '5B': [0.667, 0.775], '6': [0.775, 1], 'thal': [1.2, 1.4], 'cochlear': [1.6, 1.8]}  # normalized layer boundaries  
 
+layerGroups = { '1-3': [layer['1'][0], layer['3'][1]],  # L1-3
+                '4': layer['4'],                      # L4
+                '5': [layer['5A'][0], layer['5B'][1]],  # L5A-5B
+                '6': layer['6']}                        # L6
+
 # add layer border correction ??
 #netParams.correctBorder = {'threshold': [cfg.correctBorderThreshold, cfg.correctBorderThreshold, cfg.correctBorderThreshold], 
 #                        'yborders': [layer['2'][0], layer['5A'][0], layer['6'][0], layer['6'][1]]}  # correct conn border effect
@@ -69,17 +74,19 @@ layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475, 
 #------------------------------------------------------------------------------
 ## Load cell rules previously saved using netpyne format (DOES NOT INCLUDE VIP, NGF and spiny stellate)
 ## include conditions ('conds') for each cellRule
-cellParamLabels =  ['IT2_A1', 'IT3_A1', 'ITP4_A1', 'ITS4_reduced', 'IT5A_A1', 'CT5A_A1', 'IT5B_A1',  'PT5B_A1', 'CT5B_A1', 'IT6_A1', 'CT6_A1',
+cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
+                    'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',
                     'PV_reduced', 'SOM_reduced', 'VIP_reduced', 'NGF_reduced',
-                    'RE_reduced', 'TC_reduced', 'HTC_reduced']
+                    'RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']
 
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
-# reduce ITS4 weighNorm
-for sec in netParams.cellParams['ITS4_reduced']['secs'].values():
-    for i in range(len(sec['weightNorm'])):
-        sec['weightNorm'][i] *= 0.2
+# reduce ITS4 weightNorm 
+# for sec in netParams.cellParams['ITS4_reduced']['secs'].values():
+#     for i in range(len(sec['weightNorm'])):
+#         sec['weightNorm'][i] *= 0.2
 
 #------------------------------------------------------------------------------
 # Population parameters
@@ -148,7 +155,8 @@ netParams.popParams['TC'] =     {'cellType': 'TC',  'cellModel': 'HH_reduced',  
 netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity} 
 netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.25*thalDensity}   
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
-netParams.popParams['IREM'] =   {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}
+netParams.popParams['IREM'] =   {'cellType': 'RE', 'cellModel': 'HH_reduced',   'ynormRange': layer['thal'],   'density': thalDensity}
+netParams.popParams['TI'] =     {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 2*0.33 * thalDensity} ## Winer & Larue 1996; Huang et al 1999 
 
 
 if cfg.singleCellPops:
@@ -190,11 +198,6 @@ NGFSynMech = ['GABAA', 'GABAB']
 
 
 #------------------------------------------------------------------------------
-# Background inputs
-#------------------------------------------------------------------------------ 
-
-
-#------------------------------------------------------------------------------
 # Local connectivity parameters
 #------------------------------------------------------------------------------
 
@@ -224,8 +227,8 @@ if cfg.addConn:
                 'synMechWeightFactor': cfg.synWeightFractionEE,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
-                'sec': 'spiny'}  # 'spiny' should be a secList with spiny dends in each cellParams
-
+                'sec': 'dend_all'}
+                
 
 #------------------------------------------------------------------------------
 ## E -> I
@@ -245,36 +248,14 @@ if cfg.addConn:
                 'synMechWeightFactor': cfg.synWeightFractionEI,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
-                'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
-
+                'sec': 'proximal'}
+                
 
 #------------------------------------------------------------------------------
 ## I -> E
 if cfg.addConn and cfg.IEGain > 0.0:
 
-    if connDataSource['I->E/I'] == 'custom_A1':
-        binsLabel = 'inh'
-        preTypes = Itypes
-        synMechs =  [PVSynMech, SOMESynMech, VIPSynMech, NGFSynMech]  
-        weightFactors = [[1.0], cfg.synWeightFractionSOME, [1.0], cfg.synWeightFractionNGF] 
-        secs = ['perisom', 'apicdend', 'apicdend', 'apicdend']
-        postTypes = Etypes
-        for ipreType, (preType, synMech, weightFactor, sec) in enumerate(zip(preTypes, synMechs, weightFactors, secs)):
-            for ipostType, postType in enumerate(postTypes):
-                for ipreBin, preBin in enumerate(bins[binsLabel]):
-                    for ipostBin, postBin in enumerate(bins[binsLabel]):
-                        ruleLabel = preType+'_'+postType+'_'+str(ipreBin)+'_'+str(ipostBin)
-                        netParams.connParams[ruleLabel] = {
-                            'preConds': {'cellType': preType, 'ynorm': list(preBin)},
-                            'postConds': {'cellType': postType, 'ynorm': list(postBin)},
-                            'synMech': synMech,
-                            'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType]['E'][ipreBin,ipostBin]),
-                            'weight': cfg.IEweights[ipostBin] * cfg.IEGain,
-                            'synMechWeightFactor': weightFactor,
-                            'delay': 'defaultDelay+dist_3D/propVelocity',
-                            'sec': sec} # simple I cells used right now only have soma
-    #  BBP_S1 or Allen_V1
-    else:
+    if connDataSource['I->E/I'] == 'Allen_custom':
 
         ESynMech = ['AMPA', 'NMDA']
         SOMESynMech = ['GABAASlow','GABAB']
@@ -282,86 +263,69 @@ if cfg.addConn and cfg.IEGain > 0.0:
         PVSynMech = ['GABAA']
         VIPSynMech = ['GABAA_VIP']
         NGFSynMech = ['GABAA', 'GABAB']
+                        
+        layerGroupLabels = ['1-3', '4', '5', '6']
 
         for pre in Ipops:
             for post in Epops:
-                if connDataSource['I->E/I'] in ['Allen_V1', 'Allen_custom']:
+                for l in layerGroupLabels:  # used to tune each layer group independently
+                    
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                else:
-                    prob = pmat[pre][post]
-                
-                if 'SOM' in pre:
-                    synMech = SOMESynMech
-                elif 'PV' in pre:
-                    synMech = PVSynMech
-                elif 'VIP' in pre:
-                    synMech = VIPSynMech
-                elif 'NGF' in pre:
-                    synMech = NGFSynMech
+                    
+                    if 'SOM' in pre:
+                        synMech = SOMESynMech
+                    elif 'PV' in pre:
+                        synMech = PVSynMech
+                    elif 'VIP' in pre:
+                        synMech = VIPSynMech
+                    elif 'NGF' in pre:
+                        synMech = NGFSynMech
 
-                netParams.connParams['IE_'+pre+'_'+post] = { 
-                    'preConds': {'pop': pre}, 
-                    'postConds': {'pop': post},
-                    'synMech': synMech,
-                    'probability': prob,
-                    'weight': wmat[pre][post] * cfg.EIGain, 
-                    'synMechWeightFactor': cfg.synWeightFractionEI,
-                    'delay': 'defaultDelay+dist_3D/propVelocity',
-                    'synsPerConn': 1,
-                    'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
+                    netParams.connParams['IE_'+pre+'_'+post+'_'+l] = { 
+                        'preConds': {'pop': pre}, 
+                        'postConds': {'pop': post, 'ynorm': layerGroups[l]},
+                        'synMech': synMech,
+                        'probability': prob,
+                        'weight': wmat[pre][post] * cfg.IEGain * cfg.IELayerGain[l], 
+                        'synMechWeightFactor': cfg.synWeightFractionEI,
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'synsPerConn': 1,
+                        'sec': 'proximal'}
+                    
 
 #------------------------------------------------------------------------------
 ## I -> I
 if cfg.addConn and cfg.IIGain > 0.0:
 
-    if connDataSource['I->E/I'] == 'custom_A1':
-        binsLabel = 'inh'
-        preTypes = Itypes
-        synMechs = [PVSynMech, SOMISynMech, SOMISynMech, SOMISynMech] # Update VIP and NGF syns! 
-        sec = 'perisom'
-        postTypes = Itypes
-        for ipre, (preType, synMech) in enumerate(zip(preTypes, synMechs)):
-            for ipost, postType in enumerate(postTypes):
-                for iBin, bin in enumerate(bins[binsLabel]):
-                    ruleLabel = preType+'_'+postType+'_'+str(iBin)
-                    netParams.connParams[ruleLabel] = {
-                        'preConds': {'cellType': preType, 'ynorm': bin},
-                        'postConds': {'cellType': postType, 'ynorm': bin},
-                        'synMech': synMech,
-                        'probability': '%f * exp(-dist_2D/probLambda)' % (pmat[preType][postType]),
-                        'weight': cfg.IIweights[iBin] * cfg.IIGain,
-                        'delay': 'defaultDelay+dist_3D/propVelocity',
-                        'sec': sec} # simple I cells used right now only have soma
+    if connDataSource['I->E/I'] == 'Allen_custom':
 
-    #  BBP_S1 or Allen_V1
-    else: 
+        layerGroupLabels = ['1-3', '4', '5', '6']
         for pre in Ipops:
             for post in Ipops:
-                if connDataSource['I->E/I'] in ['Allen_V1', 'Allen_custom']:
+                for l in layerGroupLabels: 
+                    
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                else:
-                    prob = pmat[pre][post]
 
-                if 'SOM' in pre:
-                    synMech = SOMISynMech
-                elif 'PV' in pre:
-                    synMech = PVSynMech
-                elif 'VIP' in pre:
-                    synMech = VIPSynMech
-                elif 'NGF' in pre:
-                    synMech = NGFSynMech
+                    if 'SOM' in pre:
+                        synMech = SOMISynMech
+                    elif 'PV' in pre:
+                        synMech = PVSynMech
+                    elif 'VIP' in pre:
+                        synMech = VIPSynMech
+                    elif 'NGF' in pre:
+                        synMech = NGFSynMech
 
-                netParams.connParams['II_'+pre+'_'+post] = { 
-                    'preConds': {'pop': pre}, 
-                    'postConds': {'pop': post},
-                    'synMech': synMech,
-                    'probability': prob,
-                    'weight': wmat[pre][post] * cfg.IIGain, 
-                    'synMechWeightFactor': cfg.synWeightFractionII,
-                    'delay': 'defaultDelay+dist_3D/propVelocity',
-                    'synsPerConn': 1,
-                    'sec': 'perisomatic'}  # 'perisomatic' should be a secList with perisomatic dends in each cellParams
-
+                    netParams.connParams['II_'+pre+'_'+post+'_'+l] = { 
+                        'preConds': {'pop': pre}, 
+                        'postConds': {'pop': post,  'ynorm': layerGroups[l]},
+                        'synMech': synMech,
+                        'probability': prob,
+                        'weight': wmat[pre][post] * cfg.IIGain * cfg.IILayerGain[l], 
+                        'synMechWeightFactor': cfg.synWeightFractionII,
+                        'delay': 'defaultDelay+dist_3D/propVelocity',
+                        'synsPerConn': 1,
+                        'sec': 'proximal'}
+                        
 
 #------------------------------------------------------------------------------
 # Thalamic connectivity parameters
@@ -372,7 +336,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
 ## Intrathalamic 
 
 TEpops = ['TC', 'TCM', 'HTC']
-TIpops = ['IRE', 'IREM']
+TIpops = ['IRE', 'IREM', 'TI']
 
 if cfg.addIntraThalamicConn:
     for pre in TEpops+TIpops:
@@ -447,15 +411,12 @@ if cfg.addThalamoCorticalConn:
                     'sec': 'soma'}  
 
 
-
 #------------------------------------------------------------------------------
 # Subcellular connectivity (synaptic distributions)
 #------------------------------------------------------------------------------  
 
 # Set target sections (somatodendritic distribution of synapses)
 # From Billeh 2019 (Allen V1) (fig 4F) and Tremblay 2016 (fig 3)
-
-
 
 if cfg.addSubConn:
     #------------------------------------------------------------------------------
@@ -563,12 +524,8 @@ if cfg.addSubConn:
 #------------------------------------------------------------------------------  
 if cfg.addBkgConn:
     # add bkg sources for E and I cells
-    netParams.stimSourceParams['bkgE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['E'], 'noise': cfg.noiseBkg['A1'], 'number': 1e9}
-    netParams.stimSourceParams['bkgI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['I'], 'noise': cfg.noiseBkg['A1'], 'number': 1e9}
-    
-    if cfg.randomThalInput:
-        netParams.stimSourceParams['bkgThalE'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalE'], 'noise': cfg.noiseBkg['thalamus'], 'number': 1e9}
-        netParams.stimSourceParams['bkgThalI'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['ThalI'], 'noise': cfg.noiseBkg['thalamus'], 'number': 1e9}
+    netParams.stimSourceParams['excBkg'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['exc'], 'noise': cfg.noiseBkg, 'number': 1e9}
+    netParams.stimSourceParams['inhBkg'] = {'type': 'NetStim', 'start': cfg.startBkg, 'rate': cfg.rateBkg['inh'], 'noise': cfg.noiseBkg, 'number': 1e9}
     
     if cfg.cochlearThalInput:
         from input import cochlearInputSpikes
@@ -591,6 +548,9 @@ if cfg.addBkgConn:
         ICrates = data['BE_sout_population'].tolist()
         ICtimes = list(np.arange(0, cfg.duration, 1000./fs))  # list with times to set each time-dep rate
         
+        
+        ICrates = ICrates * 4 # 200 cells
+        
         numCells = len(ICrates)
 
         # Option 1: create population of DynamicNetStims with time-varying rates
@@ -604,52 +564,34 @@ if cfg.addBkgConn:
         spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration)] for i in range(len(ICrates))]
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],'spkTimes': spkTimes}
 
-    # connect stim sources to target cells
-    netParams.stimTargetParams['bkgE->E'] =  {
-        'source': 'bkgE', 
-        'conds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
-        'sec': 'soma', 
-        'loc': 0.5,
-        'synMech': ESynMech,
-        'weight': cfg.weightBkg['E'],
-        'synMechWeightFactor': cfg.synWeightFractionEE,
-        'delay': cfg.delayBkg}
 
-    netParams.stimTargetParams['bkgI->I'] =  {
-        'source': 'bkgI', 
-        'conds': {'cellType': ['PV', 'SOM', 'VIP', 'NGF']},
-        'sec': 'soma', 
-        'loc': 0.5,
-        'synMech': ESynMech,
-        'weight': cfg.weightBkg['I'],
-        'synMechWeightFactor': cfg.synWeightFractionEI,
-        'delay': cfg.delayBkg}
 
-    # connect random thalamic inputs
-    if cfg.randomThalInput:
-        netParams.stimTargetParams['bkgThalE->ThalE'] =  {
-            'source': 'bkgThalE', 
-            'conds': {'cellType': ['TC', 'HTC']},
-            'sec': 'soma', 
+    # excBkg/I -> thalamus + cortex
+    with open('cells/bkgWeightPops.json', 'r') as f:
+        weightBkg = json.load(f)
+    pops = list(cfg.allpops)
+    pops.remove('IC')
+    for pop in pops:
+        netParams.stimTargetParams['excBkg->'+pop] =  {
+            'source': 'excBkg', 
+            'conds': {'pop': pop},
+            'sec': 'apic', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': cfg.probInput['ThalE'], 
-            'weight': cfg.weightInput['ThalE'],
+            'weight': weightBkg[pop],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
 
-        netParams.stimTargetParams['bkgThalI->ThalI'] =  {
-            'source': 'bkgThalI', 
-            'conds': {'cellType': ['RE']},
-            'sec': 'soma', 
+        netParams.stimTargetParams['inhBkg->'+pop] =  {
+            'source': 'inhBkg', 
+            'conds': {'pop': pop},
+            'sec': 'proximal',
             'loc': 0.5,
-            'synMech': ESynMech,
-            'probability': cfg.probInput['ThalE'], 
-            'weight': cfg.weightInput['ThalI'],
-            'synMechWeightFactor': cfg.synWeightFractionEI,
+            'synMech': 'GABAA',
+            'weight': weightBkg[pop],
             'delay': cfg.delayBkg}
 
-    # connect cochlear thalamic input
+    # cochlea -> thal
     if cfg.cochlearThalInput:
         netParams.connParams['cochlea->ThalE'] = { 
             'preConds': {'pop': 'cochlea'}, 
@@ -673,7 +615,7 @@ if cfg.addBkgConn:
             'synMechWeightFactor': cfg.synWeightFractionEI,
             'delay': cfg.delayBkg}  
 
-    # connect cochlear + IC thalamic inputs
+    # cochlea/IC -> thal
     if cfg.ICThalInput:
         netParams.connParams['IC->ThalE'] = { 
             'preConds': {'pop': 'IC'}, 
@@ -681,21 +623,21 @@ if cfg.addBkgConn:
             'sec': 'soma', 
             'loc': 0.5,
             'synMech': ESynMech,
-            'probability': cfg.probInput['ThalE'],
-            'weight': cfg.weightInput['ThalE'],
+            'probability': cfg.ICThalInput['probE'],
+            'weight': cfg.ICThalInput['weightE'],
             'synMechWeightFactor': cfg.synWeightFractionEE,
             'delay': cfg.delayBkg}
         
         netParams.connParams['IC->ThalI'] = { 
             'preConds': {'pop': 'IC'}, 
-            'postConds': {'cellType': ['RE']},
+            'postConds': {'cellType': ['RE', 'TI']},
             'sec': 'soma', 
             'loc': 0.5,
-            'synMech': ESynMech,
-            'probability': cfg.probInput['ThalI'], 
-            'weight': cfg.weightInput['ThalI'],
-            'synMechWeightFactor': cfg.synWeightFractionEI,
+            'synMech': 'GABAA',
+            'probability': cfg.ICThalInput['probI'],
+            'weight': cfg.ICThalInput['weightI'],
             'delay': cfg.delayBkg}  
+
 
 #------------------------------------------------------------------------------
 # Current inputs (IClamp)
@@ -753,4 +695,13 @@ v13 - Added CT cells to L5A
 v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
 v15 - Added cortical and thalamic conn to CT5A and CT5B 
 v16 - Updated multiple cell types
+v17 - Changed NGF -> I prob from strong (1.0) to weak (0.35)
+v18 - Fixed bug in VIP cell morphology
+v19 - Added in 2-compartment thalamic interneuron model 
+v20 - Added TI conn and updated thal pop
+v21 - Added exc+inh bkg inputs specific to each cell type
+v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
+v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
+v24 - Fixed bug in IE/II specific layer gains
 """
+

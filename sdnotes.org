@@ -375,7 +375,7 @@ https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
 
 - similar tuning in macaques as in humans:
 -- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3198376/
-* Feb62020 Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)
+* 6Feb2020 Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)
 ** email from slava
 Hi Everyone,
 Thanks for your interest in the 'auditory-brainstem-model' description. I think, it might also be good to check e.g. the Auditory Modeling Toolbox (AMT) and maybe some implementations might be useful for your project. The AMT collection contains many models for different stages of the auditory system ( + description/documentation and references).
@@ -486,7 +486,7 @@ for cell in sim.net.cells:
         amp.play(cell.stims[0]['hObj']._ref_amp, t, True)
     except:
 
-* Feb182020 Preparing to tune model
+* 18Feb2020 Preparing to tune model
 ** consolidated all cell params in .json files
 including 3d pt morphologies and weightNorm
 ** select network size
@@ -604,9 +604,62 @@ cfg.probInput = {'ThalE': 0.25, 'ThalI': 0.25}
 - might be useful to select suitable params and value ranges
 - I think could potentially use existing sims to train
 *** param space sampling using latin hypercube
+
 - used by Tim Rumbell for single cell optim
 - more homogeneous sampling of the param space 
 
+* 23Mar2020 Tuning model
+** tune 1st bkg
+- agreed with sam should tune first bkg to each cell type: maybe ~1 Hz for E and ~4-5 Hz for I
+- add bkg GABAA input - sometimes helps to desynchronize the cells if it's noisy
+- add bkg E and I inputs for each cell type
+- can do this manually since quick sims
+* 4May2020 bkg tuning
+** latest update
+reduced the target E rates from 2 to 1.5 hz and that gives better results (eg less depol block)
+9:07
+also when using apical inputs to E, I was thinking the low flat response of PT5B is not necessarily a bad thing (edited) 
+9:08
+just means it’s kind of balanced in the sense that increasing both E and I proportionally results in the same low firing rate … which is reasonable
+9:09
+so have two decent options for bkg inputs
+9:09
+E 40 hz soma, I 40 hz soma — problems: 2 pops have depol block, 1 pop doesn’t fire
+E 40 hz apical, I 40 hz basal — problems: 1 pops have depol block, 2 pop doesn’t fire
+for either case can just adjust a bit the bkg weights for the 3 problematic pops
+9:12
+so will do that tomorrow and then submit a param sweep for conn params to see if can find good solution (with cortical + thalamic conn)
+** add hand tuned scaling factors
+- finetuning for pops not firing or in dep block
+- follow from v22_sim3 - apical E 40 hz apical, I 40 hz basal 
+ 
+   ITP4 : 0.001 Hz
+   ITS4 : 0.000 Hz
+   IT6 - depol
+** checked bkg (only long-range) rates in M1 model
+  Spikes: 23790 (2.24 Hz)
+   IT2 : 40.600 Hz
+   SOM2 : 76.400 Hz
+   PV2 : 0.000 Hz
+   IT4 : 26.600 Hz
+   IT5A : 54.600 Hz
+   SOM5A : 84.400 Hz
+   PV5A : 0.000 Hz
+   IT5B : 43.800 Hz
+   PT5B : 1.600 Hz
+   SOM5B : 63.200 Hz
+   PV5B : 0.000 Hz
+   IT6 : 30.200 Hz
+   CT6 : 18.600 Hz
+   SOM6 : 48.200 Hz
+   PV6 : 0.000 Hz
+   TPO : 2.524 Hz
+   TVL : 1.156 Hz
+   S1 : 2.541 Hz
+   S2 : 2.542 Hz
+   cM1 : 1.259 Hz
+   M2 : 1.158 Hz
+   OC : 2.462 Hz
 
 * CELL TYPES
 ** Budinger et al 2018
@@ -1027,7 +1080,7 @@ if one population gets more inputs due to bbp then another one might need to get
 
 - weight (epsp):
 -- 0.2 - 1.2 mV
-*** !Bruno and Constantinole, 2006; rat S1 (TC->L4)
+*** !Bruno and Constantinople, 2006; rat S1 (TC->L4)
 - L2/3: 0%
 - L4: 42.5% / 42.8%
 
@@ -1189,7 +1242,185 @@ Thus, to address this issue, we changed the synaptic placement rules for all L1-
 
 *** TC -> soma + non-apical dends
 *** TCM -> E apical dends
+** Thalamic interneuron conn
+*** convert data on %syn but not prob conn
+- need total num syns and number of cells on each pop 
+*** num syn contacts (SC) in cat MGBv interneurons
+A "standard" interneuron possesses about
+11,000 SC. Among them, about 5500 SC (1200 of RL
+group, 2600 of RS group, 1200 of F group, and 400 of
+UT group) are localized on the soma and dendrites of
+this cell, while about the same number (5500) of SC are
+the contacts distributed on the P-PST, which are the
+dendritic terminals of the interneuron. Within the latter
+SC population, 1400 SC belong to the RL group, 1000
+to the RS, 200 to the F, 2700 to the P, and 200 to the
+UT group. 
 
+RL --> inferior colliculus: 1200+1400=2600 (24%)
+RS --> axon terminals from A1 neurons: 2600+1000=3600 (33%)
+F --> reticular: 1200+200=1400 (13%)
+P--> thal interneurons: 2700=2700 (25%)
+UT --> unidentified: 400+200=600 (5%)
+TOTAL: 10,900
+
+*** num cells in model with diam 200um; total 12958
+**** cortex - 12187
+NGF1 151
+IT2 338
+SOM2 5
+PV2 13
+VIP2 16
+NGF2 11
+IT3 4461
+SOM3 70
+PV3 176
+VIP3 211
+NGF3 150
+ITP4 837
+ITS4 837
+SOM4 24
+PV4 93
+VIP4 13
+NGF4 14
+IT5A 359
+CT5A 359
+SOM5A 43
+PV5A 73
+VIP5A 10
+NGF5A 8
+IT5B 471
+CT5B 471
+PT5B 471
+SOM5B 112
+PV5B 134
+VIP5B 17
+NGF5B 24
+IT6 1009
+CT6 1009
+SOM6 63
+PV6 84
+VIP6 12
+NGF6 38
+**** thal - 721
+TC 116
+TCM 155
+HTC 38
+IRE 155
+IREM 155
+TI 102
+IC 50
+
+*** prob conn
+equations:
+IC->TI_prob * 50 = 0.24 * TOTAL
+CT->TI_prob * (359+471+1009) = 0.33 * TOTAL
+RE->TI_prob * (155+155) = 0.13 * TOTAL
+TI->TI_prob * 102 = 0.25 * TOTAL 
+
+solving for probs:
+IC->TI_prob = 0.24 * TOTAL / 50
+CT->TI_prob = 0.33 * TOTAL / (359+471+1009)
+RE->TI_prob = 0.13 * TOTAL / (155+155)
+TI->TI_prob = 0.25 * TOTAL / 102
+
+assuming, TOTAL1 = 10900 / 5 contacts/syn * 0.5 (only modeling 200um) = 1090
+IC->TI_prob = 0.24 * 1090 / 50 = 5.2 (!! increase IC to >= 262)
+CT->TI_prob = 0.33 * 1090 / (359+471+1009) =  0.20
+RE->TI_prob = 0.13 * 1090 / (155+155) = 0.46
+TI->TI_prob = 0.25 * 1090 / 102 = 2.67 (!! increase TI >= 273)
+
+assuming, TOTAL2 = 10900 / 5 contacts/syn * 0.2 (only modeling 200um) = 436:
+IC->TI_prob = 0.24 * 436 / 50 = 2.1 (!! increase IC to >=105)
+CT->TI_prob = 0.33 * 436 / (359+471+1009) = 0.078
+RE->TI_prob = 0.13 * 436 / (155+155) = 0.18
+TI->TI_prob = 0.25 * 436 / 102 = 1.06 (!! increase TI to >= 109)
+
+assuming, TOTAL3 = 10900 / 5 contacts/syn * 0.1 (only modeling 200um) = 218:
+IC->TI_prob = 0.24 * 218 / 50 = 1.046 (!! increase IC to >= 53); if increase IC to 200 cells --> 0.26
+CT->TI_prob = 0.33 * 218 / (359+471+1009) = 0.039
+RE->TI_prob = 0.13 * 218 / (155+155) = 0.091
+TI->TI_prob = 0.25 * 218 / 102 = 0.534
+
+note eqns hold for single cell:
+prob = avg_syns_in_single_post_cell / pre_pop_size = (total_syns / post_pop_size) / pre_pop_size = total_syns / (pre_pop_size * post_pop_size)
+
+*** conclusions
+- potentially need to increase ratio of thal cells to conn
+- for A1 column of diam 200um we have 12187 cortical cells and only 721 thal cells 
+- our current ratio of thal:A1 = 16.9:1
+- “Our results suggest an LGN-V1 expansion ratio between 17:1 and 40:1, similar to values reported previously for visual cortex, and other sensory pathways [refs include A1]” (Coen-Cagli et al 2017; F1000Res)
+
+Resulting prob conns with current assumptions:
+- IC->TI: 26%
+- CT->TI: 4%
+- RE->TI: 9%
+- TI->TI: 53%
+
+*** calculate TI -> TC
+calculate:
+TI -> TC based on above num syns TI->TI and following TI outputs:
+- TC relay cell: 92%
+- Thalamic interneurons: ~8% (7+1) 
+
+TI->TI prob = 0.534 -> divergence = 
+
+- prob = nconn / (preN * postN)
+- nconn = 0.534 * (102*102) = 5,556
+- conv = nconn / postN = 5,556 / 102 = 55
+- div = nconn / preN = 55
+
+TI outputs:
+- to TI = 8% = 55
+- to TC = 92% = 55 / 0.08 = 688 (=divergence)
+- note: TC includes TC+TCM+HTC
+
+- TI->TC nconn = div * 102 = 688 * 102 = 70,176
+- TI->TC prob   = nconn / (preN * postN) 
+                = 70,176 / (102 * (116+38+155)) 
+                = 70,176 / (102*309) 
+                = 70,176 / 31,518 
+                = 2.22
+
+*** TI -> TC method 2:
+- From Serkov 1996:
+9100 SC of different groups are distributed on a single
+"standard" relay neuron of the MGBv of the cat.
+Among them, about 1200, 5200, 1200, 1100, and 400
+SC are formed by RL-, RS-, F-, P-, and UT-terminals,
+respectively. A "standard" interneuron possesses about
+11,000 SC. Among them, about 5500 SC (1200 of RL
+group, 2600 of RS group, 1200 of F group, and 400 of
+UT group) are localized on the soma and dendrites of
+this cell, while about the same number (5500) of SC are
+the contacts distributed on the P-PST, which are the
+dendritic terminals of the interneuron. Within the latter
+SC population, 1400 SC belong to the RL group, 1000
+to the RS, 200 to the F, 2700 to the P, and 200 to the
+UT group.
+
+RL --> inferior colliculus: 1200 (13%)
+RS --> axon terminals from A1 neurons: 5200 (57%)
+F --> reticular: 1200 (13%)
+P--> thal interneurons: 1100 (12%)
+UT --> unidentified: 400 (5%)
+TOTAL = 9100 syns
+
+IC->TC_prob * 50 = 0.13 * TOTAL
+CT->TC_prob * (359+471+1009) = 0.57 * TOTAL
+RE->TC_prob * (155+155) = 0.13 * TOTAL
+TI->TC_prob * 102 = 0.12 * TOTAL 
+
+assuming, TOTAL3 = 9100 / 5 contacts/syn * 0.1 (only modeling 200um) = 182:
+IC->TC_prob = 0.13 * 182 / 50 = 0.47  if increase IC to 200 cells --> 0.12
+CT->TC_prob = 0.57 * 182 / (359+471+1009) = 0.056
+RE->TC_prob = 0.13 * 182 / (155+155) = 0.076
+TI->TC_prob = 0.12 * 182 / 102 = 0.21
+
+- Calculated values approx match what we already had in model:
+RE -> TC = 0.1 (~=0.076)
+CT -> TC = 0.1 (~=0.056)
+IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 
 
 * VERSIONS
@@ -1203,6 +1434,11 @@ Thus, to address this issue, we changed the synaptic placement rules for all L1-
 ** v14 - Fixed L5A & L5B E cell densities + added CT5A & CT5B to 'Epops'
 ** v15 - Added cortical and thalamic conn to CT5A and CT5B 
 ** v16 - Updated multiple cell types
+** v17 - Changed NGF -> I prob from strong (1.0) to weak (0.35)
+** v18 - Fixed bug in VIP cell morphology
+** v19 - Added in 2-compartment thalamic interneuron model 
+** v20 - Added TI conn and updated thal pop
+** v21 - Added exc+inh bkg inputs specific to each cell type
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -1532,3 +1768,2512 @@ memory error
 *** tuned params
 - increased bkg weights * 5
 - reduced ITS4 weightNorm * 5
+** v20_batch1 - Added TI; testing only bkg and with conn
+*** notes
+- failed in g1 -- saturated with params?
+- rerunning on g2 (non-preempt)
+*** code
+def custom():
+    params = specs.ODict()
+
+    # bkg inputs
+    factor = 5
+    
+    params['addConn'] = [0, 1]
+
+    params[('weightBkg', 'E')] = [0.5*factor]
+    params[('weightBkg', 'I')] = [0.5*factor]
+    params[('weightBkg', 'ThalE')] = [0.5*factor]
+    params[('weightBkg', 'ThalI')] = [0.5 * factor]
+
+    # params[('rateBkg', 'E')] = [40] #[20, 60]  
+    # params[('rateBkg', 'I')] = [40] #
+    # params[('rateBkg', 'ThalE')] = [40] #
+    # params[('rateBkg', 'ThalI')] = [40] #
+
+    # auditory inputs (cochlea+IC) to thalamus (remove for tuning??)
+    # params[('weightInput', 'ThalE')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    # params[('weightInput', 'ThalI')] = [0.5] # [0.25,  0.75] # 0.5 somatic PSP mV 
+    # params[('probInput', 'ThalE')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+    # params[('probInput', 'ThalI')] = [0.0] # [0.1, 0.4] # 0.25 probability of conn  
+
+    # # conn gains
+    # params['EEGain'] = [1.0] #[0.5, 1.5] 
+    # params['EIGain'] = [1.0] 
+    # params['IEGain'] = [1.0] 
+    # params['IIGain'] = [1.0] 
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = False  # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    return b
+
+*** results
+**** only bkg
+Analyzing...
+  Cells: 13108
+  Connections: 0 (0.00 per cell)
+  Spikes: 31237 (1.59 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 13.400 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 0.688 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.000 Hz
+   SOM3 : 12.229 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 0.611 Hz
+   NGF3 : 0.000 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 17.613 Hz
+   SOM4 : 13.125 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 0.231 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 13.047 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.600 Hz
+   NGF5A : 0.000 Hz
+   IT5B : 0.000 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 13.473 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.941 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 0.012 Hz
+   CT6 : 0.000 Hz
+   SOM6 : 13.159 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 0.583 Hz
+   NGF6 : 0.000 Hz
+   TC : 0.207 Hz
+   TCM : 0.077 Hz
+   HTC : 0.158 Hz
+   IRE : 5.665 Hz
+   IREM : 6.000 Hz
+   TI : 2.029 Hz
+   IC : 14.725 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 85.57 s
+Saving output as data/v20_batch1/v20_batch1_0_0_0_0_0.json  ... 
+Finished saving!
+  Done; saving time = 1.75 s.
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 22.17 s
+Total time = 202.84 s
+**** with bkg+conn
+Analyzing...
+  Cells: 13108
+  Connections: 0 (0.00 per cell)
+  Spikes: 445787 (22.67 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 0.000 Hz
+   PV2 : 0.000 Hz
+   VIP2 : 173.125 Hz
+   NGF2 : 0.000 Hz
+   IT3 : 0.000 Hz
+   SOM3 : 0.000 Hz
+   PV3 : 0.000 Hz
+   VIP3 : 174.678 Hz
+   NGF3 : 13.647 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 265.471 Hz
+   SOM4 : 0.000 Hz
+   PV4 : 0.000 Hz
+   VIP4 : 93.000 Hz
+   NGF4 : 0.000 Hz
+   IT5A : 0.000 Hz
+   CT5A : 0.000 Hz
+   SOM5A : 0.000 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 154.800 Hz
+   NGF5A : 468.000 Hz
+   IT5B : 0.000 Hz
+   CT5B : 0.000 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 0.000 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 157.471 Hz
+   NGF5B : 487.375 Hz
+   IT6 : 0.000 Hz
+   CT6 : 0.000 Hz
+   SOM6 : 7.905 Hz
+   PV6 : 1.440 Hz
+   VIP6 : 10.083 Hz
+   NGF6 : 0.000 Hz
+   TC : 0.043 Hz
+   TCM : 0.510 Hz
+   HTC : 0.026 Hz
+   IRE : 6.826 Hz
+   IREM : 6.581 Hz
+   TI : 1.863 Hz
+   IC : 14.480 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 785.08 s
+Saving output as data/v20_batch1/v20_batch1_1_0_0_0_0.json  ... 
+Finished saving!
+  Done; saving time = 3.98 s.
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 202.85 s
+Total time = 1798.94 s
+**** conclusions
+looks like generally need more bkg
+and there might be some issue with ITS4 + VIP + NGF conn … I’ll check
+good thing is was pretty fast to run … on 96 cores took 3 min for only bkg, and 30 min for bkg+conn
+** v21_batch1 - Evol optim full net; conn params
+*** code
+def evolRates():
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.75, 1.25]
+    params['EIGain'] = [0.75, 1.25]
+
+    params[('IEweights', 0)] = [0.75, 1.25]
+    params[('IEweights', 1)] = [0.75, 1.25]
+    params[('IEweights', 2)] = [0.75, 1.25]
+
+    params[('IIweights', 0)] = [0.75, 1.25]
+    params[('IIweights', 1)] = [0.75, 1.25]
+    params[('IIweights', 2)] = [0.75, 1.25]
+    
+    params['thalamoCorticalGain'] = [0.75, 1.25]  
+    params['intraThalamicGain'] = [0.75, 1.25] 
+    params['corticoThalamicGain'] = [0.75, 1.25]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 15, 'min': 0.25}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
+        print('  '+popInfo)
+        return fitness
+    
+    #from IPython import embed; embed()
+
+    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+
+    # Set evol alg configuration
+    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 100,
+        'num_elites': 2,
+        'mutation_rate': 0.5,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 200,
+        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 12, # (5h20) max number of times to check if sim is completed (for each generation)
+        'defaultFitness': 1000, # set fitness value in case simulation time is over
+        'scancelUser': 'ext_salvadordura_gmail_com'
+    }
+
+    return b
+*** results
+- 10 generations
+- pops always 0 Hz (14/42): IT2, IT3, ITP4, NGF4, PT5B, CT6, PV2, PV3, PV4, PV6, SOM2, SOM3, SOM4 
+- pops always too high >200Hz (3/42): ITS4, NGF5A, NGF5B 
+- pops sometimes too high >100Hz (6/42): NGF2, NGF3, VIP2, VIP3, VIP5A, VIP5B
+
+cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+                'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+                'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
+** v21_batch2 - Param sweep with 5 conn params
+*** results
+raw results - https://console.cloud.google.com/storage/browser/salvadord_data/v21_batch2/?forceOnBucketsSortingFiltering=false&organizationId=728762063943&project=ecas-2019
+
+firing rate as a func of 4 conn params for each of the 41 pops: https://drive.google.com/open?id=1lZQe3YjX2lGCQsLF_lzc3_FKqTImK-sg
+
+so problematic ones are IT2, IT3 and ITP4 since 0 in most, except a couple with 0.00075 Hz
+the trend suggests need to lower more EEGain and increase IIGain
+also noticed the IEGain param is not doing anything, so maybe a bug… I’ll check
+** v21_batch3 - Param sweep 6 conn params; adjusted EEGain and IIGain; fixed bug IEGain
+
+*** code
+params = specs.ODict()
+
+    # bkg inputs
+    
+    #params['addConn'] = [0, 1]
+
+    params['EEGain'] = [0.25, 0.5, 1.0, 1.5] #[0.5, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
+    params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
+    params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = False  # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+
+- unfortunately no param combination yet that gives decent firing rates in all… 
+- the problematic ones still IT2, IT3 and ITP4 (upper layer ITs), with close to 0hz rates 
+— I had similar issue with M1 and fixed by tuning gains separate for upper vs lower layers, so will try that next
+- there is one param combination >0, but only ~0.1 hz
+- 0.01 hz in the case of ITP4
+
+- NGF2-6 too high - also possibly and issue; could be affecting E spiking
+- could be result of higher background? 
+-- cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+                'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+                'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
+-- enhanced sensitivity 
+-- maybe tuned based on L1, but L2-6 different, more conn inputs
+
+things to try:
+-- tune NGF L2-6 differently
+-- tune weights of upper IT separately 
+-- VIP 
+** v21_tune - adjusting bkg weights
+- run for 10 sec instead of 1 -- better stats; avoids depending on initial 500ms
+- included all IT cells since different dend lengths
+- included all NGF cells to see variability
+- v21_tune8:
+   NGF1 : 6.100 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 8.900 Hz
+   PV2 : 4.900 Hz
+   VIP2 : 9.100 Hz
+   NGF2 : 8.300 Hz
+   IT3 : 0.000 Hz
+   NGF3 : 7.000 Hz
+   ITP4 : 7.800 Hz
+   ITS4 : 3.000 Hz
+   NGF4 : 8.500 Hz
+   NGF5A : 6.600 Hz
+   PT5B : 0.700 Hz
+   NGF5B : 7.400 Hz
+   IT6 : 0.200 Hz
+   CT6 : 0.700 Hz
+   NGF6 : 8.900 Hz
+   TC : 22.100 Hz
+   HTC : 19.900 Hz
+   IRE : 4.400 Hz
+   TI : 12.600 Hz
+- clearly some fixes required:
+-- reduce NGF a bit (80->60)
+-- increase IT (except ITP4 low) (12->20)
+-- reduce TC (1.8->1.5)
+-- reduce HTC (1.55->1.4)
+-- reduce TI (3.6->3)
+
+- v56_tune10
+-   NGF1 : 0.500 Hz
+   NGF1 : 0.500 Hz
+   IT2 : 2.300 Hz
+   SOM2 : 8.900 Hz
+   PV2 : 4.900 Hz
+   VIP2 : 9.100 Hz
+   NGF2 : 0.700 Hz
+   IT3 : 3.300 Hz
+   NGF3 : 0.500 Hz
+   ITP4 : 14.200 Hz (dep block)
+   ITS4 : 3.000 Hz
+   NGF4 : 1.100 Hz
+   IT5A : 0.800 Hz (dep block)
+   NGF5A : 0.300 Hz
+   IT5B : 0.400 Hz (dep block)
+   PT5B : 1.100 Hz
+   NGF5B : 1.300 Hz
+   IT6 : 1.500 Hz (dep block)
+   CT6 : 1.700 Hz (dep block)
+   NGF6 : 1.400 Hz
+   TC : 19.300 Hz
+   HTC : 18.400 Hz
+   IRE : 5.500 Hz
+   TI : 6.300 Hz
+- changes:
+-- IT down (20->16)
+-- NGF up a bit (60->65)
+-- reduce TC (1.5 -> 1)
+-- reduce HTC  (1.55 -> 1)
+
+- v56_tune11
+   NGF1 : 1.500 Hz
+   IT2 : 0.400 Hz
+   SOM2 : 8.900 Hz
+   PV2 : 4.900 Hz
+   VIP2 : 9.100 Hz
+   NGF2 : 2.300 Hz
+   IT3 : 0.800 Hz
+   NGF3 : 1.800 Hz
+   ITP4 : 14.600 Hz (Dep block)
+   ITS4 : 3.000 Hz
+   NGF4 : 2.400 Hz
+   IT5A : 0.200 Hz (dep block)
+   NGF5A : 1.100 Hz
+   IT5B : 0.200 Hz
+   PT5B : 1.100 Hz
+   NGF5B : 2.300 Hz
+   IT6 : 0.500 Hz (dep block)
+   CT6 : 1.700 Hz (dep block)
+   NGF6 : 3.000 Hz
+   TC : 17.000 Hz
+   HTC : 14.100 Hz
+   IRE : 5.500 Hz
+   TI : 6.300 Hz
+
+- tune automatically for each cell type
+** v22_batch1 - bkg weights for all pops (E+I 40 hz)
+*** code
+def bkgWeights(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkg'] = weights
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+ 
+
+    b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+
+    return b
+*** results
+Calculating bkg weights for each pop ...
+Bkg weight to get 2.0 Hz in pop IT2 = 19.5
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 2.0 Hz in pop IT3 = 18.1
+Bkg weight to get 2.0 Hz in pop ITP4 = 9.4
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.2
+Bkg weight to get 2.0 Hz in pop IT5A = 29.3
+Bkg weight to get 2.0 Hz in pop CT5A = 15.8
+Bkg weight to get 2.0 Hz in pop IT5B = 27.5
+Bkg weight to get 2.0 Hz in pop PT5B = 17.2
+Bkg weight to get 2.0 Hz in pop CT5B = 15.8
+Bkg weight to get 2.0 Hz in pop IT6 = 19.5
+Bkg weight to get 2.0 Hz in pop CT6 = 15.8
+Bkg weight to get 2.0 Hz in pop TC = 0.4
+Bkg weight to get 2.0 Hz in pop HTC = 0.5
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+
+** v22_batch2 - bkg weights for all pops (only E 40hz)
+*** results
+** v22_batch3 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom)
+*** results
+Calculating bkg weights for each pop ...
+Bkg weight to get 2.0 Hz in pop IT2 = 22.0
+Bkg weight to get 4.0 Hz in pop PV2 = 44.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
+Bkg weight to get 4.0 Hz in pop VIP2 = 14.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 101.0
+Bkg weight to get 2.0 Hz in pop IT3 = 11.6
+Bkg weight to get 2.0 Hz in pop ITP4 = 5.4
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.5
+Bkg weight to get 2.0 Hz in pop IT5A = 2.2
+Bkg weight to get 2.0 Hz in pop CT5A = 7.4
+Bkg weight to get 2.0 Hz in pop IT5B = 29.9
+Bkg weight to get 2.0 Hz in pop PT5B = inf
+Bkg weight to get 2.0 Hz in pop CT5B = 7.4
+Bkg weight to get 2.0 Hz in pop IT6 = 6.1
+Bkg weight to get 2.0 Hz in pop CT6 = 7.4
+Bkg weight to get 2.0 Hz in pop TC = 53.3
+Bkg weight to get 2.0 Hz in pop HTC = -64.5
+Bkg weight to get 4.0 Hz in pop IRE = 1.5
+Bkg weight to get 4.0 Hz in pop TI = 5.3
+** v22_batch4 - bkg weights for all pops (E 20hz apicdend 2*weight, I 40 Hz perisom)
+Bkg weight to get 2.0 Hz in pop IT2 = 9.0
+Bkg weight to get 4.0 Hz in pop PV2 = 19.7
+Bkg weight to get 4.0 Hz in pop SOM2 = 2.9
+Bkg weight to get 4.0 Hz in pop VIP2 = 5.5
+Bkg weight to get 4.0 Hz in pop NGF2 = 42.2
+Bkg weight to get 2.0 Hz in pop IT3 = 5.4
+Bkg weight to get 2.0 Hz in pop ITP4 = 19.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.3
+Bkg weight to get 2.0 Hz in pop IT5A = 20.4
+Bkg weight to get 2.0 Hz in pop CT5A = 3.2
+Bkg weight to get 2.0 Hz in pop IT5B = 27.8
+Bkg weight to get 2.0 Hz in pop PT5B = 24.5
+Bkg weight to get 2.0 Hz in pop CT5B = 3.2
+Bkg weight to get 2.0 Hz in pop IT6 = 6.3
+Bkg weight to get 2.0 Hz in pop CT6 = 3.2
+Bkg weight to get 2.0 Hz in pop TC = -9.3
+Bkg weight to get 2.0 Hz in pop HTC = -8.8
+Bkg weight to get 4.0 Hz in pop IRE = -0.1
+Bkg weight to get 4.0 Hz in pop TI = 2.2
+** v22_batch5 - bkg weights for all pops (E 40hz apicdend, I 40 Hz perisom 2*weight)
+Bkg weight to get 2.0 Hz in pop IT2 = 25.0
+Bkg weight to get 4.0 Hz in pop PV2 = 32.4
+Bkg weight to get 4.0 Hz in pop SOM2 = 6.9
+Bkg weight to get 4.0 Hz in pop VIP2 = 12.6
+Bkg weight to get 4.0 Hz in pop NGF2 = 89.0
+Bkg weight to get 2.0 Hz in pop IT3 = 8.6
+Bkg weight to get 2.0 Hz in pop ITP4 = 3.3
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.4
+Bkg weight to get 2.0 Hz in pop IT5A = 32.1
+Bkg weight to get 2.0 Hz in pop CT5A = 5.1
+Bkg weight to get 2.0 Hz in pop IT5B = 42.7
+Bkg weight to get 2.0 Hz in pop PT5B = -inf
+Bkg weight to get 2.0 Hz in pop CT5B = 5.1
+Bkg weight to get 2.0 Hz in pop IT6 = 12.7
+Bkg weight to get 2.0 Hz in pop CT6 = 5.1
+Bkg weight to get 2.0 Hz in pop TC = -inf
+Bkg weight to get 2.0 Hz in pop HTC = -54.5
+Bkg weight to get 4.0 Hz in pop IRE = 6.5
+Bkg weight to get 4.0 Hz in pop TI = 53.0
+** v22_batch6- bkg weights for all pops (E 40hz apicdend, I 40 Hz perisom)
+
+Bkg weight to get 2.0 Hz in pop IT2 = 19.0
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 2.0 Hz in pop IT3 = 6.4
+Bkg weight to get 2.0 Hz in pop ITP4 = 2.2
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.2
+Bkg weight to get 2.0 Hz in pop IT5A = 21.0
+Bkg weight to get 2.0 Hz in pop CT5A = 4.2
+Bkg weight to get 2.0 Hz in pop IT5B = 27.8
+Bkg weight to get 2.0 Hz in pop PT5B = inf
+Bkg weight to get 2.0 Hz in pop CT5B = 4.2
+Bkg weight to get 2.0 Hz in pop IT6 = 10.2
+Bkg weight to get 2.0 Hz in pop CT6 = 4.2
+Bkg weight to get 2.0 Hz in pop TC = 0.4
+Bkg weight to get 2.0 Hz in pop HTC = 0.5
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+** v22_batch7 - fI curves for all cell types
+** v22_batch8 - fI for new ITP4, IT5A
+** v22_batch9 - fI with celsius=36
+** v22_batch10 - fI with celsius=34
+** v22_batch11 - fI for all cells with temp=36
+** v22_batch12 - fI new cells with 37C tuned
+** v22_batch13-17 - weightNorm all cells (Except 2) after retuning
+*** notes
+13 - ITs
+16 - VIP
+** v22_batch14 (overwrote) - fI for all cells
+** v22_batch18-19 - weightNorm for TC and HTC and TI
+** v22_batch20 - weightNorm for ITS4 (overwritten accidentally)
+** v22_batch21 - bkg weights for all pops (E 20hz apicdend, I 40 Hz perisom) - bug, missing weightNorms
+Bkg weight to get 2.0 Hz in pop IT2 = 22.0
+Bkg weight to get 4.0 Hz in pop PV2 = 44.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
+Bkg weight to get 4.0 Hz in pop VIP2 = 14.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 101.0
+Bkg weight to get 2.0 Hz in pop IT3 = 11.6
+Bkg weight to get 2.0 Hz in pop ITP4 = 5.0
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.5
+Bkg weight to get 2.0 Hz in pop IT5A = 2.0
+Bkg weight to get 2.0 Hz in pop CT5A = 9.0
+Bkg weight to get 2.0 Hz in pop IT5B = 1.3
+/usr/local/lib/python3.7/site-packages/scipy/interpolate/interpolate.py:610: RuntimeWarning: divide by zero encountered in true_divide
+  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
+Bkg weight to get 2.0 Hz in pop PT5B = inf
+Bkg weight to get 2.0 Hz in pop CT5B = 9.0
+Bkg weight to get 2.0 Hz in pop IT6 = 23.0
+Bkg weight to get 2.0 Hz in pop CT6 = 9.0
+Bkg weight to get 2.0 Hz in pop TC = 3.9
+Bkg weight to get 2.0 Hz in pop HTC = 3.9
+Bkg weight to get 4.0 Hz in pop IRE = 1.5
+Bkg weight to get 4.0 Hz in pop TI = 5.3
+
+** v22_batch22 - bkg weights for all pops (E 20hz soma, I 40 Hz soma) - bug, missing weightNorms
+
+Bkg weight to get 2.0 Hz in pop IT2 = 22.0
+Bkg weight to get 4.0 Hz in pop PV2 = 44.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 7.8
+Bkg weight to get 4.0 Hz in pop VIP2 = 14.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 101.0
+Bkg weight to get 2.0 Hz in pop IT3 = 21.2
+Bkg weight to get 2.0 Hz in pop ITP4 = 2.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 1.5
+Bkg weight to get 2.0 Hz in pop IT5A = 7.8
+Bkg weight to get 2.0 Hz in pop CT5A = 6.2
+Bkg weight to get 2.0 Hz in pop IT5B = 7.8
+Bkg weight to get 2.0 Hz in pop PT5B = 20.7
+Bkg weight to get 2.0 Hz in pop CT5B = 6.2
+Bkg weight to get 2.0 Hz in pop IT6 = 9.7
+Bkg weight to get 2.0 Hz in pop CT6 = 6.2
+Bkg weight to get 2.0 Hz in pop TC = 3.9
+Bkg weight to get 2.0 Hz in pop HTC = 3.9
+Bkg weight to get 4.0 Hz in pop IRE = 1.5
+Bkg weight to get 4.0 Hz in pop TI = 5.3
+
+** v22_batch23 - missing weightNorms for CT5A and CT5B 
+** v22_batch24 - bkg weights for all pops (E 40hz soma, I 40 Hz soma) - bug, missing NGF weightNorm!
+Bkg weight to get 2.0 Hz in pop IT2 = 17.8
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = -106.7
+Bkg weight to get 2.0 Hz in pop IT3 = 16.8
+Bkg weight to get 2.0 Hz in pop ITP4 = 13.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.3
+Bkg weight to get 2.0 Hz in pop IT5A = 24.4
+Bkg weight to get 2.0 Hz in pop CT5A = 16.8
+Bkg weight to get 2.0 Hz in pop IT5B = 23.0
+Bkg weight to get 2.0 Hz in pop PT5B = 16.8
+Bkg weight to get 2.0 Hz in pop CT5B = 16.8
+Bkg weight to get 2.0 Hz in pop IT6 = 26.0
+Bkg weight to get 2.0 Hz in pop CT6 = 16.8
+Bkg weight to get 2.0 Hz in pop TC = 10.7
+Bkg weight to get 2.0 Hz in pop HTC = 10.7
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+Note: but dynamic range looks better - can probably reduce to max weight 50 and have 0.5 intervals
+** v22_batch25 - wnorm for missing NGF
+** v22_batch26 - bkg weights for all pops (E 40hz soma, I 40 Hz soma); range 0,50,0.5
+
+Bkg weight to get 2.0 Hz in pop IT2 = 17.8
+Bkg weight to get 4.0 Hz in pop PV2 = 26.6
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.9
+/usr/local/lib/python3.7/site-packages/scipy/interpolate/interpolate.py:610: RuntimeWarning: divide by zero encountered in true_divide
+  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
+Bkg weight to get 4.0 Hz in pop NGF2 = inf
+Bkg weight to get 2.0 Hz in pop IT3 = 16.8
+Bkg weight to get 2.0 Hz in pop ITP4 = 13.5
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.4
+Bkg weight to get 2.0 Hz in pop IT5A = 28.2
+Bkg weight to get 2.0 Hz in pop CT5A = 16.5
+Bkg weight to get 2.0 Hz in pop IT5B = 23.0
+Bkg weight to get 2.0 Hz in pop PT5B = 16.5
+Bkg weight to get 2.0 Hz in pop CT5B = 16.5
+Bkg weight to get 2.0 Hz in pop IT6 = 29.5
+Bkg weight to get 2.0 Hz in pop CT6 = 16.5
+Bkg weight to get 2.0 Hz in pop TC = 10.8
+Bkg weight to get 2.0 Hz in pop HTC = 10.8
+Bkg weight to get 4.0 Hz in pop IRE = 8.7
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+range not enough to get spikes in NGF
+
+** v22_batch27 - bkg weights for all pops (E 40hz soma, I 40 Hz soma); range 0,100
+--> v22_sim1 (still depol block)
+Bkg weight to get 2.0 Hz in pop IT2 = 17.8
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 2.0 Hz in pop IT3 = 16.8
+Bkg weight to get 2.0 Hz in pop ITP4 = 13.8
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.3
+Bkg weight to get 2.0 Hz in pop IT5A = 24.4
+Bkg weight to get 2.0 Hz in pop CT5A = 16.8
+Bkg weight to get 2.0 Hz in pop IT5B = 23.0
+Bkg weight to get 2.0 Hz in pop PT5B = 16.8
+Bkg weight to get 2.0 Hz in pop CT5B = 16.8
+Bkg weight to get 2.0 Hz in pop IT6 = 26.0
+Bkg weight to get 2.0 Hz in pop CT6 = 16.8
+Bkg weight to get 2.0 Hz in pop TC = 10.7
+Bkg weight to get 2.0 Hz in pop HTC = 10.7
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+  NGF1 : 5.331 Hz
+   IT2 : 2.621 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 2.921 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 2.499 Hz
+   ITS4 : 0.006 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 5.437 Hz
+   CT5A : 2.535 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 2.335 Hz
+   CT5B : 2.584 Hz
+   PT5B : 2.575 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 1.679 Hz
+   CT6 : 2.454 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 2.405 Hz
+   TCM : 2.729 Hz
+   HTC : 2.342 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+
+
+Calculating bkg weights for each pop ...
+Bkg weight to get 1.5 Hz in pop IT2 = 16.5
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 1.5 Hz in pop IT3 = 15.5
+Bkg weight to get 1.5 Hz in pop ITP4 = 13.5
+Bkg weight to get 1.5 Hz in pop ITS4 = 0.2
+Bkg weight to get 1.5 Hz in pop IT5A = 18.0
+Bkg weight to get 1.5 Hz in pop CT5A = 15.8
+Bkg weight to get 1.5 Hz in pop IT5B = 13.0
+Bkg weight to get 1.5 Hz in pop PT5B = 15.7
+Bkg weight to get 1.5 Hz in pop CT5B = 15.8
+Bkg weight to get 1.5 Hz in pop IT6 = 21.2
+Bkg weight to get 1.5 Hz in pop CT6 = 15.8
+Bkg weight to get 1.5 Hz in pop TC = 10.2
+Bkg weight to get 1.5 Hz in pop HTC = 10.2
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+-- v22_sim4 (still depol block)
+ NGF1 : 5.331 Hz
+   IT2 : 1.763 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 1.972 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 2.152 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 9.359 Hz
+   CT5A : 1.825 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 3.231 Hz
+   CT5B : 1.932 Hz
+   PT5B : 1.807 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 2.618 Hz
+   CT6 : 1.796 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+
+
+- adapted method to gradually increase num points used (avoids depol block)
+Bkg weight to get 1.5 Hz in pop IT2 = 16.5
+Bkg weight to get 4.0 Hz in pop PV2 = 32.3
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+/usr/local/lib/python3.7/site-packages/scipy/interpolate/interpolate.py:610: RuntimeWarning: divide by zero encountered in true_divide
+  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
+Bkg weight to get 4.0 Hz in pop NGF2 = 85.0
+Bkg weight to get 1.5 Hz in pop IT3 = 15.5
+Bkg weight to get 1.5 Hz in pop ITP4 = 13.5
+Bkg weight to get 1.5 Hz in pop ITS4 = 0.2
+Bkg weight to get 1.5 Hz in pop IT5A = 9.2
+Bkg weight to get 1.5 Hz in pop CT5A = 15.8
+Bkg weight to get 1.5 Hz in pop IT5B = 11.1
+Bkg weight to get 1.5 Hz in pop PT5B = 15.7
+Bkg weight to get 1.5 Hz in pop CT5B = 15.8
+Bkg weight to get 1.5 Hz in pop IT6 = 19.6
+Bkg weight to get 1.5 Hz in pop CT6 = 15.8
+Bkg weight to get 1.5 Hz in pop TC = 10.2
+Bkg weight to get 1.5 Hz in pop HTC = 10.2
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 2.6
+
+-- v22_sim5
+   NGF1 : 10.225 Hz
+   IT2 : 1.763 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 17.692 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 11.545 Hz
+   IT3 : 1.972 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 15.500 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 10.060 Hz
+   ITP4 : 2.152 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 14.495 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 8.071 Hz
+   IT5A : 1.830 Hz
+   CT5A : 1.825 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 15.356 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 9.875 Hz
+   IT5B : 3.000 Hz
+   CT5B : 1.932 Hz
+   PT5B : 1.807 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 14.478 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 9.875 Hz
+   IT6 : 3.820 Hz
+   CT6 : 1.796 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 17.690 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 9.658 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 4.088 Hz
+
+** v22_batch28 - bkg weights for all pops (E 40hz apic/adend1, I 40 Hz proximal)
+
+*** E 2hz
+Bkg weight to get 2.0 Hz in pop IT2 = 17.0
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 2.0 Hz in pop IT3 = 6.2
+Bkg weight to get 2.0 Hz in pop ITP4 = 2.3
+Bkg weight to get 2.0 Hz in pop ITS4 = 0.3
+Bkg weight to get 2.0 Hz in pop IT5A = 24.1
+Bkg weight to get 2.0 Hz in pop CT5A = 4.3
+Bkg weight to get 2.0 Hz in pop IT5B = 31.8
+/usr/local/lib/python3.7/site-packages/scipy/interpolate/interpolate.py:610: RuntimeWarning: divide by zero encountered in true_divide
+  slope = (y_hi - y_lo) / (x_hi - x_lo)[:, None]
+Bkg weight to get 2.0 Hz in pop PT5B = inf
+Bkg weight to get 2.0 Hz in pop CT5B = 4.4
+Bkg weight to get 2.0 Hz in pop IT6 = 10.0
+Bkg weight to get 2.0 Hz in pop CT6 = 4.3
+Bkg weight to get 2.0 Hz in pop TC = 10.7
+Bkg weight to get 2.0 Hz in pop HTC = 10.7
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+*** if aim for E at 1 Hz then ok: --> v22_sim2
+Bkg weight to get 1.0 Hz in pop IT2 = 14.7
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 1.0 Hz in pop IT3 = 6.0
+Bkg weight to get 1.0 Hz in pop ITP4 = 2.2
+Bkg weight to get 1.0 Hz in pop ITS4 = 0.1
+Bkg weight to get 1.0 Hz in pop IT5A = 12.5
+Bkg weight to get 1.0 Hz in pop CT5A = 4.2
+Bkg weight to get 1.0 Hz in pop IT5B = 16.4
+Bkg weight to get 1.0 Hz in pop PT5B = 23.0
+Bkg weight to get 1.0 Hz in pop CT5B = 4.2
+Bkg weight to get 1.0 Hz in pop IT6 = 9.0
+Bkg weight to get 1.0 Hz in pop CT6 = 4.2
+Bkg weight to get 1.0 Hz in pop TC = 9.7
+Bkg weight to get 1.0 Hz in pop HTC = 9.7
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+  NGF1 : 5.331 Hz
+   IT2 : 1.086 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 3.130 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 18.184 Hz
+   CT5A : 1.978 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 13.231 Hz
+   CT5B : 2.047 Hz
+   PT5B : 0.692 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 20.595 Hz
+   CT6 : 1.986 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.155 Hz
+   TCM : 1.310 Hz
+   HTC : 1.079 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+
+
+*** if aim for E at 1.5 Hz then also ok: --> v22_sim3
+Bkg weight to get 1.5 Hz in pop IT2 = 16.0
+Bkg weight to get 4.0 Hz in pop PV2 = 26.5
+Bkg weight to get 4.0 Hz in pop SOM2 = 4.4
+Bkg weight to get 4.0 Hz in pop VIP2 = 7.8
+Bkg weight to get 4.0 Hz in pop NGF2 = 75.5
+Bkg weight to get 1.5 Hz in pop IT3 = 6.1
+Bkg weight to get 1.5 Hz in pop ITP4 = 2.2
+Bkg weight to get 1.5 Hz in pop ITS4 = 0.2
+Bkg weight to get 1.5 Hz in pop IT5A = 18.3
+Bkg weight to get 1.5 Hz in pop CT5A = 4.2
+Bkg weight to get 1.5 Hz in pop IT5B = 24.1
+Bkg weight to get 1.5 Hz in pop PT5B = 34.0
+Bkg weight to get 1.5 Hz in pop CT5B = 4.3
+Bkg weight to get 1.5 Hz in pop IT6 = 12.0
+Bkg weight to get 1.5 Hz in pop CT6 = 4.2
+Bkg weight to get 1.5 Hz in pop TC = 10.2
+Bkg weight to get 1.5 Hz in pop HTC = 10.2
+Bkg weight to get 4.0 Hz in pop IRE = 8.5
+Bkg weight to get 4.0 Hz in pop TI = 48.2
+
+   NGF1 : 5.331 Hz
+   IT2 : 1.855 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 3.560 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 0.001 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 16.819 Hz
+   CT5A : 2.409 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 11.616 Hz
+   CT5B : 2.650 Hz
+   PT5B : 1.376 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 5.206 Hz
+   CT6 : 2.483 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+
+*** v22_sim6 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 10% IT6, IPT4,ITS4
+  NGF1 : 5.331 Hz
+   IT2 : 1.855 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 3.560 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 0.102 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 16.819 Hz
+   CT5A : 2.409 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 11.616 Hz
+   CT5B : 2.650 Hz
+   PT5B : 1.376 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 8.822 Hz
+   CT6 : 2.483 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+
+   still depol block
+*** v22_sim7 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 25% IT6, IPT4,ITS4
+   ITP4 : 0.626 Hz
+   ITS4 : 0.000 Hz
+   IT6 : 20.710 Hz
+*** v22_sim8 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling 50% IT6, IPT4,ITS4
+   ITP4 : 4.576 Hz
+   ITS4 : 0.000 Hz
+   IT6 : 35.489 Hz
+*** v22_sim9 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+
+   {'ITP4': 1.35, 'ITS4': 2.0, 'IT6': 0.25} 
+
+      ITP4 : 1.730 Hz - ok
+   ITS4 : 0.139 Hz - getting there, increase more
+   IT6 : 0.126 Hz - too low now, increase
+
+*** v22_sim10 (overwrote sim9) - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+
+manualScaling = {'ITP4': 1.35, 'ITS4': 2.5, 'IT6': 0.3} 
+
+   ITS4 : 0.980 Hz -- increase a but more: 3.0
+   IT6 : 2.796 Hz -- decrease - 0.28
+
+*** v22_sim11- bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+
+manualScaling = {'ITP4': 1.35, 'ITS4': 3.0, 'IT6': 0.28} 
+   ITS4 : 2.202 Hz
+   IT6 : 1.150 Hz
+
+*** v22_sim12 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+   manualScaling = {'ITP4': 1.35, 'ITS4': 2.75, 'IT6': 0.27} 
+
+      ITS4 : 1.558 Hz - ok
+   IT6 : 0.708 Hz
+
+*** v22_sim13 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); manualScaling custom IT6, IPT4,ITS4
+   manualScaling = {'ITP4': 1.35, 'ITS4': 2.75, 'IT6': 0.29} 
+   IT6 : 1.733 Hz
+
+*** v22_sim14 - bkg weights for all pops (E 40hz apical, I 40 Hz proximal); after manual tuning IT6, IPT4,ITS4
+
+  Cells: 12908
+  Connections: 12908 (1.00 per cell)
+  Synaptic contacts: 38724 (3.00 per cell)
+  Spikes: 57788 (2.98 Hz)
+   NGF1 : 5.331 Hz
+   IT2 : 1.855 Hz
+   SOM2 : 4.800 Hz
+   PV2 : 5.231 Hz
+   VIP2 : 5.125 Hz
+   NGF2 : 6.273 Hz
+   IT3 : 3.560 Hz
+   SOM3 : 4.400 Hz
+   PV3 : 5.330 Hz
+   VIP3 : 4.299 Hz
+   NGF3 : 5.313 Hz
+   ITP4 : 1.767 Hz
+   ITS4 : 1.578 Hz
+   SOM4 : 5.083 Hz
+   PV4 : 4.742 Hz
+   VIP4 : 3.385 Hz
+   NGF4 : 3.500 Hz
+   IT5A : 16.819 Hz
+   CT5A : 2.409 Hz
+   SOM5A : 5.186 Hz
+   PV5A : 5.055 Hz
+   VIP5A : 3.400 Hz
+   NGF5A : 5.250 Hz
+   IT5B : 11.616 Hz
+   CT5B : 2.650 Hz
+   PT5B : 1.376 Hz
+   SOM5B : 4.938 Hz
+   PV5B : 4.828 Hz
+   VIP5B : 5.353 Hz
+   NGF5B : 5.500 Hz
+   IT6 : 2.169 Hz
+   CT6 : 2.483 Hz
+   SOM6 : 5.095 Hz
+   PV6 : 6.702 Hz
+   VIP6 : 3.583 Hz
+   NGF6 : 5.237 Hz
+   TC : 1.767 Hz
+   TCM : 1.968 Hz
+   HTC : 1.632 Hz
+   IRE : 4.258 Hz
+   IREM : 4.077 Hz
+   TI : 3.108 Hz
+  Simulated time: 1.5 s; 4 workers
+  Run time: 852.08 s
+
+-- took quite a bit of manual tuning to fix those 3 cell types, but got nice results now… all spiking ~1-5 hz and no depol block
+-- NOT TRUE!!! - IT5A, IT5B higher!
+
+
+** v22_batch29 - Param sweep for conn
+*** code
+    params = specs.ODict()
+
+    # conn gains
+    params['EEGain'] = [0.5, 1.0, 1.5] #[0.5, 1.5] 
+    params['EIGain'] = [0.5, 1.0, 1.5] 
+    params['IEGain'] = [0.5, 1.0, 1.5] 
+    params['IIGain'] = [0.5, 1.0, 1.5, 2.0]
+    #params['thalamoCorticalGain'] = [0.5, 1.0, 1.5]  #2.5
+    #params['intraThalamicGain'] = [0.5, 1.0, 1.5] #0.5
+    #params['corticoThalamicGain'] = [0.5, 1.0, 1.5]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn '] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    return b
+** v22_batch30 - explore NGF2+IT2 response to bkg inputs (4D params)
+*** code
+
+b = bkgWeights2D(pops = ['NGF2', 'IT2'], weights = list(np.arange(0,150,10)))
+
+def bkgWeights2D(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkgE'] = weights
+    params['weightBkgI'] = weights
+    params[('rateBkg', 'exc')] = [20, 40, 60, 80]
+    params[('rateBkg', 'inh')] = [20, 40, 60, 80]
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    initCfg[('rateBkg', 'exc')] = 40
+    initCfg[('rateBkg', 'inh')] = 40
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+** v22_batch31 - evol optim network (IE, II bug)
+*** notes
+bug in IE,II params
+*** code
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 1.5]
+    params['EIGain'] = [0.5, 1.5]
+
+    params[('IEweights', 0)] = [0.5, 1.5]
+    params[('IEweights', 1)] = [0.5, 1.5]
+    params[('IEweights', 2)] = [0.5, 1.5]
+
+    params[('IIweights', 0)] = [0.5, 1.5]
+    params[('IIweights', 1)] = [0.5, 1.5]
+    params[('IIweights', 2)] = [0.5, 1.5]
+*** results
+gen_0_cand9: 
+- cell 151 (IT2), 489 (SOM2), 494 (PV2), 507 (VIP2) - depol
+- cell 6439 (ITS4) - high rate 
+** v22_batch32 - explore ITS4 response to bkg inputs (4D params)
+*** code
+b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+
+def bkgWeights2D(pops=[], weights=list(range(50))):
+
+    params = specs.ODict()
+    params['singlePop'] = pops
+    params['weightBkgE'] = weights
+    params['weightBkgI'] = weights
+    params[('rateBkg', 'exc')] = [20, 40, 60, 80]
+    params[('rateBkg', 'inh')] = [20, 40, 60, 80]
+
+    # set initial config
+    initCfg = {}
+    # sim and recoring params
+    initCfg['duration'] = 10.0 * 1e3
+    initCfg['singleCellPops'] = True
+    initCfg['singlePopForNetstim'] = True
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis','plotTraces','include')] = [0]
+    initCfg[('analysis','plotTraces','timeRange')] = [0, 3000]
+    initCfg[('analysis', 'plotRaster')] = False
+
+    initCfg[('rateBkg', 'exc')] = 40
+    initCfg[('rateBkg', 'inh')] = 40
+
+    ## turn off components not required
+    initCfg['addBkgConn'] = True
+    initCfg['addConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addIntraThalamicConn'] = False
+    initCfg['addCorticoThalamicConn'] = False
+    initCfg['addCoreThalamoCorticalConn'] = False
+    initCfg['addMatrixThalamoCorticalConn'] = False
+    initCfg['stimSubConn'] = False
+    initCfg['addIClamp'] = False
+    initCfg['addNetStim'] = False
+** v23_batch1 - evol optim network 
+*** note 
+- running with scale density 50% 
+-- small toy nets have all cells spiking
+-- maybe issue is network scale -- cecilia's paper modifies weights by squared of scaling factor
+
+- saving screen output to sim folder: https://stackoverflow.com/questions/54369613/cant-start-linux-screen-with-logging-to-specific-output-file
+*** code
+
+  # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 1.5]
+    params['EIGain'] = [0.5, 1.5]
+
+    params[('IELayerGain', '1-3')] = [0.5, 1.5]
+    params[('IELayerGain', '4')] = [0.5, 1.5]
+    params[('IELayerGain', '5')] = [0.5, 1.5]
+    params[('IELayerGain', '6')] = [0.5, 1.5]
+
+    params[('IILayerGain', '1-3')] = [0.5, 1.5]
+    params[('IILayerGain', '4')] = [0.5, 1.5]
+    params[('IILayerGain', '5')] = [0.5, 1.5]
+    params[('IILayerGain', '6')] = [0.5, 1.5]
+    
+    params['thalamoCorticalGain'] = [0.5, 1.5]  
+    params['intraThalamicGain'] = [0.5, 1.5] 
+    params['corticoThalamicGain'] = [0.5, 1.5]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        popFitness = [min(np.exp(abs(v['target'] - simData['popRates'][k])/v['width']), maxFitness) 
+                if simData['popRates'][k] > v['min'] else maxFitness for k,v in pops.items()]
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f'%(p, simData['popRates'][p], popFitness[i]) for i,p in enumerate(pops)])
+        print('  '+popInfo)
+        return fitness
+    
+    #from IPython import embed; embed()
+
+    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+
+    # Set evol alg configuration
+    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 100,
+        'num_elites': 2,
+        'mutation_rate': 0.5,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 200,
+        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 9, # (45) max number of times to check if sim is completed (for each generation)
+        'defaultFitness': 1000, # set fitness value in case simulation time is over
+        'scancelUser': 'ext_salvadordura_gmail_com'
+    }
+
+    return b
+
+** v23_batch2 - evol optim network - density 50%
+*** note 
+- running with scale density 50% 
+-- small toy nets have all cells spiking
+-- maybe issue is network scale -- cecilia's paper modifies weights by squared of scaling factor
+
+- saving screen output to sim folder: https://stackoverflow.com/questions/54369613/cant-start-linux-screen-with-logging-to-specific-output-file
+*** code
+
+
+** v23_batch3 - evol optim network - lower EE (0.1-0.5); longer evol timeout
+*** note 
+noticed mostly spiking too high or depol blocks; reduce overall excitation
+*** code
+
+** v23_batch4 - evol optim network - lower EE+EI (0.1-0.5); longer evol timeout
+*** note
+- noticed mostly spiking too high or depol blocks; reduce overall excitation to inh cells too
+- fitness 237
+- error when running 2 evol at same time - jobs of longer duration one get cancelled when jobs submitted
+
+
+** v23_batch5- evol optim network - density 50%; lower EE+EI (0.1-0.5); wider range for IE+II (0.25-2.0)
+*** note
+make more flexible the IE II
+** v23_batch6 - empty
+** v23_batch7 - best soln from v23_batch5; explored thal conn
+*** code
+    params['EEGain'] = [0.10928952347451457, 0.05]
+    params['EIGain'] = [0.13089042807412776, 0.05]
+    params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
+    params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 3000
+    initCfg['printPopAvgRates'] = [250, 3000] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]=1.9475510641094371
+    initCfg[('IELayerGain', '4')]=1.961577378323746
+    initCfg[('IELayerGain', '5')]=0.73154575340036
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.2715789518318394
+    initCfg[('IILayerGain', '4')]=0.5633033925996949
+    initCfg[('IILayerGain', '5')]=1.674448267759582
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+** v23_batch8 - best soln from v23_batch5; explored thal conn (shorter sim)
+*** code
+    params['EEGain'] = [0.10928952347451457, 0.05]
+    params['EIGain'] = [0.13089042807412776, 0.05]
+    params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
+    params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]=1.9475510641094371
+    initCfg[('IELayerGain', '4')]=1.961577378323746
+    initCfg[('IELayerGain', '5')]=0.73154575340036
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.2715789518318394
+    initCfg[('IILayerGain', '4')]=0.5633033925996949
+    initCfg[('IILayerGain', '5')]=1.674448267759582
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+** v23_batch9 - evol optim
+*** code
+def evolRates():
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.1, 1.0]
+    params['EIGain'] = [0.1, 1.0]
+
+    params[('IELayerGain', '1-3')] = [0.25, 2.0]
+    params[('IELayerGain', '4')] = [0.25, 2.0]
+    params[('IELayerGain', '5')] = [0.25, 2.0]
+    params[('IELayerGain', '6')] = [0.25, 2.0]
+
+    params[('IILayerGain', '1-3')] = [0.25, 2.0]
+    params[('IILayerGain', '4')] = [0.25, 2.0]
+    params[('IILayerGain', '5')] = [0.25, 2.0]
+    params[('IILayerGain', '6')] = [0.25, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+best fitness so far
+of course as mentioned fitness only looks at avg rate across 1 sec so not always best measure
+but interesting because starting to show some osc
+if look at this fig it’s clear that best soln’s are for the lowr EE gains — in this case range was 0.1 - 1.0
+since still want to reduce excitability more potentially could reduce range of EEgain explore more (eg. [0.05, 0.25]) … however to avoid scaling down EE so much from orig values, was thinking of also trying to increase the range of IE more — currently [0.5, 2.0] so maybe allowing up to 4.0 or 5.0 … which I think should have similar effect to lowering EE
+** v23_batch10 - evol optim net - density 100%; EE (0.05-0.5); EI (0.5-5.0)
+*** notes
+best fitness so far
+of course as mentioned fitness only looks at avg rate across 1 sec so not always best measure
+but interesting because starting to show some osc
+if look at this fig it’s clear that best soln’s are for the lowr EE gains — in this case range was 0.1 - 1.0
+since still want to reduce excitability more potentially could reduce range of EEgain explore more (eg. [0.05, 0.25]) … however to avoid scaling down EE so much from orig values, was thinking of also trying to increase the range of IE more — currently [0.5, 2.0] so maybe allowing up to 4.0 or 5.0 … which I think should have similar effect to lowering EE
+*** code
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.05, 0.5]
+    params['EIGain'] = [0.1, 1.0]
+
+    params[('IELayerGain', '1-3')] = [0.25, 5.0]
+    params[('IELayerGain', '4')] = [0.25, 5.0]
+    params[('IELayerGain', '5')] = [0.25, 5.0]
+    params[('IELayerGain', '6')] = [0.25, 5.0]
+
+    params[('IILayerGain', '1-3')] = [0.25, 2.0]
+    params[('IILayerGain', '4')] = [0.25, 2.0]
+    params[('IILayerGain', '5')] = [0.25, 2.0]
+    params[('IILayerGain', '6')] = [0.25, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+** v23_batch11 - evol optim test new fitness func
+*** code
+def evolRates():
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.05, 0.5]
+    params['EIGain'] = [0.1, 2.0]
+
+    params[('IELayerGain', '1-3')] = [0.25, 5.0]
+    params[('IELayerGain', '4')] = [0.25, 5.0]
+    params[('IELayerGain', '5')] = [0.25, 5.0]
+    params[('IELayerGain', '6')] = [0.25, 5.0]
+
+    params[('IILayerGain', '1-3')] = [0.25, 2.0]
+    params[('IILayerGain', '4')] = [0.25, 2.0]
+    params[('IILayerGain', '5')] = [0.25, 2.0]
+    params[('IILayerGain', '6')] = [0.25, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k][(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k][(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+
+    
+    #from IPython import embed; embed()
+
+    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+
+    # Set evol alg configuration
+    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 10,
+        'num_elites': 2,
+        'mutation_rate': 0.5,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 200,
+        'time_sleep': 300, # 5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 9, # max number of times to check if sim is completed (for each generation)
+        'defaultFitness': 1000, # set fitness value in case simulation time is over
+        'scancelUser': 'ext_salvadordura_gmail_com'
+    }
+
+    return b
+
+** v23_batch12 - evol optim, new fitness func, 50% density; increased ranges
+*** notes
+- can increase weight ranges because not taking into account num syns / conn
+- total weight = syn weight * num syns * electrotonic -- many unknown variables == allowed variability 
+*** code
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.05, 0.5]
+    params['EIGain'] = [0.1, 2.0]
+
+    params[('IELayerGain', '1-3')] = [0.1, 10.0]
+    params[('IELayerGain', '4')] = [0.1, 10.0]
+    params[('IELayerGain', '5')] = [0.1, 10.0]
+    params[('IELayerGain', '6')] = [0.1, 10.0]
+
+    params[('IILayerGain', '1-3')] = [0.1, 10.0]
+    params[('IILayerGain', '4')] = [0.1, 10.0]
+    params[('IILayerGain', '5')] = [0.1, 10.0]
+    params[('IILayerGain', '6')] = [0.1, 10.0]
+    
+    params['thalamoCorticalGain'] = [0.25, 2.0]  
+    params['intraThalamicGain'] = [0.25, 2.0] 
+    params['corticoThalamicGain'] = [0.25, 2.0]
+*** results
+gen_63_cand_19 - fitness 148.92
+
+ EE 0.3303517319869238	
+ EI 0.100023011	
+ IE13 9.186950686 (1.0)
+ IE4 6.160878748 (1.0)	
+ IE5 1.729074111 (1.0)
+ IE6 8.10671124 
+ II1-3 8.454681919 (1.0)
+ II4 9.44874377 (1.0)
+ II5 2.310556658 (1.0)
+ II6 1.578557048 
+ TC 1.99495686	
+ IT 0.521592918	 
+ CT 1.6131164721326399]
+
+ 
+** v24_batch1 - evol optim after fixing IE, II
+*** note
+only IE and II in L6 were working 
+*** code
+    # bkg inputs
+    params['EEGain'] = [0.1, 1.0]
+    params['EIGain'] = [0.2, 5.0]
+
+    params[('IELayerGain', '1-3')] = [0.2, 5.0]
+    params[('IELayerGain', '4')] = [0.2, 5.0]
+    params[('IELayerGain', '5')] = [0.2, 5.0]
+    params[('IELayerGain', '6')] = [0.2, 5.0]
+
+    params[('IILayerGain', '1-3')] = [0.2, 5.0]
+    params[('IILayerGain', '4')] = [0.2, 5.0]
+    params[('IILayerGain', '5')] = [0.2, 5.0]
+    params[('IILayerGain', '6')] = [0.2, 5.0]
+    
+    params['thalamoCorticalGain'] = [0.2, 5.0]  
+    params['intraThalamicGain'] = [0.2, 5.0] 
+    params['corticoThalamicGain'] = [0.2, 5.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+gen 38 cand 28 - fitness = 275.8
+
+ EE 0.824146321526465	
+ EI 0.200942767	
+ IE13 3.751053243	
+ IE4 4.780020172	
+ IE5 0.200490707	
+ IE6 4.742310303	
+ II13 0.201356072	
+ II4 1.846409498	
+ II5 4.904555212	
+ II6 2.374453718	
+ TC 1.820561507	
+ IT 0.852553584	 
+ CT 3.077182476923463
+** v24_batch2 -  evol optim with narrower range of params
+*** code
+    params['EEGain'] = [0.5, 2.0]
+    params['EIGain'] = [0.5, 2.0]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0]
+    params[('IELayerGain', '4')] = [0.5, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0]
+    params[('IELayerGain', '6')] = [0.5, 2.0]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0]
+    params[('IILayerGain', '4')] = [0.5, 2.0]
+    params[('IILayerGain', '5')] = [0.5, 2.0]
+    params[('IILayerGain', '6')] = [0.5, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0]  
+    params['intraThalamicGain'] = [0.5, 2.0] 
+    params['corticoThalamicGain'] = [0.5, 2.0]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+*** results
+gen 66 cand 8 - fitness = 311
+ EE 1.7930365644528616	
+ EI 1.301292631	
+ IE 13, 4, 5, 6 
+    1.9609935	
+    1.973369532	
+    0.547478256	
+    0.817050621	
+ II 13, 4, 5, 6
+    0.575910457	
+    0.506134474	
+    1.140789303	
+    1.999973065	
+TC 1.434715802	
+IT  1.987386358	 
+CT 1.354024353042513
+
+
+** v24_batch3 - param sweep starting from a good solution (run on my)
+*** note
+ran manually on my
+modified param set 2, to be -0.3 instead of -0.2
+*** code 
+    # conn gains
+    params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.3] 
+    params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.3]
+    params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.3]	
+    params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.3]
+    
+    #params['thalamoCorticalGain'] = [1.964478741362849, 1.0, 3.0]
+    #params[('ICThalInput', 'probE')] = [0.12, 0.25, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    
+    groupedParams = [('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain'] = 1.7930365644528616
+    initCfg['EIGain'] = 1.301292631	
+    
+    initCfg[('IELayerGain', '1-3')] = 1.9609935	
+    initCfg[('IELayerGain', '4')] = 1.973369532	
+    initCfg[('IELayerGain', '5')] = 0.547478256	
+    initCfg[('IELayerGain', '6')] = 0.817050621	
+
+    initCfg[('IILayerGain', '1-3')] = 0.575910457
+    initCfg[('IILayerGain', '4')] = 0.506134474	
+    initCfg[('IILayerGain', '5')] = 1.140789303	
+    initCfg[('IILayerGain', '6')] = 1.999973065	
+
+    initCfg['thalamoCorticalGain'] = 1.434715802
+    initCfg['intraThalamicGain'] = 1.987386358	
+    initCfg['corticoThalamicGain'] = 1.354024353042513
+
+*** results
+**** 0 (IE orig)
+  Cells: 6442
+  Connections: 0 (0.00 per cell)
+  Spikes: 28832 (2.98 Hz)
+   NGF1 : 0.027 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 26.000 Hz
+   PV2 : 2.000 Hz
+   VIP2 : 41.000 Hz
+   NGF2 : 2.000 Hz
+   IT3 : 0.016 Hz
+   SOM3 : 23.714 Hz
+   PV3 : 3.602 Hz
+   VIP3 : 42.210 Hz
+   NGF3 : 0.080 Hz
+   ITP4 : 0.002 Hz
+   ITS4 : 0.079 Hz
+   SOM4 : 9.833 Hz
+   PV4 : 2.326 Hz
+   VIP4 : 72.667 Hz
+   NGF4 : 0.857 Hz
+   IT5A : 1.564 Hz
+   CT5A : 10.894 Hz
+   SOM5A : 35.286 Hz
+   PV5A : 1.306 Hz
+   VIP5A : 2.400 Hz
+   NGF5A : 0.500 Hz
+   IT5B : 1.260 Hz
+   CT5B : 9.723 Hz
+   PT5B : 0.072 Hz
+   SOM5B : 35.714 Hz
+   PV5B : 0.851 Hz
+   VIP5B : 2.250 Hz
+   NGF5B : 0.583 Hz
+   IT6 : 4.020 Hz
+   CT6 : 13.966 Hz
+   SOM6 : 81.387 Hz
+   PV6 : 0.548 Hz
+   VIP6 : 11.833 Hz
+   NGF6 : 63.737 Hz
+   TC : 5.431 Hz
+   TCM : 0.442 Hz
+   HTC : 6.105 Hz
+   IRE : 7.273 Hz
+   IREM : 0.545 Hz
+   TI : 2.647 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 1269.69 s
+Saving output as data/v24_batch3/v24_batch3_0_0_0_0.json  ... 
+**** 1 (IE -0.1)
+  Cells: 6442
+  Connections: 0 (0.00 per cell)
+  Spikes: 31700 (3.28 Hz)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 38.500 Hz
+   PV2 : 3.667 Hz
+   VIP2 : 33.000 Hz
+   NGF2 : 1.200 Hz
+   IT3 : 0.065 Hz
+   SOM3 : 37.714 Hz
+   PV3 : 5.489 Hz
+   VIP3 : 34.181 Hz
+   NGF3 : 0.067 Hz
+   ITP4 : 0.002 Hz
+   ITS4 : 0.100 Hz
+   SOM4 : 14.250 Hz
+   PV4 : 4.239 Hz
+   VIP4 : 85.000 Hz
+   NGF4 : 1.286 Hz
+   IT5A : 1.564 Hz
+   CT5A : 12.486 Hz
+   SOM5A : 41.857 Hz
+   PV5A : 1.417 Hz
+   VIP5A : 2.000 Hz
+   NGF5A : 0.500 Hz
+   IT5B : 1.230 Hz
+   CT5B : 12.460 Hz
+   PT5B : 0.123 Hz
+   SOM5B : 44.482 Hz
+   PV5B : 0.955 Hz
+   VIP5B : 2.250 Hz
+   NGF5B : 0.500 Hz
+   IT6 : 3.988 Hz
+   CT6 : 15.157 Hz
+   SOM6 : 85.161 Hz
+   PV6 : 0.524 Hz
+   VIP6 : 11.667 Hz
+   NGF6 : 71.263 Hz
+   TC : 7.517 Hz
+   TCM : 0.442 Hz
+   HTC : 8.105 Hz
+   IRE : 8.091 Hz
+   IREM : 0.870 Hz
+   TI : 2.863 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 1320.76 s
+Saving output as data/v24_batch3/v24_batch3_1_1_1_1.json  ... 
+Finished saving!
+  Done; saving time = 2.22 s.
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 101.98 s
+
+Total time = 3079.45 s
+**** 2 (IE -0.3)
+   NGF1 : 0.000 Hz
+   IT2 : 0.000 Hz
+   SOM2 : 68.500 Hz
+   PV2 : 0.333 Hz
+   VIP2 : 8.250 Hz
+   NGF2 : 0.400 Hz
+   IT3 : 0.000 Hz
+   SOM3 : 61.943 Hz
+   PV3 : 0.864 Hz
+   VIP3 : 12.143 Hz
+   NGF3 : 0.013 Hz
+   ITP4 : 0.000 Hz
+   ITS4 : 0.000 Hz
+   SOM4 : 19.000 Hz
+   PV4 : 5.413 Hz
+   VIP4 : 87.333 Hz
+   NGF4 : 4.286 Hz
+   IT5A : 1.380 Hz
+   CT5A : 17.514 Hz
+   SOM5A : 54.857 Hz
+   PV5A : 0.000 Hz
+   VIP5A : 0.000 Hz
+   NGF5A : 0.000 Hz
+   IT5B : 1.064 Hz
+   CT5B : 18.817 Hz
+   PT5B : 0.000 Hz
+   SOM5B : 62.964 Hz
+   PV5B : 0.000 Hz
+   VIP5B : 0.000 Hz
+   NGF5B : 0.000 Hz
+   IT6 : 0.000 Hz
+   CT6 : 15.942 Hz
+   SOM6 : 91.226 Hz
+   PV6 : 0.000 Hz
+   VIP6 : 5.167 Hz
+   NGF6 : 84.789 Hz
+   TC : 8.345 Hz
+   TCM : 0.000 Hz
+   HTC : 11.842 Hz
+   IRE : 8.156 Hz
+   IREM : 0.844 Hz
+   TI : 3.392 Hz
+  Simulated time: 1.5 s; 96 workers
+  Run time: 1261.80 s
+
+** v24_batch4 - v24_batch3 with IC inputs; running 'manually' on NSG
+*** code
+**** v24_batch4_0
+"""
+cfg.py 
+
+Simulation configuration for A1 model (using NetPyNE)
+This file has sim configs as well as specification for parameterized values in netParams.py 
+
+Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
+"""
+
+
+from netpyne import specs
+import pickle
+
+cfg = specs.SimConfig()
+
+#------------------------------------------------------------------------------
+#
+# SIMULATION CONFIGURATION
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# Run parameters
+#------------------------------------------------------------------------------
+cfg.duration = 1.5*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
+cfg.verbose = 0         	## Show detailed messages
+cfg.hParams['celsius'] = 37
+cfg.createNEURONObj = 1
+cfg.createPyStruct = 1
+cfg.printRunTime = 0.1
+
+cfg.connRandomSecFromList = False  # set to false for reproducibility 
+cfg.cvode_active = False
+cfg.cvode_atol = 1e-6
+cfg.cache_efficient = True
+cfg.printRunTime = 0.1
+cfg.oneSynPerNetcon = False
+cfg.includeParamsLabel = False
+cfg.printPopAvgRates = [500, cfg.duration]
+
+#------------------------------------------------------------------------------
+# Recording 
+#------------------------------------------------------------------------------
+cfg.allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
+
+alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE', 'TI']
+
+cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
+cfg.recordStim = False			## Seen in M1 cfg.py
+cfg.recordTime = False  		## SEen in M1 cfg.py 
+cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
+
+#cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 400)]+[[100, 2500, 200], [100,2700,200]]
+
+#------------------------------------------------------------------------------
+# Saving
+#------------------------------------------------------------------------------
+
+cfg.simLabel = 'v24_batch3_0' 
+cfg.saveFolder = '.'                	## Set file output name
+cfg.savePickle = False         	## Save pkl file
+cfg.saveJson = True           	## Save json file
+cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
+cfg.backupCfgFile = None 		
+cfg.gatherOnlySimData = False	 
+cfg.saveCellSecs = False		 
+cfg.saveCellConns = False		 
+
+#------------------------------------------------------------------------------
+# Analysis and plotting 
+#----------------------------------------------------------------------------- 
+
+# cellGids = {'NGF1': 0, 'IT2': 45, 'SOM2': 146, 'PV2': 147, 'VIP2': 151, 'NGF2': 155, 'IT3': 158, 'SOM3': 1496, 'PV3': 1517, 'VIP3': 1569, 'NGF3': 1632, 'ITP4': 1677, 'ITS4': 1928, 'SOM4': 2179, 'PV4': 2186, 'VIP4': 2214, 'NGF4': 2218, 'IT5A': 2222, 'SOM5A': 2437, 'PV5A': 2450, 'VIP5A': 2472, 'NGF5A': 2475, 'IT5B': 2477, 'PT5B': 2689, 'SOM5B': 2901, 'PV5B': 2934, 'VIP5B': 2974, 'NGF5B': 2979, 'IT6': 2986, 'CT6': 3288, 'SOM6': 3590, 'PV6': 3609, 'VIP6': 3634, 'NGF6': 3637, 'TC': 3648, 'TCM': 3683, 'HTC': 3729, 'IRE': 3740, 'IREM': 3786}
+
+
+# popGidRecord = [list(cellGids.values())[i] for i in [6,7,8,9,10,11,12,-1,-2,-3,-4,-5]]
+
+cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in alltypes], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300}      	## Plot a raster
+#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': False, 'saveFig': True}
+#cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
+
+
+#------------------------------------------------------------------------------
+# Cells
+#------------------------------------------------------------------------------
+cfg.weightNormThreshold = 5.0  # maximum weight normalization factor with respect to the soma
+
+#------------------------------------------------------------------------------
+# Synapses
+#------------------------------------------------------------------------------
+cfg.AMPATau2Factor = 1.0
+cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
+cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
+cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
+cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
+
+
+#------------------------------------------------------------------------------
+# Network 
+#------------------------------------------------------------------------------
+## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
+cfg.singleCellPops = False
+cfg.singlePop = ''
+cfg.removeWeightNorm = False
+cfg.scale = 1.0     # Is this what should be used? 
+cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
+cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
+cfg.sizeZ = 200.0
+cfg.scaleDensity = 0.5 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+
+
+#------------------------------------------------------------------------------
+# Connectivity
+#------------------------------------------------------------------------------
+cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
+cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
+cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
+cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
+
+# Cortical
+cfg.addConn = 1
+
+cfg.EEGain = 1.7930365644528616 
+cfg.EIGain = 1.301292631	
+cfg.IEGain = 1.0 #0.75
+cfg.IIGain = 1.0 #0.5
+
+## I->E/I layer weights (L1-3, L4, L5, L6)
+cfg.IELayerGain = {'1-3': 1.9609935, '4': 1.973369532, '5': 0.547478256, '6': 0.817050621}
+cfg.IILayerGain = {'1-3': 0.575910457, '4': 0.506134474, '5': 1.140789303, '6': 1.999973065}
+
+# Thalamic
+cfg.addIntraThalamicConn = 1.0
+cfg.addIntraThalamicConn = 1.0
+cfg.addCorticoThalamicConn = 1.0
+cfg.addThalamoCorticalConn = 1.0
+
+cfg.thalamoCorticalGain = 1.434715802
+cfg.intraThalamicGain = 1.987386358	
+cfg.corticoThalamicGain = 1.354024353042513
+
+cfg.addSubConn = 1
+
+
+#------------------------------------------------------------------------------
+# Background inputs
+#------------------------------------------------------------------------------
+cfg.addBkgConn = 1
+cfg.noiseBkg = 1.0  # firing rate random noise
+cfg.delayBkg = 5.0  # (ms)
+cfg.startBkg = 0  # start at 0 ms
+
+# cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 15.0, 'CT': 14.0,
+#                 'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
+#                 'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
+cfg.rateBkg = {'exc': 40, 'inh': 40}
+
+## options to provide external sensory input
+cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+
+cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
+
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
+
+
+#------------------------------------------------------------------------------
+# Current inputs 
+#------------------------------------------------------------------------------
+cfg.addIClamp = 0
+
+#------------------------------------------------------------------------------
+# NetStim inputs 
+#------------------------------------------------------------------------------
+
+cfg.addNetStim = 0
+
+## LAYER 1
+cfg.NetStim1 = {'pop': 'NGF1', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
+
+# ## LAYER 2
+# cfg.NetStim2 = {'pop': 'IT2',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 60.0, 	'weight': 10.0, 'delay': 0}
+
+
+
+
+
+
+** v24_batch5 - result from v24_batch3 with IC inputs and LFP recording; manually on 'my'
+*** code
+params = specs.ODict()
+
+    # conn gains
+    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    
+    params['thalamoCorticalGain'] = [1.434715802, 2.0]
+    #params[('ICThalInput', 'probE')] = [0.12, 0.25]#, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.12, 0.25]#, 0.5]
+    
+    groupedParams = [('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain'] = 1.7930365644528616
+    initCfg['EIGain'] = 1.301292631	
+    
+    initCfg[('IELayerGain', '1-3')] = 1.9609935 - 0.15
+    initCfg[('IELayerGain', '4')] = 1.973369532	- 0.15
+    initCfg[('IELayerGain', '5')] = 0.547478256	- 0.15
+    initCfg[('IELayerGain', '6')] = 0.817050621	- 0.15
+
+    initCfg[('IILayerGain', '1-3')] = 0.575910457
+    initCfg[('IILayerGain', '4')] = 0.506134474	
+    initCfg[('IILayerGain', '5')] = 1.140789303	
+    initCfg[('IILayerGain', '6')] = 1.999973065	
+
+    initCfg['thalamoCorticalGain'] = 1.434715802
+    initCfg['intraThalamicGain'] = 1.987386358	
+    initCfg['corticoThalamicGain'] = 1.354024353042513
+
+    
+** v24_batch6 - rerun v23_batch8 with fixed LFP
+*** notes
+1_1_1_1_0
+1_1_1_1_1
+1_1_1_1_2
+
+had to go to prev commit cause bkg inputs had changed
+
+*** params
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]=1.9475510641094371 1.0
+    initCfg[('IELayerGain', '4')]=1.961577378323746 1.0
+    initCfg[('IELayerGain', '5')]=0.73154575340036 1.0
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.2715789518318394 1.0
+    initCfg[('IILayerGain', '4')]=0.5633033925996949 1.0 
+    initCfg[('IILayerGain', '5')]=1.674448267759582 1.0
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+*** code
+    params = specs.ODict()
+
+    # conn gains
+    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    
+    #params['thalamoCorticalGain'] = [1.434715802, 2.0]
+    #params[('ICThalInput', 'probE')] = [0.12, 0.25]#, 0.5]
+    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    
+    groupedParams = [] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1750
+    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    ''' from v23_batch8'''
+    initCfg['EEGain']=0.10928952347451457
+    initCfg['EIGain']=0.13089042807412776
+    initCfg[('IELayerGain', '1-3')]= 1.0
+    initCfg[('IELayerGain', '4')]=1.0
+    initCfg[('IELayerGain', '5')]=1.0
+    initCfg[('IELayerGain', '6')]=1.5743753119276733
+    initCfg[('IILayerGain', '1-3')]=1.0
+    initCfg[('IILayerGain', '4')]=1.0 
+    initCfg[('IILayerGain', '5')]=1.0
+    initCfg[('IILayerGain', '6')]=0.8550747910383769
+    initCfg['thalamoCorticalGain']=1.964478741362849
+    initCfg['intraThalamicGain']=0.35778625557189936
+    initCfg['corticoThalamicGain'] = 1.4715575641214615
+    

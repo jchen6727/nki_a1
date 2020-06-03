@@ -177,7 +177,7 @@ Ipops = ['NGF1',                            # L1
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
         'PV6', 'SOM6', 'VIP6', 'NGF6']  # L6 
         
-Tpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM']
+Tpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
 
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1], 'thal': [1.2, 1.4]} # 
 
@@ -472,6 +472,11 @@ if connDataSource['I->E/I'] == 'custom_A1':
     pmat['PV']['VIP'] = weak
     pmat['PV']['NGF'] = weak  # unknown; assume weak
 
+    # NGF -> I; unknown, assume weak since most data focuses on NGF -> E
+    pmat['NGF']['PV'] = weak
+    pmat['NGF']['SOM'] = weak
+    pmat['NGF']['VIP'] = weak
+    pmat['NGF']['NGF'] = weak  
 
     # --------------------------------------------------
     ## Weights  (=unitary conn somatic PSP amplitude)
@@ -538,6 +543,7 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
 
 # --------------------------------------------------
 ## Probabilities 
+## note: missing values mean 0 probability
 pmat['TC']['TC'] =	    0.1
 pmat['HTC']['HTC'] =	0.1
 pmat['TC']['HTC'] =	    0.1
@@ -559,6 +565,15 @@ pmat['IRE']['TC'] =	    0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['IRE']['HTC'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
 pmat['TCM']['IREM'] =	0.4
 pmat['IREM']['TCM'] =	0.3  # > data['TC_Crui2010']['prob']['TRN_VB'] = 0.08
+pmat['TI']['TC']    =   0.21  # TI values from Serkov 1996
+pmat['TI']['HTC']   =   0.21
+pmat['TI']['TCM']   =   0.21
+pmat['TC']['TI']    =   0.01
+pmat['HTC']['TI']   =   0.01
+pmat['TCM']['TI']   =   0.09
+pmat['IRE']['TI']   =   0.09
+pmat['IREM']['TI']  =	0.3 
+pmat['TI']['TI']    =   0.53
 
 
 # --------------------------------------------------
@@ -584,6 +599,16 @@ wmat['IRE']['TC'] =     0.83
 wmat['IRE']['HTC'] =    0.83
 wmat['TCM']['IREM'] =   0.2
 wmat['IREM']['TCM'] =   0.83
+wmat['TI']['TC']    =   0.83  # for TI using same values as RE
+wmat['TI']['HTC']   =   0.83
+wmat['TI']['TCM']   =   0.83
+wmat['TC']['TI']    =   0.2
+wmat['HTC']['TI']   =   0.2
+wmat['TCM']['TI']   =   0.2
+wmat['TCM']['TI']   =   0.2
+wmat['IRE']['TI']   =   0.5
+wmat['IREM']['TI']  =	0.5 
+wmat['TI']['TI']    =   0.5
 
 
 
@@ -596,12 +621,15 @@ wmat['IREM']['TCM'] =   0.83
 pmat['CT5A']['TC']	= 0.1
 pmat['CT5A']['HTC']	= 0.1
 pmat['CT5A']['IRE']	= 0.1
+pmat['CT5A']['TI']	= 0.05
 pmat['CT5B']['TC']	= 0.1
 pmat['CT5B']['HTC']	= 0.1
-pmat['CT5B']['IRE']	= 0.1
+pmat['CT5B']['IRE'] = 0.1
+pmat['CT5B']['TI']  = 0.05
 pmat['CT6']['TC']	= 0.1
 pmat['CT6']['HTC']	= 0.1
 pmat['CT6']['IRE']	= 0.1
+pmat['CT6']['TI']	= 0.05
 pmat['IT5B']['TCM']	= 0.1
 pmat['PT5B']['TCM']	= 0.1
 
@@ -610,12 +638,16 @@ pmat['PT5B']['TCM']	= 0.1
 wmat['CT5A']['TC']	= 0.7
 wmat['CT5A']['HTC']	= 0.7
 wmat['CT5A']['IRE']	= 0.23
+wmat['CT5A']['TI']	= 0.23
 wmat['CT5B']['TC']	= 0.7
 wmat['CT5B']['HTC']	= 0.7
 wmat['CT5B']['IRE']	= 0.23
+wmat['CT5B']['IRE']	= 0.23
+wmat['CT5B']['TI']	= 0.23
 wmat['CT6']['TC']	= 0.7
 wmat['CT6']['HTC']	= 0.7
 wmat['CT6']['IRE']	= 0.23
+wmat['CT6']['TI']	= 0.23
 wmat['IT5B']['TCM']	= 0.7
 wmat['PT5B']['TCM']	= 0.7
 
