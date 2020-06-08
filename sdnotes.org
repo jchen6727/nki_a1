@@ -4277,3 +4277,10 @@ had to go to prev commit cause bkg inputs had changed
     initCfg['intraThalamicGain']=0.35778625557189936
     initCfg['corticoThalamicGain'] = 1.4715575641214615
     
+** v24_batch7 - fI for ITS4 and VIP to check diam change didn't affect
+*** results
+OK, same fI, didn't affect.
+
+** v24_batch8 - fI for ITS4 with old diam (3um)
+*** results
+pretty similar to new diam (25um); but steeper curve so keeping 25um
