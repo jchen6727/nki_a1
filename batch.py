@@ -903,7 +903,7 @@ def asdRates():
     initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
     initCfg['dt'] = 0.05
 
-    initCfg['scaleDensity'] = 0.05
+    initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
@@ -922,22 +922,21 @@ def asdRates():
     pops = {}
     
     ## Exc pops
-    Epops = ['IT3']#'IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     Etune = {'target': 5, 'width': 20, 'min': 0.05}
     for pop in Epops:
         pops[pop] = Etune
     
     ## Inh pops 
-    Ipops = ['PV3']
-    # 'NGF1',                            # L1
-    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
-    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
-    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
-    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
-    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
 
     Itune = {'target': 10, 'width': 30, 'min': 0.05}
     for pop in Ipops:
@@ -978,14 +977,14 @@ def asdRates():
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
-        'sinc':         2,       #   Step size learning rate (increase)
-        'sdec':         2,       #   Step size learning rate (decrease)
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
         'pinc':         2,       #   Parameter selection learning rate (increase)
         'pdec':         2,       #   Parameter selection learning rate (decrease)
         #'pinitial':     None,    #    Set initial parameter selection probabilities
         #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
-        'maxiters':     10,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
-        'maxtime':      3600,    #    Maximum time allowed, in seconds
+        'maxiters':     1000,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
         'abstol':       1e-6,    #    Minimum absolute change in objective function
         'reltol':       1e-3,    #    Minimum relative change in objective function
         #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
@@ -993,8 +992,8 @@ def asdRates():
         #'randseed':     None,    #    The random seed to use
         'verbose':      2,       #    How much information to print during the run
         #'label':        None    #    A label to use to annotate the output
-        'time_sleep': 30, # 2.5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 5, # max number of times to check if sim is completed (for each generation)
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 30, # max number of times to check if sim is completed (for each generation)
     }
 
     return b

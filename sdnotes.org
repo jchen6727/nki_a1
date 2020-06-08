@@ -4284,3 +4284,7 @@ OK, same fI, didn't affect.
 ** v24_batch8 - fI for ITS4 with old diam (3um)
 *** results
 pretty similar to new diam (25um); but steeper curve so keeping 25um
+
+** v24_batch9 - asd optim 
+*** notes
+test with toy model first
