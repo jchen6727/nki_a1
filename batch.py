@@ -932,9 +932,9 @@ if __name__ == '__main__':
     # b = evolRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    b = fIcurve(pops=['VIP2', 'ITS4']) 
+    b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch7'
+    b.batchLabel = 'v24_batch8'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'grid' #'grid' #'evol' #  # evol
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
