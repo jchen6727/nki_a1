@@ -983,7 +983,7 @@ def asdRates():
         'pdec':         2,       #   Parameter selection learning rate (decrease)
         #'pinitial':     None,    #    Set initial parameter selection probabilities
         #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
-        'maxiters':     1000,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      360000,    #    Maximum time allowed, in seconds
         'abstol':       1e-6,    #    Minimum absolute change in objective function
         'reltol':       1e-3,    #    Minimum relative change in objective function
@@ -1010,7 +1010,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='mpi_direct':
         b.runCfg = {'type': 'mpi_direct',
             'nodes': 1,
-            'coresPerNode': 4,
+            'coresPerNode': 96,
             'script': 'init.py',
             'mpiCommand': 'mpirun',
             'skip': True}
