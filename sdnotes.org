@@ -4285,6 +4285,413 @@ OK, same fI, didn't affect.
 *** results
 pretty similar to new diam (25um); but steeper curve so keeping 25um
 
-** v24_batch9 - asd optim 
+** v24_batch9 - asd optim on 'zn' 96 cores (6 gens)
 *** notes
 test with toy model first
+*** code
+def asdRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+
+    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
+    params['EIGain'] = [0.5, 2.0, 1.301292631]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
+    params[('IELayerGain', '4')] = [0.5, 2.0, 1.973369532]
+    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
+    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.575910457]
+    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
+    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
+    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
+    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
+    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 30, # max number of times to check if sim is completed (for each generation)
+    }
+*** results
+stopped after 6 gens  -- not sure why
+
+    "fvals": [
+        323.4898722376168,
+        323.4898722376168,
+        293.7585341348848,
+        293.7585341348848,
+        293.7585341348848,
+        293.7585341348848,
+        0.0,
+        0.0,
+ "x": [
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.575910457,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.575910457,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        [
+
+
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=2.0
+set ('IELayerGain', '5')=0.547478256
+set ('IELayerGain', '6')=0.817050621
+set ('IILayerGain', '1-3')=0.5183194113
+set ('IILayerGain', '4')=0.506134474
+set ('IILayerGain', '5')=1.140789303
+set ('IILayerGain', '6')=1.999973065
+set thalamoCorticalGain=1.434715802
+set intraThalamicGain=1.987386358
+set corticoThalamicGain=1.354024353042513
+** v24_batch10 - asd optim on 'zn' 96 cores; continue from v24_batch10
+*** notes
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=2.0
+set ('IELayerGain', '5')=0.547478256
+set ('IELayerGain', '6')=0.817050621
+set ('IILayerGain', '1-3')=0.5183194113
+set ('IILayerGain', '4')=0.506134474
+set ('IILayerGain', '5')=1.140789303
+set ('IILayerGain', '6')=1.999973065
+set thalamoCorticalGain=1.434715802
+set intraThalamicGain=1.987386358
+set corticoThalamicGain=1.354024353042513
+*** code
+
+ef asdRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+
+    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
+    params['EIGain'] = [0.5, 2.0, 1.301292631]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
+    params[('IELayerGain', '4')] = [0.5, 2.0, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
+    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.5183194113]
+    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
+    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
+    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
+    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
+    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     100,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 30, # max number of times to check if sim is completed (for each generation)
+    }
