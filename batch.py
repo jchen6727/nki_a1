@@ -994,7 +994,8 @@ def asdRates():
         'verbose':      2,       #    How much information to print during the run
         #'label':        None    #    A label to use to annotate the output
         'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 30, # max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 30,  # max number of times to check if sim is completed (for each generation)
+        'popsize': 1
     }
 
     return b
@@ -1083,7 +1084,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch10'
+    b.batchLabel = 'v24_batch11'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_direct') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
