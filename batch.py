@@ -876,22 +876,22 @@ def asdRates():
 
     # bkg inputs
 
-    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
-    params['EIGain'] = [0.5, 2.0, 1.301292631]
+    params['EEGain'] = [0.5, 2.0, [1.7930365644528616]]
+    params['EIGain'] = [0.5, 2.0, [1.301292631]]
 
-    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
-    params[('IELayerGain', '4')] = [0.5, 2.0, 2.0]
-    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
-    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [1.9609935]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [2.0]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [0.547478256]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [0.817050621]]
 
-    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.5183194113]
-    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
-    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
-    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [0.5183194113]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [0.506134474]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [1.140789303]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [1.999973065]]
     
-    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
-    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
-    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+    params['thalamoCorticalGain'] = [0.5, 2.0, [1.434715802]]  
+    params['intraThalamicGain'] = [0.5, 2.0, [1.987386358]]
+    params['corticoThalamicGain'] = [0.5, 2.0, [1.354024353042513]]
 
 
     groupedParams = []
