@@ -879,18 +879,18 @@ def asdRates():
     params['EIGain'] = [0.5, 2.0, [1.301292631]]
 
     params[('IELayerGain', '1-3')] = [0.5, 2.0, [1.9609935]]
-    params[('IELayerGain', '4')] = [0.5, 2.0, [1.8666666666666667]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [1.973369532]]
     params[('IELayerGain', '5')] = [0.5, 2.0, [0.547478256]]
-    params[('IELayerGain', '6')] = [0.5, 2.0, [0.9586727286400001]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [0.817050621]]
 
-    params[('IILayerGain', '1-3')] = [0.5, 2.0, [0.57015135243]]
-    params[('IILayerGain', '4')] = [0.5, 2.0, [0.5567479214]]
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [0.575910457]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [0.506134474]]
     params[('IILayerGain', '5')] = [0.5, 2.0, [1.140789303]]
-    params[('IILayerGain', '6')] = [0.5, 2.0, [1.9110853732222222]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [1.999973065]]
     
-    params['thalamoCorticalGain'] = [0.5, 2.0, [1.2912442218]]  
-    params['intraThalamicGain'] = [0.5, 2.0, [1.7886477222]]
-    params['corticoThalamicGain'] = [0.5, 2.0, [1.4894267883467642]]
+    params['thalamoCorticalGain'] = [0.5, 2.0, [1.434715802]]  
+    params['intraThalamicGain'] = [0.5, 2.0, [1.987386358]] 
+    params['corticoThalamicGain'] = [0.5, 2.0, [1.354024353042513]]
 
 
     groupedParams = []
@@ -1083,7 +1083,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch13'
+    b.batchLabel = 'v24_batch14'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_direct') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

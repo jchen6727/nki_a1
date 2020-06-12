@@ -162,7 +162,7 @@ cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thal
 
 cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
 
-cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
+cfg.ICThalInput = False  #'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26}  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
 
 
 #------------------------------------------------------------------------------

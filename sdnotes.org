@@ -4285,7 +4285,7 @@ OK, same fI, didn't affect.
 *** results
 pretty similar to new diam (25um); but steeper curve so keeping 25um
 
-** v24_batch9 - asd optim on 'zn' 96 cores (6 gens)
+** v24_batch9 - asd optim on 'zn' 96 cores (6 gens) (bug: IC input)
 *** notes
 test with toy model first
 *** code
@@ -4553,8 +4553,10 @@ set corticoThalamicGain=1.354024353042513
 
 
 ** v24_batch10 - asd optim on 'zn' 96 cores; continue from v24_batch9 (bug)
-** v24_batch11 - asd optim on 'zn' 96 cores; continue from v24_batch9 
+** v24_batch11 - asd optim on 'zn' 96 cores; continue from v24_batch9 (bug: IC input) 
 *** notes
+not reproducible cause was using IC input (should only be bkg), and turns out IC input is random every time
+
 set EEGain=1.7930365644528616
 set EIGain=1.301292631
 set ('IELayerGain', '1-3')=1.9609935
@@ -4777,8 +4779,11 @@ params for 1st 281.8085323839038:
                 1.2912442218,
                 1.7886477222,
                 1.4894267883467642
-** v24_batch12 - asd optim on 'zn' 96 cores; continue from v24_batch11
+** v24_batch12 - asd optim on 'zn' 96 cores; continue from v24_batch11 (bug: IC input)
 *** notes
+not reproducible cause was using IC input, and turns out IC input is random every time
+
+
 fixed parallel asd by adding try excpet around psutil
 continue from v24_batch11:
                 1.7930365644528616,
@@ -5041,7 +5046,9 @@ set corticoThalamicGain=1.4894267883467642
             269.8779437853786,
             269.8779437853786,
             269.8779437853786
-** v24_batch13 - asd optim on 'zn' 96 cores; continue from v24_batch12
+** v24_batch13 - asd optim on 'zn' 96 cores; continue from v24_batch12 (bug: IC input)
+not reproducible cause was using IC input (should only be bkg), and turns out IC input is random every time
+
 set EEGain=1.7930365644528616
 set EIGain=1.301292631
 set ('IELayerGain', '1-3')=1.9609935
@@ -5055,5 +5062,25 @@ set ('IILayerGain', '6')=1.9110853732222222
 set thalamoCorticalGain=1.2912442218
 set intraThalamicGain=1.7886477222
 set corticoThalamicGain=1.4894267883467642
+
+** v24_batch14 - asd optimi on 'zn' 96 cores; from v24_batch2 (after removing IC)
+*** notes
+    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
+    params['EIGain'] = [0.5, 2.0, 1.301292631]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
+    params[('IELayerGain', '4')] = [0.5, 2.0, 1.973369532]
+    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
+    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.575910457]
+    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
+    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
+    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
+    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
+    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+*** 
 
 ** new
