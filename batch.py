@@ -875,19 +875,18 @@ def asdRates():
     params = specs.ODict()
 
     # bkg inputs
-
     params['EEGain'] = [0.5, 2.0, [1.7930365644528616]]
     params['EIGain'] = [0.5, 2.0, [1.301292631]]
 
     params[('IELayerGain', '1-3')] = [0.5, 2.0, [1.9609935]]
     params[('IELayerGain', '4')] = [0.5, 2.0, [1.8666666666666667]]
     params[('IELayerGain', '5')] = [0.5, 2.0, [0.547478256]]
-    params[('IELayerGain', '6')] = [0.5, 2.0, [0.8715206624]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [0.9586727286400001]]
 
     params[('IILayerGain', '1-3')] = [0.5, 2.0, [0.57015135243]]
-    params[('IILayerGain', '4')] = [0.5, 2.0, [0.506134474]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [0.5567479214]]
     params[('IILayerGain', '5')] = [0.5, 2.0, [1.140789303]]
-    params[('IILayerGain', '6')] = [0.5, 2.0, [1.999973065]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [1.9110853732222222]]
     
     params['thalamoCorticalGain'] = [0.5, 2.0, [1.2912442218]]  
     params['intraThalamicGain'] = [0.5, 2.0, [1.7886477222]]
@@ -984,7 +983,7 @@ def asdRates():
         'pdec':         2,       #   Parameter selection learning rate (decrease)
         #'pinitial':     None,    #    Set initial parameter selection probabilities
         #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
-        'maxiters':     100,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      360000,    #    Maximum time allowed, in seconds
         'abstol':       1e-6,    #    Minimum absolute change in objective function
         'reltol':       1e-3,    #    Minimum relative change in objective function
@@ -1084,7 +1083,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch12'
+    b.batchLabel = 'v24_batch13'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_direct') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
