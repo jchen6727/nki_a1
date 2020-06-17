@@ -5235,4 +5235,8 @@ def asdRates():
         'popsize': 1
     }
 
+** v24_batch16 - parallel ASD on GCP; NEURON 8.0
+*** notes
+*** code
+
 ** new
