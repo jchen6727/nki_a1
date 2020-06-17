@@ -993,7 +993,7 @@ def asdRates():
         'verbose':      2,       #    How much information to print during the run
         #'label':        None    #    A label to use to annotate the output
         'time_sleep': 60, # 1min wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 30,  # max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 12,  # max number of times to check if sim is completed (for each generation)
         'popsize': 40
     }
 
