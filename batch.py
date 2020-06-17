@@ -983,7 +983,7 @@ def asdRates():
         'pdec':         2,       #   Parameter selection learning rate (decrease)
         #'pinitial':     None,    #    Set initial parameter selection probabilities
         #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
-        'maxiters':     2,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      360000,    #    Maximum time allowed, in seconds
         'abstol':       1e-6,    #    Minimum absolute change in objective function
         'reltol':       1e-3,    #    Minimum relative change in objective function
@@ -994,7 +994,7 @@ def asdRates():
         #'label':        None    #    A label to use to annotate the output
         'time_sleep': 60, # 1min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 30,  # max number of times to check if sim is completed (for each generation)
-        'popsize': 2
+        'popsize': 40
     }
 
     return b
