@@ -874,23 +874,29 @@ def asdRates():
     # parameters
     params = specs.ODict()
 
+    x0 = [[1.4338777102469733, 1.1625828604622033, 1.091037051695174, 1.8712819675755956, 0.7397134465049761, 1.367569320349433, 1.418339439423966, 0.6274719645228012, 0.5675561437477121, 1.5174286644853214, 1.6851404284735372, 1.063075099977045, 0.673804518651403],
+    [1.4117825668705553, 1.4562645192525767, 0.6966421717946888, 1.1564048776911902, 0.5082691576672945, 1.8650994583365461, 0.5247660780373347, 1.3887063888108127, 0.8359523062412009, 0.786403002769916, 1.0872681212597493, 1.9355702398668257, 0.8456162169403141],
+    [1.4796339232563818, 1.2494919865726666, 1.2106074885592537, 0.5914377334878493, 0.7956691184253843, 1.1044833499655324, 1.8970275010959088, 1.2806598565853817, 1.0339389242169903, 1.2449536297089994, 1.653463860326919, 0.5816973165681442, 1.8408576413375228],
+    [1.3154950966436703, 1.0095763680475387, 1.3046938357412072, 1.337690869825955, 1.3419352351670506, 2.0, 1.806386376748424, 1.785015289487499, 1.3006272106913037, 1.6797508518217605, 1.5625342091955938, 0.9733859948789619, 0.8423443321780072],
+    [1.4081465013179777, 0.6909751558458218, 1.476256983214676, 1.4388900372032694, 0.5, 1.4292511768559795, 0.6980418301090989, 1.1884408015079058, 1.8830229460800467, 1.1514878860870101, 0.9636536753602729, 1.283310375368901, 1.2234380160367202]]
+
     # bkg inputs
-    params['EEGain'] = [0.5, 2.0]
-    params['EIGain'] = [0.5, 2.0]
+    params['EEGain'] = [0.5, 2.0, [x[0] for x in x0]]
+    params['EIGain'] = [0.5, 2.0, [x[1] for x in x0]]
 
-    params[('IELayerGain', '1-3')] = [0.5, 2.0]
-    params[('IELayerGain', '4')] = [0.5, 2.0]
-    params[('IELayerGain', '5')] = [0.5, 2.0]
-    params[('IELayerGain', '6')] = [0.5, 2.0]
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [x[2] for x in x0]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [x[3] for x in x0]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [x[4] for x in x0]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [x[5] for x in x0]]
 
-    params[('IILayerGain', '1-3')] = [0.5, 2.0]
-    params[('IILayerGain', '4')] = [0.5, 2.0]
-    params[('IILayerGain', '5')] = [0.5, 2.0]
-    params[('IILayerGain', '6')] = [0.5, 2.0]
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [x[6] for x in x0]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [x[7] for x in x0]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [x[8] for x in x0]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [x[9] for x in x0]]
     
-    params['thalamoCorticalGain'] = [0.5, 2.0]  
-    params['intraThalamicGain'] = [0.5, 2.0] 
-    params['corticoThalamicGain'] = [0.5, 2.0]
+    params['thalamoCorticalGain'] = [0.5, 2.0, [x[10] for x in x0]]
+    params['intraThalamicGain'] = [0.5, 2.0, [x[11] for x in x0]]
+    params['corticoThalamicGain'] = [0.5, 2.0, [x[12] for x in x0]]
 
 
     groupedParams = []
@@ -983,7 +989,7 @@ def asdRates():
         'pdec':         2,       #   Parameter selection learning rate (decrease)
         #'pinitial':     None,    #    Set initial parameter selection probabilities
         #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
-        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      360000,    #    Maximum time allowed, in seconds
         'abstol':       1e-6,    #    Minimum absolute change in objective function
         'reltol':       1e-3,    #    Minimum relative change in objective function
@@ -994,7 +1000,7 @@ def asdRates():
         #'label':        None    #    A label to use to annotate the output
         'time_sleep': 60, # 1min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 12,  # max number of times to check if sim is completed (for each generation)
-        'popsize': 40
+        'popsize': 5
     }
 
     return b
@@ -1083,7 +1089,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch16'
+    b.batchLabel = 'v24_batch17'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

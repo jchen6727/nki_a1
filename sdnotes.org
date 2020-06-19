@@ -5238,5 +5238,337 @@ def asdRates():
 ** v24_batch16 - parallel ASD on GCP; NEURON 8.0
 *** notes
 *** code
+*** results
+===  Maximum iterations reached (steps: 200) ===
+  == candidate: 0 | orig: 578.66 | best: 375.49 | ratio: 0.64889 ==
+  == candidate: 1 | orig: -1.0000 | best: -1.0000 | ratio: 1.0000 ==
+  == candidate: 2 | orig: 619.55 | best: 489.84 | ratio: 0.79063 ==
+  == candidate: 3 | orig: 475.22 | best: 406.03 | ratio: 0.85441 ==
+  == candidate: 4 | orig: 655.22 | best: 441.70 | ratio: 0.67413 ==
+  == candidate: 5 | orig: -1.0000 | best: -1.0000 | ratio: 1.0000 ==
+  == candidate: 6 | orig: 637.05 | best: 508.97 | ratio: 0.79894 ==
+  == candidate: 7 | orig: 639.17 | best: 475.23 | ratio: 0.74351 ==
+  == candidate: 8 | orig: 577.88 | best: 477.15 | ratio: 0.82570 ==
+  == candidate: 9 | orig: 661.17 | best: 465.06 | ratio: 0.70340 ==
+  == candidate: 10 | orig: 441.48 | best: 310.98 | ratio: 0.70441 ==
+  == candidate: 11 | orig: 502.72 | best: 382.09 | ratio: 0.76005 == 
+  == candidate: 11 | orig: 702.78 | best: 549.61 | ratio: 0.78205 ==
+  == candidate: 13 | orig: 667.11 | best: 632.18 | ratio: 0.94764 ==
+  == candidate: 14 | orig: 401.70 | best: 372.27 | ratio: 0.92675 ==
+  == candidate: 15 | orig: 667.11 | best: 477.47 | ratio: 0.71573 ==
+  == candidate: 16 | orig: 696.83 | best: 655.22 | ratio: 0.94029 ==
+  == candidate: 17 | orig: 607.66 | best: 370.02 | ratio: 0.60893 ==
+  == candidate: 18 | orig: 702.78 | best: 405.74 | ratio: 0.57734 ==
+  == candidate: 19 | orig: 608.01 | best: 463.25 | ratio: 0.76190 ==
+  == candidate: 20 | orig: 503.06 | best: 485.75 | ratio: 0.96560 ==
+  == candidate: 21 | orig: 574.45 | best: 539.32 | ratio: 0.93885 ==
+  == candidate: 22 | orig: 708.73 | best: 673.06 | ratio: 0.94967 ==
+  == candidate: 23 | orig: 667.11 | best: 396.65 | ratio: 0.59458 ==
+  == candidate: 24 | orig: 690.89 | best: 604.63 | ratio: 0.87515 ==
+  == candidate: 25 | orig: 690.89 | best: 489.01 | ratio: 0.70779 ==
+  == candidate: 26 | orig: 619.55 | best: 423.47 | ratio: 0.68351 ==
+  == candidate: 27 | orig: 684.95 | best: 655.22 | ratio: 0.95659 ==
+  == candidate: 28 | orig: 690.89 | best: 655.22 | ratio: 0.94837 ==
+  == candidate: 29 | orig: 679.00 | best: 631.44 | ratio: 0.92996 ==
+  == candidate: 30 | orig: 381.21 | best: 350.80 | ratio: 0.92021 ==
+  == candidate: 31 | orig: 643.33 | best: 607.66 | ratio: 0.94456 ==
+  == candidate: 32 | orig: 631.44 | best: 489.11 | ratio: 0.77459 ==
+  == candidate: 33 | orig: 425.21 | best: 376.33 | ratio: 0.88505 ==
+  == candidate: 34 | orig: 520.17 | best: 430.15 | ratio: 0.82693 ==
+  == candidate: 35 | orig: 732.50 | best: 562.90 | ratio: 0.76846 ==
+  == candidate: 36 | orig: 720.61 | best: 461.09 | ratio: 0.63985 ==
+  == candidate: 37 | orig: 702.78 | best: 552.11 | ratio: 0.78561 ==
+  == candidate: 38 | orig: 447.70 | best: 323.26 | ratio: 0.72205 ==
+  == candidate: 39 | orig: 481.03 | best: 456.27 | ratio: 0.94853 ==
+
+  == Overall best: candidate: 10 | orig: 441.48 | best: 310.98 | ratio: 0.70441 ==
+
+
+  Gen: 144, Cand: 10, Fitness: 310.98
+Gen: 174, Cand: 38, Fitness: 323.26
+Gen: 85, Cand: 30, Fitness: 350.80
+Gen: 102, Cand: 17, Fitness: 370.02 - not so good 
+Gen: 177, Cand: 14, Fitness: 372.27 - not so good
+Gen: 173, Cand: 0, Fitness: 375.49
+Gen: 111, Cand: 33, Fitness: 376.33
+Gen: 30, Cand: 11, Fitness: 382.09
+Gen: 161, Cand: 23, Fitness: 396.65
+Gen: 79, Cand: 18, Fitness: 405.74
+Gen: 116, Cand: 3, Fitness: 406.03
+Gen: 184, Cand: 26, Fitness: 423.47
+Gen: 1, Cand: 34, Fitness: 430.15
+Gen: 66, Cand: 4, Fitness: 441.70
+Gen: 83, Cand: 39, Fitness: 456.27
+Gen: 1, Cand: 36, Fitness: 461.09
+Gen: 126, Cand: 19, Fitness: 463.25
+Gen: 1, Cand: 9, Fitness: 465.06
+Gen: 179, Cand: 7, Fitness: 475.23
+Gen: 1, Cand: 8, Fitness: 477.15
+Gen: 1, Cand: 15, Fitness: 477.47
+Gen: 119, Cand: 20, Fitness: 485.75
+Gen: 1, Cand: 25, Fitness: 489.01
+Gen: 1, Cand: 32, Fitness: 489.11
+Gen: 1, Cand: 2, Fitness: 489.84
+Gen: 195, Cand: 6, Fitness: 508.97
+Gen: 67, Cand: 21, Fitness: 539.32
+Gen: 1, Cand: 12, Fitness: 549.61
+Gen: 1, Cand: 37, Fitness: 552.11
+Gen: 1, Cand: 35, Fitness: 562.90
+Gen: 1, Cand: 24, Fitness: 604.63
+Gen: 185, Cand: 31, Fitness: 607.66
+Gen: 1, Cand: 29, Fitness: 631.44
+Gen: 1, Cand: 13, Fitness: 632.18
+Gen: 1, Cand: 27, Fitness: 655.22
+Gen: 157, Cand: 28, Fitness: 655.22
+Gen: 1, Cand: 16, Fitness: 655.22
+Gen: 148, Cand: 22, Fitness: 673.06
+** v24_batch17 - parallel ASD on GCP; continue best solutions from v24_batch16
+*** notes
+
+Gen: 144, Cand: 10, Fitness: 310.98
+set EEGain=1.4338777102469733
+set EIGain=1.1625828604622033
+set ('IELayerGain', '1-3')=1.091037051695174
+set ('IELayerGain', '4')=1.8712819675755956
+set ('IELayerGain', '5')=0.7397134465049761
+set ('IELayerGain', '6')=1.367569320349433
+set ('IILayerGain', '1-3')=1.418339439423966
+set ('IILayerGain', '4')=0.6274719645228012
+set ('IILayerGain', '5')=0.5675561437477121
+set ('IILayerGain', '6')=1.5174286644853214
+set thalamoCorticalGain=1.6851404284735372
+set intraThalamicGain=1.063075099977045
+set corticoThalamicGain=0.673804518651403
+
+Gen: 174, Cand: 38, Fitness: 323.26
+set EEGain=1.4117825668705553
+set EIGain=1.4562645192525767
+set ('IELayerGain', '1-3')=0.6966421717946888
+set ('IELayerGain', '4')=1.1564048776911902
+set ('IELayerGain', '5')=0.5082691576672945
+set ('IELayerGain', '6')=1.8650994583365461
+set ('IILayerGain', '1-3')=0.5247660780373347
+set ('IILayerGain', '4')=1.3887063888108127
+set ('IILayerGain', '5')=0.8359523062412009
+set ('IILayerGain', '6')=0.786403002769916
+set thalamoCorticalGain=1.0872681212597493
+set intraThalamicGain=1.9355702398668257
+set corticoThalamicGain=0.8456162169403141
+
+Gen: 85, Cand: 30, Fitness: 350.80
+set EEGain=1.4796339232563818
+set EIGain=1.2494919865726666
+set ('IELayerGain', '1-3')=1.2106074885592537
+set ('IELayerGain', '4')=0.5914377334878493
+set ('IELayerGain', '5')=0.7956691184253843
+set ('IELayerGain', '6')=1.1044833499655324
+set ('IILayerGain', '1-3')=1.8970275010959088
+set ('IILayerGain', '4')=1.2806598565853817
+set ('IILayerGain', '5')=1.0339389242169903
+set ('IILayerGain', '6')=1.2449536297089994
+set thalamoCorticalGain=1.653463860326919
+set intraThalamicGain=0.5816973165681442
+set corticoThalamicGain=1.8408576413375228
+
+Gen: 102, Cand: 17, Fitness: 370.02 
+set EEGain=1.3154950966436703
+set EIGain=1.0095763680475387
+set ('IELayerGain', '1-3')=1.3046938357412072
+set ('IELayerGain', '4')=1.337690869825955
+set ('IELayerGain', '5')=1.3419352351670506
+set ('IELayerGain', '6')=2.0
+set ('IILayerGain', '1-3')=1.806386376748424
+set ('IILayerGain', '4')=1.785015289487499
+set ('IILayerGain', '5')=1.3006272106913037
+set ('IILayerGain', '6')=1.6797508518217605
+set thalamoCorticalGain=1.5625342091955938
+set intraThalamicGain=0.9733859948789619
+set corticoThalamicGain=0.8423443321780072
+
+Gen: 177, Cand: 14, Fitness: 372.27 - not so good
+Gen: 173, Cand: 0, Fitness: 375.49 - use this one, a bit different
+set EEGain=1.4081465013179777
+set EIGain=0.6909751558458218
+set ('IELayerGain', '1-3')=1.476256983214676
+set ('IELayerGain', '4')=1.4388900372032694
+set ('IELayerGain', '5')=0.5
+set ('IELayerGain', '6')=1.4292511768559795
+set ('IILayerGain', '1-3')=0.6980418301090989
+set ('IILayerGain', '4')=1.1884408015079058
+set ('IILayerGain', '5')=1.8830229460800467
+set ('IILayerGain', '6')=1.1514878860870101
+set thalamoCorticalGain=0.9636536753602729
+set intraThalamicGain=1.283310375368901
+set corticoThalamicGain=1.2234380160367202
+
+---
+Gen: 111, Cand: 33, Fitness: 376.33
+Gen: 30, Cand: 11, Fitness: 382.09
+Gen: 161, Cand: 23, Fitness: 396.65
+Gen: 79, Cand: 18, Fitness: 405.74
+Gen: 116, Cand: 3, Fitness: 406.03
+Gen: 184, Cand: 26, Fitness: 423.47
+Gen: 1, Cand: 34, Fitness: 430.15
+Gen: 66, Cand: 4, Fitness: 441.70
+Gen: 83, Cand: 39, Fitness: 456.27
+Gen: 1, Cand: 36, Fitness: 461.09
+Gen: 126, Cand: 19, Fitness: 463.25
+Gen: 1, Cand: 9, Fitness: 465.06
+Gen: 179, Cand: 7, Fitness: 475.23
+Gen: 1, Cand: 8, Fitness: 477.15
+Gen: 1, Cand: 15, Fitness: 477.47
+Gen: 119, Cand: 20, Fitness: 485.75
+Gen: 1, Cand: 25, Fitness: 489.01
+Gen: 1, Cand: 32, Fitness: 489.11
+Gen: 1, Cand: 2, Fitness: 489.84
+Gen: 195, Cand: 6, Fitness: 508.97
+Gen: 67, Cand: 21, Fitness: 539.32
+Gen: 1, Cand: 12, Fitness: 549.61
+Gen: 1, Cand: 37, Fitness: 552.11
+Gen: 1, Cand: 35, Fitness: 562.90
+Gen: 1, Cand: 24, Fitness: 604.63
+Gen: 185, Cand: 31, Fitness: 607.66
+Gen: 1, Cand: 29, Fitness: 631.44
+Gen: 1, Cand: 13, Fitness: 632.18
+Gen: 1, Cand: 27, Fitness: 655.22
+Gen: 157, Cand: 28, Fitness: 655.22
+Gen: 1, Cand: 16, Fitness: 655.22
+Gen: 148, Cand: 22, Fitness: 673.06
+*** code
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    x0 = [[1.4338777102469733, 1.1625828604622033, 1.091037051695174, 1.8712819675755956, 0.7397134465049761, 1.367569320349433, 1.418339439423966, 0.6274719645228012, 0.5675561437477121, 1.5174286644853214, 1.6851404284735372, 1.063075099977045, 0.673804518651403],
+    [1.4117825668705553, 1.4562645192525767, 0.6966421717946888, 1.1564048776911902, 0.5082691576672945, 1.8650994583365461, 0.5247660780373347, 1.3887063888108127, 0.8359523062412009, 0.786403002769916, 1.0872681212597493, 1.9355702398668257, 0.8456162169403141],
+    [1.4796339232563818, 1.2494919865726666, 1.2106074885592537, 0.5914377334878493, 0.7956691184253843, 1.1044833499655324, 1.8970275010959088, 1.2806598565853817, 1.0339389242169903, 1.2449536297089994, 1.653463860326919, 0.5816973165681442, 1.8408576413375228],
+    [1.3154950966436703, 1.0095763680475387, 1.3046938357412072, 1.337690869825955, 1.3419352351670506, 2.0, 1.806386376748424, 1.785015289487499, 1.3006272106913037, 1.6797508518217605, 1.5625342091955938, 0.9733859948789619, 0.8423443321780072],
+    [1.4081465013179777, 0.6909751558458218, 1.476256983214676, 1.4388900372032694, 0.5, 1.4292511768559795, 0.6980418301090989, 1.1884408015079058, 1.8830229460800467, 1.1514878860870101, 0.9636536753602729, 1.283310375368901, 1.2234380160367202]]
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 2.0, [x[0] for x in x0]]
+    params['EIGain'] = [0.5, 2.0, [x[1] for x in x0]]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [x[2] for x in x0]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [x[3] for x in x0]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [x[4] for x in x0]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [x[5] for x in x0]]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [x[6] for x in x0]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [x[7] for x in x0]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [x[8] for x in x0]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [x[9] for x in x0]]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, [x[10] for x in x0]]
+    params['intraThalamicGain'] = [0.5, 2.0, [x[11] for x in x0]]
+    params['corticoThalamicGain'] = [0.5, 2.0, [x[12] for x in x0]]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 1min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 12,  # max number of times to check if sim is completed (for each generation)
+        'popsize': 5
+    }
+
+    return b
 
 ** new
