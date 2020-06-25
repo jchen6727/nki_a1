@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 24
+netParams.version = 25
 
 #------------------------------------------------------------------------------
 #
@@ -640,7 +640,7 @@ if cfg.addSubConn:
 
     #------------------------------------------------------------------------------
     # NGF1 -> E: apic_tuft
-    netParams.subConnParams['NGF1->E5,6'] = {
+    netParams.subConnParams['NGF1->E'] = {
         'preConds': {'pops': ['NGF1']}, 
         'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
         'sec': 'apic_tuft',
@@ -703,7 +703,7 @@ if cfg.addSubConn:
 
     #------------------------------------------------------------------------------
     #  TCM -> E: apical
-    netParams.subConnParams['TC->E'] = {
+    netParams.subConnParams['TCM->E'] = {
         'preConds': {'cellType': ['TCM']}, 
         'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
         'sec': 'apic',
@@ -758,7 +758,7 @@ if cfg.addBkgConn:
         from input import inh_poisson_generator
         
         maxLen = min(len(ICrates[0]), len(ICtimes))
-        spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration)] for i in range(len(ICrates))]
+        spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfgICThalInput['seed'])] for i in range(len(ICrates))]
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
@@ -862,5 +862,5 @@ v21 - Added exc+inh bkg inputs specific to each cell type
 v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
 v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 v24 - Fixed bug in IE/II specific layer gains
-
+v25- Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
 """

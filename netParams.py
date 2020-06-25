@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 24
+netParams.version = 25
 
 #------------------------------------------------------------------------------
 #
@@ -702,4 +702,5 @@ v21 - Added exc+inh bkg inputs specific to each cell type
 v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
 v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 v24 - Fixed bug in IE/II specific layer gains
+v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
 """
