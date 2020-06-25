@@ -448,7 +448,7 @@ if cfg.addSubConn:
 
     #------------------------------------------------------------------------------
     # NGF1 -> E: apic_tuft
-    netParams.subConnParams['NGF1->E5,6'] = {
+    netParams.subConnParams['NGF1->E'] = {
         'preConds': {'pops': ['NGF1']}, 
         'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
         'sec': 'apic_tuft',
@@ -511,7 +511,7 @@ if cfg.addSubConn:
 
     #------------------------------------------------------------------------------
     #  TCM -> E: apical
-    netParams.subConnParams['TC->E'] = {
+    netParams.subConnParams['TCM->E'] = {
         'preConds': {'cellType': ['TCM']}, 
         'postConds': {'cellType': ['IT', 'ITS4', 'PT', 'CT']},
         'sec': 'apic',
