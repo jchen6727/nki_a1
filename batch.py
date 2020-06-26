@@ -1005,6 +1005,128 @@ def asdRates():
 
     return b
 
+
+# ----------------------------------------------------------------------------------------------
+# Adaptive Stochastic Descent (ASD)
+# ----------------------------------------------------------------------------------------------
+def optunaRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 2.0]
+    params['EIGain'] = [0.5, 2.0]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0]
+    params[('IELayerGain', '4')] = [0.5, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0]
+    params[('IELayerGain', '6')] = [0.5, 2.0]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0]
+    params[('IILayerGain', '4')] = [0.5, 2.0]
+    params[('IILayerGain', '5')] = [0.5, 2.0]
+    params[('IILayerGain', '6')] = [0.5, 2.0]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0]
+    params['intraThalamicGain'] = [0.5, 2.0]
+    params['corticoThalamicGain'] = [0.5, 2.0]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     2,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 12,
+        'time_sleep': 60,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
 # ----------------------------------------------------------------------------------------------
 # Run configurations
 # ----------------------------------------------------------------------------------------------
@@ -1084,12 +1206,13 @@ if __name__ == '__main__':
 
     #b = custom()
     # b = evolRates()
-    b = asdRates()
+    # b = asdRates()
+    b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch17'
+    b.batchLabel = 'v25_batch1'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
