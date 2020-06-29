@@ -1118,7 +1118,7 @@ def optunaRates():
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'maxFitness': fitnessFuncArgs['maxFitness'],
-        'maxiters':     2,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
         'maxiter_wait': 12,
         'time_sleep': 60,

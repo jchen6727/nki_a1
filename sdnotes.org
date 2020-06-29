@@ -5575,4 +5575,11 @@ Gen: 148, Cand: 22, Fitness: 673.06
 
     return b
 
+
+
+** v25_batch1 - parallel Optuna optim test on GCP
+*** notes
+had to run:
+pip3 install --user bokeh optuna scikit-learn PIL joblib
+mpi4py not working
 ** new
