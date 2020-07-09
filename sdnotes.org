@@ -5580,7 +5580,9 @@ Gen: 148, Cand: 22, Fitness: 673.06
 ** v25_batch1 - parallel Optuna optim test on GCP
 *** notes
 had to run:
-pip3 install --user bokeh optuna scikit-learn PIL joblib
+pip3 install --user bokeh optuna scikit-learn PIL joblib pymysql mysqlclient
+sudo yum install MySQL-python
+
 mpi4py not working
 
 - commented out optuna and bokeh loading so no issuess in hpc nodes 
