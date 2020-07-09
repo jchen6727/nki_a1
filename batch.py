@@ -670,12 +670,12 @@ def custom():
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
     #params['thalamoCorticalGain'] = [1.434715802, 2.0]
-    #params[('ICThalInput', 'probE')] = [0, 0.12]#, 0.25]#, 0.5]
-    #params[('ICThalInput', 'probI')] = [0, 0.25]#, 0.5]
+    params[('ICThalInput', 'probE')] = [0, 0.12]#, 0.25]#, 0.5]
+    params[('ICThalInput', 'probI')] = [0, 0.25]#, 0.5]
 
-    params['thalamoCorticalGain'] = [1.8483736535302833, 2.5]
+    #params['thalamoCorticalGain'] = [1.8483736535302833, 2.5]
     
-    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
