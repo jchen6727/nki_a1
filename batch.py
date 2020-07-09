@@ -699,20 +699,19 @@ def custom():
 
 
     # from v25_batch2 (optuna best)
-    initCfg['EEGain']: 0.16318652575908513, 
-    initCfg['EIGain']: 0.0954803916888752, 
-    initCfg[('IELayerGain', '1-3')]: 0.09233215564068412 
-    initCfg[('IILayerGain', '5')]: 0.07760898430641933 
-    initCfg[('IELayerGain', '4')]: 0.07258661259624377 
-    initCfg[('IELayerGain', '5')]: 0.0713373237084344
-    initCfg[('IILayerGain', '1-3')]: 0.06923784918135187 
-    initCfg['corticoThalamicGain']: 0.06569562745036477 
-    initCfg['thalamoCorticalGain']: 0.06404553725728525 
-    initCfg['intraThalamicGain']: 0.06258810229909867
-    initCfg[('IILayerGain', '6')]: 0.061622678612074155 
-    initCfg[('IILayerGain', '4')]: 0.05732905375483573 
-    initCfg[('IELayerGain', '6')]: 0.04694915774524765
-    
+    initCfg['IELayerGain', '1-3')]: 0.7628339148790332 
+    initCfg['IELayerGain', '4')]: 1.974325049287055 
+    initCfg['IELayerGain', '5')]: 0.7753261834291882 
+    initCfg['IELayerGain', '6')]: 1.5588140501085836 
+    initCfg['IILayerGain', '1-3')]: 0.8006022233940763 
+    initCfg['IILayerGain', '4')]: 1.999312334956534 
+    initCfg['IILayerGain', '5')]: 0.9126340893010045 
+    initCfg['IILayerGain', '6')]: 1.5704716674573778 
+    initCfg['EEGain']: 1.9405846115921952 
+    initCfg['EIGain']: 1.8600534795309025 
+    initCfg['corticoThalamicGain']: 1.083986203608584 
+    initCfg['intraThalamicGain']: 0.5531222327683913
+    initCfg['thalamoCorticalGain']: 1.8483736535302833
 
     
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
