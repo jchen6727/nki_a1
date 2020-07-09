@@ -673,9 +673,9 @@ def custom():
     #params[('ICThalInput', 'probE')] = [0, 0.12]#, 0.25]#, 0.5]
     #params[('ICThalInput', 'probI')] = [0, 0.25]#, 0.5]
 
-    params['duration'] = 1500
+    params['thalamoCorticalGain']: [1.8483736535302833, 2.5]
     
-    groupedParams = []#('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
