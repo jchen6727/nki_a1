@@ -75,7 +75,7 @@ def plotScatterPopVsParams(dataFolder, batchsim, df, pops):
         for param in df.columns:
             try:
                 print('Plotting scatter of %s vs %s param (R=%.2f) ...' %(pop, param, dfcorr[pop][param]))
-                df.plot.scatter(pop, param, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8,8), legend=False)
+                df.plot.scatter(pop, param, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
                 plt.title('%s vs %s R=%.2f' % (pop, param, dfcorr[pop][param]))
                 plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, pop, param), dpi=300)
             except:
