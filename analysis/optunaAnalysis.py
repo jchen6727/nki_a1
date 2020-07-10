@@ -19,7 +19,7 @@ def getParamLabels(dataFolder, batchSim):
         paramLabels = [str(x['label'][0])+str(x['label'][1]) if isinstance(x['label'], list) else str(x['label']) for x in json.load(f)['batch']['params']]
     return paramLabels
 
-def loadData(dataFolder, batchSim, pops, loadStudyFromFile=True):
+def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False):
     if loadStudyFromFile:
         with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
             df = pickle.load(f)
@@ -255,7 +255,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops = allpops)
+    df = loadData(dataFolder, batchSim, pops = allpops, loadStudyFromFile=False)
 
     #plotParamsVsRates(dataFolder, batchSim, dfParams, dfPops, allpops, excludeAbove=400)
     #plotRatesVsParams(dataFolder, batchSim, dfParams, dfPops, ymax=50, excludeAbove=400, excludeBelow=None)
