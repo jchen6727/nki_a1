@@ -19,46 +19,52 @@ def getParamLabels(dataFolder, batchSim):
         paramLabels = [str(x['label'][0])+str(x['label'][1]) if isinstance(x['label'], list) else str(x['label']) for x in json.load(f)['batch']['params']]
     return paramLabels
 
-def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False):
-    if loadStudyFromFile:
-        with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
+def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFile=False):
+    if loadDataFromFile:
+        with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
             df = pickle.load(f)
-    else:
-        study = optuna.create_study(study_name=batchSim, storage='sqlite:///%s/%s/%s_storage.db' % (dataFolder, batchSim, batchSim), load_if_exists=True) 
-        df = study.trials_dataframe(attrs=('number', 'value', 'params'))
+    else: 
+        if loadStudyFromFile:
+            with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
+                df = pickle.load(f)
+        else:
+            study = optuna.create_study(study_name=batchSim, storage='sqlite:///%s/%s/%s_storage.db' % (dataFolder, batchSim, batchSim), load_if_exists=True) 
+            df = study.trials_dataframe(attrs=('number', 'value', 'params'))
 
-        # replace column labels
-        for col in df.columns:
-            if col.startswith('params_'):
-                newName = col.replace('parms_', '').replace('(', '').replace(')', '').replace("'", "").replace(', ','')
-                df = df.rename(columns={col: newName})
+            # replace column labels
+            for col in df.columns:
+                if col.startswith('params_'):
+                    newName = col.replace('parms_', '').replace('(', '').replace(')', '').replace("'", "").replace(', ','')
+                    df = df.rename(columns={col: newName})
 
-        with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
+            with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
+                pickle.dump(df, f)
+
+
+        # load json for each trial with pop rates and add to df
+        popRates = {p: [] for p in pops}
+
+        for i in df.number:
+            try:
+                with open('%s/%s/trial_%d/trial_%d.json' % (dataFolder, batchSim, int(i), int(i)), 'r') as f:
+                    popRatesLoad = json.load(f)['simData']['popRates']
+                    
+                    for p in popRatesLoad:
+                        popRates[p].append(np.mean(list(popRatesLoad[p].values())))
+
+                print('Added trial %d' % (i))
+            except:
+                for p in popRates:
+                    popRates[p].append(0.0)
+                print('Skipped trial %d' % (i))
+
+        ipy.embed()
+            
+        for p, rates in popRates.items():
+            df.insert(len(df.columns), p, rates)
+
+        with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
             pickle.dump(df, f)
-
-
-    # load json for each trial with pop rates and add to df
-    popRates = {p: [] for p in pops}
-
-    for i in df.number:
-        try:
-            with open('%s/%s/trial_%d/trial_%d.json' % (dataFolder, batchSim, int(i), int(i)), 'r') as f:
-                popRatesLoad = json.load(f)['simData']['popRates']
-                
-                for p in popRatesLoad:
-                    popRates[p].append(np.mean(list(popRatesLoad[p].values())))
-
-            print('Added trial %d' % (i))
-        except:
-            for p in popRates:
-                popRates[p].append(0.0)
-            print('Skipped trial %d' % (i))
-        
-    for p, rates in popRates.items():
-        df.insert(len(df.columns), p, rates)
-
-    with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'w') as f:
-        pickle.dump(df, f)
 
     return df
 
@@ -255,7 +261,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops = allpops, loadStudyFromFile=False)
+    df = loadData(dataFolder, batchSim, pops = allpops, loadStudyFromFile=True)
 
     #plotParamsVsRates(dataFolder, batchSim, dfParams, dfPops, allpops, excludeAbove=400)
     #plotRatesVsParams(dataFolder, batchSim, dfParams, dfPops, ymax=50, excludeAbove=400, excludeBelow=None)
