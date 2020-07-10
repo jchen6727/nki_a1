@@ -5591,4 +5591,6 @@ worked ok after much debugging
 ** v25_batch2 - parallel Optuna optim on GCP - 50 parallel jobs
 *** notes
 50 parallel jobs, 300 trials each
+** v25_batch3 - best of v25_batch2 with and w/o IC; with LFP 
+** v25_batch4 - best of v25_batch2 with IC off; with LFP; TC 
 ** new
