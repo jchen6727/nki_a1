@@ -122,14 +122,29 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 # Cortical
 cfg.addConn = 1
 
-cfg.EEGain = 1.7930365644528616 
-cfg.EIGain = 1.301292631	
+
+    initCfg[('IELayerGain', '1-3')] = 0.7628339148790332 
+    initCfg[('IELayerGain', '4')] = 1.974325049287055 
+    initCfg[('IELayerGain', '5')] = 0.7753261834291882 
+    initCfg[('IELayerGain', '6')] = 1.5588140501085836 
+    initCfg[('IILayerGain', '1-3')] = 0.8006022233940763 
+    initCfg[('IILayerGain', '4')] = 1.999312334956534 
+    initCfg[('IILayerGain', '5')] = 0.9126340893010045 
+    initCfg[('IILayerGain', '6')] = 1.5704716674573778 
+    initCfg['EEGain'] = 1.9405846115921952 
+    initCfg['EIGain'] = 1.8600534795309025 
+    initCfg['corticoThalamicGain'] = 1.083986203608584 
+    initCfg['intraThalamicGain'] = 0.5531222327683913
+    initCfg['thalamoCorticalGain'] = 1.8483736535302833
+
+cfg.EEGain = 1.9405846115921952 
+cfg.EIGain = 1.8600534795309025 	
 cfg.IEGain = 1.0 #0.75
 cfg.IIGain = 1.0 #0.5
 
 ## I->E/I layer weights (L1-3, L4, L5, L6)
-cfg.IELayerGain = {'1-3': 1.9609935, '4': 1.973369532, '5': 0.547478256, '6': 0.817050621}
-cfg.IILayerGain = {'1-3': 0.575910457, '4': 0.506134474, '5': 1.140789303, '6': 1.999973065}
+cfg.IELayerGain = {'1-3': 0.7628339148790332, '4': 1.974325049287055 , '5': 0.7753261834291882 , '6': 1.5588140501085836}
+cfg.IILayerGain = {'1-3': 0.8006022233940763 , '4': 1.999312334956534 , '5': 0.9126340893010045 , '6': 1.5704716674573778}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1.0
@@ -137,9 +152,9 @@ cfg.addIntraThalamicConn = 1.0
 cfg.addCorticoThalamicConn = 1.0
 cfg.addThalamoCorticalConn = 1.0
 
-cfg.thalamoCorticalGain = 1.434715802
-cfg.intraThalamicGain = 1.987386358	
-cfg.corticoThalamicGain = 1.354024353042513
+cfg.thalamoCorticalGain = 1.8483736535302833
+cfg.intraThalamicGain = 0.5531222327683913
+cfg.corticoThalamicGain = 1.083986203608584 
 
 cfg.addSubConn = 1
 
