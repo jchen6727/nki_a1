@@ -5592,5 +5592,11 @@ worked ok after much debugging
 *** notes
 50 parallel jobs, 300 trials each
 ** v25_batch3 - best of v25_batch2 with and w/o IC; with LFP 
+*** note
+actually results merged with v25_batch4 - same simlabel, diff files 
 ** v25_batch4 - best of v25_batch2 with IC off; with LFP; TC 
+** v25_batch5 - best of v25_batch2 with IC; stronger weights; start 750; with LFP
+*** note
+- there is high intrinsic activity at 750 so hard to see stim effect
+
 ** new

@@ -75,7 +75,7 @@ def plotScatterPopVsParams(dataFolder, batchsim, df, pops):
         for param in df.columns:
             try:
                 print('Plotting scatter of %s vs %s param (R=%.2f) ...' %(pop, param, dfcorr[pop][param]))
-                df.plot.scatter(pop, param, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
+                df.plot.scatter(param, pop, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
                 plt.title('%s vs %s R=%.2f' % (pop, param, dfcorr[pop][param]))
                 plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, pop, param), dpi=300)
             except:
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops = allpops, loadStudyFromFile=True, loadDataFromFile=True)
 
-    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['NGF2'])
+    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
     #dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder='best', dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']

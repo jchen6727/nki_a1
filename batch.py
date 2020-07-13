@@ -669,9 +669,9 @@ def custom():
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
-    #params['thalamoCorticalGain'] = [1.434715802, 2.0]
-    params[('ICThalInput', 'probE')] = [0, 0.12]#, 0.25]#, 0.5]
-    params[('ICThalInput', 'probI')] = [0, 0.25]#, 0.5]
+    params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
+    params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
+    params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
     #params['thalamoCorticalGain'] = [1.8483736535302833, 2.5]
     
@@ -1194,7 +1194,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch4'
+    b.batchLabel = 'v25_batch5'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
