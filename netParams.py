@@ -84,9 +84,10 @@ for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
 # change weightNorm 
-for sec in netParams.cellParams['NGF_reduced']['secs'].values():
-    for i in range(len(sec['weightNorm'])):
-        sec['weightNorm'][i] *= cfg.weightNormScaling['NGF_reduced']
+for k in cfg.weightNormScaling:
+    for sec in netParams.cellParams[k]['secs'].values():
+        for i in range(len(sec['weightNorm'])):
+            sec['weightNorm'][i] *= cfg.weightNormScaling[k]
 
 #------------------------------------------------------------------------------
 # Population parameters

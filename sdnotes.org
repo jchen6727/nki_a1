@@ -5603,8 +5603,16 @@ actually results merged with v25_batch4 - same simlabel, diff files
 - issues with instnatiated vs empirical conn prob matrix:
 -- PV2/SOM2 and PV4/SOM4 appear inverted
 -- replotting with list of pops in correct order
+-- that fixed the issue -- empirical approx same as instantiated prob conn matrix
 
--
+- w=sim.analysis.plotConn(includePre=['IT3', 'NGF3'], includePost=['IT3','NGF3'], feature='weight', synOrConn='syn', synMech='AMPA', removeWeightNorm=1, showFig=0, saveFig='weight_AMPA.png', saveData='weight_AMPA.pkl')
+
+- w2=sim.analysis.plotConn(includePre=pops, includePost=pops, removeWeightNorm=1, feature='weight', synOrConn='syn', synMech='AMPA', removeWeightNorm=0, showFig=0, saveFig='weight_AMPA.png', saveData='weight_AMPA.pkl')
+
+-- issue with removeWeightNorm -- all 0 (if False, then weights ok)
+-- checking locally
+-- issues was that also need to save cell secs to have access to geom nseg and weightN
+
 
 ** v25_batch5 - best of v25_batch2 with IC; stronger weights; start 750; with LFP
 *** note
