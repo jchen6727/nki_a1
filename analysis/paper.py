@@ -255,8 +255,8 @@ def plot_empirical_conn():
     pmat = connData['pmat']
     lmat = connData['lmat']
 
-    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'PV3', 'SOM3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
-    
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+        
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
     
@@ -318,7 +318,7 @@ def plot_empirical_conn():
     plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
 
     #filename = 'EI->EI_Allen_custom_prob_conn_empirical_0.25.png'
-    filename = 'Full_Allen_custom_prob_conn_empirical_v2.png'
+    filename = 'Full_Allen_custom_prob_conn_empirical.png'
     plt.savefig('../conn/'+filename, dpi=300)
 
     #import IPython; IPython.embed()
@@ -384,18 +384,36 @@ def plot_net_conn():
 
 def plot_net_conn_cns20poster():
     # load custom A1 conn
-    with open('../data/v25_batch4/v25_batch4_conn_prob.pkl', 'rb') as f:
+    with open('../data/v25_batch4/conn_prob_new.pkl', 'rb') as f:   #v25_batch4_conn_prob.pkl
         data = pickle.load(f)
     
     # prob
-    # import IPython; IPython.embed()
-    connMatrix = data['connMatrix']    
-    
-    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
+    connMatrix = data['connMatrix']
+    #includePre = data['includePre']
+    #includePost = data['includePost']
+
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']# , 'IC']
 
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
-    
+
+
+    #import IPython; IPython.embed()
+
+    # Note: this code doesn't work to rearrange matrix rows + cols
+    # Using correct pop order in recording
+    #
+    # connMatrix = np.zeros((len(popsPre), len(popsPost)))
+    # 
+    # for ipre, pre in enumerate(popsPre):
+    #     for ipost, post in enumerate(popsPost):
+    #         #print(pre,post)
+    #         try:
+    #             connMatrix[ipre, ipost] = pmat[includePre.index(pre)][includePost.index(post)]
+    #         except:
+    #             connMatrix[ipre, ipost] = 0.0
+    #             #connMatrix[ipre, ipost] = pmat[pre][post]    
+
     # font
     fontsiz = 14
     plt.rcParams.update({'font.size': fontsiz})
@@ -405,7 +423,7 @@ def plot_net_conn_cns20poster():
     #import IPython; IPython.embed()
 
     vmin = np.nanmin(connMatrix)
-    vmax = 0.7 # np.nanmax(connMatrix) #0.5 #
+    vmax =  np.nanmax(connMatrix) #0.5 # 0.7 #
         
     plt.figure(figsize=(12, 12))
     h = plt.axes()
@@ -444,4 +462,4 @@ def plot_net_conn_cns20poster():
 # fig_conn()
 # compare_conn()
 plot_empirical_conn()
-#plot_net_conn_cns20poster()
+plot_net_conn_cns20poster()

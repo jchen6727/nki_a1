@@ -83,10 +83,10 @@ cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
-# reduce ITS4 weightNorm 
-# for sec in netParams.cellParams['ITS4_reduced']['secs'].values():
-#     for i in range(len(sec['weightNorm'])):
-#         sec['weightNorm'][i] *= 0.2
+# change weightNorm 
+for sec in netParams.cellParams['NGF_reduced']['secs'].values():
+    for i in range(len(sec['weightNorm'])):
+        sec['weightNorm'][i] *= cfg.weightNormScaling['NGF_reduced']
 
 #------------------------------------------------------------------------------
 # Population parameters

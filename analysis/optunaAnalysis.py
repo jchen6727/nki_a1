@@ -10,7 +10,7 @@ import IPython as ipy
 import os
 import utils
 from pprint import pprint
-import optuna
+#import optuna
 import pickle
 
 def getParamLabels(dataFolder, batchSim):

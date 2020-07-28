@@ -516,7 +516,7 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
             lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
-    # VIP uses by default PV weights; need to change the following:
+    # VIP uses by default PV weights; made the following changes:
     # VIP -> SOM = strong (but PV -> SOM = weak)    
     # VIP -> PV = weak (but PV -> PV = strong)   
     # VIP -> VIP = weak/veryweak (but PV -> PV = strong) 

@@ -664,18 +664,19 @@ def custom():
     params = specs.ODict()
 
     # conn gains
+    params[('weightNormScaling', 'NGF_reduced')] = [0.1, 0.25, 0.5, 1.0, 1.5, 2.0]
     # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
     # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
-    params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
-    params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
-    params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
+    #params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
+    #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
     #params['thalamoCorticalGain'] = [1.8483736535302833, 2.5]
     
-    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
@@ -686,7 +687,7 @@ def custom():
 
     initCfg['scaleDensity'] = 0.5
 
-    initCfg[('ICThalInput', 'startTime')] = 750
+    #initCfg[('ICThalInput', 'startTime')] = 750
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -715,7 +716,6 @@ def custom():
     initCfg['corticoThalamicGain'] = 1.083986203608584 
     initCfg['intraThalamicGain'] = 0.5531222327683913
     initCfg['thalamoCorticalGain'] = 1.8483736535302833
-
 
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
@@ -1196,7 +1196,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch5'
+    b.batchLabel = 'v25_batch6'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
