@@ -5699,14 +5699,19 @@ def custom():
 *** code
     params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-** v25_batch9
+** v25_batch9 - removed NGF2-6, increased IEGain
+*** notes
+fixed mpi issue on gcp:
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
 *** code
     - REMOVED NGF2-6
     params['IEGain'] = [1.0, 1.25]
 
 
-** v25_batch10
+** v25_batch10 - synweightFracEI
 *** code
     params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
-
+** v25_batch11 - removed NGF2-6, increased IEGain (fine tune)
+*** code
+params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
 ** new
