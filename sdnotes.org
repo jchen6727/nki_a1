@@ -5613,6 +5613,12 @@ actually results merged with v25_batch4 - same simlabel, diff files
 -- checking locally
 -- issues was that also need to save cell secs to have access to geom nseg and weightN
 
+In [9]: allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B'
+   ...: , 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
+
+In [10]: w=sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='weight', synOrConn='syn', synMech='AMPA', removeWeightNorm=1, showFig=0, saveFig='weight_allpops_AMPA.png', saveData='weight_
+    ...: allpops_AMPA.pkl')
+
 
 ** v25_batch5 - best of v25_batch2 with IC; stronger weights; start 750; with LFP
 *** note
@@ -5685,5 +5691,13 @@ def custom():
     b.method = 'grid'
 
     return b
+** v25_batch7 - best of v25_batch2 with different ITS4 weightNorm values
+*** code
+    params[('weightNormScaling', 'ITS4_reduced')] = [0.1, 0.25, 0.5, 1.0, 1.5, 2.0]
+
+** v25_batch8 - best of v25_batch2 with different NGF+ITS4 weightNorm values
+*** code
+    params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
+    params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
 
 ** new
