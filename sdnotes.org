@@ -5699,5 +5699,14 @@ def custom():
 *** code
     params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
+** v25_batch9
+*** code
+    - REMOVED NGF2-6
+    params['IEGain'] = [1.0, 1.25]
+
+
+** v25_batch10
+*** code
+    params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
 
 ** new

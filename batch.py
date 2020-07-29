@@ -664,7 +664,8 @@ def custom():
     params = specs.ODict()
 
     # conn gains
-    params['IEGain'] = [1.0, 1.25]
+    params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
+    # params['IEGain'] = [1.0, 1.25]
     #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
     # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
@@ -1198,7 +1199,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch9'
+    b.batchLabel = 'v25_batch10'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
