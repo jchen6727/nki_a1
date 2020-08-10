@@ -83,6 +83,105 @@ def plotScatterPopVsParams(dataFolder, batchsim, df, pops):
 
 
 
+def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=None, dataFolder=None, batchLabel=None, skipDepol=False):
+    from os.path import isfile, join
+    from glob import glob
+
+    #df = df[['gen_cand', 'pop', 'rate']].pivot(columns='pop', index='gen_cand')
+    #df.columns = df.columns.droplevel(0)
+
+    # allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+
+    ranges = {}
+    Erange = [0.00,1000]
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6','CT6', 'TC', 'TCM', 'HTC']
+    for pop in Epops:
+        ranges[pop] = Erange
+    
+    conds = []
+    # check pop rate ranges
+    if 'rates' in condlist:
+        for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
+    condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+    dfcond = df.query(condStr)
+
+    ranges = {}
+    Irange = [0.01,100]
+    Ipops = ['NGF1',                        # L1
+        'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+        'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+        'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+        'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+        'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',#,  # L5B
+        'SOM6', 'VIP6', 'NGF6',
+        'IRE', 'IREM', 'TI']      # L6 PV6
+
+    for pop in Ipops:
+        ranges[pop] = Irange
+
+    conds = []
+
+    # check pop rate ranges
+    if 'rates' in condlist:
+        for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
+    condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+    dfcond = dfcond.query(condStr)
+
+
+    # # check I > E in each layer
+    # if 'I>E' in condlist:
+    #     conds.append('PV2 > IT2 and SOM2 > IT2')
+    #     conds.append('PV5A > IT5A and SOM5A > IT5A')
+    #     conds.append('PV5B > IT5B and SOM5B > IT5B')
+    #     conds.append('PV6 > IT6 and SOM6 > IT6')
+
+    # # check E L5 > L6 > L2
+    # if 'E5>E6>E2' in condlist:
+    #     #conds.append('(IT5A+IT5B+PT5B)/3 > (IT6+CT6)/2 > IT2')
+    #     conds.append('(IT5A+IT5B+PT5B)/3 > (IT6+CT6)/2')
+    #     conds.append('(IT6+CT6)/2 > IT2')
+    #     conds.append('(IT5A+IT5B+PT5B)/3 > IT2')
+    
+    # # check PV > SOM in each layer
+    # if 'PV>SOM' in condlist:
+    #     conds.append('PV2 > IT2')
+    #     conds.append('PV5A > SOM5A')
+    #     conds.append('PV5B > SOM5B')
+    #     conds.append('PV6 > SOM6')
+
+
+    # construct query and apply
+    # condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+    # dfcond = df.query(condStr)
+
+    print('\n Filtering based on: ' + str(condlist) + '\n' + condStr)
+    print(dfcond)
+    print(len(dfcond))
+
+    # copy files
+    if copyFolder:
+        targetFolder = dataFolder+batchLabel+'/'+copyFolder
+        try: 
+            os.mkdir(targetFolder)
+        except:
+            pass
+        
+        for i,row in dfcond.iterrows():     
+            if skipDepol:
+                sourceFile1 = dataFolder+batchLabel+'/noDepol/'+batchLabel+row['simLabel']+'*.png'  
+            else:
+                sourceFile1 = dataFolder+batchLabel+'/gen_'+i.split('_')[0]+'/gen_'+i.split('_')[0]+'_cand_'+i.split('_')[1]+'_*raster*.png'   
+            #sourceFile2 = dataFolder+batchLabel+'/'+batchLabel+row['simLabel']+'.json'
+            if len(glob(sourceFile1))>0:
+                cpcmd = 'cp ' + sourceFile1 + ' ' + targetFolder + '/.'
+                #cpcmd = cpcmd + '; cp ' + sourceFile2 + ' ' + targetFolder + '/.'
+                os.system(cpcmd) 
+                print(cpcmd)
+
+
+    return dfcond
+
+
 # -----------------------------------------------------------------------------
 # Main code
 # -----------------------------------------------------------------------------
@@ -101,7 +200,7 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops = allpops, loadStudyFromFile=True, loadDataFromFile=True)
 
-    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
+    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
-    #dfFilter = filterRates(dfPops, condlist=['rates'], copyFolder='best', dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+    dfFilter = filterRates(df, condlist=['rates'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
