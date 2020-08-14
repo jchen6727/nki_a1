@@ -126,36 +126,38 @@ def evolCellNGF():
     # parameters space to explore
     params = specs.ODict()
 
-    params[('tune', 'soma', 'Ra')] = [14., 14.]#*0.5, 14.*1.5] 
-    params[('tune', 'soma', 'cm')] = [1.5*0.5, 1.5*1.5] 
-    params[('tune', 'soma', 'ch_CavL', 'gmax')] = [0.056108352*0.5, 0.056108352*1.5] 
-    params[('tune', 'soma', 'ch_CavN', 'gmax')] = [0.00058169587*0.5, 0.00058169587*1.5] 
-    params[('tune', 'soma', 'ch_KCaS', 'gmax')] = [0.006 * 0.5, 0.006 * 1.5]
-    params[('tune', 'soma', 'ch_Kdrfastngf', 'gmax')] = [0.09*0.5, 0.09*1.5] 
-    params[('tune', 'soma', 'ch_KvAngf', 'gmax')] = [0.052*0.5, 0.052*1.5] 
-    params[('tune', 'soma', 'ch_KvAngf', 'gml')] = [1.0*0.5, 1.0*1.5] 
-    params[('tune', 'soma', 'ch_KvAngf', 'gmn')] = [0.6*0.5, 0.6*1.5] 
-    params[('tune', 'soma', 'ch_KvCaB', 'gmax')] = [1.0235317e-06*0.5, 1.0235317e-06*1.5] 
-    params[('tune', 'soma', 'ch_Navngf', 'gmax')] = [0.1*0.5, 0.1*1.5] 
-    params[('tune', 'soma', 'hd', 'ehd')] = [-30*1.5, -30*0.5] 
-    params[('tune', 'soma', 'hd', 'elk')] = [-70*1.5, -70*0.5] 
-    params[('tune', 'soma', 'hd', 'gbar')] = [1e-05*0.5, 1e-05*1.5] 
-    params[('tune', 'soma', 'hd', 'vhalfl')] = [-90*1.5, -90*0.5] 
-    # params[('tune', 'soma', 'iconc_Ca', 'caiinf')] = [5e-06*0.5, 5e-06*1.5]   # convergence issues
-    # params[('tune', 'soma', 'iconc_Ca', 'catau')] = [-10*1.5, -10*0.5] 
-    params[('tune', 'soma', 'pas', 'e')] = [-85*1.5, -85*0.5]
-    params[('tune', 'soma', 'pas', 'g')] = [5e-7*0.5, 5e-7*1.5]  
+    scalingRange = [0.5, 1.5]
+    
+    params[('tune', 'soma', 'Ra')] = scalingRange
+    params[('tune', 'soma', 'cm')] = scalingRange
+    params[('tune', 'soma', 'ch_CavL', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'ch_CavN', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'ch_KCaS', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'ch_Kdrfastngf', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'ch_KvAngf', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'ch_KvAngf', 'gml')] = scalingRange
+    params[('tune', 'soma', 'ch_KvAngf', 'gmn')] = scalingRange
+    params[('tune', 'soma', 'ch_KvCaB', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'ch_Navngf', 'gmax')] = scalingRange
+    params[('tune', 'soma', 'hd', 'ehd')] = scalingRange
+    params[('tune', 'soma', 'hd', 'elk')] = scalingRange
+    params[('tune', 'soma', 'hd', 'gbar')] = scalingRange
+    params[('tune', 'soma', 'hd', 'vhalfl')] = scalingRange
+    # params[('tune', 'soma', 'iconc_Ca', 'caiinf')] = scalingRange
+    # params[('tune', 'soma', 'iconc_Ca', 'catau')] = scalingRange
+    params[('tune', 'soma', 'pas', 'e')] = scalingRange
+    params[('tune', 'soma', 'pas', 'g')] = scalingRange
 
-    params[('tune', 'dend', 'Ra')] = [14*0.5, 14*1.5] 
-    params[('tune', 'dend', 'cm')] = [1.5*0.5, 1.5*1.5] 
-    params[('tune', 'dend', 'ch_Kdrfastngf', 'gmax')] = [0.03*0.5, 0.03*1.5] 
-    params[('tune', 'dend', 'ch_Navngf', 'gmax')] = [3.7860265*0.5, 3.7860265*1.5] 
-    params[('tune', 'dend', 'pas', 'e')] = [-67*1.5, -67*0.5] 
-    params[('tune', 'dend', 'pas', 'g')] = [0.0003*0.5, 0.0003*1.5] 
+    params[('tune', 'dend', 'Ra')] = scalingRange
+    params[('tune', 'dend', 'cm')] = scalingRange
+    params[('tune', 'dend', 'ch_Kdrfastngf', 'gmax')] = scalingRange
+    params[('tune', 'dend', 'ch_Navngf', 'gmax')] = scalingRange
+    params[('tune', 'dend', 'pas', 'e')] = scalingRange
+    params[('tune', 'dend', 'pas', 'g')] = scalingRange
 
 
     # current injection params
-    interval = 1000
+    interval = 1000  # 10000
     dur = 500  # ms
     durSteady = 200  # ms
     amps = list(np.arange(0.04+0.075, 0.121+0.075, 0.01))  # amplitudes
@@ -204,7 +206,6 @@ def evolCellNGF():
     initCfg[('NetStim1', 'synMechWeightFactor')] = [0.5, 0.5]
     initCfg[('NetStim1', 'number')] = 1e9
     initCfg[('NetStim1', 'noise')] = 1.0
-
 
 
     initCfg['removeWeightNorm'] = False

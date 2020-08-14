@@ -66,7 +66,7 @@ cfg.IClamp1 = {'pop': 'NGF', 'sec': 'soma', 'loc': 0.5, 'start': 100, 'dur': 100
 # NetStim inputs 
 #------------------------------------------------------------------------------
 
-cfg.addNetStim = 0
+cfg.addNetStim = 1
 
 cfg.NetStim1 = {'pop': 'NGF', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/60.0, 'noise': 0.0, 'number': 0.0, 'weight': 10.0, 'delay': 0}
 

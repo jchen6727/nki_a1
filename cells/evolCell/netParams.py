@@ -41,18 +41,25 @@ for sec, secDict in netParams.cellParams['NGF_reduced']['secs'].items():
             if mech in cfg.tune[sec]:
                 for param in secDict['mechs'][mech]:
                     if param in cfg.tune[sec][mech]:
-                        secDict['mechs'][mech][param] = cfg.tune[sec][mech][param]  
+                        secDict['mechs'][mech][param] *= cfg.tune[sec][mech][param]  
         
         # geom
         for geomParam in secDict['geom']:
             if geomParam in cfg.tune[sec]:
-                secDict['geom'][geomParam] = cfg.tune[sec][geomParam]
+                secDict['geom'][geomParam] *= cfg.tune[sec][geomParam]
 
 
 #------------------------------------------------------------------------------
 # Population parameters
 #------------------------------------------------------------------------------
 netParams.popParams['NGF'] = {'cellType': 'NGF', 'numCells': 1}
+
+
+#------------------------------------------------------------------------------
+# Synaptic mechanism parameters
+#------------------------------------------------------------------------------
+netParams.synMechParams['NMDA'] = {'mod': 'MyExp2SynNMDABB', 'tau1NMDA': 15, 'tau2NMDA': 150, 'e': 0}
+netParams.synMechParams['AMPA'] = {'mod':'MyExp2SynBB', 'tau1': 0.05, 'tau2': 5.3, 'e': 0}
 
 
 #------------------------------------------------------------------------------
@@ -77,17 +84,17 @@ if cfg.addIClamp:
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------
 if cfg.addNetStim:
-	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-		params = getattr(cfg, key, None)
-		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+    for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+        params = getattr(cfg, key, None)
+        [pop, ynorm, sec, loc, synMech, synMechWeightFactor, starts, interval, noise, number, weights, delay] = \
+        [params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
 
         for weight, start in zip(weights, starts):
             # add stim source
             netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
 
             # connect stim source to target 
-            netParams.stimTargetParams[key+'_'+pop] =  {
+            netParams.stimTargetParams[key+'_'+pop+'_'+str(start)] =  {
                 'source': key, 
                 'conds': {'pop': pop, 'ynorm': ynorm},
                 'sec': sec, 
