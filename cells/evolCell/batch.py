@@ -235,39 +235,57 @@ def evolCellNGF():
         
 
     # create Batch object with paramaters to modify, and specifying files to use
-    b = Batch(params=params, initCfg=initCfg)
-    
-    # Set output folder, grid method (all param combinations), and run configuration
-    b.batchLabel = 'NGF_evol1'
-    b.saveFolder = 'data/'+b.batchLabel
+    b = Batch(params=params, initCfg=initCfg) 
     b.method = 'evol'
-    b.runCfg = {
-        'type': 'mpi_bulletin',#'hpc_slurm', 
-        'script': 'init.py',
-        'mpiCommand': 'python3',  
-        # # options required only for hpc
-        # 'nodes': 1,
-        # 'coresPerNode': 2,
-        # 'allocation': 'default',
-        # 'email': 'salvadordura@gmail.com',
-        # 'reservation': None,
-        # 'folder': '/home/salvadord/evol'
-        # #'custom': 'export LD_LIBRARY_PATH="$HOME/.openmpi/lib"' # only for conda users
-    }
-    b.evolCfg = {
-        'evolAlgorithm': 'custom',
-        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
-        'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 95,
-        'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
-        'mutation_rate': 0.4,
-        'crossover': 0.5,
-        'maximize': False, # maximize fitness function?
-        'max_generations': 2000,
-        'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
-        'defaultFitness': 1000 # set fitness value in case simulation time is over
-    }
+
+    if b.method == 'evol':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'NGF_evol1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_bulletin',#'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+
+        b.evolCfg = {
+            'evolAlgorithm': 'custom',
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'pop_size': 95,
+            'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
+            'mutation_rate': 0.4,
+            'crossover': 0.5,
+            'maximize': False, # maximize fitness function?
+            'max_generations': 2000,
+            'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
+            'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
+            'defaultFitness': 1000 # set fitness value in case simulation time is over
+        }
+
+    elif b.method == 'optuna':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'NGF_optuna1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_direct', #'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+        b.optimCfg = {
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'maxFitness': 1000,
+            'maxiters':     2000*95,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+            'maxtime':      100*2000,    #    Maximum time allowed, in seconds
+            'maxiter_wait': 6,
+            'time_sleep': 10,
+            'popsize': 1  # unused - run with mpi 
+        }
+
+
     # Run batch simulations
     b.run()
 
