@@ -126,38 +126,30 @@ def evolCellNGF():
     # parameters space to explore
     params = specs.ODict()
 
-    scalingRange = [0.5, 1.5]
+    scalingRange = [0.5, 2.0]
     
-    params[('tune', 'soma', 'Ra')] = scalingRange
-    params[('tune', 'soma', 'cm')] = scalingRange
-    params[('tune', 'soma', 'ch_CavL', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'ch_CavN', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'ch_KCaS', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'ch_Kdrfastngf', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'ch_KvAngf', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'ch_KvAngf', 'gml')] = scalingRange
-    params[('tune', 'soma', 'ch_KvAngf', 'gmn')] = scalingRange
-    params[('tune', 'soma', 'ch_KvCaB', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'ch_Navngf', 'gmax')] = scalingRange
-    params[('tune', 'soma', 'hd', 'ehd')] = scalingRange
-    params[('tune', 'soma', 'hd', 'elk')] = scalingRange
-    params[('tune', 'soma', 'hd', 'gbar')] = scalingRange
-    params[('tune', 'soma', 'hd', 'vhalfl')] = scalingRange
-    # params[('tune', 'soma', 'iconc_Ca', 'caiinf')] = scalingRange
-    # params[('tune', 'soma', 'iconc_Ca', 'catau')] = scalingRange
-    params[('tune', 'soma', 'pas', 'e')] = scalingRange
-    params[('tune', 'soma', 'pas', 'g')] = scalingRange
+    params[('tune', 'Ra')] = scalingRange
+    params[('tune', 'cm')] = scalingRange
+    params[('tune', 'pas', 'e')] = scalingRange
+    params[('tune', 'pas', 'g')] = scalingRange
+    params[('tune', 'ch_CavL', 'gmax')] = scalingRange
+    params[('tune', 'ch_CavN', 'gmax')] = scalingRange
+    params[('tune', 'ch_KCaS', 'gmax')] = scalingRange
+    params[('tune', 'ch_Kdrfastngf', 'gmax')] = scalingRange
+    params[('tune', 'ch_KvAngf', 'gmax')] = scalingRange
+    params[('tune', 'ch_KvCaB', 'gmax')] = scalingRange
+    params[('tune', 'ch_Navngf', 'gmax')] = scalingRange
+    params[('tune', 'hd', 'gbar')] = scalingRange
 
-    params[('tune', 'dend', 'Ra')] = scalingRange
-    params[('tune', 'dend', 'cm')] = scalingRange
-    params[('tune', 'dend', 'ch_Kdrfastngf', 'gmax')] = scalingRange
-    params[('tune', 'dend', 'ch_Navngf', 'gmax')] = scalingRange
-    params[('tune', 'dend', 'pas', 'e')] = scalingRange
-    params[('tune', 'dend', 'pas', 'g')] = scalingRange
+    # params[('tune', 'hd', 'ehd')] = scalingRange
+    # params[('tune', 'hd', 'elk')] = scalingRange
+    # params[('tune', 'hd', 'vhalfl')] = scalingRange
+    # params[('tune', 'iconc_Ca', 'caiinf')] = scalingRange
+    # params[('tune', 'iconc_Ca', 'catau')] = scalingRange
 
 
     # current injection params
-    interval = 1000  # 10000
+    interval = 10000  # 10000
     dur = 500  # ms
     durSteady = 200  # ms
     amps = list(np.arange(0.04+0.075, 0.121+0.075, 0.01))  # amplitudes
@@ -168,7 +160,7 @@ def evolCellNGF():
     stimWeights = [10, 50, 100, 150]
     stimRate = 80
     stimDur = 2000
-    stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTimes = [times[-1] + x for x in list(np.arange(0, (stimDur + interval) * len(stimWeights), stimDur + interval))]
     stimTargetSensitivity = 100  # max - min 
 
     # initial cfg set up
@@ -229,14 +221,15 @@ def evolCellNGF():
             
         diffRatesOnset = [abs(x-t) for x,t in zip(simData['fI_onset'], targetRatesOnset)]
         diffRatesSteady = [abs(x - t) for x, t in zip(simData['fI_steady'], targetRatesSteady)]
-        stimDiffRate = np.max(simData['popRates']['NGF']) - np.min(simData['popRates']['NGF'])
+        stimDiffRate = np.max(list(simData['popRates']['NGF'].values())) - np.min(list(simData['popRates']['NGF'].values()))
         
         maxFitness = 1000
         fitness = np.mean(diffRatesOnset + diffRatesSteady) if stimDiffRate < stimTargetSensitivity else maxFitness
         
         print(' Candidate rates: ', simData['fI_onset']+simData['fI_steady'])
         print(' Target rates:    ', targetRatesOnset+targetRatesSteady)
-        print(' Difference:      ', diffRatesOnset+diffRatesSteady)
+        print(' Difference:      ', diffRatesOnset + diffRatesSteady)
+        print(' Stim sensitivity: ', stimDiffRate)
 
         return fitness
         
@@ -265,12 +258,12 @@ def evolCellNGF():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 1,
+        'pop_size': 4,
         'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
         'mutation_rate': 0.4,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
-        'max_generations': 1,
+        'max_generations': 5,
         'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 20, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000 # set fitness value in case simulation time is over

@@ -31,22 +31,22 @@ netParams.loadCellParamsRule('NGF_reduced', 'NGF_reduced_cellParams.json')
 netParams.cellParams['NGF_reduced']['conds'] = {'cellType': 'NGF'}
 
 for sec, secDict in netParams.cellParams['NGF_reduced']['secs'].items():
-    if sec in cfg.tune:
-        # vinit
-        if 'vinit' in cfg.tune[sec]:
-            secDict['vinit'] = cfg.tune[sec]['vinit']
-        
-        # mechs
-        for mech in secDict['mechs']:
-            if mech in cfg.tune[sec]:
-                for param in secDict['mechs'][mech]:
-                    if param in cfg.tune[sec][mech]:
-                        secDict['mechs'][mech][param] *= cfg.tune[sec][mech][param]  
-        
-        # geom
-        for geomParam in secDict['geom']:
-            if geomParam in cfg.tune[sec]:
-                secDict['geom'][geomParam] *= cfg.tune[sec][geomParam]
+    #if sec in cfg.tune:
+    # vinit
+    if 'vinit' in cfg.tune:
+        secDict['vinit'] = cfg.tune['vinit']
+    
+    # mechs
+    for mech in secDict['mechs']:
+        if mech in cfg.tune:
+            for param in secDict['mechs'][mech]:
+                if param in cfg.tune[mech]:
+                    secDict['mechs'][mech][param] *= cfg.tune[mech][param]  
+    
+    # geom
+    for geomParam in secDict['geom']:
+        if geomParam in cfg.tune:
+            secDict['geom'][geomParam] *= cfg.tune[geomParam]
 
 
 #------------------------------------------------------------------------------
