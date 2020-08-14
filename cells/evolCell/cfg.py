@@ -52,7 +52,7 @@ cfg.saveDataInclude = ['simConfig', 'netParams', 'net', 'simData']
 cfg.analysis['plotfI'] = {'amps': [0.1], 'times': [1000], 'dur': 1000, 'targetRates': [10], 'saveFig': True, 'showFig': True}
 
 cfg.analysis['plotTraces'] = {'include': [0], 'oneFigPer': 'cell', 'saveFig': True, 
- 							  'showFig': False, 'figSize': (12,8), 'timeRange': [0,cfg.duration]}
+ 							  'showFig': False, 'figSize': (30,4), 'timeRange': [0,cfg.duration]}
 
 #------------------------------------------------------------------------------
 # Current inputs 

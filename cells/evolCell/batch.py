@@ -152,10 +152,10 @@ def evolCellNGF():
     interval = 10000  # 10000
     dur = 500  # ms
     durSteady = 200  # ms
-    amps = list(np.arange(0.04+0.075, 0.121+0.075, 0.01))  # amplitudes
+    amps = [0] + list(np.arange(0.04+0.075, 0.121+0.075, 0.01))  # amplitudes
     times = list(np.arange(interval, (dur+interval) * len(amps), dur+interval))  # start times
-    targetRatesOnset = [43., 52., 68., 80., 96., 110., 119., 131., 139.]
-    targetRatesSteady = [22., 24., 27., 30., 33., 35., 37., 39., 41.]
+    targetRatesOnset = [0., 43., 52., 68., 80., 96., 110., 119., 131., 139.]
+    targetRatesSteady = [0., 22., 24., 27., 30., 33., 35., 37., 39., 41.]
 
     stimWeights = [10, 50, 100, 150]
     stimRate = 80
@@ -219,12 +219,24 @@ def evolCellNGF():
         targetRatesSteady = kwargs['targetRatesSteady']
         stimTargetSensitivity = kwargs['stimTargetSensitivity']
             
+        # fI curve
         diffRatesOnset = [abs(x-t) for x,t in zip(simData['fI_onset'], targetRatesOnset)]
         diffRatesSteady = [abs(x - t) for x, t in zip(simData['fI_steady'], targetRatesSteady)]
-        stimDiffRate = np.max(list(simData['popRates']['NGF'].values())) - np.min(list(simData['popRates']['NGF'].values()))
+        
+        # for spontaneous (fI with 0 nA current) use regular fI calculation to avoid missing spikes  
+        # and penalize x10 to avoid these solutions
+        diffRatesOnset[0] = abs(simData['fI'][0] - targetRatesOnset[0]) * 10
+        diffRatesSteady[0] = abs(simData['fI'][0] - targetRatesSteady[0]) * 10
+
+        # calculate sensitivity (firing rate) to exc syn inputs 
+        stimMaxRate = np.max(list(simData['popRates']['NGF'].values()))
+        stimMinRate = np.min(list(simData['popRates']['NGF'].values()))
+        stimDiffRate = stimMaxRate - stimMinRate
         
         maxFitness = 1000
-        fitness = np.mean(diffRatesOnset + diffRatesSteady) if stimDiffRate < stimTargetSensitivity else maxFitness
+        fitness = np.mean(diffRatesOnset + diffRatesSteady) \
+            if stimMinRate < stimTargetSensitivity and stimDiffRate < stimTargetSensitivity \
+            else maxFitness
         
         print(' Candidate rates: ', simData['fI_onset']+simData['fI_steady'])
         print(' Target rates:    ', targetRatesOnset+targetRatesSteady)
