@@ -153,14 +153,14 @@ def evolCellNGF():
     dur = 500  # ms
     durSteady = 200  # ms
     amps = list(np.arange(0.04+0.075, 0.121+0.075, 0.01))  # amplitudes
-    times = list(np.arange(1000, (dur+interval) * len(amps), dur+interval))  # start times
+    times = list(np.arange(interval, (dur+interval) * len(amps), dur+interval))  # start times
     targetRatesOnset = [43., 52., 68., 80., 96., 110., 119., 131., 139.]
     targetRatesSteady = [22., 24., 27., 30., 33., 35., 37., 39., 41.]
 
     stimWeights = [10, 50, 100, 150]
     stimRate = 80
     stimDur = 2000
-    stimTimes = [times[-1] + x for x in list(np.arange(0, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTimes = [times[-1] + x for x in list(np.arange(-interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
     stimTargetSensitivity = 100  # max - min 
 
     # initial cfg set up
@@ -238,14 +238,14 @@ def evolCellNGF():
     b = Batch(params=params, initCfg=initCfg)
     
     # Set output folder, grid method (all param combinations), and run configuration
-    b.batchLabel = 'NGF_evol'
+    b.batchLabel = 'NGF_evol1'
     b.saveFolder = 'data/'+b.batchLabel
     b.method = 'evol'
     b.runCfg = {
         'type': 'mpi_bulletin',#'hpc_slurm', 
         'script': 'init.py',
+        'mpiCommand': 'python3',  
         # # options required only for hpc
-        # 'mpiCommand': 'mpirun',  
         # 'nodes': 1,
         # 'coresPerNode': 2,
         # 'allocation': 'default',
@@ -258,14 +258,14 @@ def evolCellNGF():
         'evolAlgorithm': 'custom',
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 4,
+        'pop_size': 95,
         'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
         'mutation_rate': 0.4,
         'crossover': 0.5,
         'maximize': False, # maximize fitness function?
-        'max_generations': 5,
+        'max_generations': 2000,
         'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 20, # max number of times to check if sim is completed (for each generation)
+        'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000 # set fitness value in case simulation time is over
     }
     # Run batch simulations
