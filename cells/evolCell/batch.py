@@ -118,6 +118,8 @@ def evolCellNGF():
 
     scalingRange = [0.5, 2.0]
     
+    params[('tune', 'L')] = scalingRange
+    params[('tune', 'diam')] = scalingRange
     params[('tune', 'Ra')] = scalingRange
     params[('tune', 'cm')] = scalingRange
     params[('tune', 'pas', 'e')] = scalingRange
@@ -238,7 +240,7 @@ def evolCellNGF():
 
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, initCfg=initCfg) 
-    b.method = 'evol'
+    b.method = 'optuna'
 
     if b.method == 'evol':
         # Set output folder, grid method (all param combinations), and run configuration
