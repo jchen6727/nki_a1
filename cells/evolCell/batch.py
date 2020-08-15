@@ -239,7 +239,7 @@ def evolCellNGF():
 
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, initCfg=initCfg) 
-    b.method = 'evol'
+    b.method = 'optuna'
 
     if b.method == 'evol':
         # Set output folder, grid method (all param combinations), and run configuration
@@ -269,7 +269,7 @@ def evolCellNGF():
 
     elif b.method == 'optuna':
         # Set output folder, grid method (all param combinations), and run configuration
-        b.batchLabel = 'NGF_optuna1'
+        b.batchLabel = 'NGF_optuna3'
         b.saveFolder = 'data/'+b.batchLabel
         b.runCfg = {
             'type': 'mpi_direct', #'hpc_slurm', 
