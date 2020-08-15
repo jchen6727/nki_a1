@@ -5717,6 +5717,8 @@ params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
 
 
 ** NGF_evol1 - reducede sensitivity to E-I imbalance with similar fI curve
+*** notes
+pip install --user optuna psutil sklearn
 *** code
 def evolCellNGF():
     # parameters space to explore
@@ -5866,4 +5868,18 @@ def evolCellNGF():
     }
     # Run batch simulations
     b.run()
+** NGF_optuna1 - reducede sensitivity to E-I imbalance with similar fI curve
+*** notes
+pip install --user optuna psutil sklearn
+*** 
+sensitivity threshold 139
+** NGF_optuna2
+*** code
+proportional to sensitivity
+** NGF_evol3
+*** code
+sensitivity threshold 200
+** NGF_optuna3
+*** code
+sensitivity threshold 200
 ** new

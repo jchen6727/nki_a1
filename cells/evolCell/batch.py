@@ -153,7 +153,7 @@ def evolCellNGF():
     stimRate = 80
     stimDur = 2000
     stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
-    stimTargetSensitivity = targetRatesOnset[-1]  # max - min 
+    stimTargetSensitivity = 200 
 
     # initial cfg set up
     initCfg = {} # specs.ODict()
@@ -225,9 +225,10 @@ def evolCellNGF():
         # stimMinRate = np.min(list(simData['popRates']['NGF'].values()))
         # stimDiffRate = stimMaxRate - stimMinRate
         
-        #maxFitness = 1000
-        fitness = np.mean(diffRatesOnset + diffRatesSteady) + np.max([0, stimMaxRate - stimTargetSensitivity])
-        
+        maxFitness = 1000
+        #fitness = np.mean(diffRatesOnset + diffRatesSteady) + np.max([0, stimMaxRate - stimTargetSensitivity])
+        fitness = np.mean(diffRatesOnset + diffRatesSteady) if stimMaxRate < stimTargetSensitivity else maxFitness
+
         print(' Candidate rates: ', simData['fI_onset']+simData['fI_steady'])
         print(' Target rates:    ', targetRatesOnset+targetRatesSteady)
         print(' Difference:      ', diffRatesOnset + diffRatesSteady)
@@ -238,11 +239,11 @@ def evolCellNGF():
 
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, initCfg=initCfg) 
-    b.method = 'optuna'
+    b.method = 'evol'
 
     if b.method == 'evol':
         # Set output folder, grid method (all param combinations), and run configuration
-        b.batchLabel = 'NGF_evol1'
+        b.batchLabel = 'NGF_evol3'
         b.saveFolder = 'data/'+b.batchLabel
         b.runCfg = {
             'type': 'mpi_bulletin',#'hpc_slurm', 
@@ -268,7 +269,7 @@ def evolCellNGF():
 
     elif b.method == 'optuna':
         # Set output folder, grid method (all param combinations), and run configuration
-        b.batchLabel = 'NGF_optuna2'
+        b.batchLabel = 'NGF_optuna1'
         b.saveFolder = 'data/'+b.batchLabel
         b.runCfg = {
             'type': 'mpi_direct', #'hpc_slurm', 
