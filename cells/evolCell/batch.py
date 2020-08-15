@@ -222,25 +222,23 @@ def evolCellNGF():
 
         # calculate sensitivity (firing rate) to exc syn inputs 
         stimMaxRate = np.max(list(simData['popRates']['NGF'].values()))
-        stimMinRate = np.min(list(simData['popRates']['NGF'].values()))
-        stimDiffRate = stimMaxRate - stimMinRate
+        # stimMinRate = np.min(list(simData['popRates']['NGF'].values()))
+        # stimDiffRate = stimMaxRate - stimMinRate
         
-        maxFitness = 1000
-        fitness = np.mean(diffRatesOnset + diffRatesSteady) \
-            if stimMinRate < stimTargetSensitivity and stimDiffRate < stimTargetSensitivity \
-            else maxFitness
+        #maxFitness = 1000
+        fitness = np.mean(diffRatesOnset + diffRatesSteady) + np.max([0, stimMaxRate - stimTargetSensitivity])
         
         print(' Candidate rates: ', simData['fI_onset']+simData['fI_steady'])
         print(' Target rates:    ', targetRatesOnset+targetRatesSteady)
         print(' Difference:      ', diffRatesOnset + diffRatesSteady)
-        print(' Stim sensitivity: ', stimDiffRate)
+        print(' Stim sensitivity: ', stimMaxRate)
 
         return fitness
         
 
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, initCfg=initCfg) 
-    b.method = 'evol'
+    b.method = 'optuna'
 
     if b.method == 'evol':
         # Set output folder, grid method (all param combinations), and run configuration
@@ -270,7 +268,7 @@ def evolCellNGF():
 
     elif b.method == 'optuna':
         # Set output folder, grid method (all param combinations), and run configuration
-        b.batchLabel = 'NGF_optuna1'
+        b.batchLabel = 'NGF_optuna2'
         b.saveFolder = 'data/'+b.batchLabel
         b.runCfg = {
             'type': 'mpi_direct', #'hpc_slurm', 
