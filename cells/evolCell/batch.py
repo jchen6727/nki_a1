@@ -238,7 +238,7 @@ def evolCellNGF():
 
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, initCfg=initCfg) 
-    b.method = 'optuna'
+    b.method = 'evol'
 
     if b.method == 'evol':
         # Set output folder, grid method (all param combinations), and run configuration
