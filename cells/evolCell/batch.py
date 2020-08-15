@@ -151,7 +151,7 @@ def evolCellNGF():
     stimRate = 80
     stimDur = 2000
     stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
-    stimTargetSensitivity = 100  # max - min 
+    stimTargetSensitivity = targetRatesOnset[-1]  # max - min 
 
     # initial cfg set up
     initCfg = {} # specs.ODict()
