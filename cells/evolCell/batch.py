@@ -12,30 +12,20 @@ def evolCellITS4():
     # parameters space to explore
     params = specs.ODict()
 
-    params[('tune', 'soma', 'Ra')] = [100.*0.5, 100*1.5] 
-    params[('tune', 'soma', 'cm')] = [0.75*0.5, 0.75*1.5]
-    params[('tune', 'soma', 'kv', 'gbar')] = [1700.0*0.5, 1700.0*1.5]
-    params[('tune', 'soma', 'naz', 'gmax')] = [72000.0*0.5, 72000.0*1.5]
-    params[('tune', 'soma', 'pas', 'e')] = [-70*1.5, -70.0*0.5]
-    params[('tune', 'soma', 'pas', 'g')] = [3.3333333333333335e-05*0.5, 3.3333333333333335e-05*1.5]
+    scalingRange = [0.5, 2.0]
 
-    params[('tune', 'dend', 'Ra')] = [0.02974858749381221*0.5, 0.02974858749381221*1.5] 
-    params[('tune', 'dend', 'cm')] = [0.75*0.5, 0.75*1.5]
-    params[('tune', 'dend', 'Nca', 'gmax')] = [0.3*0.5, 0.3*1.5]
-    params[('tune', 'dend', 'kca', 'gbar')] = [3.0 * 0.5, 3.0 * 1.5]
-    params[('tune', 'dend', 'km', 'gbar')] = [0.1*0.5, 0.1*1.5]
-    params[('tune', 'dend', 'naz', 'gmax')] = [15.0*0.5, 15.0*1.5]
-    params[('tune', 'dend', 'pas', 'e')] = [-70*1.5, -70.0*0.5]
-    params[('tune', 'dend', 'pas', 'g')] = [3.3333333333333335e-05*0.5, 3.3333333333333335e-05*1.5]
+    # params[('tune', 'L')] = scalingRange
+    params[('tune', 'diam')] = scalingRange
+    params[('tune', 'Ra')] = scalingRange
+    params[('tune', 'cm')] = scalingRange
+    params[('tune', 'kv', 'gbar')] = scalingRange
+    params[('tune', 'naz', 'gmax')] = scalingRange
+    params[('tune', 'pas', 'e')] = scalingRange
+    params[('tune', 'pas', 'g')] = scalingRange
 
-    params[('tune', 'dend1', 'Ra')] = [0.015915494309189534*0.5, 0.015915494309189534*1.5] 
-    params[('tune', 'dend1', 'cm')] = [0.75*0.5, 0.75*1.5]
-    params[('tune', 'dend1', 'Nca', 'gmax')] = [0.3*0.5, 0.3*1.5]
-    params[('tune', 'dend1', 'kca', 'gbar')] = [3.0*0.5, 3.0*1.5]
-    params[('tune', 'dend1', 'km', 'gbar')] = [0.1*0.5, 0.1*1.5]
-    params[('tune', 'dend1', 'naz', 'gmax')] = [15.0*0.5, 15.0*1.5]
-    params[('tune', 'dend1', 'pas', 'e')] = [-70*1.5, -70.0*0.5]
-    params[('tune', 'dend1', 'pas', 'g')] = [3.3333333333333335e-05*0.5, 3.3333333333333335e-05*1.5]
+    params[('tune', 'Nca', 'gmax')] = scalingRange
+    params[('tune', 'kca', 'gbar')] = scalingRange
+    params[('tune', 'km', 'gbar')] = scalingRange
 
 
     # current injection params
@@ -160,12 +150,12 @@ def evolCellNGF():
     stimWeights = [10, 50, 100, 150]
     stimRate = 80
     stimDur = 2000
-    stimTimes = [times[-1] + x for x in list(np.arange(-interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
     stimTargetSensitivity = 100  # max - min 
 
     # initial cfg set up
     initCfg = {} # specs.ODict()
-    initCfg['duration'] = ((dur+interval) * len(amps)) + ((stimDur+interval) * len(stimWeights)) 
+    initCfg['duration'] = stimTimes[-1] + stimDur # ((dur+interval) * len(amps)) + ((stimDur+interval) * len(stimWeights)) 
     initCfg[('hParams', 'celsius')] = 37
 
     initCfg['savePickle'] = True
@@ -196,7 +186,7 @@ def evolCellNGF():
     initCfg[('NetStim1', 'sec')] = 'soma'
     initCfg[('NetStim1', 'synMech')] = ['AMPA', 'NMDA']
     initCfg[('NetStim1', 'synMechWeightFactor')] = [0.5, 0.5]
-    initCfg[('NetStim1', 'number')] = 1e9
+    initCfg[('NetStim1', 'number')] = stimRate * stimDur/1000. * 1.1
     initCfg[('NetStim1', 'noise')] = 1.0
 
 
@@ -305,6 +295,6 @@ def evolCellNGF():
 # ---------------------------------------------------------------------------------------------- #
 # Main code
 if __name__ == '__main__':
-    # evolCellITS4()
+    #evolCellITS4()
     evolCellNGF() 
 

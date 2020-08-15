@@ -91,11 +91,11 @@ if cfg.addNetStim:
 
         for weight, start in zip(weights, starts):
             # add stim source
-            netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+            netParams.stimSourceParams[key+'_'+str(start)] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
 
             # connect stim source to target 
-            netParams.stimTargetParams[key+'_'+pop+'_'+str(start)] =  {
-                'source': key, 
+            netParams.stimTargetParams[key+'_'+str(start)+'_'+pop] =  {
+                'source': key+'_'+str(start), 
                 'conds': {'pop': pop, 'ynorm': ynorm},
                 'sec': sec, 
                 'loc': loc,
