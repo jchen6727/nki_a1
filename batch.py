@@ -88,6 +88,39 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['stimSubConn'] = False
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
+
+    initCfg['tune'] = { "L": 0.5292094921519722,
+                        "Ra": 1.4789488212279527,
+                        "ch_CavL": {
+                            "gmax": 0.8294009810179838
+                        },
+                        "ch_CavN": {
+                            "gmax": 1.8302558031992033
+                        },
+                        "ch_KCaS": {
+                            "gmax": 1.9966915506612826
+                        },
+                        "ch_Kdrfastngf": {
+                            "gmax": 1.9718693540420718
+                        },
+                        "ch_KvAngf": {
+                            "gmax": 1.9995297406303094
+                        },
+                        "ch_KvCaB": {
+                            "gmax": 1.386572752588786
+                        },
+                        "ch_Navngf": {
+                            "gmax": 1.9747105482249578
+                        },
+                        "cm": 1.6538025216246877,
+                        "diam": 0.9280430551297493,
+                        "hd": {
+                            "gbar": 1.359096548635795
+                        },
+                        "pas": {
+                            "e": 0.6789102769330073,
+                            "g": 0.8144720557328889
+                        }}
  
 
     b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
@@ -1191,18 +1224,18 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    #b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    b = bkgWeights2D(pops = ['NGF2'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch11'
+    b.batchLabel = 'v25_batch12'
     b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
