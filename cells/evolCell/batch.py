@@ -39,7 +39,7 @@ def evolCellITS4():
  
     stimWeights = [10, 50, 100, 150]
     stimRate = 80
-    stimDur = 2000
+    stimDur = 1000
     stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
     stimTargetSensitivity = 75
  
