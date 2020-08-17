@@ -12,7 +12,7 @@ def evolCellITS4():
     # parameters space to explore
     params = specs.ODict()
 
-    scalingRange = [0.5, 2.0]
+    scalingRange = [0.25, 4.0]
     scalingRangeReduced = [0.75, 1.5]
     
 
@@ -142,7 +142,7 @@ def evolCellITS4():
 
     elif b.method == 'optuna':
         # Set output folder, grid method (all param combinations), and run configuration
-        b.batchLabel = 'ITS4_optuna1'
+        b.batchLabel = 'ITS4_optuna2'
         b.saveFolder = 'data/'+b.batchLabel
         b.runCfg = {
             'type': 'mpi_direct', #'hpc_slurm', 
