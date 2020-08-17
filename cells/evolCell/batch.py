@@ -45,7 +45,7 @@ def evolCellITS4():
  
     # initial cfg set up
     initCfg = {} # specs.ODict()
-    initCfg['duration'] = times[-1] + dur
+    initCfg['duration'] = stimTimes[-1] + dur
     initCfg[('hParams', 'celsius')] = 37
 
     initCfg['savePickle'] = True
