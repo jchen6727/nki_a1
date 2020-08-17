@@ -10,7 +10,7 @@ import IPython as ipy
 import os
 import utils
 from pprint import pprint
-#import optuna
+import optuna
 import pickle
 
 def getParamLabels(dataFolder, batchSim):
@@ -20,27 +20,30 @@ def getParamLabels(dataFolder, batchSim):
     return paramLabels
 
 def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFile=False):
-    if loadDataFromFile:
-        with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
+ 
+    if loadStudyFromFile:
+        with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
             df = pickle.load(f)
-    else: 
-        if loadStudyFromFile:
-            with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
+    else:
+        study = optuna.create_study(study_name=batchSim, storage='sqlite:///%s/%s/%s_storage.db' % (dataFolder, batchSim, batchSim), load_if_exists=True) 
+        df = study.trials_dataframe(attrs=('number', 'value', 'params'))
+
+        # replace column labels
+        for col in df.columns:
+            if col.startswith('params_'):
+                newName = col.replace('params_', '').replace('(', '').replace(')', '').replace("'", "").replace(', ','')
+                df = df.rename(columns={col: newName})
+
+        with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
+            pickle.dump(df, f)
+
+    if loadDataFromFile:
+        try:
+            with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
                 df = pickle.load(f)
-        else:
-            study = optuna.create_study(study_name=batchSim, storage='sqlite:///%s/%s/%s_storage.db' % (dataFolder, batchSim, batchSim), load_if_exists=True) 
-            df = study.trials_dataframe(attrs=('number', 'value', 'params'))
-
-            # replace column labels
-            for col in df.columns:
-                if col.startswith('params_'):
-                    newName = col.replace('params_', '').replace('(', '').replace(')', '').replace("'", "").replace(', ','')
-                    df = df.rename(columns={col: newName})
-
-            with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
-                pickle.dump(df, f)
-
-
+        except:
+            print('Could not find _df.pkl file...')
+    else:
         # load json for each trial with pop rates and add to df
         popRates = {p: [] for p in pops}
 
@@ -64,6 +67,7 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
         with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
             pickle.dump(df, f)
 
+
     return df
 
 def plotScatterPopVsParams(dataFolder, batchsim, df, pops):
@@ -80,6 +84,46 @@ def plotScatterPopVsParams(dataFolder, batchsim, df, pops):
                 plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, pop, param), dpi=300)
             except:
                 print('Error plotting %s vs %s' % (pop,param))
+
+
+def plotScatterFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
+
+    if excludeAbove:
+        df = df[df.value < excludeAbove]
+
+    dfcorr=df.corr('pearson')
+
+    for param in df.columns:
+        try:
+            print('Plotting scatter of %s vs %s param (R=%.2f) ...' %('fitness', param, dfcorr['value'][param]))
+            df.plot.scatter(param, 'value', s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
+            plt.ylabel('fitness error')
+            plt.title('%s vs %s R=%.2f' % ('fitness', param.replace('tune', ''), dfcorr['value'][param]))
+            plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
+        except:
+            print('Error plotting %s vs %s' % ('fitness',param))
+
+
+def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None, ylim=None):
+
+    if excludeAbove:
+        df = df[df.value < excludeAbove]
+
+    df2 = df.drop(['value', 'number'], axis=1)
+    fits = list(df['value'])
+    plt.figure(figsize=(16,12))
+    for i, (k,v) in enumerate(list(df2.items())[:len(paramLabels)]):
+        y = v #(np.array(v)-min(v))/(max(v)-min(v)) # normalize
+        x = np.random.normal(i, 0.04, size=len(y))         # Add some random "jitter" to the x-axis
+        s = plt.scatter(x, y, alpha=0.3, c=[int(f-1) for f in fits], cmap='jet_r')
+    plt.colorbar(label = 'fitness')
+    plt.ylabel('Parameter value')
+    plt.xlabel('Parameter')
+    plt.xticks(range(len(paramLabels)), paramLabels, rotation=45)
+    plt.subplots_adjust(top=0.95, bottom=0.2, right=0.95)
+    if ylim: plt.ylim(0, ylim)
+    plt.savefig('%s/%s/%s_scatter_params_%s.png' % (dataFolder, batchSim, batchSim, 'excludeAbove-'+str(excludeAbove) if excludeAbove else ''))
+    #plt.show()
 
 
 
@@ -186,8 +230,8 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
 # Main code
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
-    dataFolder = '../data/'
-    batchSim = 'v25_batch2' 
+    dataFolder = '../cells/evolCell/data/'
+    batchSim = 'NGF_optuna3' 
 
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']#, 'IC']
 
@@ -200,7 +244,12 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops = allpops, loadStudyFromFile=True, loadDataFromFile=True)
 
+    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=50)
+
+    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=50, ylim=None)
+
     #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
-    dfFilter = filterRates(df, condlist=['rates'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+    #dfFilter = filterRates(df, condlist=['rates'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+

@@ -13,14 +13,16 @@ def evolCellITS4():
     params = specs.ODict()
 
     scalingRange = [0.5, 2.0]
+    scalingRangeReduced = [0.75, 1.5]
+    
 
-    # params[('tune', 'L')] = scalingRange
+    params[('tune', 'L')] = scalingRangeReduced
     params[('tune', 'diam')] = scalingRange
     params[('tune', 'Ra')] = scalingRange
     params[('tune', 'cm')] = scalingRange
     params[('tune', 'kv', 'gbar')] = scalingRange
     params[('tune', 'naz', 'gmax')] = scalingRange
-    params[('tune', 'pas', 'e')] = scalingRange
+    params[('tune', 'pas', 'e')] = scalingRangeReduced
     params[('tune', 'pas', 'g')] = scalingRange
 
     params[('tune', 'Nca', 'gmax')] = scalingRange
@@ -29,14 +31,21 @@ def evolCellITS4():
 
 
     # current injection params
-    amps = list(np.arange(0.0, 0.65, 0.05))  # amplitudes
-    times = list(np.arange(1000, 2000 * len(amps), 2000))  # start times
+    interval = 2000
     dur = 500  # ms
+    amps = list(np.arange(0.0, 0.65, 0.05))  # amplitudes
+    times = list(np.arange(interval, interval * len(amps), interval))  # start times
     targetRates = [0., 0., 19., 29., 37., 45., 51., 57., 63., 68., 73., 77., 81.]
+ 
+    stimWeights = [10, 50, 100, 150]
+    stimRate = 80
+    stimDur = 2000
+    stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTargetSensitivity = 75
  
     # initial cfg set up
     initCfg = {} # specs.ODict()
-    initCfg['duration'] = 2000 * len(amps)
+    initCfg['duration'] = times[-1] + dur
     initCfg[('hParams', 'celsius')] = 37
 
     initCfg['savePickle'] = True
@@ -46,12 +55,28 @@ def evolCellITS4():
     initCfg[('IClamp1', 'pop')] = 'ITS4'
     initCfg[('IClamp1', 'amp')] = amps
     initCfg[('IClamp1', 'start')] = times
-    initCfg[('IClamp1', 'dur')] = 1000
+    initCfg[('IClamp1', 'dur')] = dur
 
     initCfg[('analysis', 'plotfI', 'amps')] = amps
     initCfg[('analysis', 'plotfI', 'times')] = times
     initCfg[('analysis', 'plotfI', 'dur')] = dur
     initCfg[('analysis', 'plotfI', 'targetRates')] = targetRates
+
+    # netstim 
+    initCfg[('NetStim1', 'weight')] = stimWeights
+    initCfg[('NetStim1', 'start')] = stimTimes
+    initCfg[('NetStim1', 'interval')] = 1000.0 / stimRate 
+    initCfg[('NetStim1', 'pop')] = 'ITS4'
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'synMech')] = ['AMPA', 'NMDA']
+    initCfg[('NetStim1', 'synMechWeightFactor')] = [0.5, 0.5]
+    initCfg[('NetStim1', 'number')] = stimRate * stimDur/1000. * 1.1
+    initCfg[('NetStim1', 'noise')] = 1.0
+
+
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis', 'plotRaster')] = False
+    initCfg['printPopAvgRates'] = [[x, x+stimDur] for x in stimTimes]
     
     for k, v in params.items():
         initCfg[k] = v[0]  # initialize params in cfg so they can be modified    
@@ -63,8 +88,14 @@ def evolCellITS4():
     def fitnessFunc(simData, **kwargs):
         targetRates = kwargs['targetRates']
             
-        diffRates = [abs(x-t) for x,t in zip(simData['fI'], targetRates)]
-        fitness = np.mean(diffRates)
+        diffRates = [abs(x - t) for x, t in zip(simData['fI'], targetRates)]
+        
+        # calculate sensitivity (firing rate) to exc syn inputs 
+        stimMaxRate = np.max(list(simData['popRates']['ITS4'].values()))
+        
+        maxFitness = 1000
+        fitness = diffRates if stimMaxRate < stimTargetSensitivity else maxFitness
+
         
         print(' Candidate rates: ', simData['fI'])
         print(' Target rates:    ', targetRates)
@@ -76,37 +107,55 @@ def evolCellITS4():
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, initCfg=initCfg)
     
-    # Set output folder, grid method (all param combinations), and run configuration
-    b.batchLabel = 'ITS4_evol'
-    b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'evol'
-    b.runCfg = {
-        'type': 'mpi_bulletin', #'hpc_slurm', 
-        'script': 'init.py',
-        # # options required only for hpc
-        # 'mpiCommand': 'mpirun',  
-        # 'nodes': 1,
-        # 'coresPerNode': 2,
-        # 'allocation': 'default',
-        # 'email': 'salvadordura@gmail.com',
-        # 'reservation': None,
-        # 'folder': '/home/salvadord/evol'
-        # #'custom': 'export LD_LIBRARY_PATH="$HOME/.openmpi/lib"' # only for conda users
-    }
-    b.evolCfg = {
-        'evolAlgorithm': 'custom',
-        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
-        'fitnessFuncArgs': fitnessFuncArgs,
-        'pop_size': 40,
-        'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
-        'mutation_rate': 0.4,
-        'crossover': 0.5,
-        'maximize': False, # maximize fitness function?
-        'max_generations': 20,
-        'time_sleep': 5, # wait this time before checking again if sim is completed (for each generation)
-        'maxiter_wait': 20, # max number of times to check if sim is completed (for each generation)
-        'defaultFitness': 1000 # set fitness value in case simulation time is over
-    }
+    b.method = 'optuna'
+
+    if b.method == 'evol':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'ITS4_evol1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_bulletin',#'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+
+        b.evolCfg = {
+            'evolAlgorithm': 'custom',
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'pop_size': 95,
+            'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
+            'mutation_rate': 0.4,
+            'crossover': 0.5,
+            'maximize': False, # maximize fitness function?
+            'max_generations': 2000,
+            'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
+            'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
+            'defaultFitness': 1000 # set fitness value in case simulation time is over
+        }
+
+    elif b.method == 'optuna':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'ITS4_optuna1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_direct', #'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+        b.optimCfg = {
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'maxFitness': 1000,
+            'maxiters':     2000*95,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+            'maxtime':      100*2000,    #    Maximum time allowed, in seconds
+            'maxiter_wait': 6,
+            'time_sleep': 10,
+            'popsize': 1  # unused - run with mpi 
+        }    # Run batch simulations
+    
     # Run batch simulations
     b.run()
 
@@ -117,12 +166,13 @@ def evolCellNGF():
     params = specs.ODict()
 
     scalingRange = [0.5, 2.0]
+    scalingRangeReduced = [0.75, 1.5]
     
-    params[('tune', 'L')] = scalingRange
+    params[('tune', 'L')] = scalingRangeReduced
     params[('tune', 'diam')] = scalingRange
     params[('tune', 'Ra')] = scalingRange
-    params[('tune', 'cm')] = scalingRange
-    params[('tune', 'pas', 'e')] = scalingRange
+    params[('tune', 'cm')] = scalingRangeReduced
+    params[('tune', 'pas', 'e')] = scalingRangeReduced
     params[('tune', 'pas', 'g')] = scalingRange
     params[('tune', 'ch_CavL', 'gmax')] = scalingRange
     params[('tune', 'ch_CavN', 'gmax')] = scalingRange
@@ -296,6 +346,6 @@ def evolCellNGF():
 # ---------------------------------------------------------------------------------------------- #
 # Main code
 if __name__ == '__main__':
-    #evolCellITS4()
-    evolCellNGF() 
+    evolCellITS4()
+    #evolCellNGF() 
 
