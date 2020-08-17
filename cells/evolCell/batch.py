@@ -96,7 +96,9 @@ def evolCellITS4():
         stimMaxRate = np.max(list(simData['popRates']['ITS4'].values()))
         
         maxFitness = 1000
-        fitness = np.mean(diffRates) if stimMaxRate < stimTargetSensitivity else maxFitness
+
+        fitness = np.mean(diffRates) if stimMaxRate < stimTargetSensitivity else \
+                  np.mean(diffRates) + (stimMaxRate - stimTargetSensitivity)
 
         
         print(' Candidate rates: ', simData['fI'])
