@@ -1229,10 +1229,10 @@ if __name__ == '__main__':
     # b = asdRates()
     #b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    b = bkgWeights2D(pops = ['NGF2'], weights = list(np.arange(0,150,10)))
+    b = bkgWeights2D(pops = ['VIP2'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch12'
+    b.batchLabel = 'v25_batch13'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
