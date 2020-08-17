@@ -45,7 +45,7 @@ def evolCellITS4():
  
     # initial cfg set up
     initCfg = {} # specs.ODict()
-    initCfg['duration'] = stimTimes[-1] + dur
+    initCfg['duration'] = stimTimes[-1] + stimDur
     initCfg[('hParams', 'celsius')] = 37
 
     initCfg['savePickle'] = True
@@ -142,7 +142,7 @@ def evolCellITS4():
 
     elif b.method == 'optuna':
         # Set output folder, grid method (all param combinations), and run configuration
-        b.batchLabel = 'ITS4_optuna2'
+        b.batchLabel = 'ITS4_optuna3'
         b.saveFolder = 'data/'+b.batchLabel
         b.runCfg = {
             'type': 'mpi_direct', #'hpc_slurm', 
