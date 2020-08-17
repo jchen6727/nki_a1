@@ -34,7 +34,7 @@ def evolCellITS4():
     interval = 2000
     dur = 500  # ms
     amps = list(np.arange(0.0, 0.65, 0.05))  # amplitudes
-    times = list(np.arange(interval, interval * len(amps), interval))  # start times
+    times = list(np.arange(interval, (dur+interval) * len(amps), dur+interval))  # start times
     targetRates = [0., 0., 19., 29., 37., 45., 51., 57., 63., 68., 73., 77., 81.]
  
     stimWeights = [10, 50, 100, 150]
@@ -52,11 +52,13 @@ def evolCellITS4():
     initCfg['saveJson'] = False
     initCfg['saveDataInclude'] = ['simConfig', 'netParams', 'net', 'simData']
 
+    # iclamp
     initCfg[('IClamp1', 'pop')] = 'ITS4'
     initCfg[('IClamp1', 'amp')] = amps
     initCfg[('IClamp1', 'start')] = times
     initCfg[('IClamp1', 'dur')] = dur
 
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, initCfg['duration']] 
     initCfg[('analysis', 'plotfI', 'amps')] = amps
     initCfg[('analysis', 'plotfI', 'times')] = times
     initCfg[('analysis', 'plotfI', 'dur')] = dur
@@ -94,12 +96,13 @@ def evolCellITS4():
         stimMaxRate = np.max(list(simData['popRates']['ITS4'].values()))
         
         maxFitness = 1000
-        fitness = diffRates if stimMaxRate < stimTargetSensitivity else maxFitness
+        fitness = np.mean(diffRates) if stimMaxRate < stimTargetSensitivity else maxFitness
 
         
         print(' Candidate rates: ', simData['fI'])
         print(' Target rates:    ', targetRates)
         print(' Difference:      ', diffRates)
+        print(' Stim sensitivity: ', stimMaxRate)
 
         return fitness
         
