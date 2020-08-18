@@ -89,39 +89,64 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
 
-    initCfg['tune'] = { "L": 0.5292094921519722,
-                        "Ra": 1.4789488212279527,
-                        "ch_CavL": {
-                            "gmax": 0.8294009810179838
-                        },
-                        "ch_CavN": {
-                            "gmax": 1.8302558031992033
-                        },
-                        "ch_KCaS": {
-                            "gmax": 1.9966915506612826
-                        },
-                        "ch_Kdrfastngf": {
-                            "gmax": 1.9718693540420718
-                        },
-                        "ch_KvAngf": {
-                            "gmax": 1.9995297406303094
-                        },
-                        "ch_KvCaB": {
-                            "gmax": 1.386572752588786
-                        },
-                        "ch_Navngf": {
-                            "gmax": 1.9747105482249578
-                        },
-                        "cm": 1.6538025216246877,
-                        "diam": 0.9280430551297493,
-                        "hd": {
-                            "gbar": 1.359096548635795
-                        },
-                        "pas": {
-                            "e": 0.6789102769330073,
-                            "g": 0.8144720557328889
-                        }}
- 
+    # NGF
+    # initCfg['tune'] = { "L": 0.5292094921519722,
+    #                     "Ra": 1.4789488212279527,
+    #                     "ch_CavL": {
+    #                         "gmax": 0.8294009810179838
+    #                     },
+    #                     "ch_CavN": {
+    #                         "gmax": 1.8302558031992033
+    #                     },
+    #                     "ch_KCaS": {
+    #                         "gmax": 1.9966915506612826
+    #                     },
+    #                     "ch_Kdrfastngf": {
+    #                         "gmax": 1.9718693540420718
+    #                     },
+    #                     "ch_KvAngf": {
+    #                         "gmax": 1.9995297406303094
+    #                     },
+    #                     "ch_KvCaB": {
+    #                         "gmax": 1.386572752588786
+    #                     },
+    #                     "ch_Navngf": {
+    #                         "gmax": 1.9747105482249578
+    #                     },
+    #                     "cm": 1.6538025216246877,
+    #                     "diam": 0.9280430551297493,
+    #                     "hd": {
+    #                         "gbar": 1.359096548635795
+    #                     },
+    #                     "pas": {
+    #                         "e": 0.6789102769330073,
+    #                         "g": 0.8144720557328889
+    #                     }}
+
+    #ITS4
+    initCfg['tune'] = { "L": 1.3118623085123142,
+            "Nca": {
+                "gmax": 3.5838808831900515
+            },
+            "Ra": 0.6872551957221755,
+            "cm": 2.2202371016519873,
+            "diam": 2.7938082173487877,
+            "kca": {
+                "gbar": 0.40727688068272255
+            },
+            "km": {
+                "gbar": 1.3266426599463168
+            },
+            "kv": {
+                "gbar": 0.2713752431207888
+            },
+            "naz": {
+                "gmax": 3.635282589182774
+            },
+            "pas": {
+                "e": 1.0950678422289308,
+                "g": 1.6892125376050984
+            }}
 
     b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
     b.method = 'grid'
@@ -1229,10 +1254,10 @@ if __name__ == '__main__':
     # b = asdRates()
     #b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    b = bkgWeights2D(pops = ['VIP2'], weights = list(np.arange(0,150,10)))
+    b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch13'
+    b.batchLabel = 'v25_batch14'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

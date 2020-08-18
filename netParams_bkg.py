@@ -78,7 +78,7 @@ cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
-for sec, secDict in netParams.cellParams['NGF_reduced']['secs'].items():
+for sec, secDict in netParams.cellParams['ITS4_reduced']['secs'].items():
     #if sec in cfg.tune:
     # vinit
     if 'vinit' in cfg.tune:
