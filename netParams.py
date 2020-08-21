@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 25
+netParams.version = 26
 
 #------------------------------------------------------------------------------
 #
@@ -240,13 +240,18 @@ if cfg.addConn:
                 prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
             else:
                 prob = pmat[pre][post]
+            
+            if 'NGF' in post:
+                synWeightFactor = cfg.synWeightFractionENGF
+            else:
+                synWeightFactor = cfg.synWeightFractionEI
             netParams.connParams['EI_'+pre+'_'+post] = { 
                 'preConds': {'pop': pre}, 
                 'postConds': {'pop': post},
                 'synMech': ESynMech,
                 'probability': prob,
                 'weight': wmat[pre][post] * cfg.EIGain, 
-                'synMechWeightFactor': cfg.synWeightFractionEI,
+                'synMechWeightFactor': synWeightFactor,
                 'delay': 'defaultDelay+dist_3D/propVelocity',
                 'synsPerConn': 1,
                 'sec': 'proximal'}
