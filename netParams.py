@@ -368,7 +368,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
 TEpops = ['TC', 'TCM', 'HTC']
 TIpops = ['IRE', 'IREM', 'TI', 'TIM']
 
-if cfg.addIntraThalamicConn:
+if cfg.addConn and cfg.addIntraThalamicConn:
     for pre in TEpops+TIpops:
         for post in TEpops+TIpops:
             if post in pmat[pre]:
@@ -397,7 +397,7 @@ if cfg.addIntraThalamicConn:
 
 #------------------------------------------------------------------------------
 ## Corticothalamic 
-if cfg.addCorticoThalamicConn:
+if cfg.addConn and cfg.addCorticoThalamicConn:
     for pre in Epops:
         for post in TEpops+TIpops:
             if post in pmat[pre]:
@@ -414,7 +414,7 @@ if cfg.addCorticoThalamicConn:
 
 #------------------------------------------------------------------------------
 ## Thalamocortical 
-if cfg.addThalamoCorticalConn:
+if cfg.addConn and cfg.addThalamoCorticalConn:
     for pre in TEpops+TIpops:
         for post in Epops+Ipops:
             if post in pmat[pre]:
