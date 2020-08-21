@@ -349,7 +349,7 @@ if cfg.addIntraThalamicConn:
         for post in TEpops+TIpops:
             if post in pmat[pre]:
                 # for syns use ESynMech, SOMESynMech and SOMISynMech 
-                if pre in TEpops:     # E->E
+                if pre in TEpops:     # E->E/I
                     syn = ESynMech
                     synWeightFactor = cfg.synWeightFractionEE
                 elif post in TEpops:  # I->E
@@ -709,4 +709,5 @@ v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
 v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 v24 - Fixed bug in IE/II specific layer gains
 v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
+v26 - Changed NGF AMPA:NMDA ratio 
 """
