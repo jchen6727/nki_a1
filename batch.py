@@ -1061,22 +1061,22 @@ def optunaRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.5, 2.0]
-    params['EIGain'] = [0.5, 2.0]
+    params['EEGain'] = [0.2, 3.0]
+    params['EIGain'] = [0.2, 3.0]
 
-    params[('IELayerGain', '1-3')] = [0.5, 2.0]
-    params[('IELayerGain', '4')] = [0.5, 2.0]
-    params[('IELayerGain', '5')] = [0.5, 2.0]
-    params[('IELayerGain', '6')] = [0.5, 2.0]
+    params[('IELayerGain', '1-3')] = [0.2, 3.0]
+    params[('IELayerGain', '4')] = [0.2, 3.0]
+    params[('IELayerGain', '5')] = [0.2, 3.0]
+    params[('IELayerGain', '6')] = [0.2, 3.0]
 
-    params[('IILayerGain', '1-3')] = [0.5, 2.0]
-    params[('IILayerGain', '4')] = [0.5, 2.0]
-    params[('IILayerGain', '5')] = [0.5, 2.0]
-    params[('IILayerGain', '6')] = [0.5, 2.0]
+    params[('IILayerGain', '1-3')] = [0.2, 3.0]
+    params[('IILayerGain', '4')] = [0.2, 3.0]
+    params[('IILayerGain', '5')] = [0.2, 3.0]
+    params[('IILayerGain', '6')] = [0.2, 3.0]
     
-    params['thalamoCorticalGain'] = [0.5, 2.0]
-    params['intraThalamicGain'] = [0.5, 2.0]
-    params['corticoThalamicGain'] = [0.5, 2.0]
+    # params['thalamoCorticalGain'] = [0.25, 2.0]
+    # params['intraThalamicGain'] = [0.25, 2.0]
+    # params['corticoThalamicGain'] = [0.25, 2.0]
 
 
     groupedParams = []
@@ -1085,15 +1085,15 @@ def optunaRates():
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 1500
-    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['duration'] = 2000
+    initCfg['printPopAvgRates'] = [[1000, 1250], [1250, 1500], [1500, 1750], [1750, 2000]]
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis','plotRaster','timeRange')] = [1000,2000]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1000,2000]
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     initCfg['recordLFP'] = None
     initCfg[('analysis', 'plotLFP')] = False
@@ -1165,7 +1165,7 @@ def optunaRates():
         'maxFitness': fitnessFuncArgs['maxFitness'],
         'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
-        'maxiter_wait': 12,
+        'maxiter_wait': 16,
         'time_sleep': 60,
         'popsize': 1  # unused - run with mpi 
     }
@@ -1252,15 +1252,15 @@ if __name__ == '__main__':
     #b = custom()
     # b = evolRates()
     # b = asdRates()
-    #b = optunaRates()
+    b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v25_batch14'
+    b.batchLabel = 'v28_batch1'
     b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
