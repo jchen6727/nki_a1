@@ -574,7 +574,6 @@ pmat['TCM']['TI']   =   0.09
 pmat['IRE']['TI']   =   0.09
 pmat['IREM']['TI']  =	0.3 
 pmat['TI']['TI']    =  0.53
-
 pmat['TIM']['TC']   =   0.21  # TIM values from Serkov 1996
 pmat['TIM']['HTC']   =   0.21
 pmat['TIM']['TCM']   =   0.21
@@ -583,7 +582,7 @@ pmat['HTC']['TIM']   =   0.01
 pmat['TCM']['TIM']   =   0.09
 pmat['IRE']['TIM']   =   0.09
 pmat['IREM']['TIM']  =	0.3 
-pmat['TI']['TIM']    =   0.53
+pmat['TIM']['TIM']    =   0.53
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)

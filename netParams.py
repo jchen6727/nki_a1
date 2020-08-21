@@ -89,6 +89,29 @@ for k in cfg.weightNormScaling:
         for i in range(len(sec['weightNorm'])):
             sec['weightNorm'][i] *= cfg.weightNormScaling[k]
 
+## cfg.tune: 
+tunedCells = ['NGF_reduced','ITS4_reduced']
+for cellLabel in tunedCells:
+    for sec, secDict in netParams.cellParams[cellLabel]['secs'].items():
+        #if sec in cfg.tune:
+        # vinit
+        if 'vinit' in cfg.tune[cellLabel]:
+            secDict['vinit'] = cfg.tune[cellLabel]['vinit']
+    
+        # mechs
+        for mech in secDict['mechs']:
+            if mech in cfg.tune[cellLabel]:
+                for param in secDict['mechs'][mech]:
+                    if param in cfg.tune[cellLabel][mech]:
+                        print(sec, mech, param)
+                        secDict['mechs'][mech][param] *= cfg.tune[cellLabel][mech][param]  
+    
+        # geom
+        for geomParam in secDict['geom']:
+            if geomParam in cfg.tune[cellLabel]:
+                print(sec, geomParam)
+                secDict['geom'][geomParam] *= cfg.tune[cellLabel][geomParam]
+
 #------------------------------------------------------------------------------
 # Population parameters
 #------------------------------------------------------------------------------
