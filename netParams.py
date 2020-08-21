@@ -157,7 +157,8 @@ netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  
 netParams.popParams['HTC'] =    {'cellType': 'HTC', 'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.25*thalDensity}   
 netParams.popParams['IRE'] =    {'cellType': 'RE',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': thalDensity}     
 netParams.popParams['IREM'] =   {'cellType': 'RE', 'cellModel': 'HH_reduced',   'ynormRange': layer['thal'],   'density': thalDensity}
-netParams.popParams['TI'] =     {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 2*0.33 * thalDensity} ## Winer & Larue 1996; Huang et al 1999 
+netParams.popParams['TI'] =     {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.33 * thalDensity} ## Winer & Larue 1996; Huang et al 1999 
+netParams.popParams['TIM'] =    {'cellType': 'TI',  'cellModel': 'HH_reduced',  'ynormRange': layer['thal'],   'density': 0.33 * thalDensity} ## Winer & Larue 1996; Huang et al 1999 
 
 
 if cfg.singleCellPops:
@@ -342,7 +343,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
 ## Intrathalamic 
 
 TEpops = ['TC', 'TCM', 'HTC']
-TIpops = ['IRE', 'IREM', 'TI']
+TIpops = ['IRE', 'IREM', 'TI', 'TIM']
 
 if cfg.addIntraThalamicConn:
     for pre in TEpops+TIpops:
@@ -710,4 +711,5 @@ v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 v24 - Fixed bug in IE/II specific layer gains
 v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
 v26 - Changed NGF AMPA:NMDA ratio 
+v27 - Split thalamic interneurons into core and matrix (TI and TIM)
 """
