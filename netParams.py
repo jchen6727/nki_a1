@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 26
+netParams.version = 28
 
 #------------------------------------------------------------------------------
 #
@@ -712,4 +712,5 @@ v24 - Fixed bug in IE/II specific layer gains
 v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
 v26 - Changed NGF AMPA:NMDA ratio 
 v27 - Split thalamic interneurons into core and matrix (TI and TIM)
+v28 - Set recurrent TC->TC conn to 0
 """

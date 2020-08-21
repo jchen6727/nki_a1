@@ -544,11 +544,11 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
 # --------------------------------------------------
 ## Probabilities 
 ## note: missing values mean 0 probability
-pmat['TC']['TC'] =	    0.1
-pmat['HTC']['HTC'] =	0.1
-pmat['TC']['HTC'] =	    0.1
-pmat['HTC']['TC'] =	    0.1
-pmat['TCM']['TCM'] =	0.1
+pmat['TC']['TC'] =	    0.0 # 0.1
+pmat['HTC']['HTC'] =	0.0 #0.1
+pmat['TC']['HTC'] =	    0.0 # 0.1
+pmat['HTC']['TC'] =	    0.0 # 0.1
+pmat['TCM']['TCM'] =	0.0 #0.1
 pmat['IRE']['IRE'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
 pmat['IREM']['IREM'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
 pmat['IRE']['IREM'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
