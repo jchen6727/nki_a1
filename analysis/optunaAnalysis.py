@@ -59,11 +59,11 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
                 for p in popRatesLoad:
                     popRates[p].append(np.mean(list(popRatesLoad[p].values())))
 
-            print('Added trial %d' % (i))
-                except:
-                    for p in popRates:
-                        popRates[p].append(0.0)
-                    print('Skipped trial %d' % (i))
+                print('Added trial %d' % (i))
+            except:
+                for p in popRates:
+                    popRates[p].append(0.0)
+                print('Skipped trial %d' % (i))
             
         for p, rates in popRates.items():
             df.insert(len(df.columns), p, rates)
