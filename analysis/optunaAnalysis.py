@@ -57,7 +57,9 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
                     with open(filename+'.pkl', 'rb') as f:
                         popRatesLoad = pickle.load(f)['simData']['popRates']          
                 for p in popRatesLoad:
-                    popRates[p].append(np.mean(list(popRatesLoad[p].values())))
+                    popRates[p].append(list(popRatesLoad[p].values()))
+                    for t in popRatesLoad[p].keys:
+                        popRates[p+t].append(popRatesLoad[p][t])
 
                 print('Added trial %d' % (i))
             # except:
@@ -156,14 +158,14 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
 
     ranges = {}
     Irange = [0.01,100]
-    Ipops = ['NGF1',                        # L1
-        'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #Ipops =  #['NGF1',                        # L1
+    Ipops = ['PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-        'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+        'PV5A', 'SOM5A', 'VIP5A',# 'NGF5A',  # L5A  
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',#,  # L5B
-        'SOM6', 'VIP6', 'NGF6',
-        'IRE', 'IREM', 'TI', 'TIM']      # L6 PV6
+        'SOM6', 'VIP6', 'NGF6',#,
+        'IRE', 'IREM', 'TI']#, 'TIM']      # L6 PV6
 
     for pop in Ipops:
         ranges[pop] = Irange
@@ -247,13 +249,13 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, loadStudyFromFile=False, loadDataFromFile=False)
+    df = loadData(dataFolder, batchSim, pops=allpops, loadStudyFromFile=True, loadDataFromFile=False)
     
-    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=400)
+    # plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=400)
 
-    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=400, ylim=None)
+    # plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=400, ylim=None)
 
-    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
+    # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
     #dfFilter = filterRates(df, condlist=['rates'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
