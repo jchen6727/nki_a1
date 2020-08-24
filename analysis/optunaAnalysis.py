@@ -46,7 +46,7 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
     else:
         # load json for each trial with pop rates and add to df
         popRates = {p: [] for p in pops}
-        for p in popRates:
+        for p in list(popRates.keys()):
             for t in rateTimeRanges:
                 popRates[p+'_'+t] = []
 
