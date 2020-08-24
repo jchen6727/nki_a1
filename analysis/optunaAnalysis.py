@@ -19,7 +19,7 @@ def getParamLabels(dataFolder, batchSim):
         paramLabels = [str(x['label'][0])+str(x['label'][1]) if isinstance(x['label'], list) else str(x['label']) for x in json.load(f)['batch']['params']]
     return paramLabels
 
-def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFile=False):
+def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=False, loadDataFromFile=False):
  
     if loadStudyFromFile:
         with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
@@ -46,6 +46,8 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
     else:
         # load json for each trial with pop rates and add to df
         popRates = {p: [] for p in pops}
+        for t in rateTimeRanges:
+            popRates[p+'_'+t] = []
 
         for i in df.number:
             # try:
@@ -59,7 +61,7 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
                 for p in popRatesLoad:
                     popRates[p].append(list(popRatesLoad[p].values()))
                     for t in popRatesLoad[p].keys():
-                        popRates[p+t].append(popRatesLoad[p][t])
+                        popRates[p+'_'+t].append(popRatesLoad[p][t])
 
                 print('Added trial %d' % (i))
             # except:
@@ -240,7 +242,9 @@ if __name__ == '__main__':
     dataFolder = '../data/'
     batchSim = 'v28_batch1' 
 
-    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']#, 'IC']
+    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
+    
+    rateTimeRanges = ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
 
     # set font size
     plt.rcParams.update({'font.size': 18})
@@ -249,7 +253,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, loadStudyFromFile=True, loadDataFromFile=False)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=False)
     
     # plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=400)
 
