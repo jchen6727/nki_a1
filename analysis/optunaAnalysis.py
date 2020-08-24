@@ -49,11 +49,15 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
 
         for i in df.number:
             #try:
-            with open('%s/%s/trial_%d/trial_%d.json' % (dataFolder, batchSim, int(i), int(i)), 'r') as f:
-                popRatesLoad = json.load(f)['simData']['popRates']
-                
-                for p in popRatesLoad:
-                    popRates[p].append(np.mean(list(popRatesLoad[p].values())))
+            filename = '%s/%s/trial_%d/trial_%d.' % (dataFolder, batchSim, int(i), int(i))
+            if os.path.exists(filename+'.json'):
+                with open(filename+'.json', 'r') as f:
+                    popRatesLoad = json.load(f)['simData']['popRates']
+            elif os.path.exists(filename + '.pkl'):
+                with open(filename+'.pkl', 'rb') as f:
+                    popRatesLoad = pickle.load(f)['simData']['popRates']          
+            for p in popRatesLoad:
+                popRates[p].append(np.mean(list(popRatesLoad[p].values())))
 
                 print('Added trial %d' % (i))
             # except:
