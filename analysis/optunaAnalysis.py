@@ -58,7 +58,7 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
                         popRatesLoad = pickle.load(f)['simData']['popRates']          
                 for p in popRatesLoad:
                     popRates[p].append(list(popRatesLoad[p].values()))
-                    for t in popRatesLoad[p].keys:
+                    for t in popRatesLoad[p].keys():
                         popRates[p+t].append(popRatesLoad[p][t])
 
                 print('Added trial %d' % (i))
