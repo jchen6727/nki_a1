@@ -48,22 +48,22 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
         popRates = {p: [] for p in pops}
 
         for i in df.number:
-            #try:
-            filename = '%s/%s/trial_%d/trial_%d' % (dataFolder, batchSim, int(i), int(i))
-            if os.path.exists(filename+'.json'):
-                with open(filename+'.json', 'r') as f:
-                    popRatesLoad = json.load(f)['simData']['popRates']
-            elif os.path.exists(filename + '.pkl'):
-                with open(filename+'.pkl', 'rb') as f:
-                    popRatesLoad = pickle.load(f)['simData']['popRates']          
-            for p in popRatesLoad:
-                popRates[p].append(np.mean(list(popRatesLoad[p].values())))
+            try:
+                filename = '%s/%s/trial_%d/trial_%d' % (dataFolder, batchSim, int(i), int(i))
+                if os.path.exists(filename+'.json'):
+                    with open(filename+'.json', 'r') as f:
+                        popRatesLoad = json.load(f)['simData']['popRates']
+                elif os.path.exists(filename + '.pkl'):
+                    with open(filename+'.pkl', 'rb') as f:
+                        popRatesLoad = pickle.load(f)['simData']['popRates']          
+                for p in popRatesLoad:
+                    popRates[p].append(np.mean(list(popRatesLoad[p].values())))
 
-                print('Added trial %d' % (i))
-            # except:
-            #     for p in popRates:
-            #         popRates[p].append(0.0)
-            #     print('Skipped trial %d' % (i))
+            print('Added trial %d' % (i))
+                except:
+                    for p in popRates:
+                        popRates[p].append(0.0)
+                    print('Skipped trial %d' % (i))
             
         for p, rates in popRates.items():
             df.insert(len(df.columns), p, rates)
@@ -163,7 +163,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',#,  # L5B
         'SOM6', 'VIP6', 'NGF6',
-        'IRE', 'IREM', 'TI']      # L6 PV6
+        'IRE', 'IREM', 'TI', 'TIM']      # L6 PV6
 
     for pop in Ipops:
         ranges[pop] = Irange
