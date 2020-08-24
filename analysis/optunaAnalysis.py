@@ -60,7 +60,7 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
                     with open(filename+'.pkl', 'rb') as f:
                         popRatesLoad = pickle.load(f)['simData']['popRates']          
                 for p in popRatesLoad:
-                    popRates[p].append(list(popRatesLoad[p].values()))
+                    popRates[p].append(np.mean(list(popRatesLoad[p].values())))
                     for t in popRatesLoad[p].keys():
                         popRates[p+'_'+t].append(popRatesLoad[p][t])
 
@@ -137,7 +137,7 @@ def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None
 
 
 
-def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=None, dataFolder=None, batchLabel=None, skipDepol=False):
+def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRanges=[], copyFolder=None, dataFolder=None, batchLabel=None, skipDepol=False):
     from os.path import isfile, join
     from glob import glob
 
@@ -152,12 +152,21 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     for pop in Epops:
         ranges[pop] = Erange
     
-    conds = []
     # check pop rate ranges
-    if 'rates' in condlist:
-        for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
-    condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
-    dfcond = df.query(condStr)
+    if rateTimeRanges:
+        dfcond = df
+        if 'rates' in condlist:
+            for t in rateTimeRanges:
+                conds = []
+                for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k+'_'+t + '<=' + str(v[1]))
+                condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+                dfcond = dfcond.query(condStr)
+    else:
+        conds = []
+        if 'rates' in condlist:
+            for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
+        condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+        dfcond = df.query(condStr)
 
     ranges = {}
     Irange = [0.01,100]
@@ -166,20 +175,28 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
         'PV5A', 'SOM5A', 'VIP5A',# 'NGF5A',  # L5A  
-        'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',#,  # L5B
+        'PV5B', 'SOM5B', 'VIP5B',# 'NGF5B',#,  # L5B
         'SOM6', 'VIP6', 'NGF6',#,
         'IRE', 'IREM', 'TI']#, 'TIM']      # L6 PV6
 
     for pop in Ipops:
         ranges[pop] = Irange
 
-    conds = []
-
     # check pop rate ranges
-    if 'rates' in condlist:
-        for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
-    condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
-    dfcond = dfcond.query(condStr)
+
+    if rateTimeRanges:
+        if 'rates' in condlist:
+            for t in rateTimeRanges:
+                conds = []
+                for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k+'_'+t + '<=' + str(v[1]))
+                condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+                dfcond = dfcond.query(condStr)
+    else:
+        conds = []
+        if 'rates' in condlist:
+            for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k + '<=' + str(v[1]))
+        condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
+        dfcond = dfcond.query(condStr)
 
 
     # # check I > E in each layer
@@ -263,5 +280,5 @@ if __name__ == '__main__':
     # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
-    #dfFilter = filterRates(df, condlist=['rates'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM']
+    #dfFilter = filterRates(df, condlist=['rates'], rateTimeRanges = [], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', '1750_2000']
 
