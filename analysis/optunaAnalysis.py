@@ -48,7 +48,7 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
         popRates = {p: [] for p in pops}
 
         for i in df.number:
-            try:
+            # try:
                 filename = '%s/%s/trial_%d/trial_%d' % (dataFolder, batchSim, int(i), int(i))
                 if os.path.exists(filename+'.json'):
                     with open(filename+'.json', 'r') as f:
@@ -60,10 +60,10 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
                     popRates[p].append(np.mean(list(popRatesLoad[p].values())))
 
                 print('Added trial %d' % (i))
-            except:
-                for p in popRates:
-                    popRates[p].append(0.0)
-                print('Skipped trial %d' % (i))
+            # except:
+            #     for p in popRates:
+            #         popRates[p].append(0.0)
+            #     print('Skipped trial %d' % (i))
             
         for p, rates in popRates.items():
             df.insert(len(df.columns), p, rates)
