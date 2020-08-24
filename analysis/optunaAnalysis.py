@@ -49,7 +49,7 @@ def loadData(dataFolder, batchSim, pops, loadStudyFromFile=False, loadDataFromFi
 
         for i in df.number:
             #try:
-            filename = '%s/%s/trial_%d/trial_%d.' % (dataFolder, batchSim, int(i), int(i))
+            filename = '%s/%s/trial_%d/trial_%d' % (dataFolder, batchSim, int(i), int(i))
             if os.path.exists(filename+'.json'):
                 with open(filename+'.json', 'r') as f:
                     popRatesLoad = json.load(f)['simData']['popRates']
