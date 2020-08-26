@@ -148,7 +148,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
 
     ranges = {}
     Erange = [0.01,100]
-    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6','CT6', 'TC', 'TCM', 'HTC']
+    Epops = ['IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6', 'TC']  #, 'TCM', 'HTC']
     for pop in Epops:
         ranges[pop] = Erange
     
@@ -169,15 +169,16 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
         dfcond = df.query(condStr)
 
     ranges = {}
-    Irange = [0.01,100]
+    Irange = [0.01,150]
     #Ipops =  #['NGF1',                        # L1
-    Ipops = ['PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-        'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
-        'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-        'PV5A', 'SOM5A', 'VIP5A',# 'NGF5A',  # L5A  
-        'PV5B', 'SOM5B', 'VIP5B',# 'NGF5B',#,  # L5B
-        'SOM6', 'VIP6', 'NGF6',#,
-        'IRE', 'IREM', 'TI']#, 'TIM']      # L6 PV6
+    Ipops = [
+        'PV2', 'SOM2', 'VIP2'#, 'NGF2']#,      # L2
+         'PV3', 'SOM3', 'VIP3']#, 'NGF3']#,      # L3
+    #     'PV4', 'SOM4', 'VIP4', 'NGF4'],      # L4
+    #     'PV5A', 'SOM5A', 'VIP5A',# 'NGF5A',  # L5A  
+    #     'PV5B', 'SOM5B', 'VIP5B',# 'NGF5B',#,  # L5B
+    #     'SOM6', 'VIP6', 'NGF6',#,
+    #     'IRE', 'IREM', 'TI']#, 'TIM']      # L6 PV6
 
     for pop in Ipops:
         ranges[pop] = Irange
@@ -258,11 +259,14 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v28_batch1' 
-
+    batchSim = 'v28_batch1'
+    
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     
     rateTimeRanges = ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
+
+    #pd.options.display.max_columns = None  
+    #pd.options.display.max_rows = None  
 
     # set font size
     plt.rcParams.update({'font.size': 18})
@@ -271,7 +275,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=False)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=False, loadDataFromFile=False)
     
     # plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=400)
 
@@ -280,5 +284,5 @@ if __name__ == '__main__':
     # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
-    #dfFilter = filterRates(df, condlist=['rates'], rateTimeRanges = [], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', '1750_2000']
+    #dfFilter = filterRates(df, condlist=['rates'], rateTimeRanges = ['1250_1500', '1500_1750'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', ]
 
