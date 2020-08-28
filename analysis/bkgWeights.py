@@ -126,7 +126,7 @@ def calculateBkgWeightPops(pops, weights, rates, targetRates = {}, manualScaling
         # note we only calculated bkg weights for each cell type, since several pops use same cell type
         # e.g. PV2, PV4, PV5A, PV5B, PV6 will all use the value calculated for PV2 
 
-        allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+        allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
 
         import difflib
         for pop in allpops:
@@ -180,10 +180,11 @@ if __name__ == '__main__':
     Erate = 0.1  # Hz
     Irate = 0.1 # Hz
     targetRates = {p: Erate for p in ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC']}
-    targetRates.update({p: Irate for p in ['PV2', 'SOM2', 'VIP2', 'NGF2', 'IRE', 'TI']})
+    targetRates.update({p: Irate for p in ['PV2', 'SOM2', 'VIP2', 'NGF2', 'IRE', 'TI', 'TIM']})
 
     # manual scaling adjustments based on simulation with automatically calculated bkg weights (finetuning)
-    manualScaling = {'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0, 'ITP4': 1.1, 'ITS4': 10.0, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.1, 'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 0.5, 'IT5B': 0.075, 'CT5B': 0.75, 'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.1, 'TC': 1.25, 'TCM': 1.25, 'HTC': 1.25, 'TI': 1.25}  # for v22_batch28
+    NGFfactor = 5.0
+    manualScaling = {'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0 * NGFfactor, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0 * NGFfactor, 'ITP4': 1.1, 'ITS4': 1.0 * 10, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.0 * NGFfactor, 'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 1.0 * NGFfactor, 'IT5B': 0.075, 'CT5B': 0.75, 'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.0 * NGFfactor, 'TC': 1.25, 'TCM': 1.25, 'HTC': 1.25, 'TI': 1.25, 'TIM': 1.25}  # for v22_batch28
 
     # run calculation
     bkgWeights = calculateBkgWeightPops(pops, weights, rates, targetRates, manualScaling,

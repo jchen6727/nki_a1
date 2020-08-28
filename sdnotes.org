@@ -6317,4 +6317,23 @@ def evolCellITS4():
     
     # Run batch simulations
     b.run()
+
+** v28_batch1
+*** code
+*** results
+- best fitness 244; trial 12398
+-- upper layer quiet; then burst and deeper layers quiet; mutual inhib?
+-- depol block: IT2, IT3, IT6, ITS4, PV2, PV6, SOM4, VIP2-4, VIP6 (most just short period at end)
+
+- using filter analysis found 'better solutions'; trials: 9426, 13859, 14632
+-- good rates for all E except: PT5B, TCM
+-- good rates for all I except: NGF2-6, TIM, VIP4
+-- depol block: cells ITS4, IT6, PV6 -- but only some cells; pop rates ok
+
+- PT5B and TCM low rates, no depol block; can increase bkg input
+- NGF very low rates; forgot to adjust bkg inputs after tuning! 
+- TIM never fired; forgot to add bkg inputs!
+
+
+
 ** new
