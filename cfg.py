@@ -44,6 +44,8 @@ cfg.printPopAvgRates = [500, cfg.duration]
 #------------------------------------------------------------------------------
 cfg.allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
 
+ngf = ['NGF1', 'NGF2', 'NGF3',  'ITS4', 'NGF4', 'NGF5A', 'NGF5B', 'NGF6']
+
 alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', 'IRE', 'TI']
 
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc':0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
@@ -57,8 +59,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v28_tune1' 
-cfg.saveFolder = 'v28_manualTune'                	## Set file output name
+cfg.simLabel = 'v28_tune5' 
+cfg.saveFolder = 'data/v28_manualTune'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
@@ -72,7 +74,7 @@ cfg.saveCellConns = False
 #----------------------------------------------------------------------------- 
 #
 
-cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in cfg.allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in ngf], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300}      	## Plot a raster
 cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': False, 'saveFig': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
@@ -100,7 +102,7 @@ cfg.synWeightFractionENGF = [0.834, 0.166] # NGF AMPA to NMDA ratio
 # Network 
 #------------------------------------------------------------------------------
 ## These values taken from M1 cfg.py (https://github.com/Neurosim-lab/netpyne/blob/development/examples/M1detailed/cfg.py)
-cfg.singleCellPops = False
+cfg.singleCellPops = True
 cfg.singlePop = ''
 cfg.removeWeightNorm = False
 cfg.scale = 1.0     # Is this what should be used? 
@@ -119,7 +121,7 @@ cfg.synWeightFractionIE = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (update this)
 
 # Cortical
-cfg.addConn = 1
+cfg.addConn = 0
 
 cfg.EEGain = 1.0
 cfg.EIGain = 1.8600534795309025 	
@@ -140,7 +142,7 @@ cfg.thalamoCorticalGain = 1.0
 cfg.intraThalamicGain = 1.0
 cfg.corticoThalamicGain = 1.0
 
-cfg.addSubConn = 1
+cfg.addSubConn = 0
 
 
 #------------------------------------------------------------------------------
