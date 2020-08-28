@@ -735,7 +735,7 @@ def custom():
     #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
-    params['thalamoCorticalGain'] = [1.0, 1.5]
+    params['thalamoCorticalGain'] = [1.0]#, 1.5]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -1256,7 +1256,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v28_batch2'
+    b.batchLabel = 'v28_batch3'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
