@@ -1060,18 +1060,18 @@ def optunaRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.2, 3.0]
-    params['EIGain'] = [0.2, 3.0]
+    params['EEGain'] = [0.1, 3.0]
+    params['EIGain'] = [0.1, 3.0]
 
-    params[('IELayerGain', '1-3')] = [0.2, 3.0]
-    params[('IELayerGain', '4')] = [0.2, 3.0]
-    params[('IELayerGain', '5')] = [0.2, 3.0]
-    params[('IELayerGain', '6')] = [0.2, 3.0]
+    params[('IELayerGain', '1-3')] = [0.1, 3.0]
+    params[('IELayerGain', '4')] = [0.1, 3.0]
+    params[('IELayerGain', '5')] = [0.1, 3.0]
+    params[('IELayerGain', '6')] = [0.1, 3.0]
 
-    params[('IILayerGain', '1-3')] = [0.2, 3.0]
-    params[('IILayerGain', '4')] = [0.2, 3.0]
-    params[('IILayerGain', '5')] = [0.2, 3.0]
-    params[('IILayerGain', '6')] = [0.2, 3.0]
+    params[('IILayerGain', '1-3')] = [0.1, 3.0]
+    params[('IILayerGain', '4')] = [0.1, 3.0]
+    params[('IILayerGain', '5')] = [0.1, 3.0]
+    params[('IILayerGain', '6')] = [0.1, 3.0]
     
     # params['thalamoCorticalGain'] = [0.25, 2.0]
     # params['intraThalamicGain'] = [0.25, 2.0]
@@ -1248,15 +1248,15 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    #b = custom()
     # b = evolRates()
     # b = asdRates()
-    #b = optunaRates()
+    b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v28_batch4'
+    b.batchLabel = 'v28_batch5'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
