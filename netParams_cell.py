@@ -152,7 +152,7 @@ for ruleLabel in netParams.cellParams.keys():
             secLists['apic_uppertrunk'] = ['Adend2']
             secLists['apic_tuft'] = ['Adend3']
 
-        elif ruleLabel in ['ITS4']:
+        elif ruleLabel in ['ITS4_reduced']:
             secLists['all'] = secLists['proximal'] = ['soma', 'dend', 'dend1']
             secLists['dend_all'] = secLists['apic'] = secLists['apic_trunk'] = secLists['apic_lowertrunk'] = \
                 secLists['apic_uppertrunk'] = secLists['apic_tuft'] = ['dend', 'dend1']
