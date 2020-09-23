@@ -17,7 +17,7 @@ cfg = specs.SimConfig()
 #
 # SIMULATION CONFIGURATION
 #
-#------------------------------------------------------------------------------
+#------------------------------------------0#------------------------------------
 
 #------------------------------------------------------------------------------
 # Run parameters
@@ -57,7 +57,7 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v28_tune10' 
+cfg.simLabel = 'v28_tune11' 
 cfg.saveFolder = 'data/v28_manualTune'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = False           	## Save json file
