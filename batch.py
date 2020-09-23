@@ -1219,8 +1219,9 @@ def setRunCfg(b, type='mpi_bulletin'):
             'coresPerNode': 96,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
             'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
+            'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
+            'nrnCommand': 'python3',
             'skipCustom': '_raster.png'}
             #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
             # --nodelist=compute1
