@@ -10,7 +10,42 @@
     "globals": {
         "v_init": -75.0
     },
-    "secLists": {},
+    "secLists": {
+        "all": [
+            "soma",
+            "dend",
+            "dend1"
+        ],
+        "apic": [
+            "dend",
+            "dend1"
+        ],
+        "apic_lowertrunk": [
+            "dend",
+            "dend1"
+        ],
+        "apic_trunk": [
+            "dend",
+            "dend1"
+        ],
+        "apic_tuft": [
+            "dend",
+            "dend1"
+        ],
+        "apic_uppertrunk": [
+            "dend",
+            "dend1"
+        ],
+        "dend_all": [
+            "dend",
+            "dend1"
+        ],
+        "proximal": [
+            "soma",
+            "dend",
+            "dend1"
+        ]
+    },
     "secs": {
         "dend": {
             "geom": {
@@ -165,20 +200,20 @@
                 "L": 10.0,
                 "Ra": 100.0,
                 "cm": 0.75,
-                "diam": 25,
+                "diam": 3.183098861837907,
                 "nseg": 1,
                 "pt3d": [
                     [
                         0,
                         0,
                         0,
-                        25
+                        3.183098861837907
                     ],
                     [
                         0,
                         10.0,
                         0,
-                        25
+                        3.183098861837907
                     ]
                 ]
             },
