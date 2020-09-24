@@ -103,13 +103,13 @@ for cellLabel in tunedCells:
             if mech in cfg.tune[cellLabel]:
                 for param in secDict['mechs'][mech]:
                     if param in cfg.tune[cellLabel][mech]:
-                        print(sec, mech, param)
+                        #print(sec, mech, param)
                         secDict['mechs'][mech][param] *= cfg.tune[cellLabel][mech][param]  
     
         # geom
         for geomParam in secDict['geom']:
             if geomParam in cfg.tune[cellLabel]:
-                print(sec, geomParam)
+                #print(sec, geomParam)
                 secDict['geom'][geomParam] *= cfg.tune[cellLabel][geomParam]
 
 #------------------------------------------------------------------------------
