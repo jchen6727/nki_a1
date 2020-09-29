@@ -726,7 +726,7 @@ def custom():
     #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
     #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    params[('IELayerGain', '1-3')] = list(range(2.4969906720467807, 2.4969906720467807-0.25, 0.05)) 
     # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
@@ -735,7 +735,7 @@ def custom():
     #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
-    params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -762,20 +762,22 @@ def custom():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
-    # from v28_batch1 (optuna), trial 14632
+    # from v28_batch5 (optuna), trial 15446
     initCfg.update({
-    'EEGain': 0.9627240590814994,
-    'EIGain': 0.3917381420195193,
-    'IEGain': 1.0,
-    'IELayerGain': {'1-3': 1.4543584284774436,
-    '4': 0.5876239956096105,
-    '5': 0.20069931808448005,
-    '6': 0.6754391191627422},
-    'IIGain': 1.0,
-    'IILayerGain': {'1-3': 0.34624502581075384,
-    '4': 1.3085889834828857,
-    '5': 0.24735365353066327,
-    '6': 2.727404732884022}})
+        "EEGain": 0.538221678982146,
+        "EIGain": 0.24522849924039522,
+        "IELayerGain": {
+            "1-3": 2.4969906720467807,
+            "4": 0.7523928690211563,
+            "5": 0.16855428023477206,
+            "6": 2.8991792469343576
+        },
+        "IILayerGain": {
+            "1-3": 0.6648270236528021,
+            "4": 2.2876886663946765,
+            "5": 0.10069589845756556,
+            "6": 2.6134986990296576
+        }})
 
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
@@ -1249,15 +1251,15 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    #b = custom()
+    b = custom()
     # b = evolRates()
     # b = asdRates()
-    b = optunaRates()
+    #b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v28_batch5'
+    b.batchLabel = 'v28_batch6'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

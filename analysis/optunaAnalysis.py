@@ -141,8 +141,9 @@ def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None
 
     df2 = df.drop(['value', 'number'], axis=1)
     fits = list(df['value'])
-    plt.figure(figsize=(16,12))
-    for i, (k,v) in enumerate(list(df2.items())[:len(paramLabels)]):
+    plt.figure(figsize=(16, 12))
+
+    for i, (k,v) in enumerate(list(df2[paramLabels].items())):
         y = v #(np.array(v)-min(v))/(max(v)-min(v)) # normalize
         x = np.random.normal(i, 0.04, size=len(y))         # Add some random "jitter" to the x-axis
         s = plt.scatter(x, y, alpha=0.3, c=[int(f-1) for f in fits], cmap='jet_r')
@@ -164,8 +165,10 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
     # allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
 
     ranges = {}
-    Erange = [0.01,100]
-    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B',  'IT6', 'CT6', 'TC',  'HTC']#, 'TCM']#,'PT5B',
+    Erange = [0.0001,400]
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B',  'IT6', 'CT6', 'TC',  'HTC', 'TCM']
+    Epops = ['IT2', 'IT3',  'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B',  'IT6', 'CT6', 'TC',  'HTC', 'TCM']
+
     for pop in Epops:
         ranges[pop] = Erange
     
@@ -190,25 +193,16 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
     print(len(dfcond))
 
     ranges = {}
-    Irange = [0.01,200]
-    Ipops = [
-        'VIP2',#,'NGF2']#,      # L2
-        'VIP3', #,#, 'NGF3']#,      # L3
-        'VIP4',# 'NGF4'],      # L4
-        'VIP5A',# 'NGF5A',  # L5A  
-        'VIP5B',# 'NGF5B',#,  # L5B
-        'VIP6']# 'NGF6',#,
-        #'IRE', 'IREM', 'TI']  #, 'TIM']      # L6 PV6
-
-    '''
-    'PV2', 'SOM2', 'VIP2',#,#, 'NGF2']#,      # L2
-    'PV3', 'SOM3', 'VIP3', #,#, 'NGF3']#,      # L3
-    'PV4', 'SOM4',#,#, 'VIP4']# 'NGF4'],      # L4
-    'PV5A', 'SOM5A',#, 'VIP5A'# 'NGF5A',  # L5A  
-    'PV5B', 'SOM5B',#, 'VIP5B',# 'NGF5B',#,  # L5B
-    'PV6', 'SOM6',#, 'VIP6',# 'NGF6',#,
-    'IRE', 'IREM', 'TI']#, 'TIM']      # L6 PV6
-    '''
+    Irange = [0.0001,400]
+    Ipops = [ #'NGF1', 
+    'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    'PV5B', 'SOM5B', 'VIP5B',# 'NGF5B', #,  # L5B
+    'PV6', 'SOM6', 'VIP6', 'NGF6', #,
+    'IRE', 'IREM', 'TI', 'TIM']      # L6 PV6
+ 
     for pop in Ipops:
         ranges[pop] = Irange
 
@@ -304,16 +298,16 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=False, loadDataFromFile=False)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
 
-    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=1500, ylim=None)
+    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
 
     #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
 
-    #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
+    #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['VIP4'])
+    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
 
     # filter results by pop rates
-    # dfFilter = filterRates(df, condlist=['rates'], rateTimeRanges = ['1000_1250', '1250_1500', '1500_1750', '1750_2000'], copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # ,, 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', ]
+    #dfFilter = filterRates(df, condlist=['rates'], rateTimeRanges = None, copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', ]   # ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
 
