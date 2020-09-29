@@ -288,7 +288,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v28_batch1'
+    batchSim = 'v28_batch5'
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     
@@ -304,14 +304,13 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
-    
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=False)
 
     #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=1500, ylim=None)
 
     #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
 
-    plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
+    #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
 
     # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['VIP4'])
 
