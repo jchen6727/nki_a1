@@ -726,7 +726,7 @@ def custom():
     #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
     #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-    params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, 0.05)) 
+    params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
     # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
