@@ -1062,8 +1062,12 @@ def optunaRates():
     params = specs.ODict()
 
     # bkg inputs
-    params['EEGain'] = [0.1, 3.0]
-    params['EIGain'] = [0.1, 3.0]
+    params['EEGain'] = [0.1, 1.0]
+
+    params[('EILayerGain', '1-3')] = [0.1, 3.0]
+    params[('EILayerGain', '4')] = [0.1, 3.0]
+    params[('EILayerGain', '5')] = [0.1, 3.0]
+    params[('EILayerGain', '6')] = [0.1, 3.0]
 
     params[('IELayerGain', '1-3')] = [0.1, 3.0]
     params[('IELayerGain', '4')] = [0.1, 3.0]
@@ -1254,12 +1258,12 @@ if __name__ == '__main__':
     b = custom()
     # b = evolRates()
     # b = asdRates()
-    #b = optunaRates()
+    b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v28_batch6'
+    b.batchLabel = 'v29_batch1'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

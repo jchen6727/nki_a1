@@ -57,8 +57,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v28_tune11' 
-cfg.saveFolder = 'data/v28_manualTune'                	## Set file output name
+cfg.simLabel = 'v29_tune1' 
+cfg.saveFolder = 'data/v29_manualTune'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams'] 
@@ -126,7 +126,8 @@ cfg.EIGain = 1.8600534795309025
 cfg.IEGain = 1.0 #0.75
 cfg.IIGain = 1.0 #0.5
 
-## I->E/I layer weights (L1-3, L4, L5, L6)
+## E/I->E/I layer weights (L1-3, L4, L5, L6)
+cfg.EILayerGain = {'1-3': 1.0, '4': 1.0 , '5': 1.0 , '6': 1.0}
 cfg.IELayerGain = {'1-3': 1.0, '4': 1.0 , '5': 1.0 , '6': 1.0}
 cfg.IILayerGain = {'1-3': 1.0 , '4': 1.0 , '5': 1.0 , '6': 1.0}
 

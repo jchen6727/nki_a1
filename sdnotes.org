@@ -6675,4 +6675,26 @@ def custom():
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
+
+** v29_batch1 - add EIGain by layer; reduce EEGain [0, 1.0]
+*** notes
+EEGain results were typically 0 - 1.0 so reduce search space (same in M1)
+EIGain params by layer added 3 new params
+*** code
+    params['EEGain'] = [0.1, 1.0]
+
+    params[('EILayerGain', '1-3')] = [0.1, 3.0]
+    params[('EILayerGain', '4')] = [0.1, 3.0]
+    params[('EILayerGain', '5')] = [0.1, 3.0]
+    params[('EILayerGain', '6')] = [0.1, 3.0]
+
+    params[('IELayerGain', '1-3')] = [0.1, 3.0]
+    params[('IELayerGain', '4')] = [0.1, 3.0]
+    params[('IELayerGain', '5')] = [0.1, 3.0]
+    params[('IELayerGain', '6')] = [0.1, 3.0]
+
+    params[('IILayerGain', '1-3')] = [0.1, 3.0]
+    params[('IILayerGain', '4')] = [0.1, 3.0]
+    params[('IILayerGain', '5')] = [0.1, 3.0]
+    params[('IILayerGain', '6')] = [0.1, 3.0]
 ** blank

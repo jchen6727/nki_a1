@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 28
+netParams.version = 29
 
 #------------------------------------------------------------------------------
 #
@@ -234,6 +234,8 @@ wmat = connData['wmat']
 bins = connData['bins']
 connDataSource = connData['connDataSource']
 
+layerGroupLabels = ['1-3', '4', '5', '6']
+
 #------------------------------------------------------------------------------
 ## E -> E
 if cfg.addConn:
@@ -257,28 +259,29 @@ if cfg.addConn:
 
 #------------------------------------------------------------------------------
 ## E -> I
-if cfg.addConn:
+if cfg.addConn and cfg.EIGain > 0.0:
     for pre in Epops:
         for post in Ipops:
-            if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
-                prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-            else:
-                prob = pmat[pre][post]
-            
-            if 'NGF' in post:
-                synWeightFactor = cfg.synWeightFractionENGF
-            else:
-                synWeightFactor = cfg.synWeightFractionEI
-            netParams.connParams['EI_'+pre+'_'+post] = { 
-                'preConds': {'pop': pre}, 
-                'postConds': {'pop': post},
-                'synMech': ESynMech,
-                'probability': prob,
-                'weight': wmat[pre][post] * cfg.EIGain, 
-                'synMechWeightFactor': synWeightFactor,
-                'delay': 'defaultDelay+dist_3D/propVelocity',
-                'synsPerConn': 1,
-                'sec': 'proximal'}
+            for l in layerGroupLabels:  # used to tune each layer group independently
+                if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
+                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+                else:
+                    prob = pmat[pre][post]
+                
+                if 'NGF' in post:
+                    synWeightFactor = cfg.synWeightFractionENGF
+                else:
+                    synWeightFactor = cfg.synWeightFractionEI
+                netParams.connParams['EI_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': ESynMech,
+                    'probability': prob,
+                    'weight': wmat[pre][post] * cfg.EIGain * cfg.EILayerGain[l], 
+                    'synMechWeightFactor': synWeightFactor,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'proximal'}
                 
 
 #------------------------------------------------------------------------------
@@ -293,8 +296,6 @@ if cfg.addConn and cfg.IEGain > 0.0:
         PVSynMech = ['GABAA']
         VIPSynMech = ['GABAA_VIP']
         NGFSynMech = ['GABAA', 'GABAB']
-                        
-        layerGroupLabels = ['1-3', '4', '5', '6']
 
         for pre in Ipops:
             for post in Epops:
@@ -329,7 +330,6 @@ if cfg.addConn and cfg.IIGain > 0.0:
 
     if connDataSource['I->E/I'] == 'Allen_custom':
 
-        layerGroupLabels = ['1-3', '4', '5', '6']
         for pre in Ipops:
             for post in Ipops:
                 for l in layerGroupLabels: 
@@ -736,4 +736,5 @@ v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
 v26 - Changed NGF AMPA:NMDA ratio 
 v27 - Split thalamic interneurons into core and matrix (TI and TIM)
 v28 - Set recurrent TC->TC conn to 0
+v29 - Added EI specific layer gains
 """
