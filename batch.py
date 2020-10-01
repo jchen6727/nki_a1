@@ -1222,12 +1222,12 @@ def setRunCfg(b, type='mpi_bulletin'):
             'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
             'walltime': '24:00:00', #'48:00:00',
             'nodes': 1,
-            'coresPerNode': 96,  # comet=24, bridges=28, gcp=32
+            'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
             'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
-            'nrnCommand': 'nrniv -mpi -python', #'python3',
+            'nrnCommand': 'python3', #'nrniv -mpi -python', #'python3',
             'skipCustom': '_raster.png'}
             #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
             # --nodelist=compute1
