@@ -1168,7 +1168,7 @@ def optunaRates():
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'maxFitness': fitnessFuncArgs['maxFitness'],
-        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
         'maxiter_wait': 16,
         'time_sleep': 60,
@@ -1263,7 +1263,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v29_batch1'
+    b.batchLabel = 'v29_batch2'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
