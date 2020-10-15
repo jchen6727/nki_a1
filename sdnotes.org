@@ -6697,5 +6697,201 @@ EIGain params by layer added 3 new params
     params[('IILayerGain', '4')] = [0.1, 3.0]
     params[('IILayerGain', '5')] = [0.1, 3.0]
     params[('IILayerGain', '6')] = [0.1, 3.0]
-    
+*** results Discussion
+Best result so far: fitness = 94.62904843184099
+image.png 
+image.png
+
+
+:clap:
+1
+
+12:37
+Untitled 
+[I 2020-10-06 14:45:30,252] Trial 38595 finished with value: 164.94081763646528 and parameters: {'EEGain': 0.9581268943227292, "('EILayerGain', '1-3')": 0.9662336380529412, "('EILayerGain', '4')": 2.075553800981232, "('EILayerGain', '5')": 0.9031500651354619, "('EILayerGain', '6')": 0.15028858958308838, "('IELayerGain', '1-3')": 0.521718697051653, "('IELayerGain', '4')": 0.6051567737172858, "('IELayerGain', '5')": 0.23132485908097394, "('IELayerGain', '6')": 0.390331535906009, "('IILayerGain', '1-3')": 0.10486845176787038, "('IILayerGain', '4')": 2.5771673116615763, "('IILayerGain', '5')": 0.19750168057425682, "('IILayerGain', '6')": 1.3760950758758617}. Best is trial 33970 with value: 94.62904843184099.
+
+
+samn:speech_balloon:  12:39 PM
+so now have activity in L1-3? and didn't before?
+
+salvadord  12:40 PM
+NGF1, NGF5B, TIM are the only ones at 0 HZ -- but not too worried cause other NGFs firing nicely so should be possible to fix; and TIM probably easy to fix too
+
+samn:speech_balloon:  12:40 PM
+some gains far from orig values
+
+salvadord  12:40 PM
+y IT2, IT3 and ITS4 show this burst of activity, so we'll see if can get some stable activity from them
+
+samn:speech_balloon:  12:41 PM
+great - and still running so may improve further.
+
+salvadord  12:41 PM
+also noticed a couple depol blocks there, so will look into that ... might be the ones not firing
+image.png 
+image.png
+
+
+ericaygriffith:speech_balloon:  12:41 PM
+out of curiosity, do we know if the burst of activity in those pops transitions into depol block, or do the cells just go quiet?
+12:42
+lol, same question you just asked, almost jinx
+
+salvadord  12:43 PM
+haha yeah... actually the depol blocks might be the NGFs not firing? not sure, def will look into each pop individually
+
+ericaygriffith:speech_balloon:  12:43 PM
+I'll take a look at that param set as well on my own too
+:+1:
+2
+
+
+salvadord  12:43 PM
+and also will look for other potentially good solutions
+:+1:
+1
+
+
+samn:speech_balloon:  12:45 PM
+so only a few pops left to fix ... for paper, suppose can still argue tightly constrained by experiment but had to adjust some gains ~10X since those values were missing
+:+1:
+2
+
+12:46
+maybe should aim to just use whatever optim finishes with by nov
+
+salvadord  12:47 PM
+sounds good
+
+salvadord  12:57 PM
+I'm a bit concerned that the burst of activity in upper layers doesn't seem to affect deeper layers at all
+12:57
+could be a good thing, since could tune upper layers (which seem more problematic) separately
+12:58
+but could also point to some issue/bug in the model
+
+samn:speech_balloon:  12:58 PM
+good point, would expect strong L2->L5
+12:58
+bug - but have substantial weight along that pathway? hmm
+
+salvadord  1:00 PM
+was just checking conn matrix, and L2->L5 not very high
+1:00
+so perhaps local activity / inhibition enough to keep stable
+
+samn:speech_balloon:  1:00 PM
+ic, lower than M1?
+1:00
+ok sg
+
+salvadord  1:01 PM
+y lower than m1 for sure... since m1 strongest projection is L2/3 -> L5B
+:+1:
+1
+
+
+samn:speech_balloon:  1:01 PM
+and canonical always mentioned as 4->2->5
+:+1:
+1
+
+
+salvadord  1:01 PM
+v25_batch4_plot_conn_pop_probability_matrix.png 
+v25_batch4_plot_conn_pop_probability_matrix.png
+
+
+
+samn:speech_balloon:  1:02 PM
+ic, not much there
+
+salvadord  1:03 PM
+y it's true canonical makes a point of 2->5 ... I can check how allen V1 looks
+:+1:
+2
+
+
+samn:speech_balloon:  1:03 PM
+suppose i didn't see any cross layer tuning for opt, so that wouldn't be an issue
+:+1:
+1
+
+
+salvadord  1:06 PM
+Allen V1 shows low L2->L5 prob conn (0.083)
+image.png 
+image.png
+
+
+
+samn:speech_balloon:  1:07 PM
+& weights low too?
+
+samn:speech_balloon: Oct 6th at 1:07 PM
+& weights low too?
+
+
+
+
+5 replies
+
+salvadord  8 days ago
+weight is around avg - somatic EPSP of 0.74 mV
+
+samn:speech_balloon:  8 days ago
+ic
+
+samn:speech_balloon:  8 days ago
+ok, sounds like that aspect is cleared up. multiple strong stims in L2/3 could produce a response. maybe higher levels of L2/3 gamma supports that, to prevent everything from getting to L5...
+:+1:
+1
+
+
+ericaygriffith:speech_balloon:  8 days ago
+hm yeah that's a reassuring thought -- looking thru some previous runs to see if we have any with high L2/3 activity to see if we do see it coming thru to lower levels in that case
+:+1:
+2
+
+
+samn:speech_balloon:  8 days ago
+def. better than epileptic net ... leaves room for activation from the real inputs too
+
+ericaygriffith:speech_balloon:  1:07 PM
+these are out IT2 pmat numbers in conn.pkl, just for reference
+1:07
+Untitled 
+ pmat['IT2']
+{'IT2': 0.1971161130784888, 'IT3': 0.1971161130784888, 'ITP4': 0.019711611307848882, 'ITS4': 0.015829021201757432, 'IT5A': 0.10225398365946607, 'CT5A': 0.033035902413058274, 'IT5B': 0.10225398365946607, 'PT5B': 0.12899733323194185, 'CT5B': 0.033035902413058274, 'IT6': 0.0, 'CT6': 0.0, 'NGF1': 0.0, 'PV2': 0.5406866917894705, 'SOM2': 0.23449298047141015, 'VIP2': 0.0657305390018572, 'NGF2': 0.1352844118104289, 'PV3': 0.5406866917894705, 'SOM3': 0.23449298047141015, 'VIP3': 0.0657305390018572, 'NGF3': 0.1352844118104289, 'PV4': 0.11361264662917989, 'SOM4': 0.10693910647872001, 'VIP4': 0.11361264662917989, 'NGF4': 0.10693910647872001, 'PV5A': 0.110874992493537, 'SOM5A': 0.1314191429015595, 'VIP5A': 0.032569529044976495, 'NGF5A': 0.0, 'PV5B': 0.110874992493537, 'SOM5B': 0.1314191429015595, 'VIP5B': 0.032569529044976495, 'NGF5B': 0.0, 'PV6': 0.0, 'SOM6': 0.0, 'VIP6': 0.0, 'NGF6': 0.0}
+
+
+1:07
+and weights for IT2:
+1:07
+Untitled 
+wmat['IT2']
+{'IT2': 0.36, 'IT3': 0.36, 'ITP4': 0.34, 'ITS4': 0.34, 'IT5A': 0.74, 'CT5A': 0.74, 'IT5B': 0.74, 'PT5B': 0.74, 'CT5B': 0.74, 'IT6': 0.0, 'CT6': 0.0, 'NGF1': 0.0, 'PV2': 1.49, 'SOM2': 0.86, 'VIP2': 1.49, 'NGF2': 1.31, 'PV3': 1.49, 'SOM3': 0.86, 'VIP3': 1.49, 'NGF3': 1.31, 'PV4': 1.39, 'SOM4': 0.69, 'VIP4': 1.39, 'NGF4': 0.91, 'PV5A': 1.32, 'SOM5A': 0.53, 'VIP5A': 1.32, 'NGF5A': 0.0, 'PV5B': 1.32, 'SOM5B': 0.53, 'VIP5B': 1.32, 'NGF5B': 0.0, 'PV6': 0.0, 'SOM6': 0.0, 'VIP6': 0.0, 'NGF6': 0.0}
+
+
+1:07
+just for easier comparison
+:+1:
+1
+
+
+samn:speech_balloon:  1:08 PM
+so higher than allen for probabilities
+
+salvadord  1:12 PM
+y we rescaled E->E/I based on conn for E subtypes from BBP S1, since Allen lumped all as E
+:+1:
+2
+
+1:15
+I still find surprising with 0.1 conn prob it doesnt affect L5 ... though could also be because L5 already firing relatively high (~25-30 hz)
+
+samn:speech_balloon:  1:16 PM
+PV5B @ 84 Hz in that raster
+1:17
+yeah, could try it separate from optimization and see if a few stims in those layers causes noticeable response
 ** blank
