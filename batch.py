@@ -726,7 +726,7 @@ def custom():
     #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
     #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-    params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
+    #params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
     # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
@@ -735,7 +735,7 @@ def custom():
     #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
-    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    params['thalamoCorticalGain'] = [1.0]#, 1.5]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -764,19 +764,25 @@ def custom():
 
     # from v28_batch5 (optuna), trial 15446
     initCfg.update({
-        "EEGain": 0.538221678982146,
-        "EIGain": 0.24522849924039522,
+        "EEGain": 0.9540306031687423 # 0.538221678982146,
+        "EIGain": 1.8600534795309025 # 0.24522849924039522,
+        "EILayerGain": {     # EI LAYER GAIN ADDED JUST NOW BY EYG FOR TESTING REPRODUCIBILITY OF 33970 RASTER
+            "1-3": 1.0555839908615223,
+            "4": 2.14340558619317,
+            "5": 1.9222772617062545,
+            "6": 0.1526212956441903
+        },
         "IELayerGain": {
-            "1-3": 2.4969906720467807,
-            "4": 0.7523928690211563,
-            "5": 0.16855428023477206,
-            "6": 2.8991792469343576
+            "1-3": 0.6934327833154136, #2.4969906720467807,
+            "4": 0.7753753910618122, #0.7523928690211563,
+            "5": 0.10038161656290467, #0.16855428023477206,
+            "6": 0.6081174467981315 #2.8991792469343576
         },
         "IILayerGain": {
-            "1-3": 0.6648270236528021,
-            "4": 2.2876886663946765,
-            "5": 0.10069589845756556,
-            "6": 2.6134986990296576
+            "1-3": 0.2516602192260485, #0.6648270236528021,
+            "4": 2.7885418021583974, #2.2876886663946765,
+            "5": 0.10256371936611122, #0.10069589845756556,
+            "6": 1.0794836464905169 #2.6134986990296576
         }})
 
 
@@ -1204,18 +1210,18 @@ def setRunCfg(b, type='mpi_bulletin'):
              'sleepInterval': 5,
              'skip': True}
 
-    elif type=='hpc_slurm_comet':
-        b.runCfg = {'type': 'hpc_slurm', 
-            'allocation': 'shs100', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
-            #'reservation': 'salva1',
-            'walltime': '6:00:00',
-            'nodes': 4,
-            'coresPerNode': 24,  # comet=24, bridges=28
-            'email': 'salvadordura@gmail.com',
-            'folder': '/home/salvadord/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
-            'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
-            'skipCustom': '_raster.png'}
+    # elif type=='hpc_slurm_comet':
+    #     b.runCfg = {'type': 'hpc_slurm', 
+    #         'allocation': 'shs100', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
+    #         #'reservation': 'salva1',
+    #         'walltime': '6:00:00',
+    #         'nodes': 4,
+    #         'coresPerNode': 24,  # comet=24, bridges=28
+    #         'email': 'salvadordura@gmail.com',
+    #         'folder': '/home/salvadord/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
+    #         'script': 'init.py', 
+    #         'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
+    #         'skipCustom': '_raster.png'}
 
     elif type=='hpc_slurm_gcp':
         b.runCfg = {'type': 'hpc_slurm', 
@@ -1223,8 +1229,8 @@ def setRunCfg(b, type='mpi_bulletin'):
             'walltime': '24:00:00', #'48:00:00',
             'nodes': 1,
             'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
-            'email': 'salvadordura@gmail.com',
-            'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'email': 'ericaygriffith@gmail.com',
+            'folder': '/home/ext_ericaygriffith_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',
@@ -1233,17 +1239,17 @@ def setRunCfg(b, type='mpi_bulletin'):
             # --nodelist=compute1
 
 
-    elif type=='hpc_slurm_bridges':
-        b.runCfg = {'type': 'hpc_slurm', 
-            'allocation': 'ib4iflp', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
-            'walltime': '06:00:00',
-            'nodes': 2,
-            'coresPerNode': 28,  # comet=24, bridges=28
-            'email': 'salvadordura@gmail.com',
-            'folder': '/home/salvi82/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
-            'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
-            'skip': True}
+    # elif type=='hpc_slurm_bridges':
+    #     b.runCfg = {'type': 'hpc_slurm', 
+    #         'allocation': 'ib4iflp', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
+    #         'walltime': '06:00:00',
+    #         'nodes': 2,
+    #         'coresPerNode': 28,  # comet=24, bridges=28
+    #         'email': 'salvadordura@gmail.com',
+    #         'folder': '/home/salvi82/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
+    #         'script': 'init.py', 
+    #         'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
+    #         'skip': True}
 
 
 
@@ -1263,7 +1269,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v29_batch3'
+    b.batchLabel = 'v29_trial33970_repro'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
