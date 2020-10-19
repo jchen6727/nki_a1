@@ -7344,5 +7344,5 @@ Hypotheses:
 - reduce bkg weight ITS4 from 40 to 10
 - increase TIM from 1.5 to 2.0
 - increase NGF1 from 1.0 (wasn't included in list!) to 2.5
-
+- added bkg weights for L5B inh pops (were missing!)
 ** blank
