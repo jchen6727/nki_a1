@@ -184,8 +184,12 @@ if __name__ == '__main__':
 
     # manual scaling adjustments based on simulation with automatically calculated bkg weights (finetuning)
     NGFfactor = 2.5
-    ITS4factor = 40.0
-    manualScaling = {'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0 * NGFfactor, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0 * NGFfactor, 'ITP4': 1.1, 'ITS4': 1.0 * ITS4factor, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.0 * NGFfactor, 'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 1.0 * NGFfactor, 'PT5B': 2.0, 'IT5B': 0.075, 'CT5B': 0.75, 'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.0 * NGFfactor, 'TC': 1.25, 'TCM': 1.25, 'HTC': 1.25, 'TI': 1.25, 'TIM': 1.5}  # for v22_batch28
+    ITS4factor = 10.0
+    manualScaling = {'NGF1': 1.0 * NGFfactor, 'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0 * NGFfactor, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0 * NGFfactor, 
+                    'ITP4': 1.1, 'ITS4': 1.0 * ITS4factor, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.0 * NGFfactor, 
+                    'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 1.0 * NGFfactor, 
+                    'PT5B': 2.0, 'IT5B': 0.075, 'CT5B': 0.75, 
+                    'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.0 * NGFfactor, 'TC': 1.25, 'TCM': 1.25, 'HTC': 1.25, 'TI': 1.25, 'TIM': 1.5}  # for v22_batch28
 
     # run calculation
     bkgWeights = calculateBkgWeightPops(pops, weights, rates, targetRates, manualScaling,
