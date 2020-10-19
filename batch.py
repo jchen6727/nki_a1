@@ -1224,7 +1224,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'nodes': 1,
             'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
-            'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'folder': '/home/ext_salvadordura_gmail_com/A1_layers/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',
@@ -1263,7 +1263,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v29_batch3'
+    b.batchLabel = 'v30_batch1'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
