@@ -637,6 +637,61 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    ITS4 : 0.000 Hz
    IT6 - depol
 ** checked bkg (only long-range) rates in M1 model
+* 19Oct2020 Tuning by layers
+** Allen V1 paper
+"Optimizing a full recurrent network at once was very challenging; instead, we followed a stepwise, layer-by-layer procedure. 
+We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
+Then we added L2/3 recurrent connections and optimized the weights in both L4 and L2/3. 
+This approach was repeated by adding L5, then L6, and finally L1 (see Methods for details). "
+** Allen emails
+Hi Salva,
+ 
+Anton explained everything perfectly. The one minor detail is that the grid search was done in the interval [0.5*w0; 2*w0] for the LGN input because those were measured so well experimentally. For the recurrent weights, we tried to stay in [0.2*w0; 5*w0] since the experimental data was less ideal.
+ 
+Thanks,
+ 
+Yazan
+ 
+On Sat, Oct 17, 2020 at 10:48 PM Anton Arkhipov <antona@alleninstitute.org> wrote:
+Hi Salva,
+ 
+The approach was basically as described in the paper… Go layer-by-layer, starting from L4, and then adding gradually more. I would say it’s very important to get just the L4 working well. Once that’s stable, adding more layers is not as difficult… though certainly requires quite a bit of iterative work.
+ 
+Another thing of note is that there were way too many cell types to work with. So, when we did optimization, we typically operated with connection types grouped into 4 categories: E-to-E, E-to-I, I-to-E, I-to-I (typically, focusing on one layer).
+ 
+The grid searches were typically done in the interval [0.5*w0; 2*w0], where w0 is the starting weight. We would start with this broad interval and then gradually narrow it down in iterative searches. In most cases we did each grid search in just one dimension, sampling, say, 10 points within the currently selected interval. It was all done mostly by hand, we didn’t use optimization code.
+ 
+And regarding the values mentioned in the paper – I assume you mean Fig. 4? Those are original ones from the literature (based on the slice experiments). So, those were our starting values w0, and then we explored around those values.
+ 
+The final values – and the whole model – are all available here:
+https://portal.brain-map.org/explore/models/mv1-all-layers
+ 
+By the way, you included Yazan on your email, but he has actually moved on to new adventures in industry 😉. I’m CC’ing his non-work email here. Yazan, please feel free to chime in – you’ve done all of that optimization work!
+ 
+Finally, Salva, if you have more questions or would like to discuss this more, please let me know, I’m always happy to chat.
+ 
+Best,
+ 
+Anton.
+ 
+ 
+From: Salvador Dura <salvadordura@gmail.com>
+Date: Saturday, October 17, 2020 at 10:19 AM
+To: Anton Arkhipov <antona@alleninstitute.org>, Kael Dai <kaeld@alleninstitute.org>, Yazan Billeh <yazanb@alleninstitute.org>
+Subject: Model tuning
+ 
+CAUTION: This email originated from outside the Allen Institute. Please do not click links or open attachments unless you've validated the sender and know the content is safe.
+Hi guys… hope you are all doing great!
+ 
+We are building a model of auditory thalamocortical circuits and using different optimization algorithms to tune connectivity, but haven’t yet been successful and we are struggling a bit.
+ 
+I saw that for V1 you had used a layer-by-layer approach, with cell-type specific weights and grid search. We are thinking of trying this approach and wanted to ask if there are any more details (e.g. values for grid search) and/or source code available?
+ 
+Also, are the weights mentioned in the paper the original ones taken from literature or those after tuning?
+ 
+Thanks!
+Salva
+
   Spikes: 23790 (2.24 Hz)
    IT2 : 40.600 Hz
    SOM2 : 76.400 Hz
@@ -6894,4 +6949,391 @@ samn:speech_balloon:  1:16 PM
 PV5B @ 84 Hz in that raster
 1:17
 yeah, could try it separate from optimization and see if a few stims in those layers causes noticeable response
+
+
+** v29_batch2 - v29_batch1 with increased maxiters and GCP n2 80-core nodes
+*** results
+**** 1 layer at a time
+Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
+
+- all celltypes
+[] ['NGF1']
+0
+['IT2'] ['PV2', 'SOM2', 'VIP2', 'NGF2']
+1257
+['IT3'] ['PV3', 'SOM3', 'VIP3', 'NGF3']
+10099
+['ITP4', 'ITS4'] ['PV4', 'SOM4', 'VIP4', 'NGF4']
+91
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+5306
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'SOM6', 'VIP6', 'NGF6']
+549
+['TC', 'HTC', 'TCM'] ['IRE', 'IREM', 'TI', 'TIM']
+4
+
+- NO SOMs
+['IT2'] ['PV2', 'VIP2', 'NGF2']
+1257
+['IT3'] ['PV3', 'VIP3', 'NGF3']
+10182
+['ITP4', 'ITS4'] ['PV4', 'VIP4', 'NGF4']
+153
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A', 'NGF5A']
+5341
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'VIP6', 'NGF6']
+549
+
+
+- NO PVs
+['IT2'] ['PV2', 'VIP2', 'NGF2']
+1257
+['IT3'] ['PV3', 'VIP3', 'NGF3']
+10182
+['ITP4', 'ITS4'] ['PV4', 'VIP4', 'NGF4']
+153
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A', 'NGF5A']
+5341
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'VIP6', 'NGF6']
+549
+
+
+- no NGFs
+['IT2'] ['PV2', 'SOM2', 'VIP2']
+1415
+['IT3'] ['PV3', 'SOM3', 'VIP3']
+10304
+['ITP4', 'ITS4'] ['PV4', 'SOM4', 'VIP4']
+589
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A', 'VIP5A']
+16599
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B', 'VIP5B']
+13649
+['IT6', 'CT6'] ['PV6', 'SOM6', 'VIP6']
+549
+
+- no VIPs
+['IT2'] ['PV2', 'SOM2', 'NGF2']
+1388
+['IT3'] ['PV3', 'SOM3', 'NGF3']
+10252
+['ITP4', 'ITS4'] ['PV4', 'SOM4', 'NGF4']
+104
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A', 'NGF5A']
+5834
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'SOM6', 'NGF6']
+551
+
+- no NGF + ITS4
+['ITP4'] ['SOM4', 'VIP4', 'PV4']
+12718
+
+- no NGF + ITP4
+['ITS4'] ['SOM4', 'PV4', 'VIP4']
+614
+
+- no NGFs + VIPs
+['IT2'] ['PV2', 'SOM2']
+2033
+['IT3'] ['PV3', 'SOM3']
+10585
+['ITP4', 'ITS4'] ['PV4', 'SOM4']
+1663
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A']
+23776
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B']
+21787
+['IT6', 'CT6'] ['PV6', 'SOM6']
+551
+
+- no NGF + VIPS+ ITS4
+['ITP4'] ['SOM4', 'PV4', 'PV4']
+24350
+
+- no NGF + VIPS+ ITP4
+['ITS4'] ['SOM4', 'PV4', 'PV4']
+1692
+
+- no NGFs + SOMs
+['IT2'] ['PV2', 'VIP2']
+1415
+['IT3'] ['PV3', 'VIP3']
+10389
+['ITP4', 'ITS4'] ['PV4', 'VIP4']
+655
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A']
+16942
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B']
+14149
+['IT6', 'CT6'] ['PV6', 'VIP6']
+549
+
+- no NGFs + SOMs
+['IT2'] ['PV2', 'VIP2']
+1415
+['IT3'] ['PV3', 'VIP3']
+10389
+['ITP4', 'ITS4'] ['PV4', 'VIP4']
+655
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A']
+16942
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B']
+14149
+['IT6', 'CT6'] ['PV6', 'VIP6']
+549
+
+- no NGFs + PVs
+['IT2'] ['VIP2', 'SOM2']
+1948
+['IT3'] ['VIP3', 'SOM3']
+15069
+['ITP4', 'ITS4'] ['VIP4', 'SOM4']
+678
+['IT5A', 'CT5A'] ['VIP5A', 'SOM5A']
+19675
+['IT5B', 'PT5B', 'CT5B'] ['VIP5B', 'SOM5B']
+15041
+['IT6', 'CT6'] ['VIP6', 'SOM6']
+8403
+
+
+- no TI (thal)
+['TC', 'HTC', 'TCM'] ['IRE', 'IREM', 'TI']
+23995
+
+**** 2 layers at a time
+Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
+
+- all cell types:
+['IT2', 'IT3'] ['PV2', 'SOM2', 'VIP2', 'NGF2', 'PV3', 'SOM3', 'VIP3', 'NGF3']
+1121
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'VIP3', 'NGF3', 'PV4', 'SOM4', 'VIP4', 'NGF4']
+53
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'VIP4', 'NGF4', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+36
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B'] ['PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+0
+['IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+0
+
+- no NGFs:
+['IT2', 'IT3'] ['PV2', 'SOM2', 'VIP2', 'PV3', 'SOM3', 'VIP3']
+1273
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'VIP3', 'PV4', 'SOM4', 'VIP4']
+104
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'VIP4', 'PV5A', 'SOM5A', 'VIP5A']
+201
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B'] ['PV5A', 'SOM5A', 'VIP5A', 'PV5B', 'SOM5B', 'VIP5B']
+12839
+['IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['PV5B', 'SOM5B', 'VIP5B', 'PV6', 'SOM6', 'VIP6']
+296
+
+-  no NGFs+VIPs
+['IT2', 'IT3'] ['PV2', 'SOM2', 'PV3', 'SOM3']
+1849
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'PV4', 'SOM4']
+273
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'PV5A', 'SOM5A']
+1010
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B'] ['PV5A', 'SOM5A', 'PV5B', 'SOM5B']
+21212
+['IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['PV5B', 'SOM5B', 'PV6', 'SOM6']
+422
+
+-  no NGFs+VIPs (L3 with rest)
+['IT2', 'IT3'] ['PV2', 'SOM2', 'PV3', 'SOM3']
+1849
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'PV4', 'SOM4']
+273
+['IT3', 'IT5A', 'CT5A'] ['PV3', 'SOM3', 'PV5A', 'SOM5A']
+8991
+['IT3', 'IT5B', 'PT5B', 'CT5B'] ['PV3', 'SOM3', 'PV5B', 'SOM5B']
+8395
+['IT3', 'IT6', 'CT6'] ['PV3', 'SOM3', 'PV6', 'SOM6']
+228
+
+-  no NGFs+VIPs (L4 with rest)
+['IT2', 'ITP4', 'ITS4'] ['PV2', 'SOM2', 'PV4', 'SOM4']
+1
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'PV4', 'SOM4']
+273
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'PV5A', 'SOM5A']
+1010
+['ITP4', 'ITS4', 'IT5B', 'PT5B', 'CT5B'] ['PV4', 'SOM4', 'PV5B', 'SOM5B']
+887
+['ITP4', 'ITS4', 'IT6', 'CT6'] ['PV4', 'SOM4', 'PV6', 'SOM6']
+9
+
+
+**** 3 layers at a time
+Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
+
+**** Multiple layers
+
+- All except: TIM, ITS4, NGF, VIP
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM2_1750_2000<=200 and 0.01<=PV2_1750_2000<=200 and 0.01<=SOM3_1750_2000<=200 and 0.01<=PV3_1750_2000<=200 and 0.01<=SOM4_1750_2000<=200 and 0.01<=PV4_1750_2000<=200 and 0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 and 0.01<=IRE_1750_2000<=200 and 0.01<=IREM_1750_2000<=200 and 0.01<=TI_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+4720     4720  196.279426        2.525180      1.415371      1.181422      0.149769        1.167405  ...          8.96          9.60          9.28            0.0            0.0            0.0            0.0
+4735     4735  176.900135        2.522534      1.068643      1.481244      0.147047        1.172058  ...          9.28          9.44          9.76            0.0            0.0            0.0            0.0
+4746     4746  186.014585        2.506955      1.076376      1.177170      0.156911        1.038090  ...          9.12          8.96          9.28            0.0            0.0            0.0            0.0
+4752     4752  184.465662        2.528949      1.066805      1.177367      0.150565        1.061452  ...          9.12          8.48          8.64            0.0            0.0            0.0            0.0
+5331     5331  205.786178        1.264519      1.454422      1.422741      0.140669        1.174307  ...          9.60          9.60          9.92            0.0            0.0            0.0            0.0
+35984   35984  156.808598        0.352688      2.034246      1.922625      0.147769        0.703715  ...          8.64          8.48          9.76            0.0            0.0            0.0            0.0
+
+
+- All E pops; no I pops required
+
+ Filtering based on E pops: ['rates']
+0.01<=IT2_1750_2000<=200 and 0.01<=IT3_1750_2000<=200 and 0.01<=ITS4_1750_2000<=200 and 0.01<=ITP4_1750_2000<=200 and 0.01<=IT5A_1750_2000<=200 and 0.01<=CT5A_1750_2000<=200 and 0.01<=IT5B_1750_2000<=200 and 0.01<=PT5B_1750_2000<=200 and 0.01<=CT5B_1750_2000<=200 and 0.01<=IT6_1750_2000<=200 and 0.01<=CT6_1750_2000<=200 and 0.01<=TC_1750_2000<=200 and 0.01<=HTC_1750_2000<=200 and 0.01<=TCM_1750_2000<=200 
+
+In [3]: dfFilter.sort_values('value')
+Out[3]: 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+29834   29834  214.604563        0.816199      2.248762      1.465796      0.101031        0.319455  ...          9.12          9.44          9.76            0.0            0.0            0.0            0.0
+21955   21955  257.577638        1.150613      2.195296      1.498914      0.100694        0.366509  ...          9.44          8.80          9.12            0.0            0.0            0.0            0.0
+11533   11533  278.845263        1.087404      2.068392      1.497798      0.100783        0.359008  ...          9.60          9.12          9.60            0.0            0.0            0.0            0.0
+29486   29486  284.727525        0.757377      1.691641      1.400627      0.100533        0.398611  ...          9.60          8.80          9.60            0.0            0.0            0.0            0.0
+11065   11065  290.300427        1.187804      1.897773      1.613020      0.102180        0.431450  ...          8.80          8.48          9.28            0.0            0.0            0.0            0.0
+9499     9499  296.988502        1.285614      2.252270      1.428221      0.100360        0.465989  ...          9.44          9.12          9.28            0.0            0.0            0.0            0.0
+21980   21980  378.994802        0.959330      1.898465      1.501951      0.150576        0.550258  ...          8.16          8.32          8.00            0.0            0.0            0.0            0.0
+
+
+- L2+3+4 E+I (NO NGF+VIP) 
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM2_1750_2000<=200 and 0.01<=PV2_1750_2000<=200 and 0.01<=SOM3_1750_2000<=200 and 0.01<=PV3_1750_2000<=200 and 0.01<=SOM4_1750_2000<=200 and 0.01<=PV4_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+19405   19405  313.231487        0.982087       1.96245      1.395838      0.100029         0.34365  ...          9.44          8.48          9.76            0.0            0.0            0.0            0.0
+
+[1 rows x 230 columns]
+1
+
+
+- L2+3+4 E+I (NO NGF+VIP+ITS4)
+
+1044
+
+- L2+3+4 E+I (NO NGF+ITS4)
+
+21
+
+
+- L5A,5B,6 E+I (NO NGF) 
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+96         96  406.138203        1.021888      1.720320      2.033943      0.105357        0.632811  ...          7.36          7.20          8.00            0.0           0.00           0.00           0.00
+99         99  352.030195        0.729735      1.635442      1.964223      0.108902        0.836380  ...          7.84          8.32          8.32            0.0           0.00           0.00           0.32
+180       180  300.206294        0.656118      1.479756      1.437200      0.106238        0.625935  ...          8.00          8.96          8.96            0.0           0.16           0.16           0.00
+187       187  362.721582        0.698767      1.863606      1.616652      0.106268        0.624685  ...          9.76          9.28         10.08            0.0           0.00           0.00           0.00
+291       291  253.592600        0.527498      1.361050      1.554490      0.198303        1.064973  ...          6.88          7.36          7.68            0.0           0.00           0.00           0.00
+...       ...         ...             ...           ...           ...           ...             ...  ...           ...           ...           ...            ...            ...            ...            ...
+38215   38215  308.859183        1.014043      1.986808      1.274551      0.149485        0.438205  ...          8.48          9.28          9.44            0.0           0.00           0.00           0.00
+38235   38235  322.601654        0.890068      1.999058      0.830437      0.148718        0.460331  ...          8.32          8.80          8.96            0.0           0.00           0.00           0.00
+38504   38504  274.685154        0.939122      1.970261      0.432678      0.151542        0.373413  ...          8.64          9.76          9.44            0.0           0.00           0.00           0.00
+38847   38847  107.122255        0.870853      2.026761      0.914985      0.153562        0.501627  ...          8.96          8.48          8.48            0.0           0.00           0.00           0.00
+38922   38922  275.564188        0.871219      2.009719      0.491761      0.151687        0.451387  ...          9.28          8.96          9.92            0.0           0.00           0.00           0.00
+
+[408 rows x 230 columns]
+408
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['SOM5A', 'PV5A', 'SOM5B', 'PV5B', 'SOM6', 'PV6']
+408
+
+
+- L5A,5B,6 E+I (NO NGF+VIP) 
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=VIP5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=VIP5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 and 0.01<=VIP6_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+358       358  247.294075        0.393895      1.205346      2.497569      0.203703        1.168813  ...          0.32          1.60          3.04            0.0            0.0            0.0            0.0
+1258     1258  212.908082        2.628327      1.104676      0.996672      0.146807        1.327033  ...          8.48          9.60          9.44            0.0            0.0            0.0            0.0
+1301     1301  208.493956        2.497085      1.036306      1.033008      0.150680        1.314046  ...          8.64          8.96          9.44            0.0            0.0            0.0            0.0
+1686     1686  292.105837        2.659689      1.263736      1.097544      0.147424        1.275752  ...          8.64          9.28          8.64            0.0            0.0            0.0            0.0
+1695     1695  211.337109        2.662798      1.255773      1.116682      0.150551        1.288195  ...          9.28          9.92          9.44            0.0            0.0            0.0            0.0
+...       ...         ...             ...           ...           ...           ...             ...  ...           ...           ...           ...            ...            ...            ...            ...
+38019   38019         NaN             NaN           NaN           NaN           NaN             NaN  ...          9.28          9.28          8.96            0.0            0.0            0.0            0.0
+38039   38039  110.450001        0.957378      1.984317      1.342510      0.155504        0.530147  ...          8.00          8.80          8.80            0.0            0.0            0.0            0.0
+38504   38504  274.685154        0.939122      1.970261      0.432678      0.151542        0.373413  ...          8.64          9.76          9.44            0.0            0.0            0.0            0.0
+38847   38847  107.122255        0.870853      2.026761      0.914985      0.153562        0.501627  ...          8.96          8.48          8.48            0.0            0.0            0.0            0.0
+38922   38922  275.564188        0.871219      2.009719      0.491761      0.151687        0.451387  ...          9.28          8.96          9.92            0.0            0.0            0.0            0.0
+
+[264 rows x 230 columns]
+264
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['SOM5A', 'PV5A', 'VIP5A', 'SOM5B', 'PV5B', 'VIP5B', 'SOM6', 'PV6', 'VIP6']
+264
+
+- L5A,5B,6 E+I (NO NGF+VIP)  <40hz
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=VIP5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=VIP5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 and 0.01<=VIP6_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+358       358  247.294075        0.393895      1.205346      2.497569      0.203703        1.168813  ...          0.32          1.60          3.04            0.0            0.0            0.0           0.00
+18779   18779  149.368530        0.932133      1.966431      1.433206      0.102579        2.226749  ...          8.80          8.32          8.32            0.0            0.0            0.0           0.00
+22305   22305  254.927907        0.911482      1.938855      1.657147      0.101034        0.519786  ...          8.48          8.16          8.80            0.0            0.0            0.0           0.00
+27742   27742  174.027776        0.762392      2.093655      1.469545      0.102313        0.532864  ...          7.68          8.32          7.84            0.0            0.0            0.0           0.00
+28202   28202  248.636374        0.922996      1.739317      1.480892      0.101525        0.511386  ...          7.36          7.68          7.20            0.0            0.0            0.0           0.00
+30641   30641  246.649332        0.772034      2.049188      1.432427      0.102199        0.496337  ...          7.68          7.52          7.36            0.0            0.0            0.0           0.32
+33559   33559  246.380751        1.121240      2.194362      1.725751      0.101278        0.487843  ...          8.00          8.16          8.00            0.0            0.0            0.0           0.00
+33609   33609  173.846265        1.128041      2.204684      2.035821      0.100948        0.572834  ...          8.80          8.16          8.64            0.0            0.0            0.0           0.00
+33638   33638  152.398000        1.122501      2.262560      1.773047      0.100855        0.577510  ...          8.96          9.12          8.96            0.0            0.0            0.0           0.00
+35433   35433  153.321006        1.048183      2.125032      1.755068      0.101688        0.543698  ...          8.00          8.48          7.52            0.0            0.0            0.0           0.00
+
+[10 rows x 230 columns]
+
+*** results conclusions
+1 layer at a time:
+- NGF1 never fires
+- NGF cell type problematic for L4,L5A,L5B (i.e. removing leads to significantly more solutions); not much for L2,L3
+- VIP problematic for L4,L5A,L5B (similar subset as NGF; mostly due to NGF); not much for L2,L3
+- PV,SOM ~problematic for L6
+- TIM only fires in 6/40k sims; problematic for thal (most thal solutions ok if exclude TIM)
+- ITS4 problematic for L4 (down from 23k to 1.6k solns); max 1Hz (traces show depol block)
+
+2 layers at a time (no NGF+VIP): 
+- L2 and L3 90% overlap of solns (1849/2033); ok
+- L3 and L4 16% overlap of solns (273/1663); hyperinhibition / hyperexcitation?
+- L4 and L5A 61% overlap of solns (1010/1663); ok'ish
+- L5A and L5B 61% overlap of solns (1010/1663); ok'ish
+- L5B and L6 77% overlap of solns (422/551); ok 
+
+- L3 and L5A 38% overlap of solns (8991/23776); possible hyperinhibition / hyperexcitation?
+- L3 and L5B 38% overlap of solns (8395/21787); possible hyperinhibition / hyperexcitation?
+- L3 and L6 41% overlap of solns (228/551); possible hyperinhibition / hyperexcitation?
+
+- L4 and L2 <1% overlap of solns (1/1663); hyperinhibition / hyperexcitation
+- L4 and L5B 53% overlap of solns (887/1663); ok
+- L4 and L6 2% overlap of solns (9/551); hyperinhibition / hyperexcitation?
+
+Multiple layers
+- All except: TIM, ITS4, NGF, VIP 6/40k
+- Only E pops 7/40k
+- Only L2-4 E+I (no NGF+VIP) 1/40k (0 if include NGF or VIP)
+- Only L2-4 E+I (no NGF+VIP+ITS4) 1099/40k (21 if include VIP; 0 if include NGF) - some with burst
+- Only L5A-6 E+I (no NGF+VIP) 408/40k (264/40k if include VIP; 0 if include NGF)
+- Only L5A-6 E+I (no NGF), <40Hz, 10/40k
+
+- Most problematic: L4-L2, L4-L3 and L4-6 
+- L2-4 harder to tune than L5A-6 (1 vs >200 solutions); mostly due to ITS4
+
+Hypotheses:
+- L2-4 I fire too high and inhibit ITS4 (or decrease)
+- L2-4 E -> IT4 conn too strong, leads to ITS4 hyperexc (depol block)
+
+
+*** Possible next steps
+- increase bkg input or conn to NGF1, TIM, ITS4
+- tune L2-L4 and L4-L6 separately with E->PV,SOM,VIP,NGF specific gains
+-- faster to run each sim
+-- smaller parameter space (exponential decrease)
+
 ** blank

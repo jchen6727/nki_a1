@@ -123,16 +123,14 @@ def plotJointplotFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
     for param in df.columns:
         
         try:
-            g = sns.jointplot(x=list(df[param]), y=list(df['value']), scatter=True, kind='kde', fill=True, thresh=0, cmap='Blues', height=8)
-            ax = plt.gca()
-            ax.xlabel(param)
-            ax.ylabel('fitness error')
+            g = sns.jointplot(x=list(df[param]), y=list(df['value']), scatter=False, kind='kde', fill=True, thresh=0, cmap='Blues', height=8)
+            g.set_axis_labels(param, 'fitness', fontsize=16)
             #plt.title('%s vs %s R=%.2f' % ('fitness', param.replace('tune', ''), dfcorr['value'][param]))
-            plt.subplots_adjust(left=0.2, bottom=0.2)#,right=0.95, top=0.9, bottom=0.1)
+            plt.subplots_adjust(left=0.1, bottom=0.1)#,right=0.95, top=0.9, bottom=0.1)
             plt.savefig('%s/%s/%s_jointplot_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
         
         except:
-            print('Error plotting %s vs %s' % ('fitness',param))
+             print('Error plotting %s vs %s' % ('fitness',param))
 
 
 def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None, ylim=None):
@@ -159,16 +157,24 @@ def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None
 
 
 
-def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRanges=[], copyFolder=None, dataFolder=None, batchLabel=None, skipDepol=False):
+def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], Ipops=[], rateTimeRanges=[], 
+                copyFolder=None, dataFolder=None, batchLabel=None, skipDepol=False, verbose=True):
     from os.path import isfile, join
     from glob import glob
 
     # allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
 
     ranges = {}
-    Erange = [0.0001,400]
+    Erange = [0.01,200]
     #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B',  'IT6', 'CT6', 'TC',  'HTC', 'TCM']
-    Epops = ['IT2', 'IT3',  'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B',  'IT6', 'CT6', 'TC',  'HTC', 'TCM']
+    L23 = ['IT2', 'IT3' ]
+    L4 = [ 'ITP4', 'ITS4']
+    L5A = ['IT5A', 'CT5A']
+    L5B = ['IT5B', 'PT5B', 'CT5B']
+    L6 = ['IT6', 'CT6']
+    thal = ['TC',  'HTC', 'TCM']
+
+    #Epops = L23+L4
 
     for pop in Epops:
         ranges[pop] = Erange
@@ -181,7 +187,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
                 conds = []
                 for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k+'_'+t + '<=' + str(v[1]))
                 condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
-                dfcond = dfcond.query(condStr)
+                if condStr: dfcond = dfcond.query(condStr)
     else:
         conds = []
         if 'rates' in condlist:
@@ -189,21 +195,24 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
         condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
         dfcond = df.query(condStr)
 
-    print('\n Filtering based on E pops: ' + str(condlist) + '\n' + condStr)
-    print(dfcond)
-    print(len(dfcond))
+    if verbose:
+        print('\n Filtering based on E pops: ' + str(condlist) + '\n' + condStr)
+        print(dfcond)
+        print(len(dfcond))
 
     ranges = {}
-    Irange = [0.0001,400]
-    Ipops = [ #'NGF1', 
-    'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-    'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
-    'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-    'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
-    'PV5B', 'SOM5B', 'VIP5B',# 'NGF5B', #,  # L5B
-    'PV6', 'SOM6', 'VIP6', 'NGF6', #,
-    'IRE', 'IREM', 'TI', 'TIM']      # L6 PV6
+    Irange = [0.01,200]
+    L1 = ['NGF1']
+    L2 = ['PV2', 'SOM2', 'VIP2']#, 'NGF2']      # L2
+    L3 = ['PV3', 'SOM3', 'VIP3']#, 'NGF3']      # L3
+    L4 = ['PV4', 'SOM4', 'VIP4']#, 'NGF4']      # L4
+    L5A = ['PV5A', 'SOM5A', 'VIP5A']#, 'NGF5A']  # L5A  
+    L5B = ['PV5B', 'SOM5B', 'VIP5B']#, 'NGF5B'] #,  # L5B
+    L6 = ['PV6', 'SOM6', 'VIP6']#, 'NGF6'] #,
+    thal = ['IRE', 'IREM', 'TI', 'TIM']      # L6 PV6
  
+    #Ipops = L1+L2+L3
+
     for pop in Ipops:
         ranges[pop] = Irange
 
@@ -215,7 +224,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
                 conds = []
                 for k,v in ranges.items(): conds.append(str(v[0]) + '<=' + k+'_'+t + '<=' + str(v[1]))
                 condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
-                dfcond = dfcond.query(condStr)
+                if condStr: dfcond = dfcond.query(condStr)
     else:
         conds = []
         if 'rates' in condlist:
@@ -250,9 +259,10 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], rateTimeRan
     # condStr = ''.join([''.join(str(cond) + ' and ') for cond in conds])[:-4]
     # dfcond = df.query(condStr)
 
-    print('\n Filtering based on E + I pops: ' + str(condlist) + '\n' + condStr)
-    print(dfcond)
-    print(len(dfcond))
+    if verbose:
+        print('\n Filtering based on E + I pops: ' + str(condlist) + '\n' + condStr)
+        print(dfcond)
+        print(len(dfcond))
 
     # copy files
     if copyFolder:
@@ -299,16 +309,51 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=False, loadDataFromFile=False)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
 
-    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
+    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
 
-    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
+    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
 
-    plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
+    #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'])
+    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['NGF3'])
 
-    # filter results by pop rates
-    #dfFilter = filterRates(df, condlist=['rates'], rateTimeRanges = None, copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False) # 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', ]   # ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
 
+
+    # -------------------
+    # # filter results by pop rates
+
+    # # Epops
+    # L2E = ['IT2']
+    # L3E = ['IT3']
+    # L4E = ['ITP4'] #ITS4', 
+    # L5AE = ['IT5A', 'CT5A']
+    # L5BE = ['IT5B', 'PT5B', 'CT5B']
+    # L6E = ['IT6', 'CT6']
+    # thalE = ['TC',  'HTC', 'TCM'] 
+
+    # # Ipops
+    # L1I = ['NGF1']
+    # L2I = ['SOM2', 'PV2', 'VIP2']# 'NGF2']      # L2
+    # L3I = ['SOM3', 'PV3', 'VIP3']# 'NGF3']      # L3
+    # L4I = ['SOM4', 'PV4', 'VIP4']# 'NGF4']      # L4
+    # L5AI = ['SOM5A', 'PV5A', 'VIP5A']#, 'NGF5A']  # L5A  
+    # L5BI = ['SOM5B', 'PV5B', 'VIP5B']#, 'NGF5B'] #,  # L5B
+    # L6I = ['SOM6', 'PV6', 'VIP6']# 'NGF6'] #,
+    # thalI = ['IRE', 'IREM', 'TI']#, 'TIM']      # L6 PV6
+
+    # EpopsList = [L2E, L3E, L4E, L5AE, L5BE, L6E] #, thalE]
+    # IpopsList = [L2I, L3I, L4I, L5AI, L5BI, L6I] #, thalI]
+
+    # # EpopsList = [L2E+L3E, L3E+L4E, L4E+L5AE, L5AE+L5BE, L5BE+L6E] #, thalE]
+    # # IpopsList = [L2I+L3I, L3I+L4I, L4I+L5AI, L5AI+L5BI, L5BI+L6I] #, thalI]
+
+    # EpopsList = [L2E+L3E+L4E]#+L5AE+L5BE+L6E+thalE] #[L2E+L3E+L4E+L5AE+L5BE+L6E, L2E+L3E+L4E+L5AE+L5BE+L6E+thalE, L2E+L3E+L4E+L5AE+L5BE+L6E, L2E+L3E+L4E+L5AE+L5BE+L6E+thalE]
+    # IpopsList = [L2I+L3I+L4I] # [[], [], L2I+L3I+L4I+L5AI+L5BI+L6I, L2I+L3I+L4I+L5AI+L5BI+L6I+thalI]
+
+    # for Epops, Ipops in zip(EpopsList, IpopsList):
+    #     dfFilter = filterRates(df, condlist=['rates'], Epops=Epops, Ipops=Ipops, rateTimeRanges = rateTimeRanges, 
+    #                         copyFolder=False, dataFolder=dataFolder, batchLabel=batchSim, skipDepol=False, verbose=1)#False) # 'I>E', 'E5>E6>E2' 'PV>SOM'] ,['1000_1250']'1250_1500', '1500_1750', ]   # ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
+    #     print(Epops,Ipops)
+    #     print(len(dfFilter))
