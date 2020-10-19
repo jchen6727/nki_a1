@@ -6731,8 +6731,10 @@ def custom():
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
 
-** v29_batch1 - add EIGain by layer; reduce EEGain [0, 1.0]
+** v29_batch1 - add EIGain by layer; reduce EEGain [0, 1.0] - bug in EI
 *** notes
+- bug in EIgains by layer -- single EIgain, not layer-specific
+
 EEGain results were typically 0 - 1.0 so reduce search space (same in M1)
 EIGain params by layer added 3 new params
 *** code
@@ -7337,5 +7339,10 @@ Hypotheses:
 - tune L2-L4 and L4-L6 separately with E->PV,SOM,VIP,NGF specific gains
 -- faster to run each sim
 -- smaller parameter space (exponential decrease)
+** v29_batch3 - increase bkg to NGF1, TIM, reduce ITS4; fix layerwise EIgains
+*** notes
+- reduce bkg weight ITS4 from 40 to 10
+- increase TIM from 1.5 to 2.0
+- increase NGF1 from 1.0 (wasn't included in list!) to 2.5
 
 ** blank
