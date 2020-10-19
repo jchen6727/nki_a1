@@ -6951,7 +6951,9 @@ PV5B @ 84 Hz in that raster
 yeah, could try it separate from optimization and see if a few stims in those layers causes noticeable response
 
 
-** v29_batch2 - v29_batch1 with increased maxiters and GCP n2 80-core nodes
+** v29_batch2 - v29_batch1 with increased maxiters and GCP n2 80-core nodes - bug in EI!
+*** notes
+- bug in EIgains by layer -- single EIgain, not layer-specific
 *** results
 **** 1 layer at a time
 Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
@@ -7331,7 +7333,7 @@ Hypotheses:
 
 
 *** Possible next steps
-- increase bkg input or conn to NGF1, TIM, ITS4
+- increase bkg input or conn to NGF1, TIM, ITS4 (lower)
 - tune L2-L4 and L4-L6 separately with E->PV,SOM,VIP,NGF specific gains
 -- faster to run each sim
 -- smaller parameter space (exponential decrease)

@@ -272,9 +272,9 @@ if cfg.addConn and cfg.EIGain > 0.0:
                     synWeightFactor = cfg.synWeightFractionENGF
                 else:
                     synWeightFactor = cfg.synWeightFractionEI
-                netParams.connParams['EI_'+pre+'_'+post] = { 
+                netParams.connParams['EI_'+pre+'_'+post+'_'+l] = { 
                     'preConds': {'pop': pre}, 
-                    'postConds': {'pop': post},
+                    'postConds': {'pop': post, 'ynorm': layerGroups[l]},
                     'synMech': ESynMech,
                     'probability': prob,
                     'weight': wmat[pre][post] * cfg.EIGain * cfg.EILayerGain[l], 
