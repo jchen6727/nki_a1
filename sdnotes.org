@@ -1498,6 +1498,11 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 ** v24 - Fixed bug in IE/II specific layer gains
 ** v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
+** v26 - Changed NGF AMPA:NMDA ratio 
+** v27 - Split thalamic interneurons into core and matrix (TI and TIM)
+** v28 - Set recurrent TC->TC conn to 0
+** v29 - Added EI specific layer gains
+** v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
