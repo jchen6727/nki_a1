@@ -234,14 +234,14 @@ wmat = connData['wmat']
 bins = connData['bins']
 connDataSource = connData['connDataSource']
 
-layerGroupLabels = ['1-3', '4', '5', '6']
+layerGainLabels = ['1', '2', '3', '4', '5A', '5B', '6']
 
 #------------------------------------------------------------------------------
 ## E -> E
 if cfg.addConn and cfg.EEGain > 0.0:
     for pre in Epops:
         for post in Epops:
-            for l in layer:  # used to tune each layer group independently
+            for l in layerGainLabels:  # used to tune each layer group independently
                 if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
                 else:
@@ -263,7 +263,7 @@ if cfg.addConn and cfg.EEGain > 0.0:
 if cfg.addConn and cfg.EIGain > 0.0:
     for pre in Epops:
         for post in Ipops:
-            for l in layer:  # used to tune each layer group independently
+            for l in layerGainLabels:  # used to tune each layer group independently
                 if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
                 else:
@@ -300,7 +300,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
 
         for pre in Ipops:
             for post in Epops:
-                for l in layerGroupLabels:  # used to tune each layer group independently
+                for l in layerGainLabels:  # used to tune each layer group independently
                     
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
                     
@@ -315,7 +315,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
 
                     netParams.connParams['IE_'+pre+'_'+post+'_'+l] = { 
                         'preConds': {'pop': pre}, 
-                        'postConds': {'pop': post, 'ynorm': layerGroups[l]},
+                        'postConds': {'pop': post, 'ynorm': layer[l]},
                         'synMech': synMech,
                         'probability': prob,
                         'weight': wmat[pre][post] * cfg.IEGain * cfg.IELayerGain[l], 
@@ -333,7 +333,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
 
         for pre in Ipops:
             for post in Ipops:
-                for l in layerGroupLabels: 
+                for l in layerGainLabels: 
                     
                     prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
 
@@ -348,7 +348,7 @@ if cfg.addConn and cfg.IIGain > 0.0:
 
                     netParams.connParams['II_'+pre+'_'+post+'_'+l] = { 
                         'preConds': {'pop': pre}, 
-                        'postConds': {'pop': post,  'ynorm': layerGroups[l]},
+                        'postConds': {'pop': post,  'ynorm': layer[l]},
                         'synMech': synMech,
                         'probability': prob,
                         'weight': wmat[pre][post] * cfg.IIGain * cfg.IILayerGain[l], 
