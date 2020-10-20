@@ -7343,4 +7343,12 @@ Hypotheses:
 
 
 ** v30_batch1 - tuning by layers - thal + L4
+*** notes
+after 500 trials, ITS4 never spiked
+probably due to low bkg inputs and low thal inputs
+try: add bkg input gains to thal pops -> stronger thal -> ITS4 fires
+** v30_batch2 - tuning by layers - thal + L4
+*** notes
+added bkg input gains to thal pops -> stronger thal -> ITS4 fires
+reduced to 1.5 secs
 ** blank

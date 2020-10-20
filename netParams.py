@@ -601,6 +601,14 @@ if cfg.addBkgConn:
         weightBkg = json.load(f)
     pops = list(cfg.allpops)
     pops.remove('IC')
+
+    for pop in ['TC', 'TCM', 'HTC']:
+        weightBkg[pop] *= cfg.EbkgThalamicGain 
+
+    for pop in ['IRE', 'IREM', 'TI', 'TIM']:
+        weightBkg[pop] *= cfg.IbkgThalamicGain 
+
+
     for pop in pops:
         netParams.stimTargetParams['excBkg->'+pop] =  {
             'source': 'excBkg', 

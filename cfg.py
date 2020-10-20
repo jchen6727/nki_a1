@@ -159,7 +159,10 @@ cfg.startBkg = 0  # start at 0 ms
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input
-cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+#cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+
+cfg.EbkgThalamicGain = 1.0
+cfg.IbkgThalamicGain = 1.0
 
 cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
 
