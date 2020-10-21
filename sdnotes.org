@@ -7345,4 +7345,8 @@ Hypotheses:
 - increase TIM from 1.5 to 2.0
 - increase NGF1 from 1.0 (wasn't included in list!) to 2.5
 - added bkg weights for L5B inh pops (were missing!)
+** v29_batch4 - same but replace ITS4 celltype with IT; inc TIM+IREM
+*** notes
+increased TIM bkg from 2.0 to 3.0
+increased IREM from 1 to 1.5 
 ** blank

@@ -1090,15 +1090,15 @@ def optunaRates():
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 2000
-    initCfg['printPopAvgRates'] = [[1000, 1250], [1250, 1500], [1500, 1750], [1750, 2000]]
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = [1000,2000]
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1000,2000]
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     initCfg['recordLFP'] = None
     initCfg[('analysis', 'plotLFP')] = False
@@ -1263,7 +1263,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v29_batch3'
+    b.batchLabel = 'v29_batch4'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
