@@ -177,7 +177,7 @@ Ipops = ['NGF1',                            # L1
         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
         'PV6', 'SOM6', 'VIP6', 'NGF6']  # L6 
         
-Tpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+Tpops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
 
 layer = {'1': [0.00, 0.05], '2': [0.05, 0.08], '3': [0.08, 0.475], '4': [0.475,0.625], '5A': [0.625,0.667], '5B': [0.667,0.775], '6': [0.775,1], 'thal': [1.2, 1.4]} # 
 
@@ -516,7 +516,7 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
             lmat[pre][post] = data['Allen_V1']['connProb'][proj]['sigma']
             wmat[pre][post] = data['Allen_V1']['connWeight'][proj]
 
-    # VIP uses by default PV weights; need to change the following:
+    # VIP uses by default PV weights; made the following changes:
     # VIP -> SOM = strong (but PV -> SOM = weak)    
     # VIP -> PV = weak (but PV -> PV = strong)   
     # VIP -> VIP = weak/veryweak (but PV -> PV = strong) 
@@ -544,11 +544,11 @@ elif connDataSource['I->E/I'] ==  'Allen_custom':
 # --------------------------------------------------
 ## Probabilities 
 ## note: missing values mean 0 probability
-pmat['TC']['TC'] =	    0.1
-pmat['HTC']['HTC'] =	0.1
-pmat['TC']['HTC'] =	    0.1
-pmat['HTC']['TC'] =	    0.1
-pmat['TCM']['TCM'] =	0.1
+pmat['TC']['TC'] =	    0.0 # 0.1
+pmat['HTC']['HTC'] =	0.0 #0.1
+pmat['TC']['HTC'] =	    0.0 # 0.1
+pmat['HTC']['TC'] =	    0.0 # 0.1
+pmat['TCM']['TCM'] =	0.0 #0.1
 pmat['IRE']['IRE'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
 pmat['IREM']['IREM'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
 pmat['IRE']['IREM'] =	0.1  # > data['TC_Crui2010']['prob']['TRN_TRN'] = 0.028
@@ -573,8 +573,16 @@ pmat['HTC']['TI']   =   0.01
 pmat['TCM']['TI']   =   0.09
 pmat['IRE']['TI']   =   0.09
 pmat['IREM']['TI']  =	0.3 
-pmat['TI']['TI']    =   0.53
-
+pmat['TI']['TI']    =  0.53
+pmat['TIM']['TC']   =   0.21  # TIM values from Serkov 1996
+pmat['TIM']['HTC']   =   0.21
+pmat['TIM']['TCM']   =   0.21
+pmat['TC']['TIM']    =   0.01
+pmat['HTC']['TIM']   =   0.01
+pmat['TCM']['TIM']   =   0.09
+pmat['IRE']['TIM']   =   0.09
+pmat['IREM']['TIM']  =	0.3 
+pmat['TIM']['TIM']    =   0.53
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
@@ -609,7 +617,16 @@ wmat['TCM']['TI']   =   0.2
 wmat['IRE']['TI']   =   0.5
 wmat['IREM']['TI']  =	0.5 
 wmat['TI']['TI']    =   0.5
-
+wmat['TIM']['TC']    =   0.83  # for TIM using same values as RE
+wmat['TIM']['HTC']   =   0.83
+wmat['TIM']['TCM']   =   0.83
+wmat['TC']['TIM']    =   0.2
+wmat['HTC']['TIM']   =   0.2
+wmat['TCM']['TIM']   =   0.2
+wmat['TCM']['TIM']   =   0.2
+wmat['IRE']['TIM']   =   0.5
+wmat['IREM']['TIM']  =   0.5 
+wmat['TIM']['TIM']    =   0.5
 
 
 # --------------------------------------------------

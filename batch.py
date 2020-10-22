@@ -45,8 +45,8 @@ def bkgWeights(pops=[], weights=list(range(50))):
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
  
-
     b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+    b.method = 'grid'
 
     return b
 
@@ -88,9 +88,68 @@ def bkgWeights2D(pops=[], weights=list(range(50))):
     initCfg['stimSubConn'] = False
     initCfg['addIClamp'] = False
     initCfg['addNetStim'] = False
- 
+
+    # NGF
+    # initCfg['tune'] = { "L": 0.5292094921519722,
+    #                     "Ra": 1.4789488212279527,
+    #                     "ch_CavL": {
+    #                         "gmax": 0.8294009810179838
+    #                     },
+    #                     "ch_CavN": {
+    #                         "gmax": 1.8302558031992033
+    #                     },
+    #                     "ch_KCaS": {
+    #                         "gmax": 1.9966915506612826
+    #                     },
+    #                     "ch_Kdrfastngf": {
+    #                         "gmax": 1.9718693540420718
+    #                     },
+    #                     "ch_KvAngf": {
+    #                         "gmax": 1.9995297406303094
+    #                     },
+    #                     "ch_KvCaB": {
+    #                         "gmax": 1.386572752588786
+    #                     },
+    #                     "ch_Navngf": {
+    #                         "gmax": 1.9747105482249578
+    #                     },
+    #                     "cm": 1.6538025216246877,
+    #                     "diam": 0.9280430551297493,
+    #                     "hd": {
+    #                         "gbar": 1.359096548635795
+    #                     },
+    #                     "pas": {
+    #                         "e": 0.6789102769330073,
+    #                         "g": 0.8144720557328889
+    #                     }}
+
+    #ITS4
+    initCfg['tune'] = { "L": 1.3118623085123142,
+            "Nca": {
+                "gmax": 3.5838808831900515
+            },
+            "Ra": 0.6872551957221755,
+            "cm": 2.2202371016519873,
+            "diam": 2.7938082173487877,
+            "kca": {
+                "gbar": 0.40727688068272255
+            },
+            "km": {
+                "gbar": 1.3266426599463168
+            },
+            "kv": {
+                "gbar": 0.2713752431207888
+            },
+            "naz": {
+                "gmax": 3.635282589182774
+            },
+            "pas": {
+                "e": 1.0950678422289308,
+                "g": 1.6892125376050984
+            }}
 
     b = Batch(params=params, netParamsFile='netParams_bkg.py', cfgFile='cfg_cell.py', initCfg=initCfg)
+    b.method = 'grid'
 
     return b
 
@@ -160,6 +219,7 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
     
     
     b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -246,6 +306,7 @@ def longBalance():
     initCfg['saveCellConns'] = False
     
     b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+    b.method = 'grid'
 
     return b
 
@@ -321,6 +382,7 @@ def longPopStims():
     groupedParams = [] #('IEweights',0), ('IIweights',0), ('IEweights',1), ('IIweights',1), ('IEweights',2), ('IIweights',2)]
 
     b = Batch(params=params, initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -398,6 +460,7 @@ def simultLongPopStims():
 
     groupedParams = [('pulse', 'pop'),('pulse2', 'pop')] 
     b = Batch(params=params, initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -474,6 +537,7 @@ def recordedLongPopStims():
     groupedParams = []
 
     b = Batch(params=params, initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -547,6 +611,7 @@ def freqStims():
     groupedParams = [('NetStim1', 'interval'), ('NetStim1', 'number')] 
 
     b = Batch(params=params, initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -561,6 +626,7 @@ def localPopStims():
     params[('NetStim1', 'interval')] = [1000.0/20.0, 1000.0/30.0]
 
     b = Batch(params=params)
+    b.method = 'grid'
 
     grouped = []
 
@@ -596,6 +662,7 @@ def EPSPs():
     groupedParams = [] 
 
     b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -643,6 +710,7 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     groupedParams = [] 
 
     b = Batch(params=params, netParamsFile='netParams_cell.py', cfgFile='cfg_cell.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -654,31 +722,38 @@ def custom():
     params = specs.ODict()
 
     # conn gains
-    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    #params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
+    #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
+    #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
+    #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
+    params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
     # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
     
-    #params['thalamoCorticalGain'] = [1.434715802, 2.0]
-    #params[('ICThalInput', 'probE')] = [0.12, 0.25]#, 0.5]
-    params[('ICThalInput', 'probI')] = [0.12, 0.25, 0.5]
+    #params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
+    #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
+
+    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
     
-    groupedParams = [] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg = {}
-    initCfg['duration'] = 1750
-    initCfg['printPopAvgRates'] = [250, 1750] 
+    initCfg['duration'] = 2000
+    initCfg['printPopAvgRates'] = [1000, 2000] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
 
+    #initCfg[('ICThalInput', 'startTime')] = 750
+
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
 
@@ -687,44 +762,26 @@ def custom():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
+    # from v28_batch5 (optuna), trial 15446
+    initCfg.update({
+        "EEGain": 0.538221678982146,
+        "EIGain": 0.24522849924039522,
+        "IELayerGain": {
+            "1-3": 2.4969906720467807,
+            "4": 0.7523928690211563,
+            "5": 0.16855428023477206,
+            "6": 2.8991792469343576
+        },
+        "IILayerGain": {
+            "1-3": 0.6648270236528021,
+            "4": 2.2876886663946765,
+            "5": 0.10069589845756556,
+            "6": 2.6134986990296576
+        }})
 
-    ''' from v23_batch8'''
-    initCfg['EEGain']=0.10928952347451457
-    initCfg['EIGain']=0.13089042807412776
-    initCfg[('IELayerGain', '1-3')]= 1.0
-    initCfg[('IELayerGain', '4')]=1.0
-    initCfg[('IELayerGain', '5')]=1.0
-    initCfg[('IELayerGain', '6')]=1.5743753119276733
-    initCfg[('IILayerGain', '1-3')]=1.0
-    initCfg[('IILayerGain', '4')]=1.0 
-    initCfg[('IILayerGain', '5')]=1.0
-    initCfg[('IILayerGain', '6')]=0.8550747910383769
-    initCfg['thalamoCorticalGain']=1.964478741362849
-    initCfg['intraThalamicGain']=0.35778625557189936
-    initCfg['corticoThalamicGain'] = 1.4715575641214615
-    
 
-    ''' from v24_batch3
-    initCfg['EEGain'] = 1.7930365644528616
-    initCfg['EIGain'] = 1.301292631	
-    
-    initCfg[('IELayerGain', '1-3')] = 1.9609935 - 0.15
-    initCfg[('IELayerGain', '4')] = 1.973369532	- 0.15
-    initCfg[('IELayerGain', '5')] = 0.547478256	- 0.15
-    initCfg[('IELayerGain', '6')] = 0.817050621	- 0.15
-
-    initCfg[('IILayerGain', '1-3')] = 0.575910457
-    initCfg[('IILayerGain', '4')] = 0.506134474	
-    initCfg[('IILayerGain', '5')] = 1.140789303	
-    initCfg[('IILayerGain', '6')] = 1.999973065	
-
-    initCfg['thalamoCorticalGain'] = 1.434715802
-    initCfg['intraThalamicGain'] = 1.987386358	
-    initCfg['corticoThalamicGain'] = 1.354024353042513
-    '''
-
-    
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
 
     return b
 
@@ -831,7 +888,9 @@ def evolRates():
     
     #from IPython import embed; embed()
 
-    b = Batch(params=params, groupedParams=groupedParams, initCfg=initCfg)
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'evol'
 
     # Set evol alg configuration
     b.evolCfg = {
@@ -852,6 +911,271 @@ def evolRates():
 
     return b
 
+# ----------------------------------------------------------------------------------------------
+# Adaptive Stochastic Descent (ASD)
+# ----------------------------------------------------------------------------------------------
+def asdRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    x0 = [[1.4338777102469733, 1.1625828604622033, 1.091037051695174, 1.8712819675755956, 0.7397134465049761, 1.367569320349433, 1.418339439423966, 0.6274719645228012, 0.5675561437477121, 1.5174286644853214, 1.6851404284735372, 1.063075099977045, 0.673804518651403],
+    [1.4117825668705553, 1.4562645192525767, 0.6966421717946888, 1.1564048776911902, 0.5082691576672945, 1.8650994583365461, 0.5247660780373347, 1.3887063888108127, 0.8359523062412009, 0.786403002769916, 1.0872681212597493, 1.9355702398668257, 0.8456162169403141],
+    [1.4796339232563818, 1.2494919865726666, 1.2106074885592537, 0.5914377334878493, 0.7956691184253843, 1.1044833499655324, 1.8970275010959088, 1.2806598565853817, 1.0339389242169903, 1.2449536297089994, 1.653463860326919, 0.5816973165681442, 1.8408576413375228],
+    [1.3154950966436703, 1.0095763680475387, 1.3046938357412072, 1.337690869825955, 1.3419352351670506, 2.0, 1.806386376748424, 1.785015289487499, 1.3006272106913037, 1.6797508518217605, 1.5625342091955938, 0.9733859948789619, 0.8423443321780072],
+    [1.4081465013179777, 0.6909751558458218, 1.476256983214676, 1.4388900372032694, 0.5, 1.4292511768559795, 0.6980418301090989, 1.1884408015079058, 1.8830229460800467, 1.1514878860870101, 0.9636536753602729, 1.283310375368901, 1.2234380160367202]]
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 2.0, [x[0] for x in x0]]
+    params['EIGain'] = [0.5, 2.0, [x[1] for x in x0]]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [x[2] for x in x0]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [x[3] for x in x0]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [x[4] for x in x0]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [x[5] for x in x0]]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [x[6] for x in x0]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [x[7] for x in x0]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [x[8] for x in x0]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [x[9] for x in x0]]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, [x[10] for x in x0]]
+    params['intraThalamicGain'] = [0.5, 2.0, [x[11] for x in x0]]
+    params['corticoThalamicGain'] = [0.5, 2.0, [x[12] for x in x0]]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 1min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 12,  # max number of times to check if sim is completed (for each generation)
+        'popsize': 5
+    }
+
+    return b
+
+
+# ----------------------------------------------------------------------------------------------
+# Adaptive Stochastic Descent (ASD)
+# ----------------------------------------------------------------------------------------------
+def optunaRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.1, 1.0]
+
+    params[('EILayerGain', '1-3')] = [0.1, 3.0]
+    params[('EILayerGain', '4')] = [0.1, 3.0]
+    params[('EILayerGain', '5')] = [0.1, 3.0]
+    params[('EILayerGain', '6')] = [0.1, 3.0]
+
+    params[('IELayerGain', '1-3')] = [0.1, 3.0]
+    params[('IELayerGain', '4')] = [0.1, 3.0]
+    params[('IELayerGain', '5')] = [0.1, 3.0]
+    params[('IELayerGain', '6')] = [0.1, 3.0]
+
+    params[('IILayerGain', '1-3')] = [0.1, 3.0]
+    params[('IILayerGain', '4')] = [0.1, 3.0]
+    params[('IILayerGain', '5')] = [0.1, 3.0]
+    params[('IILayerGain', '6')] = [0.1, 3.0]
+    
+    # params['thalamoCorticalGain'] = [0.25, 2.0]
+    # params['intraThalamicGain'] = [0.25, 2.0]
+    # params['corticoThalamicGain'] = [0.25, 2.0]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 16,
+        'time_sleep': 60,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
 
 # ----------------------------------------------------------------------------------------------
 # Run configurations
@@ -864,7 +1188,8 @@ def setRunCfg(b, type='mpi_bulletin'):
 
     elif type=='mpi_direct':
         b.runCfg = {'type': 'mpi_direct',
-            'cores': 96,
+            'nodes': 1,
+            'coresPerNode': 96,
             'script': 'init.py',
             'mpiCommand': 'mpirun',
             'skip': True}
@@ -897,11 +1222,12 @@ def setRunCfg(b, type='mpi_bulletin'):
             'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
             'walltime': '24:00:00', #'48:00:00',
             'nodes': 1,
-            'coresPerNode': 96,  # comet=24, bridges=28, gcp=32
+            'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
             'email': 'salvadordura@gmail.com',
             'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
-            'script': 'init.py', 
+            'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
+            'nrnCommand': 'nrniv -mpi -python', #'python3',
             'skipCustom': '_raster.png'}
             #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
             # --nodelist=compute1
@@ -920,6 +1246,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'skip': True}
 
 
+
 # ----------------------------------------------------------------------------------------------
 # Main code
 # ----------------------------------------------------------------------------------------------
@@ -928,16 +1255,18 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    #b = custom()
+    # b = custom()
     # b = evolRates()
+    # b = asdRates()
+    b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    b = fIcurve(pops=['VIP2', 'ITS4']) 
+    #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v24_batch7'
+    b.batchLabel = 'v29_batch4'
     b.saveFolder = 'data/'+b.batchLabel
-    b.method = 'grid' #'grid' #'evol' #  # evol
-    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+
+    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 

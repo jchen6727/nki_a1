@@ -94,7 +94,7 @@ def cochlearInputSpikes(freqRange=[4800, 5200], #[125, 20000], #[9000, 11000],
 #     return spkTimes
 
 
-def poisson_generator(rate, t_start=0.0, t_stop=1000.0):
+def poisson_generator(rate, t_start=0.0, t_stop=1000.0, seed=None):
     """
     Returns a SpikeTrain whose spikes are a realization of a Poisson process
     with the given rate (Hz) and stopping time t_stop (milliseconds).
@@ -119,6 +119,8 @@ def poisson_generator(rate, t_start=0.0, t_stop=1000.0):
     --------
         inh_poisson_generator, inh_gamma_generator, inh_adaptingmarkov_generator
     """
+
+    rng = np.random.RandomState(seed)
 
     #number = int((t_stop-t_start)/1000.0*2.0*rate)
 
@@ -157,7 +159,7 @@ def poisson_generator(rate, t_start=0.0, t_stop=1000.0):
 
     return spikes
 
-def inh_poisson_generator(rate, t, t_stop):
+def inh_poisson_generator(rate, t, t_stop, seed=None):
     """
     Returns a SpikeTrain whose spikes are a realization of an inhomogeneous 
     poisson process (dynamic rate). The implementation uses the thinning 
@@ -196,12 +198,14 @@ def inh_poisson_generator(rate, t, t_stop):
         poisson_generator, inh_gamma_generator, inh_adaptingmarkov_generator
     """
 
+    rng = np.random.RandomState(seed)
+
     if np.shape(t)!=np.shape(rate):
         raise ValueError('shape mismatch: t,rate must be of the same shape')
 
     # get max rate and generate poisson process to be thinned
     rmax = np.max(rate)
-    ps = poisson_generator(rate=rmax, t_start=t[0], t_stop=t_stop)
+    ps = poisson_generator(rate=rmax, t_start=t[0], t_stop=t_stop, seed=seed)
 
     # return empty if no spikes
     if len(ps) == 0:

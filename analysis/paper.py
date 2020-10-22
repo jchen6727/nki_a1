@@ -255,8 +255,8 @@ def plot_empirical_conn():
     pmat = connData['pmat']
     lmat = connData['lmat']
 
-    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
-    
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+        
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
     
@@ -306,13 +306,14 @@ def plot_empirical_conn():
 
     plt.grid(False)
 
+    vmax = 0.5
     clim = [vmin, vmax]
     plt.clim(clim[0], clim[1])
     plt.colorbar(label='probability', shrink=0.8) #.set_label(label='Fitness',size=20,weight='bold')
     plt.xlabel('Post')
     plt.ylabel('Pre')
-    title = 'Empirical connection probability matrix'
-    h.xaxis.set_label_coords(0.5, 1.10)
+    title = 'Connection probability matrix' # empirical
+    h.xaxis.set_label_coords(0.5, 1.11)
     plt.title(title, y=1.12, fontWeight='bold')
     plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
 
@@ -332,7 +333,7 @@ def plot_net_conn():
     # prob
     connMatrix = data['connMatrix']    
     
-    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3',  'PV3', 'SOM3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
@@ -381,9 +382,84 @@ def plot_net_conn():
     filename = 'EI->EI_Allen_custom_prob_conn_net_0.25.png'
     plt.savefig('../conn/'+filename, dpi=300)
 
+def plot_net_conn_cns20poster():
+    # load custom A1 conn
+    with open('../data/v25_batch4/conn_prob_new.pkl', 'rb') as f:   #v25_batch4_conn_prob.pkl
+        data = pickle.load(f)
+    
+    # prob
+    connMatrix = data['connMatrix']
+    #includePre = data['includePre']
+    #includePost = data['includePost']
+
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']# , 'IC']
+
+    popsPre = allpops
+    popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
+
+
+    #import IPython; IPython.embed()
+
+    # Note: this code doesn't work to rearrange matrix rows + cols
+    # Using correct pop order in recording
+    #
+    # connMatrix = np.zeros((len(popsPre), len(popsPost)))
+    # 
+    # for ipre, pre in enumerate(popsPre):
+    #     for ipost, post in enumerate(popsPost):
+    #         #print(pre,post)
+    #         try:
+    #             connMatrix[ipre, ipost] = pmat[includePre.index(pre)][includePost.index(post)]
+    #         except:
+    #             connMatrix[ipre, ipost] = 0.0
+    #             #connMatrix[ipre, ipost] = pmat[pre][post]    
+
+    # font
+    fontsiz = 14
+    plt.rcParams.update({'font.size': fontsiz})
+
+    # ----------------------- 
+    # conn matrix full
+    #import IPython; IPython.embed()
+
+    vmin = np.nanmin(connMatrix)
+    vmax =  np.nanmax(connMatrix) #0.5 # 0.7 #
+        
+    plt.figure(figsize=(12, 12))
+    h = plt.axes()
+    plt.imshow(connMatrix, interpolation='nearest', cmap='viridis', vmin=vmin, vmax=vmax)  #_bicolormap(gap=0)
+
+    for ipop, pop in enumerate(popsPre):
+        plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-',c=(0.7,0.7,0.7))
+    for ipop, pop in enumerate(popsPost):
+        plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-',c=(0.7,0.7,0.7))
+
+    # Make pretty
+    h.set_yticks(list(range(len(popsPre))))
+    h.set_xticks(list(range(len(popsPost))))
+    h.set_yticklabels(popsPre)
+    h.set_xticklabels(popsPost, rotation=90)
+    h.xaxis.set_ticks_position('top')
+    # plt.ylim(-0.5,len(popsPre)-0.5)
+    # plt.xlim(-0.5, len(popsPost) - 0.5)
+
+    plt.grid(False)
+
+    clim = [vmin, vmax]
+    plt.clim(clim[0], clim[1])
+    plt.colorbar(label='probability', shrink=0.8) #.set_label(label='Fitness',size=20,weight='bold')
+    plt.xlabel('Post')
+    plt.ylabel('Pre')
+    title = 'Connection probability matrix'
+    h.xaxis.set_label_coords(0.5, 1.11)
+    plt.title(title, y=1.12, fontWeight='bold')
+    plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.00)
+
+    filename = 'prob_conn_net_v25_batch4.png'
+    plt.savefig('../conn/'+filename, dpi=300)
 
 #### main
 # fig_conn()
 # compare_conn()
 plot_empirical_conn()
-# plot_net_conn()
+plot_net_conn_cns20poster()

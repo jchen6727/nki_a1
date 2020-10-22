@@ -637,6 +637,61 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    ITS4 : 0.000 Hz
    IT6 - depol
 ** checked bkg (only long-range) rates in M1 model
+* 19Oct2020 Tuning by layers
+** Allen V1 paper
+"Optimizing a full recurrent network at once was very challenging; instead, we followed a stepwise, layer-by-layer procedure. 
+We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
+Then we added L2/3 recurrent connections and optimized the weights in both L4 and L2/3. 
+This approach was repeated by adding L5, then L6, and finally L1 (see Methods for details). "
+** Allen emails
+Hi Salva,
+ 
+Anton explained everything perfectly. The one minor detail is that the grid search was done in the interval [0.5*w0; 2*w0] for the LGN input because those were measured so well experimentally. For the recurrent weights, we tried to stay in [0.2*w0; 5*w0] since the experimental data was less ideal.
+ 
+Thanks,
+ 
+Yazan
+ 
+On Sat, Oct 17, 2020 at 10:48 PM Anton Arkhipov <antona@alleninstitute.org> wrote:
+Hi Salva,
+ 
+The approach was basically as described in the paper… Go layer-by-layer, starting from L4, and then adding gradually more. I would say it’s very important to get just the L4 working well. Once that’s stable, adding more layers is not as difficult… though certainly requires quite a bit of iterative work.
+ 
+Another thing of note is that there were way too many cell types to work with. So, when we did optimization, we typically operated with connection types grouped into 4 categories: E-to-E, E-to-I, I-to-E, I-to-I (typically, focusing on one layer).
+ 
+The grid searches were typically done in the interval [0.5*w0; 2*w0], where w0 is the starting weight. We would start with this broad interval and then gradually narrow it down in iterative searches. In most cases we did each grid search in just one dimension, sampling, say, 10 points within the currently selected interval. It was all done mostly by hand, we didn’t use optimization code.
+ 
+And regarding the values mentioned in the paper – I assume you mean Fig. 4? Those are original ones from the literature (based on the slice experiments). So, those were our starting values w0, and then we explored around those values.
+ 
+The final values – and the whole model – are all available here:
+https://portal.brain-map.org/explore/models/mv1-all-layers
+ 
+By the way, you included Yazan on your email, but he has actually moved on to new adventures in industry 😉. I’m CC’ing his non-work email here. Yazan, please feel free to chime in – you’ve done all of that optimization work!
+ 
+Finally, Salva, if you have more questions or would like to discuss this more, please let me know, I’m always happy to chat.
+ 
+Best,
+ 
+Anton.
+ 
+ 
+From: Salvador Dura <salvadordura@gmail.com>
+Date: Saturday, October 17, 2020 at 10:19 AM
+To: Anton Arkhipov <antona@alleninstitute.org>, Kael Dai <kaeld@alleninstitute.org>, Yazan Billeh <yazanb@alleninstitute.org>
+Subject: Model tuning
+ 
+CAUTION: This email originated from outside the Allen Institute. Please do not click links or open attachments unless you've validated the sender and know the content is safe.
+Hi guys… hope you are all doing great!
+ 
+We are building a model of auditory thalamocortical circuits and using different optimization algorithms to tune connectivity, but haven’t yet been successful and we are struggling a bit.
+ 
+I saw that for V1 you had used a layer-by-layer approach, with cell-type specific weights and grid search. We are thinking of trying this approach and wanted to ask if there are any more details (e.g. values for grid search) and/or source code available?
+ 
+Also, are the weights mentioned in the paper the original ones taken from literature or those after tuning?
+ 
+Thanks!
+Salva
+
   Spikes: 23790 (2.24 Hz)
    IT2 : 40.600 Hz
    SOM2 : 76.400 Hz
@@ -1439,6 +1494,10 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v19 - Added in 2-compartment thalamic interneuron model 
 ** v20 - Added TI conn and updated thal pop
 ** v21 - Added exc+inh bkg inputs specific to each cell type
+** v22 - Made exc+inh bkg inputs specific to each pop; automated calculation
+** v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
+** v24 - Fixed bug in IE/II specific layer gains
+** v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -4277,3 +4336,3017 @@ had to go to prev commit cause bkg inputs had changed
     initCfg['intraThalamicGain']=0.35778625557189936
     initCfg['corticoThalamicGain'] = 1.4715575641214615
     
+** v24_batch7 - fI for ITS4 and VIP to check diam change didn't affect
+*** results
+OK, same fI, didn't affect.
+
+** v24_batch8 - fI for ITS4 with old diam (3um)
+*** results
+pretty similar to new diam (25um); but steeper curve so keeping 25um
+
+** v24_batch9 - asd optim on 'zn' 96 cores (6 gens) (bug: IC input)
+*** notes
+test with toy model first
+*** code
+def asdRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+
+    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
+    params['EIGain'] = [0.5, 2.0, 1.301292631]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
+    params[('IELayerGain', '4')] = [0.5, 2.0, 1.973369532]
+    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
+    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.575910457]
+    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
+    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
+    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
+    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
+    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 30, # max number of times to check if sim is completed (for each generation)
+    }
+*** results
+stopped after 6 gens  -- not sure why
+
+    "fvals": [
+        323.4898722376168,
+        323.4898722376168,
+        293.7585341348848,
+        293.7585341348848,
+        293.7585341348848,
+        293.7585341348848,
+        0.0,
+        0.0,
+ "x": [
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.575910457,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.575910457,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            1.7930365644528616,
+            1.301292631,
+            1.9609935,
+            1.973369532,
+            0.547478256,
+            0.817050621,
+            0.5183194113,
+            0.506134474,
+            1.140789303,
+            1.999973065,
+            1.434715802,
+            1.987386358,
+            1.354024353042513
+        ],
+        [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        [
+
+
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=2.0
+set ('IELayerGain', '5')=0.547478256
+set ('IELayerGain', '6')=0.817050621
+set ('IILayerGain', '1-3')=0.5183194113
+set ('IILayerGain', '4')=0.506134474
+set ('IILayerGain', '5')=1.140789303
+set ('IILayerGain', '6')=1.999973065
+set thalamoCorticalGain=1.434715802
+set intraThalamicGain=1.987386358
+set corticoThalamicGain=1.354024353042513
+
+
+** v24_batch10 - asd optim on 'zn' 96 cores; continue from v24_batch9 (bug)
+** v24_batch11 - asd optim on 'zn' 96 cores; continue from v24_batch9 (bug: IC input) 
+*** notes
+not reproducible cause was using IC input (should only be bkg), and turns out IC input is random every time
+
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=2.0
+set ('IELayerGain', '5')=0.547478256
+set ('IELayerGain', '6')=0.817050621
+set ('IILayerGain', '1-3')=0.5183194113
+set ('IILayerGain', '4')=0.506134474
+set ('IILayerGain', '5')=1.140789303
+set ('IILayerGain', '6')=1.999973065
+set thalamoCorticalGain=1.434715802
+set intraThalamicGain=1.987386358
+set corticoThalamicGain=1.354024353042513
+
+using asd parallel implementation with single starting point
+using psutil to cancel jobs
+
+crashed because no try excpet around psutil (tried to stop nrniv from other user I guess)
+*** code
+
+ef asdRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+
+    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
+    params['EIGain'] = [0.5, 2.0, 1.301292631]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
+    params[('IELayerGain', '4')] = [0.5, 2.0, 2.0]
+    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
+    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.5183194113]
+    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
+    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
+    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
+    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
+    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     100,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 30, # max number of times to check if sim is completed (for each generation)
+    }
+*** results
+zn% head -n 100 $models/A1/data/v24_batch11/v24_batch11_output.json
+{
+    "fvals": [
+        [
+            299.70709812373457,
+            299.70709812373457,
+            293.76296218967843,
+            293.76296218967843,
+            293.76296218967843,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.8902649918624,
+            287.84085789123134,
+            287.8189938215254,
+            287.8189938215254,
+            287.8189938215254,
+            287.8189938215254,
+            287.8189938215254,
+            287.8189938215254,
+            287.8189938215254,
+            287.7895153611463,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+            281.8085323839038,
+
+
+params for 1st 281.8085323839038:
+
+                1.7930365644528616,
+                1.301292631,
+                1.9609935,
+                1.8666666666666667,
+                0.547478256,
+                0.8715206624,
+                0.57015135243,
+                0.506134474,
+                1.140789303,
+                1.999973065,
+                1.2912442218,
+                1.7886477222,
+                1.4894267883467642
+** v24_batch12 - asd optim on 'zn' 96 cores; continue from v24_batch11 (bug: IC input)
+*** notes
+not reproducible cause was using IC input, and turns out IC input is random every time
+
+
+fixed parallel asd by adding try excpet around psutil
+continue from v24_batch11:
+                1.7930365644528616,
+                1.301292631,
+                1.9609935,
+                1.8666666666666667,
+                0.547478256,
+                0.8715206624,
+                0.57015135243,
+                0.506134474,
+                1.140789303,
+                1.999973065,
+                1.2912442218,
+                1.7886477222,
+                1.4894267883467642
+*** code
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+
+    params['EEGain'] = [0.5, 2.0, [1.7930365644528616]]
+    params['EIGain'] = [0.5, 2.0, [1.301292631]]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [1.9609935]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [1.8666666666666667]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [0.547478256]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [0.8715206624]]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [0.57015135243]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [0.506134474]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [1.140789303]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [1.999973065]]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, [1.2912442218]]  
+    params['intraThalamicGain'] = [0.5, 2.0, [1.7886477222]]
+    params['corticoThalamicGain'] = [0.5, 2.0, [1.4894267883467642]]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     100,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 30,  # max number of times to check if sim is completed (for each generation)
+        'popsize': 1
+    }
+*** results
+params for gen 37 (last improvement):
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=1.8666666666666667
+set ('IELayerGain', '5')=0.547478256
+set ('IELayerGain', '6')=0.9586727286400001
+set ('IILayerGain', '1-3')=0.57015135243
+set ('IILayerGain', '4')=0.5567479214
+set ('IILayerGain', '5')=1.140789303
+set ('IILayerGain', '6')=1.9110853732222222
+set thalamoCorticalGain=1.2912442218
+set intraThalamicGain=1.7886477222
+set corticoThalamicGain=1.4894267883467642
+
+
+            293.74052987739645,
+            293.74052987739645,
+            293.74052987739645,
+            293.74052987739645,
+            293.70094352945284,
+            293.70094352945284,
+            293.70094352945284,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7770994875725,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            287.7703753723922,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            281.8273278878959,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786,
+            269.8779437853786
+** v24_batch13 - asd optim on 'zn' 96 cores; continue from v24_batch12 (bug: IC input)
+not reproducible cause was using IC input (should only be bkg), and turns out IC input is random every time
+
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=1.8666666666666667
+set ('IELayerGain', '5')=0.547478256
+set ('IELayerGain', '6')=0.9586727286400001
+set ('IILayerGain', '1-3')=0.57015135243
+set ('IILayerGain', '4')=0.5567479214
+set ('IILayerGain', '5')=1.140789303
+set ('IILayerGain', '6')=1.9110853732222222
+set thalamoCorticalGain=1.2912442218
+set intraThalamicGain=1.7886477222
+set corticoThalamicGain=1.4894267883467642
+
+** v24_batch14 - asd optimi on 'zn' 96 cores; from v24_batch2 (after removing IC)
+*** notes
+    params['EEGain'] = [0.5, 2.0, 1.7930365644528616]
+    params['EIGain'] = [0.5, 2.0, 1.301292631]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, 1.9609935]
+    params[('IELayerGain', '4')] = [0.5, 2.0, 1.973369532]
+    params[('IELayerGain', '5')] = [0.5, 2.0, 0.547478256]
+    params[('IELayerGain', '6')] = [0.5, 2.0, 0.817050621]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, 0.575910457]
+    params[('IILayerGain', '4')] = [0.5, 2.0, 0.506134474]
+    params[('IILayerGain', '5')] = [0.5, 2.0, 1.140789303]
+    params[('IILayerGain', '6')] = [0.5, 2.0, 1.999973065]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, 1.434715802]  
+    params['intraThalamicGain'] = [0.5, 2.0, 1.987386358] 
+    params['corticoThalamicGain'] = [0.5, 2.0, 1.354024353042513]
+*** results
+zn% grep ++ $models/A1/screenlog.0
+    candidate 0, step 1 (1382.1 s) ++ (orig: 317.56 | best:317.56 | new:299.58 | diff:-17.980)
+    candidate 0, step 7 (9801.1 s) ++ (orig: 317.56 | best:299.58 | new:293.65 | diff:-5.9316)
+    candidate 0, step 9 (12627.5 s) ++ (orig: 317.56 | best:293.65 | new:275.77 | diff:-17.877)
+    candidate 0, step 34 (47506.1 s) ++ (orig: 317.56 | best:275.77 | new:275.76 | diff:-0.014009)
+    candidate 0, step 39 (54482.2 s) ++ (orig: 317.56 | best:275.76 | new:275.75 | diff:-0.0073418)
+    candidate 0, step 46 (64224.4 s) ++ (orig: 317.56 | best:275.75 | new:275.73 | diff:-0.022605)
+
+gen_46_cand_0
+set EEGain=1.7930365644528616
+set EIGain=1.301292631
+set ('IELayerGain', '1-3')=1.9609935
+set ('IELayerGain', '4')=1.973369532
+set ('IELayerGain', '5')=0.6022260816
+set ('IELayerGain', '6')=0.817050621
+set ('IILayerGain', '1-3')=0.5183194113
+set ('IILayerGain', '4')=0.506134474
+set ('IILayerGain', '5')=1.0267103727
+set ('IILayerGain', '6')=2.0
+set thalamoCorticalGain=1.434715802
+set intraThalamicGain=2.0
+set corticoThalamicGain=1.4442926432453471
+** v24_batch15 - asd continue from v24_batch15
+*** code
+def asdRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 2.0, [1.7930365644528616]]
+    params['EIGain'] = [0.5, 2.0, [1.301292631]]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [1.9609935]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [1.973369532]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [0.6022260816]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [0.817050621]]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [0.5183194113]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [0.506134474]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [1.0267103727]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [2.0]]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, [1.434715802]]  
+    params['intraThalamicGain'] = [0.5, 2.0, [2.0]] 
+    params['corticoThalamicGain'] = [0.5, 2.0, [1.4442926432453471]]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     200,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 1,  # max number of times to check if sim is completed (for each generation)
+        'popsize': 1
+    }
+
+** v24_batch16 - parallel ASD on GCP; NEURON 8.0
+*** notes
+*** code
+*** results
+===  Maximum iterations reached (steps: 200) ===
+  == candidate: 0 | orig: 578.66 | best: 375.49 | ratio: 0.64889 ==
+  == candidate: 1 | orig: -1.0000 | best: -1.0000 | ratio: 1.0000 ==
+  == candidate: 2 | orig: 619.55 | best: 489.84 | ratio: 0.79063 ==
+  == candidate: 3 | orig: 475.22 | best: 406.03 | ratio: 0.85441 ==
+  == candidate: 4 | orig: 655.22 | best: 441.70 | ratio: 0.67413 ==
+  == candidate: 5 | orig: -1.0000 | best: -1.0000 | ratio: 1.0000 ==
+  == candidate: 6 | orig: 637.05 | best: 508.97 | ratio: 0.79894 ==
+  == candidate: 7 | orig: 639.17 | best: 475.23 | ratio: 0.74351 ==
+  == candidate: 8 | orig: 577.88 | best: 477.15 | ratio: 0.82570 ==
+  == candidate: 9 | orig: 661.17 | best: 465.06 | ratio: 0.70340 ==
+  == candidate: 10 | orig: 441.48 | best: 310.98 | ratio: 0.70441 ==
+  == candidate: 11 | orig: 502.72 | best: 382.09 | ratio: 0.76005 == 
+  == candidate: 11 | orig: 702.78 | best: 549.61 | ratio: 0.78205 ==
+  == candidate: 13 | orig: 667.11 | best: 632.18 | ratio: 0.94764 ==
+  == candidate: 14 | orig: 401.70 | best: 372.27 | ratio: 0.92675 ==
+  == candidate: 15 | orig: 667.11 | best: 477.47 | ratio: 0.71573 ==
+  == candidate: 16 | orig: 696.83 | best: 655.22 | ratio: 0.94029 ==
+  == candidate: 17 | orig: 607.66 | best: 370.02 | ratio: 0.60893 ==
+  == candidate: 18 | orig: 702.78 | best: 405.74 | ratio: 0.57734 ==
+  == candidate: 19 | orig: 608.01 | best: 463.25 | ratio: 0.76190 ==
+  == candidate: 20 | orig: 503.06 | best: 485.75 | ratio: 0.96560 ==
+  == candidate: 21 | orig: 574.45 | best: 539.32 | ratio: 0.93885 ==
+  == candidate: 22 | orig: 708.73 | best: 673.06 | ratio: 0.94967 ==
+  == candidate: 23 | orig: 667.11 | best: 396.65 | ratio: 0.59458 ==
+  == candidate: 24 | orig: 690.89 | best: 604.63 | ratio: 0.87515 ==
+  == candidate: 25 | orig: 690.89 | best: 489.01 | ratio: 0.70779 ==
+  == candidate: 26 | orig: 619.55 | best: 423.47 | ratio: 0.68351 ==
+  == candidate: 27 | orig: 684.95 | best: 655.22 | ratio: 0.95659 ==
+  == candidate: 28 | orig: 690.89 | best: 655.22 | ratio: 0.94837 ==
+  == candidate: 29 | orig: 679.00 | best: 631.44 | ratio: 0.92996 ==
+  == candidate: 30 | orig: 381.21 | best: 350.80 | ratio: 0.92021 ==
+  == candidate: 31 | orig: 643.33 | best: 607.66 | ratio: 0.94456 ==
+  == candidate: 32 | orig: 631.44 | best: 489.11 | ratio: 0.77459 ==
+  == candidate: 33 | orig: 425.21 | best: 376.33 | ratio: 0.88505 ==
+  == candidate: 34 | orig: 520.17 | best: 430.15 | ratio: 0.82693 ==
+  == candidate: 35 | orig: 732.50 | best: 562.90 | ratio: 0.76846 ==
+  == candidate: 36 | orig: 720.61 | best: 461.09 | ratio: 0.63985 ==
+  == candidate: 37 | orig: 702.78 | best: 552.11 | ratio: 0.78561 ==
+  == candidate: 38 | orig: 447.70 | best: 323.26 | ratio: 0.72205 ==
+  == candidate: 39 | orig: 481.03 | best: 456.27 | ratio: 0.94853 ==
+
+  == Overall best: candidate: 10 | orig: 441.48 | best: 310.98 | ratio: 0.70441 ==
+
+
+  Gen: 144, Cand: 10, Fitness: 310.98
+Gen: 174, Cand: 38, Fitness: 323.26
+Gen: 85, Cand: 30, Fitness: 350.80
+Gen: 102, Cand: 17, Fitness: 370.02 - not so good 
+Gen: 177, Cand: 14, Fitness: 372.27 - not so good
+Gen: 173, Cand: 0, Fitness: 375.49
+Gen: 111, Cand: 33, Fitness: 376.33
+Gen: 30, Cand: 11, Fitness: 382.09
+Gen: 161, Cand: 23, Fitness: 396.65
+Gen: 79, Cand: 18, Fitness: 405.74
+Gen: 116, Cand: 3, Fitness: 406.03
+Gen: 184, Cand: 26, Fitness: 423.47
+Gen: 1, Cand: 34, Fitness: 430.15
+Gen: 66, Cand: 4, Fitness: 441.70
+Gen: 83, Cand: 39, Fitness: 456.27
+Gen: 1, Cand: 36, Fitness: 461.09
+Gen: 126, Cand: 19, Fitness: 463.25
+Gen: 1, Cand: 9, Fitness: 465.06
+Gen: 179, Cand: 7, Fitness: 475.23
+Gen: 1, Cand: 8, Fitness: 477.15
+Gen: 1, Cand: 15, Fitness: 477.47
+Gen: 119, Cand: 20, Fitness: 485.75
+Gen: 1, Cand: 25, Fitness: 489.01
+Gen: 1, Cand: 32, Fitness: 489.11
+Gen: 1, Cand: 2, Fitness: 489.84
+Gen: 195, Cand: 6, Fitness: 508.97
+Gen: 67, Cand: 21, Fitness: 539.32
+Gen: 1, Cand: 12, Fitness: 549.61
+Gen: 1, Cand: 37, Fitness: 552.11
+Gen: 1, Cand: 35, Fitness: 562.90
+Gen: 1, Cand: 24, Fitness: 604.63
+Gen: 185, Cand: 31, Fitness: 607.66
+Gen: 1, Cand: 29, Fitness: 631.44
+Gen: 1, Cand: 13, Fitness: 632.18
+Gen: 1, Cand: 27, Fitness: 655.22
+Gen: 157, Cand: 28, Fitness: 655.22
+Gen: 1, Cand: 16, Fitness: 655.22
+Gen: 148, Cand: 22, Fitness: 673.06
+** v24_batch17 - parallel ASD on GCP; continue best solutions from v24_batch16
+*** notes
+
+Gen: 144, Cand: 10, Fitness: 310.98
+set EEGain=1.4338777102469733
+set EIGain=1.1625828604622033
+set ('IELayerGain', '1-3')=1.091037051695174
+set ('IELayerGain', '4')=1.8712819675755956
+set ('IELayerGain', '5')=0.7397134465049761
+set ('IELayerGain', '6')=1.367569320349433
+set ('IILayerGain', '1-3')=1.418339439423966
+set ('IILayerGain', '4')=0.6274719645228012
+set ('IILayerGain', '5')=0.5675561437477121
+set ('IILayerGain', '6')=1.5174286644853214
+set thalamoCorticalGain=1.6851404284735372
+set intraThalamicGain=1.063075099977045
+set corticoThalamicGain=0.673804518651403
+
+Gen: 174, Cand: 38, Fitness: 323.26
+set EEGain=1.4117825668705553
+set EIGain=1.4562645192525767
+set ('IELayerGain', '1-3')=0.6966421717946888
+set ('IELayerGain', '4')=1.1564048776911902
+set ('IELayerGain', '5')=0.5082691576672945
+set ('IELayerGain', '6')=1.8650994583365461
+set ('IILayerGain', '1-3')=0.5247660780373347
+set ('IILayerGain', '4')=1.3887063888108127
+set ('IILayerGain', '5')=0.8359523062412009
+set ('IILayerGain', '6')=0.786403002769916
+set thalamoCorticalGain=1.0872681212597493
+set intraThalamicGain=1.9355702398668257
+set corticoThalamicGain=0.8456162169403141
+
+Gen: 85, Cand: 30, Fitness: 350.80
+set EEGain=1.4796339232563818
+set EIGain=1.2494919865726666
+set ('IELayerGain', '1-3')=1.2106074885592537
+set ('IELayerGain', '4')=0.5914377334878493
+set ('IELayerGain', '5')=0.7956691184253843
+set ('IELayerGain', '6')=1.1044833499655324
+set ('IILayerGain', '1-3')=1.8970275010959088
+set ('IILayerGain', '4')=1.2806598565853817
+set ('IILayerGain', '5')=1.0339389242169903
+set ('IILayerGain', '6')=1.2449536297089994
+set thalamoCorticalGain=1.653463860326919
+set intraThalamicGain=0.5816973165681442
+set corticoThalamicGain=1.8408576413375228
+
+Gen: 102, Cand: 17, Fitness: 370.02 
+set EEGain=1.3154950966436703
+set EIGain=1.0095763680475387
+set ('IELayerGain', '1-3')=1.3046938357412072
+set ('IELayerGain', '4')=1.337690869825955
+set ('IELayerGain', '5')=1.3419352351670506
+set ('IELayerGain', '6')=2.0
+set ('IILayerGain', '1-3')=1.806386376748424
+set ('IILayerGain', '4')=1.785015289487499
+set ('IILayerGain', '5')=1.3006272106913037
+set ('IILayerGain', '6')=1.6797508518217605
+set thalamoCorticalGain=1.5625342091955938
+set intraThalamicGain=0.9733859948789619
+set corticoThalamicGain=0.8423443321780072
+
+Gen: 177, Cand: 14, Fitness: 372.27 - not so good
+Gen: 173, Cand: 0, Fitness: 375.49 - use this one, a bit different
+set EEGain=1.4081465013179777
+set EIGain=0.6909751558458218
+set ('IELayerGain', '1-3')=1.476256983214676
+set ('IELayerGain', '4')=1.4388900372032694
+set ('IELayerGain', '5')=0.5
+set ('IELayerGain', '6')=1.4292511768559795
+set ('IILayerGain', '1-3')=0.6980418301090989
+set ('IILayerGain', '4')=1.1884408015079058
+set ('IILayerGain', '5')=1.8830229460800467
+set ('IILayerGain', '6')=1.1514878860870101
+set thalamoCorticalGain=0.9636536753602729
+set intraThalamicGain=1.283310375368901
+set corticoThalamicGain=1.2234380160367202
+
+---
+Gen: 111, Cand: 33, Fitness: 376.33
+Gen: 30, Cand: 11, Fitness: 382.09
+Gen: 161, Cand: 23, Fitness: 396.65
+Gen: 79, Cand: 18, Fitness: 405.74
+Gen: 116, Cand: 3, Fitness: 406.03
+Gen: 184, Cand: 26, Fitness: 423.47
+Gen: 1, Cand: 34, Fitness: 430.15
+Gen: 66, Cand: 4, Fitness: 441.70
+Gen: 83, Cand: 39, Fitness: 456.27
+Gen: 1, Cand: 36, Fitness: 461.09
+Gen: 126, Cand: 19, Fitness: 463.25
+Gen: 1, Cand: 9, Fitness: 465.06
+Gen: 179, Cand: 7, Fitness: 475.23
+Gen: 1, Cand: 8, Fitness: 477.15
+Gen: 1, Cand: 15, Fitness: 477.47
+Gen: 119, Cand: 20, Fitness: 485.75
+Gen: 1, Cand: 25, Fitness: 489.01
+Gen: 1, Cand: 32, Fitness: 489.11
+Gen: 1, Cand: 2, Fitness: 489.84
+Gen: 195, Cand: 6, Fitness: 508.97
+Gen: 67, Cand: 21, Fitness: 539.32
+Gen: 1, Cand: 12, Fitness: 549.61
+Gen: 1, Cand: 37, Fitness: 552.11
+Gen: 1, Cand: 35, Fitness: 562.90
+Gen: 1, Cand: 24, Fitness: 604.63
+Gen: 185, Cand: 31, Fitness: 607.66
+Gen: 1, Cand: 29, Fitness: 631.44
+Gen: 1, Cand: 13, Fitness: 632.18
+Gen: 1, Cand: 27, Fitness: 655.22
+Gen: 157, Cand: 28, Fitness: 655.22
+Gen: 1, Cand: 16, Fitness: 655.22
+Gen: 148, Cand: 22, Fitness: 673.06
+*** code
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    x0 = [[1.4338777102469733, 1.1625828604622033, 1.091037051695174, 1.8712819675755956, 0.7397134465049761, 1.367569320349433, 1.418339439423966, 0.6274719645228012, 0.5675561437477121, 1.5174286644853214, 1.6851404284735372, 1.063075099977045, 0.673804518651403],
+    [1.4117825668705553, 1.4562645192525767, 0.6966421717946888, 1.1564048776911902, 0.5082691576672945, 1.8650994583365461, 0.5247660780373347, 1.3887063888108127, 0.8359523062412009, 0.786403002769916, 1.0872681212597493, 1.9355702398668257, 0.8456162169403141],
+    [1.4796339232563818, 1.2494919865726666, 1.2106074885592537, 0.5914377334878493, 0.7956691184253843, 1.1044833499655324, 1.8970275010959088, 1.2806598565853817, 1.0339389242169903, 1.2449536297089994, 1.653463860326919, 0.5816973165681442, 1.8408576413375228],
+    [1.3154950966436703, 1.0095763680475387, 1.3046938357412072, 1.337690869825955, 1.3419352351670506, 2.0, 1.806386376748424, 1.785015289487499, 1.3006272106913037, 1.6797508518217605, 1.5625342091955938, 0.9733859948789619, 0.8423443321780072],
+    [1.4081465013179777, 0.6909751558458218, 1.476256983214676, 1.4388900372032694, 0.5, 1.4292511768559795, 0.6980418301090989, 1.1884408015079058, 1.8830229460800467, 1.1514878860870101, 0.9636536753602729, 1.283310375368901, 1.2234380160367202]]
+
+    # bkg inputs
+    params['EEGain'] = [0.5, 2.0, [x[0] for x in x0]]
+    params['EIGain'] = [0.5, 2.0, [x[1] for x in x0]]
+
+    params[('IELayerGain', '1-3')] = [0.5, 2.0, [x[2] for x in x0]]
+    params[('IELayerGain', '4')] = [0.5, 2.0, [x[3] for x in x0]]
+    params[('IELayerGain', '5')] = [0.5, 2.0, [x[4] for x in x0]]
+    params[('IELayerGain', '6')] = [0.5, 2.0, [x[5] for x in x0]]
+
+    params[('IILayerGain', '1-3')] = [0.5, 2.0, [x[6] for x in x0]]
+    params[('IILayerGain', '4')] = [0.5, 2.0, [x[7] for x in x0]]
+    params[('IILayerGain', '5')] = [0.5, 2.0, [x[8] for x in x0]]
+    params[('IILayerGain', '6')] = [0.5, 2.0, [x[9] for x in x0]]
+    
+    params['thalamoCorticalGain'] = [0.5, 2.0, [x[10] for x in x0]]
+    params['intraThalamicGain'] = [0.5, 2.0, [x[11] for x in x0]]
+    params['corticoThalamicGain'] = [0.5, 2.0, [x[12] for x in x0]]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'asd'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'stepsize':     0.1,     #   Initial step size as a fraction of each parameter
+        'sinc':         1.5,       #   Step size learning rate (increase)
+        'sdec':         1.5,       #   Step size learning rate (decrease)
+        'pinc':         2,       #   Parameter selection learning rate (increase)
+        'pdec':         2,       #   Parameter selection learning rate (decrease)
+        #'pinitial':     None,    #    Set initial parameter selection probabilities
+        #'sinitial':     None,    #    Set initial step sizes; if empty, calculated from stepsize instead
+        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      360000,    #    Maximum time allowed, in seconds
+        'abstol':       1e-6,    #    Minimum absolute change in objective function
+        'reltol':       1e-3,    #    Minimum relative change in objective function
+        #'stalliters':   10*len(params)*len(params),  #    Number of iterations over which to calculate TolFun (n = number of parameters)
+        #'stoppingfunc': None,    #    External method that can be used to stop the calculation from the outside.
+        #'randseed':     None,    #    The random seed to use
+        'verbose':      2,       #    How much information to print during the run
+        #'label':        None    #    A label to use to annotate the output
+        'time_sleep': 60, # 1min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 12,  # max number of times to check if sim is completed (for each generation)
+        'popsize': 5
+    }
+
+    return b
+
+
+
+** v25_batch1 - parallel Optuna optim test on GCP
+*** notes
+had to run:
+pip3 install --user bokeh optuna scikit-learn PIL joblib pymysql mysqlclient
+sudo yum install MySQL-python
+
+mpi4py not working
+
+- commented out optuna and bokeh loading so no issuess in hpc nodes 
+*** results
+worked ok after much debugging
+** v25_batch2 - parallel Optuna optim on GCP - 50 parallel jobs
+*** notes
+50 parallel jobs, 300 trials each
+** v25_batch3 - best of v25_batch2 with and w/o IC; with LFP 
+*** note
+actually results merged with v25_batch4 - same simlabel, diff files 
+** v25_batch4 - best of v25_batch2 with IC off; with LFP; TC 
+*** notes
+*** results
+- plotting 'manually' conn matrices
+
+- m=sim.analysis.plotConn(includePre=pops, includePost=pops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn_prob_new.png', saveData='conn_prob_new.pkl')
+- issues with instnatiated vs empirical conn prob matrix:
+-- PV2/SOM2 and PV4/SOM4 appear inverted
+-- replotting with list of pops in correct order
+-- that fixed the issue -- empirical approx same as instantiated prob conn matrix
+
+- w=sim.analysis.plotConn(includePre=['IT3', 'NGF3'], includePost=['IT3','NGF3'], feature='weight', synOrConn='syn', synMech='AMPA', removeWeightNorm=1, showFig=0, saveFig='weight_AMPA.png', saveData='weight_AMPA.pkl')
+
+- w2=sim.analysis.plotConn(includePre=pops, includePost=pops, removeWeightNorm=1, feature='weight', synOrConn='syn', synMech='AMPA', removeWeightNorm=0, showFig=0, saveFig='weight_AMPA.png', saveData='weight_AMPA.pkl')
+
+-- issue with removeWeightNorm -- all 0 (if False, then weights ok)
+-- checking locally
+-- issues was that also need to save cell secs to have access to geom nseg and weightN
+
+In [9]: allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B'
+   ...: , 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
+
+In [10]: w=sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='weight', synOrConn='syn', synMech='AMPA', removeWeightNorm=1, showFig=0, saveFig='weight_allpops_AMPA.png', saveData='weight_
+    ...: allpops_AMPA.pkl')
+
+
+** v25_batch5 - best of v25_batch2 with IC; stronger weights; start 750; with LFP
+*** note
+- there is high intrinsic activity at 750 so hard to see stim effect
+
+** v25_batch6 - best of v25_batch2 with different NGF weightNorm values
+*** note
+- check if NGF wnorm changes it's excessive excitability/sensitivity
+
+*** code
+def custom():
+    params = specs.ODict()
+
+    # conn gains
+    params[('weightNormScaling', 'NGF_reduced')] = [0.1, 0.25, 0.5, 1.0, 1.5, 2.0]
+    # params[('IELayerGain', '1-3')] = [1.9609935, 1.9609935 - 0.1, 1.9609935 - 0.2] 
+    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    
+    #params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
+    #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
+
+    #params['thalamoCorticalGain'] = [1.8483736535302833, 2.5]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    #initCfg[('ICThalInput', 'startTime')] = 750
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from v25_batch2 (optuna best)
+    initCfg[('IELayerGain', '1-3')] = 0.7628339148790332 
+    initCfg[('IELayerGain', '4')] = 1.974325049287055 
+    initCfg[('IELayerGain', '5')] = 0.7753261834291882 
+    initCfg[('IELayerGain', '6')] = 1.5588140501085836 
+    initCfg[('IILayerGain', '1-3')] = 0.8006022233940763 
+    initCfg[('IILayerGain', '4')] = 1.999312334956534 
+    initCfg[('IILayerGain', '5')] = 0.9126340893010045 
+    initCfg[('IILayerGain', '6')] = 1.5704716674573778 
+    initCfg['EEGain'] = 1.9405846115921952 
+    initCfg['EIGain'] = 1.8600534795309025 
+    initCfg['corticoThalamicGain'] = 1.083986203608584 
+    initCfg['intraThalamicGain'] = 0.5531222327683913
+    initCfg['thalamoCorticalGain'] = 1.8483736535302833
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+** v25_batch7 - best of v25_batch2 with different ITS4 weightNorm values
+*** code
+    params[('weightNormScaling', 'ITS4_reduced')] = [0.1, 0.25, 0.5, 1.0, 1.5, 2.0]
+
+** v25_batch8 - best of v25_batch2 with different NGF+ITS4 weightNorm values
+*** code
+    params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
+    params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
+** v25_batch9 - removed NGF2-6, increased IEGain
+*** notes
+fixed mpi issue on gcp:
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+*** code
+    - REMOVED NGF2-6
+    params['IEGain'] = [1.0, 1.25]
+
+
+** v25_batch10 - synweightFracEI
+*** code
+    params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
+** v25_batch11 - removed NGF2-6, increased IEGain (fine tune)
+*** code
+params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
+
+
+** NGF_evol1 - reducede sensitivity to E-I imbalance with similar fI curve
+*** notes
+pip install --user optuna psutil sklearn
+*** code
+def evolCellNGF():
+    # parameters space to explore
+    params = specs.ODict()
+
+    scalingRange = [0.5, 2.0]
+    
+    params[('tune', 'Ra')] = scalingRange
+    params[('tune', 'cm')] = scalingRange
+    params[('tune', 'pas', 'e')] = scalingRange
+    params[('tune', 'pas', 'g')] = scalingRange
+    params[('tune', 'ch_CavL', 'gmax')] = scalingRange
+    params[('tune', 'ch_CavN', 'gmax')] = scalingRange
+    params[('tune', 'ch_KCaS', 'gmax')] = scalingRange
+    params[('tune', 'ch_Kdrfastngf', 'gmax')] = scalingRange
+    params[('tune', 'ch_KvAngf', 'gmax')] = scalingRange
+    params[('tune', 'ch_KvCaB', 'gmax')] = scalingRange
+    params[('tune', 'ch_Navngf', 'gmax')] = scalingRange
+    params[('tune', 'hd', 'gbar')] = scalingRange
+
+    # params[('tune', 'hd', 'ehd')] = scalingRange
+    # params[('tune', 'hd', 'elk')] = scalingRange
+    # params[('tune', 'hd', 'vhalfl')] = scalingRange
+    # params[('tune', 'iconc_Ca', 'caiinf')] = scalingRange
+    # params[('tune', 'iconc_Ca', 'catau')] = scalingRange
+
+
+    # current injection params
+    interval = 10000  # 10000
+    dur = 500  # ms
+    durSteady = 200  # ms
+    amps = list(np.arange(0.04+0.075, 0.121+0.075, 0.01))  # amplitudes
+    times = list(np.arange(interval, (dur+interval) * len(amps), dur+interval))  # start times
+    targetRatesOnset = [43., 52., 68., 80., 96., 110., 119., 131., 139.]
+    targetRatesSteady = [22., 24., 27., 30., 33., 35., 37., 39., 41.]
+
+    stimWeights = [10, 50, 100, 150]
+    stimRate = 80
+    stimDur = 2000
+    stimTimes = [times[-1] + x for x in list(np.arange(-interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTargetSensitivity = 100  # max - min 
+
+    # initial cfg set up
+    initCfg = {} # specs.ODict()
+    initCfg['duration'] = ((dur+interval) * len(amps)) + ((stimDur+interval) * len(stimWeights)) 
+    initCfg[('hParams', 'celsius')] = 37
+
+    initCfg['savePickle'] = True
+    initCfg['saveJson'] = False
+    initCfg['saveDataInclude'] = ['simConfig', 'netParams', 'net', 'simData']
+
+    initCfg[('IClamp1', 'pop')] = 'NGF'
+    initCfg[('IClamp1', 'amp')] = amps
+    initCfg[('IClamp1', 'start')] = times
+    initCfg[('IClamp1', 'dur')] = dur
+    
+    # iclamp
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, initCfg['duration']] 
+    initCfg[('analysis', 'plotfI', 'amps')] = amps
+    initCfg[('analysis', 'plotfI', 'times')] = times
+    initCfg[('analysis', 'plotfI', 'calculateOnset')] = True
+    initCfg[('analysis', 'plotfI', 'dur')] = dur
+    initCfg[('analysis', 'plotfI', 'durSteady')] = durSteady
+    initCfg[('analysis', 'plotfI', 'targetRates')] = [] #
+    initCfg[('analysis', 'plotfI', 'targetRatesOnset')] = targetRatesOnset
+    initCfg[('analysis', 'plotfI', 'targetRatesSteady')] = targetRatesSteady
+
+    # netstim 
+    initCfg[('NetStim1', 'weight')] = stimWeights
+    initCfg[('NetStim1', 'start')] = stimTimes
+    initCfg[('NetStim1', 'interval')] = 1000.0 / stimRate 
+    initCfg[('NetStim1', 'pop')] = 'NGF'
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'synMech')] = ['AMPA', 'NMDA']
+    initCfg[('NetStim1', 'synMechWeightFactor')] = [0.5, 0.5]
+    initCfg[('NetStim1', 'number')] = 1e9
+    initCfg[('NetStim1', 'noise')] = 1.0
+
+
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis', 'plotRaster')] = False
+    initCfg['printPopAvgRates'] = [[x, x+stimDur] for x in stimTimes]
+    
+    
+    for k, v in params.items():
+        initCfg[k] = v[0]  # initialize params in cfg so they can be modified    
+
+    # fitness function
+    fitnessFuncArgs = {}
+    fitnessFuncArgs['targetRatesOnset'] = targetRatesOnset
+    fitnessFuncArgs['targetRatesSteady'] = targetRatesSteady
+    fitnessFuncArgs['stimTargetSensitivity'] = stimTargetSensitivity
+    
+    def fitnessFunc(simData, **kwargs):
+        targetRatesOnset = kwargs['targetRatesOnset']
+        targetRatesSteady = kwargs['targetRatesSteady']
+        stimTargetSensitivity = kwargs['stimTargetSensitivity']
+            
+        diffRatesOnset = [abs(x-t) for x,t in zip(simData['fI_onset'], targetRatesOnset)]
+        diffRatesSteady = [abs(x - t) for x, t in zip(simData['fI_steady'], targetRatesSteady)]
+        stimDiffRate = np.max(list(simData['popRates']['NGF'].values())) - np.min(list(simData['popRates']['NGF'].values()))
+        
+        maxFitness = 1000
+        fitness = np.mean(diffRatesOnset + diffRatesSteady) if stimDiffRate < stimTargetSensitivity else maxFitness
+        
+        print(' Candidate rates: ', simData['fI_onset']+simData['fI_steady'])
+        print(' Target rates:    ', targetRatesOnset+targetRatesSteady)
+        print(' Difference:      ', diffRatesOnset + diffRatesSteady)
+        print(' Stim sensitivity: ', stimDiffRate)
+
+        return fitness
+        
+
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, initCfg=initCfg)
+    
+    # Set output folder, grid method (all param combinations), and run configuration
+    b.batchLabel = 'NGF_evol1'
+    b.saveFolder = 'data/'+b.batchLabel
+    b.method = 'evol'
+    b.runCfg = {
+        'type': 'mpi_bulletin',#'hpc_slurm', 
+        'script': 'init.py',
+        'mpiCommand': 'python3',  
+        # # options required only for hpc
+        # 'nodes': 1,
+        # 'coresPerNode': 2,
+        # 'allocation': 'default',
+        # 'email': 'salvadordura@gmail.com',
+        # 'reservation': None,
+        # 'folder': '/home/salvadord/evol'
+        # #'custom': 'export LD_LIBRARY_PATH="$HOME/.openmpi/lib"' # only for conda users
+    }
+    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 95,
+        'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
+        'mutation_rate': 0.4,
+        'crossover': 0.5,
+        'maximize': False, # maximize fitness function?
+        'max_generations': 2000,
+        'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
+        'defaultFitness': 1000 # set fitness value in case simulation time is over
+    }
+    # Run batch simulations
+    b.run()
+** NGF_optuna1 - reducede sensitivity to E-I imbalance with similar fI curve
+*** notes
+pip3 install --user optuna psutil sklearn
+*** code
+sensitivity threshold 139
+** NGF_optuna2
+*** code
+proportional to sensitivity
+** NGF_evol3
+*** code
+sensitivity threshold 200
+*** results
+#gen  pop-size  worst  best  median  average  std-deviation
+107, 95, 1000, 16.7812295636476, 1000.0, 909.5910595002416, 279.51521172064236
+ Candidate 77 fitness = 16.8
+
+ Candidate rates:  [0.0, 59.70149253383835, 63.89776357455542, 68.02721088039404, 72.46376811172408, 76.6283524859611, 80.64516130909925, 84.74576273159582, 88.49557524184343, 93.02325583561215, 0.0, 10.0, 10.0, 15.0, 15.0, 20.0, 20.0, 20.0, 25.0, 25.0]
+ Target rates:     [0.0, 43.0, 52.0, 68.0, 80.0, 96.0, 110.0, 119.0, 131.0, 139.0, 0.0, 22.0, 24.0, 27.0, 30.0, 33.0, 35.0, 37.0, 39.0, 41.0]
+ Difference:       [0.0, 16.701492533838348, 11.89776357455542, 0.027210880394036963, 7.536231888275921, 19.371647514038898, 29.35483869090075, 34.25423726840418, 42.504424758156574, 45.97674416438785, 0.0, 12.0, 14.0, 12.0, 15.0, 13.0, 15.0, 17.0, 14.0, 16.0]
+ Stim sensitivity:  191.5
+
+            "L": 1.2052913753109844,
+            "Ra": 0.6188916807404659,
+            "ch_CavL": {
+                "gmax": 0.6643606309051462
+            },
+            "ch_CavN": {
+                "gmax": 1.999513285476655
+            },
+            "ch_KCaS": {
+                "gmax": 1.9119135773928315
+            },
+            "ch_Kdrfastngf": {
+                "gmax": 0.6731585388416943
+            },
+            "ch_KvAngf": {
+                "gmax": 1.1398823069068658
+            },
+            "ch_KvCaB": {
+                "gmax": 1.990571113355998
+            },
+            "ch_Navngf": {
+                "gmax": 0.5000341829278828
+            },
+            "cm": 1.8703530950670728,
+            "diam": 1.0669279464935373,
+            "hd": {
+                "gbar": 0.5041587767739838
+            },
+            "pas": {
+                "e": 0.6618040978482008,
+                "g": 0.7938102760892314
+            }
+
+** NGF_optuna3
+*** code
+sensitivity threshold 200
+*** results
+Both have good steady start fI, but lower onset fI
+stim <200 hz
+
+Best is trial 7104 with value: 15.68709538903382
+ "L": 0.5292094921519722,
+            "Ra": 1.4789488212279527,
+            "ch_CavL": {
+                "gmax": 0.8294009810179838
+            },
+            "ch_CavN": {
+                "gmax": 1.8302558031992033
+            },
+            "ch_KCaS": {
+                "gmax": 1.9966915506612826
+            },
+            "ch_Kdrfastngf": {
+                "gmax": 1.9718693540420718
+            },
+            "ch_KvAngf": {
+                "gmax": 1.9995297406303094
+            },
+            "ch_KvCaB": {
+                "gmax": 1.386572752588786
+            },
+            "ch_Navngf": {
+                "gmax": 1.9747105482249578
+            },
+            "cm": 1.6538025216246877,
+            "diam": 0.9280430551297493,
+            "hd": {
+                "gbar": 1.359096548635795
+            },
+            "pas": {
+                "e": 0.6789102769330073,
+                "g": 0.8144720557328889
+            }
+
+
+Best is trial 12641 with value: 15.686702153579452
+            "L": 0.689135676792468,
+            "Ra": 1.5107994749104472,
+            "ch_CavL": {
+                "gmax": 0.7785651254425331
+            },
+            "ch_CavN": {
+                "gmax": 1.8726511033353617
+            },
+            "ch_KCaS": {
+                "gmax": 1.9989870415294693
+            },
+            "ch_Kdrfastngf": {
+                "gmax": 1.9993775322859029
+            },
+            "ch_KvAngf": {
+                "gmax": 1.9988397324882128
+            },
+            "ch_KvCaB": {
+                "gmax": 0.9711393790585342
+            },
+            "ch_Navngf": {
+                "gmax": 1.9990447151070911
+            },
+            "cm": 1.7000470536108732,
+            "diam": 0.8560750709483423,
+            "hd": {
+                "gbar": 1.3469228494250693
+            },
+            "pas": {
+                "e": 0.603295186079315,
+                "g": 0.7537517553399005
+            }
+
+
+
+
+** ITS4_optuna1
+*** code
+# ---------------------------------------------------------------------------------------------- #
+def evolCellITS4():
+    # parameters space to explore
+    params = specs.ODict()
+
+    scalingRange = [0.5, 2.0]
+    scalingRangeReduced = [0.75, 1.5]
+    
+
+    params[('tune', 'L')] = scalingRangeReduced
+    params[('tune', 'diam')] = scalingRange
+    params[('tune', 'Ra')] = scalingRange
+    params[('tune', 'cm')] = scalingRange
+    params[('tune', 'kv', 'gbar')] = scalingRange
+    params[('tune', 'naz', 'gmax')] = scalingRange
+    params[('tune', 'pas', 'e')] = scalingRangeReduced
+    params[('tune', 'pas', 'g')] = scalingRange
+
+    params[('tune', 'Nca', 'gmax')] = scalingRange
+    params[('tune', 'kca', 'gbar')] = scalingRange
+    params[('tune', 'km', 'gbar')] = scalingRange
+
+
+    # current injection params
+    interval = 2000
+    dur = 500  # ms
+    amps = list(np.arange(0.0, 0.65, 0.05))  # amplitudes
+    times = list(np.arange(interval, (dur+interval) * len(amps), dur+interval))  # start times
+    targetRates = [0., 0., 19., 29., 37., 45., 51., 57., 63., 68., 73., 77., 81.]
+ 
+    stimWeights = [10, 50, 100, 150]
+    stimRate = 80
+    stimDur = 2000
+    stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTargetSensitivity = 75
+ 
+    # initial cfg set up
+    initCfg = {} # specs.ODict()
+    initCfg['duration'] = stimTimes[-1] + dur
+    initCfg[('hParams', 'celsius')] = 37
+
+    initCfg['savePickle'] = True
+    initCfg['saveJson'] = False
+    initCfg['saveDataInclude'] = ['simConfig', 'netParams', 'net', 'simData']
+
+    # iclamp
+    initCfg[('IClamp1', 'pop')] = 'ITS4'
+    initCfg[('IClamp1', 'amp')] = amps
+    initCfg[('IClamp1', 'start')] = times
+    initCfg[('IClamp1', 'dur')] = dur
+
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, initCfg['duration']] 
+    initCfg[('analysis', 'plotfI', 'amps')] = amps
+    initCfg[('analysis', 'plotfI', 'times')] = times
+    initCfg[('analysis', 'plotfI', 'dur')] = dur
+    initCfg[('analysis', 'plotfI', 'targetRates')] = targetRates
+
+    # netstim 
+    initCfg[('NetStim1', 'weight')] = stimWeights
+    initCfg[('NetStim1', 'start')] = stimTimes
+    initCfg[('NetStim1', 'interval')] = 1000.0 / stimRate 
+    initCfg[('NetStim1', 'pop')] = 'ITS4'
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'synMech')] = ['AMPA', 'NMDA']
+    initCfg[('NetStim1', 'synMechWeightFactor')] = [0.5, 0.5]
+    initCfg[('NetStim1', 'number')] = stimRate * stimDur/1000. * 1.1
+    initCfg[('NetStim1', 'noise')] = 1.0
+
+
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis', 'plotRaster')] = False
+    initCfg['printPopAvgRates'] = [[x, x+stimDur] for x in stimTimes]
+    
+    for k, v in params.items():
+        initCfg[k] = v[0]  # initialize params in cfg so they can be modified    
+
+    # fitness function
+    fitnessFuncArgs = {}
+    fitnessFuncArgs['targetRates'] = targetRates
+    
+    def fitnessFunc(simData, **kwargs):
+        targetRates = kwargs['targetRates']
+            
+        diffRates = [abs(x - t) for x, t in zip(simData['fI'], targetRates)]
+        
+        # calculate sensitivity (firing rate) to exc syn inputs 
+        stimMaxRate = np.max(list(simData['popRates']['ITS4'].values()))
+        
+        maxFitness = 1000
+
+        fitness = np.mean(diffRates) if stimMaxRate < stimTargetSensitivity else \
+                  np.mean(diffRates) + (stimMaxRate - stimTargetSensitivity)
+
+        
+        print(' Candidate rates: ', simData['fI'])
+        print(' Target rates:    ', targetRates)
+        print(' Difference:      ', diffRates)
+        print(' Stim sensitivity: ', stimMaxRate)
+
+        return fitness
+        
+
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, initCfg=initCfg)
+    
+    b.method = 'optuna'
+
+    if b.method == 'evol':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'ITS4_evol1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_bulletin',#'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+
+        b.evolCfg = {
+            'evolAlgorithm': 'custom',
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'pop_size': 95,
+            'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
+            'mutation_rate': 0.4,
+            'crossover': 0.5,
+            'maximize': False, # maximize fitness function?
+            'max_generations': 2000,
+            'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
+            'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
+            'defaultFitness': 1000 # set fitness value in case simulation time is over
+        }
+
+    elif b.method == 'optuna':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'ITS4_optuna1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_direct', #'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+        b.optimCfg = {
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'maxFitness': 1000,
+            'maxiters':     2000*95,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+            'maxtime':      100*2000,    #    Maximum time allowed, in seconds
+            'maxiter_wait': 6,
+            'time_sleep': 10,
+            'popsize': 1  # unused - run with mpi 
+        }    # Run batch simulations
+    
+    # Run batch simulations
+    b.run()
+** ITS4_optuna2
+*** code
+# ---------------------------------------------------------------------------------------------- #
+def evolCellITS4():
+    # parameters space to explore
+    params = specs.ODict()
+
+    scalingRange = [0.25, 4.0]
+    scalingRangeReduced = [0.75, 1.5]
+    
+
+    params[('tune', 'L')] = scalingRangeReduced
+    params[('tune', 'diam')] = scalingRange
+    params[('tune', 'Ra')] = scalingRange
+    params[('tune', 'cm')] = scalingRange
+    params[('tune', 'kv', 'gbar')] = scalingRange
+    params[('tune', 'naz', 'gmax')] = scalingRange
+    params[('tune', 'pas', 'e')] = scalingRangeReduced
+    params[('tune', 'pas', 'g')] = scalingRange
+
+    params[('tune', 'Nca', 'gmax')] = scalingRange
+    params[('tune', 'kca', 'gbar')] = scalingRange
+    params[('tune', 'km', 'gbar')] = scalingRange
+
+
+    # current injection params
+    interval = 2000
+    dur = 500  # ms
+    amps = list(np.arange(0.0, 0.65, 0.05))  # amplitudes
+    times = list(np.arange(interval, (dur+interval) * len(amps), dur+interval))  # start times
+    targetRates = [0., 0., 19., 29., 37., 45., 51., 57., 63., 68., 73., 77., 81.]
+ 
+    stimWeights = [10, 50, 100, 150]
+    stimRate = 80
+    stimDur = 2000
+    stimTimes = [times[-1] + x for x in list(np.arange(interval, (stimDur + interval) * len(stimWeights), stimDur + interval))]
+    stimTargetSensitivity = 75
+ 
+    # initial cfg set up
+    initCfg = {} # specs.ODict()
+    initCfg['duration'] = stimTimes[-1] + dur
+    initCfg[('hParams', 'celsius')] = 37
+
+    initCfg['savePickle'] = True
+    initCfg['saveJson'] = False
+    initCfg['saveDataInclude'] = ['simConfig', 'netParams', 'net', 'simData']
+
+    # iclamp
+    initCfg[('IClamp1', 'pop')] = 'ITS4'
+    initCfg[('IClamp1', 'amp')] = amps
+    initCfg[('IClamp1', 'start')] = times
+    initCfg[('IClamp1', 'dur')] = dur
+
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [0, initCfg['duration']] 
+    initCfg[('analysis', 'plotfI', 'amps')] = amps
+    initCfg[('analysis', 'plotfI', 'times')] = times
+    initCfg[('analysis', 'plotfI', 'dur')] = dur
+    initCfg[('analysis', 'plotfI', 'targetRates')] = targetRates
+
+    # netstim 
+    initCfg[('NetStim1', 'weight')] = stimWeights
+    initCfg[('NetStim1', 'start')] = stimTimes
+    initCfg[('NetStim1', 'interval')] = 1000.0 / stimRate 
+    initCfg[('NetStim1', 'pop')] = 'ITS4'
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'synMech')] = ['AMPA', 'NMDA']
+    initCfg[('NetStim1', 'synMechWeightFactor')] = [0.5, 0.5]
+    initCfg[('NetStim1', 'number')] = stimRate * stimDur/1000. * 1.1
+    initCfg[('NetStim1', 'noise')] = 1.0
+
+
+    initCfg['removeWeightNorm'] = False
+    initCfg[('analysis', 'plotRaster')] = False
+    initCfg['printPopAvgRates'] = [[x, x+stimDur] for x in stimTimes]
+    
+    for k, v in params.items():
+        initCfg[k] = v[0]  # initialize params in cfg so they can be modified    
+
+    # fitness function
+    fitnessFuncArgs = {}
+    fitnessFuncArgs['targetRates'] = targetRates
+    
+    def fitnessFunc(simData, **kwargs):
+        targetRates = kwargs['targetRates']
+            
+        diffRates = [abs(x - t) for x, t in zip(simData['fI'], targetRates)]
+        
+        # calculate sensitivity (firing rate) to exc syn inputs 
+        stimMaxRate = np.max(list(simData['popRates']['ITS4'].values()))
+        
+        maxFitness = 1000
+
+        fitness = np.mean(diffRates) if stimMaxRate < stimTargetSensitivity else \
+                  np.mean(diffRates) + (stimMaxRate - stimTargetSensitivity)
+
+        
+        print(' Candidate rates: ', simData['fI'])
+        print(' Target rates:    ', targetRates)
+        print(' Difference:      ', diffRates)
+        print(' Stim sensitivity: ', stimMaxRate)
+
+        return fitness
+        
+
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, initCfg=initCfg)
+    
+    b.method = 'optuna'
+
+    if b.method == 'evol':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'ITS4_evol1'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_bulletin',#'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+
+        b.evolCfg = {
+            'evolAlgorithm': 'custom',
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'pop_size': 95,
+            'num_elites': 1, # keep this number of parents for next generation if they are fitter than children
+            'mutation_rate': 0.4,
+            'crossover': 0.5,
+            'maximize': False, # maximize fitness function?
+            'max_generations': 2000,
+            'time_sleep': 10, # wait this time before checking again if sim is completed (for each generation)
+            'maxiter_wait': 6, # max number of times to check if sim is completed (for each generation)
+            'defaultFitness': 1000 # set fitness value in case simulation time is over
+        }
+
+    elif b.method == 'optuna':
+        # Set output folder, grid method (all param combinations), and run configuration
+        b.batchLabel = 'ITS4_optuna2'
+        b.saveFolder = 'data/'+b.batchLabel
+        b.runCfg = {
+            'type': 'mpi_direct', #'hpc_slurm', 
+            'script': 'init.py',
+            'mpiCommand': '',
+            'nrnCommand': 'python3'
+        }
+        b.optimCfg = {
+            'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+            'fitnessFuncArgs': fitnessFuncArgs,
+            'maxFitness': 1000,
+            'maxiters':     2000*95,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+            'maxtime':      100*2000,    #    Maximum time allowed, in seconds
+            'maxiter_wait': 6,
+            'time_sleep': 10,
+            'popsize': 1  # unused - run with mpi 
+        }    # Run batch simulations
+    
+    # Run batch simulations
+    b.run()
+
+** v28_batch1
+*** code
+*** results
+- best fitness 244; trial 12398
+-- upper layer quiet; then burst and deeper layers quiet; mutual inhib?
+-- depol block: IT2, IT3, IT6, ITS4, PV2, PV6, SOM4, VIP2-4, VIP6 (most just short period at end)
+
+- using filter analysis found 'better solutions'; trials: 9426, 13859, 14632
+-- good rates for all E except: PT5B, TCM
+-- good rates for all I except: NGF2-6, TIM, VIP4
+-- depol block: cells ITS4, IT6, PV6 -- but only some cells; pop rates ok
+
+- PT5B and TCM low rates, no depol block; can increase bkg input
+- NGF very low rates; forgot to adjust bkg inputs after tuning! 
+- TIM never fired; forgot to add bkg inputs!
+
+** v28_batch2 - v28_batch1 trial 14632 with adjusted bkg weights
+** v28_batch3 - v28_batch1 trial 14632 with adjusted bkg weights
+*** code
+bkgWeights:
+    NGFfactor = 2.5
+    ITS4factor = 5.0
+    manualScaling = {'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0 * NGFfactor, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0 * NGFfactor, 'ITP4': 1.1, 'ITS4': 1.0 * ITS4factor, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.0 * NGFfactor, 'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 1.0 * NGFfactor, 'PT5B': 1.0, 'IT5B': 0.075, 'CT5B': 0.75, 'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.0 * NGFfactor, 'TC': 1.25, 'TCM': 1.25, 'HTC': 1.25, 'TI': 1.25, 'TIM': 1.25}  # for v22_batch28
+
+
+batch.py:
+   params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 2000
+    initCfg['printPopAvgRates'] = [1000, 2000] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    #initCfg[('ICThalInput', 'startTime')] = 750
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    # from v28_batch1 (optuna), trial 14632
+    initCfg.update({
+    'EEGain': 0.9627240590814994,
+    'EIGain': 0.3917381420195193,
+    'IEGain': 1.0,
+    'IELayerGain': {'1-3': 1.4543584284774436,
+    '4': 0.5876239956096105,
+    '5': 0.20069931808448005,
+    '6': 0.6754391191627422},
+    'IIGain': 1.0,
+    'IILayerGain': {'1-3': 0.34624502581075384,
+    '4': 1.3085889834828857,
+    '5': 0.24735365353066327,
+    '6': 2.727404732884022}})
+
+
+
+** v28_batch4 - v28_batch1 trial 14632 with adjusted bkg weights
+*** notes
+bkg w:
+ - increased PT5B to 2.0
+ - dec ITS4 to 4.0
+ - inc NGF to 4.0
+ - inc TIM to 1.5
+*** code
+    # manual scaling adjustments based on simulation with automatically calculated bkg weights (finetuning)
+    NGFfactor = 4.0
+    ITS4factor = 4.0
+    manualScaling = {'SOM2': 0.75, 'VIP2': 0.75, 'NGF2': 1.0 * NGFfactor, 'SOM3': 1.0, 'VIP3': 1.25, 'NGF3': 1.0 * NGFfactor, 'ITP4': 1.1, 'ITS4': 1.0 * ITS4factor, 'SOM4': 1.0, 'PV4': 0.9, 'VIP4': 1.0, 'NGF4': 1.0 * NGFfactor, 'IT5A': 0.075, 'CT5A': 0.75, 'SOM5A': 1.25, 'PV5A': 1.25, 'VIP5A': 1.1, 'NGF5A': 1.0 * NGFfactor, 'PT5B': 2.0, 'IT5B': 0.075, 'CT5B': 0.75, 'IT6': 0.1, 'CT6': 0.75, 'PV5B': 1.0, 'SOM6': 1.1, 'PV6': 0.75, 'NGF6': 1.0 * NGFfactor, 'TC': 1.25, 'TCM': 1.25, 'HTC': 1.25, 'TI': 1.25, 'TIM': 1.5}  # for v22_batch28
+*** results
+messed up dynamics; many silent
+
+** v28_batch5 - after fixing ITS4+NGF + bkg weights
+*** notes
+def optunaRates():
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    # bkg inputs
+    params['EEGain'] = [0.1, 3.0]
+    params['EIGain'] = [0.1, 3.0]
+
+    params[('IELayerGain', '1-3')] = [0.1, 3.0]
+    params[('IELayerGain', '4')] = [0.1, 3.0]
+    params[('IELayerGain', '5')] = [0.1, 3.0]
+    params[('IELayerGain', '6')] = [0.1, 3.0]
+
+    params[('IILayerGain', '1-3')] = [0.1, 3.0]
+    params[('IILayerGain', '4')] = [0.1, 3.0]
+    params[('IILayerGain', '5')] = [0.1, 3.0]
+    params[('IILayerGain', '6')] = [0.1, 3.0]
+    
+    # params['thalamoCorticalGain'] = [0.25, 2.0]
+    # params['intraThalamicGain'] = [0.25, 2.0]
+    # params['corticoThalamicGain'] = [0.25, 2.0]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2000
+    initCfg['printPopAvgRates'] = [[1000, 1250], [1250, 1500], [1500, 1750], [1750, 2000]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = [1000,2000]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1000,2000]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     300,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 16,
+        'time_sleep': 60,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+*** results
+a few interesting solutions… several with 41/43 pops > 0 hz (all except NGF1 and NGF5B) … though IT2 and IT3 quite low
+
+- In [17]: df.iloc[12575][2:12]                                                                                                                                                            
+Out[17]: 
+IELayerGain1-3    2.645462
+IELayerGain4      0.734880
+IELayerGain5      0.388620
+IELayerGain6      2.794542
+IILayerGain1-3    0.930986
+IILayerGain4      2.909766
+IILayerGain5      0.102020
+IILayerGain6      2.557407
+EEGain            0.712990
+EIGain            0.230825
+
+
+- In [8]: df.iloc[15446] (BEST fitness)
+
+IELayerGain1-3         2.496991
+IELayerGain4           0.752393
+IELayerGain5           0.168554
+IELayerGain6           2.899179
+IILayerGain1-3         0.664827
+IILayerGain4           2.287689
+IILayerGain5           0.100696
+IILayerGain6           2.613499
+EEGain                 0.538222
+EIGain                 0.245228
+
+
+Out[8]: 
+number             15446.000000
+value                110.902053
+IELayerGain1-3         2.496991
+IELayerGain4           0.752393
+IELayerGain5           0.168554
+IELayerGain6           2.899179
+IILayerGain1-3         0.664827
+IILayerGain4           2.287689
+IILayerGain5           0.100696
+IILayerGain6           2.613499
+EEGain                 0.538222
+EIGain                 0.245228
+NGF1                   0.000000
+IT2                    0.000000
+PV2                    6.166667
+SOM2                  15.500000
+VIP2                  82.500000
+NGF2                  11.400000
+IT3                    0.000000
+SOM3                   2.685714
+PV3                   20.886364
+VIP3                  85.228571
+NGF3                   4.600000
+ITP4                   3.811005
+ITS4                   0.093301
+PV4                    2.695652
+SOM4                  13.583333
+VIP4                  11.500000
+NGF4                   1.571429
+IT5A                  26.513966
+CT5A                  45.067039
+PV5A                  89.111111
+SOM5A                 68.904762
+VIP5A                  2.600000
+NGF5A                  4.250000
+IT5B                  21.889362
+PT5B                   1.106383
+CT5B                  42.855319
+PV5B                  73.597015
+SOM5B                 83.267857
+VIP5B                  9.250000
+NGF5B                  0.000000
+IT6                    9.265873
+CT6                    8.317460
+PV6                  177.595238
+SOM6                   5.064516
+VIP6                 100.833333
+NGF6                   4.000000
+TC                    26.189655
+TCM                    0.857143
+HTC                   35.368421
+IRE                   14.428571
+IREM                   0.272727
+TI                     9.000000
+TIM                    0.040000
+** v28_batch6 - v28_batch5 best sol (15446) with reduced IE->Layer1-3
+*** code
+def custom():
+    params = specs.ODict()
+
+    # conn gains
+    #params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
+    #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
+    #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
+    #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
+    params[('IELayerGain', '1-3')] = list(range(2.4969906720467807, 2.4969906720467807-0.25, 0.05)) 
+    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
+    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
+    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+    
+    #params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
+    #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
+    #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
+
+    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 2000
+    initCfg['printPopAvgRates'] = [1000, 2000] 
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    #initCfg[('ICThalInput', 'startTime')] = 750
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+
+    initCfg['addConn'] = True # test only bkg inputs
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    # from v28_batch5 (optuna), trial 15446
+    initCfg.update({
+        "EEGain": 0.538221678982146,
+        "EIGain": 0.24522849924039522,
+        "IELayerGain": {
+            "1-3": 2.4969906720467807,
+            "4": 0.7523928690211563,
+            "5": 0.16855428023477206,
+            "6": 2.8991792469343576
+        },
+        "IILayerGain": {
+            "1-3": 0.6648270236528021,
+            "4": 2.2876886663946765,
+            "5": 0.10069589845756556,
+            "6": 2.6134986990296576
+        }})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+** v29_batch1 - add EIGain by layer; reduce EEGain [0, 1.0] - bug in EI
+*** notes
+- bug in EIgains by layer -- single EIgain, not layer-specific
+
+EEGain results were typically 0 - 1.0 so reduce search space (same in M1)
+EIGain params by layer added 3 new params
+*** code
+    params['EEGain'] = [0.1, 1.0]
+
+    params[('EILayerGain', '1-3')] = [0.1, 3.0]
+    params[('EILayerGain', '4')] = [0.1, 3.0]
+    params[('EILayerGain', '5')] = [0.1, 3.0]
+    params[('EILayerGain', '6')] = [0.1, 3.0]
+
+    params[('IELayerGain', '1-3')] = [0.1, 3.0]
+    params[('IELayerGain', '4')] = [0.1, 3.0]
+    params[('IELayerGain', '5')] = [0.1, 3.0]
+    params[('IELayerGain', '6')] = [0.1, 3.0]
+
+    params[('IILayerGain', '1-3')] = [0.1, 3.0]
+    params[('IILayerGain', '4')] = [0.1, 3.0]
+    params[('IILayerGain', '5')] = [0.1, 3.0]
+    params[('IILayerGain', '6')] = [0.1, 3.0]
+*** results Discussion
+Best result so far: fitness = 94.62904843184099
+image.png 
+image.png
+
+
+:clap:
+1
+
+12:37
+Untitled 
+[I 2020-10-06 14:45:30,252] Trial 38595 finished with value: 164.94081763646528 and parameters: {'EEGain': 0.9581268943227292, "('EILayerGain', '1-3')": 0.9662336380529412, "('EILayerGain', '4')": 2.075553800981232, "('EILayerGain', '5')": 0.9031500651354619, "('EILayerGain', '6')": 0.15028858958308838, "('IELayerGain', '1-3')": 0.521718697051653, "('IELayerGain', '4')": 0.6051567737172858, "('IELayerGain', '5')": 0.23132485908097394, "('IELayerGain', '6')": 0.390331535906009, "('IILayerGain', '1-3')": 0.10486845176787038, "('IILayerGain', '4')": 2.5771673116615763, "('IILayerGain', '5')": 0.19750168057425682, "('IILayerGain', '6')": 1.3760950758758617}. Best is trial 33970 with value: 94.62904843184099.
+
+
+samn:speech_balloon:  12:39 PM
+so now have activity in L1-3? and didn't before?
+
+salvadord  12:40 PM
+NGF1, NGF5B, TIM are the only ones at 0 HZ -- but not too worried cause other NGFs firing nicely so should be possible to fix; and TIM probably easy to fix too
+
+samn:speech_balloon:  12:40 PM
+some gains far from orig values
+
+salvadord  12:40 PM
+y IT2, IT3 and ITS4 show this burst of activity, so we'll see if can get some stable activity from them
+
+samn:speech_balloon:  12:41 PM
+great - and still running so may improve further.
+
+salvadord  12:41 PM
+also noticed a couple depol blocks there, so will look into that ... might be the ones not firing
+image.png 
+image.png
+
+
+ericaygriffith:speech_balloon:  12:41 PM
+out of curiosity, do we know if the burst of activity in those pops transitions into depol block, or do the cells just go quiet?
+12:42
+lol, same question you just asked, almost jinx
+
+salvadord  12:43 PM
+haha yeah... actually the depol blocks might be the NGFs not firing? not sure, def will look into each pop individually
+
+ericaygriffith:speech_balloon:  12:43 PM
+I'll take a look at that param set as well on my own too
+:+1:
+2
+
+
+salvadord  12:43 PM
+and also will look for other potentially good solutions
+:+1:
+1
+
+
+samn:speech_balloon:  12:45 PM
+so only a few pops left to fix ... for paper, suppose can still argue tightly constrained by experiment but had to adjust some gains ~10X since those values were missing
+:+1:
+2
+
+12:46
+maybe should aim to just use whatever optim finishes with by nov
+
+salvadord  12:47 PM
+sounds good
+
+salvadord  12:57 PM
+I'm a bit concerned that the burst of activity in upper layers doesn't seem to affect deeper layers at all
+12:57
+could be a good thing, since could tune upper layers (which seem more problematic) separately
+12:58
+but could also point to some issue/bug in the model
+
+samn:speech_balloon:  12:58 PM
+good point, would expect strong L2->L5
+12:58
+bug - but have substantial weight along that pathway? hmm
+
+salvadord  1:00 PM
+was just checking conn matrix, and L2->L5 not very high
+1:00
+so perhaps local activity / inhibition enough to keep stable
+
+samn:speech_balloon:  1:00 PM
+ic, lower than M1?
+1:00
+ok sg
+
+salvadord  1:01 PM
+y lower than m1 for sure... since m1 strongest projection is L2/3 -> L5B
+:+1:
+1
+
+
+samn:speech_balloon:  1:01 PM
+and canonical always mentioned as 4->2->5
+:+1:
+1
+
+
+salvadord  1:01 PM
+v25_batch4_plot_conn_pop_probability_matrix.png 
+v25_batch4_plot_conn_pop_probability_matrix.png
+
+
+
+samn:speech_balloon:  1:02 PM
+ic, not much there
+
+salvadord  1:03 PM
+y it's true canonical makes a point of 2->5 ... I can check how allen V1 looks
+:+1:
+2
+
+
+samn:speech_balloon:  1:03 PM
+suppose i didn't see any cross layer tuning for opt, so that wouldn't be an issue
+:+1:
+1
+
+
+salvadord  1:06 PM
+Allen V1 shows low L2->L5 prob conn (0.083)
+image.png 
+image.png
+
+
+
+samn:speech_balloon:  1:07 PM
+& weights low too?
+
+samn:speech_balloon: Oct 6th at 1:07 PM
+& weights low too?
+
+
+
+
+5 replies
+
+salvadord  8 days ago
+weight is around avg - somatic EPSP of 0.74 mV
+
+samn:speech_balloon:  8 days ago
+ic
+
+samn:speech_balloon:  8 days ago
+ok, sounds like that aspect is cleared up. multiple strong stims in L2/3 could produce a response. maybe higher levels of L2/3 gamma supports that, to prevent everything from getting to L5...
+:+1:
+1
+
+
+ericaygriffith:speech_balloon:  8 days ago
+hm yeah that's a reassuring thought -- looking thru some previous runs to see if we have any with high L2/3 activity to see if we do see it coming thru to lower levels in that case
+:+1:
+2
+
+
+samn:speech_balloon:  8 days ago
+def. better than epileptic net ... leaves room for activation from the real inputs too
+
+ericaygriffith:speech_balloon:  1:07 PM
+these are out IT2 pmat numbers in conn.pkl, just for reference
+1:07
+Untitled 
+ pmat['IT2']
+{'IT2': 0.1971161130784888, 'IT3': 0.1971161130784888, 'ITP4': 0.019711611307848882, 'ITS4': 0.015829021201757432, 'IT5A': 0.10225398365946607, 'CT5A': 0.033035902413058274, 'IT5B': 0.10225398365946607, 'PT5B': 0.12899733323194185, 'CT5B': 0.033035902413058274, 'IT6': 0.0, 'CT6': 0.0, 'NGF1': 0.0, 'PV2': 0.5406866917894705, 'SOM2': 0.23449298047141015, 'VIP2': 0.0657305390018572, 'NGF2': 0.1352844118104289, 'PV3': 0.5406866917894705, 'SOM3': 0.23449298047141015, 'VIP3': 0.0657305390018572, 'NGF3': 0.1352844118104289, 'PV4': 0.11361264662917989, 'SOM4': 0.10693910647872001, 'VIP4': 0.11361264662917989, 'NGF4': 0.10693910647872001, 'PV5A': 0.110874992493537, 'SOM5A': 0.1314191429015595, 'VIP5A': 0.032569529044976495, 'NGF5A': 0.0, 'PV5B': 0.110874992493537, 'SOM5B': 0.1314191429015595, 'VIP5B': 0.032569529044976495, 'NGF5B': 0.0, 'PV6': 0.0, 'SOM6': 0.0, 'VIP6': 0.0, 'NGF6': 0.0}
+
+
+1:07
+and weights for IT2:
+1:07
+Untitled 
+wmat['IT2']
+{'IT2': 0.36, 'IT3': 0.36, 'ITP4': 0.34, 'ITS4': 0.34, 'IT5A': 0.74, 'CT5A': 0.74, 'IT5B': 0.74, 'PT5B': 0.74, 'CT5B': 0.74, 'IT6': 0.0, 'CT6': 0.0, 'NGF1': 0.0, 'PV2': 1.49, 'SOM2': 0.86, 'VIP2': 1.49, 'NGF2': 1.31, 'PV3': 1.49, 'SOM3': 0.86, 'VIP3': 1.49, 'NGF3': 1.31, 'PV4': 1.39, 'SOM4': 0.69, 'VIP4': 1.39, 'NGF4': 0.91, 'PV5A': 1.32, 'SOM5A': 0.53, 'VIP5A': 1.32, 'NGF5A': 0.0, 'PV5B': 1.32, 'SOM5B': 0.53, 'VIP5B': 1.32, 'NGF5B': 0.0, 'PV6': 0.0, 'SOM6': 0.0, 'VIP6': 0.0, 'NGF6': 0.0}
+
+
+1:07
+just for easier comparison
+:+1:
+1
+
+
+samn:speech_balloon:  1:08 PM
+so higher than allen for probabilities
+
+salvadord  1:12 PM
+y we rescaled E->E/I based on conn for E subtypes from BBP S1, since Allen lumped all as E
+:+1:
+2
+
+1:15
+I still find surprising with 0.1 conn prob it doesnt affect L5 ... though could also be because L5 already firing relatively high (~25-30 hz)
+
+samn:speech_balloon:  1:16 PM
+PV5B @ 84 Hz in that raster
+1:17
+yeah, could try it separate from optimization and see if a few stims in those layers causes noticeable response
+
+
+** v29_batch2 - v29_batch1 with increased maxiters and GCP n2 80-core nodes - bug in EI!
+*** notes
+- bug in EIgains by layer -- single EIgain, not layer-specific
+*** results
+**** 1 layer at a time
+Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
+
+- all celltypes
+[] ['NGF1']
+0
+['IT2'] ['PV2', 'SOM2', 'VIP2', 'NGF2']
+1257
+['IT3'] ['PV3', 'SOM3', 'VIP3', 'NGF3']
+10099
+['ITP4', 'ITS4'] ['PV4', 'SOM4', 'VIP4', 'NGF4']
+91
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+5306
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'SOM6', 'VIP6', 'NGF6']
+549
+['TC', 'HTC', 'TCM'] ['IRE', 'IREM', 'TI', 'TIM']
+4
+
+- NO SOMs
+['IT2'] ['PV2', 'VIP2', 'NGF2']
+1257
+['IT3'] ['PV3', 'VIP3', 'NGF3']
+10182
+['ITP4', 'ITS4'] ['PV4', 'VIP4', 'NGF4']
+153
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A', 'NGF5A']
+5341
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'VIP6', 'NGF6']
+549
+
+
+- NO PVs
+['IT2'] ['PV2', 'VIP2', 'NGF2']
+1257
+['IT3'] ['PV3', 'VIP3', 'NGF3']
+10182
+['ITP4', 'ITS4'] ['PV4', 'VIP4', 'NGF4']
+153
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A', 'NGF5A']
+5341
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'VIP6', 'NGF6']
+549
+
+
+- no NGFs
+['IT2'] ['PV2', 'SOM2', 'VIP2']
+1415
+['IT3'] ['PV3', 'SOM3', 'VIP3']
+10304
+['ITP4', 'ITS4'] ['PV4', 'SOM4', 'VIP4']
+589
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A', 'VIP5A']
+16599
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B', 'VIP5B']
+13649
+['IT6', 'CT6'] ['PV6', 'SOM6', 'VIP6']
+549
+
+- no VIPs
+['IT2'] ['PV2', 'SOM2', 'NGF2']
+1388
+['IT3'] ['PV3', 'SOM3', 'NGF3']
+10252
+['ITP4', 'ITS4'] ['PV4', 'SOM4', 'NGF4']
+104
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A', 'NGF5A']
+5834
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B', 'NGF5B']
+0
+['IT6', 'CT6'] ['PV6', 'SOM6', 'NGF6']
+551
+
+- no NGF + ITS4
+['ITP4'] ['SOM4', 'VIP4', 'PV4']
+12718
+
+- no NGF + ITP4
+['ITS4'] ['SOM4', 'PV4', 'VIP4']
+614
+
+- no NGFs + VIPs
+['IT2'] ['PV2', 'SOM2']
+2033
+['IT3'] ['PV3', 'SOM3']
+10585
+['ITP4', 'ITS4'] ['PV4', 'SOM4']
+1663
+['IT5A', 'CT5A'] ['PV5A', 'SOM5A']
+23776
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'SOM5B']
+21787
+['IT6', 'CT6'] ['PV6', 'SOM6']
+551
+
+- no NGF + VIPS+ ITS4
+['ITP4'] ['SOM4', 'PV4', 'PV4']
+24350
+
+- no NGF + VIPS+ ITP4
+['ITS4'] ['SOM4', 'PV4', 'PV4']
+1692
+
+- no NGFs + SOMs
+['IT2'] ['PV2', 'VIP2']
+1415
+['IT3'] ['PV3', 'VIP3']
+10389
+['ITP4', 'ITS4'] ['PV4', 'VIP4']
+655
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A']
+16942
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B']
+14149
+['IT6', 'CT6'] ['PV6', 'VIP6']
+549
+
+- no NGFs + SOMs
+['IT2'] ['PV2', 'VIP2']
+1415
+['IT3'] ['PV3', 'VIP3']
+10389
+['ITP4', 'ITS4'] ['PV4', 'VIP4']
+655
+['IT5A', 'CT5A'] ['PV5A', 'VIP5A']
+16942
+['IT5B', 'PT5B', 'CT5B'] ['PV5B', 'VIP5B']
+14149
+['IT6', 'CT6'] ['PV6', 'VIP6']
+549
+
+- no NGFs + PVs
+['IT2'] ['VIP2', 'SOM2']
+1948
+['IT3'] ['VIP3', 'SOM3']
+15069
+['ITP4', 'ITS4'] ['VIP4', 'SOM4']
+678
+['IT5A', 'CT5A'] ['VIP5A', 'SOM5A']
+19675
+['IT5B', 'PT5B', 'CT5B'] ['VIP5B', 'SOM5B']
+15041
+['IT6', 'CT6'] ['VIP6', 'SOM6']
+8403
+
+
+- no TI (thal)
+['TC', 'HTC', 'TCM'] ['IRE', 'IREM', 'TI']
+23995
+
+**** 2 layers at a time
+Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
+
+- all cell types:
+['IT2', 'IT3'] ['PV2', 'SOM2', 'VIP2', 'NGF2', 'PV3', 'SOM3', 'VIP3', 'NGF3']
+1121
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'VIP3', 'NGF3', 'PV4', 'SOM4', 'VIP4', 'NGF4']
+53
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'VIP4', 'NGF4', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+36
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B'] ['PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+0
+['IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+0
+
+- no NGFs:
+['IT2', 'IT3'] ['PV2', 'SOM2', 'VIP2', 'PV3', 'SOM3', 'VIP3']
+1273
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'VIP3', 'PV4', 'SOM4', 'VIP4']
+104
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'VIP4', 'PV5A', 'SOM5A', 'VIP5A']
+201
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B'] ['PV5A', 'SOM5A', 'VIP5A', 'PV5B', 'SOM5B', 'VIP5B']
+12839
+['IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['PV5B', 'SOM5B', 'VIP5B', 'PV6', 'SOM6', 'VIP6']
+296
+
+-  no NGFs+VIPs
+['IT2', 'IT3'] ['PV2', 'SOM2', 'PV3', 'SOM3']
+1849
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'PV4', 'SOM4']
+273
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'PV5A', 'SOM5A']
+1010
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B'] ['PV5A', 'SOM5A', 'PV5B', 'SOM5B']
+21212
+['IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['PV5B', 'SOM5B', 'PV6', 'SOM6']
+422
+
+-  no NGFs+VIPs (L3 with rest)
+['IT2', 'IT3'] ['PV2', 'SOM2', 'PV3', 'SOM3']
+1849
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'PV4', 'SOM4']
+273
+['IT3', 'IT5A', 'CT5A'] ['PV3', 'SOM3', 'PV5A', 'SOM5A']
+8991
+['IT3', 'IT5B', 'PT5B', 'CT5B'] ['PV3', 'SOM3', 'PV5B', 'SOM5B']
+8395
+['IT3', 'IT6', 'CT6'] ['PV3', 'SOM3', 'PV6', 'SOM6']
+228
+
+-  no NGFs+VIPs (L4 with rest)
+['IT2', 'ITP4', 'ITS4'] ['PV2', 'SOM2', 'PV4', 'SOM4']
+1
+['IT3', 'ITP4', 'ITS4'] ['PV3', 'SOM3', 'PV4', 'SOM4']
+273
+['ITP4', 'ITS4', 'IT5A', 'CT5A'] ['PV4', 'SOM4', 'PV5A', 'SOM5A']
+1010
+['ITP4', 'ITS4', 'IT5B', 'PT5B', 'CT5B'] ['PV4', 'SOM4', 'PV5B', 'SOM5B']
+887
+['ITP4', 'ITS4', 'IT6', 'CT6'] ['PV4', 'SOM4', 'PV6', 'SOM6']
+9
+
+
+**** 3 layers at a time
+Number of solutions (sims) out of ~40k with the following pops having rates within 0.01-200Hz:
+
+**** Multiple layers
+
+- All except: TIM, ITS4, NGF, VIP
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM2_1750_2000<=200 and 0.01<=PV2_1750_2000<=200 and 0.01<=SOM3_1750_2000<=200 and 0.01<=PV3_1750_2000<=200 and 0.01<=SOM4_1750_2000<=200 and 0.01<=PV4_1750_2000<=200 and 0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 and 0.01<=IRE_1750_2000<=200 and 0.01<=IREM_1750_2000<=200 and 0.01<=TI_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+4720     4720  196.279426        2.525180      1.415371      1.181422      0.149769        1.167405  ...          8.96          9.60          9.28            0.0            0.0            0.0            0.0
+4735     4735  176.900135        2.522534      1.068643      1.481244      0.147047        1.172058  ...          9.28          9.44          9.76            0.0            0.0            0.0            0.0
+4746     4746  186.014585        2.506955      1.076376      1.177170      0.156911        1.038090  ...          9.12          8.96          9.28            0.0            0.0            0.0            0.0
+4752     4752  184.465662        2.528949      1.066805      1.177367      0.150565        1.061452  ...          9.12          8.48          8.64            0.0            0.0            0.0            0.0
+5331     5331  205.786178        1.264519      1.454422      1.422741      0.140669        1.174307  ...          9.60          9.60          9.92            0.0            0.0            0.0            0.0
+35984   35984  156.808598        0.352688      2.034246      1.922625      0.147769        0.703715  ...          8.64          8.48          9.76            0.0            0.0            0.0            0.0
+
+
+- All E pops; no I pops required
+
+ Filtering based on E pops: ['rates']
+0.01<=IT2_1750_2000<=200 and 0.01<=IT3_1750_2000<=200 and 0.01<=ITS4_1750_2000<=200 and 0.01<=ITP4_1750_2000<=200 and 0.01<=IT5A_1750_2000<=200 and 0.01<=CT5A_1750_2000<=200 and 0.01<=IT5B_1750_2000<=200 and 0.01<=PT5B_1750_2000<=200 and 0.01<=CT5B_1750_2000<=200 and 0.01<=IT6_1750_2000<=200 and 0.01<=CT6_1750_2000<=200 and 0.01<=TC_1750_2000<=200 and 0.01<=HTC_1750_2000<=200 and 0.01<=TCM_1750_2000<=200 
+
+In [3]: dfFilter.sort_values('value')
+Out[3]: 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+29834   29834  214.604563        0.816199      2.248762      1.465796      0.101031        0.319455  ...          9.12          9.44          9.76            0.0            0.0            0.0            0.0
+21955   21955  257.577638        1.150613      2.195296      1.498914      0.100694        0.366509  ...          9.44          8.80          9.12            0.0            0.0            0.0            0.0
+11533   11533  278.845263        1.087404      2.068392      1.497798      0.100783        0.359008  ...          9.60          9.12          9.60            0.0            0.0            0.0            0.0
+29486   29486  284.727525        0.757377      1.691641      1.400627      0.100533        0.398611  ...          9.60          8.80          9.60            0.0            0.0            0.0            0.0
+11065   11065  290.300427        1.187804      1.897773      1.613020      0.102180        0.431450  ...          8.80          8.48          9.28            0.0            0.0            0.0            0.0
+9499     9499  296.988502        1.285614      2.252270      1.428221      0.100360        0.465989  ...          9.44          9.12          9.28            0.0            0.0            0.0            0.0
+21980   21980  378.994802        0.959330      1.898465      1.501951      0.150576        0.550258  ...          8.16          8.32          8.00            0.0            0.0            0.0            0.0
+
+
+- L2+3+4 E+I (NO NGF+VIP) 
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM2_1750_2000<=200 and 0.01<=PV2_1750_2000<=200 and 0.01<=SOM3_1750_2000<=200 and 0.01<=PV3_1750_2000<=200 and 0.01<=SOM4_1750_2000<=200 and 0.01<=PV4_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+19405   19405  313.231487        0.982087       1.96245      1.395838      0.100029         0.34365  ...          9.44          8.48          9.76            0.0            0.0            0.0            0.0
+
+[1 rows x 230 columns]
+1
+
+
+- L2+3+4 E+I (NO NGF+VIP+ITS4)
+
+1044
+
+- L2+3+4 E+I (NO NGF+ITS4)
+
+21
+
+
+- L5A,5B,6 E+I (NO NGF) 
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+96         96  406.138203        1.021888      1.720320      2.033943      0.105357        0.632811  ...          7.36          7.20          8.00            0.0           0.00           0.00           0.00
+99         99  352.030195        0.729735      1.635442      1.964223      0.108902        0.836380  ...          7.84          8.32          8.32            0.0           0.00           0.00           0.32
+180       180  300.206294        0.656118      1.479756      1.437200      0.106238        0.625935  ...          8.00          8.96          8.96            0.0           0.16           0.16           0.00
+187       187  362.721582        0.698767      1.863606      1.616652      0.106268        0.624685  ...          9.76          9.28         10.08            0.0           0.00           0.00           0.00
+291       291  253.592600        0.527498      1.361050      1.554490      0.198303        1.064973  ...          6.88          7.36          7.68            0.0           0.00           0.00           0.00
+...       ...         ...             ...           ...           ...           ...             ...  ...           ...           ...           ...            ...            ...            ...            ...
+38215   38215  308.859183        1.014043      1.986808      1.274551      0.149485        0.438205  ...          8.48          9.28          9.44            0.0           0.00           0.00           0.00
+38235   38235  322.601654        0.890068      1.999058      0.830437      0.148718        0.460331  ...          8.32          8.80          8.96            0.0           0.00           0.00           0.00
+38504   38504  274.685154        0.939122      1.970261      0.432678      0.151542        0.373413  ...          8.64          9.76          9.44            0.0           0.00           0.00           0.00
+38847   38847  107.122255        0.870853      2.026761      0.914985      0.153562        0.501627  ...          8.96          8.48          8.48            0.0           0.00           0.00           0.00
+38922   38922  275.564188        0.871219      2.009719      0.491761      0.151687        0.451387  ...          9.28          8.96          9.92            0.0           0.00           0.00           0.00
+
+[408 rows x 230 columns]
+408
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['SOM5A', 'PV5A', 'SOM5B', 'PV5B', 'SOM6', 'PV6']
+408
+
+
+- L5A,5B,6 E+I (NO NGF+VIP) 
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=VIP5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=VIP5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 and 0.01<=VIP6_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+358       358  247.294075        0.393895      1.205346      2.497569      0.203703        1.168813  ...          0.32          1.60          3.04            0.0            0.0            0.0            0.0
+1258     1258  212.908082        2.628327      1.104676      0.996672      0.146807        1.327033  ...          8.48          9.60          9.44            0.0            0.0            0.0            0.0
+1301     1301  208.493956        2.497085      1.036306      1.033008      0.150680        1.314046  ...          8.64          8.96          9.44            0.0            0.0            0.0            0.0
+1686     1686  292.105837        2.659689      1.263736      1.097544      0.147424        1.275752  ...          8.64          9.28          8.64            0.0            0.0            0.0            0.0
+1695     1695  211.337109        2.662798      1.255773      1.116682      0.150551        1.288195  ...          9.28          9.92          9.44            0.0            0.0            0.0            0.0
+...       ...         ...             ...           ...           ...           ...             ...  ...           ...           ...           ...            ...            ...            ...            ...
+38019   38019         NaN             NaN           NaN           NaN           NaN             NaN  ...          9.28          9.28          8.96            0.0            0.0            0.0            0.0
+38039   38039  110.450001        0.957378      1.984317      1.342510      0.155504        0.530147  ...          8.00          8.80          8.80            0.0            0.0            0.0            0.0
+38504   38504  274.685154        0.939122      1.970261      0.432678      0.151542        0.373413  ...          8.64          9.76          9.44            0.0            0.0            0.0            0.0
+38847   38847  107.122255        0.870853      2.026761      0.914985      0.153562        0.501627  ...          8.96          8.48          8.48            0.0            0.0            0.0            0.0
+38922   38922  275.564188        0.871219      2.009719      0.491761      0.151687        0.451387  ...          9.28          8.96          9.92            0.0            0.0            0.0            0.0
+
+[264 rows x 230 columns]
+264
+['IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6'] ['SOM5A', 'PV5A', 'VIP5A', 'SOM5B', 'PV5B', 'VIP5B', 'SOM6', 'PV6', 'VIP6']
+264
+
+- L5A,5B,6 E+I (NO NGF+VIP)  <40hz
+
+ Filtering based on E + I pops: ['rates']
+0.01<=SOM5A_1750_2000<=200 and 0.01<=PV5A_1750_2000<=200 and 0.01<=VIP5A_1750_2000<=200 and 0.01<=SOM5B_1750_2000<=200 and 0.01<=PV5B_1750_2000<=200 and 0.01<=VIP5B_1750_2000<=200 and 0.01<=SOM6_1750_2000<=200 and 0.01<=PV6_1750_2000<=200 and 0.01<=VIP6_1750_2000<=200 
+       number       value  EILayerGain1-3  EILayerGain4  EILayerGain5  EILayerGain6  IELayerGain1-3  ...  TI_1250_1500  TI_1500_1750  TI_1750_2000  TIM_1000_1250  TIM_1250_1500  TIM_1500_1750  TIM_1750_2000
+358       358  247.294075        0.393895      1.205346      2.497569      0.203703        1.168813  ...          0.32          1.60          3.04            0.0            0.0            0.0           0.00
+18779   18779  149.368530        0.932133      1.966431      1.433206      0.102579        2.226749  ...          8.80          8.32          8.32            0.0            0.0            0.0           0.00
+22305   22305  254.927907        0.911482      1.938855      1.657147      0.101034        0.519786  ...          8.48          8.16          8.80            0.0            0.0            0.0           0.00
+27742   27742  174.027776        0.762392      2.093655      1.469545      0.102313        0.532864  ...          7.68          8.32          7.84            0.0            0.0            0.0           0.00
+28202   28202  248.636374        0.922996      1.739317      1.480892      0.101525        0.511386  ...          7.36          7.68          7.20            0.0            0.0            0.0           0.00
+30641   30641  246.649332        0.772034      2.049188      1.432427      0.102199        0.496337  ...          7.68          7.52          7.36            0.0            0.0            0.0           0.32
+33559   33559  246.380751        1.121240      2.194362      1.725751      0.101278        0.487843  ...          8.00          8.16          8.00            0.0            0.0            0.0           0.00
+33609   33609  173.846265        1.128041      2.204684      2.035821      0.100948        0.572834  ...          8.80          8.16          8.64            0.0            0.0            0.0           0.00
+33638   33638  152.398000        1.122501      2.262560      1.773047      0.100855        0.577510  ...          8.96          9.12          8.96            0.0            0.0            0.0           0.00
+35433   35433  153.321006        1.048183      2.125032      1.755068      0.101688        0.543698  ...          8.00          8.48          7.52            0.0            0.0            0.0           0.00
+
+[10 rows x 230 columns]
+
+*** results conclusions
+1 layer at a time:
+- NGF1 never fires
+- NGF cell type problematic for L4,L5A,L5B (i.e. removing leads to significantly more solutions); not much for L2,L3
+- VIP problematic for L4,L5A,L5B (similar subset as NGF; mostly due to NGF); not much for L2,L3
+- PV,SOM ~problematic for L6
+- TIM only fires in 6/40k sims; problematic for thal (most thal solutions ok if exclude TIM)
+- ITS4 problematic for L4 (down from 23k to 1.6k solns); max 1Hz (traces show depol block)
+
+2 layers at a time (no NGF+VIP): 
+- L2 and L3 90% overlap of solns (1849/2033); ok
+- L3 and L4 16% overlap of solns (273/1663); hyperinhibition / hyperexcitation?
+- L4 and L5A 61% overlap of solns (1010/1663); ok'ish
+- L5A and L5B 61% overlap of solns (1010/1663); ok'ish
+- L5B and L6 77% overlap of solns (422/551); ok 
+
+- L3 and L5A 38% overlap of solns (8991/23776); possible hyperinhibition / hyperexcitation?
+- L3 and L5B 38% overlap of solns (8395/21787); possible hyperinhibition / hyperexcitation?
+- L3 and L6 41% overlap of solns (228/551); possible hyperinhibition / hyperexcitation?
+
+- L4 and L2 <1% overlap of solns (1/1663); hyperinhibition / hyperexcitation
+- L4 and L5B 53% overlap of solns (887/1663); ok
+- L4 and L6 2% overlap of solns (9/551); hyperinhibition / hyperexcitation?
+
+Multiple layers
+- All except: TIM, ITS4, NGF, VIP 6/40k
+- Only E pops 7/40k
+- Only L2-4 E+I (no NGF+VIP) 1/40k (0 if include NGF or VIP)
+- Only L2-4 E+I (no NGF+VIP+ITS4) 1099/40k (21 if include VIP; 0 if include NGF) - some with burst
+- Only L5A-6 E+I (no NGF+VIP) 408/40k (264/40k if include VIP; 0 if include NGF)
+- Only L5A-6 E+I (no NGF), <40Hz, 10/40k
+
+- Most problematic: L4-L2, L4-L3 and L4-6 
+- L2-4 harder to tune than L5A-6 (1 vs >200 solutions); mostly due to ITS4
+
+Hypotheses:
+- L2-4 I fire too high and inhibit ITS4 (or decrease)
+- L2-4 E -> IT4 conn too strong, leads to ITS4 hyperexc (depol block)
+
+
+*** Possible next steps
+- increase bkg input or conn to NGF1, TIM, ITS4 (lower)
+- tune L2-L4 and L4-L6 separately with E->PV,SOM,VIP,NGF specific gains
+-- faster to run each sim
+-- smaller parameter space (exponential decrease)
+** v29_batch3 - increase bkg to NGF1, TIM, reduce ITS4; fix layerwise EIgains
+*** notes
+- reduce bkg weight ITS4 from 40 to 10
+- increase TIM from 1.5 to 2.0
+- increase NGF1 from 1.0 (wasn't included in list!) to 2.5
+- added bkg weights for L5B inh pops (were missing!)
+** v29_batch4 - same but replace ITS4 celltype with IT; inc TIM+IREM
+*** notes
+increased TIM bkg from 2.0 to 3.0
+increased IREM from 1 to 1.5 
+** blank
