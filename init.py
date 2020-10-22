@@ -15,7 +15,10 @@ MPI usage:
 Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 """
 
-import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
+onServer = False
+
+import matplotlib
+if onServer: matplotlib.use('Agg')  # to avoid graphics error in servers
 
 from netpyne import sim
 
@@ -34,5 +37,5 @@ sim.setupRecording()              			# setup variables to record for each cell (
 sim.runSim()                      			# run parallel Neuron simulation  
 sim.gatherData()                  			# gather spiking data and cell info from each node
 sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
-sim.analysis.plotData()         			# plot spike raster etc
+if sim.rank==0: sim.analysis.plotData()         	# plot spike raster etc
 

@@ -22,8 +22,8 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 2.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
-cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
+cfg.duration = 2e3		## Duration of the sim, in ms
+cfg.dt = 0.05                   ## Internal Integration Time Step (ms)
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
 cfg.createNEURONObj = 1
@@ -71,9 +71,9 @@ cfg.saveCellConns = False
 #----------------------------------------------------------------------------- 
 #
 
-cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in cfg.allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300}      	## Plot a raster
-cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': False, 'saveFig': True}
+cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in cfg.allpops], 'oneFigPer': 'trace', 'overlay': True, 'saveFig': True, 'showFig': True, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+cfg.analysis['plotRaster'] = {'include': cfg.allpops, 'saveFig': True, 'showFig': True, 'popRates': True, 'orderInverse': True, 'timeRange': [0,cfg.duration], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 18, 'marker': '.', 'dpi': 300}      	## Plot a raster
+#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': False, 'saveFig': True}
 #cfg.analysis['plot2Dnet'] = True      	## Plot 2D visualization of cell positions & connections 
 
 
@@ -93,6 +93,7 @@ cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
 cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
 cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 cfg.synWeightFractionENGF = [0.834, 0.166] # NGF AMPA to NMDA ratio
+cfg.useHScale = True
 
 
 #------------------------------------------------------------------------------
@@ -106,7 +107,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 0.5 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.1 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 #------------------------------------------------------------------------------
 # Connectivity

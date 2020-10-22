@@ -1,5 +1,5 @@
 
-*20mar5 - setting up
+* 20mar5 - setting up
 ** cloned from https://github.com/NathanKlineInstitute/A1
 
 then made a new branch samn off of salva branch
@@ -161,7 +161,7 @@ terminate called after throwing an instance of 'std::bad_alloc'
 [samndp7730:13791] Signal: Aborted (6)
 [samndp7730:13791] Signal code:  (-6)
 
-*20mar6 - testing/tuning manually
+* 20mar6 - testing/tuning manually
 ** reading code/testing/tuning smaller version of model
 
 in the 0.1 scaledensity simulation, the IC cells are firing ~8 Hz when providing
@@ -530,4 +530,77 @@ raster: data/20mar6/20mar6_A3_raster.png
    
 ok, SOM still firing but not much from the other types ... can adjust noise inputs first;
 to aim for ~1 Hz firing of all types ... ? or perhaps only E types ... 
+
+* 20oct22 - back to model
+** back to model -- git merge samn with salva so have latest
+
+cloned onto cycle
+
+git clone git@github.com:NathanKlineInstitute/A1.git
+cd A1
+git branch
+git pull origin salva
+git branch
+git checkout samn
+git merge origin/salva
+Auto-merging netParams.py
+CONFLICT (content): Merge conflict in netParams.py
+Auto-merging cfg.py
+CONFLICT (content): Merge conflict in cfg.py
+Automatic merge failed; fix conflicts and then commit the result.
+git add netParams.py cfg.py
+git commit -m 'merge'
+git push origin samn
+git mv snnotes.dol snnotes.org
+git commit -m 'to org'
+git push origin samn
+
+** homeostatic synapses to regulate/tune firing rates
+
+can either do via hsyn.mod or in py with periodic callbacks - similar to smartagent weight normalizations
+
+http://www.netpyne.org/reference.html?highlight=hsyn
+
+** old NetPyNE slack discussion on using hsyn.mod in NetPyNE (from 5/4/20)
+
+Haroon Anwar It appears that homeostatic synaptic plasticity is associated with the synaptic
+mechanism (and therefore should be set/declared in netParams.synMechParams) instead of synaptic
+connection (as in case of STDP rule). I see the following lines on NetPyNe website but it is not
+clear to me how to use this option: selfNetCon (optional) - dictionary with the parameters of a
+NetCon between the cell voltage and the synapse, required by some synaptic mechanisms such as the
+homeostatic synapse (hsyn). e.g. 'selfNetCon': {'sec': 'soma' , 'threshold': -15, 'weight': -1,
+'delay': 0}
+salvadord think we had an example with homeostatic syns — did you find that? otherwise I’ll look for it after lunch
+Haroon Anwar no i didn’t find. If you can look for it, would be great help.
+salvadord not finding the example… what was the name of the mod file for homeostatic syns?
+samn:speech_balloon: hsyn.mod
+salvadord thx
+salvadord haroon, found this in sam’s netpyne version of m1 model from ~2017 … maybe try
+something similar and let me know if works: netParams.synMechParams['AMPA'] =
+{'mod':'hsyn','tau1':0.05,'tau2':5.3,'e':0,'scaling':1,'targetrate':5,'scalefactor':1.0,'scaleratefctr':scaleratefctr,
+'selfNetCon': {'threshold': -15, 'weight': -1, 'delay': 0}}
+Haroon Anwar ok
+let me try
+Haroon Anwar salva, can you please send me the link to this m1 model?
+salvadord this version is in /u/samn/m1np
+Haroon Anwar thanks
+
+** test net
+
+using a scaled down version for testing
+cfg.scaledensity=0.1
+
+for plotting, do not call matplotlib.use('Agg') on cycle ... just on server (gcp)
+
+./myrun 30
+
+** replace AMPA with hsyn 
+
+will need diff AMPA mech for E and I neurons ...
+
+netParams.synMechParams['AMPA'] = {'mod':'hsyn','tau1':0.05,'tau2':5.3,'e':0,'scaling':1,'targetrate':5,'scalefactor':1.0,'scaleratefctr':scaleratefctr,
+'selfNetCon': {'threshold': -15, 'weight': -1, 'delay': 0}}
+
+ok, adjusting to have option whether to use the homeostatic scaling ... ideally would want to have param
+for different target rates for each population ... will add that in if/when basic mechanism is working
 
