@@ -735,15 +735,16 @@ def custom():
     #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
-    params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    params['duration'] = [10000]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 2000
-    initCfg['printPopAvgRates'] = [1000, 2000] 
+    initCfg['duration'] = 10000
+    initCfg['printPopAvgRates'] = [000, 10000] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -762,28 +763,27 @@ def custom():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
-    # from v28_batch5 (optuna), trial 15446
-    initCfg.update({
-        "EEGain": 0.9540306031687423, # 0.538221678982146,
-        "EIGain": 1.8600534795309025, # 0.24522849924039522,
-        "EILayerGain": {     # EI LAYER GAIN ADDED JUST NOW BY EYG FOR TESTING REPRODUCIBILITY OF 33970 RASTER
-            "1-3": 1.0555839908615223,
-            "4": 2.14340558619317,
-            "5": 1.9222772617062545,
-            "6": 0.1526212956441903
-        },
-        "IELayerGain": {
-            "1-3": 0.6934327833154136, ##2.4969906720467807,
-            "4": 0.7753753910618122, #0.7523928690211563,
-            "5": 0.10038161656290467, #0.16855428023477206,
-            "6": 0.6081174467981315 #2.8991792469343576
-        },
-        "IILayerGain": {
-            "1-3": 0.2516602192260485, #0.6648270236528021,
-            "4": 2.7885418021583974, #2.2876886663946765,
-            "5": 0.10256371936611122, #0.10069589845756556,
-            "6": 1.0794836464905169 #2.6134986990296576
-        }})
+    # from v29_batch4 (optuna), trial trial_7508
+    import json
+    with open('data/v29_batch4/trial_7508/trial_7508_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    
+    initCfg.update({'EEGain': cfgLoad['EEGain'],
+                    ('EILayerGain', '1-3'): cfgLoad['EILayerGain']['1-3'],
+                    ('EILayerGain', '4'): cfgLoad['EILayerGain']['4'],
+                    ('EILayerGain', '5'): cfgLoad['EILayerGain']['5'],
+                    ('EILayerGain', '6'): cfgLoad['EILayerGain']['6'],
+                    ('IELayerGain', '1-3'): cfgLoad['IELayerGain']['1-3'],
+                    ('IELayerGain', '4'): cfgLoad['IELayerGain']['4'],
+                    ('IELayerGain', '5'): cfgLoad['IELayerGain']['5'],
+                    ('IELayerGain', '6'): cfgLoad['IELayerGain']['6'],
+                    ('IILayerGain', '1-3'): cfgLoad['IILayerGain']['1-3'],
+                    ('IILayerGain', '4'): cfgLoad['IILayerGain']['4'],
+                    ('IILayerGain', '5'): cfgLoad['IILayerGain']['5'],
+                    ('IILayerGain', '6'): cfgLoad['IILayerGain']['6']})
+                    
+
+    print(initCfg)
 
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
@@ -1096,15 +1096,15 @@ def optunaRates():
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 2000
-    initCfg['printPopAvgRates'] = [[1000, 1250], [1250, 1500], [1500, 1750], [1750, 2000]]
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
 
     # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = [1000,2000]
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1000,2000]
+    initCfg[('analysis','plotRaster','timeRange')] = [500,1500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500,1500]
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     initCfg['recordLFP'] = None
     initCfg[('analysis', 'plotLFP')] = False
@@ -1268,6 +1268,7 @@ if __name__ == '__main__':
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
+
 
     b.batchLabel = 'v29_trial33970_repro'
     b.saveFolder = 'data/'+b.batchLabel
