@@ -736,7 +736,7 @@ def custom():
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
     #params['thalamoCorticalGain'] = [1.0]#, 1.5]
-    params['duration'] = 10000
+    params['duration'] = [10000]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
