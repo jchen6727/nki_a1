@@ -1314,7 +1314,7 @@ def optunaRatesLayers():
         'maxFitness': fitnessFuncArgs['maxFitness'],
         'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
-        'maxiter_wait': 6,
+        'maxiter_wait': 15,
         'time_sleep': 30,
         'popsize': 1  # unused - run with mpi 
     }
