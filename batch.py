@@ -1183,20 +1183,34 @@ def optunaRates():
 # ----------------------------------------------------------------------------------------------
 def optunaRatesLayers():
 
+    # from v30_batch3 (optuna), trial 10685
+    import json
+    with open('data/v30_batch3/trial_10685/trial_10685_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
 
+
     # bkg inputs
-    params[('EELayerGain', '2')] = [0.2, 3.0]
-    params[('EILayerGain', '2')] = [0.2, 3.0]
-    params[('IELayerGain', '2')] = [0.2, 3.0]
-    params[('IILayerGain', '2')] = [0.2, 3.0]
+    # params[('EELayerGain', '2')] = [0.2, 3.0]
+    # params[('EILayerGain', '2')] = [0.2, 3.0]
+    # params[('IELayerGain', '2')] = [0.2, 3.0]
+    # params[('IILayerGain', '2')] = [0.2, 3.0]
 
     params[('EELayerGain', '3')] = [0.2, 3.0]
     params[('EILayerGain', '3')] = [0.2, 3.0]
     params[('IELayerGain', '3')] = [0.2, 3.0]
     params[('IILayerGain', '3')] = [0.2, 3.0]
+
+
+    params[('EELayerGain', '4')] = [0.5*cfgLoad['EELayerGain']['4'], 2.0*cfgLoad['EELayerGain']['4']]
+    params[('EILayerGain', '4')] = [0.5*cfgLoad['EILayerGain']['4'], 2.0*cfgLoad['EILayerGain']['4']]
+    params[('IELayerGain', '4')] = [0.5*cfgLoad['IELayerGain']['4'], 2.0*cfgLoad['IELayerGain']['4']]
+    params[('IILayerGain', '4')] = [0.5*cfgLoad['IILayerGain']['4'], 2.0*cfgLoad['IILayerGain']['4']]
+
     
     # params['thalamoCorticalGain'] = [0.2, 3.0]
     # params['intraThalamicGain'] = [0.2, 3.0]
@@ -1230,16 +1244,9 @@ def optunaRatesLayers():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
-        # from v30_batch3 (optuna), trial 10685
-    import json
-    with open('data/v30_batch3/trial_10685/trial_10685_cfg.json', 'rb') as f:
-        cfgLoad = json.load(f)['simConfig']
+
     
-    initCfg.update({('EELayerGain', '4'): cfgLoad['EELayerGain']['4'],
-                    ('EILayerGain', '4'): cfgLoad['EILayerGain']['4'],
-                    ('IELayerGain', '4'): cfgLoad['IELayerGain']['4'],
-                    ('IILayerGain', '4'): cfgLoad['IILayerGain']['4'],
-                    'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+    initCfg.update({'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
                     'intraThalamicGain': cfgLoad['intraThalamicGain'],
                     'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
                     'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
@@ -1409,7 +1416,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v30_batch5'
+    b.batchLabel = 'v30_batch6'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

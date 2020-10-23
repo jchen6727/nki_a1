@@ -643,6 +643,28 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
 We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
 Then we added L2/3 recurrent connections and optimized the weights in both L4 and L2/3. 
 This approach was repeated by adding L5, then L6, and finally L1 (see Methods for details). "
+
+
+Optimization of Full V1 Models
+
+As described in the Main Text, running simulations after the above optimization did not yield suitable network behaviors in either of our V1 models. 
+Thus, we used an iterative grid search method (Arkhipov et al., 2018), where weights were uniformly scaled for every class (e.g. scaling weights of excitatory layer
+ 4 to excitatory layer 5 connections all by the same amount, as one iteration). We searched in discrete increments weight changes across connection classes and 
+ selected the best result before moving on to the next connection class (although there was still a need to revisit connections classes during this process). 
+ The optimization employed a small training set consisting of a two 0.5-second-long simulations: one of gray screen, and the other of a single drifting grating. 
+ We aimed to satisfy three criteria: (i) match spontaneous firing rates (gray screen stimulus) to experimental observations, (ii) match peak firing rates for the 
+ drifting grating, and (iii) avoid epileptic-like activity where the network would ramp up to have large global bursts and then enter a period of silence until 
+ the next very rapid burst. The weight adjustments were kept in a strict range where, for example, the LGN to L4 excitatory weights were not adjusted at all 
+ given that they were fit to direct in vivo experimental measurements (Lien and Scanziani, 2013). Other LGN connections were restricted to be scaled only in 
+ the range [0.5, 2] from the target net input current as those were scaled from optogenetics experiments (Ji et al., 2015). 
+ The optimization was performed starting from L4 only and adding successive layers one by one. First, all interlayer connections were set to zero and only the 
+ intra-layer connections in L4 were optimized. Once our criteria were met, we added L2/3 to the optimization, including the interactions between the two layers. 
+ This procedure simplified the optimization process even though weights optimized at one step had to be readjusted at the next step (typically minor). 
+ This process was continued for layer 5, followed by layer 6, and finally layer 1. During our optimization, the weight scaling was restricted in the 
+ range of [0.2, 5]. In the deeper layers (layers 5 and 6), this rule had to be expanded to reach the net adjustment range of [0.12, 18] for the 
+ biophysical model and [0.17, 6.0] for the GLIF model. Note that adjusting the synaptic weights in the biophysical model did not translate directly to 
+ scaling the PSP (see the Layer 1 description in Matching Target Post Synaptic Potentials).
+
 ** Allen emails
 Hi Salva,
  
@@ -7359,4 +7381,5 @@ reduced to 1.5 secs
 increased duration since requires 1.5 sec to reach steady state
 - needs over 1.5 sec to reach steady state!!!
 - PT5B not firing
+** v30_batch6 - tune only L3+L4+thal; include L4 weights but starting from tuned and smaller interval
 ** blank
