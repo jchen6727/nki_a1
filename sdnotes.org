@@ -7354,4 +7354,7 @@ reduced to 1.5 secs
 ** v30_batch3 - same but replace ITS4 with IT cell type
 *** 
 ** v30_batch4 - run best result from v30_batch3 for 10 sec
+** v30_batch5 - tune L2+3+4 + thal
+*** notes
+increased duration since requires 1.5 sec to reach steady state
 ** blank

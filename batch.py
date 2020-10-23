@@ -1188,15 +1188,20 @@ def optunaRatesLayers():
     params = specs.ODict()
 
     # bkg inputs
-    params[('EELayerGain', '4')] = [0.2, 3.0]
-    params[('EILayerGain', '4')] = [0.2, 3.0]
-    params[('IELayerGain', '4')] = [0.2, 3.0]
-    params[('IILayerGain', '4')] = [0.2, 3.0]
+    params[('EELayerGain', '2')] = [0.2, 3.0]
+    params[('EILayerGain', '2')] = [0.2, 3.0]
+    params[('IELayerGain', '2')] = [0.2, 3.0]
+    params[('IILayerGain', '2')] = [0.2, 3.0]
+
+    params[('EELayerGain', '3')] = [0.2, 3.0]
+    params[('EILayerGain', '3')] = [0.2, 3.0]
+    params[('IELayerGain', '3')] = [0.2, 3.0]
+    params[('IILayerGain', '3')] = [0.2, 3.0]
     
-    params['thalamoCorticalGain'] = [0.2, 3.0]
-    params['intraThalamicGain'] = [0.2, 3.0]
-    params['EbkgThalamicGain'] = [0.2, 3.0]
-    params['IbkgThalamicGain'] = [0.2, 3.0]
+    # params['thalamoCorticalGain'] = [0.2, 3.0]
+    # params['intraThalamicGain'] = [0.2, 3.0]
+    # params['EbkgThalamicGain'] = [0.2, 3.0]
+    # params['IbkgThalamicGain'] = [0.2, 3.0]
     
     # params['corticoThalamicGain'] = [0.25, 2.0]
 
@@ -1207,8 +1212,8 @@ def optunaRatesLayers():
     # initial config
     initCfg = {}
     initCfg = {}
-    initCfg['duration'] = 1500
-    initCfg['printPopAvgRates'] = [[500, 750], [750, 1000], [1000, 1250], [1250, 1500]]
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -1216,14 +1221,30 @@ def optunaRatesLayers():
     # plotting and saving params
     initCfg[('analysis','plotRaster','markerSize')] = 10
 
-    initCfg[('analysis','plotRaster','timeRange')] = [500, 1500]
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = [500, 1500]
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
     initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
     initCfg['recordLFP'] = None
     initCfg[('analysis', 'plotLFP')] = False
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
+
+        # from v30_batch3 (optuna), trial 10685
+    import json
+    with open('data/v30_batch3/trial_10685/trial_10685_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    
+    initCfg.update({('EELayerGain', '4'): cfgLoad['EELayerGain']['4'],
+                    ('EILayerGain', '4'): cfgLoad['EILayerGain']['4'],
+                    ('IELayerGain', '4'): cfgLoad['IELayerGain']['4'],
+                    ('IILayerGain', '4'): cfgLoad['IILayerGain']['4'],
+                    'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+                    'intraThalamicGain': cfgLoad['intraThalamicGain'],
+                    'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
+                    'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+
+    print(initCfg)
 
 
     # --------------------------------------------------------
@@ -1379,16 +1400,16 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    # b = custom()
     # b = evolRates()
     # b = asdRates()
     # b = optunaRates()
-    # b = optunaRatesLayers()
+    b = optunaRatesLayers()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v30_batch4'
+    b.batchLabel = 'v30_batch5'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
