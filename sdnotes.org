@@ -7357,4 +7357,6 @@ reduced to 1.5 secs
 ** v30_batch5 - tune L2+3+4 + thal
 *** notes
 increased duration since requires 1.5 sec to reach steady state
+- needs over 1.5 sec to reach steady state!!!
+- PT5B not firing
 ** blank
