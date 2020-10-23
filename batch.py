@@ -736,15 +736,17 @@ def custom():
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
     #params['thalamoCorticalGain'] = [1.0]#, 1.5]
-    params['duration'] = [10000]
-    
+    #params['duration'] = [10000]
+
+    params[('NetStim3', 'weight')] = [50, 100, 150]
+
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 10000
-    initCfg['printPopAvgRates'] = [000, 10000] 
+    initCfg['duration'] = 2000 #10000
+    initCfg['printPopAvgRates'] = [0, 1000] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -763,9 +765,13 @@ def custom():
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
+    # NetStim
+    initCfg['addNetStim'] = 1
+    initcfg['NetStim3'] = {'pop': 'IT3',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/20.0, 'noise': 0.0, 'number': 20.0,   'weight': 10.0, 'delay': 0}
+
     # from v29_batch4 (optuna), trial trial_7508
     import json
-    with open('data/v29_batch4/trial_7508/trial_7508_cfg.json', 'rb') as f:
+    with open('data/salva_runs/v29_batch3_trial_13425_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     
     initCfg.update({'EEGain': cfgLoad['EEGain'],
@@ -1270,7 +1276,7 @@ if __name__ == '__main__':
     #b = fIcurve(pops=['ITS4']) 
 
 
-    b.batchLabel = 'v29_trial33970_repro'
+    b.batchLabel = 'v29_trial13425_repro_IT3stim0'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
