@@ -1261,7 +1261,7 @@ def optunaRatesLayers():
     
     ## Exc pops
     #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
-    Epops = ['ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     Etune = {'target': 5, 'width': 20, 'min': 0.05}
     
@@ -1277,7 +1277,8 @@ def optunaRatesLayers():
     #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
     #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
     #         'IRE', 'IREM', 'TI']  # Thal 
-    Ipops = ['PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    Ipops = ['PV3', 'SOM3', 'VIP3', 'NGF3',
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
             'IRE', 'IREM', 'TI']  # Thal 
 
     Itune = {'target': 10, 'width': 30, 'min': 0.05}
@@ -1416,7 +1417,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v30_batch6'
+    b.batchLabel = 'v30_batch7'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
