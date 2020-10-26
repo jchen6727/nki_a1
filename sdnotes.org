@@ -7380,6 +7380,13 @@ reduced to 1.5 secs
 *** notes
 increased duration since requires 1.5 sec to reach steady state
 - needs over 1.5 sec to reach steady state!!!
-- PT5B not firing
-** v30_batch6 - tune only L3+L4+thal; include L4 weights but starting from tuned and smaller interval
+- ITS4 not firing
+** v30_batch6 - tune only L3+L4+thal; include L4 weights but starting from tuned and smaller interval - bug
+*** notes
+fitness func didn't include L3 pops
+** v30_batch7 - same as v30_batch6 but fixed fitness func to include L3 pops
+** v30_batch8 - added L2 and reduced width of gaussian tuning window
+*** note
+results were getting very low fitness, so made tuning func more restrictive by narrowing the gaussian func widths
+
 ** blank
