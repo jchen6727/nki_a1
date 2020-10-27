@@ -36609,3 +36609,57 @@ gotcha, ty salva!
 ***** ADEND3: y
 ****** OLD: 662.8041155888668 – 970.0000000000002
 ****** NEW: 410.412346767 – 591.412346767
+*** [NOW MOVE TO TUESDAY] --> 
+*** Now try shrinking soma and see how fI curve responds. 
+**** old ITS4 some geomtry:
+***** "soma": {
+            "geom": {
+                "L": 10.0,
+                "Ra": 100.0,
+                "cm": 0.75,
+                "diam": 3.183098861837907,
+                "nseg": 1,
+                "pt3d": [
+                    [
+                        0,
+                        0,
+                        0,
+                        3.183098861837907
+                    ],
+                    [
+                        0,
+                        10.0,
+                        0,
+                        3.183098861837907
+                    ]
+                ]
+**** new ITS4 soma geometry: 
+***** "soma": {
+            "geom": {
+                "L": 48.4123467666,
+                "Ra": 70.0015514222,
+                "cm": 2.4998269977,
+                "diam": 28.2149102762,
+                "nseg": 1,
+                "pt3d": [
+                    [
+                        0,
+                        0,
+                        0,
+                        28.2149102762
+                    ],
+                    [
+                        0,
+                        48.4123467666,
+                        0,
+                        28.2149102762
+                    ]
+                ]
+            },
+**** Params to possibly change:
+***** L
+***** diam
+***** pt3d
+***** --> change in L would necessitate change in the other sections as well. 
+***** Try changing diameter first --> 28.2149102762 is Pyramidal-based diam, and 3.183098861837907 is stellate-based diam. Go with 3.183098861837907. 
+***** CHANGED DIAM IN soma['geom']['diam'] and in the last entry of the list in pt3d for soma (twice) 
