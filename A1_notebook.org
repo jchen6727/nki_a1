@@ -36477,3 +36477,135 @@ gotcha, ty salva!
 *** checked this, and then also changed the weights, and still not working -- what's the deal? check cfg files 
 ** IT2 still having trouble with --> Checking NGF1 to make sure it's something with IT2 weight and not my batch submissions 
 ** ITS4 investigations:
+* <2020-10-27 Tue -- notes from last ITS4 change>
+** Changes occurred on friday -- summary: shortened Adend(s), kept bdend and soma the same, got rid of axon (morphing from ITP4 back to ITS4): 
+*** NOTES: 
+**** in repro branch –> 
+**** mv ITS4_reduced_cellParams.json old_ITS4_reduced_cellParams.json
+**** copied ITP4_reduced_cellParams.json and moved the copy (renamed) to ITS4_reduced_cellParams.json
+*** LEAVING SOMA AS IS FOR NOW! (== same as ITP4) 
+*** LEAVING BASAL DEND AS IS FOR NOW! (so now == same as ITP4) 
+*** TAKING OUT AXON: 
+**** specs:
+"axon": {
+            "geom": {
+                "L": 594.292937602,
+                "Ra": 70.0015514222,
+                "cm": 2.4630760526,
+                "diam": 1.40966286462,
+                "nseg": 1,
+                "pt3d": [
+                    [
+                        0,
+                        0,
+                        0,
+                        1.40966286462
+                    ],
+                    [
+                        0,
+                        -594.292937602,
+                        0,
+                        1.40966286462
+                    ]
+                ]
+            },
+            "ions": {
+                "k": {
+                    "e": -104.0,
+                    "i": 54.4,
+                    "o": 2.5
+                },
+                "na": {
+                    "e": 42.0,
+                    "i": 10.0,
+                    "o": 140.0
+                }
+            },
+            "mechs": {
+                "kap": {
+                    "gbar": 0.120097619549,
+                    "sh": 0.0,
+                    "tq": -49.7149526489,
+                    "vhalfl": -36.7754836348,
+                    "vhalfn": 32.179925527
+                },
+                "kdr": {
+                    "gbar": 0.0416883317404,
+                    "sh": 0.0,
+                    "vhalfn": 11.6427471384
+                },
+                "nax": {
+                    "gbar": 0.384126851097,
+                    "sh": 0.0
+                },
+                "pas": {
+                    "e": -87.1335623948,
+                    "g": 0.00035435694659685776
+                }
+            },
+            "topol": {
+                "childX": 0.0,
+                "parentSec": "soma",
+                "parentX": 0.0
+            },
+            "vinit": -85.8
+        },
+**** (started previously at line 481 – can check ITP4 json file to be sure)
+**** in old ITS4 .json file –> dend1 is the basal dendrite (can look at pt3d to deduce this) –> 
+***** geom:
+ "pt3d": [
+                    [
+                        0,
+                        10.0,
+                        0,
+                        3.183098861837907
+                    ],
+                    [
+                        707.0,
+                        -717.0,
+                        0,
+                        3.183098861837907
+                    ]
+
+**** in old ITS4 .json file –> apical dend geom is: 
+"geom": {
+                "L": 535.0,
+                "Ra": 0.02974858749381221,
+                "cm": 0.75,
+                "diam": 3.183098861837907,
+                "nseg": 1,
+                "pt3d": [
+                    [
+                        0,
+                        10.0,
+                        0,
+                        3.183098861837907
+                    ],
+                    [
+                        0,
+                        545.0,
+                        0,
+                        3.183098861837907
+                    ]
+                ]
+**** in new ITS4 .json file –> how different are the 3 apical dend compartments…? By cursory inspection, geom & electrophys are same in Adend1,2,3. 
+**** So to modify new ITS4 Adends –> should I … 
+***** keep 3 compartments, but shorten them all to 1/3 of necessary length? 
+***** reduce to 1 compartment, and make it the necessary length? 
+****** right now, each Adend compartment is L 307.19588441113336
+****** I need the total length to be ~535-545. 
+****** so options (1) would mean to make each Adend compartment ~181 
+****** while option (2) would mean making a single compartment to length 535. 
+***** ^^ SAM SAYS OPTION 2 (see above) 
+**** NOTE: see what sam said in slack channel for subConnParams situation (and netParams.py, of course) – told salva that I noticed that the dend and dend1 were incorrectly sorted in secLists
+**** Changing Adend1,2,3 –> Adend
+***** LENGTH CHANGE: 307.19588441113336 –> 181 
+***** ADEND1: y
+****** OLD: 48.4123467666  – 355.6082311777334
+****** NEW: 48.4123467666  – 229.412346767
+***** ADEND2: y
+****** OLD: 355.6082311777334 – 662.8041155888668
+****** NEW: 229.412346767 – 410.412346767
+***** ADEND3: y
+****** OLD: 662.8041155888668 – 970.0000000000002
+****** NEW: 410.412346767 – 591.412346767
