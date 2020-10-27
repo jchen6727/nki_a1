@@ -36836,3 +36836,6 @@ gotcha, ty salva!
                         2.2799248874
                     ]
                 ]
+** CHANGING SOMA DIAM TO 25!!! 
+*** old diam: 3.183098861837907,
+*** new diam: 25 
