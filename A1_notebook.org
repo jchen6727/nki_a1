@@ -36664,5 +36664,13 @@ gotcha, ty salva!
 **** Try changing diameter first --> 28.2149102762 is Pyramidal-based diam, and 3.183098861837907 is stellate-based diam. Go with 3.183098861837907. 
 **** CHANGED DIAM IN soma['geom']['diam'] and in the last entry of the list in pt3d for soma (twice) 
 ** Run batch similarly to friday to generate new fI curves:
-*** run on 'zn', correct?
-*** 
+*** run on 'zn', correct? --> yes
+*** make sure batch.py is changed correctly (batch name, fIcurve function, cell pops in said function, etc.) 
+*** python -i batch.py (after git pull on repro branch of course)
+** scp over to local computer 
+** Get fI curves:
+*** on local machine
+*** cd ~/Desktop/NEUROSIM/A1/analysis
+*** change folder name in batchAnalysis.py, make sure fIAnalysis(dataFolder, batchLabel, loadAll) is the one you want 
+*** python -i batchAnalysis.py
+** Confusing --> looks like ITS4 and ITP4 fI curves remain the same, but don't understand why. Could it be that the cell types are identical here, so somehow the same file is getting loaded in...? Changed cellType back to 'ITS4' as specified in the .json file for old_ITS4_reduced_cellParams.json, and will test this. 

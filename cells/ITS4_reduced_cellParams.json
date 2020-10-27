@@ -1,7 +1,7 @@
 {
     "conds": {
         "cellModel": "HH_reduced",
-        "cellType": "IT",
+        "cellType": "ITS4",
         "ynorm": [
             0.475,
             0.625
