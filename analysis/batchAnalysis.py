@@ -16,7 +16,7 @@ from batchAnalysisPlotCombined import *
 # Main code
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchLabel = 'v29_trial13425_L4fIcurves_somaKdr3'  # 'v50_batch1' #
+    batchLabel = 'v29_trial13425_L4fIcurves_somaL10'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
     loadAll = 0
 
