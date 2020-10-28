@@ -37289,3 +37289,5 @@ gotcha, ty salva!
                         2.2799248874
                     ]
                 ]
+** Reduced soma L to 20, now raising Kdr to 0.04 (somaKdr2)
+*** 
