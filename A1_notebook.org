@@ -37037,4 +37037,6 @@ gotcha, ty salva!
 "nax": {
                     "gbar": 0.07,
                     "sh": 0.0
-*** soma nax gbar lowered to 0.05 
+*** soma nax gbar lowered to 0.05 (somaNax0)
+*** soma nax gbar raised to 0.08 (somaNax1) 
+*** soma nax gbar raised to 0.1 (somaNax2) 
