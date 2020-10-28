@@ -37032,3 +37032,9 @@ gotcha, ty salva!
                     ]
                 ]
             },
+** Depol block improved somewhat, so try loosening up some channel params:
+*** soma: 
+"nax": {
+                    "gbar": 0.07,
+                    "sh": 0.0
+*** soma nax gbar lowered to 0.05 
