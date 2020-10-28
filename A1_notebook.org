@@ -37815,3 +37815,6 @@ gotcha, ty salva!
 ** *NOTE*: changed the max current input to 9.5 in batch fIcurve function! 
 ** Try again w/ soma L at 15 and kdr at 0.05 (somaL15_2)
 *** see if any more depol block at higher inputs 
+** Tried soma L at 15 and kdr at 0.06 (ITS4_final)
+*** do start to see depol block around 0.8 nA input 
+** Try soma L at 15, kdr at 0.06, nax 0.12 (ITS4_soma1)
