@@ -37818,3 +37818,5 @@ gotcha, ty salva!
 ** Tried soma L at 15 and kdr at 0.06 (ITS4_final)
 *** do start to see depol block around 0.8 nA input 
 ** Try soma L at 15, kdr at 0.06, nax 0.12 (ITS4_soma1)
+*** looks good!
+** NOTE: Increased max current input to 12.5 in batch fI curve function! 

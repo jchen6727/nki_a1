@@ -1273,7 +1273,7 @@ if __name__ == '__main__':
     # b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    b = fIcurve(pops=['ITS4', 'ITP4']) 
+    b = fIcurve(pops=['ITS4', 'ITP4', 'IT5','CT6','PV2','IT3']) 
 
 
     b.batchLabel = 'v29_trial13425_ITS4_soma2'
