@@ -263,26 +263,28 @@ if cfg.addConn and cfg.EEGain > 0.0:
 if cfg.addConn and cfg.EIGain > 0.0:
     for pre in Epops:
         for post in Ipops:
-            for l in layerGainLabels:  # used to tune each layer group independently
-                if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
-                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                else:
-                    prob = pmat[pre][post]
-                
-                if 'NGF' in post:
-                    synWeightFactor = cfg.synWeightFractionENGF
-                else:
-                    synWeightFactor = cfg.synWeightFractionEI
-                netParams.connParams['EI_'+pre+'_'+post+'_'+l] = { 
-                    'preConds': {'pop': pre}, 
-                    'postConds': {'pop': post, 'ynorm': layer[l]},
-                    'synMech': ESynMech,
-                    'probability': prob,
-                    'weight': wmat[pre][post] * cfg.EIGain * cfg.EILayerGain[l], 
-                    'synMechWeightFactor': synWeightFactor,
-                    'delay': 'defaultDelay+dist_3D/propVelocity',
-                    'synsPerConn': 1,
-                    'sec': 'proximal'}
+            for postType in Itypes:
+                if postType in post: # only create rule if celltype matches pop
+                    for l in layerGainLabels:  # used to tune each layer group independently
+                        if connDataSource['E->E/I'] in ['Allen_V1', 'Allen_custom']:
+                            prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+                        else:
+                            prob = pmat[pre][post]
+                        
+                        if 'NGF' in post:
+                            synWeightFactor = cfg.synWeightFractionENGF
+                        else:
+                            synWeightFactor = cfg.synWeightFractionEI
+                        netParams.connParams['EI_'+pre+'_'+post+'_'+postType+'_'+l] = { 
+                            'preConds': {'pop': pre}, 
+                            'postConds': {'pop': post, 'cellType': postType, 'ynorm': layer[l]},
+                            'synMech': ESynMech,
+                            'probability': prob,
+                            'weight': wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l], 
+                            'synMechWeightFactor': synWeightFactor,
+                            'delay': 'defaultDelay+dist_3D/propVelocity',
+                            'synsPerConn': 1,
+                            'sec': 'proximal'}
                 
 
 #------------------------------------------------------------------------------

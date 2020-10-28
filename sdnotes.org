@@ -7374,7 +7374,6 @@ try: add bkg input gains to thal pops -> stronger thal -> ITS4 fires
 added bkg input gains to thal pops -> stronger thal -> ITS4 fires
 reduced to 1.5 secs
 ** v30_batch3 - same but replace ITS4 with IT cell type
-*** 
 ** v30_batch4 - run best result from v30_batch3 for 10 sec
 ** v30_batch5 - tune L2+3+4 + thal
 *** notes
@@ -7427,6 +7426,26 @@ results were getting very low fitness, so made tuning func more restrictive by n
 - tuning func: 
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
     Itune = {'target': 10, 'width': 15, 'min': 0.5}
+*** results
+- did not find better solution -- ITS3 too low
 
+- highest IT3 rates (1 - 1.5Hz) --> high SOM rates (~15hz)
+- highest IT3 rates (1 - 1.5Hz) --> mid PV rates (~3hz)
+- highest IT3 rates (1 - 1.5Hz) --> low VIP rates (<1hz)
+- highest IT3 rates (1 - 1.5Hz) --> mid NGF rates (~3Hz)
+
+- ITS4 proportional to ITP4; ITP4 slope x2
+- ITS4 proportional to PV4; PV4 slope x25
+- ITS4 proportional to SOM4; SOM4 slope x50
+- ITS4 inversely proportional to VIP4; VIP4 slope x10; if ITS4 > 1.0 -> VIP4 = 0Hz
+- ITS4 proportional to NGF4; NGF4 slope x2
+
+
+** v30_batch10 - best soln of v30_batch8, with cell-type specific EI gains
+*** code
+    params[('EICellTypeGain', 'PV')] = [minV, maxV]
+    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
+    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
+    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
 
 ** blank

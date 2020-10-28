@@ -122,7 +122,7 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.addConn = 1
 
 cfg.EEGain = 1.0
-cfg.EIGain = 1.8600534795309025 	
+cfg.EIGain = 1.0 # 1.8600534795309025 	
 cfg.IEGain = 1.0 #0.75
 cfg.IIGain = 1.0 #0.5
 
@@ -131,6 +131,9 @@ cfg.EELayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0
 cfg.EILayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
 cfg.IELayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
 cfg.IILayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
+
+## E->I by target cell type
+cfg.EICellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1.0

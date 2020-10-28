@@ -79,20 +79,22 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
 
     return df
 
-def plotScatterPopVsParams(dataFolder, batchsim, df, pops):
+def plotScatterPopVsParams(dataFolder, batchsim, df, pops, skipCols=[]):
 
     dfcorr=df.corr('pearson')
     
     for pop in pops:
 
         for param in df.columns:
-            try:
-                print('Plotting scatter of %s vs %s param (R=%.2f) ...' %(pop, param, dfcorr[pop][param]))
-                df.plot.scatter(param, pop, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
-                plt.title('%s vs %s R=%.2f' % (pop, param, dfcorr[pop][param]))
-                plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, pop, param), dpi=300)
-            except:
-                print('Error plotting %s vs %s' % (pop,param))
+            if not any([skipCol in param for skipCol in skipCols]): 
+                try:
+                    print('Plotting scatter of %s vs %s param (R=%.2f) ...' %(pop, param, dfcorr[pop][param]))
+                    df.plot.scatter(param, pop, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
+                    plt.ylim(0,2)
+                    plt.title('%s vs %s R=%.2f' % (pop, param, dfcorr[pop][param]))
+                    plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, pop, param), dpi=300)
+                except:
+                    print('Error plotting %s vs %s' % (pop,param))
 
 
 def plotScatterFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
@@ -313,13 +315,13 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
 
-    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
+    # plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
 
-    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
+    # plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
 
     # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['ITS4'])
+    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'], skipCols=rateTimeRanges)
 
 
 
