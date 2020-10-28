@@ -37642,3 +37642,4 @@ gotcha, ty salva!
                     ]
                 ]
             },
+** Bringing soma kdr gbar to 0.06 (somaKdr4) 
