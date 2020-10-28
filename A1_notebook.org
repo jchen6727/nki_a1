@@ -37645,7 +37645,7 @@ gotcha, ty salva!
 ** Bringing soma kdr gbar to 0.06 (somaKdr4) 
 ** Changing soma L back to 15 (somaL15_1)
 *** keeping kdr gbar to 0.06 
-*** so, kdr is higher than it was last time I tested soma at 15 L (kdr gbar was 0.04 last time) 
+*** so, kdr is higher than it was last time I tested soma at 15 L (kdr gbar was 0.05 last time) 
 *** changed soma L to 15
 *** soma pt3d:
 **** old: 
@@ -37812,3 +37812,6 @@ gotcha, ty salva!
                     ]
                 ]
             },
+** *NOTE*: changed the max current input to 9.5 in batch fIcurve function! 
+** Try again w/ soma L at 15 and kdr at 0.05 (somaL15_2)
+*** see if any more depol block at higher inputs 

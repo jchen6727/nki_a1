@@ -670,7 +670,7 @@ def EPSPs():
 # ----------------------------------------------------------------------------------------------
 # f-I curve
 # ----------------------------------------------------------------------------------------------
-def fIcurve(pops = [], amps = list(np.arange(0.0, 8.5, 0.5)/10.0) ):
+def fIcurve(pops = [], amps = list(np.arange(0.0, 9.5, 0.5)/10.0) ):
     params = specs.ODict()
 
     params['singlePop'] = pops
@@ -1276,7 +1276,7 @@ if __name__ == '__main__':
     b = fIcurve(pops=['ITS4', 'ITP4']) 
 
 
-    b.batchLabel = 'v29_trial13425_L4fIcurves_somaL15_1'
+    b.batchLabel = 'v29_trial13425_L4fIcurves_somaL15_2'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
