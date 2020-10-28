@@ -37051,3 +37051,4 @@ gotcha, ty salva!
 *** soma nax gbar raised to 0.08 (somaNax1) 
 *** soma nax gbar raised to 0.1 (somaNax2) 
 *** soma kdr gbar lowered from 0.02 to 0.02 (somaKdr0)
+*** soma kdr gbar raised to 0.03 (somaKdr1)
