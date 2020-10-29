@@ -37839,6 +37839,7 @@ gotcha, ty salva!
 *** initCfg['duration'] = 10000 #2000
 *** initCfg['printPopAvgRates'] = [0, 10000] #[0,1000]
 *** commented out NetStim lines
+*** Changed setRunCfg at the end to hpc_slurm_gcp vs mpi_bulletin 
 ** cfg.py changes;
 *** changed/commented out NetStim lines 
 *** didn't change duration lines since those will be set in initCfg in batch.py 

@@ -1279,7 +1279,7 @@ if __name__ == '__main__':
     b.batchLabel = 'v29_trial13425_withNewITS4'
     b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
     b.run() # run batch
 
 
