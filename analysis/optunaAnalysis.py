@@ -79,7 +79,7 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
 
     return df
 
-def plotScatterPopVsParams(dataFolder, batchsim, df, pops, skipCols=[]):
+def plotScatterPopVsParams(dataFolder, batchsim, df, pops, skipCols=[], ylim=None):
 
     dfcorr=df.corr('pearson')
     
@@ -90,7 +90,7 @@ def plotScatterPopVsParams(dataFolder, batchsim, df, pops, skipCols=[]):
                 try:
                     print('Plotting scatter of %s vs %s param (R=%.2f) ...' %(pop, param, dfcorr[pop][param]))
                     df.plot.scatter(param, pop, s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
-                    plt.ylim(0,2)
+                    if ylim: plt.ylim(0, ylim)
                     plt.title('%s vs %s R=%.2f' % (pop, param, dfcorr[pop][param]))
                     plt.savefig('%s/%s/%s_scatter_%s_%s.png' %(dataFolder, batchSim, batchSim, pop, param), dpi=300)
                 except:
@@ -295,7 +295,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], I
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v30_batch8'
+    batchSim = 'v30_batch7'
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     allpops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']

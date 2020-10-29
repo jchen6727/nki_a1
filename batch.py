@@ -1203,28 +1203,29 @@ def optunaRatesLayers():
     params = specs.ODict()
 
     #rangeV = 0.25
-    minV1 = 0.2
-    maxV1 = 4.0
+    minV = 0.2
+    maxV = 3.0
 
-    params[('EICellTypeGain', 'PV')] = [minV1, maxV1]
-    params[('EICellTypeGain', 'SOM')] = [minV1, maxV1]
-    params[('EICellTypeGain', 'VIP')] = [minV1, maxV1]
-    params[('EICellTypeGain', 'NGF')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'PV')] = [minV, maxV]
+    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
+    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
+    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
 
-    params[('EELayerGain', '2')] = [minV1, maxV1]
-    params[('EILayerGain', '2')] = [minV1, maxV1]
-    params[('IELayerGain', '2')] = [minV1, maxV1]
-    params[('IILayerGain', '2')] = [minV1, maxV1]
+    params[('EELayerGain', '4')] = [minV, maxV]
+    params[('EILayerGain', '4')] = [minV, maxV]
+    params[('IELayerGain', '4')] = [minV, maxV]
+    params[('IILayerGain', '4')] = [minV, maxV]
 
-    params[('EELayerGain', '3')] = [minV1, maxV1]
-    params[('EILayerGain', '3')] = [minV1, maxV1]
-    params[('IELayerGain', '3')] = [minV1, maxV1]
-    params[('IILayerGain', '3')] = [minV1, maxV1]
+    # params[('EELayerGain', '2')] = [minV, maxV]
+    # params[('EILayerGain', '2')] = [minV, maxV]
+    # params[('IELayerGain', '2')] = [minV, maxV]
+    # params[('IILayerGain', '2')] = [minV, maxV]
 
-    params[('EELayerGain', '4')] = [minV1, maxV1]
-    params[('EILayerGain', '4')] = [minV1, maxV1]
-    params[('IELayerGain', '4')] = [minV1, maxV1]
-    params[('IILayerGain', '4')] = [minV1, maxV1]
+    # params[('EELayerGain', '3')] = [minV, maxV]
+    # params[('EILayerGain', '3')] = [minV, maxV]
+    # params[('IELayerGain', '3')] = [minV, maxV]
+    # params[('IILayerGain', '3')] = [minV, maxV]
+
 
     # bkg inputs
     # rangeV = 0.25
@@ -1246,18 +1247,6 @@ def optunaRatesLayers():
     # params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
     # params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
     # params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
-
-
-    # ----------------
-    # params[('EELayerGain', '3')] = [0.5*cfgLoad['EELayerGain']['3'], 2.0*cfgLoad['EELayerGain']['3']]
-    # params[('EILayerGain', '3')] = [0.5*cfgLoad['EILayerGain']['3'], 2.0*cfgLoad['EILayerGain']['3']]
-    # params[('IELayerGain', '3')] = [0.5*cfgLoad['IELayerGain']['3'], 2.0*cfgLoad['IELayerGain']['3']]
-    # params[('IILayerGain', '3')] = [0.5*cfgLoad['IILayerGain']['3'], 2.0*cfgLoad['IILayerGain']['3']]
-
-    # params[('EELayerGain', '4')] = [0.5*cfgLoad['EELayerGain']['4'], 2.0*cfgLoad['EELayerGain']['4']]
-    # params[('EILayerGain', '4')] = [0.5*cfgLoad['EILayerGain']['4'], 2.0*cfgLoad['EILayerGain']['4']]
-    # params[('IELayerGain', '4')] = [0.5*cfgLoad['IELayerGain']['4'], 2.0*cfgLoad['IELayerGain']['4']]
-    # params[('IILayerGain', '4')] = [0.5*cfgLoad['IILayerGain']['4'], 2.0*cfgLoad['IILayerGain']['4']]
 
     
     # params['thalamoCorticalGain'] = [0.2, 3.0]
@@ -1289,7 +1278,10 @@ def optunaRatesLayers():
     initCfg['recordLFP'] = None
     initCfg[('analysis', 'plotLFP')] = False
 
-    initCfg['EIGain'] = 1.8600534795309025 	# was set by mistake in cfg.py so keeping here in order to reproduce results
+    initCfg['EEGain'] = 1.0 	
+    initCfg['EIGain'] = 1.0 	
+    initCfg['IEGain'] = 1.0 	
+    initCfg['IIGain'] = 1.0 	
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -1309,7 +1301,7 @@ def optunaRatesLayers():
     
     ## Exc pops
     #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
-    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     #Etune = {'target': 5, 'width': 20, 'min': 0.05}
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
@@ -1326,9 +1318,7 @@ def optunaRatesLayers():
     #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
     #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
     #         'IRE', 'IREM', 'TI']  # Thal 
-    Ipops = ['PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-            'PV3', 'SOM3', 'VIP3', 'NGF3',       # L3
-            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    Ipops = ['PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
             'IRE', 'IREM', 'TI']  # Thal 
 
     #Itune = {'target': 10, 'width': 30, 'min': 0.05}
@@ -1469,7 +1459,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v30_batch11'
+    b.batchLabel = 'v30_batch12'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

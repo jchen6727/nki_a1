@@ -7369,25 +7369,35 @@ Hypotheses:
 after 500 trials, ITS4 never spiked
 probably due to low bkg inputs and low thal inputs
 try: add bkg input gains to thal pops -> stronger thal -> ITS4 fires
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch2 - tuning by layers - thal + L4
 *** notes
 added bkg input gains to thal pops -> stronger thal -> ITS4 fires
 reduced to 1.5 secs
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch3 - same but replace ITS4 with IT cell type
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch4 - run best result from v30_batch3 for 10 sec
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch5 - tune L2+3+4 + thal
 *** notes
 increased duration since requires 1.5 sec to reach steady state
 - needs over 1.5 sec to reach steady state!!!
 - ITS4 not firing
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch6 - tune only L3+L4+thal; include L4 weights but starting from tuned and smaller interval - bug
 *** notes
 fitness func didn't include L3 pops
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch7 - same as v30_batch6 but fixed fitness func to include L3 pops
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch8 - added L2 and reduced width of gaussian tuning window
 *** note
 results were getting very low fitness, so made tuning func more restrictive by narrowing the gaussian func widths
-** v30_batch9 - best soln of v30_batch8, with param ranges +- 0.25, min rate = 0.5
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch9 - best soln of v30_batch8, with param ranges +- 0.25, min rate = 0.5; increase min rate required
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 *** code
 
 - param ranges:
@@ -7442,11 +7452,40 @@ results were getting very low fitness, so made tuning func more restrictive by n
 
 
 ** v30_batch10 - best soln of v30_batch8, with cell-type specific EI gains
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 *** code
     params[('EICellTypeGain', 'PV')] = [minV, maxV]
     params[('EICellTypeGain', 'SOM')] = [minV, maxV]
     params[('EICellTypeGain', 'VIP')] = [minV, maxV]
     params[('EICellTypeGain', 'NGF')] = [minV, maxV]
 ** v30_batch11 - layerwise + celltype
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+
+*** code
+    minV1 = 0.2
+    maxV1 = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'SOM')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'VIP')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'NGF')] = [minV1, maxV1]
+
+    params[('EELayerGain', '2')] = [minV1, maxV1]
+    params[('EILayerGain', '2')] = [minV1, maxV1]
+    params[('IELayerGain', '2')] = [minV1, maxV1]
+    params[('IILayerGain', '2')] = [minV1, maxV1]
+
+    params[('EELayerGain', '3')] = [minV1, maxV1]
+    params[('EILayerGain', '3')] = [minV1, maxV1]
+    params[('IELayerGain', '3')] = [minV1, maxV1]
+    params[('IILayerGain', '3')] = [minV1, maxV1]
+
+    params[('EELayerGain', '4')] = [minV1, maxV1]
+    params[('EILayerGain', '4')] = [minV1, maxV1]
+    params[('IELayerGain', '4')] = [minV1, maxV1]
+    params[('IILayerGain', '4')] = [minV1, maxV1]
+
 
 ** blank
