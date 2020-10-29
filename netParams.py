@@ -90,7 +90,7 @@ for k in cfg.weightNormScaling:
             sec['weightNorm'][i] *= cfg.weightNormScaling[k]
 
 ## cfg.tune: 
-tunedCells = ['NGF_reduced','ITS4_reduced']
+tunedCells = ['NGF_reduced']#,'ITS4_reduced']
 for cellLabel in tunedCells:
     for sec, secDict in netParams.cellParams[cellLabel]['secs'].items():
         #if sec in cfg.tune:

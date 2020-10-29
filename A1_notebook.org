@@ -37830,5 +37830,8 @@ gotcha, ty salva!
 *** Do I need to check fI curve w/ respect to input into other dends as well? see if I need to adjust params there or anything?
 *** what about bkg weights / weight norm adjustments now for ITS4? 
 *** Should I take out the Tune lines at the bottom of cfg.py regarding ITS4 (the stuff that is also in there for NGF?)?
+** cfg.tune changes:
+*** in netParams.py, commented out 'ITS4_reduced' from tunedCells list 
+*** in cfg.py, commented out ITS4 lines in cfg.tune 
 
 
