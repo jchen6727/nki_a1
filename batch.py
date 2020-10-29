@@ -735,18 +735,18 @@ def custom():
     #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
     #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
 
-    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    params['thalamoCorticalGain'] = [1.0]#, 1.5]
     #params['duration'] = [10000]
 
-    params[('NetStim3', 'weight')] = [50, 100, 150]
+    #params[('NetStim3', 'weight')] = [50, 100, 150]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 2000 #10000
-    initCfg['printPopAvgRates'] = [0, 1000] 
+    initCfg['duration'] = 10000
+    initCfg['printPopAvgRates'] = [0, 10000] 
     initCfg['dt'] = 0.05
 
     initCfg['scaleDensity'] = 0.5
@@ -758,7 +758,7 @@ def custom():
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     
-    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    #initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
 
     initCfg['addConn'] = True # test only bkg inputs
 
@@ -766,8 +766,8 @@ def custom():
     initCfg['saveCellConns'] = False
 
     # NetStim
-    initCfg['addNetStim'] = 1
-    initCfg['NetStim3'] = {'pop': 'IT3',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/20.0, 'noise': 0.0, 'number': 20.0,   'weight': 10.0, 'delay': 0}
+    #initCfg['addNetStim'] = 1
+    #initCfg['NetStim3'] = {'pop': 'IT3',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/20.0, 'noise': 0.0, 'number': 20.0,   'weight': 10.0, 'delay': 0}
 
     # from v29_batch4 (optuna), trial trial_7508
     import json
@@ -1267,16 +1267,16 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
+    b = custom()
     # b = evolRates()
     # b = asdRates()
     # b = optunaRates()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    b = fIcurve(pops=['IT3','CT5']) 
+    #b = fIcurve(pops=['IT3','CT5']) 
 
 
-    b.batchLabel = 'v29_trial13425_otherPops'
+    b.batchLabel = 'v29_trial13425_withNewITS4'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'mpi_bulletin') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

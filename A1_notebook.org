@@ -37830,8 +37830,15 @@ gotcha, ty salva!
 *** Do I need to check fI curve w/ respect to input into other dends as well? see if I need to adjust params there or anything?
 *** what about bkg weights / weight norm adjustments now for ITS4? 
 *** Should I take out the Tune lines at the bottom of cfg.py regarding ITS4 (the stuff that is also in there for NGF?)?
-** cfg.tune changes:
+** changes due to ITS4 (cfg.tune):
 *** in netParams.py, commented out 'ITS4_reduced' from tunedCells list 
 *** in cfg.py, commented out ITS4 lines in cfg.tune 
-
-
+** batch.py 
+*** running b = custom() now (vs. b = fIcurve)
+*** changed saveFolder to v29_trial13425_withNewITS4
+*** initCfg['duration'] = 10000 #2000
+*** initCfg['printPopAvgRates'] = [0, 10000] #[0,1000]
+*** commented out NetStim lines
+** cfg.py changes;
+*** changed/commented out NetStim lines 
+*** didn't change duration lines since those will be set in initCfg in batch.py 
