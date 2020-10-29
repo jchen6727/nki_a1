@@ -37820,3 +37820,9 @@ gotcha, ty salva!
 ** Try soma L at 15, kdr at 0.06, nax 0.12 (ITS4_soma1)
 *** looks good!
 ** NOTE: Increased max current input to 12.5 in batch fI curve function! 
+* <2020-10-29 Thu -- ITS4 finalize + test in network>
+** ITS4 final params:
+*** apical length adjusted 
+*** soma L at 15, and diam 25
+*** soma kdr at 0.06, nax at 0.12 
+
