@@ -1276,7 +1276,7 @@ if __name__ == '__main__':
     #b = fIcurve(pops=['IT3','CT5']) 
 
 
-    b.batchLabel = 'v29_trial13425_withNewITS4'
+    b.batchLabel = 'v29_trial13425_newITS4'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

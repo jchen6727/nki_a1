@@ -37843,3 +37843,6 @@ gotcha, ty salva!
 ** cfg.py changes;
 *** changed/commented out NetStim lines 
 *** didn't change duration lines since those will be set in initCfg in batch.py 
+** [RESOLVED] Error on gcp when runnning batch.py:
+*** SyntaxError: Non-ASCII character '\xc2' in file batch.py on line 1274, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
+*** ^^ ah... was trying 'python -i batch.py' --> need to be using python3!!!
