@@ -1194,29 +1194,44 @@ def optunaRatesLayers():
     #     cfgLoad = json.load(f)['simConfig']
 
     # from v30_batch8 (optuna), trial 3958
-    import json
-    with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
-        cfgLoad = json.load(f)['simConfig']
+    # import json
+    # with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
 
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
 
     #rangeV = 0.25
-    minV = 0.2
-    maxV = 4.0
+    minV1 = 0.2
+    maxV1 = 4.0
 
-    params[('EICellTypeGain', 'PV')] = [minV, maxV]
-    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
-    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
-    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
+    params[('EICellTypeGain', 'PV')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'SOM')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'VIP')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'NGF')] = [minV1, maxV1]
 
+    params[('EELayerGain', '2')] = [minV1, maxV1]
+    params[('EILayerGain', '2')] = [minV1, maxV1]
+    params[('IELayerGain', '2')] = [minV1, maxV1]
+    params[('IILayerGain', '2')] = [minV1, maxV1]
+
+    params[('EELayerGain', '3')] = [minV1, maxV1]
+    params[('EILayerGain', '3')] = [minV1, maxV1]
+    params[('IELayerGain', '3')] = [minV1, maxV1]
+    params[('IILayerGain', '3')] = [minV1, maxV1]
+
+    params[('EELayerGain', '4')] = [minV1, maxV1]
+    params[('EILayerGain', '4')] = [minV1, maxV1]
+    params[('IELayerGain', '4')] = [minV1, maxV1]
+    params[('IILayerGain', '4')] = [minV1, maxV1]
 
     # bkg inputs
     # rangeV = 0.25
     # minV = 0.1
     # maxV = 5.0
 
+    # ----------------
     # params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
     # params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
     # params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
@@ -1454,7 +1469,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v30_batch10'
+    b.batchLabel = 'v30_batch11'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
