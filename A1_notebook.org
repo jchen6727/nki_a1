@@ -37825,4 +37825,10 @@ gotcha, ty salva!
 *** apical length adjusted 
 *** soma L at 15, and diam 25
 *** soma kdr at 0.06, nax at 0.12 
+** pulled onto A1 repo on gcp (on repro branch)
+** QUESTIONS:
+*** Do I need to check fI curve w/ respect to input into other dends as well? see if I need to adjust params there or anything?
+*** what about bkg weights / weight norm adjustments now for ITS4? 
+*** Should I take out the Tune lines at the bottom of cfg.py regarding ITS4 (the stuff that is also in there for NGF?)?
+
 
