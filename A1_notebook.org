@@ -37846,3 +37846,16 @@ gotcha, ty salva!
 ** [RESOLVED] Error on gcp when runnning batch.py:
 *** SyntaxError: Non-ASCII character '\xc2' in file batch.py on line 1274, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
 *** ^^ ah... was trying 'python -i batch.py' --> need to be using python3!!!
+* <2020-10-30 Fri -- trying new ITS4>
+** bkgWeights:
+*** analysis/bkgWeights.py requires v22_batch28 (got from salva):
+**** the .json: https://drive.google.com/file/d/1OZysT_M4eLqRpi9e9_OxftxN5nTW6yfU/view
+**** the whole folder: https://drive.google.com/drive/folders/1wKpETPJon5_1CZiqbPtFNKrGYKAkgQ5c
+*** See chat to see salva's suggestions 
+*** Saved a copy of old cells/bkgWeights.json before running this, in case 
+** Merge in changes from salva's salva_layers branch:
+*** git add/commit/push changes from repro
+*** git checkout salva_layers
+*** git pull
+*** git checkout repro
+*** git merge salva_layers 
