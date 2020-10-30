@@ -57,8 +57,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v29_tune1' 
-cfg.saveFolder = 'data/v29_manualTune'                	## Set file output name
+cfg.simLabel = 'v31_tune1' 
+cfg.saveFolder = 'data/v31_manualTune'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
@@ -122,14 +122,18 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 cfg.addConn = 1
 
 cfg.EEGain = 1.0
-cfg.EIGain = 1.8600534795309025 	
+cfg.EIGain = 1.0 # 1.8600534795309025 	
 cfg.IEGain = 1.0 #0.75
 cfg.IIGain = 1.0 #0.5
 
 ## E/I->E/I layer weights (L1-3, L4, L5, L6)
-cfg.EILayerGain = {'1-3': 1.0, '4': 1.0 , '5': 1.0 , '6': 1.0}
-cfg.IELayerGain = {'1-3': 1.0, '4': 1.0 , '5': 1.0 , '6': 1.0}
-cfg.IILayerGain = {'1-3': 1.0 , '4': 1.0 , '5': 1.0 , '6': 1.0}
+cfg.EELayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
+cfg.EILayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
+cfg.IELayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
+cfg.IILayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
+
+## E->I by target cell type
+cfg.EICellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1.0
@@ -158,7 +162,10 @@ cfg.startBkg = 0  # start at 0 ms
 cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input
-cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+#cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
+
+cfg.EbkgThalamicGain = 1.0
+cfg.IbkgThalamicGain = 1.0
 
 cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
 
@@ -188,66 +195,6 @@ cfg.addNetStim = 0 #1
 
 
 cfg.tune = {}
-cfg.tune['NGF_reduced'] = {               ## NGF
-            "L": 0.9984504290798327,
-            "Ra": 1.255611271944909,
-            "ch_CavL": {
-                "gmax": 0.7643347768670886
-            },
-            "ch_CavN": {
-                "gmax": 0.7849619548728615
-            },
-            "ch_KCaS": {
-                "gmax": 1.9988364189178314
-            },
-            "ch_Kdrfastngf": {
-                "gmax": 1.8652741271839977
-            },
-            "ch_KvAngf": {
-                "gmax": 1.9986936892241702
-            },
-            "ch_KvCaB": {
-                "gmax": 1.187190039715703
-            },
-            "ch_Navngf": {
-                "gmax": 1.785111895575446
-            },
-            "cm": 1.5345487505473592,
-            "diam": 0.5686811262559474,
-            "hd": {
-                "gbar": 0.5589821152606997
-            },
-            "pas": {
-                "e": 0.906315303028034,
-                "g": 0.8298625849198543
-            }}
-
-# cfg.tune['ITS4_reduced'] = { ## ITS4
-#             "L": 0.787253786971925,
-#             "Nca": {
-#                 "gmax": 1.397670967590024
-#             },
-#             "Ra": 1.1113674386433758,
-#             "cm": 1.167087306102121,
-#             "diam": 3.828811687182317,
-#             "kca": {
-#                 "gbar": 2.100600288597735
-#             },
-#             "km": {
-#                 "gbar": 2.7281004052819293
-#             },
-#             "kv": {
-#                 "gbar": 0.2537828664684158
-#             },
-#             "naz": {
-#                 "gmax": 3.7330386432259646
-#             },
-#             "pas": {
-#                 "e": 1.199460441102786,
-#                 "g": 1.3036266548061946
-#             }
-#         }
-
 
 
 

@@ -726,7 +726,7 @@ def custom():
     #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
     #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
     #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-    #params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
+    # params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
     # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
     # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
     # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
@@ -792,6 +792,20 @@ def custom():
 
     print(initCfg)
 
+    # # from v30_batch3 (optuna), trial 10685, from salva_layers
+    # import json
+    # with open('data/v30_batch3/trial_10685/trial_10685_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+    
+    # initCfg.update({('EELayerGain', '4'): cfgLoad['EELayerGain']['4'],
+    #                 ('EILayerGain', '4'): cfgLoad['EILayerGain']['4'],
+    #                 ('IELayerGain', '4'): cfgLoad['IELayerGain']['4'],
+    #                 ('IILayerGain', '4'): cfgLoad['IILayerGain']['4'],
+    #                 'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+    #                 'intraThalamicGain': cfgLoad['intraThalamicGain'],
+    #                 'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
+    #                 'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+    # print(initCfg)
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
@@ -1190,6 +1204,202 @@ def optunaRates():
 
     return b
 
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayers():
+
+    # from v30_batch3 (optuna), trial 10685
+    # import json
+    # with open('data/v30_batch3/trial_10685/trial_10685_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+
+    # # from v30_batch6 (optuna), trial 10685
+    # import json
+    # with open('data/v30_batch6/trial_2762/trial_2762_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+
+    # from v30_batch8 (optuna), trial 3958
+    import json
+    with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    #rangeV = 0.25
+    minV = 0.2
+    maxV = 3.0
+
+    params[('EICellTypeGain', 'PV')] = [minV, maxV]
+    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
+    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
+    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
+
+    params[('EELayerGain', '4')] = [minV, maxV]
+    params[('EILayerGain', '4')] = [minV, maxV]
+    params[('IELayerGain', '4')] = [minV, maxV]
+    params[('IILayerGain', '4')] = [minV, maxV]
+
+    # params[('EELayerGain', '2')] = [minV, maxV]
+    # params[('EILayerGain', '2')] = [minV, maxV]
+    # params[('IELayerGain', '2')] = [minV, maxV]
+    # params[('IILayerGain', '2')] = [minV, maxV]
+
+    # params[('EELayerGain', '3')] = [minV, maxV]
+    # params[('EILayerGain', '3')] = [minV, maxV]
+    # params[('IELayerGain', '3')] = [minV, maxV]
+    # params[('IILayerGain', '3')] = [minV, maxV]
+
+
+    # bkg inputs
+    # rangeV = 0.25
+    # minV = 0.1
+    # maxV = 5.0
+
+    # ----------------
+    # params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    # params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
+    # params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    # params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']-rangeV, minV), min(cfgLoad['IILayerGain']['2']+rangeV, maxV)]
+
+    # params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    # params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']-rangeV, minV), min(cfgLoad['EILayerGain']['3']+rangeV, maxV)]
+    # params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    # params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']-rangeV, minV), min(cfgLoad['IILayerGain']['3']+rangeV, maxV)]
+
+    # params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV, minV), min(cfgLoad['EELayerGain']['4']+rangeV, maxV)]
+    # params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
+    # params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
+    # params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
+
+    
+    # params['thalamoCorticalGain'] = [0.2, 3.0]
+    # params['intraThalamicGain'] = [0.2, 3.0]
+    # params['EbkgThalamicGain'] = [0.2, 3.0]
+    # params['IbkgThalamicGain'] = [0.2, 3.0]
+    
+    # params['corticoThalamicGain'] = [0.25, 2.0]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 0.5
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['EEGain'] = 1.0 	
+    initCfg['EIGain'] = 1.0 	
+    initCfg['IEGain'] = 1.0 	
+    initCfg['IIGain'] = 1.0 	
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    initCfg.update({'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+                    'intraThalamicGain': cfgLoad['intraThalamicGain'],
+                    'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
+                    'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 15,
+        'time_sleep': 30,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
 # ----------------------------------------------------------------------------------------------
 # Run configurations
 # ----------------------------------------------------------------------------------------------
@@ -1268,16 +1478,17 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    # b = custom()
     # b = evolRates()
     # b = asdRates()
     # b = optunaRates()
+    b = optunaRatesLayers()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
 
-    b.batchLabel = 'v29_trial13425_newITS4'
+    b.batchLabel = 'v31_batch1'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

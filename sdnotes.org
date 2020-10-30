@@ -643,6 +643,28 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
 We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
 Then we added L2/3 recurrent connections and optimized the weights in both L4 and L2/3. 
 This approach was repeated by adding L5, then L6, and finally L1 (see Methods for details). "
+
+
+Optimization of Full V1 Models
+
+As described in the Main Text, running simulations after the above optimization did not yield suitable network behaviors in either of our V1 models. 
+Thus, we used an iterative grid search method (Arkhipov et al., 2018), where weights were uniformly scaled for every class (e.g. scaling weights of excitatory layer
+ 4 to excitatory layer 5 connections all by the same amount, as one iteration). We searched in discrete increments weight changes across connection classes and 
+ selected the best result before moving on to the next connection class (although there was still a need to revisit connections classes during this process). 
+ The optimization employed a small training set consisting of a two 0.5-second-long simulations: one of gray screen, and the other of a single drifting grating. 
+ We aimed to satisfy three criteria: (i) match spontaneous firing rates (gray screen stimulus) to experimental observations, (ii) match peak firing rates for the 
+ drifting grating, and (iii) avoid epileptic-like activity where the network would ramp up to have large global bursts and then enter a period of silence until 
+ the next very rapid burst. The weight adjustments were kept in a strict range where, for example, the LGN to L4 excitatory weights were not adjusted at all 
+ given that they were fit to direct in vivo experimental measurements (Lien and Scanziani, 2013). Other LGN connections were restricted to be scaled only in 
+ the range [0.5, 2] from the target net input current as those were scaled from optogenetics experiments (Ji et al., 2015). 
+ The optimization was performed starting from L4 only and adding successive layers one by one. First, all interlayer connections were set to zero and only the 
+ intra-layer connections in L4 were optimized. Once our criteria were met, we added L2/3 to the optimization, including the interactions between the two layers. 
+ This procedure simplified the optimization process even though weights optimized at one step had to be readjusted at the next step (typically minor). 
+ This process was continued for layer 5, followed by layer 6, and finally layer 1. During our optimization, the weight scaling was restricted in the 
+ range of [0.2, 5]. In the deeper layers (layers 5 and 6), this rule had to be expanded to reach the net adjustment range of [0.12, 18] for the 
+ biophysical model and [0.17, 6.0] for the GLIF model. Note that adjusting the synaptic weights in the biophysical model did not translate directly to 
+ scaling the PSP (see the Layer 1 description in Matching Target Post Synaptic Potentials).
+
 ** Allen emails
 Hi Salva,
  
@@ -1498,6 +1520,12 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 ** v24 - Fixed bug in IE/II specific layer gains
 ** v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
+** v26 - Changed NGF AMPA:NMDA ratio 
+** v27 - Split thalamic interneurons into core and matrix (TI and TIM)
+** v28 - Set recurrent TC->TC conn to 0
+** v29 - Added EI specific layer gains
+** v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
+** v31 - Added cell-type specific gains; update ITS4 and NGF
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -7349,4 +7377,143 @@ Hypotheses:
 *** notes
 increased TIM bkg from 2.0 to 3.0
 increased IREM from 1 to 1.5 
+=======
+
+
+** v30_batch1 - tuning by layers - thal + L4
+*** notes
+after 500 trials, ITS4 never spiked
+probably due to low bkg inputs and low thal inputs
+try: add bkg input gains to thal pops -> stronger thal -> ITS4 fires
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch2 - tuning by layers - thal + L4
+*** notes
+added bkg input gains to thal pops -> stronger thal -> ITS4 fires
+reduced to 1.5 secs
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch3 - same but replace ITS4 with IT cell type
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch4 - run best result from v30_batch3 for 10 sec
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch5 - tune L2+3+4 + thal
+*** notes
+increased duration since requires 1.5 sec to reach steady state
+- needs over 1.5 sec to reach steady state!!!
+- ITS4 not firing
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch6 - tune only L3+L4+thal; include L4 weights but starting from tuned and smaller interval - bug
+*** notes
+fitness func didn't include L3 pops
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch7 - same as v30_batch6 but fixed fitness func to include L3 pops
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch8 - added L2 and reduced width of gaussian tuning window
+*** note
+results were getting very low fitness, so made tuning func more restrictive by narrowing the gaussian func widths
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch9 - best soln of v30_batch8, with param ranges +- 0.25, min rate = 0.5; increase min rate required
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+*** code
+
+- param ranges:
+
+    # from v30_batch8 (optuna), trial 3958
+    import json
+    with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+
+    rangeV = 0.25
+    minV = 0.1
+    maxV = 5.0
+
+    # bkg inputs
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']-rangeV, minV), min(cfgLoad['IILayerGain']['2']+rangeV, maxV)]
+
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']-rangeV, minV), min(cfgLoad['EILayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']-rangeV, minV), min(cfgLoad['IILayerGain']['3']+rangeV, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV, minV), min(cfgLoad['EELayerGain']['4']+rangeV, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
+
+
+- tuning func: 
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+*** results
+- did not find better solution -- ITS3 too low
+
+- highest IT3 rates (1 - 1.5Hz) --> high SOM rates (~15hz)
+- highest IT3 rates (1 - 1.5Hz) --> mid PV rates (~3hz)
+- highest IT3 rates (1 - 1.5Hz) --> low VIP rates (<1hz)
+- highest IT3 rates (1 - 1.5Hz) --> mid NGF rates (~3Hz)
+
+- ITS4 proportional to ITP4; ITP4 slope x2
+- ITS4 proportional to PV4; PV4 slope x25
+- ITS4 proportional to SOM4; SOM4 slope x50
+- ITS4 inversely proportional to VIP4; VIP4 slope x10; if ITS4 > 1.0 -> VIP4 = 0Hz
+- ITS4 proportional to NGF4; NGF4 slope x2
+
+
+** v30_batch10 - best soln of v30_batch8, with cell-type specific EI gains
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+*** code
+    params[('EICellTypeGain', 'PV')] = [minV, maxV]
+    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
+    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
+    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
+** v30_batch11 - L2+3+4+thal, layerwise + celltype
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+
+*** code
+    minV1 = 0.2
+    maxV1 = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'SOM')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'VIP')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'NGF')] = [minV1, maxV1]
+
+    params[('EELayerGain', '2')] = [minV1, maxV1]
+    params[('EILayerGain', '2')] = [minV1, maxV1]
+    params[('IELayerGain', '2')] = [minV1, maxV1]
+    params[('IILayerGain', '2')] = [minV1, maxV1]
+
+    params[('EELayerGain', '3')] = [minV1, maxV1]
+    params[('EILayerGain', '3')] = [minV1, maxV1]
+    params[('IELayerGain', '3')] = [minV1, maxV1]
+    params[('IILayerGain', '3')] = [minV1, maxV1]
+
+    params[('EELayerGain', '4')] = [minV1, maxV1]
+    params[('EILayerGain', '4')] = [minV1, maxV1]
+    params[('IELayerGain', '4')] = [minV1, maxV1]
+    params[('IILayerGain', '4')] = [minV1, maxV1]
+
+** v30_batch12 - L4 + thal,  layer-specific + celltype-specific gains
+*** notes
+fixed thal gains from prev; 
+Overall ESOM, EPV, ENGF, EVIP gains in range [0.2, 3]
+L4 EE, EI, IE, II gains in range [0.2, 3]
+8 params with large range
+maybe II cell type-specific gains?
+
+** v30_batch13 - L4 + thal,  layer-specific + celltype-specific gains -- repeat
+*** notes
+very similar results -- good, as expected
+** v31_batch1 - L4 + thal, layer-specific + celltype-specific gains; new ITS4
+*** notes
 ** blank
