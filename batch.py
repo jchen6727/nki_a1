@@ -1194,37 +1194,43 @@ def optunaRatesLayers():
     #     cfgLoad = json.load(f)['simConfig']
 
     # from v30_batch8 (optuna), trial 3958
+    # import json
+    # with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+
+    # from v31_batch1 (optuna L4), trial 3958
     import json
-    with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
+    with open('data/v31_batch1/trial_2298/trial_2298_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
 
-    #rangeV = 0.25
+    rangeV = 0.25
     minV = 0.2
     maxV = 3.0
 
-    params[('EICellTypeGain', 'PV')] = [minV, maxV]
-    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
-    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
-    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
 
-    params[('EELayerGain', '4')] = [minV, maxV]
-    params[('EILayerGain', '4')] = [minV, maxV]
-    params[('IELayerGain', '4')] = [minV, maxV]
-    params[('IILayerGain', '4')] = [minV, maxV]
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV, minV), min(cfgLoad['EELayerGain']['4']+rangeV, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
+
+    params[('EELayerGain', '3')] = [minV, maxV]
+    params[('EILayerGain', '3')] = [minV, maxV]
+    params[('IELayerGain', '3')] = [minV, maxV]
+    params[('IILayerGain', '3')] = [minV, maxV]
+
 
     # params[('EELayerGain', '2')] = [minV, maxV]
     # params[('EILayerGain', '2')] = [minV, maxV]
     # params[('IELayerGain', '2')] = [minV, maxV]
     # params[('IILayerGain', '2')] = [minV, maxV]
-
-    # params[('EELayerGain', '3')] = [minV, maxV]
-    # params[('EILayerGain', '3')] = [minV, maxV]
-    # params[('IELayerGain', '3')] = [minV, maxV]
-    # params[('IILayerGain', '3')] = [minV, maxV]
 
 
     # bkg inputs
@@ -1301,7 +1307,7 @@ def optunaRatesLayers():
     
     ## Exc pops
     #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
-    Epops = ['ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     #Etune = {'target': 5, 'width': 20, 'min': 0.05}
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
@@ -1318,7 +1324,8 @@ def optunaRatesLayers():
     #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
     #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
     #         'IRE', 'IREM', 'TI']  # Thal 
-    Ipops = ['PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    Ipops = ['PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
             'IRE', 'IREM', 'TI']  # Thal 
 
     #Itune = {'target': 10, 'width': 30, 'min': 0.05}
@@ -1459,7 +1466,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v31_batch1'
+    b.batchLabel = 'v31_batch2'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
