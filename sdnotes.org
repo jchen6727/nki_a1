@@ -7459,7 +7459,7 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
     params[('EICellTypeGain', 'SOM')] = [minV, maxV]
     params[('EICellTypeGain', 'VIP')] = [minV, maxV]
     params[('EICellTypeGain', 'NGF')] = [minV, maxV]
-** v30_batch11 - layerwise + celltype
+** v30_batch11 - L2+3+4+thal, layerwise + celltype
 *** notes
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 
@@ -7487,5 +7487,14 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
     params[('IELayerGain', '4')] = [minV1, maxV1]
     params[('IILayerGain', '4')] = [minV1, maxV1]
 
+** v30_batch12 - L4 + thal,  layerwise + celltype
+*** note
+fixed thal gains from prev; 
+Overall ESOM, EPV, ENGF, EVIP gains in range [0.2, 3]
+L4 EE, EI, IE, II gains in range [0.2, 3]
+8 params with large range
+maybe II cell type-specific gains?
+
+** v30_batch13 - L4 + thal,  layerwise + celltype -- repeat
 
 ** blank
