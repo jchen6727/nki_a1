@@ -1525,6 +1525,7 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v28 - Set recurrent TC->TC conn to 0
 ** v29 - Added EI specific layer gains
 ** v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
+** v31 - Added cell-type specific gains; update ITS4 and NGF
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -7487,14 +7488,18 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
     params[('IELayerGain', '4')] = [minV1, maxV1]
     params[('IILayerGain', '4')] = [minV1, maxV1]
 
-** v30_batch12 - L4 + thal,  layerwise + celltype
-*** note
+** v30_batch12 - L4 + thal,  layer-specific + celltype-specific gains
+*** notes
 fixed thal gains from prev; 
 Overall ESOM, EPV, ENGF, EVIP gains in range [0.2, 3]
 L4 EE, EI, IE, II gains in range [0.2, 3]
 8 params with large range
 maybe II cell type-specific gains?
 
-** v30_batch13 - L4 + thal,  layerwise + celltype -- repeat
+** v30_batch13 - L4 + thal,  layer-specific + celltype-specific gains -- repeat
+*** notes
+very similar results -- good, as expected
+** v31_batch1 - L4 + thal, layer-specific + celltype-specific gains; new ITS4
+*** notes
 
 ** blank

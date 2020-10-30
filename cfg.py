@@ -57,8 +57,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v29_tune1' 
-cfg.saveFolder = 'data/v29_manualTune'                	## Set file output name
+cfg.simLabel = 'v31_tune1' 
+cfg.saveFolder = 'data/v31_manualTune'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
@@ -192,66 +192,6 @@ cfg.NetStim1 = {'pop': 'NGF1', 'ynorm': [0,2.0], 'sec': 'soma', 'loc': 0.5, 'syn
 
 
 cfg.tune = {}
-cfg.tune['NGF_reduced'] = {               ## NGF
-            "L": 0.9984504290798327,
-            "Ra": 1.255611271944909,
-            "ch_CavL": {
-                "gmax": 0.7643347768670886
-            },
-            "ch_CavN": {
-                "gmax": 0.7849619548728615
-            },
-            "ch_KCaS": {
-                "gmax": 1.9988364189178314
-            },
-            "ch_Kdrfastngf": {
-                "gmax": 1.8652741271839977
-            },
-            "ch_KvAngf": {
-                "gmax": 1.9986936892241702
-            },
-            "ch_KvCaB": {
-                "gmax": 1.187190039715703
-            },
-            "ch_Navngf": {
-                "gmax": 1.785111895575446
-            },
-            "cm": 1.5345487505473592,
-            "diam": 0.5686811262559474,
-            "hd": {
-                "gbar": 0.5589821152606997
-            },
-            "pas": {
-                "e": 0.906315303028034,
-                "g": 0.8298625849198543
-            }}
-
-cfg.tune['ITS4_reduced'] = { ## ITS4
-            "L": 0.787253786971925,
-            "Nca": {
-                "gmax": 1.397670967590024
-            },
-            "Ra": 1.1113674386433758,
-            "cm": 1.167087306102121,
-            "diam": 3.828811687182317,
-            "kca": {
-                "gbar": 2.100600288597735
-            },
-            "km": {
-                "gbar": 2.7281004052819293
-            },
-            "kv": {
-                "gbar": 0.2537828664684158
-            },
-            "naz": {
-                "gmax": 3.7330386432259646
-            },
-            "pas": {
-                "e": 1.199460441102786,
-                "g": 1.3036266548061946
-            }
-        }
-
 
 
 
