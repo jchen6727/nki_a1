@@ -751,6 +751,7 @@ def custom():
 
     initCfg['scaleDensity'] = 0.5
 
+    initCfg['singleCellPops'] = True 
     #initCfg[('ICThalInput', 'startTime')] = 750
 
     # plotting and saving params
