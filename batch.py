@@ -1205,7 +1205,7 @@ def optunaRatesLayers():
 
     # from v31_batch2 (optuna L3+L4), trial 9524
     import json
-    with open('data/v31_batch1/trial_9524/trial_9524_cfg.json', 'rb') as f:
+    with open('data/v31_batch2/trial_9524/trial_9524_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
 
