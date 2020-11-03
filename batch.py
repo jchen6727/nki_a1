@@ -1198,10 +1198,16 @@ def optunaRatesLayers():
     # with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
     #     cfgLoad = json.load(f)['simConfig']
 
-    # from v31_batch1 (optuna L4), trial 3958
+    # from v31_batch1 (optuna L4), trial 2298
+    # import json
+    # with open('data/v31_batch1/trial_2298/trial_2298_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+
+    # from v31_batch2 (optuna L3+L4), trial 9524
     import json
-    with open('data/v31_batch1/trial_2298/trial_2298_cfg.json', 'rb') as f:
+    with open('data/v31_batch1/trial_9524/trial_9524_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
+
 
     # --------------------------------------------------------
     # parameters
@@ -1221,16 +1227,15 @@ def optunaRatesLayers():
     params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
     params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
 
-    params[('EELayerGain', '3')] = [minV, maxV]
-    params[('EILayerGain', '3')] = [minV, maxV]
-    params[('IELayerGain', '3')] = [minV, maxV]
-    params[('IILayerGain', '3')] = [minV, maxV]
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']-rangeV, minV), min(cfgLoad['EILayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
 
-
-    # params[('EELayerGain', '2')] = [minV, maxV]
-    # params[('EILayerGain', '2')] = [minV, maxV]
-    # params[('IELayerGain', '2')] = [minV, maxV]
-    # params[('IILayerGain', '2')] = [minV, maxV]
+    params[('EELayerGain', '2')] = [minV, maxV]
+    params[('EILayerGain', '2')] = [minV, maxV]
+    params[('IELayerGain', '2')] = [minV, maxV]
+    params[('IILayerGain', '2')] = [minV, maxV]
 
 
     # bkg inputs
@@ -1307,7 +1312,7 @@ def optunaRatesLayers():
     
     ## Exc pops
     #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
-    Epops = ['IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     #Etune = {'target': 5, 'width': 20, 'min': 0.05}
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
@@ -1324,7 +1329,8 @@ def optunaRatesLayers():
     #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
     #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
     #         'IRE', 'IREM', 'TI']  # Thal 
-    Ipops = ['PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    Ipops = ['PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
             'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
             'IRE', 'IREM', 'TI']  # Thal 
 
@@ -1466,7 +1472,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v31_batch2'
+    b.batchLabel = 'v31_batch3'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

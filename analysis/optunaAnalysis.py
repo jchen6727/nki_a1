@@ -48,7 +48,10 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
         popRates = {p: [] for p in pops}
         for p in list(popRates.keys()):
             for t in rateTimeRanges:
-                popRates[p+'_'+t] = []
+                try:
+                    popRates[p+'_'+t] = []
+                except:
+                    print('%s not found ...' % (p+'_'+t))
 
         for i in df.number:
             # try:
@@ -97,7 +100,7 @@ def plotScatterPopVsParams(dataFolder, batchsim, df, pops, skipCols=[], ylim=Non
                     print('Error plotting %s vs %s' % (pop,param))
 
 
-def plotScatterFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
+def plotScatterFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None, skipCols=[]):
 
     if excludeAbove:
         df = df[df.value < excludeAbove]
@@ -105,14 +108,15 @@ def plotScatterFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
     dfcorr=df.corr('pearson')
 
     for param in df.columns:
-        try:
-            print('Plotting scatter of %s vs %s param (R=%.2f) ...' %('fitness', param, dfcorr['value'][param]))
-            df.plot.scatter(param, 'value', s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
-            plt.ylabel('fitness error')
-            plt.title('%s vs %s R=%.2f' % ('fitness', param.replace('tune', ''), dfcorr['value'][param]))
-            plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
-        except:
-            print('Error plotting %s vs %s' % ('fitness',param))
+        if not any([skipCol in param for skipCol in skipCols]): 
+            try:
+                print('Plotting scatter of %s vs %s param (R=%.2f) ...' %('fitness', param, dfcorr['value'][param]))
+                df.plot.scatter(param, 'value', s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
+                plt.ylabel('fitness error')
+                plt.title('%s vs %s R=%.2f' % ('fitness', param.replace('tune', ''), dfcorr['value'][param]))
+                plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
+            except:
+                print('Error plotting %s vs %s' % ('fitness',param))
 
 
 def plotJointplotFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
@@ -295,7 +299,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], I
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v31_batch1'
+    batchSim = 'v31_batch2'
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     allpops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
@@ -315,13 +319,13 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
 
-    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
+    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=500, ylim=None)
 
-    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None)
+    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
     # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['ITS4'], skipCols=rateTimeRanges)
+    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3','ITS4'], skipCols=rateTimeRanges)
 
 
 
