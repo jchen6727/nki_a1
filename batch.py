@@ -1316,7 +1316,7 @@ def optunaRatesLayers():
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     #Etune = {'target': 5, 'width': 20, 'min': 0.05}
-    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    Etune = {'target': 5, 'width': 5, 'min': 1.0}
     
     for pop in Epops:
         pops[pop] = Etune
@@ -1336,7 +1336,7 @@ def optunaRatesLayers():
             'IRE', 'IREM', 'TI']  # Thal 
 
     #Itune = {'target': 10, 'width': 30, 'min': 0.05}
-    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+    Itune = {'target': 10, 'width': 15, 'min': 1.0}
 
     for pop in Ipops:
         pops[pop] = Itune
@@ -1473,7 +1473,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v31_batch4'
+    b.batchLabel = 'v31_batch5'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
