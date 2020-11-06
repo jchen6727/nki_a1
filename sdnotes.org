@@ -7509,7 +7509,7 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) in range [prev-0.25:prev+0.25]
 good results
 
 
-** v31_batch3
+** v31_batch3 - L2+L3+L4 layer- + celltype-specific gains
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with broad param range [0.2:4.0]
@@ -7519,10 +7519,19 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25
 16 params; 12 small range, 4 large range
 Good results but IT3 0.5-1.0 Hz
 higher IT3 rates -> too high PV2+SOM2 is projecting too strongly to PV2 and SOM2 
-** v31_batch4
+** v31_batch4 - L2+L3+L4 layer- + celltype-specific gains -- try wider range for prev params
 *** notes
 same as v31_batch3 but E-PV, E-SOM, E-NGF, E-VIP params in range [prev-0.5:prev+0.5]
-** v31_batch5
+** v31_batch5 - L2+L3+L4 layer- + celltype-specific gains -- try wider range + min rate of 1 Hz
 *** notes
 same as v31_batch4 but min population rate set to 1.0 Hz (instead of 0.5 Hz)
+v31_batch6 - L2+L3+L4+L5A layer + celltype-specific gains; from v31_batch4; small ranges
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with broad param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5A, with broad param range [0.2:4.0]
+20 params; 12 very small range, 4 small range, 4 large range
+
 ** blank
