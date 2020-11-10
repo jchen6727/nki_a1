@@ -1375,7 +1375,7 @@ def optunaRatesLayers():
         'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
         'maxiter_wait': 15,
-        'time_sleep': 30,
+        'time_sleep': 60,
         'popsize': 1  # unused - run with mpi 
     }
 
