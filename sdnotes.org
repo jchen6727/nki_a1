@@ -7512,7 +7512,7 @@ good results
 ** v31_batch3 - L2+L3+L4 layer- + celltype-specific gains
 *** notes
 fixed/frozen gains for thal from prev solution
-layer-specific EE,EI,IE,II gains for L2, with broad param range [0.2:4.0]
+layer-specific EE,EI,IE,II gains for L2, with broad param range [0.2:3.0]
 layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.25:prev+0.25]
 layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.25:prev+0.25]
 E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
@@ -7532,7 +7532,17 @@ layer-specific EE,EI,IE,II gains for L2, with broad param range [prev-0.1:prev+0
 layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.1:prev+0.1]
 layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.1:prev+0.1]
 E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
-layer-specific EE,EI,IE,II gains for L5A, with broad param range [0.2:4.0]
+layer-specific EE,EI,IE,II gains for L5A, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+** v31_batch7 - L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (subset of params)
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with fixed params
+layer-specific EE,EI,IE,II gains for L3, with fixed params
+layer-specific EE,EI,IE,II gains for L4, with fixed params
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
 20 params; 12 very small range, 4 small range, 4 large range
 
 ** blank

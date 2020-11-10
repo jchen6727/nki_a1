@@ -299,10 +299,10 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], I
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v31_batch5'
+    batchSim = 'v31_batch7'
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
-    allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
+    allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
 
     rateTimeRanges = ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
     rateTimeRanges = ['1500_1750', '1750_2000', '2000_2250', '2250_2500']
@@ -319,13 +319,13 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
 
-    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=300, ylim=None)
+    # plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=300, ylim=None)
 
-    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    # plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
     # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3', 'PV2', 'SOM2', 'VIP3'], skipCols=rateTimeRanges)
+    # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3', 'PV2', 'SOM2', 'VIP3'], skipCols=rateTimeRanges)
 
 
 
