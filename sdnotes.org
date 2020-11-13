@@ -7554,4 +7554,7 @@ layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
 E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
 layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
 20 params; 12 very small range, 4 small range, 4 large range
+
+** v31_batch9 - increase L5B range from 0.2-3.0 to 0.1-5.0; increase L2+L3 range from 0.1 to 0.25
+
 ** blank
