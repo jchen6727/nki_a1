@@ -281,30 +281,31 @@ if cfg.addConn and cfg.IEGain > 0.0:
 
         for pre in Ipops:
             for preType in Itypes:
-                for post in Epops:
-                    for l in layerGainLabels:  # used to tune each layer group independently
-                        
-                        prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                        
-                        if 'SOM' in pre:
-                            synMech = SOMESynMech
-                        elif 'PV' in pre:
-                            synMech = PVSynMech
-                        elif 'VIP' in pre:
-                            synMech = VIPSynMech
-                        elif 'NGF' in pre:
-                            synMech = NGFSynMech
+                if preType in pre:  # only create rule if celltype matches pop
+                    for post in Epops:
+                        for l in layerGainLabels:  # used to tune each layer group independently
+                            
+                            prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+                            
+                            if 'SOM' in pre:
+                                synMech = SOMESynMech
+                            elif 'PV' in pre:
+                                synMech = PVSynMech
+                            elif 'VIP' in pre:
+                                synMech = VIPSynMech
+                            elif 'NGF' in pre:
+                                synMech = NGFSynMech
 
-                        netParams.connParams['IE_'+pre+'_'+preType+'_'+post+'_'+l] = { 
-                            'preConds': {'pop': pre}, 
-                            'postConds': {'pop': post, 'ynorm': layer[l]},
-                            'synMech': synMech,
-                            'probability': prob,
-                            'weight': wmat[pre][post] * cfg.IEGain * cfg.IECellTypeGain[preType] * cfg.IELayerGain[l], 
-                            'synMechWeightFactor': cfg.synWeightFractionEI,
-                            'delay': 'defaultDelay+dist_3D/propVelocity',
-                            'synsPerConn': 1,
-                            'sec': 'proximal'}
+                            netParams.connParams['IE_'+pre+'_'+preType+'_'+post+'_'+l] = { 
+                                'preConds': {'pop': pre}, 
+                                'postConds': {'pop': post, 'ynorm': layer[l]},
+                                'synMech': synMech,
+                                'probability': prob,
+                                'weight': wmat[pre][post] * cfg.IEGain * cfg.IECellTypeGain[preType] * cfg.IELayerGain[l], 
+                                'synMechWeightFactor': cfg.synWeightFractionEI,
+                                'delay': 'defaultDelay+dist_3D/propVelocity',
+                                'synsPerConn': 1,
+                                'sec': 'proximal'}
                     
 
 #------------------------------------------------------------------------------
