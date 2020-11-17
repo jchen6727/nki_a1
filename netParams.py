@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 31
+netParams.version = 32
 
 #------------------------------------------------------------------------------
 #
@@ -280,30 +280,31 @@ if cfg.addConn and cfg.IEGain > 0.0:
         NGFSynMech = ['GABAA', 'GABAB']
 
         for pre in Ipops:
-            for post in Epops:
-                for l in layerGainLabels:  # used to tune each layer group independently
-                    
-                    prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
-                    
-                    if 'SOM' in pre:
-                        synMech = SOMESynMech
-                    elif 'PV' in pre:
-                        synMech = PVSynMech
-                    elif 'VIP' in pre:
-                        synMech = VIPSynMech
-                    elif 'NGF' in pre:
-                        synMech = NGFSynMech
+            for preType in Itypes:
+                for post in Epops:
+                    for l in layerGainLabels:  # used to tune each layer group independently
+                        
+                        prob = '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post])
+                        
+                        if 'SOM' in pre:
+                            synMech = SOMESynMech
+                        elif 'PV' in pre:
+                            synMech = PVSynMech
+                        elif 'VIP' in pre:
+                            synMech = VIPSynMech
+                        elif 'NGF' in pre:
+                            synMech = NGFSynMech
 
-                    netParams.connParams['IE_'+pre+'_'+post+'_'+l] = { 
-                        'preConds': {'pop': pre}, 
-                        'postConds': {'pop': post, 'ynorm': layer[l]},
-                        'synMech': synMech,
-                        'probability': prob,
-                        'weight': wmat[pre][post] * cfg.IEGain * cfg.IELayerGain[l], 
-                        'synMechWeightFactor': cfg.synWeightFractionEI,
-                        'delay': 'defaultDelay+dist_3D/propVelocity',
-                        'synsPerConn': 1,
-                        'sec': 'proximal'}
+                        netParams.connParams['IE_'+pre+'_'+preType+'_'+post+'_'+l] = { 
+                            'preConds': {'pop': pre}, 
+                            'postConds': {'pop': post, 'ynorm': layer[l]},
+                            'synMech': synMech,
+                            'probability': prob,
+                            'weight': wmat[pre][post] * cfg.IEGain * cfg.IECellTypeGain[preType] * cfg.IELayerGain[l], 
+                            'synMechWeightFactor': cfg.synWeightFractionEI,
+                            'delay': 'defaultDelay+dist_3D/propVelocity',
+                            'synsPerConn': 1,
+                            'sec': 'proximal'}
                     
 
 #------------------------------------------------------------------------------
@@ -728,5 +729,6 @@ v27 - Split thalamic interneurons into core and matrix (TI and TIM)
 v28 - Set recurrent TC->TC conn to 0
 v29 - Added EI specific layer gains
 v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
-v31 - Added cell-type specific gains; update ITS4 and NGF
+v31 - Added EI cell-type specific gains; update ITS4 and NGF
+v32 - Added IE cell-type specific gains
 """

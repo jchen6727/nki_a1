@@ -114,11 +114,30 @@ def plotScatterFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None, skip
                 df.plot.scatter(param, 'value', s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
                 plt.ylabel('fitness error')
                 plt.title('%s vs %s R=%.2f' % ('fitness', param.replace('tune', ''), dfcorr['value'][param]))
-                plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
+                plt.savefig('%s/%s/%s_scatterEvol_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
             except:
                 print('Error plotting %s vs %s' % ('fitness',param))
 
 
+def plotScatterTrialVsParams(dataFolder, batchsim, df, excludeAbove=None, skipCols=[]):
+
+    if excludeAbove:
+        df = df[df.value < excludeAbove]
+
+    dfcorr=df.corr('pearson')
+
+    for param in df.columns:
+        if not any([skipCol in param for skipCol in skipCols]): 
+            try:
+                print('Plotting scatter of %s vs %s param (R=%.2f) ...' %('fitness', param, dfcorr['value'][param]))
+                #df.plot.scatter(param, 'value', s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
+                df.plot.scatter('number', param, s=4, c='value', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=True, vmin=100, vmax=400)
+                plt.ylabel('param value')
+                plt.xlabel('trial')
+                plt.title('%s vs %s R=%.2f' % ('trial', param.replace('tune', ''), dfcorr['value'][param]))
+                plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'trial', param.replace('tune', '')), dpi=300)
+            except:
+                print('Error plotting %s vs %s' % ('fitness',param))
 def plotJointplotFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
 
     if excludeAbove:
@@ -299,7 +318,7 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], I
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v31_batch8'
+    batchSim = 'v31_batch9'
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
@@ -319,13 +338,15 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
 
-    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=300, ylim=None)
+    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=300, ylim=None)
 
-    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+
+    #plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
     # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT2', 'SOM2', 'SOM3'], skipCols=rateTimeRanges)
+    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT2', 'SOM2', 'SOM3'], skipCols=rateTimeRanges)
 
 
 
