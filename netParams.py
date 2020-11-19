@@ -49,7 +49,6 @@ netParams.defaultDelay = 2.0 # default conn delay (ms)
 netParams.propVelocity = 500.0 # propagation velocity (um/ms)
 netParams.probLambda = 100.0  # length constant (lambda) for connection probability decay (um)
 
-
 #------------------------------------------------------------------------------
 # Cell parameters
 #------------------------------------------------------------------------------
@@ -143,12 +142,12 @@ netParams.popParams['VIP5B'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',
 netParams.popParams['NGF5B'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',    'ynormRange': layer['5B'],   'density': density[('A1','nonVIP')][4]}
 
 # ### LAYER 6:
-# netParams.popParams['IT6'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][5]}  
-# netParams.popParams['CT6'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][5]} 
-# netParams.popParams['SOM6'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','SOM')][5]}   
-# netParams.popParams['PV6'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','PV')][5]}     
-# netParams.popParams['VIP6'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','VIP')][5]}
-# netParams.popParams['NGF6'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','nonVIP')][5]}
+netParams.popParams['IT6'] =     {'cellType': 'IT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][5]}  
+netParams.popParams['CT6'] =     {'cellType': 'CT',  'cellModel': 'HH_reduced',  'ynormRange': layer['6'],   'density': 0.5*density[('A1','E')][5]} 
+netParams.popParams['SOM6'] =    {'cellType': 'SOM', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','SOM')][5]}   
+netParams.popParams['PV6'] =     {'cellType': 'PV',  'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','PV')][5]}     
+netParams.popParams['VIP6'] =    {'cellType': 'VIP', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','VIP')][5]}
+netParams.popParams['NGF6'] =    {'cellType': 'NGF', 'cellModel': 'HH_reduced',   'ynormRange': layer['6'],   'density': density[('A1','nonVIP')][5]}
 
 
 ### THALAMIC POPULATIONS (from prev model)
@@ -730,6 +729,6 @@ v27 - Split thalamic interneurons into core and matrix (TI and TIM)
 v28 - Set recurrent TC->TC conn to 0
 v29 - Added EI specific layer gains
 v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
-v31 - Added EI cell-type specific gains; update ITS4 and NGF
-v32 - Added IE cell-type specific gains
+v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
+v32 - Added IE presyn-cell-type specific gains
 """
