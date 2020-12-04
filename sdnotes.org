@@ -7759,5 +7759,16 @@ PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25
 34 params; 20 very small range, 8 small range, 6 large range
 
 ** v32_batch4 - best soln v32_batch3, +- 0.2 all params; min rate >=0.5Hz
-
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EI,II gains for L1, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L5A, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L5B, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L6, with [prev-0.2:prev+0.2]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.2:prev+0.2]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.2:prev+0.2]
+34 params; 34 small range
 ** blank
