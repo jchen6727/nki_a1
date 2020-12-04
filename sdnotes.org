@@ -7758,4 +7758,6 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25
 PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
 34 params; 20 very small range, 8 small range, 6 large range
 
+** v32_batch4 - best soln v32_batch3, +- 0.2 all params; min rate >=0.5Hz
+
 ** blank

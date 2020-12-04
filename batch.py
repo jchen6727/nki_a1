@@ -1185,30 +1185,30 @@ def optunaRatesLayers():
 
     # from v32_batch1 (optuna L2-L5B), trial 6668
     import json
-    with open('data/v32_batch1/trial_6668/trial_6668_cfg.json', 'rb') as f:
+    with open('data/v32_batch3/trial_5676/trial_5676_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
 
-    rangeV = 0.15
+    rangeV = 0.2
     rangeV2 = 0.25
     minV = 0.1
     maxV = 4.0
 
-    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV2, maxV)]
-    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV2, maxV)]
-    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV2, maxV)]
-    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
 
-    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV2, maxV)]
-    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV2, maxV)]
-    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV2, maxV)]
-    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV2, maxV)]
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
 
-    params[('EILayerGain', '1')] = [minV, maxV]
-    params[('IILayerGain', '1')] = [minV, maxV]
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
 
     params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
     params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
@@ -1235,10 +1235,10 @@ def optunaRatesLayers():
     params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
     params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV, minV), min(cfgLoad['IILayerGain']['5B']+rangeV, maxV)]
 
-    params[('EELayerGain', '6')] = [minV, maxV]
-    params[('EILayerGain', '6')] = [minV, maxV]
-    params[('IELayerGain', '6')] = [minV, maxV]
-    params[('IILayerGain', '6')] = [minV, maxV]
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV, minV), min(cfgLoad['EELayerGain']['6']+rangeV, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV, minV), min(cfgLoad['EILayerGain']['6']+rangeV, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV, minV), min(cfgLoad['IELayerGain']['6']+rangeV, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV, minV), min(cfgLoad['IILayerGain']['6']+rangeV, maxV)]
 
     # bkg inputs
     # rangeV = 0.25
@@ -1317,7 +1317,7 @@ def optunaRatesLayers():
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'IT5B', 'PT5B', 'CT5A', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     #Etune = {'target': 5, 'width': 20, 'min': 0.05}
-    Etune = {'target': 5, 'width': 5, 'min': 1.0}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
     
     for pop in Epops:
         pops[pop] = Etune
@@ -1341,7 +1341,7 @@ def optunaRatesLayers():
             'IRE', 'IREM', 'TI']  # Thal 
 
     #Itune = {'target': 10, 'width': 30, 'min': 0.05}
-    Itune = {'target': 10, 'width': 15, 'min': 1.0}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
 
     for pop in Ipops:
         pops[pop] = Itune
@@ -1361,7 +1361,7 @@ def optunaRatesLayers():
 
         for trange in tranges:
             popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
-                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] > v['min'] else maxFitness for k, v in pops.items()])
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
         
         popFitness = np.mean(np.array(popFitnessAll), axis=0)
         
