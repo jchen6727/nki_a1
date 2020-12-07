@@ -7771,4 +7771,48 @@ layer-specific EE,EI,IE,II gains for L6, with [prev-0.2:prev+0.2]
 E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.2:prev+0.2]
 PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.2:prev+0.2]
 34 params; 34 small range
+*** results
+many good results
+best: trial_15057
+** v32_batch5 - best of v32_batch4, with LFP; 3 scales 
+*** notes
+*** code
+def custom():
+    params = specs.ODict()
+
+    # from v32_batch1 (optuna L2-L5B), trial 6668
+    import json
+    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # conn gains
+
+    initCfg['scaleDensity'] = [0.5, 0.75, 1.0]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = cfgLoad  # set default options from prev sim
+    
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [1500, 2500] 
+
+    # plotting and saving params
+    initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': True, 'layer_lines': True, 'saveFig': 1, 'showFig': 0}
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
 ** blank
