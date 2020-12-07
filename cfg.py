@@ -57,8 +57,8 @@ cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from 
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v31_tune1' 
-cfg.saveFolder = 'data/v31_manualTune'                	## Set file output name
+cfg.simLabel = 'TI_testing' 
+cfg.saveFolder = 'data/TI_testing'                	## Set file output name
 cfg.savePickle = True         	## Save pkl file
 cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
