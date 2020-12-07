@@ -78,10 +78,25 @@ cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
                     'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',
                     'PV_reduced', 'SOM_reduced', 'VIP_reduced', 'NGF_reduced',
-                    'RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']
+                    'RE_reduced', 'TC_reduced', 'HTC_reduced'] #, 'TI_reduced']
 
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
+
+# Thalamic Interneuron Version:
+TI_version = IAHP # IL # default
+
+if TI_version == IAHP: 
+    netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IAHP.json') 
+    print('IAHP reduced conductance version loaded')
+elif TI_version == IL:
+    netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IL.json') 
+    print('IL reduced conductance version loaded')
+else: 
+    netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams.json')
+    print('Default thal int model loaded')
+
+
 
 # change weightNorm 
 for k in cfg.weightNormScaling:
