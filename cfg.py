@@ -1,4 +1,4 @@
-mpiexec -n 32 nrniv -python -mpi init.py"""
+"""
 cfg.py 
 
 Simulation configuration for A1 model (using NetPyNE)
