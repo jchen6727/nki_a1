@@ -197,6 +197,37 @@ cfg.addNetStim = 0 #1
 cfg.tune = {}
 
 
+# ------------------------ ADD PARAM VALUES FROM .JSON FILES: 
+# COMMENT THIS OUT IF USING GCP !!! ONLY USE IF USING NEUROSIM!!! 
+# import json
 
+# with open('data/salva_runs/v29_batch3_trial_13425_cfg.json', 'rb') as f:
+# 	cfgLoad = json.load(f)['simConfig']
+
+# cfg.EEGain = cfgLoad['EEGain']
+
+# cfg.EILayerGain['1'] = cfgLoad['EILayerGain']['1-3']
+# cfg.EILayerGain['2'] = cfgLoad['EILayerGain']['1-3']
+# cfg.EILayerGain['3'] = cfgLoad['EILayerGain']['1-3']
+# cfg.EILayerGain['4'] = cfgLoad['EILayerGain']['4']
+# cfg.EILayerGain['5A'] = cfgLoad['EILayerGain']['5']
+# cfg.EILayerGain['5B'] = cfgLoad['EILayerGain']['5']
+# cfg.EILayerGain['6'] = cfgLoad['EILayerGain']['6']
+
+# cfg.IELayerGain['1'] = cfgLoad['IELayerGain']['1-3']
+# cfg.IELayerGain['2'] = cfgLoad['IELayerGain']['1-3']
+# cfg.IELayerGain['3'] = cfgLoad['IELayerGain']['1-3']
+# cfg.IELayerGain['4'] = cfgLoad['IELayerGain']['4']
+# cfg.IELayerGain['5A'] = cfgLoad['IELayerGain']['5']
+# cfg.IELayerGain['5B'] = cfgLoad['IELayerGain']['5']
+# cfg.IELayerGain['6'] = cfgLoad['IELayerGain']['6']
+
+# cfg.IILayerGain['1'] = cfgLoad['IILayerGain']['1-3']
+# cfg.IILayerGain['2'] = cfgLoad['IILayerGain']['1-3']
+# cfg.IILayerGain['3'] = cfgLoad['IILayerGain']['1-3']
+# cfg.IILayerGain['4'] = cfgLoad['IILayerGain']['4']
+# cfg.IILayerGain['5A'] = cfgLoad['IILayerGain']['5']
+# cfg.IILayerGain['5B'] = cfgLoad['IILayerGain']['5']
+# cfg.IILayerGain['6'] = cfgLoad['IILayerGain']['6']
 
 
