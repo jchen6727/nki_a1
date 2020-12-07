@@ -84,12 +84,12 @@ for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
 # Thalamic Interneuron Version:
-TI_version = default # IAHP # IL # default
+TI_version = 'IAHP' # IAHP # IL # default
 
-if TI_version == IAHP: 
+if TI_version == 'IAHP': 
     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IAHP.json') 
     print('IAHP reduced conductance version loaded')
-elif TI_version == IL:
+elif TI_version == 'IL':
     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IL.json') 
     print('IL reduced conductance version loaded')
 else: 
