@@ -721,76 +721,70 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 12.5, 0.5)/10.0) ):
 def custom():
     params = specs.ODict()
 
+    # from v32_batch1 (optuna L2-L5B), trial 6668
+    import json
+    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
     # conn gains
-    #params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
-    #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
-    #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
-    #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-    # params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
-    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
-    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
-    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
+
+    # params['scaleDensity'] = [0.5, 0.75, 1.0]
+
+    params['EEGain'] = [1/np.sqrt(2)]
+    params['EIGain'] = [1.0, 1/np.sqrt(2)]
+    params['IEGain'] = [1.0, 1/np.sqrt(2)]
+    params['IIGain'] = [1.0, 1/np.sqrt(2)]
+    params['thalamoCorticalGain'] = [1.0, 1/np.sqrt(2)]
+    params['intraThalamicGain'] = [1.0, 1/np.sqrt(2)]
     
-    #params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
-    #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
-    #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
-
-    params['thalamoCorticalGain'] = [1.0]#, 1.5]
-    #params['duration'] = [10000]
-
-    #params[('NetStim3', 'weight')] = [50, 100, 150]
-
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
-    initCfg = {}
-    initCfg['duration'] = 10000
-    initCfg['printPopAvgRates'] = [0, 10000] 
-    initCfg['dt'] = 0.05
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [1500, 2500] 
+    initCfg['scaleDensity'] = 1.0
 
-    initCfg['scaleDensity'] = 0.5
-
-    initCfg['singleCellPops'] = False #True 
-    #initCfg[('ICThalInput', 'startTime')] = 750
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    #                          'startTime': 1500, 
+    #                          'weightE': 0.5, 
+    #                          'weightI': 0.5, 
+    #                          'probE': 0.12, 
+    #                          'probI': 0.26, 
+    #                          'seed': 1}  
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
-    
-    #initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
 
-    initCfg['addConn'] = True # test only bkg inputs
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
 
-    # NetStim
-    #initCfg['addNetStim'] = 1
-    #initCfg['NetStim3'] = {'pop': 'IT3',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/20.0, 'noise': 0.0, 'number': 20.0,   'weight': 10.0, 'delay': 0}
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6'), 
+                    'thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
 
-    # from v29_batch4 (optuna), trial trial_7508
-    import json
-    with open('data/salva_runs/v29_batch3_trial_13425_cfg.json', 'rb') as f:
-        cfgLoad = json.load(f)['simConfig']
-    
-    initCfg.update({'EEGain': cfgLoad['EEGain'],
-                    ('EILayerGain', '1-3'): cfgLoad['EILayerGain']['1-3'],
-                    ('EILayerGain', '4'): cfgLoad['EILayerGain']['4'],
-                    ('EILayerGain', '5'): cfgLoad['EILayerGain']['5'],
-                    ('EILayerGain', '6'): cfgLoad['EILayerGain']['6'],
-                    ('IELayerGain', '1-3'): cfgLoad['IELayerGain']['1-3'],
-                    ('IELayerGain', '4'): cfgLoad['IELayerGain']['4'],
-                    ('IELayerGain', '5'): cfgLoad['IELayerGain']['5'],
-                    ('IELayerGain', '6'): cfgLoad['IELayerGain']['6'],
-                    ('IILayerGain', '1-3'): cfgLoad['IILayerGain']['1-3'],
-                    ('IILayerGain', '4'): cfgLoad['IILayerGain']['4'],
-                    ('IILayerGain', '5'): cfgLoad['IILayerGain']['5'],
-                    ('IILayerGain', '6'): cfgLoad['IILayerGain']['6']})
-                    
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
 
-    print(initCfg)
 
     # # from v30_batch3 (optuna), trial 10685, from salva_layers
     # import json
@@ -1506,8 +1500,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-
-    b.batchLabel = 'TI_testing' # 'v32_batch4'
+    b.batchLabel = 'TI_testing' # 'v32_batch7'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
