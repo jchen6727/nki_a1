@@ -7774,6 +7774,7 @@ PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.2:prev+0.2]
 *** results
 many good results
 best: trial_15057
+
 ** v32_batch5 - best of v32_batch4, with LFP; 3 scales 
 *** notes
 *** code

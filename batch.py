@@ -728,7 +728,7 @@ def custom():
 
     # conn gains
 
-    initCfg['scaleDensity'] = [0.5, 0.75, 1.0]
+    params['scaleDensity'] = [0.5, 0.75, 1.0]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
