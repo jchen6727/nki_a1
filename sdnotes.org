@@ -7815,5 +7815,7 @@ def custom():
     b.method = 'grid'
 
     return b
+** v32_batch6 - best of v32_batch4, with LFP; with cochlear/IC speech input; with different cortichothal gains
+** v32_batch7 - best of v32_batch4, with LFP; scaled to 100% with different gains / scaling factors
 
 ** blank
