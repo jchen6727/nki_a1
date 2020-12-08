@@ -740,15 +740,35 @@ def custom():
     initCfg['printPopAvgRates'] = [1500, 2500] 
 
     # plotting and saving params
-    initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotCSD', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
+    
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6'), 
+                    'thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
