@@ -1525,7 +1525,9 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v28 - Set recurrent TC->TC conn to 0
 ** v29 - Added EI specific layer gains
 ** v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
-** v31 - Added cell-type specific gains; update ITS4 and NGF
+** v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
+** v32 - Added IE presyn-cell-type specific gains
+
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -5663,7 +5665,7 @@ Gen: 148, Cand: 22, Fitness: 673.06
 ** v25_batch1 - parallel Optuna optim test on GCP
 *** notes
 had to run:
-pip3 install --user bokeh optuna scikit-learn PIL joblib pymysql mysqlclient
+pip3 install --user bokeh optuna scikit-learn joblib pymysql mysqlclient
 sudo yum install MySQL-python
 
 mpi4py not working
@@ -7514,6 +7516,276 @@ maybe II cell type-specific gains?
 ** v30_batch13 - L4 + thal,  layer-specific + celltype-specific gains -- repeat
 *** notes
 very similar results -- good, as expected
-** v31_batch1 - L4 + thal, layer-specific + celltype-specific gains; new ITS4
+** v31_batch2 - L4 + thal, layer-specific + celltype-specific gains; new ITS4
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L3, with broad param range [0.2:4.0]
+layer-specific EE,EI,IE,II gains for L4, with range [prev-0.25:prev+0.25]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) in range [prev-0.25:prev+0.25]
+12 params; 8 small range, 4 large range
+good results
+
+
+** v31_batch3 - L2+L3+L4 layer- + celltype-specific gains
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with broad param range [0.2:3.0]
+layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.25:prev+0.25]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+16 params; 12 small range, 4 large range
+Good results but IT3 0.5-1.0 Hz
+higher IT3 rates -> too high PV2+SOM2 is projecting too strongly to PV2 and SOM2 
+** v31_batch4 - L2+L3+L4 layer- + celltype-specific gains -- try wider range for prev params
+*** notes
+same as v31_batch3 but E-PV, E-SOM, E-NGF, E-VIP params in range [prev-0.5:prev+0.5]
+** v31_batch5 - L2+L3+L4 layer- + celltype-specific gains -- try wider range + min rate of 1 Hz
+*** notes
+same as v31_batch4 but min population rate set to 1.0 Hz (instead of 0.5 Hz)
+** v31_batch6 - L2+L3+L4+L5A layer + celltype-specific gains; from v31_batch4; small ranges
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with broad param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5A, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+** v31_batch7 - L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (subset of params)
 *** notes
 ** blank
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with fixed params
+layer-specific EE,EI,IE,II gains for L3, with fixed params
+layer-specific EE,EI,IE,II gains for L4, with fixed params
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+** v31_batch8 - L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (all params)
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+
+** v31_batch9 - increase L5B range from 0.2-3.0 to 0.1-5.0; increase L2+L3 range from 0.1 to 0.25
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:5.0]
+20 params; 8 very small range, 8 small range, 4 large range
+No good solutions; stuck at ~96 fitness
+SOM2, SOM3, PT5B, CT5B 0hz or very low rate
+
+** v32_batch1 - L2-L5B; added IE presyn-cell-type specific params
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+28 params; 8 very small range, 12 small range, 4 large range
+good solution: fitness=47; all pops good except PV2 (~160Hz) and IT5B (~28hz) a bit high
+some solutions interesting slow (~1hz) oscillations on top of the fast ones (eg trial_13047)
+PV2 in particular is just ~5 cells, so prob has some peculiarities due to small size, and hopefully not hard to fix
+keep going with L6, and just fine tune at the end if needed
+
+*** results
+In [12]: df.iloc[7642][:30]
+Out[12]: 
+number               7642.000000
+value                  45.737540
+EELayerGain2            1.466797
+EELayerGain3            0.733775
+EELayerGain4            0.383257
+EELayerGain5A           1.134515
+EELayerGain5B           3.580222
+EICellTypeGainNGF       0.523345
+EICellTypeGainPV        1.577954
+EICellTypeGainSOM       0.422428
+EICellTypeGainVIP       1.963884
+EILayerGain2            0.181358
+EILayerGain3            0.210892
+EILayerGain4            0.109693
+EILayerGain5A           0.263932
+EILayerGain5B           0.162074
+IECellTypeGainNGF       0.495923
+IECellTypeGainPV        0.503529
+IECellTypeGainSOM       1.042023
+IECellTypeGainVIP       0.170270
+IELayerGain2            3.091169
+IELayerGain3            2.692236
+IELayerGain4            1.747858
+IELayerGain5A           2.515508
+IELayerGain5B           0.382218
+IILayerGain2            0.885747
+IILayerGain3            2.328585
+IILayerGain4            0.965311
+IILayerGain5A           0.230596
+IILayerGain5B           0.103807
+
+In [10]: df.iloc[6668][:30]
+Out[10]: 
+number               6668.000000
+value                  51.626852
+EELayerGain2            1.490007
+EELayerGain3            0.710163
+EELayerGain4            0.372384
+EELayerGain5A           1.179958
+EELayerGain5B           3.739412
+EICellTypeGainNGF       0.538782
+EICellTypeGainPV        1.616799
+EICellTypeGainSOM       0.444799
+EICellTypeGainVIP       1.947859
+EILayerGain2            0.190476
+EILayerGain3            0.221521
+EILayerGain4            0.104049
+EILayerGain5A           0.257049
+EILayerGain5B           0.175283
+IECellTypeGainNGF       0.310249
+IECellTypeGainPV        0.532399
+IECellTypeGainSOM       0.957409
+IECellTypeGainVIP       1.066277
+IELayerGain2            3.048898
+IELayerGain3            2.689434
+IELayerGain4            1.745614
+IELayerGain5A           2.514517
+IELayerGain5B           0.461983
+IILayerGain2            0.899853
+IILayerGain3            2.375172
+IILayerGain4            0.971353
+IILayerGain5A           0.230639
+IILayerGain5B           0.103220
+
+In [16]: df.iloc[6668][30:66]
+Out[16]: 
+IT2        7.603550
+PV2      166.833333
+SOM2      11.000000
+VIP2      48.375000
+NGF2       3.200000
+IT3        1.841704
+SOM3       1.885714
+PV3       45.318182
+VIP3       5.219048
+NGF3       1.720000
+ITP4       5.186603
+ITS4       4.454545
+PV4       28.108696
+SOM4       5.000000
+VIP4      22.833333
+NGF4       1.571429
+IT5A       1.452514
+CT5A       9.312849
+PV5A      57.250000
+SOM5A     19.904762
+VIP5A      3.000000
+NGF5A     10.000000
+IT5B      26.855319
+PT5B       1.340426
+CT5B       6.642553
+PV5B      63.701493
+SOM5B     35.982143
+VIP5B     21.375000
+NGF5B      2.166667
+TC         6.086207
+TCM       23.168831
+HTC        5.421053
+IRE        3.298701
+IREM       3.077922
+TI         3.880000
+TIM        5.200000
+Name: 6668, dtype: float64
+
+In [17]: df.iloc[7642][30:66]
+Out[17]: 
+IT2        9.692308
+PV2      168.500000
+SOM2       6.000000
+VIP2      40.500000
+NGF2       3.200000
+IT3        2.231390
+SOM3       1.685714
+PV3       49.420455
+VIP3       3.533333
+NGF3       1.866667
+ITP4       4.468900
+ITS4       3.811005
+PV4       24.369565
+SOM4       4.083333
+VIP4      32.666667
+NGF4       1.571429
+IT5A       2.625698
+CT5A      12.351955
+PV5A      72.527778
+SOM5A     21.428571
+VIP5A      2.400000
+NGF5A     10.500000
+IT5B      27.863830
+PT5B       2.000000
+CT5B       1.646809
+PV5B      50.716418
+SOM5B     31.375000
+VIP5B     19.125000
+NGF5B      2.166667
+TC         4.689655
+TCM       24.662338
+HTC        4.894737
+IRE        3.168831
+IREM       3.792208
+TI         2.720000
+TIM        4.720000
+** v32_batch2 - L2-L6; EI and IE cell-type specific gains; params from v32_batch1; 20 very small rannges
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5B, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L6, with broad param range [0.1:4.0]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
+32 params; 20 very small range, 8 small range, 4 large range
+
+** v32_batch3 - L1-L6; EI and IE cell-type specific gains; params from v32_batch1; added NGF1; inc range 0.1 to 0.15
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EI,II gains for L1, with broad param range [0.1:4.0]
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L5B, with param range [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L6, with broad param range [0.1:4.0]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
+34 params; 20 very small range, 8 small range, 6 large range
+
+** v32_batch4 - best soln v32_batch3, +- 0.2 all params; min rate >=0.5Hz
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EI,II gains for L1, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L5A, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L5B, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L6, with [prev-0.2:prev+0.2]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.2:prev+0.2]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.2:prev+0.2]
+34 params; 34 small range
+** blank
+>>>>>>> salva_layers

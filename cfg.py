@@ -135,6 +135,9 @@ cfg.IILayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0
 ## E->I by target cell type
 cfg.EICellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
 
+## I->E by target cell type
+cfg.IECellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
+
 # Thalamic
 cfg.addIntraThalamicConn = 1.0
 cfg.addIntraThalamicConn = 1.0
