@@ -746,7 +746,7 @@ def custom():
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     
-    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': True, 'layer_lines': True, 'saveFig': 1, 'showFig': 0}
+    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
