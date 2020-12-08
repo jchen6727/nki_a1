@@ -734,7 +734,7 @@ def custom():
 
     # --------------------------------------------------------
     # initial config
-    initCfg = cfgLoad  # set default options from prev sim
+    initCfg = {} # set default options from prev sim
     
     initCfg['duration'] = 2500
     initCfg['printPopAvgRates'] = [1500, 2500] 
