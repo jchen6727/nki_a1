@@ -728,7 +728,9 @@ def custom():
 
     # conn gains
 
-    params['scaleDensity'] = [0.5, 0.75, 1.0]
+    # params['scaleDensity'] = [0.5, 0.75, 1.0]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*1.0, cfgLoad['thalamoCorticalGain']*1.25, cfgLoad['thalamoCorticalGain']*1.5]
+
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -738,15 +740,24 @@ def custom():
     
     initCfg['duration'] = 2500
     initCfg['printPopAvgRates'] = [1500, 2500] 
+    initCfg['scaleDensity'] = 0.5
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 1500, 
+                             'weightE': 0.5, 
+                             'weightI': 0.5, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
 
     # plotting and saving params
-    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
-
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
-    
+
+    # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -1469,7 +1480,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch5' 
+    b.batchLabel = 'v32_batch6' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
