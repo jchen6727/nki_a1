@@ -729,8 +729,13 @@ def custom():
     # conn gains
 
     # params['scaleDensity'] = [0.5, 0.75, 1.0]
-    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*1.0, cfgLoad['thalamoCorticalGain']*1.25, cfgLoad['thalamoCorticalGain']*1.5]
 
+    params['EEGain'] = [1/np.sqrt(2)]
+    params['EIGain'] = [1.0, 1/np.sqrt(2)]
+    params['IEGain'] = [1.0, 1/np.sqrt(2)]
+    params['IIGain'] = [1.0, 1/np.sqrt(2)]
+    params['thalamoCorticalGain'] = [1.0, 1/np.sqrt(2)]
+    params['intraThalamicGain'] = [1.0, 1/np.sqrt(2)]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -740,15 +745,15 @@ def custom():
     
     initCfg['duration'] = 2500
     initCfg['printPopAvgRates'] = [1500, 2500] 
-    initCfg['scaleDensity'] = 0.5
+    initCfg['scaleDensity'] = 1.0
 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-                             'startTime': 1500, 
-                             'weightE': 0.5, 
-                             'weightI': 0.5, 
-                             'probE': 0.12, 
-                             'probI': 0.26, 
-                             'seed': 1}  
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    #                          'startTime': 1500, 
+    #                          'weightE': 0.5, 
+    #                          'weightI': 0.5, 
+    #                          'probE': 0.12, 
+    #                          'probI': 0.26, 
+    #                          'seed': 1}  
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -1480,7 +1485,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch6' 
+    b.batchLabel = 'v32_batch7' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
