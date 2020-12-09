@@ -37859,3 +37859,975 @@ gotcha, ty salva!
 *** git pull
 *** git checkout repro
 *** git merge salva_layers 
+* <2020-11-11 Wed -- cosyne>
+** cut out of cosyne submission draft: 
+-----CUT OUT OF DRAFT
+Deficits in entrainment have been observed in psychiatric disorders such as schizophrenia(4) and ADHD(3), 
+ 
+Multiscale electrophysiology data(2) (e.g. local field potential data) were gathered from 
+awake, nonhuman primate subjects at rest and during tasks. Subjects were presented with 
+various auditory stimuli while undergoing simultaneous recordings from 
+MGB and A1. These data were gathered at rest, on  presentation of click stimuli, and on 
+presentation of speech. Oscillation events were then extracted from this data and 
+classified by frequency band (delta, theta, alpha, beta, gamma, high gamma). 
+
+Experimental data, primarily from macaques(2), has been used to construct and refine a biologically realistic model of the auditory thalamocortical system. 
+ 
+These cortical cell populations were distributed across the 6 layers of A1 in a manner consistent with empirical data. 
+
+ and the 2 modeled thalamic regions (MGB and TRN), with the pattern and density of distribution again informed by empirical data. 
+ 
+ with the pattern and density of cell type distribution informed by empirical data.
+Thalamic populations:
+            ▪ MGB:
+                • Core and Matrix 
+                • TI (inhibitory: locally projecting thalamic interneurons)
+                • TC (excitatory: relay cells to cortex) 
+            ▪ TRN (reticular nucleus):
+                • RE cells (inhibitory) 
+ 
+DATA-DRIVEN CELL MODELS: 
+Cells were distributed across layers 2-6, except neurogliaform cells which were 
+also included in L1, as these have been identified as important targets of the 
+thalamic matrix. 
+
+This was done via either multi-objective evolutionary optimization algorithm or via hand-tuning. 
+** Feed noisy background stimulation independently to each synapse in the unconnected network. 
+** Calculate E+I background weights such that each population exhibits low spontaneous firing rates (~1-4 Hz).
+** Activate connectivity between cell populations and drive network with noisy  background input. 
+** Optimize network-level synaptic gain parameters (e.g. EEGain, EIGain) such that all cell pops show ecologically valid firing rates similar to those seen at rest empirically.
+
+Network optimization is being performed with algorithms such as Adaptive Stochastic Descent (ASD) and Optuna (a hyperparameter optimization framework). Application of these algorithms to this large-scale, biologically detailed network requires 1000s of parallel simulations on supercomputers. 
+
+Synaptic weight gains (E->E, E->I, I->E, I->I) were part of the high-level network parameter set being tweaked for this optimization. 
+ 
+Electrophysiology data was obtained from collaborators who recorded simultaneously from nonhuman primate primary auditory cortex (A1) and medial geniculate body (MGB). This data was used to help refine the model and to investigate the mechanisms and functions of the oscillatory patterns observed in this data set. 
+ 
+Model is being refined using optimization algorithms (e.g. Optuna, Adaptive Stochastic Descent) and data analyses from in vivo multisite recordings.
+
+We used evolutionary algorithms to tune 12 high-level network connectivity parameters (e.g. background input and synaptic weight gains) in order to generate experimentally-constrained firing rates in all 42 neuron populations. Each simulated second required ~15 minutes on 96 supercomputer cores. For the evolutionary optimization, we ran 100 simultaneous simulations (9,600 cores) for each generation. 
+
+NETWORK TUNING & OPTIMIZATION
+The ability to give arbitrary sound input to the model (including the sound stimuli 
+used in the in vivo macaque experiments) facilitated matching model to experiment
+
+The aim was to be able to feed a sound stimulus into the model, 
+ brain regions earlier in the auditory processing pathway (e.g. cochlea, inferior colliculus), and to 
+
+To do this, we needed to be able to feed a sound stimulus into brain regions earlier in the auditory processing pathway, 
+
+to create the correct input for the thalamocortical neurons of the MGB. 
+
+simulate output from brain regions earlier in the auditory 
+processing pathway
+
+DOWNSTREAM STRUCTURES / INPUT TO MODE: 
+Auditory inputs were simulated using phenomenological models of the cochlear nerve and inferior colliculus (IC), both of which captured the main physiological transformations occurring in these structures. The output of the model IC was used to drive the TC populations. This allowed us to input any arbitrary sound to the model, including those presented to awake macaque monkeys during experiments.
+
+Hiroyuki et al. (2017). Neuron;95:412-423
+
+By comparing in silico and in vivo responses to the same auditory stimuli, we are able to investigate the mechanistic origins of spatiotemporal oscillatory patterns observed in vivo. Model predictions will then be tested in vivo, using deep brain electrical microstimulation and pharmacological manipulations. 
+
+Model will make predictions on the proposed roles of neuronal oscillations in auditory information processing, which will be tested via targeted deep brain electrical microstimulation and pharmacological manipulations.
+Model will be used to explore the mechanistic origins of the spatiotemporal neuronal oscillatory patterns observed in vivo.
+
+We will use our model to predict mechanistic origins of spatiotemporal neuronal oscillatory patterns observed in vivo using an iterative modeling and data-analysis process. To test model predictions, we will use targeted deep brain electrical microstimulation and pharmacological manipulations.
+ 
+Model will be used to explore the mechanistic origins of the spatiotemporal neuronal oscillatory patterns observed in vivo, and to make predictions on the proposed roles of neuronal oscillations in auditory information processing -- predictions which will be tested via targeted deep brain electrical microstimulation and pharmacological manipulations.
+This model will be used to generate testable cellular and network-level predictions about the mechanisms underlying entrainment; these hypotheses will then be examined in vivo using techniques such as neuromodulation.
+
+* <2020-11-12 Thu - cosyne>
+** more cuts from draft: 
+
+MODEL DETAILS: 
+
+We used evolutionary optimization to tune this thalamocortical network to reproduce experimentally-constrained firing rates for each of the 42 neural populations. We tuned 12 high-level connectivity parameters, including background input and synaptic weight gains, within biologically plausible ranges. To the best of our knowledge, this is the first time evolutionary optimization was successfully used for large-scale biophysically-detailed network models. 
+
+This ability to dovetail model and experimental data will allow us to  investigate the mechanisms underlying the oscillatory patterns observed in this in vivo data set. Our model’s mechanistic predictions will be tested using targeted deep brain electrical microstimulation and pharmacological manipulations.
+
+The in silico branch of this work aimed to replicate the oscillatory patterns seen in vivo, and to manipulate the biologically-based parameters of the network model to generate predictions about the mechanisms underlying the cortical oscillations seen in this data set. 
+
+The cell models used in this network were multicompartment, conductance-based models with multiple ion channels, with parameters (e.g. channel density) optimized to reproduce physiological responses. Simplified morphologies of 1-6 compartments were used, and dendritic lengths were sized to match macaque cortical dimensions. The electrophysiology of each cell type was fitted to macaque (if available) or rodent electrophysiology data. Passive parameters (e.g. leak channel conductance) were tuned to fit resting membrane potential (RMP) and other features of subthreshold traces, including steady state voltage and sag. Active parameters (e.g. fast Na+ channel density) were then tuned to fit features like firing rate curves and adaptation*. Connectivity between these populations was then instantiated based on presynaptic cell type, post-synaptic cell type, and layer location. This information was again derived from empirical macaque and rodent data. 
+With the network constructed, network optimization could then take place. Background weights and high-level synaptic gain parameters (e.g. EEGain, EIGain, IEGain, IIGain) were tuned such that each cell population showed ecologically valid firing rates, similar to those seen at rest during in vivo multisite recordings. Optimization was performed using Optuna, a hyperparameter optimization framework, in a stepwise, layer-by-layer fashion (L4 → L2/3 → L5 → L6 → L1). Application of these algorithms to this large-scale network required 1000s of parallel simulations on supercomputers. 
+The ability to give arbitrary sound input to the model was a key component in matching the model to data, and in generating predictions regarding mechanisms underlying network oscillations. 
+Mechanistic predictions from the model will then be used to guide neuromodulatory experiments in vivo, to explore the validity of these predictions in a living system. 
+
+    • “Lesion” thalamic matrix 
+    • Lower connection strength between thalamic matrix and L1 
+    • Lower connection strength between L1 interneurons and L2/3 pyramidal cells
+
+--- IN VIVO 
+
+The in vivo arm of this study gathered multiscale electrophysiology data (e.g. local field potential data) from awake, nonhuman primate subjects. Subjects were presented with various auditory stimuli while undergoing simultaneous recordings from MGB and A1. Recordings were gathered at rest, on presentation of click stimuli, and during presentation of speech stimuli. Oscillation events were then extracted from this data and classified by frequency band (delta, theta, alpha, beta, gamma, high gamma)*. These data illustrated what oscillatory activity was present at rest, and how these oscillations changed in response to stimuli [USED THIS LINE ALREADY]. 
+
+-- PRELIMINARY RESULTS:
+Data (e.g. voltage trace data, local field potential (LFP) data & corresponding CSD data) can be collected from the model. At this time, model construction has been completed, and the final stages of network optimization are underway. Preliminary network results show thalamic oscillations in response to speech data*, and an effect relating the strength of inhibitory input from Inferior Colliculus (IC) to Medial Geniculate Body (MGB) and the degree of observed thalamic rhythmicity in response to speech input.* 
+As network optimization concludes, we will be able to use the model to investigate a variety of circuit-based hypotheses in the auditory thalamocortical system (e.g. thalamic core vs. matrix activity in mismatch negativity, thalamic matrix and L1 inhibition in oscillatory phase reset, lateral inhibition circuitry in differing cortical responses to high- vs. low-frequency sounds). These investigations will help us generate predictions which can be tested in vivo, using deep brain electrical microstimulation and pharmacological manipulations, with the aim of elucidating the cellular- and network-level mechanisms underlying cortical entrainment. Mention phase reset mechanism hypothesis if going with new summary. 
+
+
+results 
+
+allows us to use the model to test particular extant circuit-based hypotheses regarding auditory information processing. 
+
+This ability to dovetail model and experimental data will allow us to  investigate the mechanisms underlying the oscillatory patterns observed in this in vivo data set. Our model’s mechanistic predictions will be tested using targeted deep brain electrical microstimulation and pharmacological manipulations.
+
+
+----> Shift direction / framing to more speech-related stuff? 
+Ideas from WIP #2-- 
+    • Potential thalamocortical circuit hypotheses 
+        ◦ Core → L4 activity
+        ◦ Matrix → L1 activity --| sculpts supragranular activity 
+    • So we set out to show that:
+        ◦ (1) Cortical frequency band oscillations, specifically in the delta-theta range (i.e. not alpha), synchronize to naturalistic, quasi-rhythmic auditory stimuli (a) IN VIVO and this will (b) be replicated IN SILICO
+        ◦ (2) Entrainment relies on an oscillatory “phase reset” mechanism orchestrated by thalamic matrix neurons in MGB and supragranular interneurons
+    • Described in vivo (1) entrainment protocol
+    • Described in silico (1) entrainment protocol (build model, tune model, validate model) 
+    • In the midst of the above ^^, described thalamic circuit (slides 72+)
+    • Describe in vivo (2) mechanism testing protocol (slide 102-110)
+        ◦ (a) matrix tonic → bursting
+        ◦ (b) disrupt matrix
+        ◦ (c) SSC between L1 int and thal matrix TC)
+    • Describe in silico (2) mechanism testing protocol (slides 111-115)
+        ◦ (a) manipulate thal int / matrix circuitry (slide 113 for 3 potential possibilities)
+        ◦ (b) thal matrix activity change -- what is mechanism? (slides 114-115)
+    • Slide 117: future stuff 
+
+
+
+more cuts from cosyne submission draft: 
+--- EXTRA TEXT / IDEAS  -- 
+With speech signals, the frequency range of these envelopes lies reliably in the 4-7 Hz range, even across languages. 
+
+These waveforms are filtered by the cochlea into different critical frequency bands. Each of these filtered signals has an envelope, outlining the edge of the quasi-rhythmic waveform. With speech signals, the frequency range of these envelopes lies reliably in the 4-7 Hz range, even across languages. 
+
+Speech waveforms in particular have an oscillatory, quasi-rhythmic quality. The cochlea filters these raw waveforms according to frequency, resulting in filtered signals whose envelopes retain this rhythmicity. The frequency of these envelopes lies reliably in the 4-7 Hz range, even across languages. It has been repeatedly observed that low-frequency oscillations in auditory cortex phase-lock to the envelopes of these filtered signals. Furthermore, this frequency range matches the rate at which syllables occur in continuous speech. These observations have led to a growing body of data showing that phase-locking between cortex and speech waveform is a crucial component to the parsing and comprehension of continuous speech, with disruptions in entrainment reliably leading to reduced speech intelligibility. However, despite the growing body of behavioral work investigating the functions and significance of entrainment, the cellular and network-level mechanisms underlying this phenomenon are not fully understood. This project thus uses a dual in vivo and in silico approach to investigate the mechanisms underlying the low-frequency cortical oscillations and entrainment seen during auditory speech processing.  
+
+awake human and nonhuman primate subjects. Oscillation events were extracted from this data and classified by frequency band (delta, theta, alpha, beta, gamma, high gamma)*. These data illustrated what oscillatory activity was present at rest, and how these oscillations changed in response to stimuli. 
+
+Baseline oscillatory activity at rest has been analyzed, and analysis of task… something something is ongoing. 
+
+--- cutting out of summary for now …. ---
+The hypothesized functions of entrainment range from parsing continuous speech signals into discrete syllabic units for further processing, to the idea that entrainment may help with selective attention by disfavoring competing, misaligned streams of speech.
+
+Recordings were gathered at rest, on presentation of click stimuli, and during presentation of speech stimuli. Oscillation events were then extracted from this data and classified by frequency band (delta, theta, alpha, beta, gamma, high gamma)*. These data illustrated what oscillatory activity was present at rest, and how these oscillations changed in response to stimuli. 
+
+, to both replicate the in vivo findings
+ and using the model’s detailed parameters to make predictions regarding specific thalamocortical circuit hypotheses regarding entrainment. 
+
+Oscillation events were extracted from this data and classified by frequency band (delta, theta, alpha, beta, gamma, high gamma)*. Oscillations in the spontaneous, resting-state data set have been quantified to provide a baseline for analyzing task- and state-related activity, which is ongoing, and to provide a template for 
+
+This study aimed 
+    • to replicate the in vivo finding that cortical frequency band oscillations, specifically in the delta-theta range, synchronize to naturalistic, quasi-rhythmic auditory stimuli, and furthermore, 
+    • to reproduce this finding in a biologically-realistic in silico network model of the auditory thalamocortical system. 
+This network model (will then be / has been / is also being (?)) used to investigate specific thalamocortical circuit hypotheses regarding the mechanisms of entrainment: for example, the idea that entrainment relies on an oscillatory “phase reset” mechanism where supragranular interneurons, activated by inputs from the thalamic matrix pathway, contribute inhibition which sculpts the signal in lower cortical layers.* Mechanistic predictions from the network model will then be used to guide neuromodulatory experiments in vivo, to explore the validity of these predictions in a living system. 
+
+
+
+
+
+
+
+------
+cutting out of cosyne submission draft: 
+The in silico network model drew from the experimental data to construct and refine a biologically realistic simulation of the auditory thalamocortical system. This network model, instantiated using the NEURON simulator and the NetPyNE tool, contains 42 [CHECK THIS -- see salva comment above] neural populations, distributed across the 6 layers of A1 or the 2 modeled thalamic regions (MGB and TRN). Layer boundaries, neuronal densities and cell type distributions per layer were based on macaque and rodent thalamocortical data. 
+^^ cut this paragraph or shorten it -- basically restating part of abstract above. 
+
+Mounting evidence suggests that this phenomenon plays an important role in auditory information processing, while deficits in entrainment have been observed in pathologies such as schizophrenia and ADHD
+
+Once these neuron models were fitted and distributed across the network model in a manner consistent with the available data, 
+
+To the best of our knowledge, this is the first time evolutionary optimization has been successfully used for large-scale biophysically-detailed network models. 
+
+First, connectivity in the network was disabled, and noisy background stimulation was fed to each synapse in the unconnected network. Excitatory and inhibitory background weights were calculated such that each cell population exhibited low spontaneous firing rates (~1-4 Hz). Following this, network connectivity was again activated, and the network was again driven with noisy background input. From here, high-level synaptic gain parameters (e.g. EEGain, EIGain, IEGain, IIGain) were optimized such that each cell population showed ecologically valid firing rates, similar to those seen at rest in in vivo multisite recordings. 
+
+Parameters were first optimized within L4 alone. Once this layer achieved valid firing rates in all cell populations, gain parameters in this layer were frozen, and L2/3 connections were added. This was followed by L5A, L5B, L6, and lastly L1. 
+
+circuit-based hypotheses in the auditory thalamocortical system (e.g. the role of thalamic core vs. matrix populations in mismatch negativity (Lakatos et al., 2020)), of thalamic matrix and L1 inhibitory connectivity in oscillatory phase reset, and of lateral inhibition circuitry in differing cortical responses to high- vs. low-frequency sounds (Hiroyuki et al., 2017).
+
+This data will also be useful for building and validating a biophysically detailed MODEL of the thalamocortical system. We can extract data about cortical layer depth, identity of different cell types, and connectivity in order to build the model. And we can also use things like experimental LFP/CSD data in order to validate the model. We can then use this model to generate predictions about the mechanism(s) underlying this entrainment phenomenon that we see, and we can then ping-pong these predictions back to the in vivo side of things where experiments with targeted neuromodulation can be used to test these predictions.
+We have a robust collaboration with a group that is gathering experimental data on macaques. Their electrophysiology recordings will help us look at oscillatory activity in the cortex. To this end we have data like Current Source Density data in A1 of macaque monkeys, human EEG and ECoG data, single unit recordings -- data taken at rest & during tasks. These data will help us understand what oscillations are present at rest, how these oscillations change in response to stimuli, how the entrainment described earlier correlates with behavior and perception. These are the types of questions that this kind of data can examine. 
+
+These data illustrated what oscillatory activity was present at rest, how these oscillations changed in response to stimuli, and how the entrainment described earlier correlates with behavior and perception
+
+---
+An excerpt that could be useful for papers later:
+Entrainment is the alignment of low-frequency cortical oscillation phase to the phase of incoming auditory stimuli. Mounting evidence suggests that this phenomenon plays an important role in speech processing. Speech waveforms have an oscillatory, quasi-rhythmic quality. The cochlea filters these raw waveforms according to frequency, resulting in filtered signals whose envelopes retain this rhythmicity. The frequency of these envelopes lies reliably in the 4-7 Hz range, even across languages. It has been repeatedly observed that low-frequency oscillations in auditory cortex phase-lock to the envelopes of these filtered signals. Furthermore, this frequency range matches the rate at which syllables occur in continuous speech. These observations have led to a growing body of data showing that phase-locking between cortex and speech waveform is a crucial component to the parsing and comprehension of continuous speech, with disruptions in entrainment reliably leading to reduced speech intelligibility. However, despite the growing body of behavioral work investigating the functions and significance of entrainment, the cellular and network-level mechanisms underlying this phenomenon are not fully understood. This project thus uses a dual in vivo and in silico approach to investigate the mechanisms underlying the low-frequency cortical oscillations and entrainment seen during auditory speech processing.  
+This study aimed to replicate the in vivo finding that cortical frequency band oscillations, specifically in the delta-theta range, synchronize to naturalistic, quasi-rhythmic auditory stimuli, and furthermore, to reproduce this finding in a biologically-realistic in silico network model of the auditory thalamocortical system. This network model (will then be / has been / is also being (?)) used to investigate specific thalamocortical circuit hypotheses regarding the mechanisms of entrainment: for example, the idea that entrainment relies on an oscillatory “phase reset” mechanism where supragranular interneurons, activated by inputs from the thalamic matrix pathway, contribute inhibition which sculpts the signal in lower cortical layers.* Mechanistic predictions from the network model will then be used to guide neuromodulatory experiments in vivo, to explore the validity of these predictions in a living system. 
+
+* <2020-12-08 Tue -- thal int sims>
+** see int_nb.org in thal_int_paper for more detailed info as well
+** [DONE] merge salva_layers into repro branch:
+*** conflicts in: 
+**** analysis/optunaAnalysis.py
+***** <<<<<<< HEAD
+    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT3'], skipCols=rateTimeRanges) # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['ITS4'])
+=======
+    # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT6'], skipCols=rateTimeRanges)
+>>>>>>> salva_layers
+***** Keeping it commented out as in salva_layers 
+**** batch.py
+***** <<<<<<< HEAD
+    b.batchLabel = 'TI_testing'
+=======
+    b.batchLabel = 'v32_batch4' 
+>>>>>>> salva_layers
+***** Keeping TI_testing as b.batchLabel
+**** sdnotes.org 
+***** little confusing -- didn't really make any changes. something called "blank" -- left it in. 
+*** add, commit, push. 
+*** THEN do git pull on salva_layers (forgot to do this), then merge again. 
+*** ^^ did this --> conflicts in:
+**** cfg.py
+***** <<<<<<< HEAD
+#cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': False, 'saveFig': True}
+=======
+cfg.analysis['plotLFP'] = {'plots': ['timeSeries', 'PSD', 'spectrogram'], 'saveData': False, 'saveFig': True}
+cfg.analysis['plotCSD'] = {'spacing_um': 100, 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+>>>>>>> salva_layers
+***** Keeping it as it is in salva_layers (bottom, after ====) 
+**** batch.py
+***** (1) <<<<<<< HEAD
+    params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    #params['duration'] = [10000]
+
+    #params[('NetStim3', 'weight')] = [50, 100, 150]
+
+=======
+    # params['scaleDensity'] = [0.5, 0.75, 1.0]
+
+    params['EEGain'] = [1/np.sqrt(2)]
+    params['EIGain'] = [1.0, 1/np.sqrt(2)]
+    params['IEGain'] = [1.0, 1/np.sqrt(2)]
+    params['IIGain'] = [1.0, 1/np.sqrt(2)]
+    params['thalamoCorticalGain'] = [1.0, 1/np.sqrt(2)]
+    params['intraThalamicGain'] = [1.0, 1/np.sqrt(2)]
+    
+>>>>>>> salva_layers
+***** ^^ kept salva_layers version
+***** (2) <<<<<<< HEAD
+    initCfg['singleCellPops'] = False #True 
+    #initCfg[('ICThalInput', 'startTime')] = 750
+=======
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    #                          'startTime': 1500, 
+    #                          'weightE': 0.5, 
+    #                          'weightI': 0.5, 
+    #                          'probE': 0.12, 
+    #                          'probI': 0.26, 
+    #                          'seed': 1}  
+>>>>>>> salva_layers
+***** ^^ kept salva_layers version
+***** (3) <<<<<<< HEAD
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    #initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+=======
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+>>>>>>> salva_layers
+***** ^^ kept salva_layers version
+***** (4) <<<<<<< HEAD
+
+    # NetStim
+    #initCfg['addNetStim'] = 1
+    #initCfg['NetStim3'] = {'pop': 'IT3',  'ynorm': [0,1], 'sec': 'soma', 'loc': 0.5, 'synMech': ['AMPA'], 'synMechWeightFactor': [1.0], 'start': 0, 'interval': 1000.0/20.0, 'noise': 0.0, 'number': 20.0,   'weight': 10.0, 'delay': 0}
+
+    # from v29_batch4 (optuna), trial trial_7508
+    import json
+    with open('data/salva_runs/v29_batch3_trial_13425_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    
+    initCfg.update({'EEGain': cfgLoad['EEGain'],
+                    ('EILayerGain', '1-3'): cfgLoad['EILayerGain']['1-3'],
+                    ('EILayerGain', '4'): cfgLoad['EILayerGain']['4'],
+                    ('EILayerGain', '5'): cfgLoad['EILayerGain']['5'],
+                    ('EILayerGain', '6'): cfgLoad['EILayerGain']['6'],
+                    ('IELayerGain', '1-3'): cfgLoad['IELayerGain']['1-3'],
+                    ('IELayerGain', '4'): cfgLoad['IELayerGain']['4'],
+                    ('IELayerGain', '5'): cfgLoad['IELayerGain']['5'],
+                    ('IELayerGain', '6'): cfgLoad['IELayerGain']['6'],
+                    ('IILayerGain', '1-3'): cfgLoad['IILayerGain']['1-3'],
+                    ('IILayerGain', '4'): cfgLoad['IILayerGain']['4'],
+                    ('IILayerGain', '5'): cfgLoad['IILayerGain']['5'],
+                    ('IILayerGain', '6'): cfgLoad['IILayerGain']['6']})
+                    
+=======
+    
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6'), 
+                    'thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+>>>>>>> salva_layers
+
+***** ^^ kept salva_layers version
+***** (5) <<<<<<< HEAD
+    b.batchLabel = 'TI_testing' # 'v32_batch4'
+=======
+    b.batchLabel = 'v32_batch7' 
+>>>>>>> salva_layers
+***** ^^ kept repro version (TI_testing batchLabel -- put v32_batch7 in comment)
+**** sdnotes.org 
+***** ^^ see above for confusing thing from before; just got rid of '**blank' -- no real changes.
+** Working from 'repro' branch primarily, and running sims from gcp 
+** discussion w/ sam & bill re: inclusion of circuit 
+** csd.py merge into development branch: 
+*** I am in csd branch of my fork of netpyne 
+*** pull request is initiated (can search csd branch or some other related search term to see the process of contributing to netpyne -- believe that is listed in may 21 entry) 
+** lfp.py edits:
+*** Taking out the following code from the bottom of the script:
+
+
+
+
+
+# -------------------------------------------------------------------------------------------------------------------
+## Plot LFP (time-resolved, power spectral density, time-frequency and 3D locations)
+# -------------------------------------------------------------------------------------------------------------------
+#@exception
+def plotCSD(timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'PSD', 'spectrogram', 'locations'], NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True): 
+    """Plots local field potentials.
+
+    Parameters
+    ----------
+    timeRange : list [start, stop]
+        Time range to plot.
+        **Default:** 
+        ``None`` plots entire time range
+
+    electrodes : list
+        List of electrodes to include; ``'avg'`` is the average of all electrodes; ``'all'`` is each electrode separately.
+        **Default:** ``['avg', 'all']``
+    
+    plots : list
+        List of plot types to show.
+        **Default:** ``['timeSeries', 'PSD', 'spectrogram', 'locations']``
+    
+    NFFT : int (power of 2)
+        Number of data points used in each block for the PSD and time-freq FFT. 
+        **Default:** ``256``
+    
+    noverlap : int (<nperseg)
+        Number of points of overlap between segments for PSD and time-freq.
+        **Default:** ``128``
+    
+    nperseg
+        Length of each segment for time-freq.
+        **Default:** ``256``
+    
+    minFreq : float
+        Minimum frequency shown in plot for PSD and time-freq.
+        **Default:** ``1``
+    
+    maxFreq : float
+        Maximum frequency shown in plot for PSD and time-freq.
+        **Default:** ``100``
+    
+    stepFreq : float
+        Step frequency.
+        **Default:** ``1``
+    
+    smooth : int
+        Window size for smoothing LFP; no smoothing if ``0``
+        **Default:** ``0``
+    
+    separation : float
+        Separation factor between time-resolved LFP plots; multiplied by max LFP value.
+        **Default:** ``1.0``
+    
+    includeAxon : bool
+        Whether to show the axon in the location plot.
+        **Default:** ``True``
+    
+    logx : bool
+        Whether to make x-axis logarithmic
+        **Default:** ``False``
+    
+    logy : bool
+        Whether to make y-axis logarithmic
+        **Default:** ``False``
+    
+    normSignal : bool
+        Whether to normalize the signal.
+        **Default:** ``False``
+    
+    normPSD : bool
+        Whether to normalize the power spectral density.
+        **Default:** ``False, 
+    
+    normSpec : bool
+        Needs documentation.
+        **Default:** ``False``
+    
+    filtFreq : int or list
+        Frequency for low-pass filter (int) or frequencies for bandpass filter in a list: [low, high]
+        **Default:** ``False`` does not filter the data
+    
+    filtOrder : int
+        Order of the filter defined by `filtFreq`.
+        **Default:** ``3``
+    
+    detrend : bool
+        Whether to detrend.
+        **Default:** ``False``
+    
+    transformMethod : str
+        Transform method.
+        **Default:** ``'morlet'``
+        **Options:** ``'fft'``
+
+    maxPlots : int
+        Maximum number of subplots. Currently unused.
+        **Default:** ``8``
+
+    overlay : bool
+        Whether to overlay plots or use subplots.
+        **Default:** ``False`` overlays plots.
+
+    colors : list
+        List of normalized RGB colors to use.
+        **Default:** ``None`` uses standard colors
+
+    figSize : list [width, height]
+        Size of figure in inches.
+        **Default:** ``(10, 8)`` 
+    
+    fontSize : int
+        Font size on figure.
+        **Default:** ``14`` 
+
+    lineWidth : int
+        Line width.
+        **Default:** ``1.5``
+
+    dpi : int
+        Resolution of figure in dots per inch.
+        **Default:** ``100``
+    
+    saveData : bool or str
+        Whether and where to save the data used to generate the plot. 
+        **Default:** ``False`` 
+        **Options:** ``True`` autosaves the data,
+        ``'/path/filename.ext'`` saves to a custom path and filename, valid file extensions are ``'.pkl'`` and ``'.json'``
+    
+    saveFig : bool or str
+        Whether and where to save the figure.
+        **Default:** ``False``
+        **Options:** ``True`` autosaves the figure,
+        ``'/path/filename.ext'`` saves to a custom path and filename, valid file extensions are ``'.png'``, ``'.jpg'``, ``'.eps'``, and ``'.tiff'``
+    
+    showFig : bool
+        Shows the figure if ``True``.
+        **Default:** ``True``
+
+    Returns
+    -------
+    (figs, dict)
+        A tuple consisting of the matplotlib figure handles and a dictionary containing the plot data.
+
+    See Also
+    --------
+    iplotLFP :
+
+    Examples
+    --------
+    >>> import netpyne, netpyne.examples.example
+    >>> out = netpyne.analysis.plotLFP()
+    """
+
+    # Note: should probably split funcs for signal, psd, spectrogram and locs
+
+    from .. import sim
+    from ..support.scalebar import add_scalebar
+
+    print('Plotting CSD ...')
+
+    if not colors: colors = colorList
+    
+    # set font size
+    plt.rcParams.update({'font.size': fontSize})
+    
+    # time range
+    if timeRange is None:
+        timeRange = [0,sim.cfg.duration]
+
+    lfp = np.array(sim.allSimData['CSD'])[:, int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep)]
+
+    if filtFreq:
+        from scipy import signal
+        fs = 1000.0/sim.cfg.recordStep
+        nyquist = fs/2.0    
+        if isinstance(filtFreq, list): # bandpass
+            Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+            b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+        elif isinstance(filtFreq, Number): # lowpass
+            Wn = filtFreq/nyquist
+            b, a = signal.butter(filtOrder, Wn)
+        for i in range(lfp.shape[1]):
+            lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+
+    if detrend:
+        from scipy import signal
+        for i in range(lfp.shape[1]):
+            lfp[:,i] = signal.detrend(lfp[:,i])
+
+    if normSignal:
+        for i in range(lfp.shape[1]):
+            offset = min(lfp[:,i])
+            if offset <= 0:
+                lfp[:,i] += abs(offset)
+            lfp[:,i] /= max(lfp[:,i])
+
+    # electrode selection
+    if 'all' in electrodes:
+        electrodes.remove('all')
+        electrodes.extend(list(range(int(sim.net.recXElectrode.nsites))))
+
+    # plotting
+    figs = []
+    #maxPlots = 8.0
+    
+    data = {'lfp': lfp}  # returned data
+
+    # time series -----------------------------------------
+    if 'timeSeries' in plots:
+        
+        for i in range(lfp.shape[0]):
+            lfp[i,:] = _smooth1d(lfp[i,:], smooth)
+            lfp[i, 0:int(smooth / 2)] = lfp[i, int(smooth / 2)]
+            lfp[i,-int(smooth/2):] = lfp[i,-int(smooth/2)]
+
+        #lfpPlot = 
+
+        ydisp = np.absolute(lfp).max() * separation
+        offset = 1.0*ydisp
+        t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
+        if figSize:
+            figs.append(plt.figure(figsize=figSize))
+
+        for i,elec in enumerate(electrodes):
+            if elec == 'avg':
+                lfpPlot = np.mean(lfp, axis=0)
+                color = 'k'
+                lw=1.0
+            elif isinstance(elec, Number) and elec <= sim.net.recXElectrode.nsites:
+                lfpPlot = lfp[elec,:]
+                color = colors[i%len(colors)]
+                lw = 1.0
+                        
+            plt.plot(t[:len(lfpPlot)], -lfpPlot + (i * ydisp), color=color, linewidth=lw)
+            
+            if len(electrodes) > 1:
+                plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, color=color, ha='center', va='top', fontsize=fontSize, fontweight='bold')
+
+        ax = plt.gca()
+
+        data['lfpPlot'] = lfpPlot
+        data['ydisp'] =  ydisp
+        data['t'] = t
+
+        # format plot
+        if len(electrodes) > 1:
+            plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', fontSize=fontSize, rotation=90)
+            plt.ylim(-offset, (len(electrodes))*ydisp)
+        else:       
+            plt.suptitle('LFP Signal', fontSize=fontSize, fontweight='bold')
+        ax.invert_yaxis()
+        plt.xlabel('time (ms)', fontsize=fontSize)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        plt.subplots_adjust(bottom=0.1, top=1.0, right=1.0)
+
+        # calculate scalebar size and add scalebar
+        round_to_n = lambda x, n, m: int(np.ceil(round(x, -int(np.floor(np.log10(abs(x)))) + (n - 1)) / m)) * m 
+        scaley = 1000.0  # values in mV but want to convert to uV
+        m = 10.0
+        sizey = 100/scaley
+        while sizey > 0.25*ydisp:
+            try:
+                sizey = round_to_n(0.2*ydisp*scaley, 1, m) / scaley
+            except:
+                sizey /= 10.0
+            m /= 10.0
+        labely = '%.3g $\mu$A'%(sizey*scaley)#)[1:]
+        if len(electrodes) > 1:
+            add_scalebar(ax,hidey=True, matchy=False, hidex=False, matchx=False, sizex=0, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+        else:
+            add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, unitsx='ms', loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+        # save figure
+        if saveFig: 
+            if isinstance(saveFig, basestring):
+                filename = saveFig
+            else:
+                filename = sim.cfg.filename+'_'+'lfp.png'
+            plt.savefig(filename, dpi=dpi)
+
+    # PSD ----------------------------------
+    if 'PSD' in plots:
+        if overlay:
+            figs.append(plt.figure(figsize=figSize))
+        else:
+            numCols = 1 # np.round(len(electrodes) / maxPlots) + 1
+            figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+            #import seaborn as sb
+
+        allFreqs = []
+        allSignal = []
+        data['allFreqs'] = allFreqs
+        data['allSignal'] = allSignal
+
+        for i,elec in enumerate(electrodes):
+            if elec == 'avg':
+                lfpPlot = np.mean(lfp, axis=1)
+            elif isinstance(elec, Number) and elec <= sim.net.recXElectrode.nsites:
+                lfpPlot = lfp[:, elec]
+            
+            # Morlet wavelet transform method
+            if transformMethod == 'morlet':
+                from ..support.morlet import MorletSpec, index2ms
+
+                Fs = int(1000.0/sim.cfg.recordStep)
+
+                #t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+                morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+                freqs = F = morletSpec.f
+                spec = morletSpec.TFR
+                signal = np.mean(spec, 1)
+                ylabel = 'Power'
+
+            # FFT transform method
+            elif transformMethod == 'fft':
+                Fs = int(1000.0/sim.cfg.recordStep)
+                power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+
+                if smooth:
+                    signal = _smooth1d(10*np.log10(power[0]), smooth)
+                else:
+                    signal = 10*np.log10(power[0])
+                freqs = power[1]
+                ylabel = 'Power (dB/Hz)'
+
+            allFreqs.append(freqs)
+            allSignal.append(signal)
+
+        # ALTERNATIVE PSD CALCULATION USING WELCH
+        # from http://joelyancey.com/lfp-python-practice/
+        # from scipy import signal as spsig
+        # Fs = int(1000.0/sim.cfg.recordStep)
+        # maxFreq=100
+        # f, psd = spsig.welch(lfpPlot, Fs, nperseg=100)
+        # plt.semilogy(f,psd,'k')
+        # sb.despine()
+        # plt.xlim((0,maxFreq))
+        # plt.yticks(size=fontsiz)
+        # plt.xticks(size=fontsiz)
+        # plt.ylabel('$uV^{2}/Hz$',size=fontsiz)
+
+        if normPSD:
+            vmax = np.max(allSignal)
+            for i, s in enumerate(allSignal):
+                allSignal[i] = allSignal[i]/vmax
+
+        for i,elec in enumerate(electrodes):
+            if not overlay:
+                plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+            if elec == 'avg':
+                color = 'k'
+            elif isinstance(elec, Number) and elec <= sim.net.recXElectrode.nsites:
+                color = colors[i % len(colors)]
+            freqs = allFreqs[i]
+            signal = allSignal[i]
+            plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
+            plt.xlim([0, maxFreq])
+            if len(electrodes) > 1 and not overlay:
+                plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
+            plt.ylabel(ylabel, fontsize=fontSize)
+            
+        # format plot
+        plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+        if overlay:
+            plt.legend(fontsize=fontSize)
+        plt.tight_layout()
+        plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+        plt.subplots_adjust(bottom=0.08, top=0.92)
+
+        if logx:
+            pass
+        #from IPython import embed; embed()
+
+        # save figure
+        if saveFig: 
+            if isinstance(saveFig, basestring):
+                filename = saveFig
+            else:
+                filename = sim.cfg.filename + '_plot_lfp_psd.png'
+            plt.savefig(filename, dpi=dpi)
+
+    # Spectrogram ------------------------------
+    if 'spectrogram' in plots:
+        import matplotlib.cm as cm
+        numCols = 1 #np.round(len(electrodes) / maxPlots) + 1
+        figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+        #t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+        
+        # Morlet wavelet transform method
+        if transformMethod == 'morlet':
+            from ..support.morlet import MorletSpec, index2ms
+
+            spec = []
+            
+            for i,elec in enumerate(electrodes):
+                if elec == 'avg':
+                    lfpPlot = np.mean(lfp, axis=1)
+                elif isinstance(elec, Number) and elec <= sim.net.recXElectrode.nsites:
+                    lfpPlot = lfp[:, elec]
+                fs = int(1000.0 / sim.cfg.recordStep)
+                t_spec = np.linspace(0, index2ms(len(lfpPlot), fs), len(lfpPlot))
+                spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq))
+                
+            f = np.array(range(minFreq, maxFreq+1, stepFreq))  # only used as output for user
+
+            vmin = np.array([s.TFR for s in spec]).min()
+            vmax = np.array([s.TFR for s in spec]).max()
+            for i,elec in enumerate(electrodes):
+                plt.subplot(np.ceil(len(electrodes) / numCols), numCols, i + 1)
+                T = timeRange
+                F = spec[i].f
+                if normSpec:
+                    spec[i].TFR = spec[i].TFR / vmax
+                    S = spec[i].TFR
+                    vc = [0, 1]
+                else:
+                    S = spec[i].TFR
+                    vc = [vmin, vmax]
+
+                plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+                plt.colorbar(label='Power')
+                plt.ylabel('Hz')
+                plt.tight_layout()                
+                if len(electrodes) > 1:
+                    plt.title('Electrode %s' % (str(elec)), fontsize=fontSize - 2)
+        
+        # FFT transform method
+        elif transformMethod == 'fft':
+
+            from scipy import signal as spsig
+            spec = []
+            
+            for i,elec in enumerate(electrodes):
+                if elec == 'avg':
+                    lfpPlot = np.mean(lfp, axis=1)
+                elif isinstance(elec, Number) and elec <= sim.net.recXElectrode.nsites:
+                    lfpPlot = lfp[:, elec]
+                # creates spectrogram over a range of data 
+                # from: http://joelyancey.com/lfp-python-practice/
+                fs = int(1000.0/sim.cfg.recordStep)
+                f, t_spec, x_spec = spsig.spectrogram(lfpPlot, fs=fs, window='hanning',
+                detrend=mlab.detrend_none, nperseg=nperseg, noverlap=noverlap, nfft=NFFT,  mode='psd')
+                x_mesh, y_mesh = np.meshgrid(t_spec*1000.0, f[f<maxFreq])
+                spec.append(10*np.log10(x_spec[f<maxFreq]))
+
+            vmin = np.array(spec).min()
+            vmax = np.array(spec).max()
+            for i,elec in enumerate(electrodes):
+                plt.subplot(np.ceil(len(electrodes)/numCols), numCols, i+1)
+                plt.pcolormesh(x_mesh, y_mesh, spec[i], cmap=cm.viridis, vmin=vmin, vmax=vmax)
+                plt.colorbar(label='dB/Hz', ticks=[np.ceil(vmin), np.floor(vmax)])
+                if logy:
+                    plt.yscale('log')
+                    plt.ylabel('Log-frequency (Hz)')
+                    if isinstance(logy, list):
+                        yticks = tuple(logy)
+                        plt.yticks(yticks, yticks)
+                else:
+                    plt.ylabel('(Hz)')
+                if len(electrodes) > 1:
+                    plt.title('Electrode %s'%(str(elec)), fontsize=fontSize-2)
+
+        plt.xlabel('time (ms)', fontsize=fontSize)
+        plt.tight_layout()
+        plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
+        plt.subplots_adjust(bottom=0.08, top=0.90)
+        
+        # save figure
+        if saveFig: 
+            if isinstance(saveFig, basestring):
+                filename = saveFig
+            else:
+                filename = sim.cfg.filename+'_'+'lfp_timefreq.png'
+            plt.savefig(filename, dpi=dpi)
+
+    # locations ------------------------------
+    if 'locations' in plots:
+        cvals = [] # used to store total transfer resistance
+
+        for cell in sim.net.compartCells:
+            trSegs = list(np.sum(sim.net.recXElectrode.getTransferResistance(cell.gid)*1e3, axis=0)) # convert from Mohm to kilohm
+            if not includeAxon:
+                i = 0
+                for secName, sec in cell.secs.items():
+                    nseg = sec['hObj'].nseg #.geom.nseg
+                    if 'axon' in secName:
+                        for j in range(i,i+nseg): del trSegs[j] 
+                    i+=nseg
+            cvals.extend(trSegs)  
+            
+        includePost = [c.gid for c in sim.net.compartCells]
+        fig = sim.analysis.plotShape(includePost=includePost, showElectrodes=electrodes, cvals=cvals, includeAxon=includeAxon, dpi=dpi,
+        fontSize=fontSize, saveFig=saveFig, showFig=showFig, figSize=figSize)[0]
+        figs.append(fig)
+
+
+    outputData = {'LFP': lfp, 'electrodes': electrodes, 'timeRange': timeRange, 'saveData': saveData, 'saveFig': saveFig, 'showFig': showFig}
+
+    if 'PSD' in plots:
+        outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
+    
+    if 'spectrogram' in plots:
+        outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]})
+
+    #save figure data
+    if saveData:
+        figData = outputData
+        _saveFigData(figData, saveData, 'lfp')
+
+    # show fig 
+    if showFig: _showFigure()
+
+    return figs, outputData
+*** ^^ the above lines were an aborted attempt to get a plotCSD() function into lfp.py -- believe the logic there was to have all the plotting functions in the same place, but for now going to leave getCSD() and plotCSD() in the same place --> Checking in w/ joe and salva to make sure that's okay. --> yup --> took that code out of lfp.py and pushed 'git push origin csd'
+** csd.py edits:
+*** @exception added to csd.py, above def plotCSD() 
+** Deleted .png files from netpyne/examples/LFPrecording:
+*** made a copy of them just in case -- on local machine, ~/Desktop/examples-LFPrecording-pngs
+*** then did 'git rm ____.png' for all the .png files in that directory
+*** cd ../../ so that I was back in netpyne main dir
+*** git commit -m 'deleting .png files from examples/LFPrecording'
+*** git push origin csd (made sure I was on csd branch of my fork first of course)
+** merging with development branch on my fork:
+*** cd ~/Desktop/NEUROSIM/netpyne
+*** git branch 
+*** git checkout development 
+*** git pull upstream development
+**** This pulls changes from upstream/development (so development branch of neurosim netpyne github)
+**** some people would do git pull --rebase upstream development, which does git fetch, then git rebase
+**** git pull does git fetch, then git merge. This is evidently safer but not as clean. 
+*** git push origin development
+**** This pushes the changes that were just pulled into my cloned forked repo
+*** git checkout csd
+**** switch to feature branch
+*** git merge development
+**** merge in changes from the dev branch 
+*** fixed merge conflicts:
+**** analysis/__init__.py:
+***** just added the csd import lines at the bottom
+**** examples/LFPrecording/net_lfp.py:
+*** git add .   (NOTE: am in csd [feature] branch)
+*** git commit -m 'commit_message'
+*** git push origin csd 
+** update bokeh for use in netpyne
+*** --> had long chat with joe (virtual envs, etc.) 
+*** conda command not found / working (command not recognized, even though 'which conda' shows that it goes to ~/anaconda3/bin/conda)
+*** instead, tried:  pip install --upgrade bokeh
+Collecting bokeh
+  Using cached bokeh-2.2.3.tar.gz (8.8 MB)
+Requirement already satisfied, skipping upgrade: PyYAML>=3.10 in ./lib/python3.7/site-packages (from bokeh) (3.13)
+Requirement already satisfied, skipping upgrade: python-dateutil>=2.1 in ./lib/python3.7/site-packages (from bokeh) (2.7.3)
+Requirement already satisfied, skipping upgrade: Jinja2>=2.7 in ./lib/python3.7/site-packages (from bokeh) (2.10)
+Requirement already satisfied, skipping upgrade: numpy>=1.11.3 in ./lib/python3.7/site-packages (from bokeh) (1.15.1)
+Collecting pillow>=7.1.0
+  Using cached Pillow-8.0.1-cp37-cp37m-macosx_10_10_x86_64.whl (2.2 MB)
+Requirement already satisfied, skipping upgrade: packaging>=16.8 in ./lib/python3.7/site-packages (from bokeh) (17.1)
+Requirement already satisfied, skipping upgrade: tornado>=5.1 in ./lib/python3.7/site-packages (from bokeh) (5.1)
+Collecting typing_extensions>=3.7.4
+  Using cached typing_extensions-3.7.4.3-py3-none-any.whl (22 kB)
+Requirement already satisfied, skipping upgrade: six>=1.5 in ./lib/python3.7/site-packages (from python-dateutil>=2.1->bokeh) (1.11.0)
+Requirement already satisfied, skipping upgrade: MarkupSafe>=0.23 in ./lib/python3.7/site-packages (from Jinja2>=2.7->bokeh) (1.0)
+Requirement already satisfied, skipping upgrade: pyparsing>=2.0.2 in ./lib/python3.7/site-packages (from packaging>=16.8->bokeh) (2.2.0)
+Building wheels for collected packages: bokeh
+  Building wheel for bokeh (setup.py) ... done
+  Created wheel for bokeh: filename=bokeh-2.2.3-py3-none-any.whl size=9295377 sha256=6b14cd1312d645dcf69c83bf285d6bd35835701ed54420efbd319c95e253ca05
+  Stored in directory: /Users/ericagriffith/Library/Caches/pip/wheels/0c/6a/ac/5de7ec1983d76fa1243106008b70df211dceb5ed643ad15699
+Successfully built bokeh
+Installing collected packages: pillow, typing-extensions, bokeh
+  Attempting uninstall: pillow
+    Found existing installation: Pillow 5.2.0
+    Uninstalling Pillow-5.2.0:
+      Successfully uninstalled Pillow-5.2.0
+  Attempting uninstall: bokeh
+    Found existing installation: bokeh 0.13.0
+    Uninstalling bokeh-0.13.0:
+      Successfully uninstalled bokeh-0.13.0
+Successfully installed bokeh-2.2.3 pillow-8.0.1 typing-extensions-3.7.4.3
+WARNING: You are using pip version 20.2.3; however, version 20.3.1 is available.
+You should consider upgrading via the '/Users/ericagriffith/anaconda3/bin/python -m pip install --upgrade pip' command.
+*** ^^ believe this worked? try again. 
+*** ^^ yup!
+** need to recompile mod files in netpyne/examples/LFPrecording because currently using 7.6 for library nrnmech --> 
+*** rm -r x86_64
+*** ln -s mod/x86_64 x86_64
+*** cd mod
+*** nrnivmodl
+*** success!!
+** added from .utils import exception to the beginning of csd.py --> this allows @exception to work at the beginning of the plotCSD() function --> do I need to add this to getCSD() as well? 
+** Try again to run net_lfp.py and cell_lfp.py:
+*** yup! works!
+** merge in latest dev branch changes:
+*** git checkout development
+*** git pull upstream development
+*** git push origin development
+*** git checkout csd
+*** git merge development
+Merge made by the 'recursive' strategy.
+ CHANGES.md                                                             |  2 ++
+ netpyne/cell/compartCell.py                                            | 16 +++++++++++-----
+ netpyne/network/netrxd.py                                              |  1 +
+ netpyne/{support/jupyter => tutorials}/netpyne_tut1/README.md          |  0
+ netpyne/{support/jupyter => tutorials}/netpyne_tut1/netpyne_tut1.ipynb |  0
+ 5 files changed, 14 insertions(+), 5 deletions(-)
+ rename netpyne/{support/jupyter => tutorials}/netpyne_tut1/README.md (100%)
+ rename netpyne/{support/jupyter => tutorials}/netpyne_tut1/netpyne_tut1.ipynb (100%)
+*** git push origin csd
+* <2020-12-09 Wed -- csd>
+** csd pull request passed all checks last night!
+** Changes to csd.py:
+*** Changing plotCSD() lines with the title of the plot such that "CSD with LFP overlay" only displays when LFP_overlay is True (if False --> "Current Source Density (CSD)" 
+*** took out these lines (already commented out): 
+  # if LFP_overlay is True:
+  #   numplots=1
+  # else:
+  #   numplots=1   # SWITCHED, used to be above numplots = 2, and here
+  # numplots = 1
+*** deleted this comment next to fig = plt.figure() --> #plt.figure(figsize=(10, 8)) #<-- quite large; for multiple subplots 
+** Changes to csd.py plotCSD():
+*** change A1_layer_bounds to layer_bounds and make this an arg (dict)
+*** took out these lines:
+****     # add labels for each layer -- would have to be adjusted by hand if changing layer bounds
+    # fig.text(0.922,0.855,'L1',color='black')
+    # fig.text(0.92,0.825,'L2',color='black')
+    # fig.text(0.92,0.68,'L3',color='black')
+    # fig.text(0.92,0.5,'L4',color='black')
+    # fig.text(0.92,0.44,'L5A',color='black')
+    # fig.text(0.92,0.39,'L5B',color='black')
+    # fig.text(0.92,0.29,'L6',color='black')
+** Salva having issues w/:
+*** [FIXED] 1) LFP_overlay and layer lines showing when testing on A1 
+**** Changed if statements with the above args such that they say e.g. "if LFP_overlay" or "if not LFP_overlay" vs. "if LFP_overlay is True" -- that way can use either True/False or 1/0 for args. 
+*** 2) Suggests that layer boundaries not be hardcoded! makes sense. 
+** Want to test on A1:
+*** changing cfg.py such that (a) cfg.scaleDensity = 0.075 #0.5 AND (b) cfg.duration = 0.5*1e3 #2.0*1e3
+*** ^^ hopefully makes it easier to run on my local machine? try it. 
+ 
