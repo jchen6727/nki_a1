@@ -1200,8 +1200,8 @@ def optunaRatesLayers():
     # parameters
     params = specs.ODict()
 
-    rangeV = 0.1
-    rangeV2 = 0.4
+    rangeV = 0.25
+    rangeV2 = 0.75
     minV = 0.1
     maxV = 4.0
 
@@ -1457,7 +1457,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch8' 
+    b.batchLabel = 'v32_batch9' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
