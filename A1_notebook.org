@@ -38830,4 +38830,48 @@ Merge made by the 'recursive' strategy.
 ** Want to test on A1:
 *** changing cfg.py such that (a) cfg.scaleDensity = 0.075 #0.5 AND (b) cfg.duration = 0.5*1e3 #2.0*1e3
 *** ^^ hopefully makes it easier to run on my local machine? try it. 
- 
+** csd changes pushed to csd branch of my netpyne fork --> layer lines and LFP overlay should now work with either T/F or with 1/0, and layer boundaries are no longer hardcoded. 
+* <2020-12-10 Thu -- data>
+** Next steps are to both keep working on the thal int paper and to work on comparing data to model
+** Going to work on looking at data for now. 
+*** Idea from sam: 
+**** "may be interesting to compare presentation of clicks at different phases of background oscillation ... but can try that when have a good sense of how click propagates through the layers"
+*** So, next thing would be to be able to look at the click data 
+** Data files and scripts:
+*** matlab script from peter
+*** nhpdat.py script from sam
+**** nhpdat.py --> in ~/Documents/MATLAB/macaque_A1/
+**** nhpday.py also in ~/Desktop/neurosim_misc/csd_misc/csd_verification 
+**** Also --> this replies in part on csd (from csd import *)
+**** ^^ so which csd.py is this referring to? 
+**** ^^ ~/Desktop/neurosim_misc/csd_misc has a lot of files that potentially have what I'm looking for here. 
+*** .mat files --> on google drive, and also in select locations on local machine:
+**** in ~/Documents/MATLAB/macaque_A1/
+**** in ~/Desktop/neurosim_misc/csd_misc/csd_verification/data 
+** Next steps:
+*** Make a .m (or .py? probably .m) script that will extract only the files that are relevant to us:
+**** do this by recording location
+**** problem -- how to do this? I guess batch by batch? bc I can't put all the files on my machine because it's just too many. 
+*** Figure out how to get LFP/CSD from this data 
+**** nhpdat.py will have reliable ways to do this
+**** what needs to be pre-processed in matlab, if anything? 
+** Data processing:
+* <2020-12-11 Fri -- click data>
+** Get CSD/LFP of click data:
+*** csd_verify.py --> works 
+*** have this lock into csd.py in netpyne/netpyne/analysis somehow. 
+** Click data example file:
+*** in ~/Documents/MATLAB/macaque_A1/click/contproc/1-bu001002015@os_eye06_20.mat
+*** ^^ also put this file in ~/Desktop/neurosim_misc/csd_misc/csd_verification/"".mat
+*** ^^ put this as filename in csd_verify.py and see if it works. 
+*** ^^ Deprecation warning:
+**** "python -i csd_verify.py 
+fn: 1-bu001002015@os_eye06_20.mat sampr: 44000.0 samprds: 1000.0
+resampling channel 0
+/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/scipy/signal/signaltools.py:2383:
+FutureWarning: Using a non-tuple sequence for multidimensional
+indexing is deprecated; use `arr[tuple(seq)]` instead of
+`arr[seq]`. In the future this will be interpreted as an array index,
+`arr[np.array(seq)]`, which will result either in an error or a
+different result."
+**** ^^ Believe this arises from downsample.py's function where newdata = decimate() <-- this is imported from scipy.signal, so guessing this is where that comes from. 
