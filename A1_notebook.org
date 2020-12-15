@@ -38875,3 +38875,53 @@ indexing is deprecated; use `arr[tuple(seq)]` instead of
 `arr[np.array(seq)]`, which will result either in an error or a
 different result."
 **** ^^ Believe this arises from downsample.py's function where newdata = decimate() <-- this is imported from scipy.signal, so guessing this is where that comes from. 
+** Clarification from same on the avgERP lines:
+*** (1) # set epoch params
+swindowms = 0
+ewindowms = 50
+windowms = ewindowms - swindowms
+*** ^^ swindowms is the start time relative to stimulus onset
+*** ^^ ewindowms is time after stimulus onset 
+*** so this code is looking at the entire length of the data, cutting out the parts where there IS a stimulus, and then averaging the responses that come afterwards
+*** from sam:
+**** "that function is actually cutting out data where there IS a stimulus occurring
+**** since the idea is to get all the responses and then compare them
+**** so first the bad periods are detected, then the remaining are used to get the average ERP."
+*** (2) # clean bad LFP values and get CSD
+sigmathresh=4
+*** "i think sigmathresh is a threshold X standard dev to exclude noise"
+*** trigtimes --> absolute value (in time -- check units) of when the stimuli actually occur
+** Note on averaging: 
+*** for spontaneous --> don't average ("for spontaneous data usually shouldn't average // otherwise everything gets 'blurred' out since onset/offset of different oscillations/events will be out of phase // but you could align to some internal signal.")
+** so ^^ given what we now know about spontaneous data not being subjected to averaging, should I add this into the csd functions? 
+*** ^^ i.e. when trialType = 'spont' (or 'click' or 'speech') ---> when it is 'spont' then don't average, and when trialType is 'click' or 'speech', then average. probably. 
+** Thresh questions:
+*** These lines in load.py:
+def calPosThresh(dat, sigmathresh):
+  #return dat.mean() + sigmathresh * dat.std() # this was originally commented out, reversing it to try (EYG)
+  return 100
+
+def calNegThresh(dat, sigmathresh):
+  #return dat.mean() - sigmathresh * dat.std() # this was originally commented out, reversing it to try (EYG)
+  return -100
+*** When 'return 100' or 'return -100' are the lines that are in use (uncommented), then finds 0 bad epochs in a sample click data file, which seems like it's probably not correct? 
+*** When the other lines are uncommented and in use (e.g. return dat.mean() - sigmathresh * dat.std()) --> then it does find bad epochs in the sample click file I'm using. 
+*** Try the same test on a spontaneous file? --> makes my computer go haywire!! 
+* <2020-12-14 Mon -- meetings all day>
+** journal club, joe tutorial meeting, covid vaccine town hall, md/phd interviews
+* <2020-12-15 Tue -- csd time series>
+** looking at time series of csd in data
+*** Sam says to narrow it down to time around the stimulus intervals
+*** trigtimes (from load.loadfile) gives the array of stimulus trigger *indices* (not in sec or ms)
+*** ^^ how to conver this into seconds? 
+*** stimTimes = tt[trigtimes(i)] probably? 
+**** stimTimes = []
+**** for i in range(len(trigtimes)):
+***** stimTimes.append(tt[trigtimes[i]])
+** made a script:
+*** located currently on local machine in ~/Desktop/neurosim_misc/csd_misc/csd_verification/csd_timeSeries.py --> I know I should relocate this. what should this function be a part of? 
+*** ^^ This should be part of a larger script on csd data analysis 
+** Making a script for A1/analysis called dataAnalysis.py --> this will contain the functions and code to generate figures / analyses from data files. 
+*** What does peter say... --> he says to write the code like the functions are already written. what do you want this to look like? 
+*** Do this later 
+** Sent email to peter sam and noelle -- need .csv file to correspond channel numbers to layers 
