@@ -38925,3 +38925,70 @@ def calNegThresh(dat, sigmathresh):
 *** What does peter say... --> he says to write the code like the functions are already written. what do you want this to look like? 
 *** Do this later 
 ** Sent email to peter sam and noelle -- need .csv file to correspond channel numbers to layers 
+* <2020-12-17 Thu -- back to csd>
+** Need to be able to get average across trials
+** Made another pull request in netpyne (#547):
+*** Did this because a couple of the minor fixes / improvements (e.g. boolean issues and hardcoding of layer labels in plotCSD()) that salva made were committed/pushed after the other pull request was closed. Made a new one so these can be merged into netpyne development branch (steps below). 
+*** https://github.com/Neurosim-lab/netpyne/pull/547
+*** (1) In your browser, go to https://github.com/Neurosim-lab/netpyne 
+*** (2) click on the "New pull request" button.
+*** (3) This ^^ will bring you to the "Compare changes" page where you should click on "compare across forks". 
+**** Ensure the "base repository" is Neurosim-lab/netpyne 
+**** and the "base" is development. 
+**** Set the head repository to ericaygriffith/netpyne 
+**** and the "compare" to csd (name-of-your-new-branch)
+**** Type a title and description for your pull request (if your modifications were in response to an issue, include the issue number --> NOT RELEVANT THIS TIME). 
+***** https://github.com/Neurosim-lab/netpyne/issues/304
+***** TITLE: "Layer bounds no longer hardcoded in plotCSD() #547"
+***** Finally, click on "Create Pull Request"
+** Git rejected my attempt to add/commit/push some data .mat files to the repro branch (says they are too large!! error text below): 
+ericagriffith% git commit -m 'adding data/NHPdata directory containing some example NHP data files from Peter Lakatos'
+[repro 1edb0d1] adding data/NHPdata directory containing some example NHP data files from Peter Lakatos
+ 3 files changed, 18 insertions(+)
+ create mode 100644 data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat
+ create mode 100644 data/NHPdata/spont/contproc/1-bu001002017@os_eye06_20.mat
+[Ericas-Air-3:~/Desktop/NEUROSIM/A1] ericagriffith% git push origin repro
+Enumerating objects: 14, done.
+Counting objects: 100% (14/14), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (11/11), 954.01 MiB | 23.86 MiB/s, done.
+Total 11 (delta 2), reused 1 (delta 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+remote: error: Trace: d7e8f5e479491a7c98576eb674054d864d37b4291bf5024056e6ea5f15d32064
+remote: error: See http://git.io/iEPt8g for more information.
+remote: error: File data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat is 197.15 MB; this exceeds GitHub's file size limit of 100.00 MB
+remote: error: File data/NHPdata/spont/contproc/1-bu001002017@os_eye06_20.mat is 783.81 MB; this exceeds GitHub's file size limit of 100.00 MB
+To https://github.com/NathanKlineInstitute/A1.git
+ ! [remote rejected] repro -> repro (pre-receive hook declined)
+error: failed to push some refs to 'https://github.com/NathanKlineInstitute/A1.git'
+** What are all the functionalities that need to be done here then? 
+*** Need to be able to take a file as input 
+*** Need to be able to take this file and extract the CSD data (and other related params -- e.g. sampling rate, stimuli time indices, time array, LFP data, etc.) 
+**** requires load.loadfile()
+***** [DONE -- see below] ^^ this requires both load.getCSD() AND rdmat.rdmat AND getTriggerTimes() 
+***** [DONE] Bring rdmat.rdmat into A1/analysis/dataAnalysis.py:
+****** imports: 
+import sys
+import os
+import h5py
+import numpy as np
+#from csd import *
+#from filter import downsample
+import downsample
+from collections import OrderedDict
+****** put df rdmat(fn,samprds=0) into dataAnalysis.py 
+***** [DONE] Bring load.getCSD() into A1/analysis/dataAnalysis.py
+****** [DONE] Requires load.getbandpass() and load.Vaknin() 
+******* [DONE] Put getbandpass() into dataAnalysis.py
+******** [DONE] Requires bandpass() <-- IMPORTED 
+******* [DONE] Put Vaknin() into dataAnalysis.py: 
+***** [DONE] Bring load.getTriggerTimes() into dataAnalysis.py: 
+****** [DONE] requires h5py
+** NOTE: NEW CLONE OF REPO --
+*** I messed up with all the stuff above (adding/pushing that data file), so deleted A1 from local machine:
+**** cd ~/Desktop/NEUROSIM
+**** rm -rf A1
+*** ^^ but first I made a A1.zip copy in case there were any local figs etc that I wanted to keep track of. 
+*** then I did git clone https://github.com/NathanKlineInstitute/A1.git
