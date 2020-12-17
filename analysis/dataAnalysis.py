@@ -138,4 +138,23 @@ if __name__ == '__main__':
 
 	fileName = '../data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
 
+  [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fileName, samprds=11*1e3, spacing_um=100)
+  # sampr is the sampling rate after downsampling 
+  # tt is time array (in seconds)
+  # ttrigtimes is array of stim trigger indices
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
