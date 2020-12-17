@@ -53,7 +53,7 @@ def rdmat (fn,samprds=0):
 def getbandpass (lfps,sampr,minf=0.05,maxf=300):
   datband = []
   for i in range(len(lfps[0])): datband.append(bandpass(lfps[:,i],minf,maxf,df=sampr,zerophase=True))
-  datband = numpy.array(datband)
+  datband = np.array(datband)
   return datband
 
 
@@ -90,7 +90,7 @@ def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300):
   spacing_mm = spacing_um/1000
   # when drawing CSD make sure that negative values (depolarizing intracellular current) drawn in red,
   # and positive values (hyperpolarizing intracellular current) drawn in blue
-  CSD = -numpy.diff(datband,n=2,axis=ax)/spacing_mm**2 # now each column (or row) is an electrode -- CSD along electrodes
+  CSD = -np.diff(datband,n=2,axis=ax)/spacing_mm**2 # now each column (or row) is an electrode -- CSD along electrodes
 
   CSD = Vaknin(CSD)
 
@@ -131,18 +131,17 @@ def loadfile (fn,samprds,spacing_um=100):
 
 
 
-
-
 # MAIN CODE 
 if __name__ == '__main__':
-
-	fileName = '../data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
+  
+  fileName = '../data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
 
   [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fileName, samprds=11*1e3, spacing_um=100)
   # sampr is the sampling rate after downsampling 
   # tt is time array (in seconds)
   # ttrigtimes is array of stim trigger indices
 
+  
 
 
 
