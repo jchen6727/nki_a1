@@ -7,18 +7,17 @@ Contributors: ericaygriffith@gmail.com, samnemo@gmail.com
 """
 
 
-## IMPORTS 
+## IMPORTS ## 
 import sys
 import os
-import h5py									# for rdmat() and getTriggerTimes()
+import h5py									            # for rdmat() and getTriggerTimes()
 import numpy as np
 import downsample
 from collections import OrderedDict
-from filter import lowpass,bandpass 		 #for getbandpass()
+from filter import lowpass,bandpass 		 # for getbandpass()
 
 
 ## FUNCTIONS ## 
-
 ### Originally in rdmat.py ### 
 def rdmat (fn,samprds=0):  
   fp = h5py.File(fn,'r') # open the .mat / HDF5 formatted data
@@ -141,7 +140,6 @@ if __name__ == '__main__':
   # tt is time array (in seconds)
   # ttrigtimes is array of stim trigger indices
 
-  
 
 
 
