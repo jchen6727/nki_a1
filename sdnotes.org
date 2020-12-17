@@ -7824,5 +7824,6 @@ def custom():
 ** v32_batch12 - best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different weights 
 ** v32_batch13 - from v32_batch11, scale 1.0, only thal+L2+L3+L4, param range 0.1 - 4.0
 ** v32_batch14 - from v32_batch13, scale 1.0, only thal+L2+L3+L4, param range narrower
+** v32_batch15 - best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different conn probs
 
 ** blank
