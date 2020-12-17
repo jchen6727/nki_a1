@@ -38965,8 +38965,8 @@ To https://github.com/NathanKlineInstitute/A1.git
 error: failed to push some refs to 'https://github.com/NathanKlineInstitute/A1.git'
 ** What are all the functionalities that need to be done here then? 
 *** Need to be able to take a file as input 
-*** Need to be able to take this file and extract the CSD data (and other related params -- e.g. sampling rate, stimuli time indices, time array, LFP data, etc.) 
-**** requires load.loadfile()
+*** [DONE] Need to be able to take this file and extract the CSD data (and other related params -- e.g. sampling rate, stimuli time indices, time array, LFP data, etc.) 
+**** [DONE] requires load.loadfile()
 ***** [DONE -- see below] ^^ this requires both load.getCSD() AND rdmat.rdmat AND getTriggerTimes() 
 ***** [DONE] Bring rdmat.rdmat into A1/analysis/dataAnalysis.py:
 ****** imports: 
@@ -38986,6 +38986,8 @@ from collections import OrderedDict
 ******* [DONE] Put Vaknin() into dataAnalysis.py: 
 ***** [DONE] Bring load.getTriggerTimes() into dataAnalysis.py: 
 ****** [DONE] requires h5py
+
+**** 
 ** NOTE: NEW CLONE OF REPO --
 *** I messed up with all the stuff above (adding/pushing that data file), so deleted A1 from local machine:
 **** cd ~/Desktop/NEUROSIM
