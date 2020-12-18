@@ -17,7 +17,7 @@ from collections import OrderedDict
 from filter import lowpass,bandpass 		 # for getbandpass()
 
 
-## FUNCTIONS ## 
+## PRE-PROCESSING FUNCTIONS ## 
 ### Originally in rdmat.py ### 
 def rdmat (fn,samprds=0):  
   fp = h5py.File(fn,'r') # open the .mat / HDF5 formatted data
@@ -127,6 +127,8 @@ def loadfile (fn,samprds,spacing_um=100):
   LFP = LFP.T # make sure each row is a channel
   return sampr,LFP,dt,tt,CSD,trigtimes
 
+
+### PLOTTING FUNCTIONS ### 
 
 
 
