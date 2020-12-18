@@ -39230,3 +39230,7 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** AVERAGING FUNCTION(S) 
 **** [DONE] getAvgERP --> from load.py:
 ***** [DONE] requires ms2index (also from load.py) 
+*** NEXT GOALS:
+**** (1) PLOT the interpolated CSD like you do for the sim data 
+**** (2) Add CSD time series overlay like you do for the sim data
+**** (3) Add LFP time series overlay like you do for the sim data

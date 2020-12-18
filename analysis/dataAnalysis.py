@@ -7,6 +7,12 @@ Contributors: ericaygriffith@gmail.com, samnemo@gmail.com
 """
 
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
+
 ## IMPORTS ## 
 import sys
 import os
@@ -16,6 +22,7 @@ import downsample
 from collections import OrderedDict
 from filter import lowpass,bandpass 		  # for getbandpass()
 import scipy                              # for plotCSD()
+import matplotlib                         # for plotCSD()
 from matplotlib import pyplot as plt      # for plotCSD() 
 
 
@@ -152,16 +159,19 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 
 
 ### PLOTTING FUNCTIONS ### 
-def plotCSD(dat,timeRange,tt,saveFig=True,showFig=True):
+def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted
   ## tt --> numpy array of time points
   
-  dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms? 
+  #dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms? 
+  
+  if timeRange is None:
+    timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording
 
   # INTERPOLATION
-  X = np.arange(timeRange[0], timeRange[1], dt)
-  Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data)
+  X = tt #np.arange(timeRange[0], timeRange[1], dt)
+  Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data) # may be [1] for data 
   CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
   Y_plot = np.linspace(0,dat.shape[0],num=1000) # ,num=1000 is included in csd.py in netpyne --> hmm. necessary? 
   Z = CSD_spline(Y_plot,X)
@@ -169,7 +179,7 @@ def plotCSD(dat,timeRange,tt,saveFig=True,showFig=True):
   # (i) Set up axes
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
-  ymin = 0
+  ymin = 1 # 
   ymax = 24 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
@@ -198,11 +208,12 @@ def plotCSD(dat,timeRange,tt,saveFig=True,showFig=True):
   axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
 
   # SAVE FIGURE
+  ## make this a little more explicable 
   if saveFig:
     if isinstance(saveFig, basestring):
       filename = saveFig
     else:
-      filename = sim.cfg.filename + '_CSD.png'
+      filename =  'NHP_CSD_fig.png'
     try:
       plt.savefig(filename)   #dpi
     except:
@@ -225,7 +236,7 @@ if __name__ == '__main__':
     # trigtimes is array of stim trigger indices
 
   #### PLOTTING INTERPOLATED CSD COLOR MAP PLOT #### 
-
+  #plotCSD(dat=CSD_data,tt=tt)
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
   # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
@@ -236,8 +247,8 @@ if __name__ == '__main__':
   ewindowms = 200 # end time of epoch relative to stimulus onset 
 
   # calculate average CSD ERP 
-  #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-
+  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  plotCSD(dat=avgCSD,tt=ttavg)
 
   ## PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
 
