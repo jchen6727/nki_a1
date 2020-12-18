@@ -128,6 +128,27 @@ def loadfile (fn,samprds,spacing_um=100):
   return sampr,LFP,dt,tt,CSD,trigtimes
 
 
+### AVERAGING FUNCTIONS ###
+### NOTE: should also make these available for use for sim data as well in netpyne 
+def ms2index (ms, sampr): return int(sampr*ms/1e3)
+
+# get the average ERP (dat should be either LFP or CSD)
+# originally from load.py 
+def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
+  nrow = dat.shape[0]
+  tt = np.linspace(swindowms, ewindowms,ms2index(ewindowms - swindowms,sampr))
+  swindowidx = ms2index(swindowms,sampr) # could be negative
+  ewindowidx = ms2index(ewindowms,sampr)
+  avgERP = np.zeros((nrow,len(tt)))
+  for chan in range(nrow): # go through channels
+    for trigidx in trigtimes: # go through stimuli
+      sidx = max(0,trigidx+swindowidx)
+      eidx = min(dat.shape[1],trigidx+ewindowidx)
+      avgERP[chan,:] += dat[chan, sidx:eidx]
+    avgERP[chan,:] /= float(len(trigtimes))
+  return tt,avgERP
+
+
 ### PLOTTING FUNCTIONS ### 
 
 
@@ -142,6 +163,8 @@ if __name__ == '__main__':
   # tt is time array (in seconds)
   # ttrigtimes is array of stim trigger indices
 
+
+  # PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
 
 
 
