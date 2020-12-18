@@ -160,10 +160,12 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
+def plotCSD(dat,tt,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## tt --> numpy array of time points (time array in seconds)
+  ## overlay --> can be 'LFP' or 'CSD' to overlay time series of either dataset 
+  ## LFP_data --> numpy array of LFP data 
   
   tt = tt*1e3 # Convert units from seconds to ms 
   dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms after converstion
@@ -210,20 +212,53 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
 
 
   # (v) OVERLAY -- SETTING ASIDE FOR NOW -- THAT IS NEXT GOAL 
-  axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
+  if overlay is 'LFP' or overlay is 'CSD':
+    nrow = dat.shape[0] # number of channels
+    gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0) 
+    subaxs = []
+
+    # go down grid and add data from each channel 
+    if overlay == 'LFP':
+      if LFP_data is None:
+        print('no LFP data provided!')
+      else:
+        axs[0].set_title('NHP CSD with LFP overlay', fontsize=14)
+        LFP_data = LFP_data[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # slice LFP data according to timeRange
+        for chan in range(nrow):
+          subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+          fig.add_subplot(subaxs[chan])
+          subaxs[chan].margins(0.0,0.01)
+          subaxs[chan].get_xaxis().set_visible(False)
+          subaxs[chan].get_yaxis().set_visible(False)
+          subaxs[chan].plot(X,LFP_data[chan,:],color='gray',linewidth=0.3)
+
+    elif overlay == 'CSD':
+      axs[0].set_title('NHP CSD with CSD time series overlay', fontsize=14)
+      for chan in range(nrow):
+          subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+          fig.add_subplot(subaxs[chan])
+          subaxs[chan].margins(0.0,0.01)
+          subaxs[chan].get_xaxis().set_visible(False)
+          subaxs[chan].get_yaxis().set_visible(False)
+          subaxs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
+
+  else:
+    axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
 
 
   # SAVE FIGURE
-  ## make this a little more explicable 
   if saveFig:
-    if isinstance(saveFig, basestring):
-      filename = saveFig
+    if overlay == 'LFP':
+      filename = 'NHP_csd_lfpOverlay.png'
+    elif overlay == 'CSD':
+      filename = 'NHP_csd_csdOverlay.png'
     else:
-      filename =  'NHP_CSD_fig.png'
+      filename = 'NHP_CSD_fig.png'
     try:
-      plt.savefig(filename)   #dpi
+      plt.savefig(filename) # dpi
     except:
       plt.savefig('NHP_CSD_fig.png')
+
 
   # DISPLAY FINAL FIGURE
   if showFig is True:
@@ -326,7 +361,7 @@ if __name__ == '__main__':
     # trigtimes is array of stim trigger indices
 
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  plotCSD(dat=CSD_data,tt=tt,timeRange=[1000,1500])
+  plotCSD(dat=CSD_data,tt=tt,LFP_data = LFP_data,overlay='LFP',timeRange=[1000,1500])
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
   # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
