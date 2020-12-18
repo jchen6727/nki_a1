@@ -251,7 +251,7 @@ def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
   ymin = 1  # 0 in csd.py in netpyne 
-  ymax = 24 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  ymax = 24 # dat.shape[0] # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
