@@ -10,11 +10,13 @@ Contributors: ericaygriffith@gmail.com, samnemo@gmail.com
 ## IMPORTS ## 
 import sys
 import os
-import h5py									            # for rdmat() and getTriggerTimes()
+import h5py									              # for rdmat() and getTriggerTimes()
 import numpy as np
 import downsample
 from collections import OrderedDict
-from filter import lowpass,bandpass 		 # for getbandpass()
+from filter import lowpass,bandpass 		  # for getbandpass()
+import scipy                              # for plotCSD()
+from matplotlib import pyplot as plt      # for plotCSD() 
 
 
 ## PRE-PROCESSING FUNCTIONS ## 
@@ -150,7 +152,66 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 
 
 ### PLOTTING FUNCTIONS ### 
+def plotCSD(dat,timeRange,tt,saveFig=True,showFig=True):
+  ## dat --> CSD data as numpy array
+  ## timeRange --> time range to be plotted
+  ## tt --> numpy array of time points
+  
+  dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms? 
 
+  # INTERPOLATION
+  X = np.arange(timeRange[0], timeRange[1], dt)
+  Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data)
+  CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
+  Y_plot = np.linspace(0,dat.shape[0],num=1000) # ,num=1000 is included in csd.py in netpyne --> hmm. necessary? 
+  Z = CSD_spline(Y_plot,X)
+
+  # (i) Set up axes
+  xmin = int(X[0])
+  xmax = int(X[-1]) + 1 
+  ymin = 0
+  ymax = 24 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  extent_xy = [xmin, xmax, ymax, ymin]
+
+  # (ii) Set up figure
+  fig = plt.figure()
+
+  # (iii) Create plots w/ common axis labels and tick marks
+  axs = []
+
+  numplots = 1 # HOW TO DETERMINE THIS? WHAT IF MORE THAN ONE? 
+
+  gs_outer = matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
+
+  for i in range(numplots):
+    axs.append(plt.Subplot(fig,gs_outer[i*2:i*2+2]))
+    fig.add_subplot(axs[i])
+    axs[i].set_xlabel('Time (ms)',fontsize=12)
+    axs[i].tick_params(axis='y', which='major', labelsize=8)
+
+  # (iv) PLOT INTERPOLATED CSD COLOR MAP
+  spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
+  axs[0].set_ylabel('Contact depth', fontsize = 12) # um or not? is "channel" more appropriate?
+
+
+  # (v) OVERLAY -- SETTING ASIDE FOR NOW -- THAT IS NEXT GOAL 
+  axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
+
+  # SAVE FIGURE
+  if saveFig:
+    if isinstance(saveFig, basestring):
+      filename = saveFig
+    else:
+      filename = sim.cfg.filename + '_CSD.png'
+    try:
+      plt.savefig(filename)   #dpi
+    except:
+      plt.savefig('NHP_CSD_fig.png')
+
+  # DISPLAY FINAL FIGURE
+  if showFig is True:
+    plt.show()
+    #plt.close()
 
 
 # MAIN CODE 
@@ -163,6 +224,8 @@ if __name__ == '__main__':
     # tt is time array (in seconds)
     # trigtimes is array of stim trigger indices
 
+  #### PLOTTING INTERPOLATED CSD COLOR MAP PLOT #### 
+
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
   # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
@@ -173,9 +236,9 @@ if __name__ == '__main__':
   ewindowms = 200 # end time of epoch relative to stimulus onset 
 
   # calculate average CSD ERP 
-  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
 
-  
+
   ## PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
 
 
