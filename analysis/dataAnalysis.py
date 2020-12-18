@@ -170,18 +170,15 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
 
   if timeRange is None:
     timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording (ms)
-  
   else:
     dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # SLICE CSD DATA APPROPRIATELY
-    #tt = np.arange(timeRange[0],timeRange[1],dt)# DO THE SAME FOR TIMEPOINTS 
-    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
-
+    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
 
   # INTERPOLATION
-  X = tt #np.arange(timeRange[0], timeRange[1], dt)
-  Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data) # may be [1] for data 
+  X = tt 
+  Y = np.arange(dat.shape[0]) 
   CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
-  Y_plot = np.linspace(0,dat.shape[0],num=1000) # ,num=1000 is included in csd.py in netpyne --> hmm. necessary? 
+  Y_plot = np.linspace(0,dat.shape[0],num=1000) 
   Z = CSD_spline(Y_plot,X)
 
   # (i) Set up axes
@@ -241,7 +238,7 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
 def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
-  ## Overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
+  ## overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
 
   # INTERPOLATION
   X = tt 
