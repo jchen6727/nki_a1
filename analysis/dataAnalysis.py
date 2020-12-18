@@ -162,17 +162,19 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 # PLOT CSD 
 def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
-  ## timeRange --> time range to be plotted
-  ## tt --> numpy array of time points
+  ## timeRange --> time range to be plotted (in ms)
+  ## tt --> numpy array of time points (time array in seconds)
   
-  #dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms? 
-  
-  if timeRange is None:
-    timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording
-  # else:
-  #   dat = dat[timeRange[0]:] # SLICE CSD DATA APPROPRIATELY
-  #   tt = # DO THE SAME FOR TIMEPOINTS 
+  tt = tt*1e3 # Convert units from seconds to ms 
+  dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms after converstion
 
+  if timeRange is None:
+    timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording (ms)
+  
+  else:
+    dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # SLICE CSD DATA APPROPRIATELY
+    #tt = np.arange(timeRange[0],timeRange[1],dt)# DO THE SAME FOR TIMEPOINTS 
+    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
 
 
   # INTERPOLATION
@@ -230,6 +232,9 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   if showFig is True:
     plt.show()
     #plt.close()
+
+
+
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
@@ -324,7 +329,7 @@ if __name__ == '__main__':
     # trigtimes is array of stim trigger indices
 
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  #plotCSD(dat=CSD_data,tt=tt,timeRange=[1000,2000])
+  plotCSD(dat=CSD_data,tt=tt,timeRange=[1000,1500])
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
   # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
