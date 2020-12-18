@@ -39216,3 +39216,17 @@ Changes were made to get rid of initial artifacts occurring at window beginnings
 Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CSD_raw', 'CSD_bandpassed', or 'LFP' (as strings) to this argument, which will then plot the raw (un-bandpassed) CSD time series, the bandpassed CSD time series, or the LFP time series respectively on top of the interpolated color map CSD plot. 
 *** https://github.com/Neurosim-lab/netpyne/pull/548
 *** ^^ Sent to salva (link) and he merged -- done! 
+** Back to csd for data:
+*** ~/Desktop/NEUROSIM/A1/analysis/dataAnalysis.py
+*** Doing this on 'repro' branch
+*** What are all the types of plots we need this to be able to do? 
+**** regular CSD color map plot (non-averaged) 
+**** regular CSD color map plot (averaged):
+***** averaged ERP with respect to each stimulus epoch 
+**** CSD time series overlay 
+***** whole time series overlay
+***** averaged ERP time series overlay 
+*** How to best organize all these? 
+*** AVERAGING FUNCTION(S) 
+**** [DONE] getAvgERP --> from load.py:
+***** [DONE] requires ms2index (also from load.py) 

@@ -167,14 +167,16 @@ if __name__ == '__main__':
   ## REMOVE BAD EPOCHS FIRST..? ## 
   # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
 
-  ## Get AVERAGE ERP ## 
+  ## GET AVERAGE ERP ## 
   # set epoch params
   swindowms = 0 # start time relative to stimulus 
   ewindowms = 200 # end time of epoch relative to stimulus onset 
 
+  # calculate average CSD ERP 
   ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
 
-  # PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
+  
+  ## PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
 
 
 
