@@ -38994,3 +38994,225 @@ from collections import OrderedDict
 **** rm -rf A1
 *** ^^ but first I made a A1.zip copy in case there were any local figs etc that I wanted to keep track of. 
 *** then I did git clone https://github.com/NathanKlineInstitute/A1.git
+* <2020-12-18 Fri -- csd>
+** Potential csd bug pointed out by salva? 
+*** Peaks in color map csd seem to dominate the beginning of any window regardless of time range. 
+*** Sam says could be bandpassing artifact? 
+** Trying to fix: 
+*** created a dir on my local machine desktop (~/Desktop/csd_test)
+*** created a test_CSD.py script, added the .pkl file he is using
+*** trying some fixes:
+**** (1) First try: vaknin: 0 --> 
+***** However, plotCSD() doesn't have arg vaknin, only getCSD() does!
+***** by default getCSD() vaknin arg set to True --> try False 
+***** ^^ only seems to "stretch out" the csd data 
+**** (2) Next try: norm: 0 --> 
+***** getCSD() has norm set to true, try False (vaknin back to True) 
+***** didn't do much of anything
+**** (3) Next try: LFP_overlay:0 & ymax = 24 in csd.py 
+***** clearly just scrunched it up into 0-24, so, yeah. 
+**** (4) Change if hlines from if hlines is True (to eliminate bool problem) --> NOT A FIX FOR THIS, JUST A FIX IN GENERAL, KEEP THIS
+**** (5) Add CSD time series:
+***** Start at this line: # go down grid and add LFP from each channel
+#     for chan in range(nrow):
+#       subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+#       fig.add_subplot(subaxs[chan])
+#       subaxs[chan].margins(0.0,0.01)
+#       subaxs[chan].get_xaxis().set_visible(False)
+#       subaxs[chan].get_yaxis().set_visible(False)
+#       subaxs[chan].plot(X,LFP_data[:,chan],color=clr,linewidth=lw)
+
+*****       ## ADD CSD DATA FOR TIMELINE AS WELL 
+****** subaxs[chan].plot(X,CSD_data[:,chan],color='black')
+** Trying no bandpass:
+***   CSD_data_noBandpass = -np.diff(LFP_data,n=2,axis=ax)/spacing_mm**2
+*** Yes --> seeing differences
+** Sam suggests calculating entire CSD and then plotting only the relevant portions (vs. calculating CSD in chunks) -- this will help remove edge artifacts. Try this. 
+** Changing CSD as above:
+*** changes are being made to csd.py in  netpyne/analysis/analysis -- in 'csd' branch of ericaygriffith fork of netpyne development
+*** getCSD() changes:
+**** take out timeRange as an argument
+***** removed from documentation under getCS()
+****** timeRange : list [start, stop]  
+        Time range to calculate CSD (ms). 
+        ** MUST BE PROVIDED BY USER IF LFP_exists IS TRUE ** 
+        **Default:** 
+        ``None`` uses entire time range if data is from sim
+****** This was originally in between 'dt' and spacing_um
+***** removed -- timeRange=None from def getCSD() args
+**** Added 'LFP' to the following print statement --> print('getCSD() is using LFP data from existing simulation.')
+**** Commenting out the following lines about determining the timeRange:
+    # ## These lines technically assume that from .. import sim worked -- slight reorganization needed 
+    # if timeRange is None:
+    #   try:
+    #     timeRange = sim.cfg.analysis['plotLFP']['timeRange']
+    #     # This sets the timeRange equal to the timeRange used in plotLFP
+    #   except:
+    #     print('No timeRange specified in plotLFP -- using entire sim duration as timeRange.')
+    #     timeRange = [0,sim.cfg.duration]
+    #     print('timeRange = ' + str(timeRange))
+    #   else:
+    #     print('timeRange specified in plotLFP.')
+    #     print('timeRange = ' + str(timeRange))
+    # else:
+    #   print('Using timeRange from getCSD() arguments.')
+    #   print('timeRange = ' + str(timeRange)) # This is to verify that the timeRange being used is the timeRange specified in the arguments
+
+**** Commenting out lines instantiating 'tt' which is an array of the timeRange points:
+    tt = np.arange(timeRange[0], timeRange[1],dt)   # make array of time points 
+    print('tt.size = ' + str(tt.size))
+**** Commenting out defining list_lfp_data because it is only used in code that is also commented out below: 
+*****       #list_lfp_data = sim.allSimData['LFP']
+***** context:     if 'LFP' in sim_data_categories:
+      #list_lfp_data = sim.allSimData['LFP']
+      lfp_data = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+      print('lfp_data shape = ' + str(lfp_data.shape))
+      # array_lfp_data = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:] # from lfp.py, line 200; array splicing
+      # print('full_lfp_data.size = ' + str(full_lfp_data.size))
+      # if len(tt) == len(list_lfp_data):
+      #   lfp_data = array_lfp_data
+      # elif len(tt) < len(list_lfp_data):      #full_lfp_data.size:
+      #   lfp_data = full_lfp_data
+      #   print('DEBUGGING LINE: went with option 2 -- confirming.')
+      #   print('lfp_data.size = ' + str(lfp_data.size))
+      # elif len(tt) > len(list_lfp_data):        #full_lfp_data.size:
+      #   print('WARNING: More time points than number of lfp data points.')
+      #   lfp_data = full_lfp_data # MAY HAVE TO REWORK THIS 
+**** Changing lfp_data such that it is all of sim.allSimData['LFP'] and not chopped up by timeRange 
+****** original -->       lfp_data = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+****** amended -->        lfp_data = np.array(sim.allSimData['LFP'])
+**** Deleting the following commented out lines that follow if 'LFP' in sim_data_categories:
+*****       # array_lfp_data = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:] # from lfp.py, line 200; array splicing
+      # print('full_lfp_data.size = ' + str(full_lfp_data.size))
+      # if len(tt) == len(list_lfp_data):
+      #   lfp_data = array_lfp_data
+      # elif len(tt) < len(list_lfp_data):      #full_lfp_data.size:
+      #   lfp_data = full_lfp_data
+      #   print('DEBUGGING LINE: went with option 2 -- confirming.')
+      #   print('lfp_data.size = ' + str(lfp_data.size))
+      # elif len(tt) > len(list_lfp_data):        #full_lfp_data.size:
+      #   print('WARNING: More time points than number of lfp data points.')
+	    #   lfp_data = full_lfp_data # MAY HAVE TO REWORK THIS 
+**** Deleting commented out lines in beginning of  ### condition 2: arbitrary LFP data:
+*****   #elif LFP_exists is True:   ### GET LFP DATA AND CONFIRM EXISTENCE OF OTHER NECESSARY PARAMS FROM USER
+    # if LFP_input_data is None and LFP_input_file is None:
+    #   print('MUST PROVIDE LFP DATA')
+    #   if timeRange is None:
+    #     print('MUST PROVIDE TIME RANGE in ms')
+    #   if sampr is None:
+    #     print('MUST PROVIDE SAMPLING RATE in Hz')
+    #   if dt is None:
+    #     print('MUST PROVIDE dt in ms')
+    #   if spacing_um is None:
+    #     print('MUST PROVIDE SPACING BETWEEN ELECTRODES in MICRONS')
+**** Commenting out timeRange lines in condition 2:
+*****       # if timeRange is None:
+      #   try:
+      #     csd_data[i]['timeRange'] = sim.cfg.analysis['plotLFP']['timeRange'] # USE LFP TIMERANGE BY DEFAULT
+      #   except:
+      #     csd_data[i]['timeRange'] = [0, data[i]['simConfig']['duration']] # USE WHOLE SIM DURATION IF NOT ACCESSIBLE
+      #     print('timeRange not specified in plotLFP - using whole sim duration for timeRange')
+      #   timeRange = csd_data[i]['timeRange']        # only works in the 1 input file scenario; expand capability for multiple files 
+      # else:
+      #   csd_data[i]['timeRange'] = timeRange
+**** Change full_lfp_data to just lfp_data in condition2
+***** ORIG LINES:
+    #full_lfp_data = {}
+    for key in data.keys:
+      full_lfp_data = data[key]['simData']['LFP']  # only works in the 1 input file scenario; expand capability for multiple files             
+
+***** AMENDED LINES: 
+    for key in data.keys:
+      lfp_data_list = data[key]['simData']['LFP']  # only works in the 1 input file scenario; expand capability for multiple files             
+
+**** Amend the full_lfp_data lines so just lfp_data is getting case as numpy array:
+***** ORIG: lfp_data = np.array(full_lfp_data)[int(timeRange[0]/dt):int(timeRange[1]/dt),:]
+***** NEW:
+    ## EXTRACT LFP DATA 
+    for key in data.keys:
+      lfp_data_list = data[key]['simData']['LFP']  # only works in the 1 input file scenario; expand capability for multiple files             
+    
+    ## CAST LFP DATA AS NUMPY ARRAY 
+    lfp_data = np.array(lfp_data_list)
+**** Commenting out tt line in condition2 as well:
+*****     # ## MAKE ARRAY OF TIME POINTS ## USEFUL FOR GETALLDATA CONDITION
+    # tt = np.arange(timeRange[0],timeRange[1],dt)
+**** Commenting out another set of tt lines & changing lfp data slicing in condition2 where list of LFP data is delivered without any .json file:
+***** ORIG:
+  ## FOR LIST OF LFP DATA WITHOUT ANY .JSON INPUT FILE 
+  elif len(LFP_input_data) > 0 and LFP_input_file is None:     # elif LFP_input_file is None and ...
+    ## GET LFP DATA OVER THE SPECIFIED TIME RANGE
+    lfp_data = np.array(LFP_input_data)[int(timeRange[0]/dt):int(timeRange[1]/dt),:]  # get lfp_data in timeRange specified 
+
+    ## MAKE ARRAY OF TIME POINTS
+    tt = np.arange(timeRange[0],timeRange[1],dt)
+***** AMENDED: 
+  ## FOR LIST OF LFP DATA WITHOUT ANY .JSON INPUT FILE 
+  elif len(LFP_input_data) > 0 and LFP_input_file is None:     # elif LFP_input_file is None and ...
+    ## GET LFP DATA OVER THE SPECIFIED TIME RANGE
+    lfp_data = np.array(LFP_input_data)  # get lfp_data and cast as numpy array
+
+    # ## MAKE ARRAY OF TIME POINTS
+    # tt = np.arange(timeRange[0],timeRange[1],dt)
+**** Commenting out timeRange saving in save_to_sim lines at end of getCSD():
+*****       #sim.allSimData['CSD']['timeRange'] = timeRange       # ['CSD']['sim']
+**** NOTE: leaving noBandpass trial lines in there for now!!! for testing!!! 
+**** Delete timeRange and tt from getAllData
+***** ORIG:   # RETURN CSD AND OTHER RELEVANT PARAM VALUES, IF DESIRED 
+  if getAllData is True:
+    return lfp_data, CSD_data, timeRange, sampr, spacing_um, dt, tt
+***** AMENDED:   # RETURN CSD AND OTHER RELEVANT PARAM VALUES, IF DESIRED 
+  if getAllData is True:
+    return lfp_data, CSD_data, sampr, spacing_um, dt
+
+*** plotCSD() changes:
+**** In condition 1 (default), where CSD has to be calculated from LFP sim data, change args passed to getCSD():
+***** ORIG:    getCSD(timeRange=timeRange,sampr=sampr,spacing_um=spacing_um,dt=dt,getAllData=True)
+***** AMENDED: getCSD(sampr=sampr,spacing_um=spacing_um,dt=dt,getAllData=True)
+
+**** if timeRange is None --> changing this so that default is entire sim duration:
+      if timeRange is None:  ## RETRIEVE TIME RANGE (in ms), IF UNSPECIFIED IN ARGS
+        #timeRange = sim.allSimData['CSD']['timeRange']
+        timeRange = [0,sim.cfg.duration] # sim.cfg.duration is a float # timeRange should be the entire sim duration 
+
+
+**** changed indexing of CSD_data so that bandpassed & raw overlays could be properly sliced according to timeRange
+*** sam says: looks like artifacts are removed!! I agree (waiting for salva -- he is teaching)
+*** plotCSD change to overlay:
+**** changing LFP_overlay arg to 'overlay' -- giving option to overlay CSD time series (raw or bandpassed), as well as LFP data. 
+**** arg goes from LFP_overlay=True --> overlay=None
+**** documentation for this arg:
+***** ORIG:
+      LFP_overlay : bool
+        Option to include LFP data overlaid on CSD plot 
+        **Default:** ``True`` 
+
+***** AMENDED:
+      LFP_overlay : str
+        Option to include other data overlaid on CSD color map plot 
+        Options: 'CSD_raw', 'CSD_bandpassed', 'LFP'
+        **Default:** ``None`` 
+
+*** QUESTION --> would it be useful to return any of the time variables, but using the entire sim duration? Keep this in mind when fixing plotCSD(). Don't think so -- can just get full duration from sim.cfg.duration in plotCSD() if timeRange isn't specified! 
+** NOTE FOR FUTURE: fix csd_data lines in condition 2 of getCSD() -- seem like they could be better named or something!
+** Fixed and tested! 
+** [DONE!] Need to open new pull request 
+*** (1) Go to https://github.com/Neurosim-lab/netpyne 
+*** (2) Navigate to Pull Requests --> click 'New pull request' button
+*** (3) This ^^ will bring you to the "Compare changes" page where you should click on "compare across forks". 
+**** Ensure the "base repository" is Neurosim-lab/netpyne 
+**** and the "base" is development. 
+**** Set the head repository to ericaygriffith/netpyne 
+**** and the "compare" to csd (name-of-your-new-branch)
+*** (4) Click 'Create pull request'
+*** (5) Type a title and description for your pull request (reference issue number if relevant -- not relevant this time) 
+*** (6) Click "Create pull request" (green button at bottom)
+*** FOR THIS PULL REQUEST (#548):
+*** Title of pull request:
+CSD now calculates CSD from full LFP and plots according to timeRange
+*** Description of pull request:
+Changes were made to get rid of initial artifacts occurring at window beginnings when plotting CSD. Now getCSD() will calculate CSD from the entire LFP dataset (vs. slicing LFP according to timeRange and calculating CSD on that LFP subset). plotCSD() will then only plot the relevant parts of the CSD dataset according to timeRange. 
+
+Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CSD_raw', 'CSD_bandpassed', or 'LFP' (as strings) to this argument, which will then plot the raw (un-bandpassed) CSD time series, the bandpassed CSD time series, or the LFP time series respectively on top of the interpolated color map CSD plot. 
+*** https://github.com/Neurosim-lab/netpyne/pull/548
+*** ^^ Sent to salva (link) and he merged -- done! 
