@@ -311,6 +311,7 @@ def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
 
 
   # (v) SET TITLE AND OVERLAY AVERAGE ERP TIME SERIES (OR NOT)
+  ## NOTE: add option for overlaying average LFP...??
   if overlay:
     nrow = dat.shape[0] # number of channels 
     gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0)
@@ -335,14 +336,15 @@ def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
   # SAVE FIGURE
   ## make this a little more explicable 
   if saveFig:
-    if isinstance(saveFig, basestring):
-      filename = saveFig
+    if overlay:
+      filename = 'NHP_avgCSD_csdOverlay.png'
     else:
-      filename =  'NHP_avgCSD_fig.png'
+      filename = 'NHP_avgCSD.png'
     try:
-      plt.savefig(filename)   #dpi
+      plt.savefig(filename) #dpi
     except:
-      plt.savefig('NHP_avgCSD_fig.png')
+      plt.saveFig('NHP_avgCSD.png')
+
 
   # DISPLAY FINAL FIGURE
   if showFig is True:
@@ -364,16 +366,15 @@ if __name__ == '__main__':
   plotCSD(dat=CSD_data,tt=tt,LFP_data = LFP_data,overlay='LFP',timeRange=[1000,1500])
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
-  # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
 
   ## GET AVERAGE ERP ## 
-  # # set epoch params
-  # swindowms = 0 # start time relative to stimulus 
-  # ewindowms = 200 # end time of epoch relative to stimulus onset 
+  # set epoch params
+  swindowms = 0 # start time relative to stimulus 
+  ewindowms = 200 # end time of epoch relative to stimulus onset 
 
   # # calculate average CSD ERP 
-  # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  # plotAvgCSD(dat=avgCSD,tt=ttavg)
+  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  plotAvgCSD(dat=avgCSD,tt=ttavg)
 
 
 
