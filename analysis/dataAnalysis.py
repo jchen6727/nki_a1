@@ -173,6 +173,8 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   #   dat = dat[timeRange[0]:] # SLICE CSD DATA APPROPRIATELY
   #   tt = # DO THE SAME FOR TIMEPOINTS 
 
+
+
   # INTERPOLATION
   X = tt #np.arange(timeRange[0], timeRange[1], dt)
   Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data) # may be [1] for data 
@@ -322,19 +324,19 @@ if __name__ == '__main__':
     # trigtimes is array of stim trigger indices
 
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  #plotCSD(dat=CSD_data,tt=tt)
+  #plotCSD(dat=CSD_data,tt=tt,timeRange=[1000,2000])
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
   # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
 
   ## GET AVERAGE ERP ## 
-  # set epoch params
-  swindowms = 0 # start time relative to stimulus 
-  ewindowms = 200 # end time of epoch relative to stimulus onset 
+  # # set epoch params
+  # swindowms = 0 # start time relative to stimulus 
+  # ewindowms = 200 # end time of epoch relative to stimulus onset 
 
-  # calculate average CSD ERP 
-  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  plotAvgCSD(dat=avgCSD,tt=ttavg)
+  # # calculate average CSD ERP 
+  # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  # plotAvgCSD(dat=avgCSD,tt=ttavg)
 
 
 
