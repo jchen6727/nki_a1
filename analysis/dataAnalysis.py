@@ -129,7 +129,7 @@ def loadfile (fn,samprds,spacing_um=100):
 
 
 ### AVERAGING FUNCTIONS ###
-### NOTE: should also make these available for use for sim data as well in netpyne 
+#### NOTE: should also make these available for use for sim data as well in netpyne 
 def ms2index (ms, sampr): return int(sampr*ms/1e3)
 
 # get the average ERP (dat should be either LFP or CSD)
@@ -159,10 +159,20 @@ if __name__ == '__main__':
   fileName = '../data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
 
   [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fileName, samprds=11*1e3, spacing_um=100)
-  # sampr is the sampling rate after downsampling 
-  # tt is time array (in seconds)
-  # ttrigtimes is array of stim trigger indices
+    # sampr is the sampling rate after downsampling 
+    # tt is time array (in seconds)
+    # trigtimes is array of stim trigger indices
 
+
+  ## REMOVE BAD EPOCHS FIRST..? ## 
+  # NOTE: if so, change 'trigtimes' arg below in getAvgERP to 'tts' --> necessary?
+
+  ## Get AVERAGE ERP ## 
+  # set epoch params
+  swindowms = 0 # start time relative to stimulus 
+  ewindowms = 200 # end time of epoch relative to stimulus onset 
+
+  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
 
   # PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
 
