@@ -159,6 +159,7 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 
 
 ### PLOTTING FUNCTIONS ### 
+# PLOT CSD 
 def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted
@@ -168,6 +169,9 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   
   if timeRange is None:
     timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording
+  # else:
+  #   dat = dat[timeRange[0]:] # SLICE CSD DATA APPROPRIATELY
+  #   tt = # DO THE SAME FOR TIMEPOINTS 
 
   # INTERPOLATION
   X = tt #np.arange(timeRange[0], timeRange[1], dt)
@@ -179,7 +183,7 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
   # (i) Set up axes
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
-  ymin = 1 # 
+  ymin = 1  # 0 in csd.py in netpyne 
   ymax = 24 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
@@ -201,11 +205,12 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
 
   # (iv) PLOT INTERPOLATED CSD COLOR MAP
   spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
-  axs[0].set_ylabel('Contact depth', fontsize = 12) # um or not? is "channel" more appropriate?
+  axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
 
 
   # (v) OVERLAY -- SETTING ASIDE FOR NOW -- THAT IS NEXT GOAL 
   axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
+
 
   # SAVE FIGURE
   ## make this a little more explicable 
@@ -225,6 +230,87 @@ def plotCSD(dat,tt,timeRange=None,saveFig=True,showFig=True):
     #plt.close()
 
 
+### PLOT CSD OF AVERAGED ERP ### 
+def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
+  ## dat --> CSD data as numpy array (from getAvgERP)
+  ## tt --> numpy array of time points (from getAvgERP)
+  ## Overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
+
+  # INTERPOLATION
+  X = tt 
+  Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data) # may be [1] for data 
+  CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
+  Y_plot = np.linspace(0,dat.shape[0],num=1000) # ,num=1000 is included in csd.py in netpyne --> hmm. necessary? 
+  Z = CSD_spline(Y_plot,X)
+
+  # (i) Set up axes
+  xmin = int(X[0])
+  xmax = int(X[-1]) + 1 
+  ymin = 1  # 0 in csd.py in netpyne 
+  ymax = 24 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  extent_xy = [xmin, xmax, ymax, ymin]
+
+  # (ii) Set up figure
+  fig = plt.figure()
+
+  # (iii) Create plots w/ common axis labels and tick marks
+  axs = []
+
+  numplots = 1 # HOW TO DETERMINE THIS? WHAT IF MORE THAN ONE? 
+
+  gs_outer = matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
+
+  for i in range(numplots):
+    axs.append(plt.Subplot(fig,gs_outer[i*2:i*2+2]))
+    fig.add_subplot(axs[i])
+    axs[i].set_xlabel('Time (ms)',fontsize=12)
+    axs[i].tick_params(axis='y', which='major', labelsize=8)
+
+  # (iv) PLOT INTERPOLATED CSD COLOR MAP
+  spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
+  axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
+
+
+  # (v) SET TITLE AND OVERLAY AVERAGE ERP TIME SERIES (OR NOT)
+  if overlay:
+    nrow = dat.shape[0] # number of channels 
+    gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0)
+    subaxs = []
+
+    # set title
+    axs[0].set_title('NHP CSD with CSD time series overlay',fontsize=12)
+    # go down grid and add data from each channel
+    for chan in range(nrow):
+        subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+        fig.add_subplot(subaxs[chan])
+        subaxs[chan].margins(0.0,0.01)
+        subaxs[chan].get_xaxis().set_visible(False)
+        subaxs[chan].get_yaxis().set_visible(False)
+        subaxs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
+
+  else:
+    axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
+
+
+
+  # SAVE FIGURE
+  ## make this a little more explicable 
+  if saveFig:
+    if isinstance(saveFig, basestring):
+      filename = saveFig
+    else:
+      filename =  'NHP_avgCSD_fig.png'
+    try:
+      plt.savefig(filename)   #dpi
+    except:
+      plt.savefig('NHP_avgCSD_fig.png')
+
+  # DISPLAY FINAL FIGURE
+  if showFig is True:
+    plt.show()
+    #plt.close()
+
+
 # MAIN CODE 
 if __name__ == '__main__':
   
@@ -235,7 +321,7 @@ if __name__ == '__main__':
     # tt is time array (in seconds)
     # trigtimes is array of stim trigger indices
 
-  #### PLOTTING INTERPOLATED CSD COLOR MAP PLOT #### 
+  #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
   #plotCSD(dat=CSD_data,tt=tt)
 
   ## REMOVE BAD EPOCHS FIRST..? ## 
@@ -248,9 +334,8 @@ if __name__ == '__main__':
 
   # calculate average CSD ERP 
   ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  plotCSD(dat=avgCSD,tt=ttavg)
+  plotAvgCSD(dat=avgCSD,tt=ttavg)
 
-  ## PLOT INTERPOLATED CSD COLOR MAP (NON-AVERAGED):
 
 
 
