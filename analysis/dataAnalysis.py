@@ -352,10 +352,15 @@ def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
     #plt.close()
 
 
-# MAIN CODE 
+
+
+###########################
+######## MAIN CODE ########
+###########################
+
 if __name__ == '__main__':
   
-  fileName = '../data/NHPdata/click/contproc/1-bu001002015@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
+  fileName = '../data/NHPdata/spont/contproc/1-bu001002017@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
 
   [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fileName, samprds=11*1e3, spacing_um=100)
     # sampr is the sampling rate after downsampling 
@@ -363,18 +368,19 @@ if __name__ == '__main__':
     # trigtimes is array of stim trigger indices
 
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  plotCSD(dat=CSD_data,tt=tt,LFP_data = LFP_data,overlay='LFP',timeRange=[1000,1500])
+  plotCSD(dat=CSD_data,tt=tt,timeRange=[1100,1600])
 
-  ## REMOVE BAD EPOCHS FIRST..? ## 
 
-  ## GET AVERAGE ERP ## 
-  # set epoch params
-  swindowms = 0 # start time relative to stimulus 
-  ewindowms = 200 # end time of epoch relative to stimulus onset 
+  ## REMOVE BAD EPOCHS FIRST..?  
 
-  # # calculate average CSD ERP 
-  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  plotAvgCSD(dat=avgCSD,tt=ttavg)
+  # ## GET AVERAGE ERP ## 
+  # # set epoch params
+  # swindowms = 0 # start time relative to stimulus 
+  # ewindowms = 200 # end time of epoch relative to stimulus onset 
+
+  # # # calculate average CSD ERP 
+  # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  # plotAvgCSD(dat=avgCSD,tt=ttavg)
 
 
 

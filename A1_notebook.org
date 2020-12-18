@@ -39231,6 +39231,10 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 **** [DONE] getAvgERP --> from load.py:
 ***** [DONE] requires ms2index (also from load.py) 
 *** NEXT GOALS:
-**** (1) PLOT the interpolated CSD like you do for the sim data 
-**** (2) Add CSD time series overlay like you do for the sim data
-**** (3) Add LFP time series overlay like you do for the sim data
+**** (1) [DONE] PLOT the interpolated CSD like you do for the sim data 
+**** (2) [DONE] Add CSD time series overlay like you do for the sim data
+**** (3) [DONE] Add LFP time series overlay like you do for the sim data
+** A1/analysis/dataAnalysis.py now has functions to plot CSD, average CSD / ERP, overlays on both of those plots, etc. tested and works w/ spontaneous and click data files. 
+** NEXT STEPS:
+*** write matlab code to organize only the .mat files that apply to us 
+*** put in average ERP code (calculating + plotting) into csd netpyne 
