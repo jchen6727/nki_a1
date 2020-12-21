@@ -7818,8 +7818,81 @@ def custom():
 ** v32_batch6 - best of v32_batch4, with LFP; with cochlear/IC speech input; with different cortichothal gains
 ** v32_batch7 - best of v32_batch4, with LFP; scaled to 100% with different gains / scaling factors
 ** v32_batch8 - scale 1.0, from v32_batch4, with param range -0.4 +0.1
+*** results
+**** params order of importance (optuna)
+OrderedDict([("('IELayerGain', '5B')", 0.7499801502949816),
+             ("('EELayerGain', '6')", 0.055137684099558305),
+             ("('EILayerGain', '2')", 0.03635570655825216),
+             ("('EILayerGain', '5B')", 0.035392440489203265),
+             ("('IILayerGain', '1')", 0.022242992113195782),
+             ("('IILayerGain', '4')", 0.012277743367558977),
+             ("('IILayerGain', '5B')", 0.011612647383699343),
+             ("('EILayerGain', '3')", 0.009056442192559315),
+             ("('EELayerGain', '4')", 0.00710624539774585),
+             ("('IECellTypeGain', 'SOM')", 0.005899490508980003),
+             ("('IELayerGain', '3')", 0.005484483076799773),
+             ("('IELayerGain', '4')", 0.005259504941152925),
+             ("('EILayerGain', '5A')", 0.0038855760530673573),
+             ("('EICellTypeGain', 'VIP')", 0.003723196948324842),
+             ("('EILayerGain', '6')", 0.0035016070582954226),
+             ("('IILayerGain', '3')", 0.002852825893140483),
+             ("('EICellTypeGain', 'SOM')", 0.0027826202811932397),
+             ("('EELayerGain', '5A')", 0.002616465265447208),
+             ("('IILayerGain', '5A')", 0.0023586747106461156),
+             ("('IELayerGain', '2')", 0.002179872554014031),
+             ("('IECellTypeGain', 'NGF')", 0.0020017208171822327),
+             ("('EELayerGain', '2')", 0.0020012870209595184),
+             ("('IECellTypeGain', 'PV')", 0.002000904527418183),
+             ("('EICellTypeGain', 'PV')", 0.001971158738791962),
+             ("('EELayerGain', '5B')", 0.0019025344008027562),
+             ("('EELayerGain', '3')", 0.0016153303988286137),
+             ("('EILayerGain', '1')", 0.00147970708681901),
+             ("('IILayerGain', '2')", 0.0013053395401501741),
+             ("('IECellTypeGain', 'VIP')", 0.001196072679381705),
+             ("('EILayerGain', '4')", 0.0011403893414908093),
+             ("('IELayerGain', '6')", 0.0010167186924202067),
+             ("('EICellTypeGain', 'NGF')", 0.0009049134461898428),
+             ("('IELayerGain', '5A')", 0.0008924573619307901),
+             ("('IILayerGain', '6')", 0.0008650967598182902)])
+
 ** v32_batch9 - scale 1.0, from v32_batch4, with param range -0.75 +0.25
 ** v32_batch10 - scale 1.0, from v32_batch4, with param range -1.0 +1.0
+*** results
+**** params order of importance (optuna)
+OrderedDict([("('IELayerGain', '5B')", 0.3151041601577254),
+             ("('EICellTypeGain', 'SOM')", 0.08400212322088972),
+             ("('IELayerGain', '6')", 0.0762918769003323),
+             ("('IELayerGain', '4')", 0.0715883186275869),
+             ("('IELayerGain', '3')", 0.05313019308373143),
+             ("('EELayerGain', '4')", 0.045071353565951815),
+             ("('IECellTypeGain', 'SOM')", 0.04465051832626217),
+             ("('EILayerGain', '3')", 0.03513225590822564),
+             ("('IELayerGain', '5A')", 0.03431980052812068),
+             ("('IECellTypeGain', 'NGF')", 0.021889977683634144),
+             ("('IILayerGain', '5B')", 0.018055913288555152),
+             ("('EELayerGain', '5A')", 0.01603521241493111),
+             ("('EILayerGain', '6')", 0.014430459842131458),
+             ("('EELayerGain', '6')", 0.013700774868924117),
+             ("('EICellTypeGain', 'PV')", 0.012762351035541556),
+             ("('IECellTypeGain', 'PV')", 0.01271007860451602),
+             ("('EICellTypeGain', 'NGF')", 0.01247971221706121),
+             ("('EELayerGain', '3')", 0.011064900976532357),
+             ("('IILayerGain', '4')", 0.01050117989864462),
+             ("('IILayerGain', '5A')", 0.010040918117366206),
+             ("('IILayerGain', '2')", 0.008828854276217579),
+             ("('EELayerGain', '5B')", 0.008317352788539763),
+             ("('EELayerGain', '2')", 0.00814952977715714),
+             ("('EILayerGain', '5A')", 0.007014747634411912),
+             ("('IECellTypeGain', 'VIP')", 0.006998916046105591),
+             ("('EILayerGain', '1')", 0.006980195516415598),
+             ("('EICellTypeGain', 'VIP')", 0.0063617138402887645),
+             ("('IILayerGain', '1')", 0.006207601669380438),
+             ("('IELayerGain', '2')", 0.005453809051148756),
+             ("('IILayerGain', '6')", 0.005322212789753398),
+             ("('IILayerGain', '3')", 0.004741085624350056),
+             ("('EILayerGain', '4')", 0.004551092697970192),
+             ("('EILayerGain', '2')", 0.004396261976505042),
+             ("('EILayerGain', '5B')", 0.003714547045091773)])
 ** v32_batch11 - scale 1.0, only thal+L4, param range 0.1 - 4.0 - CHECK!
 ** v32_batch12 - best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different weights 
 ** v32_batch13 - from v32_batch11, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4 +-0.1; I->EI +-0.25
@@ -7829,7 +7902,27 @@ ITP4, ITS4 ~ 0 Hz
 ** v32_batch14 - from v32_batch13, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
 *** results
 fitness ~90
-
+**** params order of importance (optuna)
+OrderedDict([("('EICellTypeGain', 'PV')", 0.6012994003413611),
+             ("('EICellTypeGain', 'VIP')", 0.0674523215057324),
+             ("('EICellTypeGain', 'SOM')", 0.05859333642331545),
+             ("('EICellTypeGain', 'NGF')", 0.030404890848270017),
+             ("('IELayerGain', '3')", 0.026609611733240005),
+             ("('IECellTypeGain', 'VIP')", 0.024467396634401412),
+             ("('EILayerGain', '3')", 0.023617705813091756),
+             ("('EILayerGain', '2')", 0.02139474144951049),
+             ("('IILayerGain', '2')", 0.020743683311677006),
+             ("('IELayerGain', '2')", 0.017510779139447326),
+             ("('IECellTypeGain', 'NGF')", 0.015071640236342313),
+             ("('EELayerGain', '4')", 0.013298150090182486),
+             ("('IECellTypeGain', 'PV')", 0.01229421034433112),
+             ("('EILayerGain', '4')", 0.012034170246579217),
+             ("('IELayerGain', '4')", 0.010810362332032402),
+             ("('IECellTypeGain', 'SOM')", 0.010511967126289197),
+             ("('EELayerGain', '3')", 0.010027132954179493),
+             ("('IILayerGain', '3')", 0.008980533541981537),
+             ("('IILayerGain', '4')", 0.007605008889729912),
+             ("('EELayerGain', '2')", 0.007272957038305588)])
 ** v32_batch15 - best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different conn probs
 ** v32_batch16 - from v32_batch13, scale 1.0, only thal+L2+L3+L4, param range +-1.0
 *** results
