@@ -39265,3 +39265,15 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** https://docs.google.com/document/d/1QCNktVVJJFJ_Pv0p8KMYRkDsw8NRBQ07d7PgLOFuhXA/edit
 *** thal int: https://docs.google.com/spreadsheets/d/17MVCAVA0PVZr6Bh8eIwglKP9_HWiVuohZa_OCqlnp2w/edit#gid=0
 *** https://docs.google.com/spreadsheets/d/1cAT7qE62htYg6pXsGgcqimK43JtMYcyi3WFzSafClb0/edit#gid=1372572880
+** CSD plots from data: 
+*** Focus on 'click' data first. 
+*** Macaque data: https://drive.google.com/drive/u/1/folders/0AJZ4deB_2EwUUk9PVA
+*** Click data https://drive.google.com/drive/u/1/folders/1NVthJIjgQDEa5efz_88711unaQg2KFbs
+*** ^^ MAKE SURE that the ones you are downloading are ones that apply to us!! 'A1' or 'thal' etc. !! 
+**** Write code for this 
+**** Make a list 
+**** Show list / put list somewhere (nb of course, but maybe also channel, etc.) 
+*** Download some of these and put them in ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc
+*** ^^ NOTE: do NOT add these to repo!! 
+*** Run them in script: A1/analysis/dataAnalysis.py
+*** 
