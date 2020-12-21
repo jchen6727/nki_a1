@@ -39238,3 +39238,30 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 ** NEXT STEPS:
 *** write matlab code to organize only the .mat files that apply to us 
 *** put in average ERP code (calculating + plotting) into csd netpyne 
+* <2020-12-21 Mon -- paper>
+** Keep working on thal int paper (see thal int nb for more details on that)
+** Plan for citations for model-building paper:
+*** (1) Gather together all the citations gathered for the single-cell and connectivity 
+**** ^^ do this in a paperpile folder in Neurosim gsuite --> A1 --> citations
+**** [DONE] Create 'citations' subdir as described above on paperpile 
+*** (2) Share this paperpile folder with salva / the auditory channel
+** Citations work / sources: 
+*** https://docs.google.com/spreadsheets/d/1JoIkf02TWzEXbAA_sfRN8o1VPNi_ai6ZDeBJ5JiRy_o/edit#gid=76808989 -- tab "Connection Probabilities" 
+**** ^^ INTRACORTICAL SOURCES, LOOKS LIKE: 
+**** Weiler et al., 2008
+**** Apicella et al., 2012
+**** Kiritani et al., 2012
+*** ^^ same spreadsheet -- tab "Connection Weights (internal)" 
+**** Kiritani et al., 2012
+**** Apicella et al., 2012
+*** ^^ same spreadsheet -- tab "Cell Types & Numbers"
+**** # of cells per layer --> from a comment: "from /u/samn/papers/nrnsci5:793.pdf" --> FIND THIS! --> DONE
+**** ^^ Markram et al., 2004. 
+*** https://docs.google.com/spreadsheets/d/1rXU6ujzg6TBG59XEFuyE1HTJ6VWM-Jr9XIjMMOxvU1g/edit#gid=86073334 --> "A1 params (alternative sources)" 
+** Spreadsheets of data gathering:
+*** https://docs.google.com/spreadsheets/d/1JoIkf02TWzEXbAA_sfRN8o1VPNi_ai6ZDeBJ5JiRy_o/edit#gid=0
+*** https://docs.google.com/spreadsheets/d/14NpwK7-Ex7VHfX8tobmk1fyh7DT3nKTSflEytT0rJ6Q/edit#gid=1413310831
+*** https://docs.google.com/spreadsheets/d/1JZ0vc6AUQUbM8Rwr5ROpi2RaP-6PTZQ-bz6tFsnoifA/edit#gid=0
+*** https://docs.google.com/document/d/1QCNktVVJJFJ_Pv0p8KMYRkDsw8NRBQ07d7PgLOFuhXA/edit
+*** thal int: https://docs.google.com/spreadsheets/d/17MVCAVA0PVZr6Bh8eIwglKP9_HWiVuohZa_OCqlnp2w/edit#gid=0
+*** https://docs.google.com/spreadsheets/d/1cAT7qE62htYg6pXsGgcqimK43JtMYcyi3WFzSafClb0/edit#gid=1372572880
