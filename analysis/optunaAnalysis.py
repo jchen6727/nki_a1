@@ -313,6 +313,15 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], I
     return dfcond
 
 
+def calculateParamImportance(dataFolder, batchSim):
+    study = optuna.create_study(study_name=batchSim, storage='sqlite:///%s/%s/%s_storage.db' % (dataFolder, batchSim, batchSim), load_if_exists=True) 
+    importance = optuna.importance.get_param_importances(study=study)
+    print(importance)
+    return importance
+
+
+
+
 # -----------------------------------------------------------------------------
 # Main code
 # -----------------------------------------------------------------------------
