@@ -392,7 +392,6 @@ def sortFiles(pathToData,regions):
 
 
   # (2) Set up dict to contain A1, MGB, and TRN filenames
-
   recordingAreaCodes = {1:'A1', 2:'belt', 3:'MGB', 4:'LGN', 5:'Medial Pulvinar', 6:'Pulvinar', 7:'TRN', 8:'Motor Ctx', 9:'Striatum', 10:'SC', 11:'IP', 33:'MGBv'} # All of the area codes -- recording region pairs 
   numCodes = list(recordingAreaCodes.keys()) # [1, 3, 7]
   nameCodes = list(recordingAreaCodes.values()) # ['A1', 'MGB', 'TRN']
@@ -430,9 +429,30 @@ def sortFiles(pathToData,regions):
   return DataFiles # Change this...? 
 
 
-# def moveDataFiles(pathToData,option): # deletes or moves irrelevant .mat files
-#   # pathToData -- path to parent dir with unsorted or unwanted .mat files 
-#   blahblah
+## REVAMP THIS 
+def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irrelevant .mat files
+  # pathToData -- path to parent dir with unsorted or unwanted .mat files 
+  # option -- delete or move to 'other'
+
+  # list of unsorted files 
+  leftoverFiles = [q for q in os.listdir(pathToData) if os.path.isfile(os.path.join(pathToData,q))]
+  leftoverFiles = [q for q in leftoverFiles if '.mat' in q]
+
+  for left in leftoverFiles:
+    fullLeft = pathToData + left             # full path to leftover .mat file 
+    if option is None or option is 'delete':  # DEFAULT IS TO DELETE THE OTHER UNSORTED FILES
+      if os.path.isfile(fullLeft):
+        print('Deleting ' + left)             # INSTEAD OF DELETING SHOULD I JUST MOVE THE FILE? 
+        os.remove(fullLeft)
+    elif option is 'move': # MOVE TO 'other' DIRECTORY
+      otherDir = pathToData + 'other/'
+      otherFilePath = otherDir + left
+      if os.path.isdir(otherDir):
+        shutil.move(fullLeft,otherFilePath)
+      elif not os.path.isdir(otherDir):
+        os.mkdir(otherDir)
+        shutil.move(fullLeft,otherFilePath)
+
 
 ###########################
 ######## MAIN CODE ########
@@ -445,6 +465,8 @@ if __name__ == '__main__':
   
   # Sort these files by recording region 
   DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
+
+  moveDataFiles(origDataDir,'move')
 
   # # (4) Delete the files that haven't been moved 
   # leftoverFiles = [q for q in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,q))]
