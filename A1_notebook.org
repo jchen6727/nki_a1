@@ -39407,10 +39407,8 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** MATLAB, areas.m
 *** ~/Documents/MATLAB/macaque_A1/click/contproc --> Added 3 new subdirs (A1, MGB, TRN) 
 ** NOTE: change structure of how you save/sort these files --> either save from matlab to the A1 dir, or process directly from the matlab dir. 
-
- [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = d.loadfile(fn='../data/NHPdata/click/contproc/A1/1-bu005006017@os_eye06_20.mat', samprds=11*1e3, spacing_um=100)
-
-
-50914, 54428, 57942, 61457, 64971,
-
-3514
+** Adding to main code of dataAnalysis.py -- was doing this in separate matlab script for no good reason, so now have the pre-processing steps in the main code.
+*** Testing! 
+*** NOTE: Should definitely break these up further into functions/sections to make it more flexible -- e.g. what if only want to see A1 or MGB, etc. Make input as args possible somewhere in this architecture. 
+*** Commenting out all the CSD processing code in the main code section -- only testing sorting ability: have a bunch of known A1 and MGB .mat files in ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc/ 
+*** 

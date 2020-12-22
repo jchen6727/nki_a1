@@ -372,7 +372,25 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
     #plt.close()
 
 
+##################################  
+### FILE PROCESSING FUNCTIONS #### 
+##################################
 
+# What functions do I need? 
+## Function that combines steps 1-3 below
+## Function that does 4 (removes or moves other .mat files)
+
+def moveDataFiles(): # deletes or moves irrelevant .mat files
+
+def sortFiles(pathToData,regions):
+  # pathToData -- string -- should go to parent directory with the raw unsorted .mat files
+  # regions -- list of strings or numbers -- indicates recording regions of interest 
+  
+  origDataFiles = [f for f in os.listdir(pathToData) if os.path.isfile(os.path.join(pathToData,f))]
+  origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
+
+  DataFiles = {} # dict 
+  for i in 
 
 ###########################
 ######## MAIN CODE ########
@@ -393,7 +411,8 @@ if __name__ == '__main__':
 
   # (3) Iterate through all the files in origDataFiles and find out params.filedata.area and sort
   for fn in origDataFiles:
-    fp = h5py.File(fn,'r')
+    fullFN = origDataDir + fn
+    fp = h5py.File(fullFN,'r')
     areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
     if areaCode == 1:       # A1
       A1files.append(fn)
@@ -425,72 +444,62 @@ if __name__ == '__main__':
   for left in leftoverFiles:
     fullLeft = origDataDir + left
     if os.path.isfile(fullLeft):
-      print('Deleting ' + left)
+      print('Deleting ' + left)  # INSTEAD OF DELETING SHOULD I JUST MOVE THE FILE? 
       os.remove(fullLeft)
 
 
-  ## CSD PROCESSING
-  dataType = 'click' # 'spont' # 'speech'
+  # ## CSD PROCESSING
+  # dataType = 'click' # 'spont' # 'speech'
   
-  if dataType == 'click': 
-    paths_to_Data = ['../data/NHPdata/click/contproc/A1/', '../data/NHPdata/click/contproc/MGB/', '../data/NHPdata/click/contproc/TRN/']
-    paths_to_Figs = ['../data/NHPdata/CSD/click/A1/', '../data/NHPdata/CSD/click/MGB/', '../data/NHPdata/CSD/click/TRN/']
-    # path_A1_Data = '../data/NHPdata/click/contproc/A1/'
-    # path_MGB_Data = '../data/NHPdata/click/contproc/MGB/'
-    # path_TRN_Data = '../data/NHPdata/click/contproc/TRN/'
-  elif dataType == 'spont':
-    paths_to_Data = ['../data/NHPdata/spont/contproc/A1/', '../data/NHPdata/spont/contproc/MGB/', '../data/NHPdata/spont/contproc/TRN/']
-    paths_to_Figs = ['../data/NHPdata/CSD/spont/A1/', '../data/NHPdata/CSD/spont/MGB/', '../data/NHPdata/CSD/spont/TRN/']    
-    # path_A1_Data = '../data/NHPdata/spont/contproc/A1/'
-    # path_MGB_Data = '../data/NHPdata/spont/contproc/MGB/'
-    # path_TRN_Data = '../data/NHPdata/spont/contproc/TRN/'
-  elif dataType == 'speech':
-    paths_to_Data = ['../data/NHPdata/speech/contproc/A1/', '../data/NHPdata/speech/contproc/MGB/', '../data/NHPdata/speech/contproc/TRN/']
-    paths_to_Figs = ['../data/NHPdata/CSD/speech/A1/', '../data/NHPdata/CSD/speech/MGB/', '../data/NHPdata/CSD/speech/TRN/']
-    # path_A1_Data = '../data/NHPdata/speech/contproc/A1/'
-    # path_MGB_Data = '../data/NHPdata/speech/contproc/MGB/'
-    # path_TRN_Data = '../data/NHPdata/speech/contproc/TRN/'
-  
+  # if dataType == 'click': 
+  #   paths_to_Data = ['../data/NHPdata/click/contproc/A1/', '../data/NHPdata/click/contproc/MGB/', '../data/NHPdata/click/contproc/TRN/']
+  #   paths_to_Figs = ['../data/NHPdata/CSD/click/A1/', '../data/NHPdata/CSD/click/MGB/', '../data/NHPdata/CSD/click/TRN/']
+  # elif dataType == 'spont':
+  #   paths_to_Data = ['../data/NHPdata/spont/contproc/A1/', '../data/NHPdata/spont/contproc/MGB/', '../data/NHPdata/spont/contproc/TRN/']
+  #   paths_to_Figs = ['../data/NHPdata/CSD/spont/A1/', '../data/NHPdata/CSD/spont/MGB/', '../data/NHPdata/CSD/spont/TRN/']    
+  # elif dataType == 'speech':
+  #   paths_to_Data = ['../data/NHPdata/speech/contproc/A1/', '../data/NHPdata/speech/contproc/MGB/', '../data/NHPdata/speech/contproc/TRN/']
+  #   paths_to_Figs = ['../data/NHPdata/CSD/speech/A1/', '../data/NHPdata/CSD/speech/MGB/', '../data/NHPdata/CSD/speech/TRN/']
 
-  for pathData in paths_to_Data:
-    #os.listdir(pathData)
-    #print('Processing .mat files from ' + pathData)
+  # for pathData in paths_to_Data:
+  #   #os.listdir(pathData)
+  #   #print('Processing .mat files from ' + pathData)
 
-    dataFiles = [f for f in os.listdir(pathData) if os.path.isfile(os.path.join(pathData,f))]
+  #   dataFiles = [f for f in os.listdir(pathData) if os.path.isfile(os.path.join(pathData,f))]
 
-    dataFiles = [f for f in dataFiles if '.mat' in f] # gets all the dataFiles in either A1, MGB, or TRN subdirs 
+  #   dataFiles = [f for f in dataFiles if '.mat' in f] # gets all the dataFiles in either A1, MGB, or TRN subdirs 
 
-    #print(dataFiles)
+  #   #print(dataFiles)
 
-    for file in dataFiles:
+  #   for file in dataFiles:
 
-      filepath = pathData + file # string with full path to file 
+  #     filepath = pathData + file # string with full path to file 
 
-      [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=filepath, samprds=11*1e3, spacing_um=100)
-      # sampr is the sampling rate after downsampling 
-      # tt is time array (in seconds)
-      # trigtimes is array of stim trigger indices
+  #     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=filepath, samprds=11*1e3, spacing_um=100)
+  #     # sampr is the sampling rate after downsampling 
+  #     # tt is time array (in seconds)
+  #     # trigtimes is array of stim trigger indices
 
-      #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-      plotCSD(fn=filepath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
+  #     #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
+  #     plotCSD(fn=filepath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
 
 
-      # REMOVE BAD EPOCHS FIRST..?  
+  #     # REMOVE BAD EPOCHS FIRST..?  
 
-      # GET AVERAGE ERP ## 
-      ## set epoch params
-      swindowms = 0 # start time relative to stimulus 
-      ewindowms = 200 # end time of epoch relative to stimulus onset 
+  #     # GET AVERAGE ERP ## 
+  #     ## set epoch params
+  #     swindowms = 0 # start time relative to stimulus 
+  #     ewindowms = 200 # end time of epoch relative to stimulus onset 
 
-      # calculate average CSD ERP 
-      ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-      plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
+  #     # calculate average CSD ERP 
+  #     ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  #     plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
 
 
-    # MOVE .PNG FILES 
-    pngFiles = [f for f in os.listdir() if os.path.isfile(f)]
-    pngFiles = [f for f in pngFiles if '.png' in f]
-    dataPrefixes = []
+    # # MOVE .PNG FILES 
+    # pngFiles = [f for f in os.listdir() if os.path.isfile(f)]
+    # pngFiles = [f for f in pngFiles if '.png' in f]
+    # dataPrefixes = []
 
 
 
