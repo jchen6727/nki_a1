@@ -382,7 +382,8 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
 def sortFiles(pathToData,regions):
   # pathToData -- string -- should go to parent directory with the raw unsorted .mat files
   # regions -- list of string or numbers -- either number code or name code for recording regions of interest (e.g. ['A1' 'MGB'] or [1 7])
-  
+  ## ^^ Make it so can either delete or sort the files not recorded in 'regions'
+
   # (1) Create a list of all the unsorted .mat files 
   ## NOTE: COMBINE THESE LINES? TEST. 
   origDataFiles = [f for f in os.listdir(pathToData) if os.path.isfile(os.path.join(pathToData,f))]
@@ -410,6 +411,8 @@ def sortFiles(pathToData,regions):
         DataFiles[area].append(fn)
       else:
         DataFiles[area].append(fn)
+    else:
+      print('Invalid area code in file %s' % fn)
 
 
   # (3) Move files into appropriate subdirectories
@@ -421,15 +424,15 @@ def sortFiles(pathToData,regions):
       if os.path.isdir(newPath):
         shutil.move(origFilePath,newFilePath)
       elif not os.path.isdir(newPath):
-        os.mkdir(newFilePath)
+        os.mkdir(newPath)
         shutil.move(origFilePath,newFilePath)
 
-  return DataFiles
+  return DataFiles # Change this...? 
 
 
-def moveDataFiles(pathToData,option): # deletes or moves irrelevant .mat files
-  # pathToData -- path to parent dir with unsorted or unwanted .mat files 
-  blahblah
+# def moveDataFiles(pathToData,option): # deletes or moves irrelevant .mat files
+#   # pathToData -- path to parent dir with unsorted or unwanted .mat files 
+#   blahblah
 
 ###########################
 ######## MAIN CODE ########
