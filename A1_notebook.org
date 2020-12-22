@@ -39396,4 +39396,7 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 ** In NEUROSIM/A1/data/NHPdata --- only putting files in that correspond to relevant auditory files!!!
 *** Transfer them from ~/Documents/MATLAB/macaque_A1/click/contproc/AuditoryFiles
 * <2020-12-22 Tue -- csd>
-** 
+** TO DO for CSD:
+*** get all .mat files from the relevant data directory 
+*** iterate through them to get avgCSD and regular CSD for a certain time frame
+*** [DONE] change the saving method 
