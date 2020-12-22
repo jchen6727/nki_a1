@@ -379,12 +379,54 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
 ###########################
 
 if __name__ == '__main__':
-  ## PRe-PROCESSING
+  ## PRE-PROCESSING
+  # (1) Get list of all the .mat files in the original data directory 
+  origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+
+  origDataFiles = [f for f in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,f))]
+  origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
+
+  # (2) Set up lists for A1, MGB, and TRN files
+  A1files = []
+  MGBfiles = []
+  TRNfiles = []
+
+  # (3) Iterate through all the files in origDataFiles and find out params.filedata.area and sort
+  for fn in origDataFiles:
+    fp = h5py.File(fn,'r')
+    areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
+    if areaCode == 1:       # A1
+      A1files.append(fn)
+    elif areaCode == 3:     # MGB
+      MGBfiles.append(fn)
+    elif areaCode == 7:     # TRN
+      TRNfiles.append(fn)
+
+  for file in A1files:
+    origFilePath = origDataDir + file
+    newFilePath = origDataDir + 'A1/' + file
+    shutil.move(origFilePath, newFilePath)
+
+  for file in MGBfiles:
+    origFilePath = origDataDir + file
+    newFilePath = origDataDir + 'MGB/' + file
+    shutil.move(origFilePath, newFilePath)
+
+  for file in TRNfiles:
+    origFilePath = origDataDir + file
+    newFilePath = origDataDir + 'TRN/' + file
+    shutil.move(origFilePath, newFilePath)
 
 
+  # (4) Delete the files that haven't been moved 
+  leftoverFiles = [q for q in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,q))]
+  leftoverFiles = [q for q in leftoverFiles if '.mat' in q]
 
-
-
+  for left in leftoverFiles:
+    fullLeft = origDataDir + left
+    if os.path.isfile(fullLeft):
+      print('Deleting ' + left)
+      os.remove(fullLeft)
 
 
   ## CSD PROCESSING
@@ -411,8 +453,8 @@ if __name__ == '__main__':
   
 
   for pathData in paths_to_Data:
-    os.listdir(pathData)
-    print('Processing .mat files from ' + pathData)
+    #os.listdir(pathData)
+    #print('Processing .mat files from ' + pathData)
 
     dataFiles = [f for f in os.listdir(pathData) if os.path.isfile(os.path.join(pathData,f))]
 
