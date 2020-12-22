@@ -39397,6 +39397,6 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** Transfer them from ~/Documents/MATLAB/macaque_A1/click/contproc/AuditoryFiles
 * <2020-12-22 Tue -- csd>
 ** TO DO for CSD:
-*** get all .mat files from the relevant data directory 
+*** [DONE] get all .mat files from the relevant data directory 
 *** iterate through them to get avgCSD and regular CSD for a certain time frame
 *** [DONE] change the saving method 

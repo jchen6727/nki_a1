@@ -16,6 +16,7 @@ except NameError:
 ## IMPORTS ## 
 import sys
 import os
+import shutil 
 import h5py									              # for rdmat() and getTriggerTimes()
 import numpy as np
 import downsample
@@ -396,31 +397,33 @@ if __name__ == '__main__':
 
   print(dataFiles)
 
-  # fileName = '../data/NHPdata/click/contproc/1-bu005006017@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
+  #fileName = '../data/NHPdata/click/contproc/1-bu005006017@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
 
-  # # get all .mat files from the relevant data directory 
-  # # iterate through them to get avgCSD and regular CSD for a certain time frame
-  # # [DONE] change the saving method 
+  # iterate through them to get avgCSD and regular CSD for a certain time frame
 
-  # [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fileName, samprds=11*1e3, spacing_um=100)
-  #   # sampr is the sampling rate after downsampling 
-  #   # tt is time array (in seconds)
-  #   # trigtimes is array of stim trigger indices
+  for file in dataFiles:
 
-  # #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  # plotCSD(fn=fileName,dat=CSD_data,tt=tt,timeRange=[1100,1200])
+    filepath = pathData + file # string with full path to file 
+
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=filepath, samprds=11*1e3, spacing_um=100)
+    # sampr is the sampling rate after downsampling 
+    # tt is time array (in seconds)
+    # trigtimes is array of stim trigger indices
+
+    #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
+    plotCSD(fn=filepath,dat=CSD_data,tt=tt,timeRange=[1100,1200])
 
 
-  ## REMOVE BAD EPOCHS FIRST..?  
+    # REMOVE BAD EPOCHS FIRST..?  
 
-  ## GET AVERAGE ERP ## 
-  # set epoch params
-  # swindowms = 0 # start time relative to stimulus 
-  # ewindowms = 200 # end time of epoch relative to stimulus onset 
+    # GET AVERAGE ERP ## 
+    ## set epoch params
+    swindowms = 0 # start time relative to stimulus 
+    ewindowms = 200 # end time of epoch relative to stimulus onset 
 
-  # # # calculate average CSD ERP 
-  # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  # plotAvgCSD(fn=fileName,dat=avgCSD,tt=ttavg)
+    # calculate average CSD ERP 
+    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+    plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg)
 
 
 
