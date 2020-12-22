@@ -373,12 +373,10 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
 
 
 ##################################  
-### FILE PROCESSING FUNCTIONS #### 
+### FILE PRE-PROCESSING FUNCTIONS #### 
 ##################################
 
-# What functions do I need? 
-## Function that does 4 (removes or moves other .mat files)
-
+# Sorts data .mat files by recording region
 def sortFiles(pathToData,regions):
   # pathToData -- string -- should go to parent directory with the raw unsorted .mat files
   # regions -- list of string or numbers -- either number code or name code for recording regions of interest (e.g. ['A1' 'MGB'] or [1 7])
@@ -454,6 +452,13 @@ def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irreleva
         shutil.move(fullLeft,otherFilePath)
 
 
+
+##################################  
+### CSD PROCESSING FUNCTIONS #### 
+##################################
+
+
+
 ###########################
 ######## MAIN CODE ########
 ###########################
@@ -466,17 +471,8 @@ if __name__ == '__main__':
   # Sort these files by recording region 
   DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
 
+  # Delete or move unwanted / unworted .mat data files 
   moveDataFiles(origDataDir,'move')
-
-  # # (4) Delete the files that haven't been moved 
-  # leftoverFiles = [q for q in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,q))]
-  # leftoverFiles = [q for q in leftoverFiles if '.mat' in q]
-
-  # for left in leftoverFiles:
-  #   fullLeft = origDataDir + left
-  #   if os.path.isfile(fullLeft):
-  #     print('Deleting ' + left)  # INSTEAD OF DELETING SHOULD I JUST MOVE THE FILE? 
-  #     os.remove(fullLeft)
 
 
   # ## CSD PROCESSING
