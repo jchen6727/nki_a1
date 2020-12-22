@@ -280,8 +280,6 @@ def plotCSD(dat,tt,fn=None,overlay=None,LFP_data=None,timeRange=None,saveFig=Tru
 
 
 
-
-
 ### PLOT CSD OF AVERAGED ERP ### 
 def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
@@ -381,7 +379,15 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
 ###########################
 
 if __name__ == '__main__':
-  
+  ## PRe-PROCESSING
+
+
+
+
+
+
+
+  ## CSD PROCESSING
   dataType = 'click' # 'spont' # 'speech'
   
   if dataType == 'click': 
@@ -435,7 +441,7 @@ if __name__ == '__main__':
       ewindowms = 200 # end time of epoch relative to stimulus onset 
 
       # calculate average CSD ERP 
-      ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+      ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
       plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
 
 
