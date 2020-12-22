@@ -39272,8 +39272,128 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** ^^ MAKE SURE that the ones you are downloading are ones that apply to us!! 'A1' or 'thal' etc. !! 
 **** Write code for this 
 **** Make a list 
-**** Show list / put list somewhere (nb of course, but maybe also channel, etc.) 
+**** Show list / put list somewhere (nb of course, but maybe also channel, etc.)
 *** Download some of these and put them in ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc
 *** ^^ NOTE: do NOT add these to repo!! 
 *** Run them in script: A1/analysis/dataAnalysis.py
-*** 
+** CLICK FILES FROM A1, MGB, or TRN:
+*** CHECKED FILES SO FAR:
+**** ALL IN CLICK/CONTPROC
+**** ROUND 1: 
+***** '1-bu001002015@os_eye06_20.mat'
+***** '1-bu003004013@os_eye06_20.mat'
+***** '1-bu003004014@os_eye06_20.mat'
+***** '1-bu005006017@os_eye06_20.mat'
+***** '1-bu005006018@os_eye06_20.mat'
+***** '1-bu005006026@os_eye06_20.mat'
+***** '1-bu007008018@os_eye06_20.mat'
+***** '1-bu007008019@os_eye06_20.mat'
+
+**** ROUND 2:
+***** '1-bu007008025@os_eye06_20.mat'
+***** '1-bu009010022@os_eye06_20.mat'
+***** '1-bu009010023@os_eye06_20.mat'
+***** '1-bu009010029@os_eye06_20.mat'
+***** '1-bu011012010@os_eye06_20.mat'
+***** '1-bu011012011@os_eye06_20.mat'
+***** '1-bu011012017@os_eye06_20.mat'
+***** '1-bu013014022@os_eye06_20.mat'
+***** '1-bu013014023@os_eye06_20.mat'
+***** '1-bu013014029@os_eye06_20.mat'
+***** '1-bu013014036@os_eye06_20.mat'
+**** ROUND 3: 
+***** '1-bu015016026@os_eye06_20.mat'
+***** '1-bu015016027@os_eye06_20.mat'
+***** '1-bu015016033@os_eye06_20.mat'
+***** '1-bu017018024@os_eye06_20.mat'
+***** '1-bu019020023@os_eye06_20.mat'
+***** '1-bu019020024@os_eye06_20.mat'
+***** '1-bu019020031@os_eye06_20.mat'
+***** '1-bu023000016@os_eye06_20.mat'
+***** '1-bu023000017@os_eye06_20.mat'
+***** '1-bu023000022@os_eye06_20.mat'
+***** '1-bu023000027@os_eye06_20.mat'
+***** '1-bu025026012@os_eye06_20.mat'
+**** ROUND 4: 
+***** '1-bu027028011@os_eye06_20.mat'
+***** '1-bu029030009@os_eye06_20.mat'
+***** '1-bu031032015@os_eye06_20.mat'
+***** '1-bu035036016@os_eye06_20.mat'
+***** '1-bu037038013@os_eye06_20.mat'
+***** '1-bu037038014@os_eye06_20.mat'
+***** '1-bu039040018@os_eye06_20.mat'
+***** '1-bu041042023@os_eye06_20.mat'
+***** '1-bu041042060@os_eye06_20.mat'
+***** '1-bu043044011@os_eye06_20.mat'
+**** ROUND 5: 
+***** '1-bu043044014@os_eye06_20.mat'
+***** '1-gt004000018@os_eye06_30.mat'
+***** '1-gt004000019@os_eye06_30.mat'
+***** '1-gt005000010@os_eye06_30.mat'
+***** '1-gt005000011@os_eye06_30.mat'
+***** '1-gt006000012@os_eye06_30.mat'
+***** '1-gt006000013@os_eye06_30.mat'
+***** '1-gt008000021@os_eye06_30.mat'
+***** '1-gt009010018@os_eye06_30.mat'
+**** ROUND 6: 
+***** '1-gt009010019@os_eye06_30.mat'
+***** '1-gt011000012@os_eye06_30.mat'
+***** '1-gt011000013@os_eye06_30.mat'
+***** '1-gt012000016@os_eye06_30.mat'
+***** '1-gt012000017@os_eye06_30.mat'
+***** '1-gt013000016@os_eye06_30.mat'
+***** '1-gt013000017@os_eye06_30.mat'
+***** '1-gt013000039@os_eye06_30.mat'
+***** '1-gt013000040@os_eye06_30.mat'
+***** '1-gt014015020@os_eye06_30.mat'
+***** '1-gt014015021@os_eye06_30.mat'
+***** '1-gt016017020@os_eye06_30.mat'
+***** '1-gt016017021@os_eye06_30.mat'
+**** ROUND 7: 
+***** '1-gt018019017@os_eye06_30.mat'
+***** '1-gt020021012@os_eye06_30.mat'
+***** '1-gt020021013@os_eye06_30.mat'
+***** '1-gt022023016@os_eye06_30.mat'
+***** '1-gt022023017@os_eye06_30.mat'
+***** '1-gt024025022@os_eye06_30.mat'
+***** '1-gt024025023@os_eye06_30.mat'
+***** '1-gt028029022@os_eye06_30.mat'
+***** '1-gt028029023@os_eye06_30.mat'
+***** '1-gt030031018@os_eye06_30.mat'
+***** '1-gt030031019@os_eye06_30.mat'
+***** '1-gt030031025@os_eye06_30.mat'
+**** ROUND 8: 
+
+*** in click/contproc/AuditoryFiles (these are the files that make the cut according to areas.m!!)   
+**** Round 1 below:
+**** '1-bu005006017@os_eye06_20.mat'
+**** '1-bu005006018@os_eye06_20.mat'
+**** '1-bu005006026@os_eye06_20.mat'
+**** Round 2 below:
+**** '1-bu009010022@os_eye06_20.mat'
+**** '1-bu009010023@os_eye06_20.mat'
+**** '1-bu009010029@os_eye06_20.mat'
+**** Round 3 below: 
+**** '1-bu015016026@os_eye06_20.mat'
+**** '1-bu015016027@os_eye06_20.mat'
+**** '1-bu015016033@os_eye06_20.mat'
+**** '1-bu019020023@os_eye06_20.mat'
+**** '1-bu019020024@os_eye06_20.mat'
+**** '1-bu019020031@os_eye06_20.mat'
+**** '1-bu025026012@os_eye06_20.mat'
+**** Round 4 below:
+**** '1-bu031032015@os_eye06_20.mat'
+**** '1-bu035036016@os_eye06_20.mat'
+**** Round 5 below:
+**** '1-gt006000012@os_eye06_30.mat'
+**** '1-gt006000013@os_eye06_30.mat'
+**** '1-gt008000021@os_eye06_30.mat'
+**** Round 6 below -- NONE :
+**** Round 7 below:
+**** '1-gt020021012@os_eye06_30.mat'
+**** '1-gt020021013@os_eye06_30.mat'
+**** Switched to just having all the files that exist in the /click/contproc directory into the 'AuditoryFiles' subdir -- will delete the rest (do this by hand bc do it automatically seems... so rash or something!! Want to look them over by hand for a bit). 
+** In NEUROSIM/A1/data/NHPdata --- only putting files in that correspond to relevant auditory files!!!
+*** Transfer them from ~/Documents/MATLAB/macaque_A1/click/contproc/AuditoryFiles
+* <2020-12-22 Tue -- csd>
+** 

@@ -160,12 +160,14 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
+def plotCSD(dat,tt,fn=None,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## tt --> numpy array of time points (time array in seconds)
+  ## fn --> filename -- used for saving! 
   ## overlay --> can be 'LFP' or 'CSD' to overlay time series of either dataset 
   ## LFP_data --> numpy array of LFP data 
+
   
   tt = tt*1e3 # Convert units from seconds to ms 
   dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms after converstion
@@ -248,16 +250,26 @@ def plotCSD(dat,tt,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFi
 
   # SAVE FIGURE
   if saveFig:
-    if overlay == 'LFP':
-      filename = 'NHP_csd_lfpOverlay.png'
-    elif overlay == 'CSD':
-      filename = 'NHP_csd_csdOverlay.png'
+    if fn is None:
+      if overlay == 'LFP':
+        figname = 'NHP_CSD_withLFP.png'
+      elif overlay == 'CSD':
+        figname = 'NHP_CSD_csdOverlay.png'
+      else:
+        figname = 'NHP_CSD_fig.png'
     else:
-      filename = 'NHP_CSD_fig.png'
+      filename = fn[0:-4] # takes out the .mat from the filename given as arg
+      if overlay == 'LFP':
+        figname = 'NHP_CSD_withLFP_%s.png' % filename
+      elif overlay == 'CSD':
+        figname = 'NHP_CSD_csdOverlay_%s.png' % filename
+      else:
+        figname = 'NHP_CSD_fig_%s.png' % filename
     try:
-      plt.savefig(filename) # dpi
+      plt.savefig(figname) # dpi
     except:
       plt.savefig('NHP_CSD_fig.png')
+
 
 
   # DISPLAY FINAL FIGURE
@@ -270,9 +282,10 @@ def plotCSD(dat,tt,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFi
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
-def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
+def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
+  ## fn --> string --> input filename --> used for saving! 
   ## overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
 
   # INTERPOLATION
@@ -336,12 +349,19 @@ def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
   # SAVE FIGURE
   ## make this a little more explicable 
   if saveFig:
-    if overlay:
-      filename = 'NHP_avgCSD_csdOverlay.png'
+    if fn is None: 
+      if overlay:
+        figname = 'NHP_avgCSD_csdOverlay.png'
+      else:
+        figname = 'NHP_avgCSD.png'
     else:
-      filename = 'NHP_avgCSD.png'
+      filename = fn[0:-4] # removes the .mat from the input filename
+      if overlay:  
+        figname = 'NHP_avgCSD_csdOverlay_%s.png' % filename
+      else:
+        figname = 'NHP_avgCSD_%s.png' % filename
     try:
-      plt.savefig(filename) #dpi
+      plt.savefig(figname) #dpi
     except:
       plt.saveFig('NHP_avgCSD.png')
 
@@ -360,7 +380,11 @@ def plotAvgCSD(dat,tt,overlay=True,saveFig=True,showFig=True):
 
 if __name__ == '__main__':
   
-  fileName = '../data/NHPdata/spont/contproc/1-bu001002017@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
+  fileName = '../data/NHPdata/click/contproc/1-bu005006017@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
+
+  # get all .mat files from the relevant data directory 
+  # iterate through them to get avgCSD and regular CSD for a certain time frame
+  # change the saving method 
 
   [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fileName, samprds=11*1e3, spacing_um=100)
     # sampr is the sampling rate after downsampling 
@@ -368,19 +392,19 @@ if __name__ == '__main__':
     # trigtimes is array of stim trigger indices
 
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  plotCSD(dat=CSD_data,tt=tt,timeRange=[1100,1600])
+  plotCSD(dat=CSD_data,tt=tt,timeRange=[1100,1200])
 
 
   ## REMOVE BAD EPOCHS FIRST..?  
 
-  # ## GET AVERAGE ERP ## 
-  # # set epoch params
-  # swindowms = 0 # start time relative to stimulus 
-  # ewindowms = 200 # end time of epoch relative to stimulus onset 
+  ## GET AVERAGE ERP ## 
+  # set epoch params
+  swindowms = 0 # start time relative to stimulus 
+  ewindowms = 200 # end time of epoch relative to stimulus onset 
 
-  # # # calculate average CSD ERP 
-  # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  # plotAvgCSD(dat=avgCSD,tt=ttavg)
+  # # calculate average CSD ERP 
+  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  plotAvgCSD(dat=avgCSD,tt=ttavg)
 
 
 
