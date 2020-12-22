@@ -39411,4 +39411,75 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** Testing! 
 *** NOTE: Should definitely break these up further into functions/sections to make it more flexible -- e.g. what if only want to see A1 or MGB, etc. Make input as args possible somewhere in this architecture. 
 *** Commenting out all the CSD processing code in the main code section -- only testing sorting ability: have a bunch of known A1 and MGB .mat files in ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc/ 
-*** 
+** Evolution of pre-processing code:
+*** went from separate script in matlab
+*** next to code in main code block of analysis/dataAnalysis.py
+*** now currently have a preprocessing function called sortFiles(pathToData,regions) which can do all the code that was in the main block (besides delete or move the irrelevant files)
+*** Took out the following code ^^: 
+  ## PRE-PROCESSING
+  # (1) Get list of all the .mat files in the original data directory 
+  # origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+
+  # origDataFiles = [f for f in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,f))]
+  # origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
+
+  # # (2) Set up lists for A1, MGB, and TRN files
+  # A1files = []
+  # MGBfiles = []
+  # TRNfiles = []
+
+  # # (3) Iterate through all the files in origDataFiles and find out params.filedata.area and sort
+  # for fn in origDataFiles:
+  #   fullFN = origDataDir + fn
+  #   fp = h5py.File(fullFN,'r')
+  #   areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
+  #   if areaCode == 1:       # A1
+  #     A1files.append(fn)
+  #   elif areaCode == 3:     # MGB
+  #     MGBfiles.append(fn)
+  #   elif areaCode == 7:     # TRN
+  #     TRNfiles.append(fn)
+
+  # for file in A1files:
+  #   origFilePath = origDataDir + file
+  #   newFilePath = origDataDir + 'A1/' + file
+  #   shutil.move(origFilePath, newFilePath)
+
+  # for file in MGBfiles:
+  #   origFilePath = origDataDir + file
+  #   newFilePath = origDataDir + 'MGB/' + file
+  #   shutil.move(origFilePath, newFilePath)
+
+  # for file in TRNfiles:
+  #   origFilePath = origDataDir + file
+  #   newFilePath = origDataDir + 'TRN/' + file
+  #   shutil.move(origFilePath, newFilePath)
+*** Took out the following code pt 2:
+  # ## NOTE: Do this more automatically by supplying dict of all the recording areas? For later potentially. 
+  # for region in regions:
+  #   if region in numCodes: 
+  #     if region is 1:
+  #       DataFiles['A1'] = []
+  #     elif region is 3:
+  #       DataFiles['MGB'] = []
+  #     elif region is 7:
+  #       DataFiles['TRN'] = []
+  #   elif region in nameCodes:
+  #     DataFiles[region] = []
+  #   else:
+  #     print('No relevant .mat files') # CHANGE THIS MESSAGE? 
+
+  # # (3) Iterate through all .mat files and sort by recording area 
+  # for fn in origDataFiles:
+  #   fullFN = pathToData + fn
+  #   #print(fullFN)
+  #   fp = h5py.File(fullFN,'r')
+  #   areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
+  #   #print(areaCode)
+  #   if areaCode == 1: # why doesn't 'is' work here...? 
+  #     DataFiles['A1'].append(fn)
+  #   elif areaCode == 3:
+  #     DataFiles['MGB'].append(fn)
+  #   elif areaCode == 7:
+  #     DataFiles['TRN'].append(fn)
+*** Made the sortFiles function more efficient! 

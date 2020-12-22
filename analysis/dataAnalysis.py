@@ -392,41 +392,30 @@ def sortFiles(pathToData,regions):
   origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
   print(origDataFiles)
 
-  # (2) Set up dict to contain A1, MGB, and TRN filenames 
-  recordingAreaCodes = {'A1': 1, 'MGB': 3, 'TRN': 7}
-  numCodes = list(recordingAreaCodes.values()) # [1, 3, 7]
-  nameCodes = list(recordingAreaCodes.keys()) # ['A1', 'MGB', 'TRN']
+
+  # (2) Set up dict to contain A1, MGB, and TRN filenames
+
+  recordingAreaCodes = {1:'A1', 3:'MGB', 7:'TRN'} # Can flesh this out so has all of the area codes -- recording region pairs 
+  numCodes = list(recordingAreaCodes.keys()) # [1, 3, 7]
+  nameCodes = list(recordingAreaCodes.values()) # ['A1', 'MGB', 'TRN']
 
   DataFiles = {} 
 
-  ## NOTE: Do this more automatically by supplying dict of all the recording areas? For later potentially. 
-  for region in regions:
-    if region in numCodes: 
-      if region is 1:
-        DataFiles['A1'] = []
-      elif region is 3:
-        DataFiles['MGB'] = []
-      elif region is 7:
-        DataFiles['TRN'] = []
-    elif region in nameCodes:
-      DataFiles[region] = []
-    else:
-      print('No relevant .mat files') # CHANGE THIS MESSAGE? 
-
-  # (3) Iterate through all .mat files and sort by recording area 
   for fn in origDataFiles:
     fullFN = pathToData + fn
     #print(fullFN)
     fp = h5py.File(fullFN,'r')
     areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
-    #print(areaCode)
-    if areaCode == 1: # why doesn't 'is' work here...? 
-      DataFiles['A1'].append(fn)
-    elif areaCode == 3:
-      DataFiles['MGB'].append(fn)
-    elif areaCode == 7:
-      DataFiles['TRN'].append(fn)
+    if areaCode in numCodes:
+      area = str(recordingAreaCodes[areaCode]) # e.g. 'A1', 'MGB'
+      if area not in list(DataFiles.keys()):
+        DataFiles[area] = [] 
+        DataFiles[area].append(fn)
+      else:
+        DataFiles[area].append(fn)
 
+
+  # (3) Move files into appropriate subdirectories
   for key in DataFiles.keys():
     for file in DataFiles[key]:
       origFilePath = pathToData + file
@@ -440,52 +429,17 @@ def sortFiles(pathToData,regions):
 
   return DataFiles
 
+
 ###########################
 ######## MAIN CODE ########
 ###########################
 
 if __name__ == '__main__':
-  ## PRE-PROCESSING
-  # (1) Get list of all the .mat files in the original data directory 
-  # origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
 
-  # origDataFiles = [f for f in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,f))]
-  # origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
-
-  # # (2) Set up lists for A1, MGB, and TRN files
-  # A1files = []
-  # MGBfiles = []
-  # TRNfiles = []
-
-  # # (3) Iterate through all the files in origDataFiles and find out params.filedata.area and sort
-  # for fn in origDataFiles:
-  #   fullFN = origDataDir + fn
-  #   fp = h5py.File(fullFN,'r')
-  #   areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
-  #   if areaCode == 1:       # A1
-  #     A1files.append(fn)
-  #   elif areaCode == 3:     # MGB
-  #     MGBfiles.append(fn)
-  #   elif areaCode == 7:     # TRN
-  #     TRNfiles.append(fn)
-
-  # for file in A1files:
-  #   origFilePath = origDataDir + file
-  #   newFilePath = origDataDir + 'A1/' + file
-  #   shutil.move(origFilePath, newFilePath)
-
-  # for file in MGBfiles:
-  #   origFilePath = origDataDir + file
-  #   newFilePath = origDataDir + 'MGB/' + file
-  #   shutil.move(origFilePath, newFilePath)
-
-  # for file in TRNfiles:
-  #   origFilePath = origDataDir + file
-  #   newFilePath = origDataDir + 'TRN/' + file
-  #   shutil.move(origFilePath, newFilePath)
-
-  # STEPS 1-3 ABOVE: 
+  # Parent data directory containing unsorted .mat files
   origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  
+  # Sort these files by recording region 
   DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
 
   # # (4) Delete the files that haven't been moved 
