@@ -39483,3 +39483,16 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
   #   elif areaCode == 7:
   #     DataFiles['TRN'].append(fn)
 *** Made the sortFiles function more efficient! 
+*** Fleshing out the dict with the recording regions so it can handle any of them: 
+1 - A1
+2 - belt
+3 - MGB
+4 - LGN
+5 - Medial Pulvinar
+6 - Pulvinar
+7 - TRN
+8 - Motor Ctx
+9 - Striatum
+33 - MGBv
+10 - SC
+11 – IP

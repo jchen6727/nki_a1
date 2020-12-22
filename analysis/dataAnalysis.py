@@ -377,10 +377,7 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
 ##################################
 
 # What functions do I need? 
-## Function that combines steps 1-3 below
 ## Function that does 4 (removes or moves other .mat files)
-
-#def moveDataFiles(): # deletes or moves irrelevant .mat files
 
 def sortFiles(pathToData,regions):
   # pathToData -- string -- should go to parent directory with the raw unsorted .mat files
@@ -395,7 +392,7 @@ def sortFiles(pathToData,regions):
 
   # (2) Set up dict to contain A1, MGB, and TRN filenames
 
-  recordingAreaCodes = {1:'A1', 3:'MGB', 7:'TRN'} # Can flesh this out so has all of the area codes -- recording region pairs 
+  recordingAreaCodes = {1:'A1', 2:'belt', 3:'MGB', 4:'LGN', 5:'Medial Pulvinar', 6:'Pulvinar', 7:'TRN', 8:'Motor Ctx', 9:'Striatum', 10:'SC', 11:'IP', 33:'MGBv'} # All of the area codes -- recording region pairs 
   numCodes = list(recordingAreaCodes.keys()) # [1, 3, 7]
   nameCodes = list(recordingAreaCodes.values()) # ['A1', 'MGB', 'TRN']
 
@@ -429,6 +426,10 @@ def sortFiles(pathToData,regions):
 
   return DataFiles
 
+
+def moveDataFiles(pathToData,option): # deletes or moves irrelevant .mat files
+  # pathToData -- path to parent dir with unsorted or unwanted .mat files 
+  blahblah
 
 ###########################
 ######## MAIN CODE ########
