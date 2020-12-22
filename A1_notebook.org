@@ -39397,6 +39397,13 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** Transfer them from ~/Documents/MATLAB/macaque_A1/click/contproc/AuditoryFiles
 * <2020-12-22 Tue -- csd>
 ** TO DO for CSD:
-*** [DONE] get all .mat files from the relevant data directory 
-*** iterate through them to get avgCSD and regular CSD for a certain time frame
-*** [DONE] change the saving method 
+*** dataAnalysis.py:
+**** [DONE] get all .mat files from the relevant data directory 
+**** [DONE] iterate through them to get avgCSD and regular CSD for a certain time frame
+**** [DONE] change the saving method 
+*** [DONE] areas.m -- Add ability to sort by recording site (A1, MGB, or TRN!!) 
+*** dataAnalysis.py -- Add ability to save into specific folders based on the above, or pre-sort? 
+** [DONE] Sort by recording site:
+*** MATLAB, areas.m
+*** ~/Documents/MATLAB/macaque_A1/click/contproc --> Added 3 new subdirs (A1, MGB, TRN) 
+** NOTE: change structure of how you save/sort these files --> either save from matlab to the A1 dir, or process directly from the matlab dir. 

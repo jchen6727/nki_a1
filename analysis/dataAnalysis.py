@@ -385,60 +385,64 @@ if __name__ == '__main__':
   dataType = 'click' # 'spont' # 'speech'
   
   if dataType == 'click': 
-    pathData = '../data/NHPdata/click/contproc/'
+    paths_to_Data = ['../data/NHPdata/click/contproc/A1/', '../data/NHPdata/click/contproc/MGB/', '../data/NHPdata/click/contproc/TRN/']
+    paths_to_Figs = ['../data/NHPdata/CSD/click/A1/', '../data/NHPdata/CSD/click/MGB/', '../data/NHPdata/CSD/click/TRN/']
+    # path_A1_Data = '../data/NHPdata/click/contproc/A1/'
+    # path_MGB_Data = '../data/NHPdata/click/contproc/MGB/'
+    # path_TRN_Data = '../data/NHPdata/click/contproc/TRN/'
   elif dataType == 'spont':
-    pathData = '../data/NHPdata/spont/contproc/'
+    paths_to_Data = ['../data/NHPdata/spont/contproc/A1/', '../data/NHPdata/spont/contproc/MGB/', '../data/NHPdata/spont/contproc/TRN/']
+    paths_to_Figs = ['../data/NHPdata/CSD/spont/A1/', '../data/NHPdata/CSD/spont/MGB/', '../data/NHPdata/CSD/spont/TRN/']    
+    # path_A1_Data = '../data/NHPdata/spont/contproc/A1/'
+    # path_MGB_Data = '../data/NHPdata/spont/contproc/MGB/'
+    # path_TRN_Data = '../data/NHPdata/spont/contproc/TRN/'
   elif dataType == 'speech':
-    pathData = '../data/NHPdata/speech/contproc/'
+    paths_to_Data = ['../data/NHPdata/speech/contproc/A1/', '../data/NHPdata/speech/contproc/MGB/', '../data/NHPdata/speech/contproc/TRN/']
+    paths_to_Figs = ['../data/NHPdata/CSD/speech/A1/', '../data/NHPdata/CSD/speech/MGB/', '../data/NHPdata/CSD/speech/TRN/']
+    # path_A1_Data = '../data/NHPdata/speech/contproc/A1/'
+    # path_MGB_Data = '../data/NHPdata/speech/contproc/MGB/'
+    # path_TRN_Data = '../data/NHPdata/speech/contproc/TRN/'
   
-  os.listdir(pathData)
 
-  dataFiles = [f for f in os.listdir(pathData) if os.path.isfile(os.path.join(pathData,f))]
+  for pathData in paths_to_Data:
+    os.listdir(pathData)
+    print('Processing .mat files from ' + pathData)
 
-  print(dataFiles)
+    dataFiles = [f for f in os.listdir(pathData) if os.path.isfile(os.path.join(pathData,f))]
 
-  #fileName = '../data/NHPdata/click/contproc/1-bu005006017@os_eye06_20.mat' # SPONT: '1-bu001002017@os_eye06_20.mat' # CLICK: '1-bu001002015@os_eye06_20.mat' #'1-rb067068029@os.mat'
+    dataFiles = [f for f in dataFiles if '.mat' in f] # gets all the dataFiles in either A1, MGB, or TRN subdirs 
 
-  # iterate through them to get avgCSD and regular CSD for a certain time frame
+    #print(dataFiles)
 
-  for file in dataFiles:
+    for file in dataFiles:
 
-    filepath = pathData + file # string with full path to file 
+      filepath = pathData + file # string with full path to file 
 
-    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=filepath, samprds=11*1e3, spacing_um=100)
-    # sampr is the sampling rate after downsampling 
-    # tt is time array (in seconds)
-    # trigtimes is array of stim trigger indices
+      [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=filepath, samprds=11*1e3, spacing_um=100)
+      # sampr is the sampling rate after downsampling 
+      # tt is time array (in seconds)
+      # trigtimes is array of stim trigger indices
 
-    #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-    plotCSD(fn=filepath,dat=CSD_data,tt=tt,timeRange=[1100,1200])
-
-
-    # REMOVE BAD EPOCHS FIRST..?  
-
-    # GET AVERAGE ERP ## 
-    ## set epoch params
-    swindowms = 0 # start time relative to stimulus 
-    ewindowms = 200 # end time of epoch relative to stimulus onset 
-
-    # calculate average CSD ERP 
-    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-    plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg)
+      #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
+      plotCSD(fn=filepath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
 
 
+      # REMOVE BAD EPOCHS FIRST..?  
+
+      # GET AVERAGE ERP ## 
+      ## set epoch params
+      swindowms = 0 # start time relative to stimulus 
+      ewindowms = 200 # end time of epoch relative to stimulus onset 
+
+      # calculate average CSD ERP 
+      ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+      plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
 
 
-
-
-
-
-
-
-
-
-
-
-
+    # MOVE .PNG FILES 
+    pngFiles = [f for f in os.listdir() if os.path.isfile(f)]
+    pngFiles = [f for f in pngFiles if '.png' in f]
+    dataPrefixes = []
 
 
 
