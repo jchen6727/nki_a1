@@ -380,17 +380,65 @@ def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
 ## Function that combines steps 1-3 below
 ## Function that does 4 (removes or moves other .mat files)
 
-def moveDataFiles(): # deletes or moves irrelevant .mat files
+#def moveDataFiles(): # deletes or moves irrelevant .mat files
 
 def sortFiles(pathToData,regions):
   # pathToData -- string -- should go to parent directory with the raw unsorted .mat files
-  # regions -- list of strings or numbers -- indicates recording regions of interest 
+  # regions -- list of string or numbers -- either number code or name code for recording regions of interest (e.g. ['A1' 'MGB'] or [1 7])
   
+  # (1) Create a list of all the unsorted .mat files 
+  ## NOTE: COMBINE THESE LINES? TEST. 
   origDataFiles = [f for f in os.listdir(pathToData) if os.path.isfile(os.path.join(pathToData,f))]
   origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
+  print(origDataFiles)
 
-  DataFiles = {} # dict 
-  for i in 
+  # (2) Set up dict to contain A1, MGB, and TRN filenames 
+  recordingAreaCodes = {'A1': 1, 'MGB': 3, 'TRN': 7}
+  numCodes = list(recordingAreaCodes.values()) # [1, 3, 7]
+  nameCodes = list(recordingAreaCodes.keys()) # ['A1', 'MGB', 'TRN']
+
+  DataFiles = {} 
+
+  ## NOTE: Do this more automatically by supplying dict of all the recording areas? For later potentially. 
+  for region in regions:
+    if region in numCodes: 
+      if region is 1:
+        DataFiles['A1'] = []
+      elif region is 3:
+        DataFiles['MGB'] = []
+      elif region is 7:
+        DataFiles['TRN'] = []
+    elif region in nameCodes:
+      DataFiles[region] = []
+    else:
+      print('No relevant .mat files') # CHANGE THIS MESSAGE? 
+
+  # (3) Iterate through all .mat files and sort by recording area 
+  for fn in origDataFiles:
+    fullFN = pathToData + fn
+    #print(fullFN)
+    fp = h5py.File(fullFN,'r')
+    areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
+    #print(areaCode)
+    if areaCode == 1: # why doesn't 'is' work here...? 
+      DataFiles['A1'].append(fn)
+    elif areaCode == 3:
+      DataFiles['MGB'].append(fn)
+    elif areaCode == 7:
+      DataFiles['TRN'].append(fn)
+
+  for key in DataFiles.keys():
+    for file in DataFiles[key]:
+      origFilePath = pathToData + file
+      newPath = pathToData + key + '/' # /A1/ etc. 
+      newFilePath = newPath + file 
+      if os.path.isdir(newPath):
+        shutil.move(origFilePath,newFilePath)
+      elif not os.path.isdir(newPath):
+        os.mkdir(newFilePath)
+        shutil.move(origFilePath,newFilePath)
+
+  return DataFiles
 
 ###########################
 ######## MAIN CODE ########
@@ -399,53 +447,56 @@ def sortFiles(pathToData,regions):
 if __name__ == '__main__':
   ## PRE-PROCESSING
   # (1) Get list of all the .mat files in the original data directory 
+  # origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+
+  # origDataFiles = [f for f in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,f))]
+  # origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
+
+  # # (2) Set up lists for A1, MGB, and TRN files
+  # A1files = []
+  # MGBfiles = []
+  # TRNfiles = []
+
+  # # (3) Iterate through all the files in origDataFiles and find out params.filedata.area and sort
+  # for fn in origDataFiles:
+  #   fullFN = origDataDir + fn
+  #   fp = h5py.File(fullFN,'r')
+  #   areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
+  #   if areaCode == 1:       # A1
+  #     A1files.append(fn)
+  #   elif areaCode == 3:     # MGB
+  #     MGBfiles.append(fn)
+  #   elif areaCode == 7:     # TRN
+  #     TRNfiles.append(fn)
+
+  # for file in A1files:
+  #   origFilePath = origDataDir + file
+  #   newFilePath = origDataDir + 'A1/' + file
+  #   shutil.move(origFilePath, newFilePath)
+
+  # for file in MGBfiles:
+  #   origFilePath = origDataDir + file
+  #   newFilePath = origDataDir + 'MGB/' + file
+  #   shutil.move(origFilePath, newFilePath)
+
+  # for file in TRNfiles:
+  #   origFilePath = origDataDir + file
+  #   newFilePath = origDataDir + 'TRN/' + file
+  #   shutil.move(origFilePath, newFilePath)
+
+  # STEPS 1-3 ABOVE: 
   origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
 
-  origDataFiles = [f for f in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,f))]
-  origDataFiles = [f for f in origDataFiles if '.mat' in f] # list of all the .mat data files to be processed 
+  # # (4) Delete the files that haven't been moved 
+  # leftoverFiles = [q for q in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,q))]
+  # leftoverFiles = [q for q in leftoverFiles if '.mat' in q]
 
-  # (2) Set up lists for A1, MGB, and TRN files
-  A1files = []
-  MGBfiles = []
-  TRNfiles = []
-
-  # (3) Iterate through all the files in origDataFiles and find out params.filedata.area and sort
-  for fn in origDataFiles:
-    fullFN = origDataDir + fn
-    fp = h5py.File(fullFN,'r')
-    areaCode = int(fp['params']['filedata']['area'][0][0]) # 1 - A1   # 3 - MGB   # 7 - TRN
-    if areaCode == 1:       # A1
-      A1files.append(fn)
-    elif areaCode == 3:     # MGB
-      MGBfiles.append(fn)
-    elif areaCode == 7:     # TRN
-      TRNfiles.append(fn)
-
-  for file in A1files:
-    origFilePath = origDataDir + file
-    newFilePath = origDataDir + 'A1/' + file
-    shutil.move(origFilePath, newFilePath)
-
-  for file in MGBfiles:
-    origFilePath = origDataDir + file
-    newFilePath = origDataDir + 'MGB/' + file
-    shutil.move(origFilePath, newFilePath)
-
-  for file in TRNfiles:
-    origFilePath = origDataDir + file
-    newFilePath = origDataDir + 'TRN/' + file
-    shutil.move(origFilePath, newFilePath)
-
-
-  # (4) Delete the files that haven't been moved 
-  leftoverFiles = [q for q in os.listdir(origDataDir) if os.path.isfile(os.path.join(origDataDir,q))]
-  leftoverFiles = [q for q in leftoverFiles if '.mat' in q]
-
-  for left in leftoverFiles:
-    fullLeft = origDataDir + left
-    if os.path.isfile(fullLeft):
-      print('Deleting ' + left)  # INSTEAD OF DELETING SHOULD I JUST MOVE THE FILE? 
-      os.remove(fullLeft)
+  # for left in leftoverFiles:
+  #   fullLeft = origDataDir + left
+  #   if os.path.isfile(fullLeft):
+  #     print('Deleting ' + left)  # INSTEAD OF DELETING SHOULD I JUST MOVE THE FILE? 
+  #     os.remove(fullLeft)
 
 
   # ## CSD PROCESSING
