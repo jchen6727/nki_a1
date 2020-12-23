@@ -427,7 +427,7 @@ def sortFiles(pathToData,regions):
   return DataFiles # Change this...? 
 
 
-## REVAMP THIS 
+## REVAMP THIS  ## work for any type of file / flexible, or just .mat? 
 def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irrelevant .mat files
   # pathToData -- path to parent dir with unsorted or unwanted .mat files 
   # option -- delete or move to 'other'
@@ -456,6 +456,35 @@ def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irreleva
 ##################################  
 ### CSD PROCESSING FUNCTIONS #### 
 ##################################
+
+# What functions do I need? 
+def someFunc(pathToData,expCondition,saveFolder,regions):
+  # pathToData: string -- path to parent dir containing the .mat files (or the level above that), e.g. '../data/NHPdata/click/contproc/'
+  # expCondition: string -- which type of trial? --> 'click' or 'spont' or 'speech'
+  # saveFolder: string -- what is the parent dir that you wish to save the .png files in?
+  # regions: list of numbers or strings that indicates recording region(s) of interest, e.g. [1, 3, 7], ['A1', 'MGB', 'TRN']
+
+  conditions = ['click', 'spont', 'speech']
+
+  recordingAreaCodes = {1:'A1', 2:'belt', 3:'MGB', 4:'LGN', 5:'Medial Pulvinar', 6:'Pulvinar', 7:'TRN', 8:'Motor Ctx', 9:'Striatum', 10:'SC', 11:'IP', 33:'MGBv'} # All of the area codes -- recording region pairs 
+  numCodes = list(recordingAreaCodes.keys())      # e.g. [1, 3, 7]
+  nameCodes = list(recordingAreaCodes.values())   # e.g. ['A1', 'MGB', 'TRN']
+
+  if expCondition in conditions: 
+    pathToFigs = saveFolder + expCondition + '/' # e.g. '../data/NHPdata/CSD/click/'
+    if not os.path.isdir(saveFolder):
+      os.mkdir(saveFolder)
+    if not os.path.isdir(pathToFigs): # Make subdirs for each condition  
+      os.mkdir(pathToFigs)
+    for region in regions:
+      if region in numCodes:
+        areaName = str(recordingAreaCodes[region])
+        regionDir = pathToFigs + areaName + '/'  # e.g. '../data/NHPdata/CSD/click/A1/'
+        if not os.path.isdir(regionDir):
+          os.mkdir(regionDir)
+      elif region not in numCodes:
+        print('Recording region not recognized.')
+
 
 
 

@@ -39496,3 +39496,7 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 33 - MGBv
 10 - SC
 11 – IP
+** Evolution of the csd processing functions:
+*** Abstracting this code out of the main code block as well 
+* <2020-12-23 Wed -- csd>
+** working more on analysis/dataAnalysis.py functions -- abstracting out from main code block into defined functions. 
