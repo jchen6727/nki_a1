@@ -485,6 +485,39 @@ def someFunc(pathToData,expCondition,saveFolder,regions):
       elif region not in numCodes:
         print('Recording region not recognized.')
 
+  for area in nameCodes:
+    areaDataDir = pathToData + area + '/'
+    if not os.path.isdir(areaDataDir):
+      print('No region-sorted .mat files detected for ' + str(area))
+    else:
+      dataFiles = [f for f in os.listdir(areaDataDir) if os.path.isfile(os.path.join(areaDataDir,f))]
+      dataFiles = [f for f in dataFiles if '.mat' in f] # list of all the .mat files in each area's data folder 
+    
+    for file in dataFiles:
+      fullPath = areaDataDir + file # full path to data .mat file 
+      [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+          # sampr is the sampling rate after downsampling 
+          # tt is time array (in seconds)
+          # trigtimes is array of stim trigger indices
+          # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
+      #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
+      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
+          # NOTE: make timeRange an arg in this function!!! 
+
+      # REMOVE BAD EPOCHS FIRST..?  
+
+      # GET AVERAGE ERP ## 
+      ## set epoch params
+      swindowms = 0 # start time relative to stimulus 
+      ewindowms = 200 # end time of epoch relative to stimulus onset 
+
+      # calculate average CSD ERP 
+      ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+      plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
+
+
+
 
 
 
