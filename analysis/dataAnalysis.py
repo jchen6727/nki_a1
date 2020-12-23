@@ -161,11 +161,12 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,fn=None,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
+def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## tt --> numpy array of time points (time array in seconds)
-  ## fn --> filename -- used for saving! 
+  ## fn --> filename -- string -- used for saving! 
+  ## saveFolder --> string -- path to directory where figs should be saved
   ## overlay --> can be 'LFP' or 'CSD' to overlay time series of either dataset 
   ## LFP_data --> numpy array of LFP data 
 
@@ -281,10 +282,11 @@ def plotCSD(dat,tt,fn=None,overlay=None,LFP_data=None,timeRange=None,saveFig=Tru
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
-def plotAvgCSD(dat,tt,fn=None,overlay=True,saveFig=True,showFig=True):
+def plotAvgCSD(dat,tt,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
   ## fn --> string --> input filename --> used for saving! 
+  ## saveFolder --> string --> directory where figs should be saved
   ## overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
 
   # INTERPOLATION
@@ -524,7 +526,7 @@ def someFunc(pathToData,expCondition,saveFolder,regions):
     # CURRENTLY --> we should be looking / creating files in ooh... analysis. hm. 
     pngFiles = [q for q in os.listdir(areaDataDir) if os.path.isfile(os.path.join(areaDataDir,q))]
     pngFiles = [q for q in pngFiles if '.png' in f]
-      
+    
 
 
 

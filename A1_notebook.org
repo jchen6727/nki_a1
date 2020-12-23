@@ -39553,3 +39553,4 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
   #     ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
   #     plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
 ** NOTE: should make moving function applicable to .mat and .png files 
+** NOTE: save location should be added to the plotCSD and plotAvgCSD functions
