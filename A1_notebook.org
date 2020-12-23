@@ -39500,3 +39500,8 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** Abstracting this code out of the main code block as well 
 * <2020-12-23 Wed -- csd>
 ** working more on analysis/dataAnalysis.py functions -- abstracting out from main code block into defined functions. 
+** Things to add:
+*** # NOTE: option(s) regarding what is being plotted!!!!! 
+*** # NOTE: make swindowms and ewindowms args in this function as well?!?!
+*** # NOTE: make timeRange an arg in this function!!! 
+*** # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 

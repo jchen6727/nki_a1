@@ -511,10 +511,13 @@ def someFunc(pathToData,expCondition,saveFolder,regions):
       ## set epoch params
       swindowms = 0 # start time relative to stimulus 
       ewindowms = 200 # end time of epoch relative to stimulus onset 
+        # NOTE: make swindowms and ewindowms args in this function as well?!?!
 
       # calculate average CSD ERP 
       ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
       plotAvgCSD(fn=filepath,dat=avgCSD,tt=ttavg,showFig=False)
+
+      # NOTE: option(s) regarding what is being plotted!!!!! 
 
 
 
