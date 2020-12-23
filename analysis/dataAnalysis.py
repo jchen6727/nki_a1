@@ -272,6 +272,16 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
     except:
       plt.savefig('NHP_CSD_fig.png')
 
+    # move saved fig to appropriate directory 
+    if saveFolder is not None:
+      if not os.path.isdir(saveFolder):
+        cwd = os.getcwd()
+        origFigPath = cwd + '/' + figname
+        newFigPath = saveFolder + figname
+        os.mkdir(saveFolder)
+        shutil.move(origFigPath, newFigPath)
+
+
 
 
   # DISPLAY FINAL FIGURE
