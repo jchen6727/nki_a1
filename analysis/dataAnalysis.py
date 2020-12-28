@@ -306,9 +306,10 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
-def plotAvgCSD(dat,tt,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
+def plotAvgCSD(dat,tt,trigtimes,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
+  ## trigtimes --> should be relativeTrigTimesMS
   ## fn --> string --> input filename --> used for saving! 
   ## saveFolder --> string --> directory where figs should be saved
   ## overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
@@ -366,6 +367,9 @@ def plotAvgCSD(dat,tt,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=
         subaxs[chan].get_yaxis().set_visible(False)
         subaxs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
 
+    # add vertical line at bottom for trigger time
+    subaxs[nrow].vlines(x=trigtimes[1],ymin=-0.2,ymax=0,colors='b')
+
   else:
     axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
 
@@ -422,8 +426,8 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
     axs[chan].plot(tt,dat[chan,:],color='red',linewidth=0.3)
 
   #axs[nrow-1].arrow(clip_on=False)
-  axs[nrow-1].get_xaxis().set_visible(True)
-  axs[nrow-1].vlines(x=trigtimes[1],ymin=-0.2,ymax=0,colors='b')
+  #axs[nrow-1].get_xaxis().set_visible(True)
+  #axs[nrow-1].vlines(x=trigtimes[1],ymin=-0.2,ymax=0,colors='b')
   #plt.annotate('HERE',xy=(trigtimes[1],-0.1),arrowprops=dict(arrowstyle="<->", color='b'),xytext=(trigtimes[1],-0.2),annotation_clip=True)
   #fig.canvas.draw()
   plt.xlabel('Time (ms)')
@@ -658,12 +662,12 @@ if __name__ == '__main__':
   print(relativeTrigTimesMS[2])
   #print((tt[trigtimes[2]]-tt[trigtimes[1]])*1e3 + ) #  tt[trigtimes[2]]*1e3)
 
-  plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=False,showFig=True)
+  plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
 
   #individualERPs = np.zeros()
   tt1,individualERP1 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,1)
   tt2,individualERP2 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,2)
-  tt3,individualERP3 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,3)
+  #tt3,individualERP3 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,3)
 
   plotIndividualERP(individualERP1,tt1,trigtimes=relativeTrigTimesMS)
   plotIndividualERP(individualERP2,tt2,trigtimes=relativeTrigTimesMS)
