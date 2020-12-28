@@ -470,7 +470,7 @@ def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irreleva
 ##################################
 
 # What functions do I need? 
-def someFunc(pathToData,expCondition,saveFolder,regions):
+def plotExpData(pathToData,expCondition,saveFolder,regions):
   # pathToData: string -- path to parent dir containing the .mat files (or the level above that), e.g. '../data/NHPdata/click/contproc/'
   # expCondition: string -- which type of trial? --> 'click' or 'spont' or 'speech'
   # saveFolder: string -- what is the parent dir that you wish to save the .png files in?
@@ -555,6 +555,7 @@ if __name__ == '__main__':
 
   # Delete or move unwanted / unworted .mat data files 
   moveDataFiles(origDataDir,'move')
+
 
 
 
