@@ -159,6 +159,20 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
   return tt,avgERP
 
 
+def individualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
+  nrow = dat.shape[0] # number of channels 
+  tt = np.linspace(swindowms, ewindowms,ms2index(ewindowms - swindowms,sampr))
+  individualERP = np.zeros((nrow,len(tt))) # set up array for averaged values 
+  swindowidx = ms2index(swindowms,sampr) # could be negative
+  ewindowidx = ms2index(ewindowms,sampr)
+  trigidx = trigtimes[ERPindex] # which stimulus to look at 
+  for chan in range(nrow): # go through channels
+    sidx = max(0,trigidx+swindowidx)
+    eidx = min(dat.shape[1],trigidx+ewindowidx)
+    individualERP[chan,:] = dat[chan, sidx:eidx] # add together data points from each time window
+  return tt,individualERP
+
+
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
 def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
@@ -603,10 +617,10 @@ if __name__ == '__main__':
       for n in range(subset_len):
         checkList.append(csdChannel[i+n])
       
-      print('AVERAGE CSD VALUES BEING CHECKED')
-      print(checkList)
-      print('SUBSET FROM AVERAGE CSD')
-      print(subsetCSD)
+      # print('AVERAGE CSD VALUES BEING CHECKED')
+      # print(checkList)
+      # print('SUBSET FROM AVERAGE CSD')
+      # print(subsetCSD)
 
       if checkList == subsetCSD:
         count += 1
