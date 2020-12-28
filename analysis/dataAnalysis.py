@@ -145,17 +145,17 @@ def ms2index (ms, sampr): return int(sampr*ms/1e3)
 # get the average ERP (dat should be either LFP or CSD)
 # originally from load.py 
 def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
-  nrow = dat.shape[0]
+  nrow = dat.shape[0] # number of channels 
   tt = np.linspace(swindowms, ewindowms,ms2index(ewindowms - swindowms,sampr))
+  avgERP = np.zeros((nrow,len(tt))) # set up array for averaged values 
   swindowidx = ms2index(swindowms,sampr) # could be negative
   ewindowidx = ms2index(ewindowms,sampr)
-  avgERP = np.zeros((nrow,len(tt)))
   for chan in range(nrow): # go through channels
     for trigidx in trigtimes: # go through stimuli
       sidx = max(0,trigidx+swindowidx)
       eidx = min(dat.shape[1],trigidx+ewindowidx)
-      avgERP[chan,:] += dat[chan, sidx:eidx]
-    avgERP[chan,:] /= float(len(trigtimes))
+      avgERP[chan,:] += dat[chan, sidx:eidx] # add together data points from each time window
+    avgERP[chan,:] /= float(len(trigtimes)) # average each data point 
   return tt,avgERP
 
 
@@ -301,7 +301,7 @@ def plotAvgCSD(dat,tt,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=
 
   # INTERPOLATION
   X = tt 
-  Y = np.arange(dat.shape[0]) # make sure this is the right axis ([0] correct for sim data) # may be [1] for data 
+  Y = np.arange(dat.shape[0]) # number of channels
   CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
   Y_plot = np.linspace(0,dat.shape[0],num=1000) # ,num=1000 is included in csd.py in netpyne --> hmm. necessary? 
   Z = CSD_spline(Y_plot,X)
@@ -530,7 +530,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
         # NOTE: make swindowms and ewindowms args in this function as well?!?!
 
       # calculate average CSD ERP 
-      ttavg,avgCSD = d.getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+      ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
       plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,showFig=False)
 
       # NOTE: option(s) regarding what is being plotted!!!!! 
@@ -554,13 +554,59 @@ if __name__ == '__main__':
   # Parent data directory containing unsorted .mat files
   origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
-  # Sort these files by recording region 
-  DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
+  ## Sort these files by recording region 
+  # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
 
-  # Delete or move unwanted / unworted .mat data files 
-  moveDataFiles(origDataDir,'move')
+  ## Delete or move unwanted / unworted .mat data files 
+  # moveDataFiles(origDataDir,'move')
+
+  ############# 
+  recordingArea = 'MGB/' # 'A1/'
+
+  dataFile = '1-bu015016027@os_eye06_20.mat'
+
+  fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
+
+  [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+          # sampr is the sampling rate after downsampling 
+          # tt is time array (in seconds)
+          # trigtimes is array of stim trigger indices
+          # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
+  #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
+  #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
+
+  # REMOVE BAD EPOCHS FIRST..?  
+
+  # GET AVERAGE ERP ## 
+  ## set epoch params
+  swindowms = 0 # start time relative to stimulus 
+  ewindowms = 200 #200 # end time of epoch relative to stimulus onset 
 
 
+  # calculate average CSD ERP 
+  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=False,showFig=True)
+
+
+  # INVESTIGATE IF THERE ARE REPEATS
+  # for chan in range(avgCSD.shape[0]):
+  #   csdChannel = list(avgCSD[chan,:])
+  #   subsetCSD = csdChannel[0:10]    # arbitrary length
+
+  #   count = 0
+  #   for i in range(len(csdChannel) - (len(subsetCSD)-1)):
+  #     subset_len = len(subsetCSD)
+  #     checkList = []
+
+  #     for n in range(subset_len):
+  #       checkList.append(csdChannel[i+n])
+
+  #     if checkList == subsetCSD:
+  #       count += 1
+  #       print('sequence found')
+    
+  #   print(count)
 
 
     # # MOVE .PNG FILES 
