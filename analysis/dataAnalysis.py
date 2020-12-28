@@ -482,6 +482,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
   numCodes = list(recordingAreaCodes.keys())      # e.g. [1, 3, 7]
   nameCodes = list(recordingAreaCodes.values())   # e.g. ['A1', 'MGB', 'TRN']
 
+  # Create directory to save figures 
   if expCondition in conditions: 
     pathToFigs = saveFolder + expCondition + '/' # e.g. '../data/NHPdata/CSD/click/'
     if not os.path.isdir(saveFolder):
@@ -497,11 +498,14 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
       elif region not in numCodes:
         print('Recording region not recognized.')
 
+  # Find .mat data files for each region specified in 'regions' arg 
+  ## MAKE THIS BETTER! 
   for area in nameCodes:
     areaDataDir = pathToData + area + '/'
     if not os.path.isdir(areaDataDir):
       print('No region-sorted .mat files detected for ' + str(area))
     else:
+      print('.mat files found for region ' + str(area))
       dataFiles = [f for f in os.listdir(areaDataDir) if os.path.isfile(os.path.join(areaDataDir,f))]
       dataFiles = [f for f in dataFiles if '.mat' in f] # list of all the .mat files in each area's data folder 
     
