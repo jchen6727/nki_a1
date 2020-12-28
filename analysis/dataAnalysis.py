@@ -101,7 +101,7 @@ def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300):
   # and positive values (hyperpolarizing intracellular current) drawn in blue
   CSD = -np.diff(datband,n=2,axis=ax)/spacing_mm**2 # now each column (or row) is an electrode -- CSD along electrodes
 
-  CSD = Vaknin(CSD)
+  #CSD = Vaknin(CSD)
 
   return CSD
 
@@ -159,7 +159,7 @@ def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
   return tt,avgERP
 
 
-def individualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
+def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
   nrow = dat.shape[0] # number of channels 
   tt = np.linspace(swindowms, ewindowms,ms2index(ewindowms - swindowms,sampr))
   individualERP = np.zeros((nrow,len(tt))) # set up array for averaged values 
@@ -398,6 +398,73 @@ def plotAvgCSD(dat,tt,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=
     #plt.close()
 
 
+def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
+  ## GET TRIGGER TIMES IN MS
+  # trigTimesMS = []
+  # trigtimes=trigtimes[0:len(tt)]
+  
+  # for idx in trigtimes:
+  #   trigTimesMS.append(tt[idx]*1e3)
+  # #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+
+  # ## GET RELATIVE TRIGGER TIMES IN MS 
+  # relativeTrigTimesMS = []
+  # for time in trigTimesMS:
+  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+  # dt --> time between stimuli 
+  dt1 = relativeTrigTimesMS[2] - relativeTrigTimesMS[1]
+  dt2 = relativeTrigTimesMS[3] - relativeTrigTimesMS[2]
+  if dt1 == dt2:
+    print('Stimuli not at regular intervals')
+  else:
+    dt = dt1
+
+
+  # MAKE FIGURE OF AVERAGE CSD 
+
+  fig = plt.figure()
+  nrow = dat.shape[0] # number of channels
+  axs = []
+
+
+  gs_outer = matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
+
+  gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0)
+
+  for chan in range(nrow):
+    axs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+    fig.add_subplot(axs[chan])
+    axs[chan].margins(0.0,0.01)
+    axs[chan].get_xaxis().set_visible(False)
+    axs[chan].get_yaxis().set_visible(False)
+    axs[chan].plot(tt,dat[chan,:],color='red',linewidth=0.3)
+
+  #axs[nrow-1].arrow(clip_on=False)
+  plt.annotate('',xy=(relativeTrigTimesMS[1],-0.1),arrowprops=dict(arrowstyle="<->", color='b'),annotation_clip=False)
+
+  plt.xlabel('Time (ms)')
+  plt.ylabel('Channel')  
+  plt.show()
+
+
+  # if overlay:
+  #   fig = plt.figure() ## declared earlier
+  #   nrow = dat.shape[0] # number of channels 
+  #   gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0)
+  #   subaxs = []
+
+  #   # go down grid and add data from each channel
+  #   for chan in range(nrow):
+  #       subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+  #       fig.add_subplot(subaxs[chan])
+  #       subaxs[chan].margins(0.0,0.01)
+  #       subaxs[chan].get_xaxis().set_visible(False)
+  #       subaxs[chan].get_yaxis().set_visible(False)
+  #       subaxs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
+
+
+
 ##################################  
 ### FILE PRE-PROCESSING FUNCTIONS #### 
 ##################################
@@ -587,6 +654,19 @@ if __name__ == '__main__':
           # trigtimes is array of stim trigger indices
           # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
+  ## GET TRIGGER TIMES IN MS
+  trigTimesMS = []
+  for idx in trigtimes:
+    trigTimesMS.append(tt[idx]*1e3)
+  #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+
+  relativeTrigTimesMS = []
+  for time in trigTimesMS:
+    relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+  #print(relativeTrigTimesMS) # USEFUL FOR OVERLAYING ON AVERAGE 
+
+  
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
   #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
 
@@ -599,34 +679,52 @@ if __name__ == '__main__':
 
 
   # calculate average CSD ERP 
-  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-  #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=False,showFig=True)
+  ttavg,avgCSD = getAvgERP(CSD_data, sampr, relativeTrigTimesMS, swindowms, ewindowms)
 
+  print('TIME OF FIRST STIMULUS')
+  print(relativeTrigTimesMS[0])
+  print('TIME OF SECOND STIMULUS')
+  print(relativeTrigTimesMS[1]) #(tt[trigtimes[1]]-tt[trigtimes[0]])*1e3 + 0)
+  print('TIME OF THIRD STIMULUS')
+  print(relativeTrigTimesMS[2])
+  #print((tt[trigtimes[2]]-tt[trigtimes[1]])*1e3 + ) #  tt[trigtimes[2]]*1e3)
 
-  # INVESTIGATE IF THERE ARE REPEATS
-  for chan in range(avgCSD.shape[0]):
-    csdChannel = list(avgCSD[chan,:])
-    subsetCSD = csdChannel[100:200]    # arbitrary length
-    #print(subsetCSD)
+  plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=False,showFig=True)
 
-    count = 0
-    for i in range(len(csdChannel) - (len(subsetCSD)-1)):
-      subset_len = len(subsetCSD)
-      checkList = []
+  #individualERPs = np.zeros()
+  tt1,individualERP1 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,1)
+  tt2,individualERP2 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,2)
+  tt3,individualERP3 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,3)
 
-      for n in range(subset_len):
-        checkList.append(csdChannel[i+n])
+  plotIndividualERP(individualERP1,tt1,trigtimes)
+  plotIndividualERP(individualERP2,tt2,trigtimes)
+
+  
+
+  # # INVESTIGATE IF THERE ARE REPEATS
+  # for chan in range(avgCSD.shape[0]):
+  #   csdChannel = list(avgCSD[chan,:])
+  #   subsetCSD = csdChannel[100:200]    # arbitrary length
+  #   #print(subsetCSD)
+
+  #   count = 0
+  #   for i in range(len(csdChannel) - (len(subsetCSD)-1)):
+  #     subset_len = len(subsetCSD)
+  #     checkList = []
+
+  #     for n in range(subset_len):
+  #       checkList.append(csdChannel[i+n])
       
-      # print('AVERAGE CSD VALUES BEING CHECKED')
-      # print(checkList)
-      # print('SUBSET FROM AVERAGE CSD')
-      # print(subsetCSD)
+  #     # print('AVERAGE CSD VALUES BEING CHECKED')
+  #     # print(checkList)
+  #     # print('SUBSET FROM AVERAGE CSD')
+  #     # print(subsetCSD)
 
-      if checkList == subsetCSD:
-        count += 1
-        print('sequence found')
+  #     if checkList == subsetCSD:
+  #       count += 1
+  #       print('sequence found')
     
-    print(count)
+  #   print(count)
 
 
     # # MOVE .PNG FILES 
