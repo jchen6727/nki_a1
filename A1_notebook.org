@@ -39556,4 +39556,52 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 ** NOTE: save location should be added to the plotCSD and plotAvgCSD functions 
 * <2020-12-28 Mon -- csd>
 ** Salva notes periodicity might be too exact on the avg csd functions -- is this true? check it out: 
-*** 
+*** A1/analysis/dataAnalysis.py 
+*** The issue *may* be with the plotAvgCSD func since this is what Salva pointed out. Try some more again. 
+**** How?
+**** so right now -- the main code sorts and moves the original .mat files. 
+**** IGNORE someFunc for now.... ---> but do fix this later. look into the periodicity first. ---> Changed name of this func to plotExpData()
+** Select some files that generated periodic avg CSD figs: 
+*** NHP_avgCSD_csdOverlay_1-bu015016027@os_eye06_20 --> MGB 
+*** NHP_avgCSD_csdOverlay_1-bu009010023@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu019020024@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt006000013@os_eye06_30 --> A1
+*** NHP_avgCSD_csdOverlay_1-gt020021013@os_eye06_30 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt040041012@os_eye06_30 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt044045013@os_eye06_30 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt047048016@os_eye06_30 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt055056016@os_eye06_30 --> MGB
+*** NHP_avgCSD_csdOverlay_1-ma005000016@os_eye06_20 --> A1
+*** NHP_avgCSD_csdOverlay_1-ma005000029@os_eye06_20 --> A1
+*** NHP_avgCSD_csdOverlay_1-ma027028018@os_eye06_20 --> MGB
+** Select some files that did NOT generate periodic avg CSD figs:
+*** NHP_avgCSD_csdOverlay_1-bu009010022@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu009010029@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu015016026@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu015016033@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu019020023@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu019020031@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-bu025026012@os_eye06_20 ("smooth") --> A1
+*** NHP_avgCSD_csdOverlay_1-bu031032015@os_eye06_20 ("smooth") --> A1
+*** NHP_avgCSD_csdOverlay_1-bu035036016@os_eye06_20 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt006000012@os_eye06_30 ("smooth") --> A1
+*** NHP_avgCSD_csdOverlay_1-gt008000021@os_eye06_30 --> MGB
+*** NHP_avgCSD_csdOverlay_1-gt020021012@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt040041011@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt040041018@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt044045012@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt044045018@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt047048015@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt047048021@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt051052011@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt051052018@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt051052024@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt055056015@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-gt055056021@os_eye06_30
+*** NHP_avgCSD_csdOverlay_1-ma004000014@os_eye06_20 ("smooth") --> A1
+*** NHP_avgCSD_csdOverlay_1-ma004000020@os_eye06_20 ("smooth") --> A1
+*** NHP_avgCSD_csdOverlay_1-ma005000015@os_eye06_20
+*** NHP_avgCSD_csdOverlay_1-ma005000020@os_eye06_20
+*** NHP_avgCSD_csdOverlay_1-ma005000028@os_eye06_20
+*** NHP_avgCSD_csdOverlay_1-ma027028017@os_eye06_20
+
