@@ -590,23 +590,29 @@ if __name__ == '__main__':
 
 
   # INVESTIGATE IF THERE ARE REPEATS
-  # for chan in range(avgCSD.shape[0]):
-  #   csdChannel = list(avgCSD[chan,:])
-  #   subsetCSD = csdChannel[0:10]    # arbitrary length
+  for chan in range(avgCSD.shape[0]):
+    csdChannel = list(avgCSD[chan,:])
+    subsetCSD = csdChannel[100:200]    # arbitrary length
+    #print(subsetCSD)
 
-  #   count = 0
-  #   for i in range(len(csdChannel) - (len(subsetCSD)-1)):
-  #     subset_len = len(subsetCSD)
-  #     checkList = []
+    count = 0
+    for i in range(len(csdChannel) - (len(subsetCSD)-1)):
+      subset_len = len(subsetCSD)
+      checkList = []
 
-  #     for n in range(subset_len):
-  #       checkList.append(csdChannel[i+n])
+      for n in range(subset_len):
+        checkList.append(csdChannel[i+n])
+      
+      print('AVERAGE CSD VALUES BEING CHECKED')
+      print(checkList)
+      print('SUBSET FROM AVERAGE CSD')
+      print(subsetCSD)
 
-  #     if checkList == subsetCSD:
-  #       count += 1
-  #       print('sequence found')
+      if checkList == subsetCSD:
+        count += 1
+        print('sequence found')
     
-  #   print(count)
+    print(count)
 
 
     # # MOVE .PNG FILES 
