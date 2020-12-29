@@ -274,7 +274,8 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
       else:
         figname = 'NHP_CSD_fig.png'
     else:
-      filename = fn[31:-4] # takes out the .mat from the filename given as arg
+      #filename = fn[31:-4] # takes out the .mat from the filename given as arg
+      filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
       if overlay == 'LFP':
         figname = 'NHP_CSD_withLFP_%s.png' % filename
       elif overlay == 'CSD':
@@ -391,8 +392,7 @@ def plotAvgCSD(dat,tt,relativeTrigTimes=None,fn=None,saveFolder=None,overlay=Tru
         figname = 'NHP_avgCSD_csdOverlay.png'
       else:
         figname = 'NHP_avgCSD.png'
-    else: ## CHANGE FILENAME LINE
-      #filename = fn[31:-4] # removes the .mat from the input filename
+    else: 
       filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
       print(filename)
       if overlay:  
