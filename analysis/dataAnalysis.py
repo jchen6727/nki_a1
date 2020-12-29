@@ -622,8 +622,11 @@ if __name__ == '__main__':
 
   ############# 
   recordingArea = 'MGB/' # 'A1/'
+  
+  MGBfiles = ['1-bu015016027@os_eye06_20.mat', '1-bu009010023@os_eye06_20.mat', '1-bu019020024@os_eye06_20.mat','1-gt020021013@os_eye06_30.mat', '1-gt040041012@os_eye06_30.mat', '1-gt044045013@os_eye06_30.mat', '1-gt047048016@os_eye06_30.mat', '1-gt055056016@os_eye06_30.mat', '1-ma027028018@os_eye06_20.mat']
+  A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
 
-  dataFile = '1-bu015016027@os_eye06_20.mat'
+  dataFile = MGBfiles[6] 
 
   fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
@@ -639,6 +642,12 @@ if __name__ == '__main__':
     trigTimesMS.append(tt[idx]*1e3)
   #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
 
+  ## GET RELATIVE TRIGGER TIME INDICES
+  relativeTrigTimes = []
+  for idx in trigtimes:
+    relativeTrigTimes.append(idx - 80143)
+
+  ## GET RELATIVE TRIGGER TIMES IN SECONDS 
   relativeTrigTimesMS = []
   for time in trigTimesMS:
     relativeTrigTimesMS.append(time-trigTimesMS[0])
@@ -660,13 +669,12 @@ if __name__ == '__main__':
   # calculate average CSD ERP 
   ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
 
-  print('TIME OF FIRST STIMULUS')
-  print(relativeTrigTimesMS[0])
-  print('TIME OF SECOND STIMULUS')
-  print(relativeTrigTimesMS[1]) #(tt[trigtimes[1]]-tt[trigtimes[0]])*1e3 + 0)
-  print('TIME OF THIRD STIMULUS')
-  print(relativeTrigTimesMS[2])
-  #print((tt[trigtimes[2]]-tt[trigtimes[1]])*1e3 + ) #  tt[trigtimes[2]]*1e3)
+  # print('TIME OF FIRST STIMULUS')
+  # print(relativeTrigTimesMS[0])
+  # print('TIME OF SECOND STIMULUS')
+  # print(relativeTrigTimesMS[1]) #(tt[trigtimes[1]]-tt[trigtimes[0]])*1e3 + 0)
+  # print('TIME OF THIRD STIMULUS')
+  # print(relativeTrigTimesMS[2])
 
   plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
 
@@ -680,30 +688,36 @@ if __name__ == '__main__':
 
   
 
-  # # INVESTIGATE IF THERE ARE REPEATS
-  # for chan in range(avgCSD.shape[0]):
-  #   csdChannel = list(avgCSD[chan,:])
-  #   subsetCSD = csdChannel[100:200]    # arbitrary length
-  #   #print(subsetCSD)
+  # INVESTIGATE IF THERE ARE REPEATS
+  for chan in range(avgCSD.shape[0]):
+    csdChannel = list(avgCSD[chan,:])
+    #subsetCSD = csdChannel[100:200]    # arbitrary length
+    subsetCSD = csdChannel[relativeTrigTimes[0]:relativeTrigTimes[1]]
 
-  #   count = 0
-  #   for i in range(len(csdChannel) - (len(subsetCSD)-1)):
-  #     subset_len = len(subsetCSD)
-  #     checkList = []
+    # print('subsetCSD')
+    # print(subsetCSD)
+    # print('csdChannel')
+    # print(csdChannel)
 
-  #     for n in range(subset_len):
-  #       checkList.append(csdChannel[i+n])
+    count = 0
+    for i in range(len(csdChannel) - (len(subsetCSD)-1)):
+      subset_len = len(subsetCSD)
+      checkList = []
+
+      for n in range(subset_len):
+        checkList.append(csdChannel[i+n])
       
-  #     # print('AVERAGE CSD VALUES BEING CHECKED')
-  #     # print(checkList)
-  #     # print('SUBSET FROM AVERAGE CSD')
-  #     # print(subsetCSD)
+      # print('AVERAGE CSD VALUES BEING CHECKED')
+      # print(checkList)
+      # print('SUBSET FROM AVERAGE CSD')
+      # print(subsetCSD)
 
-  #     if checkList == subsetCSD:
-  #       count += 1
-  #       print('sequence found')
+      if checkList == subsetCSD:
+        count += 1
+        print('sequence found')
+
     
-  #   print(count)
+    print(count)
 
 
     # # MOVE .PNG FILES 

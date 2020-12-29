@@ -39608,3 +39608,12 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** To overlay the individual CSD data that make up the ERP trials -- look at these. 
 *** ^^ extract them when getting getAvgERP
 ** Changes being made to dataAnalysis.py
+* <2020-12-29 Tue -- csd>
+** Changes to be made to dataAnalysis.py:
+*** change filename saving in saveFigure
+*** add arg and if statement (or keep what I have now) for trigtimes overlay
+** Check other 'periodic' files:
+*** 1-bu015016027@os_eye06_20.mat --> NOT REPETITIVE
+*** 1-bu009010023@os_eye06_20.mat --> REPETITIVE 
+*** 1-bu019020024@os_eye06_20.mat --> REPETITIVE 
+*** 
