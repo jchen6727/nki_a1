@@ -306,7 +306,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
-def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
+def plotAvgCSD(dat,tt,relativeTrigTimes=None,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
   ## trigtimes --> should be relativeTrigTimesMS
@@ -352,7 +352,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
 
   # (v) ADD ARROW POINTING TO STIMULUS TIMES
   ## ADD ARG THEN IF STATEMENT
-  for time in trigtimes:
+  for time in relativeTrigTimes:
     if time <= xmax:
       axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
       axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
@@ -380,6 +380,8 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
     axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
 
 
+  #if overlay_individualERP:
+
 
   # SAVE FIGURE
   ## make this a little more explicable 
@@ -390,7 +392,8 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
       else:
         figname = 'NHP_avgCSD.png'
     else: ## CHANGE FILENAME LINE
-      filename = fn[31:-4] # removes the .mat from the input filename
+      #filename = fn[31:-4] # removes the .mat from the input filename
+      filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
       print(filename)
       if overlay:  
         figname = 'NHP_avgCSD_csdOverlay_%s.png' % filename
@@ -409,7 +412,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
 
 
 def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
-    # dat should be avgCSD from getAvgERP
+    # dat should be individual ERP from getIndividual ERP
     # tt should be ttavg from getAvgERP
     # trigtimes should be relativeTrigTimesMS
 
@@ -626,7 +629,7 @@ if __name__ == '__main__':
   MGBfiles = ['1-bu015016027@os_eye06_20.mat', '1-bu009010023@os_eye06_20.mat', '1-bu019020024@os_eye06_20.mat','1-gt020021013@os_eye06_30.mat', '1-gt040041012@os_eye06_30.mat', '1-gt044045013@os_eye06_30.mat', '1-gt047048016@os_eye06_30.mat', '1-gt055056016@os_eye06_30.mat', '1-ma027028018@os_eye06_20.mat']
   A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
 
-  dataFile = MGBfiles[6] 
+  dataFile = MGBfiles[4] #A1files[2] #MGBfiles[8] 
 
   fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
@@ -645,7 +648,7 @@ if __name__ == '__main__':
   ## GET RELATIVE TRIGGER TIME INDICES
   relativeTrigTimes = []
   for idx in trigtimes:
-    relativeTrigTimes.append(idx - 80143)
+    relativeTrigTimes.append(idx - trigtimes[0])#80143)
 
   ## GET RELATIVE TRIGGER TIMES IN SECONDS 
   relativeTrigTimesMS = []
