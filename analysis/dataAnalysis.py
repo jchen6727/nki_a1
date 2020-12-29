@@ -306,7 +306,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
-def plotAvgCSD(dat,tt,trigtimes,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
+def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
   ## trigtimes --> should be relativeTrigTimesMS
@@ -349,7 +349,16 @@ def plotAvgCSD(dat,tt,trigtimes,fn=None,saveFolder=None,overlay=True,saveFig=Tru
   axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
 
 
-  # (v) SET TITLE AND OVERLAY AVERAGE ERP TIME SERIES (OR NOT)
+
+  # (v) ADD ARROW POINTING TO STIMULUS TIMES
+  ## ADD ARG THEN IF STATEMENT
+  for time in trigtimes:
+    if time <= xmax:
+      axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+      axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
+
+
+  # (vi) SET TITLE AND OVERLAY AVERAGE ERP TIME SERIES (OR NOT)
   ## NOTE: add option for overlaying average LFP...??
   if overlay:
     nrow = dat.shape[0] # number of channels 
@@ -367,9 +376,6 @@ def plotAvgCSD(dat,tt,trigtimes,fn=None,saveFolder=None,overlay=True,saveFig=Tru
         subaxs[chan].get_yaxis().set_visible(False)
         subaxs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
 
-    # add vertical line at bottom for trigger time
-    subaxs[nrow].vlines(x=trigtimes[1],ymin=-0.2,ymax=0,colors='b')
-
   else:
     axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
 
@@ -383,7 +389,7 @@ def plotAvgCSD(dat,tt,trigtimes,fn=None,saveFolder=None,overlay=True,saveFig=Tru
         figname = 'NHP_avgCSD_csdOverlay.png'
       else:
         figname = 'NHP_avgCSD.png'
-    else:
+    else: ## CHANGE FILENAME LINE
       filename = fn[31:-4] # removes the .mat from the input filename
       print(filename)
       if overlay:  
@@ -665,12 +671,12 @@ if __name__ == '__main__':
   plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
 
   #individualERPs = np.zeros()
-  tt1,individualERP1 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,1)
-  tt2,individualERP2 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,2)
+  #tt1,individualERP1 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,1)
+  #tt2,individualERP2 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,2)
   #tt3,individualERP3 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,3)
 
-  plotIndividualERP(individualERP1,tt1,trigtimes=relativeTrigTimesMS)
-  plotIndividualERP(individualERP2,tt2,trigtimes=relativeTrigTimesMS)
+  #plotIndividualERP(individualERP1,tt1,trigtimes=relativeTrigTimesMS)
+  #plotIndividualERP(individualERP2,tt2,trigtimes=relativeTrigTimesMS)
 
   
 
