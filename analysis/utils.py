@@ -135,8 +135,7 @@ def readBatchData(dataFolder, batchLabel, loadAll=False, saveAll=True, vars=None
                         output = json.load(fileObj, object_pairs_hook=OrderedDict)
                 elif os.path.isfile(outFile+'.pkl'):
                     outFile = outFile + '.pkl'
-                    with open(outFile, 'rb
-                    ') as fileObj:
+                    with open(outFile, 'rb') as fileObj:
                         output = pickle.load(fileObj)
                 else:
                     print('... file missing')
