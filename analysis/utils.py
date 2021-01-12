@@ -12,6 +12,7 @@ from pylab import *
 from itertools import product
 import pandas as pd
 from pprint import pprint
+import os
 
 from netpyne import specs
 from collections import OrderedDict
@@ -127,10 +128,23 @@ def readBatchData(dataFolder, batchLabel, loadAll=False, saveAll=True, vars=None
                 # read output file
                 iCombStr = ''.join([''.join('_'+str(i)) for i in iComb])
                 simLabel = b['batchLabel']+iCombStr
-                outFile = dataFolder+'/'+batchLabel+'/'+simLabel+'.json'
-                try:
-                    with open(outFile, 'r') as fileObj:
+                outFile = dataFolder+'/'+batchLabel+'/'+simLabel
+                if os.path.isfile(outFile+'.json'):
+                    outFile = outFile + '.json'
+                    with open(outFile, 'rb') as fileObj:
                         output = json.load(fileObj, object_pairs_hook=OrderedDict)
+                elif os.path.isfile(outFile+'.pkl'):
+                    outFile = outFile + '.pkl'
+                    with open(outFile, 'rb
+                    ') as fileObj:
+                        output = pickle.load(fileObj)
+                else:
+                    print('... file missing')
+                    missing = missing + 1
+                    output = {}
+                    continue
+
+                try:
                     # save output file in data dict
                     data[iCombStr] = {}  
                     data[iCombStr]['paramValues'] = pComb  # store param values

@@ -7928,7 +7928,9 @@ OrderedDict([("('EICellTypeGain', 'PV')", 0.6012994003413611),
 *** results
 fitness ~90
 
-** v32_batch18 - best of v32_batch4, scaled to 100%; grid search of main params - PENDING TO RUN
+** v32_batch17 - full - CHECK!
+
+** v32_batch18 - best of v32_batch4, scaled to 100%; grid search of main params - RAN
 *** notes
 EE - [0.25, 0.5, 0.75, 1.0] - 16
 EI, IE, II - [0.5, 1.0, 1.5] - 9

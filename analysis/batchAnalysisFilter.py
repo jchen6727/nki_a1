@@ -28,22 +28,22 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], copyFolder=
     rangesE = {}
     rangesI = {}
 
-    Erange = [0.001,500]
+    Erange = [0.01,200]
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6','CT6'] # , 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']  # all layers
 #'ITS4',
     for pop in Epops:
         rangesE[pop] = Erange
 
-    Irange = [0.001,500]
-    Ipops = ['PV2']
+    Irange = [0.01,200]
+    #Ipops = ['PV2']
 
-    # Ipops = ['NGF1',                        # L1
-    #     'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-    #     'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
-    #     'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-    #     'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
-    #     'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
-    #     'PV6', 'SOM6', 'VIP6', 'NGF6']      # L6 
+    Ipops = ['NGF1',                        # L1
+        'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+        'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+        'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+        'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+        'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+        'PV6', 'SOM6', 'VIP6', 'NGF6']      # L6 
 
     for pop in Ipops:
         rangesI[pop] = Irange
@@ -142,7 +142,7 @@ def applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=True):
     var = [('simData','popRates')]
     params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
  
-    ipy.embed()
+    #pipy.embed()
 
     # convert to pandas and add pop Rates
     df1 = utils.toPandas(params, data)
@@ -165,6 +165,8 @@ def applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=True):
 
     for i,condList in enumerate(condLists):
         print(len(filterRates(dfpop, condlist=condList, copyFolder='selected_'+str(i), dataFolder=dataFolder, batchLabel=batchLabel, skipDepol=skipDepol)))
+    
+    return dfpop
 
 
 def filterStimRates(dataFolder, batchLabel, simLabel=None, load=False, subset=''):
