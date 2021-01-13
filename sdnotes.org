@@ -7937,6 +7937,16 @@ EI, IE, II - [0.5, 1.0, 1.5] - 9
 E-PV, E-SOM, E-NGF, E-VIP - [0.5, 1.0, 1.5] - 27
 total = 16*9*27 = 3888
 use thal from v32_batch11 or 13
+*** results
+- only solutions where all pops fire are with EE=1, but they don't fire at same time; different periods; pops inhibit each other
+- a few solutions with EE=0, show promising results, with some osc, but some layers (eg L5) and some upper pops (eg SOM) dont fire
+- did pop analysis 4D heatmap for all pops and params 
+-- hard to extract conclusions
+-- but IIGain=1.5 and IEGain=0.5 seems to work best for most pops
+
+TODO:
+- calculate fitness value as in evol/optuna, to find good solutions where most pops fire consistently 
+- need to recalculate popRates every 250 ms -- info should be obtainable from .pkl files
 
 ** v32_batchX - scale 1.0, only thal+L2+L3+L4, param range 0.1-4.0
 
