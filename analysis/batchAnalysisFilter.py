@@ -386,3 +386,62 @@ def filterDepolBlock(dataFolder, batchLabel, loadAll, gids=None):
 
 
 
+
+
+''' filter based on fitness score:
+
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+    # Ipops = [#'NGF1',  
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+    #         #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+'''
