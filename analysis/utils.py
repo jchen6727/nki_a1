@@ -715,3 +715,23 @@ def move_element(odict, thekey, newpos):
         i += 1
     return odict
 
+
+def addPopRatesToJson(dataFolder, batchLabel):
+    from os import listdir
+    from os.path import isfile, join
+    from netpyne import sim
+    
+    path = dataFolder+batchLabel 
+    outFiles = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.pkl')]
+
+    for outfile in outFiles:
+        #try:
+        filepath = path+outfile
+        sim.load(filepath, instantiate=False)
+        sim.allSimData['popRates']=sim.analysis.popAvgRates(tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
+        sim.saveData(filename=filepath[:-4])
+        os.rename(filepath, filepath[:-4]+'_orig.pkl')
+        #except:
+        #    print('Error in file %s' % (outfile))
+
+        
