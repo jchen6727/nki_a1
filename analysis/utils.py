@@ -725,13 +725,13 @@ def addPopRatesToJson(dataFolder, batchLabel):
     outFiles = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.pkl')]
 
     for outfile in outFiles:
-        #try:
-        filepath = path+outfile
-        sim.load(filepath, instantiate=False)
-        sim.allSimData['popRates']=sim.analysis.popAvgRates(tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
-        sim.saveData(filename=filepath[:-4])
-        os.rename(filepath, filepath[:-4]+'_orig.pkl')
-        #except:
-        #    print('Error in file %s' % (outfile))
+        try:
+            filepath = path+outfile
+            sim.load(filepath, instantiate=False)
+            sim.allSimData['popRates']=sim.analysis.popAvgRates(tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
+            os.rename(filepath, filepath[:-4]+'_orig.pkl')
+            sim.saveData(filename=filepath[:-4])
+        except:
+            print('Error in file %s' % (outfile))
 
         
