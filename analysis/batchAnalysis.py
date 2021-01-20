@@ -18,7 +18,7 @@ if __name__ == '__main__':
     dataFolder = '../data/'
     batchLabel = 'v32_batch18'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
-    loadAll = 1
+    loadAll = 0
 
     # ---------------------------------------------
     # Filtering wrapper funcs
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     #df = filterDepolBlock(dataFolder, batchLabel, loadAll, gids=[])
     
-    # = applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=0)  
+    df = applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=0)  
     
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
@@ -56,9 +56,9 @@ if __name__ == '__main__':
     
     # fIAnalysis(dataFolder, batchLabel, loadAll)
     
-    for pop in allpops:     
-        df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EEGain', 'EIGain','IEGain', 'IIGain'], vals=[pop], groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
-        df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EICellTypeGain_PV', 'EICellTypeGain_SOM', 'EICellTypeGain_VIP', 'EICellTypeGain_NGF'], vals=[pop], groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
+    # for pop in allpops:     
+    #     df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EEGain', 'EIGain','IEGain', 'IIGain'], vals=[pop], groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
+    #     df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EICellTypeGain_PV', 'EICellTypeGain_SOM', 'EICellTypeGain_VIP', 'EICellTypeGain_NGF'], vals=[pop], groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
 
     #df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['weightBkgE', 'weightBkgI','rateBkg_exc', 'rateBkg_inh'], vals=['ITS4'], groupStat='first', plotLine=False) 
 
