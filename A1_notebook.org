@@ -39617,3 +39617,24 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 *** 1-bu009010023@os_eye06_20.mat --> REPETITIVE 
 *** 1-bu019020024@os_eye06_20.mat --> REPETITIVE 
 *** 
+* <2021-01-22 Fri -- csd for spontaneous data comparison>
+** Macaque data on google drive: https://drive.google.com/drive/u/1/folders/0AJZ4deB_2EwUUk9PVA
+** Put this data on local machine:
+*** Which directories are an option? 
+**** ~/Documents/MATLAB/macaque_A1/spont
+**** ~/Desktop/NEUROSIM/A1/data/NHPdata/spont
+*** ^^ going to go with the latter (the dir in A1) -- this is already indicated in analysis/dataAnalysis.py script
+** Sort them (as I go along!):
+*** Belt: 
+**** 1-bu001002017
+**** 1-bu003004015
+**** 1-bu003004024
+*** A1:
+**** 1-bu005006019
+** Pulvinar files -- compressed:
+*** pulvinar_compressed1.zip:
+**** 1-bu007008020
+**** 1-bu007008029
+**** 1-bu013014031
+**** 1-bu013014040
+
