@@ -39631,10 +39631,10 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 **** 1-bu003004024
 *** A1:
 **** 1-bu005006019
-** Pulvinar files -- compressed:
+** Compressed data files:
 *** pulvinar_compressed1.zip:
 **** 1-bu007008020
 **** 1-bu007008029
 **** 1-bu013014031
 **** 1-bu013014040
-
+** NOTE --> last file downloaded for now: 1-bu037038015@os_eye06_20.mat
