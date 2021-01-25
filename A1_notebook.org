@@ -39762,10 +39762,121 @@ fn is /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-
 ** MUA.shape --> (23, 3107221)
 ** getflayers() & csv issue:
 *** talked to noelle/sam/peter -- emails below
-*** TO DO: ADD EMAILS 
+*** Erica to group: 
+Hello all! 
 
+Just following up on this since I am getting the ball rolling on monkey-to-model comparisons! 
+
+I had a couple of questions: 
+1) I just had a chat with sam about the supra/gran/infra source/sink pairs, so I understand this a little better than I did when I sent this original email. I see from the previous excel sheet from Noelle (thank you Noelle!) that, for A1, the top channel is 1 and bottom is 15. I was going to make some estimates for s1a/b, s2a/b, etc. based on the previous email from Peter, but Peter I believe the range of channels you referenced was out of 21 (e.g. upper 11/21 == supra, middle 4/21 == gran, lower 7/21 = infra). I see that channels for the belt cortical region span from 1-21, but since A1 appears to be 1-15, I was hoping to get equivalent info for that region if possible! 
+
+2) Noelle, I also see from your previous email that the channels usually stay the same across recording modalities -- just want to make sure that if I start analyzing the spontaneous data, that I can use the same assumptions that I listed above (which I got from looking at the click and BBN sections of the excel file). 
+
+
+Thank you so much! Hope you are all doing well. Let me know if I can clarify anything :) 
+
+Best,
+Erica
+
+*** Peter reply: 
+Erica,
+
+ 
+
+No monkey’s brains or no experiments are the same. This is why Noelle went through all files to determine the layers for each experiment. Roughly you could assume what I told you before, but it rarely matches the real scenario exactly.
+
+I think since for your purposes, you need exact layer specifications, you should go with Noelle’s excel sheet which for A1 (Area coded by 1) contains the boundaries for top & bottom of cortex, and also the boundaries of the granular layer. From those you can figure out the boundaries for Supra and Infra layers. However you would have to look at the CSD color plots related to BBN or click to decide what are the boundaries for the sublayers within Supra & Infra i.e. S1, S2, I1, I2.
+
+ 
+
+Let us know if you have any questions.
+*** Sam reply to this (after chat w/ sam on slack): 
+On Mon, Jan 25, 2021 at 12:02 PM Peter Lakatos <plakatos@lakatoslab.com> wrote:
+Erica,
+
+ 
+
+No monkey’s brains or no experiments are the same. This is why Noelle went through all files to determine the layers for each experiment. Roughly you could assume what I told you before, but it rarely matches the real scenario exactly.
+
+I think since for your purposes, you need exact layer specifications, you should go with
+
+
+For the first paper on model/data we were planning to make gross comparisons of features (frequency, cycles, etc.) between model and ephys oscillations in different layers (supra, gran, infragran). Source vs sink could be useful for understanding generators. 
+ 
+Noelle’s excel sheet which for A1 (Area coded by 1) contains the boundaries for top & bottom of cortex, and also the boundaries of the granular layer. From those you can figure out the boundaries for Supra and Infra layers. However you would have to look at the CSD color plots related to BBN or click to decide what are the boundaries for the sublayers within Supra & Infra i.e. S1, S2, I1, I2.
+
+
+We only see top/bottom in the file(s) Noelle sent - maybe she has an updated file? If anyone has a marked-up example of CSD showing which features indicate S1 vs S2 that would be helpful. Or could we setup a call with Noelle/Erica to show exactly how that determination is made?
+ 
+
+ 
+
+Let us know if you have any questions.
+
+
+Thanks,
+Sam
+*** Reply from Noelle: 
+Hi Erica,
+1) As Peter said for each individual experiment the the cortex sometimes covers all 21 chs but sometimes it doesn't (it could be thinner) and in the case of experiment 1-bu005006 (for example) the cortex only covered 15chs of the electrode, whereas in the case of expt 2-bu027028 (for example) the cortex was thicker and spanned all 21 chs. In the attached excel sheet I have highlighted all A1 experiments (n=80) in blue. The columns marked in orange at the top of the excel sheet show the channels which mark the boundaries of the top (i.e. top of Supra layer) and bottom (last ch of the Infra layer) of cortex. The columns marked in green at the top of the excel sheet mark the boundaries of only the granular layer within that cortex. So looking at expt 1-bu005006 for example you can say that Supra layer stretches from chs 1-5 (very few chs must be missing chs from the upper supra layers), Gran chs6-7, Infra chs 8-15.
+
+2) Yes, for the majority of A1 experiments. The are only 2 exceptions which I have marked in purple in the comments column &  I give the new boundaries for the Spont file.
+
+I hope this makes things clearer & don't hesitate to reach out if you have more questions.
+Noelle.
+
+(Followed up with another email --> Sorry attached wrong excel
+file. This is the right one.) 
+*** Sam reply: 
+Thanks, that should help in getting started. In the long run we'll need to understand exactly how you determine S1 (source) vs S2 (sink) - if you could setup a call with Erica to go through that process in detail, it would be helpful (we might also find a way to automate it).
+Thanks,
+Sam
+*** My reply: 
+Thanks so much for this new spreadsheet! Very helpful -- I think this will be enough to get started on the spontaneous comparisons. Sam mentioned above the S1/S2 issue; maybe something we could discuss on one of our Friday meetings?  
+
+Thanks again for all this info; it is much appreciated! :) 
+Erica
+*** Response from Noelle: 
+Hi Erica,
+yes, we could discuss this at this Friday's meeting or I'd be happy anytime to zoom about it either.
+In the meantime I've attached a CSD profile from a recording in A1 related to the BF tone of this A1 site (BF=11Khz) which show's a typical profile that we would see to a preferred modality stimulus in a cortical are, and which we would use to determine layers. So first you would look for the earliest sink (red color) to designate the Gran layer (usually it does not have the largest sink amplitude), in this case chs 13-14. Then above that you look for a pretty large amplitude source (blue color) over sink (red color) pair to designate the Supra layer in this case Chs 4-12. Within the Supra layer the boundaries of S1 and S2 are simply determined by the boundaries of the source for S1 and the boundaries of the sink for S2. The infra layers are usually easy to designate: a sink over source pair directly under the Gran layer. Sometimes within the Infra layer the boundaries of I1 and I2 are harder to define.
+But remember this is dependent on the reponse to a preferred modality stimulus. If it was a non-prefrerred modality stimulus, such as non-BF tone which causes suppression in A1, the sinks and sources would be reversed.  We just use these CSD signatures as indicators of layers.
+
+Thanks,
+Noelle.
+*** Reply to Noelle from Me: 
+Ah, thank you so much Noelle! This is very helpful. So, I see that these boundaries are derived by looking at the response to BF -- one thing I'm trying to understand is how this concept maps onto the different modalities (spont, BBN, oldtono, etc.). i.e. if I have the spontaneous or click data files, would I be able to use these to derive this info? 
+
+If you'd prefer to set up a quick zoom call instead, I'm more than happy to do that as well! 
+
+Thanks so much for your help with this. Sorry if I am slow on the uptake! This is my first time working with this kind of data, so I'm just trying to get my bearings. I really appreciate it! 
+
+Erica
 ** For now --> use old .csv just to keep going thru the code
 *** Put a copy of an old .csv file (19may9_A1_ERP_Layers.csv) into ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1 
 *** Change dbpath in load.py, line 2399 to reflect this new location! 
 *** NOTE: of course, this is not a suitable .csv file (ERP, it's old, etc.) -- just for sake of example 
 *** Changing line 2400 as well -- note that this actually is for ERP and is the same file as the one I am using (still old, etc.) 
+*** Changed 'dorun' from False to True (load.py, line 2346). 
+*** In ~/Desktop/NEUROSIM/a1dat, run --> python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat --> See what happens! 
+*** Output --> "channels unknown! no channels used; exiting" --> ah okay. failed on getflayers() --> KEEP SOLVING THIS TOMORROW!! 
+** List of spontaneous A1 .mat files w/ bottom channel == 21:
+*** '1-bu025026014@os_eye06_20.mat' (2-21) 
+*** '1-bu031032017@os_eye06_20.mat' (2-21) 
+*** '1-ma005000017@os_eye06_20.mat' (2-21) 
+*** '2-bu001002017@os_eye06_20.mat' (6-21)   --> FOUND 
+*** '2-bu013014031@os_eye06_20.mat' (2-21)   --> FOUND
+*** '2-bu015016028@os_eye06_20.mat' (3-21)   --> FOUND
+*** '2-bu027028013@os_eye06_20.mat' (1-21) ! --> FOUND
+*** '2-bu043044016@os_eye06_20.mat' (5-21)   --> FOUND
+*** '2-gt044045014@os_eye06_30.mat' (2-21)   --> FOUND
+*** '2-ma031032023@os_eye06_20.mat' (1-21) ! --> FOUND
+*** '2-rb023024016@os_eye06_20.mat' (4-21)   --> FOUND
+*** '2-rb031032016@os_eye06_20.mat' (1-21) ! --> FOUND
+*** '2-rb045046026@os_eye06_20.mat' (1-21) ! --> FOUND
+*** '2-rb063064011@os_eye06_20.mat' (5-21)   --> FOUND
+*** '2-ta040041045@os_eye06_30.mat' (5-21)   --> FOUND
+*** '2-ta044045022@os_eye06_30.mat' (2-21)   --> FOUND
+*** '2-um007008014@os_eye06_30.mat' (7-21)   --> FOUND
+*** '2-um040041018@os_eye06_30.mat' (3-21)   --> FOUND
+
