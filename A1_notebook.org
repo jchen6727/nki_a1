@@ -39638,3 +39638,134 @@ Additionally, plotCSD() arg LFP_overlay changed to overlay --> can now input 'CS
 **** 1-bu013014031
 **** 1-bu013014040
 ** NOTE --> last file downloaded for now: 1-bu037038015@os_eye06_20.mat
+** Plotting CSD of A1 spontaneous data files:
+*** in analysis/dataAnalysis.py --> changed main code block so that would be plotting regular CSD for each of the A1 data files in A1/data/NHPdata/spont/contproc
+*** However --> got a segmentation fault after an attempt at resampling the channels of the first file? hm. perhaps too large...? 
+*** TRY: re-including timeRange = [1000, 1200] just to test out this hypothesis.
+*** TRY: just doing one of the A1 spontaneous files on its own. 
+** Generated some 200ms long CSD plots from spontaneous A1 data files --> NOTE: sam says these are probably too short and will most likely be better to look at lengths 1-10s:
+*** moved them to A1/data/NHPdata/CSD/spont/A1
+** NOTE: Need to get layer boundaries from the most recent email Nicole sent me (look at this!!) 
+** Sam suggests that for comparison of model vs monkey, that might be best to find oscillation events using OEvent pkg (https://github.com/NathanKlineInstitute/a1dat) and to look for / compare any spontaneous oscillation events across model and monkey. 
+** OEvent:
+*** again, located: https://github.com/NathanKlineInstitute/a1dat
+*** tips for using; sam says:
+**** end of notebook.org has use example
+**** usually run on CSD and specify which channels (could just use a few from model - supra, gran, infragran)
+*** I am cloning this into ~/Desktop/NEUROSIM
+**** cd ~/Desktop/NEUROSIM
+**** went to github --> code --> https clone
+**** cd ~/Desktop/NEUROSIM --> git clone https://github.com/NathanKlineInstitute/a1dat.git
+**** done! 
+**** --> now to access, go to ~/Desktop/NEUROSIM/a1dat
+** a1dat:
+*** created 'erica' branch in case need to modify load.py (very possible!) 
+**** git checkout -b erica
+**** confirmed on 'erica' branch with git branch 
+*** from reading last entry in notebook.org (20sep23 --> example for IT), it seems like load.py is the main file to look at here. 
+*** ^^ From this entry, seems like they ran it with python -i load.py path_to_mat_file.mat (--> python -i load.py data/nhpdat/spont/A1/2-rb023024051@os.mat) 
+*** I see the main block of code at the bottom; there may be some things that need to be changed? See below:
+**** line 2339
+***** ORIG: basedir = 'data/nhpdat/spont/oscout/' 
+***** --> potentially need to change it to basedir = '~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1' ?? 
+**** line 2399: 
+***** ORIG: dbpath = 'data/nhpdat/spont/A1/19apr4_A1_spont_LayersForSam.csv'
+***** --> changed to...? hm. LOOK AT THAT EMAIL!! 
+**** line 2400: 
+***** ORIG: if fn.count('ERP'): dbpath = 'data/nhpdat/ERP/A1/19may9_A1_ERP_Layers.csv'
+***** --> change to...? 
+**** line 2407 & line 2408:
+***** if dolaggedcoh: basedir = 'data/nhpdat/spont/laggedcoh'
+***** if dolaggedcohnoband: basedir = 'data/nhpdat/spont/laggedcohnoband'
+***** --> change to...? 
+** Seeing what happens when trying to run load.py as described at the end of notebook.org:
+*** cd ~/Desktop/NEUROSIM/a1dat
+*** python-i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat
+**** ^^ OUTPUT: ModuleNotFoundError: No module named 'hdf5storage'
+**** ^^ Required in a1dat/hecogdat.py evidently. 
+**** ^^ pip install hdf5storage
+***** ericagriffith% pip install hdf5storage
+Collecting hdf5storage
+  Downloading hdf5storage-0.1.15-py2.py3-none-any.whl (56 kB)
+     |████████████████████████████████| 56 kB 1.3 MB/s 
+Requirement already satisfied: numpy; python_version >= "3.4" in ./anaconda3/lib/python3.7/site-packages (from hdf5storage) (1.15.1)
+Requirement already satisfied: h5py>=2.1; python_version >= "3.3" in ./anaconda3/lib/python3.7/site-packages (from hdf5storage) (2.8.0)
+Requirement already satisfied: six in ./anaconda3/lib/python3.7/site-packages (from h5py>=2.1; python_version >= "3.3"->hdf5storage) (1.11.0)
+Installing collected packages: hdf5storage
+Successfully installed hdf5storage-0.1.15
+WARNING: You are using pip version 20.2.3; however, version 20.3.3 is available.
+You should consider upgrading via the '/Users/ericagriffith/anaconda3/bin/python -m pip install --upgrade pip' command. 
+**** ^^ python --> import hdf5storage works now 
+*** Trying again after installing hdf5storage! 
+*** RAN!
+**** ericagriffith% python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat
+['load.py', '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat']
+/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat 44000.0 samprds: 11000.0
+fn: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat sampr: 44000.0 samprds: 11000.0
+resampling channel 0
+/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/scipy/signal/signaltools.py:2383: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  return y[keep]
+/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/scipy/signal/signaltools.py:3463: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  return y[sl]
+resampling channel 1
+resampling channel 2
+resampling channel 3
+resampling channel 4
+resampling channel 5
+resampling channel 6
+resampling channel 7
+resampling channel 8
+resampling channel 9
+resampling channel 10
+resampling channel 11
+resampling channel 12
+resampling channel 13
+resampling channel 14
+resampling channel 15
+resampling channel 16
+resampling channel 17
+resampling channel 18
+resampling channel 19
+resampling channel 20
+resampling channel 21
+resampling channel 22
+[[-1.81014624e-18 -1.50845520e-18  2.03641452e-18 ... -3.09351163e-21
+   6.62895350e-22  1.28896318e-22]]
+fn is /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat getbipolar: False winsz: 10 medthresh: 4.0 useCSD: True useDynThresh: 0 dolaggedcoh False mspecwidth: 7.0 docfc: False dolaggedcohnoband: False dosim: 0 endfctr: 0.5
+**** main output lines at the end:
+***** [[-1.81014624e-18 -1.50845520e-18  2.03641452e-18 ... -3.09351163e-21
+   6.62895350e-22  1.28896318e-22]]
+***** fn is /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat getbipolar: False winsz: 10 medthresh: 4.0 useCSD: True useDynThresh: 0 dolaggedcoh False mspecwidth: 7.0 docfc: False dolaggedcohnoband: False dosim: 0 endfctr: 0.5
+* <2021-01-25 Mon -- oevent pkg>
+** output of load.py:
+*** ['load.py', '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat'] 
+**** ^^ this is sys.argv <-- this gets printed in the main code block of load.py in line 2358
+*** /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat 44000.0 samprds: 11000.0
+**** ^^ this gets printed in line 2366 (print(fn,getorigsampr(fn),'samprds:',samprds))
+*** fn: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat sampr: 44000.0 samprds: 11000.0
+**** ^^ this is printed via loadfile (function in a1dat/nhpdat.py <-- actually subfunction of loadfile, rdmat). This is involed in load.py in line 2375 (could be line 2371, but not this bc right now 'getbipolar' is set to False) 
+*** Then a bunch of resampling lines that I recognize from other times I have run loadfile
+*** [[-1.81014624e-18 -1.50845520e-18  2.03641452e-18 ... -3.09351163e-21
+   6.62895350e-22  1.28896318e-22]]
+**** ^^ not sure where this is getting printed, but some candidates would be one of the nhpdat.py functions? the only one that I see is that we're calling loadfile. when does loadfile print something like this? 
+**** ^^ 3 functions that loadfile calls -- rdmat, getCSD, getMUA
+***** rdmat only calls print for the 'resampling channel' lines -- don't think it's this 
+***** getCSD is actually in a1dat/csd.py -- getCSD calls Vaknin and removemean
+***** ^^ removemean actually does have a print line --> print(np.mean(x, axis=ax, keepdims=True))
+***** getMUA is in a1dat/csd.py -- this doesn't have a print line 
+*** fn is /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu005006019@os_eye06_20.mat getbipolar: False winsz: 10 medthresh: 4.0 useCSD: True useDynThresh: 0 dolaggedcoh False mspecwidth: 7.0 docfc: False dolaggedcohnoband: False dosim: 0 endfctr: 0.5
+**** ^^ this is in load.py in line 2392 ( --> print('fn is',fn,'getbipolar:',getbipolar,'winsz:', winsz, 'medthresh:', medthresh,'useCSD:',useCSD,'useDynThresh:',useDynThresh,'dolaggedcoh',dolaggedcoh,'mspecwidth:',mspecwidth,'docfc:',docfc,'dolaggedcohnoband:',dolaggedcohnoband,'dosim:',dosim,'endfctr:',endfctr)) 
+** Okay, so I see that it gets up to the "if dorun:" statement in load.py, on line 2395 --> dorun is set to False currently. So, looks like it took the raw data file and did getCSD and getMUA on it. 
+** What comes next? --> look at end of notebook.org
+** CSD.shape --> (21, 3107221)
+** dat.shape --> (21, 3107221)
+** MUA.shape --> (23, 3107221)
+** getflayers() & csv issue:
+*** talked to noelle/sam/peter -- emails below
+*** TO DO: ADD EMAILS 
+
+** For now --> use old .csv just to keep going thru the code
+*** Put a copy of an old .csv file (19may9_A1_ERP_Layers.csv) into ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1 
+*** Change dbpath in load.py, line 2399 to reflect this new location! 
+*** NOTE: of course, this is not a suitable .csv file (ERP, it's old, etc.) -- just for sake of example 
+*** Changing line 2400 as well -- note that this actually is for ERP and is the same file as the one I am using (still old, etc.) 

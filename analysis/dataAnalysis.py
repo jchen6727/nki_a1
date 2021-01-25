@@ -434,11 +434,6 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
     axs[chan].get_yaxis().set_visible(False)
     axs[chan].plot(tt,dat[chan,:],color='red',linewidth=0.3)
 
-  #axs[nrow-1].arrow(clip_on=False)
-  #axs[nrow-1].get_xaxis().set_visible(True)
-  #axs[nrow-1].vlines(x=trigtimes[1],ymin=-0.2,ymax=0,colors='b')
-  #plt.annotate('HERE',xy=(trigtimes[1],-0.1),arrowprops=dict(arrowstyle="<->", color='b'),xytext=(trigtimes[1],-0.2),annotation_clip=True)
-  #fig.canvas.draw()
   plt.xlabel('Time (ms)')
   plt.ylabel('Channel')  
   plt.show()
@@ -615,7 +610,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -623,54 +618,72 @@ if __name__ == '__main__':
   ## Delete or move unwanted / unworted .mat data files 
   # moveDataFiles(origDataDir,'move')
 
-  ############# 
-  recordingArea = 'MGB/' # 'A1/'
+  # ############# 
+  recordingArea = 'A1/' # 'MGB/' 
   
-  MGBfiles = ['1-bu015016027@os_eye06_20.mat', '1-bu009010023@os_eye06_20.mat', '1-bu019020024@os_eye06_20.mat','1-gt020021013@os_eye06_30.mat', '1-gt040041012@os_eye06_30.mat', '1-gt044045013@os_eye06_30.mat', '1-gt047048016@os_eye06_30.mat', '1-gt055056016@os_eye06_30.mat', '1-ma027028018@os_eye06_20.mat']
-  A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
+  dataPath = origDataDir + recordingArea
+  dataFiles = os.listdir(dataPath) # ensure this only includes .mat files --> appears so upon check 
 
-  dataFile = MGBfiles[4] #A1files[2] #MGBfiles[8] 
+  # MGBfiles = ['1-bu015016027@os_eye06_20.mat', '1-bu009010023@os_eye06_20.mat', '1-bu019020024@os_eye06_20.mat','1-gt020021013@os_eye06_30.mat', '1-gt040041012@os_eye06_30.mat', '1-gt044045013@os_eye06_30.mat', '1-gt047048016@os_eye06_30.mat', '1-gt055056016@os_eye06_30.mat', '1-ma027028018@os_eye06_20.mat']
+  # A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
+  # dataFile = MGBfiles[4] #A1files[2] #MGBfiles[8] 
 
-  fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
+  for dataFile in dataFiles:
+    fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
-  [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
-          # sampr is the sampling rate after downsampling 
-          # tt is time array (in seconds)
-          # trigtimes is array of stim trigger indices
-          # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
 
-  ## GET TRIGGER TIMES IN MS
-  trigTimesMS = []
-  for idx in trigtimes:
-    trigTimesMS.append(tt[idx]*1e3)
-  #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1000,1200],showFig=False) # timeRange=[1100,1200],
 
-  ## GET RELATIVE TRIGGER TIME INDICES
-  relativeTrigTimes = []
-  for idx in trigtimes:
-    relativeTrigTimes.append(idx - trigtimes[0])#80143)
 
-  ## GET RELATIVE TRIGGER TIMES IN SECONDS 
-  relativeTrigTimesMS = []
-  for time in trigTimesMS:
-    relativeTrigTimesMS.append(time-trigTimesMS[0])
+  # [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+  #         # sampr is the sampling rate after downsampling 
+  #         # tt is time array (in seconds)
+  #         # trigtimes is array of stim trigger indices
+  #         # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-  #print(relativeTrigTimesMS) # USEFUL FOR OVERLAYING ON AVERAGE 
+  #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
+  #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
+
+
+
+  # ## GET TRIGGER TIMES IN MS
+  # trigTimesMS = []
+  # for idx in trigtimes:
+  #   trigTimesMS.append(tt[idx]*1e3)
+  # #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+
+  # ## GET RELATIVE TRIGGER TIME INDICES
+  # relativeTrigTimes = []
+  # for idx in trigtimes:
+  #   relativeTrigTimes.append(idx - trigtimes[0])#80143)
+
+  # ## GET RELATIVE TRIGGER TIMES IN SECONDS 
+  # relativeTrigTimesMS = []
+  # for time in trigTimesMS:
+  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+  # #print(relativeTrigTimesMS) # USEFUL FOR OVERLAYING ON AVERAGE 
 
   
   #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
   #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
 
-  # REMOVE BAD EPOCHS FIRST..?  
+  ## REMOVE BAD EPOCHS FIRST..?  
 
-  # GET AVERAGE ERP ## 
-  ## set epoch params
-  swindowms = 0 # start time relative to stimulus 
-  ewindowms = 200 #200 # end time of epoch relative to stimulus onset 
+  # ### GET AVERAGE ERP ###
+  # ## set epoch params
+  # swindowms = 0     # start time relative to stimulus 
+  # ewindowms = 200   # end time of epoch relative to stimulus onset 
 
 
-  # calculate average CSD ERP 
-  ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+  ## calculate average CSD ERP ###
+  #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
+
+
+  #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
+
+  ###################
 
   # print('TIME OF FIRST STIMULUS')
   # print(relativeTrigTimesMS[0])
@@ -678,8 +691,6 @@ if __name__ == '__main__':
   # print(relativeTrigTimesMS[1]) #(tt[trigtimes[1]]-tt[trigtimes[0]])*1e3 + 0)
   # print('TIME OF THIRD STIMULUS')
   # print(relativeTrigTimesMS[2])
-
-  plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
 
   #individualERPs = np.zeros()
   #tt1,individualERP1 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,1)
@@ -691,36 +702,36 @@ if __name__ == '__main__':
 
   
 
-  # INVESTIGATE IF THERE ARE REPEATS
-  for chan in range(avgCSD.shape[0]):
-    csdChannel = list(avgCSD[chan,:])
-    #subsetCSD = csdChannel[100:200]    # arbitrary length
-    subsetCSD = csdChannel[relativeTrigTimes[0]:relativeTrigTimes[1]]
+  # # INVESTIGATE IF THERE ARE REPEAT SEQUENCES
+  # for chan in range(avgCSD.shape[0]):
+  #   csdChannel = list(avgCSD[chan,:])
+  #   #subsetCSD = csdChannel[100:200]    # arbitrary length
+  #   subsetCSD = csdChannel[relativeTrigTimes[0]:relativeTrigTimes[1]]
 
-    # print('subsetCSD')
-    # print(subsetCSD)
-    # print('csdChannel')
-    # print(csdChannel)
+  #   # print('subsetCSD')
+  #   # print(subsetCSD)
+  #   # print('csdChannel')
+  #   # print(csdChannel)
 
-    count = 0
-    for i in range(len(csdChannel) - (len(subsetCSD)-1)):
-      subset_len = len(subsetCSD)
-      checkList = []
+  #   count = 0
+  #   for i in range(len(csdChannel) - (len(subsetCSD)-1)):
+  #     subset_len = len(subsetCSD)
+  #     checkList = []
 
-      for n in range(subset_len):
-        checkList.append(csdChannel[i+n])
+  #     for n in range(subset_len):
+  #       checkList.append(csdChannel[i+n])
       
-      # print('AVERAGE CSD VALUES BEING CHECKED')
-      # print(checkList)
-      # print('SUBSET FROM AVERAGE CSD')
-      # print(subsetCSD)
+  #     # print('AVERAGE CSD VALUES BEING CHECKED')
+  #     # print(checkList)
+  #     # print('SUBSET FROM AVERAGE CSD')
+  #     # print(subsetCSD)
 
-      if checkList == subsetCSD:
-        count += 1
-        print('sequence found')
+  #     if checkList == subsetCSD:
+  #       count += 1
+  #       print('sequence found')
 
     
-    print(count)
+  #   print(count)
 
 
     # # MOVE .PNG FILES 
