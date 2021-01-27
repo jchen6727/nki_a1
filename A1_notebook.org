@@ -39968,3 +39968,9 @@ Noelle.
 ** QUESTIONS remaining on tax osc paper:
 *** significance / meaning of CV2 and Fano Factor? --> ah... CV2 is squared coefficient of variation? need more info still though to understand the significance. 
 *** intra-event, inter-event? 
+** So --> from brief re-reading of taxonomy of oscillations paper, I would say that -- little clearer what I can aim to generate that could be useful. Basic things to start with (visually-speaking, in terms of plots) -- would be CSD, morlet spectrograms (w/ red bounding boxes?), csd w/ highlighted unfiltered + filtered waveforms. 
+** ^^ Relatedly, so then, what characteristics in this data set should I be looking for? 
+*** number of cycles from each oscillation band (in supra/gran/infra, I'm assuming?) 
+*** ^^ question of which angle to look at this dataset from -- particular oscillation characteristics, intra vs inter event rhythmicity?? need to understand this better, then whole-dataset level characteristics
+*** If sam wants to use this to look at e.g. how oscillations are generated ... how does this fit into what I said above? 
+** QUESTION --> Should I be looking at ERP from click and removing these, as indicated by the tax osc paper?  
