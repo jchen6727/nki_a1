@@ -175,9 +175,10 @@ def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,saveFig=True,showFig=True):
+def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
+  ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
   ## tt --> numpy array of time points (time array in seconds)
   ## fn --> filename -- string -- used for saving! 
   ## saveFolder --> string -- path to directory where figs should be saved
@@ -262,6 +263,19 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
   else:
     axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
+
+
+
+  ## ADD ARROW POINTING TO STIMULUS TIMES      ## NOTE: this was taken from (v) in plotAvgCSD() & main code block
+  if trigtimes:
+    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    for idx in trigtimes:
+      trigtimesMS.append(tt[idx])   # tt should already be converted to ms (from sec) as indicated above 
+    
+    for time in trigtimesMS:
+      if time >= xmin and time <= xmax:
+        axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+        axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
 
 
   # SAVE FIGURE
@@ -610,7 +624,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  origDataDir = '../data/NHPdata/click/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -619,7 +633,7 @@ if __name__ == '__main__':
   # moveDataFiles(origDataDir,'move')
 
   # ############# 
-  recordingArea = 'A1/' # 'MGB/' 
+  recordingArea = 'A1/' #'A1/' # 'MGB/' 
   
   dataPath = origDataDir + recordingArea
   dataFiles = os.listdir(dataPath) # ensure this only includes .mat files --> appears so upon check 
@@ -628,12 +642,12 @@ if __name__ == '__main__':
   # A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
   # dataFile = MGBfiles[4] #A1files[2] #MGBfiles[8] 
 
-  for dataFile in dataFiles:
+  for dataFile in dataFiles[0:3]:
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
 
-    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1000,1200],showFig=False) # timeRange=[1100,1200],
+    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,showFig=False) # timeRange=[1100,1200],
 
 
   # [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
