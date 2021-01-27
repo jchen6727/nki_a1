@@ -39974,3 +39974,25 @@ Noelle.
 *** ^^ question of which angle to look at this dataset from -- particular oscillation characteristics, intra vs inter event rhythmicity?? need to understand this better, then whole-dataset level characteristics
 *** If sam wants to use this to look at e.g. how oscillations are generated ... how does this fit into what I said above? 
 ** QUESTION --> Should I be looking at ERP from click and removing these, as indicated by the tax osc paper?  
+* <2021-01-27 Wed -- layer boundaries>
+** TO DO: 
+*** look at feedback on thal int results section
+*** look at CSD of some of those click files downloaded yesterday
+*** Identify instances of the pattern described by noelle (copy-pasted in earlier entries and described over email) 
+*** Apply visual alg described by noelle (in earlier entries) to these responses
+*** Screenshot & send interpretation to noelle for confirmation / feedback
+*** Once this is established --> Make new .csv file
+*** Add this .csv file into load.py
+*** Try load.py again (as is)
+*** Do another read-thru of tax osc paper -- continue matching text to functions and seeing what analyses could be useful / possible for cosyne & first paper
+*** See if this read-thru and the new run attempts of load.py de-mystifies more of what the current load.py main code block does 
+*** Come up with ideas + consult with sam & salva about what we ideally want from this processing
+*** Suggest / Try concrete modifications to load.py to make this happen
+*** Then, start thinking about how to do the equivalent for model data 
+** CSD of click files:
+*** ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc/A1 --> for now, the ones I downloaded yesterday are in a subdir (A1_click_21_channel_bottom) that I will eventualy get rid of. 
+*** A1/analysis/dataAnalysis.py is script to generate CSD from data files 
+*** The CSD png files will be saved (NEED TO FIX THIS!) in A1/analysis
+*** 200ms almost certainly too short to capture what I can be sure is a response to click. 
+*** It occurs to me that it would be best to maybe look expliclty at response after a known trigger time? Figure this out potentially. 
+*** ^^ For now, plot timeRange = [0,1100] to see what this looks like. 
