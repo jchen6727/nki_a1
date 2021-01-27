@@ -321,10 +321,10 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
 ### PLOT CSD OF AVERAGED ERP ### 
-def plotAvgCSD(dat,tt,relativeTrigTimes=None,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
+def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFig=True,showFig=True):
   ## dat --> CSD data as numpy array (from getAvgERP)
   ## tt --> numpy array of time points (from getAvgERP)
-  ## trigtimes --> should be relativeTrigTimesMS
+  ## trigtimes --> should be relativeTrigTimesMS (NOTE: trigtimes changed from relativeTrigTimes=None)
   ## fn --> string --> input filename --> used for saving! 
   ## saveFolder --> string --> directory where figs should be saved
   ## overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
@@ -364,14 +364,40 @@ def plotAvgCSD(dat,tt,relativeTrigTimes=None,fn=None,saveFolder=None,overlay=Tru
   axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
 
 
-
+#########
   # (v) ADD ARROW POINTING TO STIMULUS TIMES
-  ## ADD ARG THEN IF STATEMENT
-  for time in relativeTrigTimes:
-    if time <= xmax:
-      axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
-      axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
+    # OLD CODE #### DEPRECATED #### ## ADD ARG THEN IF STATEMENT
+    # for time in relativeTrigTimes:
+    #   if time <= xmax:
+    #     axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+    #     axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
 
+
+  # (v) ADD ARROW POINTING TO STIMULUS TIMES        ## NOTE: this was taken from (v) in plotAvgCSD() & main code block
+  # if trigtimes: ## FIGURE THIS OUT 
+  
+  # ## GET TRIGGER TIMES IN MS
+  # trigTimesMS = []
+  # for idx in trigtimes:
+  #   trigTimesMS.append(tt[idx]*1e3)
+  # #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+
+  # ## GET RELATIVE TRIGGER TIME INDICES
+  # relativeTrigTimes = []
+  # for idx in trigtimes:
+  #   relativeTrigTimes.append(idx - trigtimes[0])#80143)
+
+  # ## GET RELATIVE TRIGGER TIMES IN SECONDS 
+  # relativeTrigTimesMS = []
+  # for time in trigTimesMS:
+  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+    # for time in trigtimesMS:
+    #   if time >= xmin and time <= xmax:
+    #     axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+    #     axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
+
+#########
 
   # (vi) SET TITLE AND OVERLAY AVERAGE ERP TIME SERIES (OR NOT)
   ## NOTE: add option for overlaying average LFP...??
@@ -426,12 +452,30 @@ def plotAvgCSD(dat,tt,relativeTrigTimes=None,fn=None,saveFolder=None,overlay=Tru
 
 
 def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
-    # dat should be individual ERP from getIndividual ERP
-    # tt should be ttavg from getAvgERP
-    # trigtimes should be relativeTrigTimesMS
+  # dat should be individual ERP from getIndividual ERP
+  # tt should be ttavg from getAvgERP
+  # trigtimes should be relativeTrigTimesMS -- NOT EVEN USED RIGHT NOW; Pre-emptive code below 
 
-  # MAKE FIGURE OF AVERAGE CSD 
 
+  # Convert trigtimes (list of indices in tt that correspond to onset of trigger stimuli) to trigtimesMS and/or relativeTrigTimesMS
+  # (i) ## GET TRIGGER TIMES IN MS
+  # trigTimesMS = []
+  # for idx in trigtimes:
+  #   trigTimesMS.append(tt[idx]*1e3)
+
+  # (ii) ## GET RELATIVE TRIGGER TIME INDICES
+  # relativeTrigTimes = []
+  # for idx in trigtimes:
+  #   relativeTrigTimes.append(idx - trigtimes[0])#80143)
+
+  # (iii) ## GET RELATIVE TRIGGER TIMES IN MILLISECONDS 
+  # relativeTrigTimesMS = []
+  # for time in trigTimesMS:
+  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+
+  ### MAKE FIGURE OF INDIVIDUAL ERP ### --- NOTE: are we sure this is what that does? VERIFY. 
+ 
   fig = plt.figure()
   nrow = dat.shape[0] # number of channels
   axs = []
@@ -455,10 +499,9 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
 
 
 
-
-##################################  
+######################################
 ### FILE PRE-PROCESSING FUNCTIONS #### 
-##################################
+######################################
 
 # Sorts data .mat files by recording region
 def sortFiles(pathToData,regions):
@@ -638,26 +681,19 @@ if __name__ == '__main__':
   dataPath = origDataDir + recordingArea
   dataFiles = os.listdir(dataPath) # ensure this only includes .mat files --> appears so upon check 
 
-  # MGBfiles = ['1-bu015016027@os_eye06_20.mat', '1-bu009010023@os_eye06_20.mat', '1-bu019020024@os_eye06_20.mat','1-gt020021013@os_eye06_30.mat', '1-gt040041012@os_eye06_30.mat', '1-gt044045013@os_eye06_30.mat', '1-gt047048016@os_eye06_30.mat', '1-gt055056016@os_eye06_30.mat', '1-ma027028018@os_eye06_20.mat']
-  # A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
-  # dataFile = MGBfiles[4] #A1files[2] #MGBfiles[8] 
-
-  for dataFile in dataFiles[0:3]:
+  for dataFile in dataFiles[0:1]:
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+            # sampr is the sampling rate after downsampling 
+            # tt is time array (in seconds)
+            # trigtimes is array of stim trigger indices
+            # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
 
     plotCSD(fn=fullPath,dat=CSD_data,tt=tt,showFig=False) # timeRange=[1100,1200],
 
 
-  # [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
-  #         # sampr is the sampling rate after downsampling 
-  #         # tt is time array (in seconds)
-  #         # trigtimes is array of stim trigger indices
-  #         # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
-
-  #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
 
 
 
@@ -680,8 +716,6 @@ if __name__ == '__main__':
   # #print(relativeTrigTimesMS) # USEFUL FOR OVERLAYING ON AVERAGE 
 
   
-  #### PLOT INTERPOLATED CSD COLOR MAP PLOT #### 
-  #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,timeRange=[1100,1200],showFig=False)
 
   ## REMOVE BAD EPOCHS FIRST..?  
 
@@ -693,7 +727,6 @@ if __name__ == '__main__':
 
   ## calculate average CSD ERP ###
   #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
-
 
   #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
 

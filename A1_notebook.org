@@ -40010,6 +40010,50 @@ Noelle.
         axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
 
 
-*** Give it a go! 
 *** NOTE: should make the conversion from trigtimes indices --> ms a function potentially? 
-*** 
+*** Give it a go! --> Try thus far with just 1 of the click files; the third one maybe? the good one? 
+** Cleaning up main code block in A1/analysis/dataAnalysis.py:
+*** Trigger times code -- maybe useful for later if making a function of some kind? 
+**** The code below gets the trigger times in ms:
+  # ## GET TRIGGER TIMES IN MS
+  # trigTimesMS = []
+  # for idx in trigtimes:
+  #   trigTimesMS.append(tt[idx]*1e3)
+  # #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+
+**** The code below gets the relative trigger time indices:
+  # ## GET RELATIVE TRIGGER TIME INDICES
+  # relativeTrigTimes = []
+  # for idx in trigtimes:
+  #   relativeTrigTimes.append(idx - trigtimes[0])#80143)
+
+**** The code below gets relative trigger times in (milli?)seconds:
+  # ## GET RELATIVE TRIGGER TIMES IN SECONDS 
+  # relativeTrigTimesMS = []
+  # for time in trigTimesMS:
+  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+**** Full code block of above (plus one print line at the end):
+  # ## GET TRIGGER TIMES IN MS
+  # trigTimesMS = []
+  # for idx in trigtimes:
+  #   trigTimesMS.append(tt[idx]*1e3)
+  # #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
+
+  # ## GET RELATIVE TRIGGER TIME INDICES
+  # relativeTrigTimes = []
+  # for idx in trigtimes:
+  #   relativeTrigTimes.append(idx - trigtimes[0])#80143)
+
+  # ## GET RELATIVE TRIGGER TIMES IN SECONDS 
+  # relativeTrigTimesMS = []
+  # for time in trigTimesMS:
+  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
+
+  # #print(relativeTrigTimesMS) # USEFUL FOR OVERLAYING ON AVERAGE 
+**** ^^ believe all of this was in there in order to overlay this on the average and individual ERP
+**** ^^ problem right now to fix is that trigtimes in plotInidivudalERP() and plotAvgCSD() require trigtimes to be in relativeTrigTimesMS format. Should do this in function, not in main code block. Clean this up!! 
+*** Removing filenames from main code block (now retrieves these automatically):
+**** # MGBfiles = ['1-bu015016027@os_eye06_20.mat', '1-bu009010023@os_eye06_20.mat', '1-bu019020024@os_eye06_20.mat','1-gt020021013@os_eye06_30.mat', '1-gt040041012@os_eye06_30.mat', '1-gt044045013@os_eye06_30.mat', '1-gt047048016@os_eye06_30.mat', '1-gt055056016@os_eye06_30.mat', '1-ma027028018@os_eye06_20.mat']
+**** # A1files = ['1-gt006000013@os_eye06_30.mat', '1-ma005000016@os_eye06_20.mat', '1-ma005000029@os_eye06_20.mat']
+**** # dataFile = MGBfiles[4] #A1files[2] #MGBfiles[8] 
