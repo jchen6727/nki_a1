@@ -39867,16 +39867,104 @@ Erica
 *** '2-bu001002017@os_eye06_20.mat' (6-21)   --> FOUND 
 *** '2-bu013014031@os_eye06_20.mat' (2-21)   --> FOUND
 *** '2-bu015016028@os_eye06_20.mat' (3-21)   --> FOUND
-*** '2-bu027028013@os_eye06_20.mat' (1-21) ! --> FOUND
-*** '2-bu043044016@os_eye06_20.mat' (5-21)   --> FOUND
-*** '2-gt044045014@os_eye06_30.mat' (2-21)   --> FOUND
-*** '2-ma031032023@os_eye06_20.mat' (1-21) ! --> FOUND
-*** '2-rb023024016@os_eye06_20.mat' (4-21)   --> FOUND
-*** '2-rb031032016@os_eye06_20.mat' (1-21) ! --> FOUND
-*** '2-rb045046026@os_eye06_20.mat' (1-21) ! --> FOUND
-*** '2-rb063064011@os_eye06_20.mat' (5-21)   --> FOUND
-*** '2-ta040041045@os_eye06_30.mat' (5-21)   --> FOUND
-*** '2-ta044045022@os_eye06_30.mat' (2-21)   --> FOUND
-*** '2-um007008014@os_eye06_30.mat' (7-21)   --> FOUND
-*** '2-um040041018@os_eye06_30.mat' (3-21)   --> FOUND
+*** '2-bu027028013@os_eye06_20.mat' (1-21) ! --> line 158 --> FOUND
+*** '2-bu043044016@os_eye06_20.mat' (5-21)   --> line 164 --> FOUND
+*** '2-gt044045014@os_eye06_30.mat' (2-21)   --> line 180 --> FOUND
+*** '2-ma031032023@os_eye06_20.mat' (1-21) ! --> line 190 --> FOUND
+*** '2-rb023024016@os_eye06_20.mat' (4-21)   --> line 196 --> FOUND
+*** '2-rb031032016@os_eye06_20.mat' (1-21) ! --> line 199 --> FOUND
+*** '2-rb045046026@os_eye06_20.mat' (1-21) ! --> line 204 --> FOUND
+*** '2-rb063064011@os_eye06_20.mat' (5-21)   --> line 213 --> FOUND
+*** '2-ta040041045@os_eye06_30.mat' (5-21)   --> line 218 --> FOUND
+*** '2-ta044045022@os_eye06_30.mat' (2-21)   --> line 220 --> FOUND
+*** '2-um007008014@os_eye06_30.mat' (7-21)   --> line 227 --> FOUND
+*** '2-um040041018@os_eye06_30.mat' (3-21)   --> line 239 --> FOUND
+* <2021-01-26 Tue -- monkey to model comparisons>
+** response from noelle (See yesterday for rest of thread): 
+*** Hi Erica,
+No worries at all, I know it can be ambiguous sometimes. At times we forget that things we are so familiar with can be confusing when you don't see them day in-day out.
+So if the stimuli are of a modality that cause an excitatory response in A1 (i.e. suprathreshold MUA firing) e.g. BBN bursts (unless it's an A1 site that has a low BF (< 1400Hz) which usually doesn't respond or responds with with suppression to BBN, so have to use the BF tones in that case), oldTono (which is made up of pure frequency tones ranging from 0.3-32KHz in half octave steps presented in a random order)  or clicks, the CSD profile will look very similar (i.e. similar in pattern: Supra source over sink, Gran sink, Infra sink over source) to the one I sent previously. As there are no stimuli being presented during Spontaneous you won't have a stimulus response profile to help in choosing layers so we usually use the nearest in time presentation of BBN or click or BF streams to assign layers to channels and use those for the Spontaneous file. Generally during an experiment/recording we present a BBN stream (approx. 100 presentations within a stream) quite often (maybe every 40mins or so) to check that the brain hasn't moved up or down the electrode and the electrode chs we assigned to a specific layer are still in that layer.
+I hope this helps makes things clearer & you can ask me about the layers anytime!
+Noelle.
+** Made a corresponding list of BBN files (these correspond to the spontaneous A1 files in the last point from yesterday's entry)
+*** NOTE: these correspond to the ones that say "FOUND" after them -- see noelle's most recent spreadsheet for more info. 
+*** '2-bu001002010@os_eye06_20.mat'
+*** '2-bu013014041@os_eye06_20.mat'
+*** '2-bu015016038@os_eye06_20.mat'
+*** 2-bu027028016@os_eye06_20.mat'
+*** '2-bu043044047@os_eye06_20.mat'
+*** '2-gt044045045@os_eye06_30.mat'
+*** '2-ma031032018@os_eye06_20.mat'
+*** '2-rb023024011@os_eye06_20.mat'
+*** '2-rb031032011@os_eye06_20.mat'
+*** '2-rb045046029@os_eye06_20.mat'
+*** 2-rb063064007@os_eye06_20.mat'
+*** '2-ta040041046@os_eye06_30.mat'
+*** '2-ta044045038@os_eye06_30.mat'
+*** '2-um007008015@os_eye06_30.mat'
+*** '2-um040041016@os_eye06_30.mat'
+** Corresponding click data files: 
+*** NOTE: these correspond with the files in yesterday's entry with the FOUND label 
+*** '2-bu001002015@os_eye06_20.mat' (line 146) --> FOUND
+*** '2-bu013014029@os_eye06_20.mat' (line 153) --> FOUND
+*** '2-bu015016026@os_eye06_20.mat' (line 154) --> FOUND
+*** '2-bu027028011@os_eye06_20.mat' (line 158) --> FOUND
+*** '2-bu043044014@os_eye06_20.mat' (line 164) --> FOUND
+*** '2-gt044045012@os_eye06_30.mat' (line 180) --> FOUND
+*** '2-ma031032021@os_eye06_20.mat' (line 190) --> FOUND
+*** '2-rb023024014@os_eye06_20.mat' (line 196) --> FOUND 
+*** '2-rb031032014@os_eye06_20.mat' (line 199) --> FOUND
+*** '2-rb045046017@os_eye06_20.mat' (line 204) --> FOUND
+*** '2-rb063064009@os_eye06_20.mat' (line 213) --> FOUND
+*** '2-ta040041029@os_eye06_30.mat' (line 218) --> FOUND
+*** '2-ta044045021@os_eye06_30.mat' (line 220) --> FOUND
+*** '2-um007008018@os_eye06_30.mat' (line 227) --> FOUND
+*** '2-um040041020@os_eye06_30.mat' (line 239) --> FOUND
+** going through load.py, nhpdat.py, and taxonomy of osc paper:
+*** functions of interest in load.py:
+**** function of interest: def getmoreletwin --> # get morlet specgrams on windows of dat time series (window size in samples = winsz)
+**** ^^ related, load.py --> imports MorletSpec from morlet.py (also in a1dat) 
+**** function of interest: def geteventprop --> # get all major event properties, used for drawing the event or other...
+**** def getspecevents --> 
+***** # get oscillatory events
+***** # lms is list of windowed morlet spectrograms, lmsnorm is spectrograms normalized by median in each power
+***** # lnoise is whether the window had noise, medthresh is median threshold for significant events,
+***** # lsidx,leidx are starting/ending indices into original time-series, csd is current source density
+***** # on the single chan, MUA is multi-channel multiunit activity, overlapth is threshold for merging
+***** # events when bounding boxes overlap, fctr is fraction of event amplitude to search left/right/up/down
+***** # when terminating events
 
+*** in taxonomy of osc paper:
+**** Validation of OEvent pkg:
+***** superimposed simulated alpha events on supragranular CSD and then used pkg for detection (longer events were better -- longer == more cycles)
+**** removed ERPs from the CSD 
+***** Formed average ERPs from click dataset (in supra, gran, and infra)
+***** Formulated ERP score 
+***** Removed / excluded any event with ERP score > 0.8, etc. (some other criteria as well)
+**** Don't fully understand this 7-cycle morelet waveform situation, but:
+***** morlet waveform: https://en.wikipedia.org/wiki/Morlet_wavelet
+**** Oscillation event features -- duration, frequency span, waveform shape (basic characterization -- believe more details also included)
+**** entrainment theory + communication thru coherence
+**** Important to distinguish btwn non-oscillation waveforms occurring dur to time-domain features (e.g. synaptic time constants) vs. multi-cycle oscillation events
+**** functions in load.py potentially correlated to text from tax osc paper:
+***** In methods -- inter-event interval characterization: IEIstatsbyband, getblobIEI, etc. 
+***** In methods --> oscillation event detection and feature extraction --> 3rd papragraph ("we then calculated additional features from this set of events" --> possibly def getextrafeatures (I see zerophase=True in bandpass fx argument here) 
+***** in main code of load.py:
+****** medthresh:  probably corresponds to the 4x median threshold that I see ref'ed in tax osc paper.
+****** overlapth: "After the initial set of oscillation events is detected, we merge events when their bounding box overlapping area in the wavelet spectrogram exceeds 50% of the minimum area of each individual event. This allows continuity of events that are separated by minor fluctuations below threshold."
+****** freqmin (0.25), freqmax (250), freqstep (0.25): " We used linearly spaced frequencies (0.25 Hz frequency increments), ranging from 0.25 - 250 Hz, to compute the wavelets."
+****** winsz (10): "We extracted moderate/high-power spectral events using 7-cycle Morlet wavelets on non-overlapping 10 s windows"
+****** mspecwidth (7): not as sure about this one, but seems likely!!! --> "We extracted moderate/high-power spectral events using 7-cycle Morlet wavelets..." 
+
+** QUESTION FOR LOAD.PY --> what does def getdlmaw do? (line 2073) 
+** Benefits of data-driven modeling for oscilation detection as outlined in tax osc paper section "Mechanisms of oscilation generation": 
+*** Data-driven modeling could also pave the way for:
+**** understanding the extent to which electrophysiological measurements are contaminated by noise, and
+**** which type of waveforms one can expect to see in electrophysiological signals recorded during different experimental conditions. 
+**** Biophysical modeling could further allow us to:
+**** develop a revised taxonomy of the different oscillations, by predicting which circuit components each oscillation arises from. 
+**** A clearer understanding of the mechanisms creating oscillations will pave the way to:
+**** improving neuropathologies associated with disrupted brain rhythms, via pharmacology or targeted neuromodulation that normalizes rhythmic activity in a principled manner.
+** QUESTIONS remaining on tax osc paper:
+*** significance / meaning of CV2 and Fano Factor? --> ah... CV2 is squared coefficient of variation? need more info still though to understand the significance. 
+*** intra-event, inter-event? 
