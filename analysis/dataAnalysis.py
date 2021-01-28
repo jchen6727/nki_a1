@@ -25,7 +25,8 @@ from filter import lowpass,bandpass 		  # for getbandpass()
 import scipy                              # for plotCSD()
 import matplotlib                         # for plotCSD()
 from matplotlib import pyplot as plt      # for plotCSD() 
-
+# trying to get sort()
+from pylab import *
 
 ## PRE-PROCESSING FUNCTIONS ## 
 ### Originally in rdmat.py ### 
@@ -87,8 +88,8 @@ def Vaknin(x):
 # get CSD - first do a lowpass filter. lfps is a list or numpy array of LFPs arranged spatially by column
 def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300):
 
-  # convert from uV to mV
-  lfps = lfps/1000
+  # convert from uV to mV ## Does this already happen in rdmat() ?? 
+  # lfps = lfps/1000
 
   datband = getbandpass(lfps,sampr,minf,maxf)
   if datband.shape[0] > datband.shape[1]: # take CSD along smaller dimension
@@ -142,6 +143,61 @@ def loadfile (fn,samprds,spacing_um=100):
 #### NOTE: should also make these available for use for sim data as well in netpyne 
 def ms2index (ms, sampr): return int(sampr*ms/1e3)
 
+
+### REMOVE BAD EPOCHS ### 
+def calPosThresh(dat, sigmathresh):
+  #return dat.mean() + sigmathresh * dat.std() # this was originally commented out, reversing it to try (EYG)
+  return 100
+
+def calNegThresh(dat, sigmathresh):
+  #return dat.mean() - sigmathresh * dat.std() # this was originally commented out, reversing it to try (EYG)
+  return -100
+
+# remove noise, where noise < negthres < dat < posthres < noise
+def badEpoch (dat, sigmathresh):
+  badValues = len(np.where(dat <= calNegThresh(dat, sigmathresh))[0]) + \
+              len(np.where(dat >= calPosThresh(dat, sigmathresh))[0])
+  if badValues > 0:
+    return True
+  else:
+    return False
+
+def removeBadEpochs (dat, sampr, trigtimes, swindowms, ewindowms, sigmathresh):
+  nrow = dat.shape[0]
+  swindowidx = ms2index(swindowms,sampr) # could be negative
+  ewindowidx = ms2index(ewindowms,sampr) # should this be sampr or samprds -- question from EYG (12/11/2020)
+
+  # trigByChannel could be returned for removing different epochs on each channel
+  trigByChannel = [x for x in range(nrow)]
+  badEpochs = []
+  for chan in range(nrow): # go through channels
+    trigByChannel[chan] = []
+    for trigidx in trigtimes: # go through stimuli
+      sidx = max(0,trigidx+swindowidx)
+      eidx = min(dat.shape[1],trigidx+ewindowidx)
+      if not badEpoch(dat[chan, sidx:eidx], sigmathresh):
+        trigByChannel[chan].append(trigidx)
+      else:
+        badEpochs.append(trigidx)
+    print('Found %d bad epochs in channel %d. Range: [%.2f, %.2f]'%
+          (len(trigtimes) - len(trigByChannel[chan]), chan,
+           calNegThresh(dat[chan, sidx:eidx], sigmathresh),
+           calPosThresh(dat[chan, sidx:eidx], sigmathresh)))
+
+  # combine bad epochs into a single sorted list (without duplicates)
+  badEpochs = sort(list(set(badEpochs)))
+  print('%d bad epochs:'%len(badEpochs),[x for x in badEpochs])
+
+  # remove the associated trigger times before returning
+  trigtimes = np.delete(trigtimes,[trigtimes.index(x) for x in badEpochs])
+
+  return trigtimes
+
+### 
+
+
+
+
 # get the average ERP (dat should be either LFP or CSD)
 # originally from load.py 
 def getAvgERP (dat, sampr, trigtimes, swindowms, ewindowms):
@@ -186,8 +242,15 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   ## LFP_data --> numpy array of LFP data 
 
   
+  if trigtimes:
+    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    for idx in trigtimes:
+      trigtimesMS.append(tt[idx]*1e3)
+
+
   tt = tt*1e3 # Convert units from seconds to ms 
   dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms after converstion
+
 
   if timeRange is None:
     timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording (ms)
@@ -267,15 +330,12 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
   ## ADD ARROW POINTING TO STIMULUS TIMES      ## NOTE: this was taken from (v) in plotAvgCSD() & main code block
-  if trigtimes:
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    for idx in trigtimes:
-      trigtimesMS.append(tt[idx])   # tt should already be converted to ms (from sec) as indicated above 
-    
+  if trigtimesMS:
     for time in trigtimesMS:
       if time >= xmin and time <= xmax:
         axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
         axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
+
 
 
   # SAVE FIGURE
@@ -364,7 +424,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
   axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
 
 
-#########
+  #########
   # (v) ADD ARROW POINTING TO STIMULUS TIMES
     # OLD CODE #### DEPRECATED #### ## ADD ARG THEN IF STATEMENT
     # for time in relativeTrigTimes:
@@ -397,7 +457,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
     #     axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
     #     axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
 
-#########
+  #########
 
   # (vi) SET TITLE AND OVERLAY AVERAGE ERP TIME SERIES (OR NOT)
   ## NOTE: add option for overlaying average LFP...??
@@ -679,9 +739,14 @@ if __name__ == '__main__':
   recordingArea = 'A1/' #'A1/' # 'MGB/' 
   
   dataPath = origDataDir + recordingArea
-  dataFiles = os.listdir(dataPath) # ensure this only includes .mat files --> appears so upon check 
+  dataFilesList = os.listdir(dataPath) # ensure this only includes .mat files --> appears so upon check 
+  dataFiles = []
+  for file in dataFilesList:
+    if '.mat' in file:
+      dataFiles.append(file)
 
-  for dataFile in dataFiles[0:1]:
+
+  for dataFile in dataFiles: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -691,95 +756,40 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
 
-    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,showFig=False) # timeRange=[1100,1200],
+    # GET AND PLOT CSD 
+    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[10000,15000],showFig=True) # timeRange=[1100,1200],
+    
+    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    for idx in trigtimes:
+      trigtimesMS.append(tt[idx]*1e3)
+
+    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
+    ### AVG CSD ### 
+    ## (1) Remove bad epochs 
+    ## (a) set epoch params
+    swindowms = 0     # start time relative to stimulus 
+    ewindowms = 200   # end time of epoch relative to stimulus onset 
+    
+    ## (b) set sigma thresh
+    sigmathresh=4 
 
+    ## (c) 
+    trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-  # ## GET TRIGGER TIMES IN MS
-  # trigTimesMS = []
-  # for idx in trigtimes:
-  #   trigTimesMS.append(tt[idx]*1e3)
-  # #print(trigTimesMS) # USEFUL FOR KNOWING ABSOLUTE VALUE OF STIMULUS TIMES
-
-  # ## GET RELATIVE TRIGGER TIME INDICES
-  # relativeTrigTimes = []
-  # for idx in trigtimes:
-  #   relativeTrigTimes.append(idx - trigtimes[0])#80143)
-
-  # ## GET RELATIVE TRIGGER TIMES IN SECONDS 
-  # relativeTrigTimesMS = []
-  # for time in trigTimesMS:
-  #   relativeTrigTimesMS.append(time-trigTimesMS[0])
-
-  # #print(relativeTrigTimesMS) # USEFUL FOR OVERLAYING ON AVERAGE 
-
+    ## calculate average CSD ERP ###
+    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-
-  ## REMOVE BAD EPOCHS FIRST..?  
-
-  # ### GET AVERAGE ERP ###
-  # ## set epoch params
-  # swindowms = 0     # start time relative to stimulus 
-  # ewindowms = 200   # end time of epoch relative to stimulus onset 
+    plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
 
-  ## calculate average CSD ERP ###
-  #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimes, swindowms, ewindowms)
 
-  #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,trigtimes=relativeTrigTimesMS,saveFig=False,showFig=True)
+
+
 
   ###################
-
-  # print('TIME OF FIRST STIMULUS')
-  # print(relativeTrigTimesMS[0])
-  # print('TIME OF SECOND STIMULUS')
-  # print(relativeTrigTimesMS[1]) #(tt[trigtimes[1]]-tt[trigtimes[0]])*1e3 + 0)
-  # print('TIME OF THIRD STIMULUS')
-  # print(relativeTrigTimesMS[2])
-
-  #individualERPs = np.zeros()
-  #tt1,individualERP1 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,1)
-  #tt2,individualERP2 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,2)
-  #tt3,individualERP3 = getIndividualERP(CSD_data,sampr,trigtimes,swindowms,ewindowms,3)
-
-  #plotIndividualERP(individualERP1,tt1,trigtimes=relativeTrigTimesMS)
-  #plotIndividualERP(individualERP2,tt2,trigtimes=relativeTrigTimesMS)
-
-  
-
-  # # INVESTIGATE IF THERE ARE REPEAT SEQUENCES
-  # for chan in range(avgCSD.shape[0]):
-  #   csdChannel = list(avgCSD[chan,:])
-  #   #subsetCSD = csdChannel[100:200]    # arbitrary length
-  #   subsetCSD = csdChannel[relativeTrigTimes[0]:relativeTrigTimes[1]]
-
-  #   # print('subsetCSD')
-  #   # print(subsetCSD)
-  #   # print('csdChannel')
-  #   # print(csdChannel)
-
-  #   count = 0
-  #   for i in range(len(csdChannel) - (len(subsetCSD)-1)):
-  #     subset_len = len(subsetCSD)
-  #     checkList = []
-
-  #     for n in range(subset_len):
-  #       checkList.append(csdChannel[i+n])
-      
-  #     # print('AVERAGE CSD VALUES BEING CHECKED')
-  #     # print(checkList)
-  #     # print('SUBSET FROM AVERAGE CSD')
-  #     # print(subsetCSD)
-
-  #     if checkList == subsetCSD:
-  #       count += 1
-  #       print('sequence found')
-
-    
-  #   print(count)
-
 
     # # MOVE .PNG FILES 
     # pngFiles = [f for f in os.listdir() if os.path.isfile(f)]
