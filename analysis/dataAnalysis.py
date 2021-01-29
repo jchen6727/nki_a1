@@ -746,7 +746,7 @@ if __name__ == '__main__':
       dataFiles.append(file)
 
 
-  for dataFile in dataFiles: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles[0:5]: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -757,32 +757,32 @@ if __name__ == '__main__':
 
 
     # GET AND PLOT CSD 
-    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[10000,15000],showFig=True) # timeRange=[1100,1200],
+    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
     
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    for idx in trigtimes:
-      trigtimesMS.append(tt[idx]*1e3)
+    # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    # for idx in trigtimes:
+    #   trigtimesMS.append(tt[idx]*1e3)
 
-    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+    # print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
-    ### AVG CSD ### 
-    ## (1) Remove bad epochs 
-    ## (a) set epoch params
-    swindowms = 0     # start time relative to stimulus 
-    ewindowms = 200   # end time of epoch relative to stimulus onset 
+    # ### AVG CSD ### 
+    # ## (1) Remove bad epochs 
+    # ## (a) set epoch params
+    # swindowms = 0     # start time relative to stimulus 
+    # ewindowms = 200   # end time of epoch relative to stimulus onset 
     
-    ## (b) set sigma thresh
-    sigmathresh=4 
+    # ## (b) set sigma thresh
+    # sigmathresh=4 
 
-    ## (c) 
-    trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
+    # ## (c) 
+    # trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-    ## calculate average CSD ERP ###
-    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
+    # ## calculate average CSD ERP ###
+    # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-    plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+    # plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
 
 

@@ -40166,3 +40166,12 @@ def removeBadEpochs (dat, sampr, trigtimes, swindowms, ewindowms, sigmathresh):
   return trigtimes
 * <2021-01-28 Thu -- layer detection>
 ** Strange, because doesn't look like there is necessarily a big response to each click? However, there is a potential bug here -- I see that both rdmat() and getCSD() convert lfp from uV to mV. --> Comment out lfps = lfps/1000 in getCSD() in A1/analysis/dataAnalysis.py, and re-run this script. 
+** Sent noelle an email asking for verification that my CSDs looked reasonable -- and also asked for confirmation that averaged CSDs are what should be used for layer detection (yes!) -- text below:
+*** Hi Erica,
+Yes, you are correct that the SOA of the click stream is 320ms. I forgot to mention that we always use the average CSD to look at layers (sorry about that), as you can see from your single trial plots the CSD is very weak. Your averaged CSD plots do look totally believable (I've attached the CSD plots I already had for those files, note they are on a shorter timescale than yours (-5 - 50ms)) and are the same to what we have for them i.e. the sources & sink line up in the same channels as I have. File 2-bu001002015 is pretty noisy ( lots of red), do you baseline & artifact reject? That pass (2-bu001002) was in a low freq area of A1 (BF=0.5kHz) so the CSD & MUA response to BBN & click will always be shitty. In the case of that file I had to look at the response to BF (0.5kHz, response profile is attached - im01_2-bu001002018@ep1_02).
+In the case of 2-bu027028011 it looks very messy likely due to the angle of the electrode (it prob. wasn't perfectly perpendicular to the cortex),but the gran is ch12-13, Supra chs 1-11 (oftentimes if the angle is bad you get sinks in the upper source (S1=chs1-5) and source in the lower sink (S2=6-11)), Infra chs 14-19 (the bottom 2 chs are in white matter due to the MUA increasing again). In my excel sheet I see I set the lower boundaries to 21 and that was a mistake now I see.
+In the case of 2-bu043044014, the electrode should've been lowered more as the profile is missing the infra source. Also this has somewhat the same problem as 2-bu027028 as in the angle wasn't good. S1=ch5-12 and S2=13-17, G=18-19, I1=20-21, I2=missing.
+
+Basically you can see that some profiles don't always fit the perfect example we use in publications.
+Hope this helps and talk soon!
+Noelle.
