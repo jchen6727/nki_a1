@@ -40190,7 +40190,7 @@ Noelle.
 **** Gran: Ch 12-13
 **** Infra: Chs 14-19 
 ***** "the bottom 2 chs are in white matter due to the MUA increasing again"
-***** In my excel sheet I see I set the lower boundaries to 21 and that was a mistake  --> TO DO: FIX THIS IN EXCEL SHEET! 
+***** In my excel sheet I see I set the lower boundaries to 21 and that was a mistake  --> TO DO: FIX THIS IN EXCEL SHEET! [DONE] -- wrote 21(CORRECTED:19) in line 158, cell H
 *** 2-bu043044014 
 **** S1 : Chs 5-12 
 **** S2 : 13-17
@@ -40227,4 +40227,5 @@ Noelle.
 *** looking at Vaknin() function in dataAnalysis.py -- Duplicates the first and last rows into new first and new last rows. Meh. how useful is this really? not so sure. 
 *** Going to keep channel ymax at 22 in the plotting functions, and leave this line commented out in getCSD() (CSD = Vaknin(CSD)). 
 *** BUT, one remaining question -- how does this pair up with what Noelle is saying about the 'last channel'. What does that mean in this context? There are manifestly data from 22 channels being processed, and yet I can obviously see from this spreadsheet that there are files with, e.g. 15 as the last channel. How does this work?? Interesting --> Ah, it may go into white matter. I recall her saying that (see text above from her emails, one example where this happens). 
+** Ah -- NOTE: don't forget that thanks to this spreadsheet, you have the granular top and bottoms defined. 
 ** 

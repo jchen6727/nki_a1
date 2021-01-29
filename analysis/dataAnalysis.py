@@ -268,8 +268,8 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   # (i) Set up axes
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
-  ymin = 1  # 0 in csd.py in netpyne 
-  ymax = 22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  ymin = 1    # 0 in csd.py in netpyne 
+  ymax = 22   #22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
@@ -286,7 +286,8 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
     axs.append(plt.Subplot(fig,gs_outer[i*2:i*2+2]))
     fig.add_subplot(axs[i])
     axs[i].set_xlabel('Time (ms)',fontsize=12)
-    axs[i].tick_params(axis='y', which='major', labelsize=8)
+    #axs[i].tick_params(axis='y', which='major', labelsize=8)
+    axs[i].set_yticks(np.arange(ymin, ymax, step=1))
 
   # (iv) PLOT INTERPOLATED CSD COLOR MAP
   spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
@@ -404,7 +405,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
-  fig = plt.figure()
+  fig = plt.figure(figsize=(5,8))
 
   # (iii) Create plots w/ common axis labels and tick marks
   axs = []
@@ -417,12 +418,12 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
     axs.append(plt.Subplot(fig,gs_outer[i*2:i*2+2]))
     fig.add_subplot(axs[i])
     axs[i].set_xlabel('Time (ms)',fontsize=12)
-    axs[i].tick_params(axis='y', which='major', labelsize=8)
+    #axs[i].tick_params(axis='y', which='major', labelsize=8)
+    axs[i].set_yticks(np.arange(ymin, ymax, step=1))
 
   # (iv) PLOT INTERPOLATED CSD COLOR MAP
   spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
   axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
-  axs[0].set_yticks(np.arange(ymin,ymax,1.0))
 
   #########
   # (v) ADD ARROW POINTING TO STIMULUS TIMES
@@ -746,7 +747,9 @@ if __name__ == '__main__':
       dataFiles.append(file)
 
 
-  for dataFile in dataFiles[2:3]: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  dataFiles_test = ['2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+
+  for dataFile in dataFiles_test: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
