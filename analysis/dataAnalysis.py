@@ -757,7 +757,7 @@ if __name__ == '__main__':
 
 
     # GET AND PLOT CSD 
-    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
+    ## plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
     
     # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
     # for idx in trigtimes:
@@ -767,22 +767,22 @@ if __name__ == '__main__':
 
 
 
-    # ### AVG CSD ### 
-    # ## (1) Remove bad epochs 
-    # ## (a) set epoch params
-    # swindowms = 0     # start time relative to stimulus 
-    # ewindowms = 200   # end time of epoch relative to stimulus onset 
+    ### AVG CSD ### 
+    ## (1) Remove bad epochs 
+    ## (a) set epoch params
+    swindowms = 0     # start time relative to stimulus 
+    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
     
-    # ## (b) set sigma thresh
-    # sigmathresh=4 
+    ## (b) set sigma thresh
+    sigmathresh=4 
 
-    # ## (c) 
-    # trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
+    ## (c) 
+    trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-    # ## calculate average CSD ERP ###
-    # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
+    ## calculate average CSD ERP ###
+    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-    # plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+    plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
 
 

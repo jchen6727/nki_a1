@@ -40176,5 +40176,41 @@ Basically you can see that some profiles don't always fit the perfect example we
 Hope this helps and talk soon!
 Noelle.
 * <2021-01-29 Fri -- layer detection>
+** Files mentioned by Noelle:
+*** 2-bu001002015 
+**** "pretty noise" (lots of red) -- "do you baseline & artifact reject?" 
+**** That pass (2-bu001002) was in a low freq area of A1 (BF=0.5kHz) so the CSD & MUA response to BBN & click will always be shitty. 
+**** In the case of that file I had to look at the response to BF (0.5kHz, response profile is attached --> im01_2-bu001002018@ep1_02).
+*** 2-bu027028011
+**** "it looks very messy likely due to the angle of the electrode"
+**** Supra: Chs 1-11 / S1 : 1-5 / S2: 6-11
+***** ^^ "oftentimes if the angle is bad you get sinks in the upper source (S1=chs1-5) and source in the lower sink (S2=6-11)"
+**** S1: 1-15
+**** S2: 6-11 
+**** Gran: Ch 12-13
+**** Infra: Chs 14-19 
+***** "the bottom 2 chs are in white matter due to the MUA increasing again"
+***** In my excel sheet I see I set the lower boundaries to 21 and that was a mistake  --> TO DO: FIX THIS IN EXCEL SHEET! 
+*** 2-bu043044014 
+**** S1 : Chs 5-12 
+**** S2 : 13-17
+**** G: 18-19
+**** I1: 20-21
+**** I2: missing!! 
+**** "the electrode should've been lowered more as the profile is missing the infra source" 
+**** Also this has somewhat the same problem as 2-bu027028 as in the angle wasn't good.
 ** Data for .csv layers file: 
-*** 
+*** 2-bu027028011
+**** S1: 1-15
+**** S2: 6-11 
+**** Gran: Ch 12-13
+**** Infra: Chs 14-19 
+*** 2-bu043044014 
+**** S1 : Chs 5-12 
+**** S2 : 13-17
+**** G: 18-19
+**** I1: 20-21
+**** I2: missing!! 
+** Make Average CSD plots for more files: 
+*** in A1/analysis/dataAnalysis.py --> commenting out plotCSD and instead sticking to plotAvgCSD() lines. 
+*** Adjusting the ewindowms down from 200ms to 50ms to better match Noelle. 
