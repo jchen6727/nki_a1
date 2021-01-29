@@ -385,16 +385,18 @@ def filterDepolBlock(dataFolder, batchLabel, loadAll, gids=None):
 
 
 
+def addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]]):
+        
+    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll)
+    df = utils.toPandas(params, data)
 
-
-
-''' filter based on fitness score:
+    # calculate fitness value for each row
+    fitnessFuncArgs = {}
+    pops = {}
 
     ## Exc pops
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
-    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
-    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
     
     for pop in Epops:
@@ -409,16 +411,8 @@ def filterDepolBlock(dataFolder, batchLabel, loadAll, gids=None):
             'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
             'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
             'IRE', 'IREM', 'TI']  # Thal 
-    # Ipops = [#'NGF1',  
-    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
-    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-    #         #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
-    #         #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
-    #         #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
-    #         'IRE', 'IREM', 'TI']  # Thal 
 
-    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+
     Itune = {'target': 10, 'width': 15, 'min': 0.5}
 
     for pop in Ipops:
@@ -426,8 +420,7 @@ def filterDepolBlock(dataFolder, batchLabel, loadAll, gids=None):
     
     fitnessFuncArgs['pops'] = pops
     fitnessFuncArgs['maxFitness'] = 1000
-    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
-
+    fitnessFuncArgs['tranges'] = tranges
 
     def fitnessFunc(simData, **kwargs):
         import numpy as np
@@ -444,4 +437,8 @@ def filterDepolBlock(dataFolder, batchLabel, loadAll, gids=None):
         popFitness = np.mean(np.array(popFitnessAll), axis=0)
         
         fitness = np.mean(popFitness)
-'''
+        return fitness
+
+    df['fitness'] = [fitnessFunc(simData=row, **fitnessFuncArgs) for index, row in df.iterrows()]
+
+    return df

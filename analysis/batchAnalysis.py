@@ -18,7 +18,7 @@ if __name__ == '__main__':
     dataFolder = '../data/'
     batchLabel = 'v32_batch18'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
-    loadAll = 0
+    loadAll = 1
 
     # ---------------------------------------------
     # Filtering wrapper funcs
@@ -26,11 +26,12 @@ if __name__ == '__main__':
 
     #df = filterDepolBlock(dataFolder, batchLabel, loadAll, gids=[])
     
-    df = applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=0)  
+    # df = applyFilterRates(dataFolder, batchLabel, loadAll, skipDepol=0)  
     
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
-
+    df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
+    
     # ---------------------------------------------
     # Single sim plot funcs
     # ---------------------------------------------
@@ -52,14 +53,11 @@ if __name__ == '__main__':
     # Combined sim (batch) funcs
     # ---------------------------------------------
 
-    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+    #allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
     
     # fIAnalysis(dataFolder, batchLabel, loadAll)
     
-    # for pop in allpops:     
-    #     df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EEGain', 'EIGain','IEGain', 'IIGain'], vals=[pop], groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
-    #     df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['EICellTypeGain_PV', 'EICellTypeGain_SOM', 'EICellTypeGain_VIP', 'EICellTypeGain_NGF'], vals=[pop], groupStat='mean', plotLine=False) #thalamoCorticalGain 'thalamoCorticalGain', 'corticoThalamicGain',
-
+1
     #df = popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['weightBkgE', 'weightBkgI','rateBkg_exc', 'rateBkg_inh'], vals=['ITS4'], groupStat='first', plotLine=False) 
 
     # df = ihEPSPAnalysis(dataFolder, batchLabel, loadAll, pars=['groupWeight','ihGbar'], vals=['Vpeak_PTih'], zdcomp=0, plotLine=1)#, \
