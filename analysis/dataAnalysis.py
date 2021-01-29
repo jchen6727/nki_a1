@@ -269,7 +269,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
   ymin = 1  # 0 in csd.py in netpyne 
-  ymax = 24 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  ymax = 22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
@@ -400,7 +400,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
   ymin = 1  # 0 in csd.py in netpyne 
-  ymax = 24 # dat.shape[0] # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  ymax = 22 # dat.shape[0] # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
@@ -422,7 +422,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
   # (iv) PLOT INTERPOLATED CSD COLOR MAP
   spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
   axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
-
+  axs[0].set_yticks(np.arange(ymin,ymax,1.0))
 
   #########
   # (v) ADD ARROW POINTING TO STIMULUS TIMES
@@ -746,7 +746,7 @@ if __name__ == '__main__':
       dataFiles.append(file)
 
 
-  for dataFile in dataFiles[0:5]: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles[2:3]: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)

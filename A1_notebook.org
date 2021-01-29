@@ -40214,3 +40214,17 @@ Noelle.
 ** Make Average CSD plots for more files: 
 *** in A1/analysis/dataAnalysis.py --> commenting out plotCSD and instead sticking to plotAvgCSD() lines. 
 *** Adjusting the ewindowms down from 200ms to 50ms to better match Noelle. 
+*** Change plotAvgCSD() so that the y-axis shows more granular view of channels (have tick mark for every channel, vs. every 5). 
+**** Adding this line to (iv) Plot Interpolated CSD Color map: 
+**** axs[0].set_yticks(np.arange(ymin,ymax,1.0))
+**** ^^ TRY this with single .mat file (set this in main code block)
+*** ^^ Adjustments below WORKED to set y axis tickmarks for channels 
+*** Vaknin --> noticing that the ymax that I have is set to 24, however, the data is being processing for 22 channels (makes sense, because vaknin commented out in getCSD()). Did a couple trial things -- 
+**** (1) as is -- 22 channels processed, 24 plotted
+**** (2) uncommented vaknin line in getCSD() -- still 22 channels processed (as per output on terminal), but clearly stuff added in to the edges on the plot -- more compressed appearance. 
+**** (3) re-commented out vaknin line in getCSD() and change ymax to 22 in plotAvgCSD() -- now 22 channels processed as per terminal output, and 22 channels plotted on CSD plot. Kind of like this one the best? See if this makes more sense with the interpretations that nicole gave. and/or ask sam. 
+** Question about Vaknin --
+*** looking at Vaknin() function in dataAnalysis.py -- Duplicates the first and last rows into new first and new last rows. Meh. how useful is this really? not so sure. 
+*** Going to keep channel ymax at 22 in the plotting functions, and leave this line commented out in getCSD() (CSD = Vaknin(CSD)). 
+*** BUT, one remaining question -- how does this pair up with what Noelle is saying about the 'last channel'. What does that mean in this context? There are manifestly data from 22 channels being processed, and yet I can obviously see from this spreadsheet that there are files with, e.g. 15 as the last channel. How does this work?? Interesting --> Ah, it may go into white matter. I recall her saying that (see text above from her emails, one example where this happens). 
+** 
