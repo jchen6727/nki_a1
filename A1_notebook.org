@@ -40300,4 +40300,22 @@ sg ... also will be interesting to see if the oscillation events are generated f
 **** 2-ta044045022@os_eye06_30.mat -- 2-ta044045021@os_eye06_30.mat
 **** 2-um007008014@os_eye06_30.mat -- 2-um007008018@os_eye06_30.mat
 **** 2-um040041018@os_eye06_30.mat -- 2-um040041020@os_eye06_30.mat
-*** 
+*** [REMAINING Q's] Create .csv file with source/sink info: 
+**** Believe I may need one for ERP and one for spontaneous? --> see a1dat/load.py (lines 2399 & 2400) 
+**** This should be located in the same directory as the corresponding data files (e.g. for ERP --> 'data/nhpdat/ERP/A1/19may9_A1_ERP_Layers.csv'; for spont --> 'data/nhpdat/spont/A1/19apr4_A1_spont_LayersForSam.csv'
+*** [REMAINING Q's] ERP exclusion: 
+**** erp.py exists -- has func "def addERPscore" -- this supposedly adds the ERP score to pdf -- ? not precisely sure what this means or if this is what is used. 
+**** load.py has many functions referencing ERPscore -- 
+***** def getvarwindCV2
+***** def getdCV2
+***** def geteventprop
+***** def drawwaveforms()
+***** def drawallCSD
+***** def draw
+***** def TPFP -- "get true positives, false positives -- intended for ERP detection" 
+** OEvent pkg:
+*** evstats.py -- CV2, fano-factor
+*** erp.py 
+*** morlet.py -- has MorletSpec class -- this is used in load.py's "def getmorletwin" function -- which supposedly "gets morlet specgrams on windows of dat time series (window size in samples = winsz)" 
+*** QUESTION: what is dframe? look this up in sam's notebook.org -- see this at the bottom of load.py in main code block, where dframe comes from "def GetDFrame" defined in load.py 
+*** in load.py, def drawavgwaveformspec -- draws average CSD; uses MorletSpec
