@@ -40267,3 +40267,37 @@ once have a good sense can look at how they compare during speech or clicks
 gotcha -- great! thx. just wanted to make sure I was thinking about this correctly. appreciate the confirmation/direction/info. will forge ahead.
 *** samn 10:47 AM
 sg ... also will be interesting to see if the oscillation events are generated from supra- or subthreshold activity (one of the recent ideas about beta is it's generated through subthreshold activation)
+** Goals/next steps:
+*** Generate (a) morlet wavelet spectrogram(s) of (various) oscillation events happening in the spontaneous data sets stored in some of these NHP A1 .mat files. 
+*** Look at the corresponding CSD waveform (unfiltered) of these events
+*** Generate and superimpose the filtered CSD waveform onto the unfiltered CSD waveform
+*** Evalute the quality of said waveform(s) / spectrogram(s): 
+**** (i) How "clean" are they (the CSD waveforms)? -- i.e. high or low correlation between filtered and unfiltered waveform?
+**** (ii) For CSD --> look at e.g. a beta event, and determine where it is being generated:
+***** (a) which cortical layers --> supra, gran, infra?
+***** (b) which populations are contributing --> no clue how to determine this, especially in the monkey data set? cross this bridge when coming to it. 
+***** (c) related to prior points a & b possibly, or perhaps not --> see if oscillation events are generated from supra- or sub-threshold activation --> questions below:
+****** activation of what...? this is a spontaneous data set I will be looking at, so I'm not how that works. but of course still populations being activated. is that what this means? again cross this bridge when coming to it. 
+** (1) Generate morlet wavelet spectrogram(s) of (various) oscillation events happening in the spontaneous monkey data sets.
+*** Code for OEvent pkg necessary for this is in ~/Desktop/NEUROSIM/a1dat
+*** .mat files necessary for this are in:
+**** spontaneous: ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1 
+**** click: ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc/A1 
+*** List of corresponding click & spont data files:
+**** SPONT on left -- CLICK on right
+**** 2-bu001002017@os_eye06_20.mat -- 2-bu001002015@os_eye06_20.mat
+**** 2-bu013014031@os_eye06_20.mat -- 2-bu013014029@os_eye06_20.mat
+**** 2-bu015016028@os_eye06_20.mat -- 2-bu015016026@os_eye06_20.mat
+**** 2-bu027028013@os_eye06_20.mat -- 2-bu027028011@os_eye06_20.mat
+**** 2-bu043044016@os_eye06_20.mat -- 2-bu043044014@os_eye06_20.mat
+**** 2-gt044045014@os_eye06_30.mat -- 2-gt044045012@os_eye06_30.mat
+**** 2-ma031032023@os_eye06_20.mat -- 2-ma031032021@os_eye06_20.mat
+**** 2-rb023024016@os_eye06_20.mat -- 2-rb023024014@os_eye06_20.mat
+**** 2-rb031032016@os_eye06_20.mat -- 2-rb031032014@os_eye06_20.mat
+**** 2-rb045046026@os_eye06_20.mat -- 2-rb045046017@os_eye06_20.mat
+**** 2-rb063064011@os_eye06_20.mat -- 2-rb063064009@os_eye06_20.mat
+**** 2-ta040041045@os_eye06_30.mat -- 2-ta040041029@os_eye06_30.mat
+**** 2-ta044045022@os_eye06_30.mat -- 2-ta044045021@os_eye06_30.mat
+**** 2-um007008014@os_eye06_30.mat -- 2-um007008018@os_eye06_30.mat
+**** 2-um040041018@os_eye06_30.mat -- 2-um040041020@os_eye06_30.mat
+*** 
