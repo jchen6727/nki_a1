@@ -40228,4 +40228,42 @@ Noelle.
 *** Going to keep channel ymax at 22 in the plotting functions, and leave this line commented out in getCSD() (CSD = Vaknin(CSD)). 
 *** BUT, one remaining question -- how does this pair up with what Noelle is saying about the 'last channel'. What does that mean in this context? There are manifestly data from 22 channels being processed, and yet I can obviously see from this spreadsheet that there are files with, e.g. 15 as the last channel. How does this work?? Interesting --> Ah, it may go into white matter. I recall her saying that (see text above from her emails, one example where this happens). 
 ** Ah -- NOTE: don't forget that thanks to this spreadsheet, you have the granular top and bottoms defined. 
-** 
+* <2021-02-01 Mon -- more data pre-processing>
+** did some more layers
+** one day post-second dose covid shot. feeling absolutely terrible. can barely stand up. 
+* <2021-02-02 Tue -- oevent pkg>
+** conversation with sam this morning: 
+*** ericaygriffith  10:39 AM
+hey sam, have some question(s) for you -- so I did another
+read-through of the taxonomy of oscillations paper. that helped me
+contextualize a lot of the functions that I was seeing in the oevent
+pkg (and from looking at the code, I definitely understood the paper
+better this time as well). so next I  wanted your guidance though on
+what specific things would be the most helpful to generate in terms of
+comparing model to monkey. correct my thinking of course, but seems
+like could focus on either recording-scale information (e.g. like
+Figure 5, where you look at how often an oscillation from a given
+frequency band occurs in infra/gran/supra), and/or event
+(i.e. oscillation)-scale information. I admit that I don't fully
+understand yet some of the stats surrounding these features (e.g. fano
+factor) but I'm fully sure I can get there with a little more
+background reading. are there any specific things I should aim for
+here? I know for the sake of the paper/poster, it will be good to have
+some figures like Fig. 4 (oscillation events from NHP A1 supra -- with
+spectrogram + filtered/unfiltered csd waveform). I figured I could
+start there, but wanted to see if you thought. is that a decent first
+thing to aim for? and/or should I also focus on any other information
+that could be helpful in comparison?
+*** samn 10:43 AM
+yeah, first is to see the oscillation events and how they look in spectrogram
+then could compare how they look in the full CSD ... so take a beta event and look at the CSD where is it generated (which cortical layers, which populations contributing)
+10:45
+the fano factor and CV2 are used to measure rhythmicity - across individual events of a frequency (whether they're distributed randomly in time or have more predictability)
+10:46
+but yeah, should start with looking at individual events to get a better sense - how clean are the waveforms (high correlation between raw and filtered signals or low)
+10:46
+once have a good sense can look at how they compare during speech or clicks
+*** ericaygriffith  10:47 AM
+gotcha -- great! thx. just wanted to make sure I was thinking about this correctly. appreciate the confirmation/direction/info. will forge ahead.
+*** samn 10:47 AM
+sg ... also will be interesting to see if the oscillation events are generated from supra- or subthreshold activity (one of the recent ideas about beta is it's generated through subthreshold activation)
