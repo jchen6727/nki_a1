@@ -40347,3 +40347,10 @@ sg ... also will be interesting to see if the oscillation events are generated f
 	          if row.count(s) > 0:
 
 *** ^^ Instead of using import csv, etc. and having to change everything -- just changed nhpdat function grepstr() such that fp = open(fn,'r', encoding='utf-8') -- added encoding = 'utf-8' to the arg list of this line!! (line 60) 
+** ^^ Now that this issue has been solved, try load.py again 
+*** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+*** ^^ run this in ~/Desktop/NEUROSIM/a1dat 
+*** hmm!! it still exits!! --> "channels unknown! no channels used; exiting"
+*** weird!! why is this still showing that s2, g, i1 are -1!! ?? 
+*** ^^ see if it's because of '' or not around filename? 
+*** ^^ ah, it may be that dbpath didn't have a leading '/' in load.py --> changed this; try again
