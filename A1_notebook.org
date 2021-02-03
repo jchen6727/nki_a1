@@ -40427,3 +40427,36 @@ up to channel 7 getphase: True
 3190000 3300000
 3300000 3410000
 Killed
+** Try again -- quit a bunch of applications; closed out a bunch of windows; emptied trash. give it another go! 
+** Now set up ssh onto desktop at home -- more powerful -- see admin_nb.org for more details on this [also copied below]
+*** INFO: 
+**** ssh -X erica@68.160.218.237
+***** pw is t0rt13e_Bfuck
+**** ~ (home) is /home/erica
+*** Configuring my setup: 
+**** cd Desktop --> mkdir NEUROSIM
+**** TO DO: clone A1 and a1dat into this NEUROSIM directory 
+**** TO DO: install python 3.7 anaconda 
+*** a1dat repo:
+**** changed nhpdat.py so reflects the same script on my computer --> namely grepstr function has been changed such that encoding = 'utf-8' is in the open argument
+**** changed load.py :
+***** changes were made in main code block at the end
+***** dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+***** basedir = 'home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/' 
+**** ^^ now need to get the A1 directory cloned and the data on this machine as well. 
+*** A1 repo: 
+**** in /home/erica/Desktop/NEUROSIM/
+**** git clone https://github.com/NathanKlineInstitute/A1.git
+**** git checkout repro
+*** Now scp-ing over data:
+**** [DONE] CLICK DATA:
+***** on local machine 
+***** cd ~/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc/ 
+***** scp -r A1 erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/click/contproc/
+**** [DONE] SPONT DATA:
+***** on local machine
+***** cd ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/ 
+***** scp -r A1 erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/
+*** [DONE] install python 3.7 -- peter did this for me! thank you! 
+*** [TO DO] install netpyne, neuron -- can come later probably? don't need those right now I don't think -- am processing the monkey (not sim) data. 
+
