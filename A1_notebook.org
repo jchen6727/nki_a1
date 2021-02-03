@@ -40589,3 +40589,26 @@ fn is /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu0270280
 *** >>> savespec = True 
 *** >>> dout = getIEIstatsbyBand(dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth,getphase=True,savespec=savespec,endfctr=endfctr)
 ** getIEIstatsbyBand seems to get stuck at some iteration of getmorletwin -- added print statements to load.py getmorletwin and getIEIstatsbyBand (in desktop and laptop) to determine where this is happening. 
+** Try (when ssh'ed into desktop) again --> python -i load.py /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+*** CSD.shape
+*** MUA.shape
+*** dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+*** s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+*** lchan = [s2]
+*** savespec = True
+*** dout = getIEIstatsbyBand(dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth,getphase=True,savespec=savespec,endfctr=endfctr)
+** OKAY --> using those print statements described above, can see that it completes getmorletwin() in getIEIstatsbyBand -- place a new print statement after the next line --> "print('done with lmsnorm line')" after lmsnorm = [normop(ms.TFR) for ms in lms]
+*** do this in laptop and desktop machine version of load.py in a1dat 
+** Adding lines to load.py to run automatically when dorun = False
+***   print('CSD shape: ' + str(CSD.shape))
+  print('MUA shape: ' + str(MUA.shape))
+  dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+  s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+  lchan = [s2]
+  savespec = True
+  dout = getIEIstatsbyBand(dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth,getphase=True,savespec=savespec,endfctr=endfctr)
+
+** Running again with new print statement in getIEIstatsbyBand after lmsnorm line and with new lines added to main code block of load.py: 
+*** python -i load.py /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat ---> running while ssh'ed into desktop, in a1dat directory 
+*** okay --> "done with lmsnorm" line ran -- still waiting. so not stuck here. go back to getIEIstatsbyBand and add more print lines. 
+** Added more print lines to load.py getIEIstatsbyBand for more granularity (on both desktop and laptop) 
