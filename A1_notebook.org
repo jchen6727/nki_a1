@@ -40489,3 +40489,103 @@ WARNING: Keyring is skipped due to an exception: Failed to unlock the collection
 **** python --> import hdf5storage --> no error (this is despite the keyring is skipped warning -- google this later) 
 **** trying again 
 *** Trying the above command again (cd ~/Desktop/a1dat --> python -i load.py /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat) 
+** Still runs out of memory (Killed) on desktop -- talked to sam; chat below:
+*** ericaygriffith 2:31 PM
+sam what machine did you use to run load.py...? I ask bc I've been having memory issues. I was trying initially on my laptop (solved some minor issues w/ 2 of the nhpdat.py functions that I was having - just with the csv files, can't see how it would be causing this), but every time I ran it on my laptop, at a certain point it would get killed (out of memory). I set everything up instead on my husband's desktop machine (much more powerful), and even there it seems to max out the memory. can't figure out if this just requires me running this on something like gcp (or neurosim, or something else), or if this sounds odd. wanted to check in (edited) 
+*** samn 2:32 PM
+ah, it depends what you do ... the spectrograms take a lot of memory
+even on first channel it's already crashing? hmm
+how long is that recording? if running out of memory could use a lower samprds
+*** ericaygriffith  2:44 PM
+it appears to be 367 seconds (so ~ 6 minutes)
+okay! lowering samprds sounds reasonable - I will try that and see if I can at least get this to run
+*** samn 2:45 PM
+what functions are called at bottom of your load.py? you have version from OEvent or a1dat repository? looks like when you load the file it starts running the analyses but might make more sense to adjust what's called in __main__ & for you to call the functions you need instead
+*** ericaygriffith  2:47 PM
+cloned from https://github.com/NathanKlineInstitute/a1dat -- here is the main code block from load.py: --> see slack for copied code block
+I changed the basedir and dbpath, and also set dorun to True
+*** samn 2:48 PM
+i'd set dorun to false so can call the functions needed. it might be running at too high sampling rate and using too many channels by default
+and then you can set s2,g,i1 channels properly - since differs for files you're using compared to what i was using
+*** ericaygriffith  2:50 PM
+ah okay, I set it to True just because it seemed as if it would stop running after printing 'fn is' etc. --  I guess I can change it to what you have at the end of notebook.org specifically?
+*** samn  2:50 PM
+sure
+at least for initial testing
+*** ericaygriffith  2:51 PM
+okay -- believe now s2, g, i1 should be getting calculated from the new .csv file that I'm filling out w/ help of noelle, so hopefully those should be correct (or close)?
+*** samn:speech_balloon:  2:51 PM
+ah, ok - so it reads those values from your file, sg
+*** ericaygriffith  2:55 PM
+yeah -- okay thanks that gives me some ideas. I'll try a lower downsampling rate! earlier I compared this main code block to what's in your notebook, and saw enough overlap that I didn't change this (once I navigated all the if statements), but I will do it line-by-line so I have more of a handle on it. thx for the help!! will keep at it.
+** Lowering samprds (downsampling rate): 
+*** in load.py (on desktop and laptop): 
+**** lines 2360-2366:
+   if narg>=2:
+    fn = sys.argv[1]
+    if dosim:
+      samprds = 1e3
+    else:
+      samprds = 1100.0 #getdownsampr(fn) # getdownsampr(fn) gets you 11e3
+    print(fn,getorigsampr(fn),'samprds:',samprds)
+** Go line by line -- rather than running whole code block of load.py + only do overlap btwn this code block and what is specifiedin notebook.org:
+*** Set dorun back to False (in load.py -- laptop and desktop)
+*** run load.py (now it should stop at line 2393 -- print line) 
+*** output: 
+$ python -i load.py /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+['load.py', '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat']
+/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 44000.0 samprds: 1100.0
+fn: /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat sampr: 44000.0 samprds: 1100.0
+resampling channel 0
+resampling channel 1
+resampling channel 2
+resampling channel 3
+resampling channel 4
+resampling channel 5
+resampling channel 6
+resampling channel 7
+resampling channel 8
+resampling channel 9
+resampling channel 10
+resampling channel 11
+resampling channel 12
+resampling channel 13
+resampling channel 14
+resampling channel 15
+resampling channel 16
+resampling channel 17
+resampling channel 18
+resampling channel 19
+resampling channel 20
+resampling channel 21
+resampling channel 22
+[[ 3.77113799e-20 -3.77113799e-20  4.14825179e-19 ...  7.54227598e-20
+  -3.77113799e-20  8.48506048e-20]]
+/home/erica/Desktop/NEUROSIM/a1dat/filter.py:72: UserWarning: Selected high corner frequency (5000) of bandpass is at or above Nyquist (550.0). Applying a high-pass instead.
+  warnings.warn(msg)
+fn is /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat getbipolar: False winsz: 10 medthresh: 4.0 useCSD: True useDynThresh: 0 dolaggedcoh False mspecwidth: 7.0 docfc: False dolaggedcohnoband: False dosim: 0 endfctr: 0.5
+*** >>> CSD.shape
+(21, 403971)
+*** >>> MUA.shape
+(23, 403971)
+*** >>> dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+*** >>> s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+**** output --> ['2-bu027028013@os_eye06_20.mat', 'A1', '1', '5', '6', '11', '12', '13', '14', '17', '18', '19']
+0 4 5 10 11 12 13 16 17 18 2 7 11 14 17
+*** >>> lchan = [s2,g,i1] --> CHANGED TO >>> lchan = [s2]
+*** >>> freqmin
+0.25
+*** >>> freqmax
+250.0
+*** >>> freqstep
+0.25
+*** >>> sampr
+1100.0
+*** >>> endfctr
+0.5
+
+*** >>> overlapth
+0.5
+*** >>> savespec = True 
+*** >>> dout = getIEIstatsbyBand(dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth,getphase=True,savespec=savespec,endfctr=endfctr)
+** getIEIstatsbyBand seems to get stuck at some iteration of getmorletwin -- added print statements to load.py getmorletwin and getIEIstatsbyBand (in desktop and laptop) to determine where this is happening. 
