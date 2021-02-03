@@ -40201,7 +40201,7 @@ Noelle.
 **** Also this has somewhat the same problem as 2-bu027028 as in the angle wasn't good.
 ** Data for .csv layers file: 
 *** 2-bu027028011
-**** S1: 1-15
+**** S1: 1-5
 **** S2: 6-11 
 **** Gran: Ch 12-13
 **** Infra: Chs 14-19 
@@ -40313,9 +40313,37 @@ sg ... also will be interesting to see if the oscillation events are generated f
 ***** def drawallCSD
 ***** def draw
 ***** def TPFP -- "get true positives, false positives -- intended for ERP detection" 
+*** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 
+*** ^^ Run this command in ~/Desktop/NEUROSIM/a1dat
 ** OEvent pkg:
 *** evstats.py -- CV2, fano-factor
 *** erp.py 
 *** morlet.py -- has MorletSpec class -- this is used in load.py's "def getmorletwin" function -- which supposedly "gets morlet specgrams on windows of dat time series (window size in samples = winsz)" 
 *** QUESTION: what is dframe? look this up in sam's notebook.org -- see this at the bottom of load.py in main code block, where dframe comes from "def GetDFrame" defined in load.py 
 *** in load.py, def drawavgwaveformspec -- draws average CSD; uses MorletSpec
+* <2021-02-03 Wed -- debugging oevent>
+** Debugging issue with getflayers() function in nhpdat.py -- not reading the .csv file with the layer info: 
+*** error: UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+*** trying this:
+**** in ~/Desktop/NEUROSIM/a1dat
+**** python
+**** import nhpdat; import os; import csv 
+**** dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+**** fn = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat'
+**** s2,g,i1 = nhpdat.getflayers(fn,dbpath=dbpath,abbrev=True)
+**** ^^ when that doesn't work, try:
+**** s = nhpdat.grepstr(dbpath,os.path.split(fn)[-1])
+*** ^^ may have to change this now, to import csv and use this:
+**** with open(dbpath, newline = '') as file:
+...    reader = csv.reader(file, delimiter = ',')
+...    for row in reader:
+...       print(row)
+... 
+**** [TO BE CONTINUED] def grepstr(fn, s):
+        try:
+           with open(fn, newline = '') as csvfile:
+              reader = csv.reader(csvfile, delimiter = ' ')
+              for row in reader: 
+	          if row.count(s) > 0:
+
+*** ^^ Instead of using import csv, etc. and having to change everything -- just changed nhpdat function grepstr() such that fp = open(fn,'r', encoding='utf-8') -- added encoding = 'utf-8' to the arg list of this line!! (line 60) 
