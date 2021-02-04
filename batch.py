@@ -723,24 +723,17 @@ def custom():
 
     # from prev - best of 50% cell density
     import json
-    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v32_batch14/trial_981/trial_981_cfg.json', 'rb') as f:
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
     # conn gains - total 3888 param combs
-    params['EEGain'] = [0.25, 0.5, 0.75, 1.0]  # 1 
-    params['EIGain'] = [0.5, 1.0, 1.5] # 1, 0
-    params['IEGain'] = [0.5, 1.0, 1.5] # 0
-    params['IIGain'] = [0.5, 1.0, 1.5] # 0
-    params[('EICellTypeGain', 'PV')] = [0.5, 1.0, 1.5] # 0, 2 
-    params[('EICellTypeGain', 'SOM')] = [0.5, 1.0, 1.5] # 0, 2 once
-    params[('EICellTypeGain', 'VIP')] = [0.5, 1.0, 1.5] # 1,2
-    params[('EICellTypeGain', 'NGF')] = [0.5, 1.0, 1.5] # 0,1,2
+    params[('ICThalInput', 'probE')] = [0.0, 0.12, 0.26, 0.5] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12, 0.26, 0.5] # 0,1,2
     
-
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
@@ -751,18 +744,18 @@ def custom():
     initCfg['printPopAvgRates'] = [1500, 2500] 
     initCfg['scaleDensity'] = 1.0
 
-    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-    #                          'startTime': 2000, 
-    #                          'weightE': 1.0, 
-    #                          'weightI': 1.0, 
-    #                          'probE': 0.12, 
-    #                          'probI': 0.26, 
-    #                          'seed': 1}  
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -1516,16 +1509,16 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
+    b = custom()
     # b = evolRates()
     # b = asdRates()
     # b = optunaRates()
-    b = optunaRatesLayers()
+    # b = optunaRatesLayers()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch19' 
+    b.batchLabel = 'v32_batch20' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

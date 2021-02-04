@@ -7382,23 +7382,23 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 ** v30_batch4 - run best result from v30_batch3 for 10 sec
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
-** v30_batch5 - tune L2+3+4 + thal
+** v30_batch5 - tuning  L2+3+4 + thal
 *** notes
 increased duration since requires 1.5 sec to reach steady state
 - needs over 1.5 sec to reach steady state!!!
 - ITS4 not firing
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
-** v30_batch6 - tune only L3+L4+thal; include L4 weights but starting from tuned and smaller interval - bug
+** v30_batch6 - tuning  only L3+L4+thal; include L4 weights but starting from tuned and smaller interval - bug
 *** notes
 fitness func didn't include L3 pops
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
-** v30_batch7 - same as v30_batch6 but fixed fitness func to include L3 pops
+** v30_batch7 - tuning same as v30_batch6 but fixed fitness func to include L3 pops
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
-** v30_batch8 - added L2 and reduced width of gaussian tuning window
+** v30_batch8 - tuning added L2 and reduced width of gaussian tuning window
 *** note
 results were getting very low fitness, so made tuning func more restrictive by narrowing the gaussian func widths
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
-** v30_batch9 - best soln of v30_batch8, with param ranges +- 0.25, min rate = 0.5; increase min rate required
+** v30_batch9 - tuning best soln of v30_batch8, with param ranges +- 0.25, min rate = 0.5; increase min rate required
 *** notes
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 *** code
@@ -7454,7 +7454,7 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
 - ITS4 proportional to NGF4; NGF4 slope x2
 
 
-** v30_batch10 - best soln of v30_batch8, with cell-type specific EI gains
+** v30_batch10 - tuning best soln of v30_batch8, with cell-type specific EI gains
 *** notes
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 *** code
@@ -7462,7 +7462,7 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
     params[('EICellTypeGain', 'SOM')] = [minV, maxV]
     params[('EICellTypeGain', 'VIP')] = [minV, maxV]
     params[('EICellTypeGain', 'NGF')] = [minV, maxV]
-** v30_batch11 - L2+3+4+thal, layerwise + celltype
+** v30_batch11 - tuning L2+3+4+thal, layerwise + celltype
 *** notes
 https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
 
@@ -7490,7 +7490,7 @@ https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/
     params[('IELayerGain', '4')] = [minV1, maxV1]
     params[('IILayerGain', '4')] = [minV1, maxV1]
 
-** v30_batch12 - L4 + thal,  layer-specific + celltype-specific gains
+** v30_batch12 - tuning L4 + thal,  layer-specific + celltype-specific gains
 *** notes
 fixed thal gains from prev; 
 Overall ESOM, EPV, ENGF, EVIP gains in range [0.2, 3]
@@ -7498,10 +7498,10 @@ L4 EE, EI, IE, II gains in range [0.2, 3]
 8 params with large range
 maybe II cell type-specific gains?
 
-** v30_batch13 - L4 + thal,  layer-specific + celltype-specific gains -- repeat
+** v30_batch13 - tuning L4 + thal,  layer-specific + celltype-specific gains -- repeat
 *** notes
 very similar results -- good, as expected
-** v31_batch2 - L4 + thal, layer-specific + celltype-specific gains; new ITS4
+** v31_batch2 - tuning L4 + thal, layer-specific + celltype-specific gains; new ITS4
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L3, with broad param range [0.2:4.0]
@@ -7511,7 +7511,7 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) in range [prev-0.25:prev+0.25]
 good results
 
 
-** v31_batch3 - L2+L3+L4 layer- + celltype-specific gains
+** v31_batch3 - tuning L2+L3+L4 layer- + celltype-specific gains
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with broad param range [0.2:3.0]
@@ -7521,13 +7521,13 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25
 16 params; 12 small range, 4 large range
 Good results but IT3 0.5-1.0 Hz
 higher IT3 rates -> too high PV2+SOM2 is projecting too strongly to PV2 and SOM2 
-** v31_batch4 - L2+L3+L4 layer- + celltype-specific gains -- try wider range for prev params
+** v31_batch4 - tuning L2+L3+L4 layer- + celltype-specific gains -- try wider range for prev params
 *** notes
 same as v31_batch3 but E-PV, E-SOM, E-NGF, E-VIP params in range [prev-0.5:prev+0.5]
-** v31_batch5 - L2+L3+L4 layer- + celltype-specific gains -- try wider range + min rate of 1 Hz
+** v31_batch5 - tuning L2+L3+L4 layer- + celltype-specific gains -- try wider range + min rate of 1 Hz
 *** notes
 same as v31_batch4 but min population rate set to 1.0 Hz (instead of 0.5 Hz)
-** v31_batch6 - L2+L3+L4+L5A layer + celltype-specific gains; from v31_batch4; small ranges
+** v31_batch6 - tuning L2+L3+L4+L5A layer + celltype-specific gains; from v31_batch4; small ranges
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with broad param range [prev-0.1:prev+0.1]
@@ -7536,7 +7536,7 @@ layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.1:prev+0.1]
 E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
 layer-specific EE,EI,IE,II gains for L5A, with broad param range [0.2:3.0]
 20 params; 12 very small range, 4 small range, 4 large range
-** v31_batch7 - L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (subset of params)
+** v31_batch7 - tuning L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (subset of params)
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with fixed params
@@ -7546,7 +7546,7 @@ layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
 E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
 layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
 20 params; 12 very small range, 4 small range, 4 large range
-** v31_batch8 - L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (all params)
+** v31_batch8 - tuning L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (all params)
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with [prev-0.1:prev+0.1]
@@ -7557,7 +7557,7 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25
 layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
 20 params; 12 very small range, 4 small range, 4 large range
 
-** v31_batch9 - increase L5B range from 0.2-3.0 to 0.1-5.0; increase L2+L3 range from 0.1 to 0.25
+** v31_batch9 - tuning increase L5B range from 0.2-3.0 to 0.1-5.0; increase L2+L3 range from 0.1 to 0.25
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
@@ -7570,7 +7570,7 @@ layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:5.0]
 No good solutions; stuck at ~96 fitness
 SOM2, SOM3, PT5B, CT5B 0hz or very low rate
 
-** v32_batch1 - L2-L5B; added IE presyn-cell-type specific params
+** v32_batch1 - tuning L2-L5B; added IE presyn-cell-type specific params
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
@@ -7731,7 +7731,7 @@ IRE        3.168831
 IREM       3.792208
 TI         2.720000
 TIM        4.720000
-** v32_batch2 - L2-L6; EI and IE cell-type specific gains; params from v32_batch1; 20 very small rannges
+** v32_batch2 - tuning L2-L6; EI and IE cell-type specific gains; params from v32_batch1; 20 very small rannges
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EE,EI,IE,II gains for L2, with [prev-0.1:prev+0.1]
@@ -7744,7 +7744,7 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25
 PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
 32 params; 20 very small range, 8 small range, 4 large range
 
-** v32_batch3 - L1-L6; EI and IE cell-type specific gains; params from v32_batch1; added NGF1; inc range 0.1 to 0.15
+** v32_batch3 - tuning L1-L6; EI and IE cell-type specific gains; params from v32_batch1; added NGF1; inc range 0.1 to 0.15
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EI,II gains for L1, with broad param range [0.1:4.0]
@@ -7758,7 +7758,7 @@ E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25
 PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
 34 params; 20 very small range, 8 small range, 6 large range
 
-** v32_batch4 - best soln v32_batch3, +- 0.2 all params; min rate >=0.5Hz
+** v32_batch4 - tuning best soln v32_batch3, +- 0.2 all params; min rate >=0.5Hz
 *** notes
 fixed/frozen gains for thal from prev solution
 layer-specific EI,II gains for L1, with [prev-0.2:prev+0.2]
@@ -7775,7 +7775,7 @@ PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.2:prev+0.2]
 many good results
 best: trial_15057
 
-** v32_batch5 - best of v32_batch4, with LFP; 3 scales 
+** v32_batch5 - run best of v32_batch4, with LFP; 3 scales 
 *** notes
 *** code
 def custom():
@@ -7815,9 +7815,9 @@ def custom():
     b.method = 'grid'
 
     return b
-** v32_batch6 - best of v32_batch4, with LFP; with cochlear/IC speech input; with different cortichothal gains
-** v32_batch7 - best of v32_batch4, with LFP; scaled to 100% with different gains / scaling factors
-** v32_batch8 - scale 1.0, from v32_batch4, with param range -0.4 +0.1
+** v32_batch6 - run best of v32_batch4, with LFP; with cochlear/IC speech input; with different cortichothal gains
+** v32_batch7 - run best of v32_batch4, with LFP; scaled to 100% with different gains / scaling factors
+** v32_batch8 - tuning scale 1.0, from v32_batch4, with param range -0.4 +0.1
 *** results
 **** params order of importance (optuna)
 OrderedDict([("('IELayerGain', '5B')", 0.7499801502949816),
@@ -7855,8 +7855,8 @@ OrderedDict([("('IELayerGain', '5B')", 0.7499801502949816),
              ("('IELayerGain', '5A')", 0.0008924573619307901),
              ("('IILayerGain', '6')", 0.0008650967598182902)])
 
-** v32_batch9 - scale 1.0, from v32_batch4, with param range -0.75 +0.25
-** v32_batch10 - scale 1.0, from v32_batch4, with param range -1.0 +1.0
+** v32_batch9 - tuning scale 1.0, from v32_batch4, with param range -0.75 +0.25
+** v32_batch10 - tuning scale 1.0, from v32_batch4, with param range -1.0 +1.0
 *** results
 **** params order of importance (optuna)
 OrderedDict([("('IELayerGain', '5B')", 0.3151041601577254),
@@ -7893,13 +7893,13 @@ OrderedDict([("('IELayerGain', '5B')", 0.3151041601577254),
              ("('EILayerGain', '4')", 0.004551092697970192),
              ("('EILayerGain', '2')", 0.004396261976505042),
              ("('EILayerGain', '5B')", 0.003714547045091773)])
-** v32_batch11 - scale 1.0, only thal+L4, param range 0.1 - 4.0 - CHECK!
-** v32_batch12 - best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different weights 
-** v32_batch13 - from v32_batch11, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4 +-0.1; I->EI +-0.25
+** v32_batch11 - tuning scale 1.0, only thal+L4, param range 0.1 - 4.0 - CHECK!
+** v32_batch12 - run best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different weights 
+** v32_batch13 - tuning from v32_batch11, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4 +-0.1; I->EI +-0.25
 *** results
 fitness ~90
 ITP4, ITS4 ~ 0 Hz
-** v32_batch14 - from v32_batch13, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
+** v32_batch14 - tuning from v32_batch13, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
 *** results
 fitness ~90
 **** params order of importance (optuna)
@@ -7923,14 +7923,19 @@ OrderedDict([("('EICellTypeGain', 'PV')", 0.6012994003413611),
              ("('IILayerGain', '3')", 0.008980533541981537),
              ("('IILayerGain', '4')", 0.007605008889729912),
              ("('EELayerGain', '2')", 0.007272957038305588)])
-** v32_batch15 - best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different conn probs
-** v32_batch16 - from v32_batch13, scale 1.0, only thal+L2+L3+L4, param range +-1.0
+** v32_batch15 - run best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different conn probs
+** v32_batch16 - tuning from v32_batch13, scale 1.0, only thal+L2+L3+L4, param range +-1.0
 *** results
 fitness ~90
 
-** v32_batch17 - full - CHECK!
+** v32_batch17 - scale 1.0, full model, from v32_batch14 
+*** notes
+EI params from v32_batch14 trial 981, +-1.0  (by mistaked didnt include here IE params)
+thal+L2,L3,L4, IE params from v32_batch14 trial 981, +-0.5
+L1, L5A,L5B,L6 - 0.1-4
 
-** v32_batch18 - best of v32_batch4, scaled to 100%; grid search of main params - RAN
+
+** v32_batch18 - tuning - best of v32_batch4, scaled to 100%; grid search of main params
 *** notes
 EE - [0.25, 0.5, 0.75, 1.0] - 16
 EI, IE, II - [0.5, 1.0, 1.5] - 9
@@ -7952,7 +7957,7 @@ DONE:
 TODO:
 - explore param space around these solutions using optuna and/or grid search
 - if grid search, calculate fitness values directly?
-** v32_batch19 - optuna based on best solutions of v32_batch18; plus added L2+L3-specific IE gains 
+** v32_batch19 - tuning - optuna based on best solutions of v32_batch18; plus added L2+L3-specific IE gains 
 *** code
     # from prev - best of 50% cell density
     import json
@@ -7984,9 +7989,11 @@ TODO:
 
     params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
     params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
-    
-** v32_batchX - scale 1.0, only thal+L2+L3+L4, param range 0.1-4.0
+*** results
+trial_974 good!
+** v32_batch20 - scale 1.0; best from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0)
 
+*** 
 ** blank
 
 
