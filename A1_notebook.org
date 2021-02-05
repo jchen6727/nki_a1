@@ -41224,10 +41224,47 @@ duration:297.3 ms, 3 peaks, 3.1 cycles, filtsigcor:0.64
 163.25112200282638 311.900999264396
 
 *** savefig('trial_fig.png') --> LOOKS BLANK, but is this related to some kind of driver issue... ? swrast etc.? or is it something I am doing in the code? 
-** [IN PROGRESS] Trying on actual desktop now -- could try to use x2go potentially? or gcp? 
+** Trying on actual desktop now -- could try to use x2go potentially? or gcp? -- now the driver errors are gone, but still getting those warnings about empty slices (see below): 
+*** /home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:217: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:186: RuntimeWarning: invalid value encountered in true_divide
+  arrmean, rcount, out=arrmean, casting='unsafe', subok=False)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:209: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/fromnumeric.py:3335: RuntimeWarning: Mean of empty slice.
+  out=out, **kwargs)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:161: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
 ** Added the following lines to load.py main code block:
 ***   dfs = df[(df.band=='alpha')&(df.Foct<1.5)&(df.ncycle>3)&(df.filtsigcor>0.6)]  # select some events using the data frame
 *** print('dfs length = ' + str(len(dfs)))
 ***  # draw a single event
 ***  idx=0; evv.clf(); evv.draw(dfs.index[idx],clr='red',drawfilt=True,filtclr='b',ylspec=(1,50)); 
 *** # ADD SAVE FIG LINE
+** ^^ Added/committed/pushed this change to 'erica' branch of a1dat --DONE: pull these changes on desktop machine 
+* <2021-02-05 Fri -- spectrograms>
+** Figure out those errors -- conversation w/ sam below:
+*** samn 10:05 AM
+also, easier to debug/test if you take a shorter period of time - say 20 seconds instead of 6 minutes
+*** ericaygriffith  10:09 AM
+ah sure yeah that makes sense! should I do that once the file is loaded? i.e. load the full .mat file in the python script, but then add some lines to only take a subset of the data through the rest of the code? or do you think better to do it beforehand, i.e. save a smaller .mat file?
+*** samn 10:09 AM
+yeah, subset sounds good
+then can play around with the downsampling rate and see what you get
+
+** Based on the above convo, things to implement: 
+*** Chop up dat (which was set equal to CSD earlier in load.py), CSD, and tt arrays 
+****     ### SELECT PORTION OF CSD FOR DEBUGGING ###
+  print('original CSD shape: ' + str(CSD.shape))
+  print('original dat shape: ' + str(dat.shape))
+  print('original tt shape: ' + str(tt.shape))
+  print('MUA shape: ' + str(MUA.shape))
+  timeRange = [] # Fill this in [starting_time, end_time] in units sec (tt is time array in seconds -- from rdmat --> loadfile in nhpdat.py)
+  dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # recall dat = CSD # dt is time step in seconds (rdmat --> loadfile in nhpdat.py)
+  tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # Make same selection in the timepoint array
+  CSD = CSD[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
+  print('new CSD shape: ' + str(CSD.shape))
+  print('new dat shape: ' + str(dat.shape))
+  print('new tt shape: ' + str(tt.shape))
+  print('Starting timepoint: ' + str(tt[0]))
+  print('Ending timepoint: ' + str(tt[-1]))
