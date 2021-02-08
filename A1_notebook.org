@@ -41252,14 +41252,14 @@ ah sure yeah that makes sense! should I do that once the file is loaded? i.e. lo
 yeah, subset sounds good
 then can play around with the downsampling rate and see what you get
 
-** Based on the above convo, things to implement: 
+** Slice CSD, tt, and dat arrays to specific time range: 
 *** Chop up dat (which was set equal to CSD earlier in load.py), CSD, and tt arrays 
 ****     ### SELECT PORTION OF CSD FOR DEBUGGING ###
   print('original CSD shape: ' + str(CSD.shape))
   print('original dat shape: ' + str(dat.shape))
   print('original tt shape: ' + str(tt.shape))
   print('MUA shape: ' + str(MUA.shape))
-  timeRange = [] # Fill this in [starting_time, end_time] in units sec (tt is time array in seconds -- from rdmat --> loadfile in nhpdat.py)
+  timeRange = [10, 30] # Fill this in [starting_time, end_time] in units sec (tt is time array in seconds -- from rdmat --> loadfile in nhpdat.py)
   dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # recall dat = CSD # dt is time step in seconds (rdmat --> loadfile in nhpdat.py)
   tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # Make same selection in the timepoint array
   CSD = CSD[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
@@ -41268,3 +41268,132 @@ then can play around with the downsampling rate and see what you get
   print('new tt shape: ' + str(tt.shape))
   print('Starting timepoint: ' + str(tt[0]))
   print('Ending timepoint: ' + str(tt[-1]))
+**** Added this to a1dat erica branch -- pulled on desktop machine
+*** try, on desktop machine, from ~/Desktop/NEUROSIM/a1dat --> python -i load.py /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+*** okay! ^^ output: 
+original CSD shape: (21, 403971)
+original dat shape: (21, 403971)
+original tt shape: (403971,)
+MUA shape: (23, 403971)
+new CSD shape: (21, 22000)
+new dat shape: (21, 22000)
+new tt shape: (22000,)
+Starting timepoint: 10.000009901725376
+Ending timepoint: 29.999120613366877
+['2-bu027028013@os_eye06_20.mat', 'A1', '1', '5', '6', '11', '12', '13', '14', '17', '18', '19']
+0 4 5 10 11 12 13 16 17 18 2 7 11 14 17
+>>> tt[0]
+10.000009901725376
+>>> tt[-1]
+29.999120613366877
+>>> tt[1]
+10.000918993534622
+>>> tt[2]
+10.00182808534387
+>>> tt[3]
+10.002737177153119
+>>> dt
+0.0009090909090909091
+>>> dt*1e3
+
+*** appears to work. 
+** Increase sampling rate: 
+*** change samprds -- 
+*** if do sim: else: line --> in else, change samprds to 8e3 (from 1100.0) --> successfully changed. 
+*** add/commit/push load.py, pull on desktop, run again --> should it be a multiple of 44e3? --> maybe 8800? 
+*** Change this again to a multiple of 44e3 --> go with 8800.0 
+*** WARNING: 
+/home/erica/Desktop/NEUROSIM/a1dat/filter.py:72: UserWarning: Selected high corner frequency (5000) of bandpass is at or above Nyquist (4400.0). Applying a high-pass instead.
+  warnings.warn(msg)
+** Uncommenting lines in main code block of load.py up to dout = getIEIstatsbyBand to see if new sampling rate can be completed. --> Completed! 
+*** (partial) output:
+0
+delta 4 5.634425890487973 2.9172364417502545
+theta 6 0.2332217335128461 0.18585543451202607
+alpha 10 1.2163544268589506 0.8025232454772936
+beta 23 5.855050726582027 0.8234054664296309
+gamma 22 1.1643427359273082 0.8994107552581602
+hgamma 212 165.16790957282262 2.2586113574675997
+1
+theta 5 2.032476981316233 3.3902256486596576
+alpha 10 1.3630786938873989 0.4807897741808516
+beta 30 20.14560839985137 1.424278642523754
+gamma 23 1.5892613942027882 3.825089286964344
+hgamma 220 13.66720715951491 2.792212381984328
+dout completed
+*** note -- no errors regarding drivers or regarding mean slice empty etc. 
+** Try the rest of the lines (line by line interactively) to see if can generate figure:
+*** df = GetDFrame(dout,sampr, CSD, MUA, alignby='bywaveletpeak', haveMUA=True)
+*** ^^ sam says to leave MUA as None if not comparing -- try as is for now and then see what happens. 
+*** Ah -- here is the error:
+**** >>> df = GetDFrame(dout,sampr, CSD, MUA, alignby='bywaveletpeak', haveMUA=True)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:217: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:186: RuntimeWarning: invalid value encountered in true_divide
+  arrmean, rcount, out=arrmean, casting='unsafe', subok=False)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:209: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/fromnumeric.py:3335: RuntimeWarning: Mean of empty slice.
+  out=out, **kwargs)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:161: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+**** Try MUA = None
+*** df = GetDFrame(dout,sampr, CSD, MUA, alignby='bywaveletpeak', haveMUA=False)
+*** ^^ hm, none of those make a difference. Add print lines to GetDFrame to see where this is coming from. 
+*** Confusing becuase df still shows a 568 x 125 data frame containing all kinds of info. strange. 
+** Pinpointed where the error is coming from:
+*** output: 
+levent loop starting
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:217: RuntimeWarning: Degrees of freedom <= 0 for slice
+  keepdims=keepdims)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:186: RuntimeWarning: invalid value encountered in true_divide
+  arrmean, rcount, out=arrmean, casting='unsafe', subok=False)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:209: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/fromnumeric.py:3335: RuntimeWarning: Mean of empty slice.
+  out=out, **kwargs)
+/home/erica/anaconda3/lib/python3.7/site-packages/numpy/core/_methods.py:161: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+levent loop starting
+levent loop starting
+levent loop starting
+levent loop starting
+*** This means it's happening in the first instance of the levent loop in GetDFrame, but does not happen for the rest of the iterations. 
+*** Getting more info on which event this is happening to. 
+** Try the rest of the lines even without fully solving the above error ^^ 
+** Hypotheses about the blank fig(s): 
+*** Error that i've been hunting down above? 
+*** the warning at the beginning about highpass? 
+*** the way I'm picking which event to display?? 
+** from lab meeting - 28-50Hz -- CSD may upregulate the gamma/hgamma frequency events -- doesn't affect the lower-frequency components 
+** 1-2 Hz -- could argue that all the stimuli are presented in this range so naybe it rewires -- could also be the result of doing this on 1 second of simulation. 
+** Try increasing the downsampling rate just to see what happens -- to 11e3 (should be faster now that have it at 20 seconds). 
+*** Did get rid of that warning in the beginning about "/home/erica/Desktop/NEUROSIM/a1dat/filter.py:72: UserWarning: Selected high corner frequency (5000) of bandpass is at or above Nyquist (4400.0). Applying a high-pass instead.
+  warnings.warn(msg)"
+*** still get that same error in the first instance of levent. hm. 
+
+idx=0; --> HAD TO GET RID OF evv.clf() !!! 
+evv.draw(dfs.index[idx],clr='red',drawfilt=True,filtclr='b',ylspec=(1,50)); 
+** success! Add the lines to load.py officially; and add/commit/push to a1dat erica branch. 
+* <2021-02-08 Mon -- wavelet analysis on sim data>
+** Next goal: run this wavelet analysis on sim data
+** Data file: 
+*** A1_v32_batch5_v32_batch5_0.pkl --> added to ~/Desktop/NEUROSIM/a1dat from ~/Desktop/csd_test 
+*** ^^ NOT adding this file to repo; just for testing. 
+** Modifications to load.py: 
+*** load.py is in a1dat repo
+*** Modify the main code block to accommodate this --> go line by line to evaluate what needs to change
+*** The steps that occur (roughly): 
+**** (1) samprds is declared
+**** (2) CSD, tt, etc. are acquired using loadfile
+**** (3) CSD and tt are sliced according to timeRange 
+**** (4) Layers are acquired using .csv file and getflayers. This ends up with which channels contain data for supra, gran, and infragranular layers. ~~ WILL NEED TO THINK ON THIS ~~ !!!
+**** (5) getIEIstatsbyBand occurs --> This will need to be modified according to whatever happens for 'lchan'
+**** (6) GetDFrame -- this creates a pandas data frame with wavelet info -- this should be relatively straightforward / shouldn't need much changing if the previous steps are adjusted such that sim data is reported in terms of channel? 
+**** (7) dlms -- dictionary of morlet spectrograms is made. Similarly, should be straightforward if previous steps are adjusted?
+**** (8) eventviewer -- no changes probably needed here, similarly to 6 & 7
+**** (9) dfs -- some event(s) selected from the pandas data frame made in step 6; no adjustments, similarly. 
+**** (10) evv.draw -- event selected in step 9; no adjustments necessary; reasoning similar to above. 
+*** So -- from the above analysis: acquisition and slicing of CSD and tt arrays shoul be fine; can borrow from netpyne code. Easy enough, will just need to fiddle with that. --> NOTE: will need to figure out if this is a matter of importing packages, or adding some files to a1dat, or just some lines of code / functions to load.py? Figure this out. 
+*** BIGGEST issue to solve is the layers issue. 
+
