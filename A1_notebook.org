@@ -41446,7 +41446,17 @@ tt = np.arange(timeRange[0],timeRange[1],dt)
 *** Ah --> don't do this graphically. Do this numerically. 
 *** We know the electrode spacing and the placement -- from cfg.py
 **** we know spacing is 100um
-**** how many electrodes placed? where to find this info? 
+**** cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] 
+**** 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900 
+**** 20 electrodes total! (labeled channels 0-19) 
 *** We also know the layer boundaries
+**** layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+**** ^^ keep in mind these are the lower bounds of these layers 
 *** Futhermore, we know supragranular, granular, infragranular
+**** supra -- L1,L2,L3
+**** granular -- L4
+**** infra -- L5A, L5B, L6 
 *** put this all together!! 
+**** supra --> Layers 1-3 --> 0-950 --> electrodes / channels 0-9 (10?) 
+**** granular --> L4 --> 950-1250 --> electrodes / channels 10-12
+**** infra --> Layers 5A, 5B, 6 --> 1250 - 2000 --> electrodes / channels 13-19
