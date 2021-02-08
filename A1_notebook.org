@@ -41457,6 +41457,16 @@ tt = np.arange(timeRange[0],timeRange[1],dt)
 **** granular -- L4
 **** infra -- L5A, L5B, L6 
 *** put this all together!! 
-**** supra --> Layers 1-3 --> 0-950 --> electrodes / channels 0-9 (10?) 
-**** granular --> L4 --> 950-1250 --> electrodes / channels 10-12
+**** supra --> Layers 1-3 --> 0-950 --> electrodes / channels 0-9 (0 - 1000)  
+***** S1a / b : 0-1 (~L1/L2) -- (0-200)
+***** S2a / b : 2-9 (~L3)  -- (200-1000)
+**** granular --> L4 --> 950-1250 --> electrodes / channels 10-11 (1000-1200) 
 **** infra --> Layers 5A, 5B, 6 --> 1250 - 2000 --> electrodes / channels 13-19
+***** I1 a/b : 13-15 (1300 - 1600)
+***** I2 a/b : 16-19 (1600 - 2000) 
+** Created simData_layers.csv file with the following info: 
+*** S1a	S1b	S2a	S2b	G1a	G1b	I1a	I1b	I2a	I2b
+*** 0	1	2	9	10	11	12	15	16	19
+*** file:  A1_v32_batch5_v32_batch5_0.pkl
+*** area: A1
+*** NEXT Q: WHERE TO PUT THIS? 
