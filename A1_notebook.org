@@ -41396,4 +41396,57 @@ evv.draw(dfs.index[idx],clr='red',drawfilt=True,filtclr='b',ylspec=(1,50));
 **** (10) evv.draw -- event selected in step 9; no adjustments necessary; reasoning similar to above. 
 *** So -- from the above analysis: acquisition and slicing of CSD and tt arrays shoul be fine; can borrow from netpyne code. Easy enough, will just need to fiddle with that. --> NOTE: will need to figure out if this is a matter of importing packages, or adding some files to a1dat, or just some lines of code / functions to load.py? Figure this out. 
 *** BIGGEST issue to solve is the layers issue. 
+** Acquisition and slicing of CSD and tt: 
+*** In this context (.pkl file) 
+*** Load sim info: 
+**** from netpyne import sim
+**** sim.load(filename)
+*** Get LFP, sampr, spacing_um
+**** lfp_data = np.array(sim.allSimData['LFP'])
+**** sampr = 1./sim.cfg.recordStep
+**** spacing_um = sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1]
+**** spacing_mm = spacing_um/1000
+*** Get CSD: 
+**** datband = getbandpass(lfp_data,sampr,minf,maxf) 
+**** Get the CSD data --> 
+  # Convert spacing from microns to mm 
+  spacing_mm = spacing_um/1000
 
+  # Bandpass filter the LFP data with getbandpass() fx defined above
+  datband = getbandpass(lfp_data,sampr,minf,maxf) 
+
+  # Take CSD along smaller dimension
+  if datband.shape[0] > datband.shape[1]:
+    ax = 1
+  else:
+    ax = 0
+
+  # VAKNIN CORRECTION
+  if vaknin: 
+    datband = Vaknin(datband)
+
+  # NORM <-- ASKING SAM MORE ABOUT THIS
+  if norm: 
+    removemean(datband,ax=ax)
+
+  # now each column (or row) is an electrode -- take CSD along electrodes
+  CSD_data = -np.diff(datband,n=2,axis=ax)/spacing_mm**2  ## CSD_data should be in mV/mm**2, assuming that LFP data is in mV. 
+  
+*** Get tt array --> 
+timeRange = [0,sim.cfg.duration] # (if timeRange is none)
+dt = sim.cfg.recordStep          # dt --> recording time step (ms)
+tt = np.arange(timeRange[0],timeRange[1],dt) 
+*** Slice CSD and tt:
+**** CSD_data = sim.allSimData['CSD']['CSD_data'][:,int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep)]  
+**** NOTE: tt already "sliced" using timeRange -- just have to specify the timeRange and dt. 
+*** ^^ THESE LINES are all from combo of netpyne/analysis/csd.py and ~/Desktop/csd_test/test_CSD.py
+** ^^ Add these lines (or equivalent) into a1dat/load.py 
+** Layer / channel issue: 
+*** look at the difference between the CSD data from the sim, and CSD data from the monkeys --> so, not actually much difference. but need to be able to see which layers correspond to which channels. 
+*** Ah --> don't do this graphically. Do this numerically. 
+*** We know the electrode spacing and the placement -- from cfg.py
+**** we know spacing is 100um
+**** how many electrodes placed? where to find this info? 
+*** We also know the layer boundaries
+*** Futhermore, we know supragranular, granular, infragranular
+*** put this all together!! 
