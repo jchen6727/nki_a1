@@ -41469,4 +41469,70 @@ tt = np.arange(timeRange[0],timeRange[1],dt)
 *** 0	1	2	9	10	11	12	15	16	19
 *** file:  A1_v32_batch5_v32_batch5_0.pkl
 *** area: A1
-*** NEXT Q: WHERE TO PUT THIS? 
+*** NEXT Q: WHERE TO PUT THIS .csv FILE? 
+** Now put these two solutions together -- .csv file created, and lines for extracting/slicing CSD are gathered. 
+** Changes to load.py:
+***       if donetpyne:
+        # Get sampr (Hz), CSD 
+        sim.load(fn) # fn should be .pkl netpyne sim file 
+        lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
+        dat = lfp_data # to match the lines after else statement -- dat here originally equals lfp data; gets reassigned to CSD after if/else statement 
+        sampr = 1./sim.cfg.recordStep # sampling rate (Hz) 
+        spacing_um =  sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1] # spacing between electrodes in microns
+        CSD = getCSD(lfps=lfp_data,sampr=sampr,spacing_um=spacing_um) # getCSD() in nhpdat.py 
+        # Get dt
+        dt = sim.cfg.recordStep # recording time step (ms)
+        # Get tt 
+        timeRange = None # CHANGE THIS IF WANT CUSTOM TIME RANGE
+        if timeRange is None:
+          timeRange = [0,sim.cfg.duration] # sim.cfg.duration is a float # timeRange should be the entire sim duration 
+        tt = numpy.arange(timeRange[0],timeRange[1],dt) 
+        ## ^^ Now, have sampr, dat, dt, tt, CSD (not MUA)
+**  Moved .pkl file to ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+** Moved .csv layers file to ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv
+*** Changed so that when processed by getflayers, the channels would correspond to the correct channels...? Added +1 to each channel value. May change this back. Not sure... 
+** Added more netpyne-specific lines to main code block of load.py!!
+** Now testing load.py on local machine to see if runs up to getflayers if donetpyne=1. --> python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+** Strangely, when have more than one line in .csv file -- it doesn't read it correctly because the last entry is blank. (, then nothing). just one line for now, but will have to debug this later!!! 
+** Getting some errors - check on shape of CSD
+*** ERROR: 
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "load.py", line 1141, in getIEIstatsbyBand
+    lms,lnoise,lsidx,leidx = getmorletwin(dat[chan,:],int(winsz*sampr),sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,noiseamp=noiseamp)
+  File "load.py", line 202, in getmorletwin
+    ms = MorletSpec(sig,sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,width=mspecwidth)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/a1dat/morlet.py", line 67, in __init__
+    self.transform(tsvec,getphase) # perform wavelet transform
+  File "/Users/ericagriffith/Desktop/NEUROSIM/a1dat/morlet.py", line 81, in transform
+    self.TFR[j, :],self.PHS[j, :] = MorletVec(sig, self.sampr, freq, self.width, getphase=True)
+ValueError: could not broadcast input array from shape (99) into shape (100)
+*** CSD.shape in monkey -- (21, 4039705)
+*** CSD.shape in data -- (18, 25000)
+** RUN ON LAPTOP:
+*** SIM DATA TESTS: python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+*** MONKEY DATA TESTS: python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+* <2021-02-09 Tue -- morlet spectrograms on sim data>
+** Error upon using getIEIstatsbyBand:
+*** up to channel 4 getphase: True
+0 100
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "load.py", line 1141, in getIEIstatsbyBand
+    lms,lnoise,lsidx,leidx = getmorletwin(dat[chan,:],int(winsz*sampr),sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,noiseamp=noiseamp)
+  File "load.py", line 202, in getmorletwin
+    ms = MorletSpec(sig,sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,width=mspecwidth)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/a1dat/morlet.py", line 67, in __init__
+    self.transform(tsvec,getphase) # perform wavelet transform
+  File "/Users/ericagriffith/Desktop/NEUROSIM/a1dat/morlet.py", line 81, in transform
+    self.TFR[j, :],self.PHS[j, :] = MorletVec(sig, self.sampr, freq, self.width, getphase=True)
+ValueError: could not broadcast input array from shape (99) into shape (100)
+*** sam says: 
+looks like an index off by 1 error ... roundoff or conversion to int somewhere maybe causing that problem
+
+
+*** add some print statements? 
+*** should change my units to seconds in main code block of load.py for time arrays, etc. (comes up in morlet functions) 
+*** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+*** Conversion from ms to sec for 'dt' appears to have corrected this issue, but make sure that there are no other lingering errors as a result of this -- yes; also corrected fullTimeRange lines, etc. 
+*** Now appears to get past getIEIstatsbyBand line!! 
