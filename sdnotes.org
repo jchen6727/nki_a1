@@ -7992,6 +7992,39 @@ TODO:
 *** results
 trial_974 good!
 ** v32_batch20 - scale 1.0; best from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0)
+** v32_batch21 - scale 1.0; 11.5-sec; best from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0) and start time
+*** code
+    # from prev - best of 50% cell density
+    import json
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # conn gains - total 3888 param combs
+    params[('ICThalInput', 'probE')] = [0.0, 0.12, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'startTime')] = [2000, 5000, 8000]
+    
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['scaleDensity'] = 1.0
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
 
 *** 
 ** blank

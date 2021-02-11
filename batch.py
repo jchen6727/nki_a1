@@ -731,17 +731,18 @@ def custom():
         cfgLoad2 = json.load(f)['simConfig']
 
     # conn gains - total 3888 param combs
-    params[('ICThalInput', 'probE')] = [0.0, 0.12, 0.26, 0.5] # 0,1,2
-    params[('ICThalInput', 'probI')] = [0.0, 0.12, 0.26, 0.5] # 0,1,2
+    params[('ICThalInput', 'probE')] = [0.0, 0.12, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'startTime')] = [2000, 5000, 8000]
     
-    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 2500
-    initCfg['printPopAvgRates'] = [1500, 2500] 
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, 11500] 
     initCfg['scaleDensity'] = 1.0
 
     initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -1518,7 +1519,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch20' 
+    b.batchLabel = 'v32_batch21' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
