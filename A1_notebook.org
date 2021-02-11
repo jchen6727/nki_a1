@@ -41949,7 +41949,7 @@ To revert your SDK to the previously installed version, you may run:
 *** sim:
 **** on gcp
 **** cd ~/a1dat
-**** [WORKED] python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+**** [WORKED!] python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
 **** python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch19_trial_974_trial_974.pkl
 * <2021-02-11 Thu -- spont and speech data processing>
 ** 1sec sim run, full-density, spontaneous: 
@@ -41962,3 +41962,21 @@ To revert your SDK to the previously installed version, you may run:
 **** Run the above command in terminal on local machine 
 **** passphrase is !peter88
 **** success! 
+*** Transfer new .csv (added new .pkl filenames) over to gcp -- A1/data/simDataFiles
+**** use scp:
+***** SPONT: on local machine, cd ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+***** gcloud compute scp simDataLayers.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+*** Transfer new .pkl over to gcp -- from A1/data/simDataFiles:
+**** use scp:
+***** on local machine cd ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+***** gcloud compute scp A1_v32_batch20_v32_batch20_0_0.pkl ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+*** Run load.py on gcp:
+**** on gcp -- cd ~/a1dat
+**** git pull origin erica (already up to date)
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch20_v32_batch20_0_0.pkl
+**** 
+
+
+
+*** TO DO: change load.py code in a1dat repo (erica branch) such that this doesn't matter for sims, since all will have same channel source/sink info. 
+**** To do this -- figure out what s2, g, i1 are so that you can just set them in the main code block of load.py 
