@@ -41530,7 +41530,6 @@ ValueError: could not broadcast input array from shape (99) into shape (100)
 *** sam says: 
 looks like an index off by 1 error ... roundoff or conversion to int somewhere maybe causing that problem
 
-
 *** add some print statements? 
 *** should change my units to seconds in main code block of load.py for time arrays, etc. (comes up in morlet functions) 
 *** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
@@ -41584,7 +41583,6 @@ chan: 4
 **** Run the above command in terminal on local machine 
 **** passphrase is !peter88
 **** success! 
-
 *** Create dirs and subdirs on gcp A1 repo (repro branch):
 **** mkdir A1/data/NHPdata -- click, spont, speech
 ***** in each of click, spont, speech -- mkdir contproc
@@ -41610,25 +41608,25 @@ chan: 4
 ***** on local machine, cd ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
 ***** gcp compute scp *.mat ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
 
-
 ** From salva:
 *** erica here’s the data of the best full density simulation: https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch19/trial_974
 *** Downloaded this and placed it on local machine in ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v32_batch19_trial_974_trial_974.pkl
 *** Now cd to this spont directory on local machine 
 *** and do: gcloud compute scp A1_v32_batch19_trial_974_trial_974.pkl ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
-** OLD GCLOUD INFO COPY-PASTED FROM EARLIER DATES (1):
-*** Go to https://console.cloud.google.com/compute/instances?project=ecas-2019&instancessize=50
-*** Select instance 'g4-controller' --> SSH dropdown menu --> Open in browser window
-*** Username on gcp is ext_ericaygriffith_gmail_com
-*** To create user on account root (?), per salva:
+** gcloud info from previous posts in case useful: 
+*** OLD GCLOUD INFO COPY-PASTED FROM EARLIER DATES (1):
+**** Go to https://console.cloud.google.com/compute/instances?project=ecas-2019&instancessize=50
+**** Select instance 'g4-controller' --> SSH dropdown menu --> Open in browser window
+**** Username on gcp is ext_ericaygriffith_gmail_com
+**** To create user on account root (?), per salva:
 **** NOTE: accounts default and debug did not exist (see slack DMs between salva and I for more info if necessary)
 **** alias mysudo='sudo -E env "PATH=$PATH"'
 **** mysudo sacctmgr create user name=ext_ericaygriffith_gmail_com cluster=g4 account=root AdminLevel=admin
-*** Kind-of documentation, use with caution lol: https://docs.google.com/document/d/1fhW1YV8t0TBCaQ6OIgHK22cTqSOBp6GVUE6Ugf8FE_Y/edit#heading=h.rryybzyaw93m
-*** [ON LAPTOP] can do 'pip install gcloud' ON LAPTOP to login from there
-*** [ON GCP]:
-**** Install netpyne in home folder (guessing development branch?) 
-**** Fix paths in your bashrc (use salva's below as ref): 
+**** Kind-of documentation, use with caution lol: https://docs.google.com/document/d/1fhW1YV8t0TBCaQ6OIgHK22cTqSOBp6GVUE6Ugf8FE_Y/edit#heading=h.rryybzyaw93m
+**** [ON LAPTOP] can do 'pip install gcloud' ON LAPTOP to login from there
+**** [ON GCP]:
+***** Install netpyne in home folder (guessing development branch?) 
+***** Fix paths in your bashrc (use salva's below as ref): 
 ***** salva's bashrc:
 export N=root/nrn
     export CPU=x86_64
@@ -41655,16 +41653,16 @@ export N=root/nrn
     alias tarc='tar -zcvf'
     alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
     alias cpgs='gsutil -m cp -r'
-**** Check that NEURON works (do I need to install?) 
-** OLD GCLOUD INFO COPY-PASTED FROM EARLIER DATES (2): 
-*** GCP data issues: 
-*** on browser, on gcp console --> storage --> eyg_data is my bucket
-*** FROM CLUSTER TO BUCKET (run this in terminal on local machine that is ssh'ed into gcp!!): gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
-*** ^^ path in cluster is /home/ext_ericaygriffith_gmail_com/A1/data
-*** ^^ bucket path is gs://eyg_data 
-*** *IN gcp, I made a copy of the data dir for testing, called A1/data/v29_batch2_copyTest*
-*** so do command: gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2_copyTest gs://eyg_data
-**** ERROR: 
+***** Check that NEURON works (do I need to install?) 
+*** OLD GCLOUD INFO COPY-PASTED FROM EARLIER DATES (2): 
+**** GCP data issues: 
+**** on browser, on gcp console --> storage --> eyg_data is my bucket
+**** FROM CLUSTER TO BUCKET (run this in terminal on local machine that is ssh'ed into gcp!!): gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+**** ^^ path in cluster is /home/ext_ericaygriffith_gmail_com/A1/data
+**** ^^ bucket path is gs://eyg_data 
+**** *IN gcp, I made a copy of the data dir for testing, called A1/data/v29_batch2_copyTest*
+**** so do command: gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2_copyTest gs://eyg_data
+***** ERROR: 
 $ gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2_copyTest gs://eyg_data
 Copying file:///home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2_copyTest/v29_batch2_0.run [Content-Type=application/octet-stream]...
 Copying file:///home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2_copyTest/v29_batch2_0_cfg.json [Content-Type=application/json]...
@@ -41702,10 +41700,10 @@ Acceptable scopes: https://www.googleapis.com/auth/cloud-platform
 AccessDeniedException: 403 Insufficient OAuth2 scope to perform this operation.
 Acceptable scopes: https://www.googleapis.com/auth/cloud-platform
 CommandException: 12 files/objects could not be transferred.
-*** try scp: 
-**** gcloud compute scp --recurse g1-n2-login0:/home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
-**** ^^ this worked!! 
-*** % gcloud components update
+**** try scp: 
+***** gcloud compute scp --recurse g1-n2-login0:/home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+***** ^^ this worked!! 
+**** % gcloud components update
 
 
 Your current Cloud SDK version is: 312.0.0
@@ -41938,6 +41936,29 @@ Update done!
 To revert your SDK to the previously installed version, you may run:
   $ gcloud components update --version 312.0.0
 
-*** [done] add my scp to the gcp doc (https://docs.google.com/document/d/1w0QXqLexAz81-Ik0zQK4ZQ1GQdn9-dsJ5QV-M2iNXKs/edit#)
-**** gcloud compute scp --recurse g1-n2-login0:/path/to/gcp/data/dir ~/my/local/dir
-*** messaged Zaid over slack 
+**** [done] add my scp to the gcp doc (https://docs.google.com/document/d/1w0QXqLexAz81-Ik0zQK4ZQ1GQdn9-dsJ5QV-M2iNXKs/edit#)
+***** gcloud compute scp --recurse g1-n2-login0:/path/to/gcp/data/dir ~/my/local/dir
+**** messaged Zaid over slack 
+** gcp paths added to main code block of load.py
+** Run load.py on gcp:
+*** Had to install h5py and hdf5storage -- 'sudo pip3 install h5py' and 'sudo pip3 install hdf5storage'
+*** monkey:
+**** on gcp
+**** cd ~/a1dat
+**** python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 
+*** sim:
+**** on gcp
+**** cd ~/a1dat
+**** [WORKED] python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+**** python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch19_trial_974_trial_974.pkl
+* <2021-02-11 Thu -- spont and speech data processing>
+** 1sec sim run, full-density, spontaneous: 
+*** https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch20;tab=objects?prefix=&forceOnObjectsSortingFiltering=false
+*** The last one (A1_v32_batch19_trial_974_trial_974.pkl) did not record LFP ^^ this one above is the same but with LFP recorded. 
+** Run newer full-density sim on gcp: 
+*** Login to gcp:  
+**** go to gcp console on browser: https://console.cloud.google.com/home/dashboard?project=ecas2-nsf1904444
+**** compute engines --> VM instances --> trying g1-n2-controller --> SSH dropdown menu --> gcloud command --> copy-paste (gcloud beta compute ssh --zone "us-central1-f" "g1-n2-controller" --tunnel-through-iap --project "ecas2-nsf1904444") 
+**** Run the above command in terminal on local machine 
+**** passphrase is !peter88
+**** success! 
