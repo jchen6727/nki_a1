@@ -7933,7 +7933,8 @@ fitness ~90
 EI params from v32_batch14 trial 981, +-1.0  (by mistaked didnt include here IE params)
 thal+L2,L3,L4, IE params from v32_batch14 trial 981, +-0.5
 L1, L5A,L5B,L6 - 0.1-4
-
+*** results
+no good sols
 
 ** v32_batch18 - tuning - best of v32_batch4, scaled to 100%; grid search of main params
 *** notes
@@ -8042,7 +8043,23 @@ try following trials:
 ** v32_batch22 - scale 1.0; 11.5-sec; trial 287 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
 ** v32_batch23 - scale 1.0; 11.5-sec; trial 616 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
 ** v32_batch24 - scale 1.0; 11.5-sec; trial 1443 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+** v32_batch25 - No cortical conn, just bkg; scale 1.0; 11.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input
+*** code
+    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.0, 0.25]
+    params[('ICThalInput', 'weightI')] = [0.0, 0.25]
+    params['thalamoCorticalGain'] = [0.0, 1.0]
 
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI'), ('ICThalInput', 'weightE'), ('ICThalInput', 'weightI'), 'thalamoCorticalGain'] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    ...
+
+    initCfg['EEGain'] = 0.0 #1.0
+    initCfg['EIGain'] = 0.0 #1.0 # 1.8600534795309025 	
+    initCfg['IEGain'] = 0.0 #1.0 #0.75
+    initCfg['IIGain'] = 0.0
+    initCfg['thalamoCorticalGain'] = 0.0
 ** blank
 
 

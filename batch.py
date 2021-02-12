@@ -723,32 +723,34 @@ def custom():
 
     # from prev - best of 50% cell density
     import json
-    with open('data/v32_batch19/trial_1443/trial_1443_cfg.json', 'rb') as f:
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v32_batch19/trial_1443/trial_1443_cfg.json', 'rb') as f:
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
-    # conn gains - total 3888 param combs
     params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
     params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
-    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
-    params[('ICThalInput', 'startTime')] = [2000, 5000] #, 8000]
+    params[('ICThalInput', 'weightE')] = [0.0, 0.25]
+    params[('ICThalInput', 'weightI')] = [0.0, 0.25]
+    params['thalamoCorticalGain'] = [0.0, 1.0]
+
+    #params[('ICThalInput', 'startTime')] = [2000, 5000] #, 8000]
     
     
-    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI'), ('ICThalInput', 'weightE'), ('ICThalInput', 'weightI'), 'thalamoCorticalGain'] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {} # set default options from prev sim
-    
+
     initCfg['duration'] = 11500
     initCfg['printPopAvgRates'] = [1500, 11500] 
     initCfg['scaleDensity'] = 1.0
 
     initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-                             'startTime': 2000, 
+                             'startTime': 3000, 
                              'weightE': 1.0, 
                              'weightI': 1.0, 
                              'probE': 0.12, 
@@ -794,6 +796,14 @@ def custom():
         else:
             initCfg.update({p: cfgLoad2[p]})
 
+
+    # REMOVE THIS!!!
+    initCfg['EEGain'] = 0.0 #1.0
+    initCfg['EIGain'] = 0.0 #1.0 # 1.8600534795309025 	
+    initCfg['IEGain'] = 0.0 #1.0 #0.75
+    initCfg['IIGain'] = 0.0
+    initCfg['thalamoCorticalGain'] = 0.0
+    
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
@@ -1521,7 +1531,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch24' 
+    b.batchLabel = 'v32_batch25' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
