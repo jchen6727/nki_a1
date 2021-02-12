@@ -723,17 +723,19 @@ def custom():
 
     # from prev - best of 50% cell density
     import json
-    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+    with open('data/v32_batch19/trial_287/trial_287_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+    with open('data/v32_batch19/trial_287/trial_287_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
     # conn gains - total 3888 param combs
-    params[('ICThalInput', 'probE')] = [0.0, 0.12, 0.12, 0.26, 0.26] # 0,1,2
-    params[('ICThalInput', 'probI')] = [0.0, 0.12, 0.26, 0.12, 0.26] # 0,1,2
-    params[('ICThalInput', 'startTime')] = [2000, 5000, 8000]
+    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'startTime')] = [2000, 5000] #, 8000]
+    
     
     groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -1519,7 +1521,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch21' 
+    b.batchLabel = 'v32_batch22' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

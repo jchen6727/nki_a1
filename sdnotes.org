@@ -8026,7 +8026,23 @@ trial_974 good!
                              'probI': 0.26, 
                              'seed': 1}  
 
-*** 
+*** results
+so this is the full scale 10 sec (1.5-11.5 sec) sim without auditory stimuli (just all pops receving bkg inputs)…
+after ~6sec the dynamics seem to change regime: several pops stop firing and others fire a lot and oscillations disappear (showing raster and lfp spec at 4 diff depths)
+same with speech stimuli at 2-3sec … the stim seems to move net also to different regime with no osc etc
+similar happens if move stim to 5-6sec or 8-9 sec
+
+I was thinking of 1) trying one of the other solutions to see if keeps showing reasonable activity beyond 6 sec; 
+and 2) trying lowering IC->Thal weight to see if can get transient response to stimuli that doesn’t mess up dynamics
+
+try following trials:
+- 287
+- 616
+- 1443
+** v32_batch22 - scale 1.0; 11.5-sec; trial 287 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+** v32_batch23 - scale 1.0; 11.5-sec; trial 616 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+** v32_batch24 - scale 1.0; 11.5-sec; trial 1443 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+
 ** blank
 
 
