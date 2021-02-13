@@ -8060,6 +8060,13 @@ try following trials:
     initCfg['IEGain'] = 0.0 #1.0 #0.75
     initCfg['IIGain'] = 0.0
     initCfg['thalamoCorticalGain'] = 0.0
+** v32_batch26 -  scale 1.0; 11.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input; diff thal->conn gains
+*** code
+    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.0, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.0, 0.25]
+    params['thalamoCorticalGain'] = [0.0, 0.25, 0.5, 1.0, 1.5]
 ** blank
 
 

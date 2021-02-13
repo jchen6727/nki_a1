@@ -732,9 +732,9 @@ def custom():
 
     params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
     params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
-    params[('ICThalInput', 'weightE')] = [0.0, 0.25]
+    params[('ICThalInput', 'weightE')] = [0.0, 0.5]
     params[('ICThalInput', 'weightI')] = [0.0, 0.25]
-    params['thalamoCorticalGain'] = [0.0, 1.0]
+    params['thalamoCorticalGain'] = [0.0, 0.25, 0.5, 1.0, 1.5]
 
     #params[('ICThalInput', 'startTime')] = [2000, 5000] #, 8000]
     
@@ -797,12 +797,12 @@ def custom():
             initCfg.update({p: cfgLoad2[p]})
 
 
-    # REMOVE THIS!!!
-    initCfg['EEGain'] = 0.0 #1.0
-    initCfg['EIGain'] = 0.0 #1.0 # 1.8600534795309025 	
-    initCfg['IEGain'] = 0.0 #1.0 #0.75
-    initCfg['IIGain'] = 0.0
-    initCfg['thalamoCorticalGain'] = 0.0
+    # Include this to remove intracortical and thalamocortical conn  
+    # initCfg['EEGain'] = 0.0 #1.0
+    # initCfg['EIGain'] = 0.0 #1.0 # 1.8600534795309025 	
+    # initCfg['IEGain'] = 0.0 #1.0 #0.75
+    # initCfg['IIGain'] = 0.0
+    # initCfg['thalamoCorticalGain'] = 0.0
     
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
@@ -1531,7 +1531,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v32_batch25' 
+    b.batchLabel = 'v32_batch26' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
