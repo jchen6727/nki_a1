@@ -703,6 +703,7 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     numCols = 1                   # np.round(nrow/maxPlots) + 1   # maxPlots = 8
     figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
 
+
     # Morlet wavelet transform method
     if transformMethod == 'morlet':       # transformMethod is 'morlet' by default
       from testMorlet import MorletSpec, index2ms
@@ -712,46 +713,83 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
       if logy:
         freqList = np.logspace(np.log10(minFreq), np.log10(maxFreq), int((maxFreq-minFreq)/stepFreq))
 
-      for chan in range(nrow):
-        lfpPlot = lfp[chan,:]
-        fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
-        t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot)) # WILL len() FUNCTION WORK OR DIMS SWITCHED?
-        spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+      if 'all' in electrodes:
+        for chan in range(nrow):
+          lfpPlot = lfp[chan,:]
+          fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
+          t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot)) # WILL len() FUNCTION WORK OR DIMS SWITCHED?
+          spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
 
-      f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+        f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
 
-      vmin = np.array([s.TFR for s in spec]).min() # try s instead of s.TFR 
-      vmax = np.array([s.TFR for s in spec]).max() # try s instead of s.TFR 
-      # print('okay! ran so far')
-      # print('vmin shape = ' + str(vmin.shape))
-      # print('vmax shape = ' + str(vmax.shape))
-      # return vmin,vmax,f,spec
+        vmin = np.array([s.TFR for s in spec]).min()
+        vmax = np.array([s.TFR for s in spec]).max()
 
-      for chan in range(nrow):
-        plt.subplot(np.ceil(nrow / numCols), numCols, i + 1)
-        T = timeRange
-        F = spec[i].f
-        if normSpec:
-          spec[i].TFR = spec[i].TFR / vmax
-          S = spec[i].TFR
-          vc = [0, 1]
-        else:
-          S = spec[i].TFR
-          vc = [vmin, vmax]
+        for chan in range(nrow):
+          plt.subplot(np.ceil(nrow / numCols), numCols, chan + 1)
+          T = timeRange
+          F = spec[chan].f
+          if normSpec:
+            spec[chan].TFR = spec[chan].TFR / vmax
+            S = spec[chan].TFR
+            vc = [0, 1]
+          else:
+            S = spec[chan].TFR
+            vc = [vmin, vmax]
 
-        plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-        if normSpec:
-          plt.colorbar(label='Normalized power')
-        else:
-          plt.colorbar(label='Power')
+          plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+          if normSpec:
+            plt.colorbar(label='Normalized power')
+          else:
+            plt.colorbar(label='Power')
+
+          plt.ylabel('Hz')
+          plt.tight_layout()
+
+      else:
+        for i,elec in enumerate(electrodes):
+          lfpPlot = lfp[elec,:]
+          fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
+          t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot)) # WILL len() FUNCTION WORK OR DIMS SWITCHED?
+          spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+        f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+
+        vmin = np.array([s.TFR for s in spec]).min()
+        vmax = np.array([s.TFR for s in spec]).max()
+
+        for i,elec in enumerate(electrodes):
+          plt.subplot(np.ceil(len(electrodes) / numCols), numCols, i + 1)
+          T = timeRange
+          F = spec[i].f
+          if normSpec:
+            spec[i].TFR = spec[i].TFR / vmax
+            S = spec[i].TFR
+            vc = [0, 1]
+          else:
+            S = spec[i].TFR
+            vc = [vmin, vmax]
+
+          plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+          if normSpec:
+            plt.colorbar(label='Normalized power')
+          else:
+            plt.colorbar(label='Power')
+          plt.ylabel('Hz')
+          plt.tight_layout()
 
 
-    plt.ylabel('Hz')
-    plt.tight_layout()
+    # Skipping --> if transformMethod == 'fft':
+
     plt.xlabel('time (ms)', fontsize=fontSize)
-    plt.tight_layout()
     plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
     plt.subplots_adjust(bottom=0.08, top=0.90)
+    
+    if showFig:
+      plt.show()
+
+    if saveFig:
+      plt.saveFig('LFP_spectrograms.png')
 
 
 ######################################
@@ -951,7 +989,7 @@ if __name__ == '__main__':
             # trigtimes is array of stim trigger indices
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-    vmin,vmax,f,spec = plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'])
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'],electrodes=[4,6,7],figSize=(10,10))
     #plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'])
 
     # GET AND PLOT CSD 
