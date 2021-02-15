@@ -41950,7 +41950,7 @@ To revert your SDK to the previously installed version, you may run:
 **** on gcp
 **** cd ~/a1dat
 **** [WORKED!] python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
-**** python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch19_trial_974_trial_974.pkl
+**** DOES NOT WORK; no LFP recording: python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch19_trial_974_trial_974.pkl
 * <2021-02-11 Thu -- spont and speech data processing>
 ** 1sec sim run, full-density, spontaneous: 
 *** https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch20;tab=objects?prefix=&forceOnObjectsSortingFiltering=false
@@ -41974,9 +41974,114 @@ To revert your SDK to the previously installed version, you may run:
 **** on gcp -- cd ~/a1dat
 **** git pull origin erica (already up to date)
 **** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch20_v32_batch20_0_0.pkl
-**** 
+*** hoc error?? :
+****   Added NEURON objects to 13108 cells
+  Done; re-instantiate net time = 23.21 s
+Loading simData...
+Recording 43 traces of 1 types on node 0
+NEURON: Arg out of range in user function
+ near line 0
+ nao0_na_ion = 140.0
+                    ^
+        PtrVector(0)
+Traceback (most recent call last):
+  File "load.py", line 2394, in <module>
+    sim.load(fn) # fn should be .pkl netpyne sim file 
+  File "/home/ext_ericaygriffith_gmail_com/netpyne/netpyne/sim/wrappers.py", line 270, in load
+    simData = sim.setupRecording()              # setup variables to record for each cell (spikes, V traces, etc)
+  File "/home/ext_ericaygriffith_gmail_com/netpyne/netpyne/sim/setup.py", line 427, in setupRecording
+    setupRecordLFP()
+  File "/home/ext_ericaygriffith_gmail_com/netpyne/netpyne/sim/setup.py", line 323, in setupRecordLFP
+    cell.imembPtr = h.PtrVector(nseg)  # pointer vector
+RuntimeError: hoc error
 
 
+*** full-density with LFP recording; DOES NOT WORK (producees above error): 
+**** sim.load('/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch20_v32_batch20_0_0.pkl') 
+*** half-density with LFP recording; WORKS: 
+**** sim.load('/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl') 
+*** half-density w/ no LFP recording; WORKS: 
+**** sim.load('/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch19_trial_974_trial_974.pkl')
 
 *** TO DO: change load.py code in a1dat repo (erica branch) such that this doesn't matter for sims, since all will have same channel source/sink info. 
 **** To do this -- figure out what s2, g, i1 are so that you can just set them in the main code block of load.py 
+** Resolving hoc error described above: 
+*** salva suggested -- sim.load(fn, instantiate=False)
+*** This worked with sim.load('/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch20_v32_batch20_0_0.pkl', instantiate = False) 
+*** Made this modification to load.py (a1dat, erica branch) -- adding/committing/pushing/pulling on gcp and then seeing if rest of load.py runs. 
+** Trying to run load.py on gcp again (v32, batch20_0 -- full density, 1s, w/ LFP):
+*** on gcp: cd ~/a1dat
+*** git branch: erica
+*** git pull origin erica (load.py changes pulled)
+*** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch20_v32_batch20_0_0.pkl
+*** Works!!
+** Next steps:
+*** ericaygriffith  4:22 PM
+in terms of comparison -- sorry I know we briefly chatted about this before sam, but just want to clarify best way forward. just thinking here, seems like I could probably run this code on sim data as well and see what some oscillation events from sim data look like? and/or do we want to get a sense of the breakdown of proportion of oscillation events in different frequency bands - anything like that?
+
+samn:speech_balloon:  5:31 PM
+Yeah run sim to see breakdown sounds like a good first step
+Then to see if there are layer wise differences
+And the generators,
+Or populations that carry specific oscillation frequencies
+* <2021-02-12 Fri -- HNN / background reading + speech processing>
+** HNN paper:
+*** NOTES
+*** Conserved features minimally sufficient to account for generation of evoked responses and brain rhythms measured with EEG/MEG:
+**** (I) 3-layered structure with PNs in supra and infragranular layers whose dendrites span across the layers and are synaptically coupled to inhibitory interneurons in a 3- to-1 ratio of pyramidal to inhibitory cells (Figure 3A).
+**** (II) Exogenous driving input through two known layer-specific pathways.
+***** (i) Proximal drive: excitatory synaptic drive that comes from the lemniscal thalamus and contacts the cortex in the granular layers, which then propagates to the proximal PN dendrites in the supragranular and infragranular layers and somata of the inhibitory neurons; this input is referred to as proximal drive (Figure 3B). 
+***** (ii) Distal Drive: excitatory synaptic drive from higher-order cortex or non- specific thalamic nuclei that synapses directly into the supragranular layers and contacts the distal PN dendrites and somata of the inhibitory neuron; this input is referred to as distal drive (Figure 3C).
+**** (III) Exogenous drive to the network can also be generated as excitatory synaptic drives following a Poisson process to the somata of chosen cell classes or as tonic input simulated as a somatic cur- rent clamp with a fixed current injection. 
+*** QUESTION: Distal vs. proximal drive -- could distal drive (an example) be thalamic matrix input? Goes to supragranular, right? 
+*** Macroscale EEG/MEG signals are generated by the synchronous activity in large populations of PN neurons:
+**** Evoked responses are typically on the order of 10 – 100nAm, and are estimated to be generated by the synchronous spiking activity of the order of tens of thousands of pyramidal neurons.
+**** Low-frequency oscillations are larger in magnitude and are on the order of 100–1000 nAm, and are estimated to be generated by the subthreshold activity of on the order of a million pyramidal neurons (Jones et al., 2009; Jones et al., 2007; Murakami and Okada, 2006). 
+* <2021-02-14 Sun -- cosyne 2021 prep>
+** File locations on google slides:
+*** poster: https://docs.google.com/presentation/d/1M7N2aR04wxFV0iZ-9jIuq7VkwFMrSPOkp9CP55n4sPk/edit#slide=id.gbd437d927a_0_73
+*** thumbnail: https://docs.google.com/presentation/d/1WK3g4UMC2GzO4LDoEIYBIGn8sahhv-X_ZC1K0cD8h3M/edit#slide=id.p 
+*** slides: https://docs.google.com/presentation/d/1gM52ASWXPJaTJXwx9wpDXcmdL87LLua6vu90fi_0mRc/edit#slide=id.p
+*** All are located in My drive --> cosyne 2021 (subdir) 
+** File info:
+*** poster: 1500 x 600 pixels, < 5 MB
+*** thumbnail: 750 x 300 pixels, < 5 MB
+*** slides: aim for ~ 10 slides, publish and submit url when submitting above files as well 
+*** Info for presenters: http://www.cosyne.org/c/index.php?title=Cosyne_information_for_presenters_2021
+** Poster:
+*** 1500 x 600 pixels (for location see above)
+*** Four main sections:
+**** Introduction
+***** background
+***** in silico
+***** in vivo 
+**** Network Structure
+***** overall structure
+***** data-driven cell models (e.g. thal int, pyramidal)
+***** connectivity
+***** phenom modles (IC & cochlea)
+**** Network Optimization
+**** Results
+***** Model validation
+****** spontaneous
+****** speech 
+***** Further analyses 
+*** Results (model validation) figs: 
+**** Need to work on the results figures the most!!
+**** Main theme: Sim results vs. Monkey results
+**** Salva made a pdf with good starting point (A1_model_Dec2020.pdf):
+***** Believe these figs are all from half-density sim? CONFIRM. 
+***** First page shows a spontaneous raster (cortical and thalamic cells driven with background white noise inputs) and cell traces and some nice bar plots on the side for firing rate of each population. 
+***** Second page shows spontaneous activity LFP / CSD:
+****** LFP raw signal by layer (uV vs. time)
+****** LFP spectrogram by layer (Hz (freq) vs. time) 
+****** LFP PSD (power spectral density) by layer (Power vs. frequency)
+****** CSD w/ LFP overlay
+***** Third page shows a raster (and cell traces and pop firing) in response to an auditory stimulus --> stim comes in at 2000 and raster is plotted from 1500 to 2500 ms. Shows an increase in activity with some oscillations emerging in there. 
+***** Fourth page shows corresponding LFP / CSD in response to auditory stimulus described on page 3. 
+****** LFP raw signal by layer (uV vs. time) -- red vertical line placed at time of stimulus onset. This allows for better highlighting of the qualitative change in LFP raw signal. 
+****** LFP spectrogram by layer (Hz (freq) vs. time) -- red vertical line also placed at time of stimulus onset. Also allows for better highlighting of the qualitative change in LFP spectrogram. 
+****** LFP PSD (power spectral density) by layer (Power vs. frequency) -- of course no red line here because not amenable to that (power vs. freq), but I have to say that I don't find the differences between LFP PSD on pages 4 vs. 2 all that impressive qualitatively. 
+****** CSD w/ LFP overlay 
+**** My first thought here is to use these simulation figures as a starting point and to generate some figures from the monkey data that can demonstrate similarities. 
+**** Goal here is to get some good valication 
