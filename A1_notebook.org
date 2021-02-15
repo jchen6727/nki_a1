@@ -42066,7 +42066,7 @@ Or populations that carry specific oscillation frequencies
 ****** spontaneous
 ****** speech 
 ***** Further analyses 
-*** Results (model validation) figs: 
+*** Thoughts on results (model validation) figs: 
 **** Need to work on the results figures the most!!
 **** Main theme: Sim results vs. Monkey results
 **** Salva made a pdf with good starting point (A1_model_Dec2020.pdf):
@@ -42084,4 +42084,60 @@ Or populations that carry specific oscillation frequencies
 ****** LFP PSD (power spectral density) by layer (Power vs. frequency) -- of course no red line here because not amenable to that (power vs. freq), but I have to say that I don't find the differences between LFP PSD on pages 4 vs. 2 all that impressive qualitatively. 
 ****** CSD w/ LFP overlay 
 **** My first thought here is to use these simulation figures as a starting point and to generate some figures from the monkey data that can demonstrate similarities. 
-**** Goal here is to get some good valication 
+*** Results figs -- spontaneous model-validation figures:
+**** Layers in sim vs. monkey:
+***** Sim -- L1, 2, 3, 4, 5A, 5B, 6
+***** Monkey -- Supragranular (L1/2/3), Granular (L4), Infragranular (L5/6)
+**** Raw LFP signal by layer:
+***** SIM: use the simulation figs in the .pdf as a starting point
+***** MONKEY: generate raw LFP signals by layer
+**** LFP spectrogram by layer:
+***** SIM: use the simulation figs in the .pdf as a starting point
+***** MONKEY: generate LFP spectrograms by layer
+**** LFP PSD by layer -- do this +/-, but first generate the previous two (raw signal + spectrogram) 
+**** NOTE: Recall from meeting with lakatos lab that there is relatively more alpha band activity seen in these than in what they generally see. Ask salva / go thru the chats to see if there are any examples where LFP spectrogram looks closer to experimental results. 
+**** Start by looking into generating LFP spectrogram and raw LFP signal plots for monkey data. 
+*** Spontaneous LFP spectrogram / raw LFP for monkey:
+**** ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
+**** 2-bu027028013@os_eye06_20.mat --> this is the file I've been looking at lately.  
+**** LATER: Add others to .csv 
+***** 21feb02_A1_spont_layers.csv
+***** Code is in analysis/dataAnalysis.py -- plotAvgCSD then use the noelle email to assign channels from there. 
+**** Could add function to plot LFP:
+***** Look at netpyne lfp.py (netpyne/netpyne/analysis/lfp.py) 
+***** Add/adapt this code in for the .mat data? 
+***** Put this code into analysis/dataAnalysis.py 
+*** Adding LFP functions to A1/analysis/dataAnalysis.py 
+**** Adapting from netpyne's lfp.py
+**** Args:
+***** timeRange=None
+***** electrodes=['avg', 'all'] --
+****** MAY CHANGE THIS 
+***** plots=['timeSeries', 'spectrogram'] -- 
+****** ORIG: plots=['timeSeries', 'PSD', 'spectrogram', 'locations']
+***** inputLFP=None
+***** NFFT -- (not) leaving this out for now!! 
+***** Actually -- just copying over all the args for now -- change as you go!
+**** Cut from comments:
+*****     """
+    Function for plotting local field potentials (LFP)
+
+    Parameters
+    ----------
+    timeRange : list [start, stop]
+        Time range to plot.
+        **Default:**
+        ``None`` plots entire time range
+        **Options:** ``<option>`` <description of option>
+
+    electrodes : list --> electrodes=['avg', 'all'],  --> NOTE: TAKEN OUT FOR NOW 
+        List of electrodes to include; ``'avg'`` is the average of all electrodes; ``'all'`` is each electrode separately.
+        **Default:** ``['avg', 'all']``
+        **Options:** ``<option>`` <description of option>
+
+    plots : list
+        List of plot types to show.
+        **Default:** ``['timeSeries', 'spectrogram']``
+        **Options:** ``<option>`` <description of option>
+    """
+    
