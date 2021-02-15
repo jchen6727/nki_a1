@@ -42142,7 +42142,7 @@ Or populations that carry specific oscillation frequencies
     """
     
 * <2021-02-15 Mon -- LFP / model validation figures>
-** Adding code to A1/analysis/dataAnalysis.py 
+** LFP timeSeries code to A1/analysis/dataAnalysis.py 
 *** NOTE: LFP is in mV after extraction from rdmat() 
 *** line removed from FORMAT PLOT section in 'timeSeries' if statement: 
     #plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (nrow*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', fontSize=fontSize, rotation=90)
@@ -42152,3 +42152,8 @@ Or populations that carry specific oscillation frequencies
 *** ERROR / WARNING from scalebar code addition:
 **** dataAnalysis.py:677: RuntimeWarning: overflow encountered in double_scalars
   round_to_n = lambda x, n, m: int(np.ceil(round(x, -int(np.floor(np.log10(abs(x)))) + (n - 1)) / m)) * m
+** Adding LFP spectrogram code to A1/analysis/dataAnalysis.py:
+*** from ..support.morlet import MorletSpec, index2ms
+*** ^^ what's the equivalent here that I can use in A1 directory. 
+*** Copy-pasted morlet.py from netpyne/support/morlet.py to A1/analysis/testMorlet.py --> then "from testMorlet import MorletSpec, index2ms" --> tested line on its own and it worked. 
+*** 

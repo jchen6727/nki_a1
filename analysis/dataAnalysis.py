@@ -639,6 +639,8 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
   axs = []
   nrow = lfp.shape[0]  # number of channels in the recording
 
+
+  ### TIME SERIES -----------------------------------------
   if 'timeSeries' in plots:
     ydisp = np.absolute(lfp).max() * separation
     offset = 1.0*ydisp
@@ -694,6 +696,36 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     if showFig:
       plt.show()
 
+
+  ### SPECTROGRAM -----------------------------------------
+  if 'spectrogram' in plots:
+    import matplotlib.cm as cm
+    numCols = 1                   # np.round(nrow/maxPlots) + 1   # maxPlots = 8
+    figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+
+    # Morlet wavelet transform method
+    if transformMethod == 'morlet':       # transformMethod is 'morlet' by default
+      from testMorlet import MorletSpec, index2ms
+
+      spec = []
+      freqList = None
+      if logy:
+        freqList = np.logspace(np.log10(minFreq), np.log10(maxFreq), int((maxFreq-minFreq)/stepFreq))
+
+      for chan in range(nrow):
+        lfpPlot = lfp[chan,:]
+        fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
+        t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot)) # WILL len() FUNCTION WORK OR DIMS SWITCHED?
+        spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+      f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+
+      vmin = np.array([s.TFR for s in spec]).min() # try s instead of s.TFR 
+      vmax = np.array([s.TFR for s in spec]).max() # try s instead of s.TFR 
+      print('okay! ran so far')
+      print('vmin shape = ' + str(vmin.shape))
+      print('vmax shape = ' + str(vmax.shape))
+      return vmin,vmax,f,spec
 
 ######################################
 ### FILE PRE-PROCESSING FUNCTIONS #### 
@@ -892,7 +924,8 @@ if __name__ == '__main__':
             # trigtimes is array of stim trigger indices
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500])
+    vmin,vmax,f,spec = plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'])
+    #plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'])
 
     # GET AND PLOT CSD 
     ## plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
