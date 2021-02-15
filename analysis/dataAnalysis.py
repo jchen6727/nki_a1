@@ -566,19 +566,18 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
 ## ADAPTED FROM NETPYNE ANALYSIS lfp.py 
 ## may change electrodes 
 
-def plotLFP(dat,tt,trigtimes=None,timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], plotByLayer=True, inputLFP=None, NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
+def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], plotByLayer=True, inputLFP=None, NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
   ## dat --> LFP data as numpy array
   ## tt --> numpy array of time points (time array in seconds)
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
-  ## fn --> filename -- string -- used for saving! 
-  ## saveFolder --> string -- path to directory where figs should be saved
-  ## plotByLayer -- break the graphs up by supra/infra/gran or plot all on the same graph 
-
-  ## NOTE: MAKE SURE LFP DATA IS THE CORRECT DIMENTIONS (NOT TRANSPOSED)
+    #### ARGS NOT YET ADDED / USED: 
+    ## fn --> filename -- string -- used for saving! 
+    ## saveFolder --> string -- path to directory where figs should be saved
+    ## plotByLayer -- break the graphs up by supra/infra/gran or plot all on the same graph 
 
   from testScalebar import add_scalebar
-  from testBokeh import colorList # PUT THIS UP TOP OR CHANGE HOW IT IS DONE
+  from testBokeh import colorList 
   from numbers import Number
 
 
@@ -592,25 +591,25 @@ def plotLFP(dat,tt,trigtimes=None,timeRange=None, electrodes=['avg', 'all'], plo
 
   ## trigtimes only if non-spontaneous data (click or speech)
   if trigtimes:
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS
     for idx in trigtimes:
       trigtimesMS.append(tt[idx]*1e3)
 
 
-  tt = tt*1e3 # Convert units from seconds to ms 
-  dt = tt[1] - tt[0] # dt is the time step of the recording (equivalent to sim.cfg.recordStep) # UNITS: in ms after converstion
+  tt = tt*1e3        # Convert time array units from seconds to ms 
+  dt = tt[1] - tt[0] # dt is the time step of the recording (equivalent to sim.cfg.recordStep) # UNITS: in ms after conversion
 
 
-  # SLICE LFP AND TIME ARRAYS APPROPRIATELY
+  # SLICE LFP AND TIME ARRAYS APPROPRIATELY ACCORDING TO timeRange
   if timeRange is None:
     timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording (ms)
   else:
-    dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # SLICE LFP DATA APPROPRIATELY
-    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
+    dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]  # SLICE LFP DATA ACCORDING TO timeRange
+    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]      # DO THE SAME FOR TIMEPOINT ARRAY 
 
   lfp = dat # set lfp equal to 'dat' so that rest of code is comparable to netpyne lfp.py 
 
-  if filtFreq: # default is False
+  if filtFreq:  # default is False
     from scipy import signal
     fs = 1000.0/dt # dt is equivalent to sim.cfg.recordStep 
     nyquist = fs/2.0
@@ -623,41 +622,59 @@ def plotLFP(dat,tt,trigtimes=None,timeRange=None, electrodes=['avg', 'all'], plo
     for i in range(lfp.shape[1]):
       lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
 
-  if detrend: # default is False 
+  if detrend:   # default is False 
     from scipy import signal
     for i in range(lfp.shape[1]):
       lfp[:,i] = signal.detrend(lfp[:,i])
 
-  if normSignal:
+  if normSignal:  # default is False
     for i in range(lfp.shape[1]):
       offset = min(lfp[:,i])
       if offset <= 0:
         lfp[:,i] += abs(offset)
       lfp[:,i] /= max(lfp[:,i])
 
-  ### plotting
+  ### PLOTTING ### 
   figs = []
   axs = []
-  #maxPlots = 8.0
-  nrow = lfp.shape[0] #dat.shape[0]   # number of channels 
+  nrow = lfp.shape[0]  # number of channels in the recording
 
   if 'timeSeries' in plots:
     ydisp = np.absolute(lfp).max() * separation
     offset = 1.0*ydisp
-    #t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
     if figSize:
       figs.append(plt.figure(figsize=figSize))
 
 
     for chan in range(nrow):
-      #axs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
       lfpPlot = lfp[chan,:]
-      color = colors[chan%len(colors)] #colors[i%len(colors)]
+      color = colors[chan%len(colors)] 
       lw = 1.0
 
       plt.plot(tt[0:len(lfpPlot)], -lfpPlot+(chan*ydisp), color=color, linewidth=lw)
+      plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (chan*ydisp), chan, color=color, ha='center', va='top', fontsize=fontSize, fontweight='bold')
+    
+    ax = plt.gca()
 
-    #plt.show()
+    ## FORMAT PLOT ### 
+    ### x axis 
+    plt.xlabel('Time (ms)', fontsize=fontSize)
+    ### y axis 
+    plt.ylim(-offset, nrow*ydisp)
+    ax.invert_yaxis()
+    ax.axes.yaxis.set_ticks([])
+    plt.ylabel('Channel')
+    ax.axes.yaxis.set_label_coords(-0.1, 0.5)
+    ### make top, right, left spines of the plot invisible
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ### add title to graph 
+    plt.suptitle('Local Field Potential (LFP)')
+    
+    if showFig:
+      plt.show()
+
 
 ######################################
 ### FILE PRE-PROCESSING FUNCTIONS #### 
@@ -856,7 +873,7 @@ if __name__ == '__main__':
             # trigtimes is array of stim trigger indices
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-    plotLFP(LFP_data,tt)
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500])
 
     # GET AND PLOT CSD 
     ## plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
