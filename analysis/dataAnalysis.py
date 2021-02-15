@@ -671,6 +671,25 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     ax.spines['left'].set_visible(False)
     ### add title to graph 
     plt.suptitle('Local Field Potential (LFP)')
+
+    ### ADD SCALEBAR ### 
+    ##### RUNTIME WARNING BEING GENERATED -- SEE NB 
+    round_to_n = lambda x, n, m: int(np.ceil(round(x, -int(np.floor(np.log10(abs(x)))) + (n - 1)) / m)) * m
+    scaley = 1000.0  # values in mV but want to convert to uV
+    m = 10.0
+    sizey = 100/scaley
+    while sizey > 0.25*ydisp:
+      try:
+        sizey = round_to_n(0.2*ydisp*scaley, 1, m) / scaley
+      except:
+        sizey /= 10.0
+      m /= 10.0
+    labely = '%.3g $\mu$V'%(sizey*scaley)#)[1:]
+    if nrow > 1:
+      add_scalebar(ax,hidey=True, matchy=False, hidex=False, matchx=False, sizex=0, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+    else:
+      add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, unitsx='ms', loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+
     
     if showFig:
       plt.show()

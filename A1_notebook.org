@@ -42146,4 +42146,9 @@ Or populations that carry specific oscillation frequencies
 *** NOTE: LFP is in mV after extraction from rdmat() 
 *** line removed from FORMAT PLOT section in 'timeSeries' if statement: 
     #plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (nrow*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', fontSize=fontSize, rotation=90)
-*** 
+*** Cleaned up timeSeries code 
+*** NOTE: have not yet added testScalebar or testBokeh which are necessary for this LFP plotting function, but keep that in mind for later -- should I rename?
+*** Added scalebar lines from netpyne's lfp.py --> changed if electrodes > 1 to if nrow > 1 --> NOTE: may have to change this depending on how the electrodes argument gets changed. 
+*** ERROR / WARNING from scalebar code addition:
+**** dataAnalysis.py:677: RuntimeWarning: overflow encountered in double_scalars
+  round_to_n = lambda x, n, m: int(np.ceil(round(x, -int(np.floor(np.log10(abs(x)))) + (n - 1)) / m)) * m
