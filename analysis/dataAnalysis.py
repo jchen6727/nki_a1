@@ -722,10 +722,37 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
 
       vmin = np.array([s.TFR for s in spec]).min() # try s instead of s.TFR 
       vmax = np.array([s.TFR for s in spec]).max() # try s instead of s.TFR 
-      print('okay! ran so far')
-      print('vmin shape = ' + str(vmin.shape))
-      print('vmax shape = ' + str(vmax.shape))
-      return vmin,vmax,f,spec
+      # print('okay! ran so far')
+      # print('vmin shape = ' + str(vmin.shape))
+      # print('vmax shape = ' + str(vmax.shape))
+      # return vmin,vmax,f,spec
+
+      for chan in range(nrow):
+        plt.subplot(np.ceil(nrow / numCols), numCols, i + 1)
+        T = timeRange
+        F = spec[i].f
+        if normSpec:
+          spec[i].TFR = spec[i].TFR / vmax
+          S = spec[i].TFR
+          vc = [0, 1]
+        else:
+          S = spec[i].TFR
+          vc = [vmin, vmax]
+
+        plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+        if normSpec:
+          plt.colorbar(label='Normalized power')
+        else:
+          plt.colorbar(label='Power')
+
+
+    plt.ylabel('Hz')
+    plt.tight_layout()
+    plt.xlabel('time (ms)', fontsize=fontSize)
+    plt.tight_layout()
+    plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
+    plt.subplots_adjust(bottom=0.08, top=0.90)
+
 
 ######################################
 ### FILE PRE-PROCESSING FUNCTIONS #### 
