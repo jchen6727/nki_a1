@@ -42166,4 +42166,7 @@ Or populations that carry specific oscillation frequencies
 *** inputLFP=None, 
 *** plotByLayer=True, 
 ** Added PSD code to plotLFP! 
-** supra/gran/infra
+** supra/gran/infra --> 
+*** Added def grepstr() to dataAnalysis.py
+*** Added def getflayers() to dataAnalysis.py (took out default dbpath)
+*** Added dbpath and fn as args to plotLFP

@@ -560,17 +560,82 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
 
 #### PLOT LFP FUNCTIONS ####
 
+# return first line matching s if it exists in file fn
+def grepstr (fn, s):
+  try:
+    fp = open(fn,'r', encoding='utf-8')
+    lns = fp.readlines()
+    for ln in lns:
+      if ln.count(s) > 0:
+        fp.close()
+        return ln.strip()
+    fp.close()
+  except:
+    pass
+  return False
+
+
+# this function gets the CSD/LFP channel ranges for the .mat cortical recording:
+# s1: supragranular source
+# s2: supragranular sink
+# g: granular sink
+# i1: infragranular sink
+# i2: infragranular source
+# each of these values have a range, by default will pick the middle value as s1,s2,g,i1,i2
+#
+# note that indices in dbpath file are Matlab based so subtracts 1 first
+# since not all files have layers determined, returns empty values (-1) when not found
+# when abbrev==True, only get s2,g,i1
+def getflayers (fn, dbpath,getmid=True,abbrev=False):
+  if dbpath is None or len(dbpath)==0: dbpath = findcsvdbpath(fn)
+  s = grepstr(dbpath,os.path.split(fn)[-1])
+  if s == False:
+    if abbrev:
+      return [-1 for i in range(3)]
+    else:
+      return [-1 for i in range(5)]
+  ls = s.split(',')
+  print(ls)
+  try:
+    lint = [int(x)-1 for x in ls[2:]]
+    if not monoinc(lint):
+      if abbrev:
+        return [-1 for i in range(3)]
+      else:
+        return [-1 for i in range(5)]      
+    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = lint
+    if getmid:
+      s1 = int((s1low+s1high)/2.0)
+      s2 = int((s2low+s2high)/2.0)
+      g = int((glow+ghigh)/2.0)
+      i1 = int((i1low+i1high)/2.0)
+      i2 = int((i2low+i2high)/2.0)
+      print(s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high,s1,s2,g,i1,i2)
+      if abbrev:
+        return s2,g,i1
+      else:
+        return s1,s2,g,i1,i2
+    else:
+      return s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high
+  except:
+    if abbrev:
+      return [-1 for i in range(3)]
+    else:
+      return [-1 for i in range(5)]
+
 # -------------------------------------------------------------------------------------------------------------------
 ## Plot LFP (time-resolved, power spectral density, time-frequency and 3D locations)
 # -------------------------------------------------------------------------------------------------------------------
 ## ADAPTED FROM NETPYNE ANALYSIS lfp.py 
 ## may change electrodes 
 
-def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
+def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], dbpath=None, fn=None, NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
   ## dat --> LFP data as numpy array
   ## tt --> numpy array of time points (time array in seconds)
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
+  ## dbpath --> path to .csv layer file with relevant .mat filename, needed if electrodes includes 'supra', 'infra', or 'gran'
+  ## fn --> path to .mat filename, needed if electrodes includes 'supra', 'infra', or 'gran'
     #### ARGS NOT YET ADDED / USED: 
     ## fn --> filename -- string -- used for saving! 
     ## saveFolder --> string -- path to directory where figs should be saved
@@ -659,6 +724,26 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
         lfpPlot = np.mean(lfp,axis=0) ## axis = 1 in netpyne lfp.py, but dims should be flipped for data
         color='k'
         lw = 1.0 
+
+      ## lfpPlot for supgragranular, infragranular, or granular layer(s). 
+      elif elec == 'supra':
+        if dbpath is None:
+          print('need dbpath')
+        if fn is None:
+          print('need path to .mat data file')
+
+      elif elec == 'infra':
+        if dbpath is None:
+          print('need dbpath')
+        if fn is None:
+          print('need path to .mat data file')
+
+      elif elec == 'gran':
+        if dbpath is None:
+          print('need dbpath')
+        if fn is None:
+          print('need path to .mat data file')
+
       elif isinstance(elec, Number):
         lfpPlot = lfp[elec,:] # this is lfp[:,elec] in netpyne lfp.py, but dims should be flipped for data
         color = colors[i%len(colors)]
@@ -1057,8 +1142,14 @@ if __name__ == '__main__':
             # trigtimes is array of stim trigger indices
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['PSD'],electrodes=[4,12,16,19,'avg'],saveFig=True) # 16,19 #[4,12]
-    #plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'])
+    ## SET PATH TO .csv LAYER FILE: 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
+    # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
+    
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['PSD'],electrodes=[4,12,16,19,'avg'],fn=fullPath,dbpath = dbpath, saveFig=True) # 16,19 #[4,12]
+
+
 
     # GET AND PLOT CSD 
     ## plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
