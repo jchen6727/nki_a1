@@ -42156,4 +42156,14 @@ Or populations that carry specific oscillation frequencies
 *** from ..support.morlet import MorletSpec, index2ms
 *** ^^ what's the equivalent here that I can use in A1 directory. 
 *** Copy-pasted morlet.py from netpyne/support/morlet.py to A1/analysis/testMorlet.py --> then "from testMorlet import MorletSpec, index2ms" --> tested line on its own and it worked. 
-*** 
+** In LFP timeSeries --> removals/modifications:
+*** removed
+    # plt.ylabel('Channel')
+    # ax.axes.yaxis.set_label_coords(-0.1, 0.5)
+*** Added in 'avg' capability 
+*** Changed electrodes such that not dependent on nrow/chan 
+** In args -- removed
+*** inputLFP=None, 
+*** plotByLayer=True, 
+** Added PSD code to plotLFP! 
+** supra/gran/infra

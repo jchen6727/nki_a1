@@ -566,7 +566,7 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
 ## ADAPTED FROM NETPYNE ANALYSIS lfp.py 
 ## may change electrodes 
 
-def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], plotByLayer=True, inputLFP=None, NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
+def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
   ## dat --> LFP data as numpy array
   ## tt --> numpy array of time points (time array in seconds)
   ## timeRange --> time range to be plotted (in ms)
@@ -634,10 +634,16 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
         lfp[:,i] += abs(offset)
       lfp[:,i] /= max(lfp[:,i])
 
+
+  ### ELECTRODES ###
+  nrow = lfp.shape[0]  # number of channels in the recording
+  if 'all' in electrodes:
+    electrodes.remove('all')
+    electrodes.extend(list(range(nrow))) 
+
   ### PLOTTING ### 
   figs = []
   axs = []
-  nrow = lfp.shape[0]  # number of channels in the recording
 
 
   ### TIME SERIES -----------------------------------------
@@ -648,13 +654,18 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
       figs.append(plt.figure(figsize=figSize))
 
 
-    for chan in range(nrow):
-      lfpPlot = lfp[chan,:]
-      color = colors[chan%len(colors)] 
-      lw = 1.0
+    for i,elec in enumerate(electrodes):
+      if elec == 'avg':
+        lfpPlot = np.mean(lfp,axis=0) ## axis = 1 in netpyne lfp.py, but dims should be flipped for data
+        color='k'
+        lw = 1.0 
+      elif isinstance(elec, Number):
+        lfpPlot = lfp[elec,:] # this is lfp[:,elec] in netpyne lfp.py, but dims should be flipped for data
+        color = colors[i%len(colors)]
+        lw = 1.0 
 
-      plt.plot(tt[0:len(lfpPlot)], -lfpPlot+(chan*ydisp), color=color, linewidth=lw)
-      plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (chan*ydisp), chan, color=color, ha='center', va='top', fontsize=fontSize, fontweight='bold')
+      plt.plot(tt[0:len(lfpPlot)], -lfpPlot+(i*ydisp), color=color, linewidth=lw) # chan changed to i
+      plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, color=color, ha='center', va='top', fontsize=fontSize, fontweight='bold') # chan changed to i
     
     ax = plt.gca()
 
@@ -662,11 +673,11 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     ### x axis 
     plt.xlabel('Time (ms)', fontsize=fontSize)
     ### y axis 
-    plt.ylim(-offset, nrow*ydisp)
+    if len(electrodes) > 1:
+      plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', fontSize=fontSize, rotation=90)
+    plt.ylim(-offset, (len(electrodes))*ydisp)
     ax.invert_yaxis()
     ax.axes.yaxis.set_ticks([])
-    plt.ylabel('Channel')
-    ax.axes.yaxis.set_label_coords(-0.1, 0.5)
     ### make top, right, left spines of the plot invisible
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -696,11 +707,14 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     if showFig:
       plt.show()
 
+    if saveFig:
+      plt.savefig('LFP_timeSeries.png') # ADD FILENAME INFO TO THIS 
+
 
   ### SPECTROGRAM -----------------------------------------
   if 'spectrogram' in plots:
     import matplotlib.cm as cm
-    numCols = 1                   # np.round(nrow/maxPlots) + 1   # maxPlots = 8
+    numCols = np.round(nrow/maxPlots) + 1   # maxPlots = 8
     figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
 
 
@@ -713,75 +727,49 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
       if logy:
         freqList = np.logspace(np.log10(minFreq), np.log10(maxFreq), int((maxFreq-minFreq)/stepFreq))
 
-      if 'all' in electrodes:
-        for chan in range(nrow):
-          lfpPlot = lfp[chan,:]
-          fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
-          t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot)) # WILL len() FUNCTION WORK OR DIMS SWITCHED?
-          spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+      # TO PLOT LFP SPECTROGRAMS FROM ALL ELECTRODES 
+      for i,elec in enumerate(electrodes):
+        if elec=='avg':
+          lfpPlot = np.mean(lfp,axis=0)   # axis=1 in netpyne lfp.py, but dims should be flipped for data 
+        elif isinstance(elec,Number):
+          lfpPlot = lfp[elec,:] 
+        fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
+        t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot))
+        spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
 
-        f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
 
-        vmin = np.array([s.TFR for s in spec]).min()
-        vmax = np.array([s.TFR for s in spec]).max()
+      f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+      vmin = np.array([s.TFR for s in spec]).min()
+      vmax = np.array([s.TFR for s in spec]).max()
 
-        for chan in range(nrow):
-          plt.subplot(np.ceil(nrow / numCols), numCols, chan + 1)
-          T = timeRange
-          F = spec[chan].f
-          if normSpec:
-            spec[chan].TFR = spec[chan].TFR / vmax
-            S = spec[chan].TFR
-            vc = [0, 1]
-          else:
-            S = spec[chan].TFR
-            vc = [vmin, vmax]
+      for i,elec in enumerate(electrodes):
+        plt.subplot(np.ceil(len(electrodes) / numCols), numCols, i + 1)
+        T = timeRange
+        F = spec[i].f
+        if normSpec:
+          spec[i].TFR = spec[i].TFR / vmax
+          S = spec[i].TFR
+          vc = [0, 1]
+        else:
+          S = spec[i].TFR
+          vc = [vmin, vmax]
+      
 
-          plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-          if normSpec:
-            plt.colorbar(label='Normalized power')
-          else:
-            plt.colorbar(label='Power')
-
-          plt.ylabel('Hz')
-          plt.tight_layout()
-
-      else:
-        for i,elec in enumerate(electrodes):
-          lfpPlot = lfp[elec,:]
-          fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
-          t_spec = np.linspace(0,index2ms(len(lfpPlot),fs), len(lfpPlot)) # WILL len() FUNCTION WORK OR DIMS SWITCHED?
-          spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-        f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
-
-        vmin = np.array([s.TFR for s in spec]).min()
-        vmax = np.array([s.TFR for s in spec]).max()
-
-        for i,elec in enumerate(electrodes):
-          plt.subplot(np.ceil(len(electrodes) / numCols), numCols, i + 1)
-          T = timeRange
-          F = spec[i].f
-          if normSpec:
-            spec[i].TFR = spec[i].TFR / vmax
-            S = spec[i].TFR
-            vc = [0, 1]
-          else:
-            S = spec[i].TFR
-            vc = [vmin, vmax]
-
-          plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-          if normSpec:
-            plt.colorbar(label='Normalized power')
-          else:
-            plt.colorbar(label='Power')
-          plt.ylabel('Hz')
-          plt.tight_layout()
+        plt.imshow(S,extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+        if normSpec:
+          plt.colorbar(label='Normalized power')
+        else:
+          plt.colorbar(label='Power')
+        plt.ylabel('Hz')
+        plt.tight_layout()
+        if len(electrodes) > 1:
+          plt.title('Electrode %s' % (str(elec)), fontsize=fontSize - 2)
 
 
     # Skipping --> if transformMethod == 'fft':
 
     plt.xlabel('time (ms)', fontsize=fontSize)
+    #if 'avg' in electrodes:
     plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
     plt.subplots_adjust(bottom=0.08, top=0.90)
     
@@ -789,7 +777,87 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
       plt.show()
 
     if saveFig:
-      plt.saveFig('LFP_spectrograms.png')
+      plt.savefig('LFP_spectrograms.png') # ADD FILENAME TO IT    # THIS IS SAVING A BLANK FILE? 
+
+
+  ### PSD (Power Spectral Density) -----------------------------------------
+  if 'PSD' in plots:
+    if overlay:
+      figs.append(plt.figure(figsize=figSize))
+    else:
+      numCols = np.round(len(electrodes) / maxPlots) + 1  # 1  # maxPlots = 8
+      figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+
+    allFreqs = []
+    allSignal = []
+
+    for i,elec in enumerate(electrodes):
+      if elec == 'avg':
+        lfpPlot = np.mean(lfp, axis=0)
+      elif isinstance(elec, Number):
+        lfpPlot = lfp[elec,:]
+
+      # Morlet wavelet transform method
+      if transformMethod == 'morlet':
+        from testMorlet import MorletSpec, index2ms
+
+        Fs = int(1000.0/dt)
+
+        #t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+        morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+        freqs = F = morletSpec.f
+        spec = morletSpec.TFR
+        signal = np.mean(spec, 1)
+        ylabel = 'Power'
+
+      # FFT transform method ## THIS CONDITION IS UNTESTED 
+      elif transformMethod == 'fft':
+        Fs = int(1000.0/dt)
+        power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+
+        if smooth:
+          signal = _smooth1d(10*np.log10(power[0]), smooth)
+        else:
+          signal = 10*np.log10(power[0])
+          freqs = power[1]
+          ylabel = 'Power (dB/Hz)'
+
+
+      allFreqs.append(freqs)
+      allSignal.append(signal)
+
+
+    if normPSD:
+      vmax = np.max(allSignal)
+      for i, s in enumerate(allSignal):
+        allSignal[i] = allSignal[i]/vmax
+
+    for i,elec in enumerate(electrodes):
+      if not overlay:
+        plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+      if elec == 'avg':
+        color = 'k'
+      elif isinstance(elec, Number):
+        color = colors[i%len(colors)]
+      freqs = allFreqs[i]
+      signal = allSignal[i]
+      plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
+      plt.xlim([0, maxFreq])
+      if len(electrodes) > 1 and not overlay:
+        plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
+      plt.ylabel(ylabel, fontsize=fontSize)
+
+    # format plot
+    plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+    if overlay:
+      plt.legend(fontsize=fontSize)
+    plt.tight_layout()
+    plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+    plt.subplots_adjust(bottom=0.08, top=0.92)
+
+    if showFig:
+      plt.show()
+
 
 
 ######################################
@@ -989,7 +1057,7 @@ if __name__ == '__main__':
             # trigtimes is array of stim trigger indices
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'],electrodes=[4,6,7],figSize=(10,10))
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['PSD'],electrodes=[4,12,16,19,'avg'],saveFig=True) # 16,19 #[4,12]
     #plotLFP(dat=LFP_data,tt=tt,timeRange=[1500,2500],plots=['spectrogram'])
 
     # GET AND PLOT CSD 
