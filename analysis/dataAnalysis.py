@@ -574,6 +574,13 @@ def grepstr (fn, s):
     pass
   return False
 
+#
+def monoinc (lx):
+  if len(lx) < 2: return True
+  for i,j in zip(lx,lx[1:]):
+    if i > j:
+      return False
+  return True
 
 # this function gets the CSD/LFP channel ranges for the .mat cortical recording:
 # s1: supragranular source
@@ -726,23 +733,29 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
         lw = 1.0 
 
       ## lfpPlot for supgragranular, infragranular, or granular layer(s). 
-      elif elec == 'supra':
+      elif elec in ['supra', 'infra', 'gran']:
         if dbpath is None:
-          print('need dbpath')
+          print('need path to .csv layer file')
         if fn is None:
           print('need path to .mat data file')
+        else:
+          s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+          print('supra: ' + str(s2))
+          print('gran: ' + str(g))
+          print('infra: ' + str(i1))
 
-      elif elec == 'infra':
-        if dbpath is None:
-          print('need dbpath')
-        if fn is None:
-          print('need path to .mat data file')
-
-      elif elec == 'gran':
-        if dbpath is None:
-          print('need dbpath')
-        if fn is None:
-          print('need path to .mat data file')
+        if elec == 'supra':
+          lfpPlot = lfp[s2,:]
+          color='r'
+          lw = 1.0 
+        elif elec == 'infra':
+          lfpPlot = lfp[i1,:]
+          color='b'
+          lw = 1.0 
+        elif elec == 'gran':
+          lfpPlot = lfp[g,:]
+          color='g'
+          lw = 1.0 
 
       elif isinstance(elec, Number):
         lfpPlot = lfp[elec,:] # this is lfp[:,elec] in netpyne lfp.py, but dims should be flipped for data
@@ -1147,7 +1160,7 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['PSD'],electrodes=[4,12,16,19,'avg'],fn=fullPath,dbpath = dbpath, saveFig=True) # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['timeSeries'],electrodes=['supra','infra','gran'],fn=fullPath,dbpath = dbpath, saveFig=True) # 16,19 #[4,12]
 
 
 
