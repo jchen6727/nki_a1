@@ -829,6 +829,25 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
       for i,elec in enumerate(electrodes):
         if elec=='avg':
           lfpPlot = np.mean(lfp,axis=0)   # axis=1 in netpyne lfp.py, but dims should be flipped for data 
+
+        elif elec in ['supra', 'infra', 'gran']:
+          if dbpath is None:
+            print('need path to .csv layer file')
+          if fn is None:
+            print('need path to .mat data file')
+          else:
+            s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+            print('supra: ' + str(s2))
+            print('gran: ' + str(g))
+            print('infra: ' + str(i1))
+
+          if elec == 'supra':
+            lfpPlot = lfp[s2,:]
+          elif elec == 'infra':
+            lfpPlot = lfp[i1,:]
+          elif elec == 'gran':
+            lfpPlot = lfp[g,:]
+
         elif isinstance(elec,Number):
           lfpPlot = lfp[elec,:] 
         fs = int(1000.0/dt) # dt is equivalent to sim.cfg.recordStep  (units of dt: ms)
@@ -867,7 +886,6 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     # Skipping --> if transformMethod == 'fft':
 
     plt.xlabel('time (ms)', fontsize=fontSize)
-    #if 'avg' in electrodes:
     plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
     plt.subplots_adjust(bottom=0.08, top=0.90)
     
@@ -892,6 +910,28 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     for i,elec in enumerate(electrodes):
       if elec == 'avg':
         lfpPlot = np.mean(lfp, axis=0)
+
+      elif elec in ['supra', 'infra', 'gran']:
+        if dbpath is None:
+          print('need path to .csv layer file')
+        if fn is None:
+          print('need path to .mat data file')
+        else:
+          s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+          print('supra: ' + str(s2))
+          print('gran: ' + str(g))
+          print('infra: ' + str(i1))
+
+        if elec == 'supra':
+          lfpPlot = lfp[s2,:]
+          #color = 'r'
+        elif elec == 'infra':
+          lfpPlot = lfp[i1,:]
+          #color = 'b'
+        elif elec == 'gran':
+          lfpPlot = lfp[g,:]
+          #color = 'g'
+
       elif isinstance(elec, Number):
         lfpPlot = lfp[elec,:]
 
@@ -935,8 +975,15 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
         plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
       if elec == 'avg':
         color = 'k'
+      elif elec == 'supra':
+        color = 'r'
+      elif elec == 'infra':
+        color = 'b'
+      elif elec == 'gran':
+        color = 'g'
       elif isinstance(elec, Number):
         color = colors[i%len(colors)]
+      
       freqs = allFreqs[i]
       signal = allSignal[i]
       plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
@@ -1160,7 +1207,7 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['timeSeries'],electrodes=['supra','infra','gran'],fn=fullPath,dbpath = dbpath, saveFig=True) # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['PSD'],electrodes=['supra','infra','gran'],fn=fullPath,dbpath = dbpath, saveFig=True) # 16,19 #[4,12]
 
 
 
