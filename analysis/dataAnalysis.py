@@ -674,13 +674,6 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
   plt.rcParams.update({'font.size': fontSize})
 
 
-  ## trigtimes only if non-spontaneous data (click or speech)
-  if trigtimes:
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS
-    for idx in trigtimes:
-      trigtimesMS.append(tt[idx]*1e3)
-
-
   tt = tt*1e3        # Convert time array units from seconds to ms 
   dt = tt[1] - tt[0] # dt is the time step of the recording (equivalent to sim.cfg.recordStep) # UNITS: in ms after conversion
 
@@ -781,6 +774,18 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
       plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, color=color, ha='center', va='top', fontsize=fontSize, fontweight='bold') # chan changed to i
     
     ax = plt.gca()
+
+    ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
+    if trigtimes is not None:
+      trigtimesMS = []
+      for idx in trigtimes:
+        trigtimesMS.append(tt[idx]) # tt already converted to ms
+      if trigtimesMS is not None:
+        for trig in trigtimesMS:
+          if trig >= timeRange[0] and time <= timeRange[1]:
+            #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+            ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
+
 
     ## FORMAT PLOT ### 
     ### x axis 
@@ -1279,7 +1284,7 @@ if __name__ == '__main__':
       startTime = 4236.0 # in ms, for gcp 
       endTime = 5920.0 # in ms, for gcp 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2900,6000],plots=['timeSeries'],electrodes=[6,12,19],saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2900,6000],plots=['timeSeries'],electrodes=[6,12,19],trigtimes=trigtimes,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
     ## GET AND PLOT CSD 

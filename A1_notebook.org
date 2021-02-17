@@ -42381,4 +42381,12 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_erica
 gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
 **** ^^ same results on both local desktop machine and on gcp (see above)
 **** Should I add in lines for scp-ing files to dataAnalysis.py? -- not now. 
-
+** Looking more at speech figs: 
+*** for the robin_speech .mat file in data/NHPdata/speech/contproc/A1 --> the first stim time is 4436.9 ms (approx) and the second is at 6020.4545 ms (approx)
+*** Set timeRange such that ~1.5 s (1500ms) of baseline activity is shown in timeSeries prior to onset of first stimulus. timeRange = [2900,6000] 
+*** Changed main code block in dataAnalysis.py to reflect this and am now 
+*** scp:
+**** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
+**** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
+*** By the looks of it, there do seem to be differences! Would it help to normalize? 
+*** 
