@@ -923,17 +923,19 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, triglines=False, electrodes=['
           plt.title('Electrode %s' % (str(elec)), fontsize=fontSize - 2)
 
 
+        ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
+        ax = plt.gca() 
+
+        if triglines:
+          if trigtimesMS is not None:
+            for trig in trigtimesMS:
+              if trig >= timeRange[0] and trig <= timeRange[1]:
+                #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+                ax.axvline(trig,linestyle='dashed', clip_on=False) #ymin=,ymax=,
+
+
+
     # Skipping --> if transformMethod == 'fft':
-
-    ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
-    ax = plt.gca() 
-
-    if triglines:
-      if trigtimesMS is not None:
-        for trig in trigtimesMS:
-          if trig >= timeRange[0] and trig <= timeRange[1]:
-            #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
-            ax.axvline(trig,linestyle='dashed', clip_on=False) #ymin=,ymax=,
 
 
     plt.xlabel('time (ms)', fontsize=fontSize)
@@ -1299,7 +1301,7 @@ if __name__ == '__main__':
       startTime = 4236.0 # in ms, for gcp 
       endTime = 5920.0 # in ms, for gcp 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,15000],plots=['spectrogram'],triglines=True,electrodes=[6,12,19],trigtimes=trigtimes,normSpec=True,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,15000],plots=['spectrogram'],triglines=True,electrodes=[6,12,19],trigtimes=trigtimes,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
     ## GET AND PLOT CSD 
