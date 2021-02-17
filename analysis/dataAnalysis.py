@@ -785,7 +785,7 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     ### add arg then add 'if vline:' here 
     if trigtimesMS is not None:
       for trig in trigtimesMS:
-        if trig >= timeRange[0] and time <= timeRange[1]:
+        if trig >= timeRange[0] and trig <= timeRange[1]:
           #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
           ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
 
