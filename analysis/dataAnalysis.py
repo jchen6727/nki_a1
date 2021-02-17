@@ -649,15 +649,16 @@ def listToString(s):
 ## ADAPTED FROM NETPYNE ANALYSIS lfp.py 
 ## may change electrodes 
 
-def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], dbpath=None, fn=None, NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
+def plotLFP(dat,tt,timeRange=None,trigtimes=None, triglines=False, electrodes=['avg', 'all'], plots=['timeSeries','spectrogram'], dbpath=None, fn=None, NFFT=256, noverlap=128, nperseg=256, minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, includeAxon=True, logx=False, logy=False, normSignal=False, normPSD=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, transformMethod='morlet', maxPlots=8, overlay=False, colors=None, figSize=(8, 8), fontSize=14, lineWidth=1.5, dpi=200, saveData=None, saveFig=None, showFig=True):
   ## dat --> LFP data as numpy array
   ## tt --> numpy array of time points (time array in seconds)
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
+  ## triglines --> boolean; indicates whether or not you want a line at the stimulus onset trigger
+  ## electrodes --> list of electrodes to include -- can be numbers, or 'all', 'avg', or 'supra'/'gran'/'infra' if there is a .csv included with dbpath
   ## dbpath --> path to .csv layer file with relevant .mat filename, needed if electrodes includes 'supra', 'infra', or 'gran'
-  ## fn --> path to .mat filename, needed if electrodes includes 'supra', 'infra', or 'gran'
+  ## fn --> path to .mat filename, needed if electrodes includes 'supra', 'infra', or 'gran', also works for saving
     #### ARGS NOT YET ADDED / USED: 
-    ## fn --> filename -- string -- used for saving! 
     ## saveFolder --> string -- path to directory where figs should be saved
     ## plotByLayer -- break the graphs up by supra/infra/gran or plot all on the same graph 
 
@@ -782,12 +783,12 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     ax = plt.gca()
 
     ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
-    ### add arg then add 'if vline:' here 
-    if trigtimesMS is not None:
-      for trig in trigtimesMS:
-        if trig >= timeRange[0] and trig <= timeRange[1]:
-          #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
-          ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
+    if triglines:
+      if trigtimesMS is not None:
+        for trig in trigtimesMS:
+          if trig >= timeRange[0] and trig <= timeRange[1]:
+            #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+            ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
 
 
     ## FORMAT PLOT ### 
@@ -923,6 +924,15 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
 
 
     # Skipping --> if transformMethod == 'fft':
+
+    ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
+    if triglines:
+      if trigtimesMS is not None:
+        for trig in trigtimesMS:
+          if trig >= timeRange[0] and trig <= timeRange[1]:
+            #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+            ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
+
 
     plt.xlabel('time (ms)', fontsize=fontSize)
     plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
@@ -1287,7 +1297,7 @@ if __name__ == '__main__':
       startTime = 4236.0 # in ms, for gcp 
       endTime = 5920.0 # in ms, for gcp 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,15000],plots=['timeSeries'],electrodes=[6,12,19],trigtimes=trigtimes,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,15000],plots=['spectrogram'],triglines=True,electrodes=[6,12,19],trigtimes=trigtimes,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
     ## GET AND PLOT CSD 
