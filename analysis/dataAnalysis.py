@@ -1233,7 +1233,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  origDataDir = '../data/NHPdata/speech/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1253,7 +1253,7 @@ if __name__ == '__main__':
 
   dataFiles_test = ['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
-  for dataFile in dataFiles_test: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -1267,7 +1267,15 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,3100],plots=['PSD'],electrodes=[4,9,16],saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    firstTrigger = trigtimes[0]*1e3
+    secondTrigger = trigtimes[1]*1e3
+    print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
+    print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
+    startTime = firstTrigger-200.0
+    endTime = secondTrigger-100
+    # HOW TO TELL HOW LONG THESE STIMS ARE? 
+
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[startTime,endTime],plots=['spectrogram', 'PSD', 'timeSeries'],electrodes=[6,12,19],saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
 

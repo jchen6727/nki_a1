@@ -42334,7 +42334,9 @@ TypeError: can only concatenate str (not "int") to str
 ***** TEST (on local laptop):
 ****** with fn: WORKED
 ****** without fn:  WORKED
-**** Add/commit/push these saving changes now that they have been tested! 
-**** Add/commit/push the testBokeh.py, testMorlet.py, and testScalebar.py scripts in analysis 
-**** Pull the above changes onto gcp
-**** Pull the above changes onto local Desktop machine 
+**** [DONE] Add/commit/push these saving changes now that they have been tested! 
+**** [DONE] Add/commit/push the testBokeh.py, testMorlet.py, and testScalebar.py scripts in analysis 
+**** [DONE] Pull the above changes onto gcp
+**** [DONE] Pull the above changes onto local Desktop machine 
+**** Now that all those changes are done, look at more speech lfp spectrograms:
+**** plotLFP(dat=LFP_data,tt=tt,timeRange=[startTime,endTime],plots=['spectrogram', 'PSD', 'timeSeries'],electrodes=[6,12,19],saveFig=True, fn=fullPath) 
