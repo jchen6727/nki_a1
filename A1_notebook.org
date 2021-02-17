@@ -42219,3 +42219,122 @@ then call mednorm, etc. - in case you want to use
 **** half-density sim on the left; from .pdf from salva 
 **** monkey on the right ('2-bu027028013@os_eye06_20.mat') -- generated with dataAnalysis.py -- [electrodes 4, 12, 16, 19]
 *** LFP raw signal: 
+* <2021-02-17 Wed -- cosyne fig generation>
+** Showed PSD plots to channel: 
+*** salva seemed glad about them! peaks similar in places. see chat. 
+*** TO DO: look at more spectrograms and PSD plots from other .mat files, and possibly other .pkl files (full density? hm)
+** Speech figures:
+*** Downloaded .mat speech files from a1dat/robin_speech from gdrive
+*** no csv file, so sam says to use peter's rule of thumb here (first 11/21 are supra, next 4/21 are gran, and the last 7/21 are infragranular)
+*** Pulled master branch of a1dat repo at sam's suggestion to see latest code he used for figures posted in channel. 
+*** Edited main code block of A1/analysis/dataAnalysis.py on repro branch to look at speech spectrograms. 
+*** Other changes to migrate / push so can use on Desktop (local machine):
+**** testBokeh.py, testScalebar.py, and testMorlet.py
+**** Also have to scp the speech .mat files 
+
+
+
+*** Get new data and A1/analysis changes etc onto local desktop machine:
+**** Pull new changes from A1 repo and also scp speech .mat file into correct location
+**** ssh -X erica@68.160.218.237
+**** mkdir NHPdata/speech/contproc/A1 (and belt and MGB subdirs as well)
+**** git pull origin repro -- username, password
+**** on local laptop machine:
+***** cd ~/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1
+***** scp 2-rb051052020@os.mat erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+*** Get new data and A1/analysis changes etc onto gcp:
+**** Pull new changes from A1 repo and also scp speech .mat file into correct location
+**** login to gcp:
+***** gcloud beta compute ssh --zone "us-central1-f" "g1-n2-controller" --tunnel-through-iap --project "ecas2-nsf1904444"
+***** passphrase is !peter88
+**** git branch -- repro -- git pull origin repro 
+**** use scp to get new speech .mat file into A1 data subdir:
+***** on gcp: mkdir NHPdata/speech/contproc/A1 (and belt and MGB subdirs as well)
+***** on local machine: cd ~/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+***** gcloud compute scp 2-rb051052020@os.mat ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/
+*** Check out dataAnalysis.py lfp spectrograms on local desktop machine and gcp (taking too long on laptop):
+**** first FIX the saving situation for filenames (timeSeries first)
+*****     if saveFig:
+      if fn is None:
+        electrodeString = listToString(electrodes)
+        figname = 'NHP_LFP_timeSeries_electrodes_%s.png' % electrodeString  
+      else:
+        pathParts = fn.split("/")
+        for i,pathPart in enumerate(pathParts):
+          if '.mat' in pathPart:
+            filenameMat = pathParts[i]
+	    filename = filenameMat[:-4]
+        print('Saving LFP timeSeries for file ' + filename)
+        figname = 'NHP_LFP_timeSeries_%s.png' % filename
+      try:
+        plt.savefig(figname, dpi=dpi) #dpi 
+      except:
+        plt.savefig('NHP_LFP_timeSeries.png', dpi=dpi)
+***** TEST THIS 
+****** do test on local machine with small file (spont)
+***** ERROR (no fn -- trying to save electrodes-based filename -- error in listToString -- didn't convert elements of list to str): 
+Traceback (most recent call last):
+  File "dataAnalysis.py", line 1242, in <module>
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,3100],plots=['timeSeries'],electrodes=[4,9,16],saveFig=True) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+  File "dataAnalysis.py", line 827, in plotLFP
+    electrodeString = listToString(electrodes)
+  File "dataAnalysis.py", line 640, in listToString
+    str1 += elec   
+TypeError: can only concatenate str (not "int") to str
+***** Naming worked, but this time saved a blank file? try adding dpi = dpi to plt.savefig arg
+***** Naming worked, but still a blank file -- read that need to show after saving. try this, and if doesn't work, look into plt.gcf() (get current figure) --> WORKED
+***** Now try with fn = fullPath as arg in plotLFP to see if saving w/ .mat file name works -- changed filename lines slightly so that .mat is cut off of the full filename before being used for saving -- WORKED
+**** Expand the above saving changes from timeSeries to spectrogram:
+***** Code:
+    if saveFig:
+      if fn is None:
+        electrodeString = listToString(electrodes)
+        figname = 'NHP_LFP_spect_electrodes_%s.png' % electrodeString  
+      else:
+        pathParts = fn.split("/")
+        for i,pathPart in enumerate(pathParts):
+          if '.mat' in pathPart:
+            filenameMat = pathParts[i]
+            filename = filenameMat[:-4]
+        print('Saving LFP spectrogram for file ' + filename)
+        figname = 'NHP_LFP_spect_%s.png' % filename
+      try:
+        plt.savefig(figname, dpi=dpi) #dpi 
+      except:
+        plt.savefig('NHP_LFP_spectrogram.png',dpi=dpi)
+
+
+    if showFig:
+      plt.show()
+***** TEST (on local laptop):
+****** with fn: WORKED
+****** without fn: WORKED
+**** Expand the above saving changes from timeSeries and spectrogram to PSD:
+***** code:
+    if saveFig:
+      if fn is None:
+        electrodeString = listToString(electrodes)
+        figname = 'NHP_LFP_PSD_electrodes_%s.png' % electrodeString  
+      else:
+        pathParts = fn.split("/")
+        for i,pathPart in enumerate(pathParts):
+          if '.mat' in pathPart:
+            filenameMat = pathParts[i]
+            filename = filenameMat[:-4]
+        print('Saving LFP PSD for file ' + filename)
+        figname = 'NHP_LFP_PSD_%s.png' % filename
+      try:
+        plt.savefig(figname, dpi=dpi) #dpi 
+      except:
+        plt.savefig('NHP_LFP_PSD.png',dpi=dpi)
+
+
+    if showFig:
+      plt.show()
+***** TEST (on local laptop):
+****** with fn: WORKED
+****** without fn:  WORKED
+**** Add/commit/push these saving changes now that they have been tested! 
+**** Add/commit/push the testBokeh.py, testMorlet.py, and testScalebar.py scripts in analysis 
+**** Pull the above changes onto gcp
+**** Pull the above changes onto local Desktop machine 

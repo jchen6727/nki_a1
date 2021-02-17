@@ -630,6 +630,19 @@ def getflayers (fn, dbpath,getmid=True,abbrev=False):
     else:
       return [-1 for i in range(5)]
 
+
+# Function to convert   
+def listToString(s):  
+    # initialize an empty string 
+    str1 = ""  
+    # traverse in the string   
+    for elec in s:  
+        str1 += str(elec)   
+    # return string   
+    return str1  
+        
+      
+
 # -------------------------------------------------------------------------------------------------------------------
 ## Plot LFP (time-resolved, power spectral density, time-frequency and 3D locations)
 # -------------------------------------------------------------------------------------------------------------------
@@ -805,13 +818,27 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     else:
       add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, unitsx='ms', loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
 
-    
-    if showFig:
-      plt.show()
 
     if saveFig:
-      plt.savefig('LFP_timeSeries.png') # ADD FILENAME INFO TO THIS 
+      if fn is None:
+        electrodeString = listToString(electrodes)
+        figname = 'NHP_LFP_timeSeries_electrodes_%s.png' % electrodeString  
+      else:
+        pathParts = fn.split("/")
+        for i,pathPart in enumerate(pathParts):
+          if '.mat' in pathPart:
+            filenameMat = pathParts[i]
+            filename = filenameMat[:-4]
+        print('Saving LFP timeSeries for file ' + filename)
+        figname = 'NHP_LFP_timeSeries_%s.png' % filename
+      try:
+        plt.savefig(figname, dpi=dpi) #dpi 
+      except:
+        plt.savefig('NHP_LFP_timeSeries.png',dpi=dpi)
 
+
+    if showFig:
+      plt.show()
 
   ### SPECTROGRAM -----------------------------------------
   if 'spectrogram' in plots:
@@ -893,12 +920,26 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
     plt.subplots_adjust(bottom=0.08, top=0.90)
     
+    if saveFig:
+      if fn is None:
+        electrodeString = listToString(electrodes)
+        figname = 'NHP_LFP_spect_electrodes_%s.png' % electrodeString  
+      else:
+        pathParts = fn.split("/")
+        for i,pathPart in enumerate(pathParts):
+          if '.mat' in pathPart:
+            filenameMat = pathParts[i]
+            filename = filenameMat[:-4]
+        print('Saving LFP spectrogram for file ' + filename)
+        figname = 'NHP_LFP_spect_%s.png' % filename
+      try:
+        plt.savefig(figname, dpi=dpi) #dpi 
+      except:
+        plt.savefig('NHP_LFP_spectrogram.png',dpi=dpi)
+
+
     if showFig:
       plt.show()
-
-    if saveFig:
-      plt.savefig('LFP_spectrograms.png') # ADD FILENAME TO IT    # THIS IS SAVING A BLANK FILE? 
-
 
   ### PSD (Power Spectral Density) -----------------------------------------
   if 'PSD' in plots:
@@ -1003,13 +1044,26 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
     plt.subplots_adjust(bottom=0.08, top=0.92)
 
+    if saveFig:
+      if fn is None:
+        electrodeString = listToString(electrodes)
+        figname = 'NHP_LFP_PSD_electrodes_%s.png' % electrodeString  
+      else:
+        pathParts = fn.split("/")
+        for i,pathPart in enumerate(pathParts):
+          if '.mat' in pathPart:
+            filenameMat = pathParts[i]
+            filename = filenameMat[:-4]
+        print('Saving LFP PSD for file ' + filename)
+        figname = 'NHP_LFP_PSD_%s.png' % filename
+      try:
+        plt.savefig(figname, dpi=dpi) #dpi 
+      except:
+        plt.savefig('NHP_LFP_PSD.png',dpi=dpi)
+
+
     if showFig:
       plt.show()
-
-    if saveFig:
-      plt.savefig('PSD_LFP.png') # USE FILENAME IN THIS!! 
-
-
 
 ######################################
 ### FILE PRE-PROCESSING FUNCTIONS #### 
@@ -1179,7 +1233,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/speech/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1197,9 +1251,9 @@ if __name__ == '__main__':
     if '.mat' in file:
       dataFiles.append(file)
 
-  dataFiles_test = []#['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+  dataFiles_test = ['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
-  for dataFile in dataFiles: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles_test: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -1213,18 +1267,18 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,3100],plots=['spectrogram'],electrodes=[4,9,16],saveFig=True) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,3100],plots=['PSD'],electrodes=[4,9,16],saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
 
     ## GET AND PLOT CSD 
     # plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
     
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    for idx in trigtimes:
-      trigtimesMS.append(tt[idx]*1e3)
+    # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    # for idx in trigtimes:
+    #   trigtimesMS.append(tt[idx]*1e3)
 
-    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+    # print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
