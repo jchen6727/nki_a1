@@ -42389,4 +42389,4 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_erica
 **** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
 **** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
 *** By the looks of it, there do seem to be differences! Would it help to normalize? 
-*** 
+*** changing timeRange=[2000,15000] to timeRange=[4000,5000]
