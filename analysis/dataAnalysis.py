@@ -926,6 +926,8 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, triglines=False, electrodes=['
     # Skipping --> if transformMethod == 'fft':
 
     ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
+    ax = plt.gca() 
+    
     if triglines:
       if trigtimesMS is not None:
         for trig in trigtimesMS:
