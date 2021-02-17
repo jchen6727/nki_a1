@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 2.0*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.1*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -64,7 +64,7 @@ cfg.saveJson = False           	## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
 cfg.backupCfgFile = None 		
 cfg.gatherOnlySimData = False	 
-cfg.saveCellSecs = False		 
+cfg.saveCellSecs = True		 
 cfg.saveCellConns = False		 
 
 #------------------------------------------------------------------------------

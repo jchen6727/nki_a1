@@ -36,7 +36,7 @@ sim.gatherData()                  			# gather spiking data and cell info from ea
 sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
 sim.analysis.plotData()         			# plot spike raster etc
 
-
+'''
 if sim.rank == 0:
     layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
     filename = sim.cfg.saveFolder+'/'+sim.cfg.simLabel
@@ -45,7 +45,7 @@ if sim.rank == 0:
     sim.analysis.plotRaster(**{'include': sim.cfg.allpops, 'saveFig': filename+'_5sec', 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [1500,6500], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
     sim.analysis.plotRaster(**{'include': sim.cfg.allpops, 'saveFig': filename+'_10sec', 'showFig': False, 'popRates': True, 'orderInverse': True, 'timeRange': [1500,11500], 'figSize': (14,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
 
-    sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 11500], dpi=300, showFig=0, saveFig=1)
+    #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 11500], dpi=300, showFig=0, saveFig=1)
         
     for elec in [1, 6, 11, 16]:
         sim.analysis.plotLFP(**{'plots': ['timeSeries'], 'electrodes': [elec], 'timeRange': [1500, 6500], 'maxFreq':80, 'figSize': (8,4), 'saveData': False, 'saveFig': filename+'_LFP_signal_5s_elec_'+str(elec), 'showFig': False})
@@ -63,3 +63,4 @@ if sim.rank == 0:
     #     #         [2100, 2200]] 
     # for t in tranges:
     #     sim.analysis.plotCSD(**{'spacing_um': 100, 'overlay': 'LFP', 'layer_lines': 1, 'layer_bounds': layer_bounds, 'timeRange': [t[0], t[1]], 'saveFig': filename[:-4]+'_CSD_%d-%d' % (t[0], t[1]), 'figSize': (6,9), 'dpi': 300, 'showFig': 0})
+'''

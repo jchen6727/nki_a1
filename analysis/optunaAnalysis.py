@@ -174,7 +174,6 @@ def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None
     plt.colorbar(label = 'fitness')
     plt.ylabel('Parameter value')
     plt.xlabel('Parameter')
-    plt.xticks(range(len(paramLabels)), paramLabels, rotation=45)
     plt.subplots_adjust(top=0.95, bottom=0.2, right=0.95)
     if ylim: plt.ylim(0, ylim)
     plt.savefig('%s/%s/%s_scatter_params_%s.png' % (dataFolder, batchSim, batchSim, 'excludeAbove-'+str(excludeAbove) if excludeAbove else ''))

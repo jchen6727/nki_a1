@@ -8040,6 +8040,11 @@ try following trials:
 - 287
 - 616
 - 1443
+
+- sam for spont (full scale model) use this: v32_batch21_0_0_0.pkl in https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch21 
+(ideally 1.5- 5.5s since after 6s dynamics changed)
+- for speech (full scale model) can try: v32_batch21_1_1_0.pkl, v32_batch21_2_2_0.pkl, v32_batch21_3_3_0.pkl, and v32_batch21_4_4_0.pkl; 
+stim starts at 2sec (the model response is not transient though, it changes regime and infragranular stop firing); the 4 sims correspond to different IC->Thal conn params
 ** v32_batch22 - scale 1.0; 11.5-sec; trial 287 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
 ** v32_batch23 - scale 1.0; 11.5-sec; trial 616 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
 ** v32_batch24 - scale 1.0; 11.5-sec; trial 1443 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
@@ -8062,11 +8067,36 @@ try following trials:
     initCfg['thalamoCorticalGain'] = 0.0
 ** v32_batch26 -  scale 1.0; 11.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input; diff thal->conn gains
 *** code
-    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
-    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
-    params[('ICThalInput', 'weightE')] = [0.0, 0.5]
-    params[('ICThalInput', 'weightI')] = [0.0, 0.25]
-    params['thalamoCorticalGain'] = [0.0, 0.25, 0.5, 1.0, 1.5]
+    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2 (orig: 0.12 - arbirtrary)
+    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2 (orig: 0.26 - arbirtrary)
+    params[('ICThalInput', 'weightE')] = [0.0, 0.5] # (orig: 1.0 - arbitrary)
+    params[('ICThalInput', 'weightI')] = [0.0, 0.25] # (orig: 1.0 - arbitrary)
+    params['thalamoCorticalGain'] = [0.0, 0.25, 0.5, 1.0, 1.5] # (orig: 2.1058298893943608)
+*** results
+0_0_0_0-2 - no stim, TC gain<1.5 results in narrow large amp osc -- high sync; silent rest 
+0_0_0_3 - no stim, TC gain=1.5 results in less overall synchrony
+
+1_1_1_0-2 - stim, TC gain<1.5 no response to stim
+1_1_1_3 - stim, TC gain=1.5 transient response to stim
+Option 2: full scale model with weaker TC gain (shows less overall sync); spont=v32_batch26_0_0_0_0_3.pkl and v32_batch26_0_0_0_0_4.pkl; speech (starting at 3s)= v32_batch26_1_1_1_1_3.pkl and v32_batch26_1_1_1_1_4.pkl ; data folder: https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch26 
+
+** v32_batch27 - grid search tune to exp; scale 1.0; 4.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input; diff thal->conn gains
+*** notes
+- focus on granular electrode
+- calculate wavelet CSD
+- focus on freqs < 10 hz
+- start stim at 2.5 sec; stim dur = 1sec; allow 1 sec after stim; total = 4.5 sec
+
+Run separately no stim vs speech:
+- no stim:
+    params['thalamoCorticalGain'] = [1.5, 1.75, 2.0, 2.25]
+- speech:
+    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [1.5, 1.75, 2.0, 2.25]
+*** 
 ** blank
 
 
