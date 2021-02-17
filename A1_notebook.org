@@ -42353,3 +42353,32 @@ TypeError: can only concatenate str (not "int") to str
 ****** scp over the files:
 ******* on local laptop machine
 ******* scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_LFP_* /Users/ericagriffith/Desktop/
+***** on gcp: 
+****** No module named 'bokeh' -- sudo pip3 install bokeh (should probably have done --user) 
+****** trying again -- python3 -i dataAnalysis.py 
+****** ran through this time (with these deprecation warnings):
+******* ydisp = 0.6302578833948309
+dataAnalysis.py:790: MatplotlibDeprecationWarning: Case-insensitive properties were deprecated in 3.3 and support will be removed two minor releases later
+  plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', fontSize=fontSize, rotation=90)
+Saving LFP timeSeries for file 2-rb051052020@os
+dataAnalysis.py:894: MatplotlibDeprecationWarning: Passing non-integers as three-element position specification is deprecated since 3.3 and will be removed two minor releases later.
+  plt.subplot(np.ceil(len(electrodes) / numCols), numCols, i + 1)
+Saving LFP spectrogram for file 2-rb051052020@os
+dataAnalysis.py:1019: MatplotlibDeprecationWarning: Passing non-integers as three-element position specification is deprecated since 3.3 and will be removed two minor releases later.
+  plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+dataAnalysis.py:1019: MatplotlibDeprecationWarning: Passing non-integers as three-element position specification is deprecated since 3.3 and will be removed two minor releases later.
+  plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+dataAnalysis.py:1019: MatplotlibDeprecationWarning: Passing non-integers as three-element position specification is deprecated since 3.3 and will be removed two minor releases later.
+  plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+Saving LFP PSD for file 2-rb051052020@os
+****** scp these files over to my local machine 
+****** on local machine
+****** PSD:
+gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_LFP_PSD_2-rb051052020@os.png /Users/ericagriffith/Desktop/
+****** spectrogram:
+gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_LFP_spect_2-rb051052020@os.png /Users/ericagriffith/Desktop/
+****** timeSeries:
+gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
+**** ^^ same results on both local desktop machine and on gcp (see above)
+**** Should I add in lines for scp-ing files to dataAnalysis.py? -- not now. 
+
