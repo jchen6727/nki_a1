@@ -673,6 +673,12 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
   # set font size
   plt.rcParams.update({'font.size': fontSize})
 
+  # Get trigger times (in ms) iff file is speech or click 
+  if trigtimes is not None:
+    trigtimesMS = []
+    for idx in trigtimes:
+      trigtimesMS.append(tt[idx]*1e3) # tt already converted to ms
+
 
   tt = tt*1e3        # Convert time array units from seconds to ms 
   dt = tt[1] - tt[0] # dt is the time step of the recording (equivalent to sim.cfg.recordStep) # UNITS: in ms after conversion
@@ -776,15 +782,12 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     ax = plt.gca()
 
     ## Add vertical lines to stimulus onset    ## trigtimes only if non-spontaneous data (click or speech)
-    if trigtimes is not None:
-      trigtimesMS = []
-      for idx in trigtimes:
-        trigtimesMS.append(tt[idx]) # tt already converted to ms
-      if trigtimesMS is not None:
-        for trig in trigtimesMS:
-          if trig >= timeRange[0] and time <= timeRange[1]:
-            #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
-            ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
+    ### add arg then add 'if vline:' here 
+    if trigtimesMS is not None:
+      for trig in trigtimesMS:
+        if trig >= timeRange[0] and time <= timeRange[1]:
+          #ax.annotate(' ', xy = (trig,24), xytext = (trig,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
+          ax.axvline(trig,linestyle='dashed') #ymin=,ymax=,
 
 
     ## FORMAT PLOT ### 
