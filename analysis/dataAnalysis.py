@@ -1267,8 +1267,8 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    firstTrigger = trigtimes[0]*1e3
-    secondTrigger = trigtimes[1]*1e3
+    firstTrigger = tt[trigtimes[0]]*1e3
+    secondTrigger = tt[trigtimes[1]]*1e3
     print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
     print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
     startTime = firstTrigger-200.0

@@ -42340,3 +42340,4 @@ TypeError: can only concatenate str (not "int") to str
 **** [DONE] Pull the above changes onto local Desktop machine 
 **** Now that all those changes are done, look at more speech lfp spectrograms:
 **** plotLFP(dat=LFP_data,tt=tt,timeRange=[startTime,endTime],plots=['spectrogram', 'PSD', 'timeSeries'],electrodes=[6,12,19],saveFig=True, fn=fullPath) 
+**** ^^ running dataAnalysis.py on both gcp and local Desktop machine, not sure which will be faster -- trying both. 
