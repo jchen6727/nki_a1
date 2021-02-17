@@ -401,7 +401,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
   ymin = 1  # 0 in csd.py in netpyne 
-  ymax = 22 # dat.shape[0] # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  ymax = 21 # 22  # dat.shape[0] # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
@@ -680,6 +680,7 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]      # DO THE SAME FOR TIMEPOINT ARRAY 
 
   lfp = dat # set lfp equal to 'dat' so that rest of code is comparable to netpyne lfp.py 
+  #lfp = dat * 1000 ## SWITCH LFP UNITS FROM mV to uV !! 
 
   if filtFreq:  # default is False
     from scipy import signal
@@ -721,6 +722,7 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
   ### TIME SERIES -----------------------------------------
   if 'timeSeries' in plots:
     ydisp = np.absolute(lfp).max() * separation
+    print('ydisp = ' + str(ydisp))
     offset = 1.0*ydisp
     if figSize:
       figs.append(plt.figure(figsize=figSize))
@@ -781,22 +783,24 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
     ax.spines['right'].set_visible(False)
     ax.spines['left'].set_visible(False)
     ### add title to graph 
-    plt.suptitle('Local Field Potential (LFP)')
+    plt.suptitle('LFP Signal')
 
     ### ADD SCALEBAR ### 
     ##### RUNTIME WARNING BEING GENERATED -- SEE NB 
     round_to_n = lambda x, n, m: int(np.ceil(round(x, -int(np.floor(np.log10(abs(x)))) + (n - 1)) / m)) * m
-    scaley = 1000.0  # values in mV but want to convert to uV
+    scaley = 1000.0  # values in mV but want to convert to uV (??) -- values of lfp are in uV right now.  
     m = 10.0
     sizey = 100/scaley
-    while sizey > 0.25*ydisp:
+    #while sizey > 0.25*ydisp:
+    if sizey > 0.25 * ydisp: # Change while to if to resolve runtime overflow warning -- see nb for more details 
       try:
         sizey = round_to_n(0.2*ydisp*scaley, 1, m) / scaley
+        print('sizey = ' + str(sizey))
       except:
         sizey /= 10.0
       m /= 10.0
     labely = '%.3g $\mu$V'%(sizey*scaley)#)[1:]
-    if nrow > 1:
+    if len(electrodes) > 1:
       add_scalebar(ax,hidey=True, matchy=False, hidex=False, matchx=False, sizex=0, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
     else:
       add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, unitsx='ms', loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
@@ -812,7 +816,7 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
   ### SPECTROGRAM -----------------------------------------
   if 'spectrogram' in plots:
     import matplotlib.cm as cm
-    numCols = np.round(nrow/maxPlots) + 1   # maxPlots = 8
+    numCols = 1 #np.round(nrow/maxPlots) + 1   # maxPlots = 8
     figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
 
 
@@ -924,13 +928,12 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
 
         if elec == 'supra':
           lfpPlot = lfp[s2,:]
-          #color = 'r'
+        
         elif elec == 'infra':
           lfpPlot = lfp[i1,:]
-          #color = 'b'
+
         elif elec == 'gran':
           lfpPlot = lfp[g,:]
-          #color = 'g'
 
       elif isinstance(elec, Number):
         lfpPlot = lfp[elec,:]
@@ -1002,6 +1005,9 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, electrodes=['avg', 'all'], plo
 
     if showFig:
       plt.show()
+
+    if saveFig:
+      plt.savefig('PSD_LFP.png') # USE FILENAME IN THIS!! 
 
 
 
@@ -1173,7 +1179,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  origDataDir = '../data/NHPdata/speech/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1191,9 +1197,9 @@ if __name__ == '__main__':
     if '.mat' in file:
       dataFiles.append(file)
 
-  dataFiles_test = ['2-bu027028013@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+  dataFiles_test = []#['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
-  for dataFile in dataFiles_test: # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -1203,22 +1209,22 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
     ## SET PATH TO .csv LAYER FILE: 
-    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,2500],plots=['PSD'],electrodes=['supra','infra','gran'],fn=fullPath,dbpath = dbpath, saveFig=True) # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2100,3100],plots=['spectrogram'],electrodes=[4,9,16],saveFig=True) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
 
-    # GET AND PLOT CSD 
-    ## plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[1100,1200],
+    ## GET AND PLOT CSD 
+    # plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
     
-    # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    # for idx in trigtimes:
-    #   trigtimesMS.append(tt[idx]*1e3)
+    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    for idx in trigtimes:
+      trigtimesMS.append(tt[idx]*1e3)
 
-    # print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 

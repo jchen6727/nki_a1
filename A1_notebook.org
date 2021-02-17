@@ -42170,3 +42170,52 @@ Or populations that carry specific oscillation frequencies
 *** Added def grepstr() to dataAnalysis.py
 *** Added def getflayers() to dataAnalysis.py (took out default dbpath)
 *** Added dbpath and fn as args to plotLFP
+* <2021-02-16 Tue -- more figures for poster>
+** TO DO: add in from paper notebook task outline
+** Add more files to spontaneous .csv 
+*** in A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv
+*** Open up spreadsheet from noelle
+*** Added several more files + used spreadsheet to fill in G1a/G1b and S1a 
+*** Use avgCSD to fill in the blanks
+**** open A1/analysis/dataAnalysis.py 
+**** go to main code block 
+*** List of corresponding click & spont data files:
+**** SPONT on left -- CLICK on right
+**** 2-bu001002017@os_eye06_20.mat -- 2-bu001002015@os_eye06_20.mat
+**** 2-bu013014031@os_eye06_20.mat -- 2-bu013014029@os_eye06_20.mat
+**** 2-bu015016028@os_eye06_20.mat -- 2-bu015016026@os_eye06_20.mat
+**** 2-bu027028013@os_eye06_20.mat -- 2-bu027028011@os_eye06_20.mat -- DONE
+**** 2-bu043044016@os_eye06_20.mat -- 2-bu043044014@os_eye06_20.mat -- DONE
+**** 2-gt044045014@os_eye06_30.mat -- 2-gt044045012@os_eye06_30.mat
+**** 2-ma031032023@os_eye06_20.mat -- 2-ma031032021@os_eye06_20.mat
+**** 2-rb023024016@os_eye06_20.mat -- 2-rb023024014@os_eye06_20.mat -- CLICK MISSING
+**** 2-rb031032016@os_eye06_20.mat -- 2-rb031032014@os_eye06_20.mat
+**** 2-rb045046026@os_eye06_20.mat -- 2-rb045046017@os_eye06_20.mat
+**** 2-rb063064011@os_eye06_20.mat -- 2-rb063064009@os_eye06_20.mat
+**** 2-ta040041045@os_eye06_30.mat -- 2-ta040041029@os_eye06_30.mat
+**** 2-ta044045022@os_eye06_30.mat -- 2-ta044045021@os_eye06_30.mat
+**** 2-um007008014@os_eye06_30.mat -- 2-um007008018@os_eye06_30.mat
+**** 2-um040041018@os_eye06_30.mat -- 2-um040041020@os_eye06_30.mat
+**** 1-bu025026014@os_eye06_20.mat -- 1-bu025026012@os_eye06_20.mat -- RETRIEVED
+**** 1-bu031032017@os_eye06_20.mat -- 1-bu031032015@os_eye06_20.mat -- RETRIEVED
+**** 1-bu005006019@os_eye06_20.mat -- 1-bu005006017@os_eye06_20.mat -- RETRIEVED
+*** click/spont layer determinations by file:
+**** SPONT on left -- CLICK on right
+**** 2-bu001002017@os_eye06_20.mat -- 2-bu001002015@os_eye06_20.mat 
+***** S1a: 6, G1a: 16 , G1b: 17  , bottom: 21
+**** Did some more layer approximations. Stopping for now. 
+** Re: smoothing of CSD:
+ samn:speech_balloon:  3:10 PM
+msn = mednorm(ms.TFR)
+3:10
+that's after you get a morlet spectrogram, then msn will have the median normalized one
+3:11
+e.g. ms =
+MorletSpec(CSD[chan,:],sampr,freqmin=0.25,freqmax=80,freqstep=0.25) ,
+then call mednorm, etc. - in case you want to use
+** LFP figures spontaneous vs. half-density: 
+*** LFP spectrogram spontaneous vs. half-density:
+**** see slide 1: https://docs.google.com/presentation/d/1_bN5vuwe1H0jJjxYPBjxDZMvROskQOOaNDAlQX_lXOg/edit#slide=id.p
+**** half-density sim on the left; from .pdf from salva 
+**** monkey on the right ('2-bu027028013@os_eye06_20.mat') -- generated with dataAnalysis.py -- [electrodes 4, 12, 16, 19]
+*** LFP raw signal: 
