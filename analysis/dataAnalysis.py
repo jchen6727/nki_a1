@@ -1267,13 +1267,17 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    firstTrigger = tt[trigtimes[0]]*1e3
-    secondTrigger = tt[trigtimes[1]]*1e3
-    print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
-    print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-    startTime = firstTrigger-200.0
-    endTime = secondTrigger-100
     # HOW TO TELL HOW LONG THESE STIMS ARE? 
+    if trigtimes is not None:
+      firstTrigger = tt[trigtimes[0]]*1e3
+      secondTrigger = tt[trigtimes[1]]*1e3
+      print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
+      print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
+      startTime = firstTrigger-200.0
+      endTime = secondTrigger-100
+    else: 
+      startTime = 4236.0 # in ms, for gcp 
+      endTime = 5920.0 # in ms, for gcp 
 
     plotLFP(dat=LFP_data,tt=tt,timeRange=[startTime,endTime],plots=['spectrogram', 'PSD', 'timeSeries'],electrodes=[6,12,19],saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 

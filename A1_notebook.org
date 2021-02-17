@@ -42231,9 +42231,6 @@ then call mednorm, etc. - in case you want to use
 *** Other changes to migrate / push so can use on Desktop (local machine):
 **** testBokeh.py, testScalebar.py, and testMorlet.py
 **** Also have to scp the speech .mat files 
-
-
-
 *** Get new data and A1/analysis changes etc onto local desktop machine:
 **** Pull new changes from A1 repo and also scp speech .mat file into correct location
 **** ssh -X erica@68.160.218.237
@@ -42341,3 +42338,18 @@ TypeError: can only concatenate str (not "int") to str
 **** Now that all those changes are done, look at more speech lfp spectrograms:
 **** plotLFP(dat=LFP_data,tt=tt,timeRange=[startTime,endTime],plots=['spectrogram', 'PSD', 'timeSeries'],electrodes=[6,12,19],saveFig=True, fn=fullPath) 
 **** ^^ running dataAnalysis.py on both gcp and local Desktop machine, not sure which will be faster -- trying both. 
+***** Error -- realized that was not calculated firstTrigger and secondTrigger correctly -- (trigtimes[0] vs. tt[trigtimes[0]]) -- resolved
+***** spectrograms looked a little "blank"
+***** ODDLY -- trigtimes not loading in gcp?? look into this:
+***** from local Desktop Machine:
+****** >>> firstTrigger
+4436.909090909091
+>>> secondTrigger
+6020.454545454546
+>>> startTime
+4236.909090909091
+>>> endTime
+5920.454545454546
+****** scp over the files:
+******* on local laptop machine
+******* scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_LFP_* /Users/ericagriffith/Desktop/
