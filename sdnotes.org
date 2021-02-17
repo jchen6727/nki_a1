@@ -8080,7 +8080,7 @@ stim starts at 2sec (the model response is not transient though, it changes regi
 1_1_1_3 - stim, TC gain=1.5 transient response to stim
 Option 2: full scale model with weaker TC gain (shows less overall sync); spont=v32_batch26_0_0_0_0_3.pkl and v32_batch26_0_0_0_0_4.pkl; speech (starting at 3s)= v32_batch26_1_1_1_1_3.pkl and v32_batch26_1_1_1_1_4.pkl ; data folder: https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch26 
 
-** v32_batch27 - grid search tune to exp; scale 1.0; 4.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input; diff thal->conn gains
+** v32_batch27 - grid search tune to exp; scale 1.0; 4.5-sec; trial 974 from v32_batch19; with LFP; WITH cochlear IC/speech input; diff thal->conn gains
 *** notes
 - focus on granular electrode
 - calculate wavelet CSD
@@ -8089,14 +8089,18 @@ Option 2: full scale model with weaker TC gain (shows less overall sync); spont=
 
 Run separately no stim vs speech:
 - no stim:
-    params['thalamoCorticalGain'] = [1.5, 1.75, 2.0, 2.25]
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 - speech:
     params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'weightE')] = [0.25, 0.5]
     params[('ICThalInput', 'weightI')] = [0.25, 0.5]
-    params['thalamoCorticalGain'] = [1.5, 1.75, 2.0, 2.25]
-*** 
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+** v32_batch28 - grid search tune to exp; scale 1.0; 4.5-sec; trial 974 from v32_batch19; with LFP; WITHOUT IC/speech input; diff thal->conn gains
+*** notes
+- start stim at 2.5 sec; stim dur = 1sec; allow 1 sec after stim; total = 4.5 sec
+
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 ** blank
 
 

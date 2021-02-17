@@ -739,7 +739,7 @@ def custom():
     #params[('ICThalInput', 'startTime')] = [2000, 5000] #, 8000]
     
     
-    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI'), ('ICThalInput', 'weightE'), ('ICThalInput', 'weightI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
