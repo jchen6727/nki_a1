@@ -1301,7 +1301,7 @@ if __name__ == '__main__':
       startTime = 4236.0 # in ms, for gcp 
       endTime = 5920.0 # in ms, for gcp 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,15000],plots=['timeSeries'],triglines=True,electrodes=[6],trigtimes=trigtimes,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,15000],plots=['spectrogram'],triglines=True,electrodes=[6],trigtimes=trigtimes,saveFig=True, fn=fullPath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
     ## GET AND PLOT CSD 
