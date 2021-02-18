@@ -42390,3 +42390,29 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_erica
 **** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_LFP_timeSeries_2-rb051052020@os.png /Users/ericagriffith/Desktop/
 *** By the looks of it, there do seem to be differences! Would it help to normalize? 
 *** changing timeRange=[2000,15000] to timeRange=[4000,5000]
+** Resolution issue w/ speech fig? hm. 
+** Loop back to spontaneous files for a bit:
+*** These are all in second_look_spont
+*** Go thru spont files and see if can find a good/better spect + PSD 
+*** files to take a closer look at:
+**** 2-gt044045014@os_eye06_30.mat -- meh
+**** 2-bu043044016@os_eye06_20.mat:
+***** trying timeRange = [4000,5000] and electrodes = [5,13,18,21]
+***** meh 
+**** 2-ma031032023@os_eye06_20.mat
+***** try timeRange = [5000,6000] and electrodes = [2, 8, 13, 18]
+***** meh 
+**** --> 2-rb031032016@os_eye06_20.mat
+***** timeRange=[3000,4000], electrodes=[2, 8, 13, 18]
+***** better than the previous in this list
+**** --> 2-rb063064011@os_eye06_20.mat
+***** timeRange=[3400,4400], electrodes = [6,12,15,19]
+***** hm, still a candidate
+**** 2-bu027028013@os_eye06_20.mat
+***** timeRange = [2000,4000] and electrodes = [2,8,13,18]
+***** okay! 
+*** Used apps.automeris.io/wpd on screenshot of this half-density fig from .pdf and the peak between 10-20 comes around 16-17 
+*** Used apps.automeris.io/wpd on screenshot of PSD from sim and peak comes around 18.* <2021-02-18 Thu -- cosyne figures>
+** spont figures:
+** avgCSD for speech:
+*** Changed dataAnalysis.py such that avgCSD is being plotted for speech -- might be too much to run on local laptop machine. push to desktop. 
