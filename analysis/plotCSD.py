@@ -9,3 +9,6 @@ timeRange=[1100, 1400]
 sim = utils.loadFromFile('../data/v25_batch5/v25_batch5_0_0_2.json')
 sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, LFP_overlay=True, layer_lines=True, saveFig=1, showFig=0)
 plt.savefig('v25_batch5_0_0_2_1100-1400.png')   
+
+
+

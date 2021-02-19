@@ -42414,5 +42414,83 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_erica
 *** Used apps.automeris.io/wpd on screenshot of this half-density fig from .pdf and the peak between 10-20 comes around 16-17 
 *** Used apps.automeris.io/wpd on screenshot of PSD from sim and peak comes around 18.* <2021-02-18 Thu -- cosyne figures>
 ** spont figures:
+*** Finalize side-by-side spectrogram
+*** Find (if possible) .pkl file for the half-density spontaneous run that produced the figs in .pdf so that I can try to get or store the PSD values. I want to import those so I can use them in conjunction with the ones I generate from the .mat data files. Ideally would like to normalize and plot them overlaid. 
+*** ^^ Attempt and ask about this. 
 ** avgCSD for speech:
 *** Changed dataAnalysis.py such that avgCSD is being plotted for speech -- might be too much to run on local laptop machine. push to desktop. 
+*** ^^ added, committed, pushed. pulled on desktop after ssh-ing in (see admin_nb.org for more details on ssh into Desktop machine). 
+*** Running dataAnalysis.py to get avgCSD for robin speech file. 
+*** Update to channel: 
+
+hi all quick update from me -- regarding spontaneous validation figs,
+I went thru a bunch more spont .mat data files and isolated good
+examples + tweaked some of the formatting (e.g. made spectrogram axes
+the same for sim vs. monkey, fig size matches, etc.). I was thinking
+of overlaying one of the decent PSD comparisons I found (would
+normalize the amplitudes) -- some .mat files do have stronger
+lower-frequency component, but varies. going to give it a try and see
+visually what looks best. either way I isolated some decent examples
+and am pretty-fying them the best I can. I'm working this stuff into poster
+primarily for now, but also putting them in context in slides
+too. will post more of that later today. 
+
+
+re: speech -- I started looking at robin speech .mat file. plotted lfp
+time series for different channels overlaid with vertical lines for
+speech stim onset. one thing I noticed from doing this is that
+channels 12/13 have a very large-amplitude low-frequency oscillation
+at baseline - the waveform does change (perhaps more noticeable in
+some of the other channels) but the baseline osc is so large that it is the
+predominant thing seen when I look at the average CSD. I'm about to
+look more closely at the wavelets you posted earlier for speech input
+to model to digest those a little better, but thought I would ask if
+either of you have any insight/suggestions/guidance on whether or not
+this looks strange or normal? I'm about to do the same for full-scale
+model .pkl to compare, but yeah, thought I would show and see  if any
+thoughts first. 
+*** Sam suggests looking at another speech recording -- he is uploading two more. 
+** a1dat : 
+*** going to merge in sam's branch to erica
+*** only changes I really made were to nhpdat.py grepstr() func for encoding utf-8 and also load.py -- copy these both to desktop for safekeeping 
+*** made spontData.py -- really should rename this!!  -- RENAMED TO nhpspecdat.py
+*** It is the equivalent (or should be) of simdat.py
+*** added getflayers() changes
+**** set some default values in case .csv does not have that file fully filled out
+*** fixing formatting now -- sam uses high-res display on laptop so formatting way off for me. fix using standard matplotlib functions? 
+** Fill in HERE re: spont csd spec figures (conversation on A1 channel)
+** speech csd spec figures using nhpspecdat.py:
+*** added a bunch of lines to nhpspecdat.py 
+*** going to take too long on laptop -- transfer all this over to desktop machine
+*** ssh into desktop 
+*** scp the data files into A1 NHPdata:
+**** on local machine (laptop) 
+**** cd into data directory in question (~/...../NHPdata/speech/contproc/A1) 
+**** scp 2-bu037038046@os.mat erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+**** scp 2-ma033034023@os.mat erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+**** scp A1_speech_layers.csv erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+*** LATER: might as well scp the sim .pkl files into here as well 
+*** run on desktop
+*** 2-ma033034023@os.mat:
+**** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/a1dat/speech_spec_2-ma033034023@os.mat_.png /Users/ericagriffith/Desktop
+**** STIM ONSETS / START/END TIME FOR 2-ma033034023:
+First stim onset occurs at: 13.716363636363635 s
+Next stim onset occurs at: 15.764090909090909 s
+start time for plotting is: 12.216363636363635 s
+end time for plotting is: 14.716363636363635 s
+*** 2-rb051052020@os.mat:
+**** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/a1dat/speech_spec_2-rb051052020@os.mat_.png /Users/ericagriffith/Desktop
+**** STIM ONSETS / START/END TIME FOR 2-rb051052020@os.mat
+ First stim onset occurs at: 4.436909090909091 s
+Next stim onset occurs at: 6.0204545454545455 s
+start time for plotting is: 2.936909090909091 s
+end time for plotting is: 5.436909090909091 s
+*** 2-bu037038046@os.mat
+**** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/a1dat/speech_spec_2-bu037038046@os.mat_.png /Users/ericagriffith/Desktop
+**** STIM ONSETS / START/END TIME FOR 2-bu037038046@os.mat
+ First stim onset occurs at: 10.367636363636363 s
+Next stim onset occurs at: 12.57190909090909 s
+start time for plotting is: 8.867636363636363 s
+end time for plotting is: 11.367636363636363 s
+** Keep working on figures:
+*** 

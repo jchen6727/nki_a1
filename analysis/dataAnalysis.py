@@ -1275,7 +1275,7 @@ if __name__ == '__main__':
 
   dataFiles_test = ['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
-  for dataFile in dataFiles_test: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
