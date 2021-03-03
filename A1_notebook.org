@@ -42412,7 +42412,8 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_erica
 ***** timeRange = [2000,4000] and electrodes = [2,8,13,18]
 ***** okay! 
 *** Used apps.automeris.io/wpd on screenshot of this half-density fig from .pdf and the peak between 10-20 comes around 16-17 
-*** Used apps.automeris.io/wpd on screenshot of PSD from sim and peak comes around 18.* <2021-02-18 Thu -- cosyne figures>
+*** Used apps.automeris.io/wpd on screenshot of PSD from sim and peak comes around 18.
+* <2021-02-18 Thu -- cosyne figures>
 ** spont figures:
 *** Finalize side-by-side spectrogram
 *** Find (if possible) .pkl file for the half-density spontaneous run that produced the figs in .pdf so that I can try to get or store the PSD values. I want to import those so I can use them in conjunction with the ones I generate from the .mat data files. Ideally would like to normalize and plot them overlaid. 
@@ -42492,5 +42493,475 @@ end time for plotting is: 5.436909090909091 s
 Next stim onset occurs at: 12.57190909090909 s
 start time for plotting is: 8.867636363636363 s
 end time for plotting is: 11.367636363636363 s
-** Keep working on figures:
-*** 
+** Keep working on figures
+** PULL REQUEST:
+*** Did this because of fix to sampr (see point below for more details)
+*** (1) In your browser, go to https://github.com/Neurosim-lab/netpyne 
+*** (2) click on Pull requests --> "New pull request" button.
+*** (3) This ^^ will bring you to the "Compare changes" page where you should click on "compare across forks". 
+**** Ensure the "base repository" is Neurosim-lab/netpyne 
+**** and the "base" is development. 
+**** Set the head repository to ericaygriffith/netpyne 
+**** and the "compare" to csd (name-of-your-new-branch)
+**** Click "Create Pull Request"
+**** Type a title and description for your pull request (if your modifications were in response to an issue, include the issue number --> NOT RELEVANT THIS TIME). 
+*** Pull request:
+**** # 555 
+**** Title: Fixed calculation of sampr in getCSD()
+**** Sampling rate calculation bug fix -- sampr previously calculated by dividing 1/sim.cfg.recordStep; however sim.cfg.recordStep is in units of ms, conversion to seconds is necessary for sampr to be in Hz. New calculation is sampr = 1/(sim.cfg.recordStep/1000.0).
+** avgCSD for speech:
+*** FOR SIM:
+**** NOTE: FIXED DT AND SAMPR IN NETPYNE CSD !!! sampr = 1/dt, but dt = sim.cfg.recordStep!! which is in ms!! thus sampr = 1/dt was not actually in Hz. corrected such that sampr = 1/(sim.cfg.recordStep/1000.0) -- added, committed, pushed to my fork of netpyne and told salvador! 
+**** NOTE: realizing that plotAvgCSD() doesn't exist for netpyne. should do this; but for now there is no more than 1 speech input, so nothing to average -- just set timeRange to start of stim + 50ms after. 
+**** Wrote a script in A1/analysis called plotCosyne.py which can plot full CSD or stim CSD and save figs according to filename (saves in A1/analysis -- have to organize after generation). 
+**** Gathered 1 .pkl file from the gcp bucket (https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch27;tab=objects?prefix=&forceOnObjectsSortingFiltering=false) but there are many more!! 
+**** Data files go in A1/data/simDataFiles/speech
+**** NEXT STEPS:
+***** GATHER MORE .PKL files from gcp bucket (linked above) 
+****** [DONE] Start with the ones that end in _4.pkl 
+****** [DONE] set to 100 files per page in gcp bucket, and get all that said .pkl on 1st page
+***** Put them in ~/Desktop/NEUROSIM/A1/data/simDataFiles/speech/
+***** Change plotCosyne.py in whatever way necessary 
+***** +UNNECESSARY STEP !! Add them to .csv file -- UNNECESSARY STEP!!+
+***** Run A1/analysis/plotCosyne.py 
+***** Put all the .pngs that get generated into A1/analysis/sim_avgCSD_SPEECH_figs
+***** Iterate again back to the top!! 
+**** GATHER MORE .PKL FILES 
+*** FOR MONKEY:
+**** Have those two new A1 .mat files for robin speech (in A1/data/NHPdata/speech/contproc/A1) 
+**** Edited dataAnalysis.py main code block to get avgCSD for them
+**** scp them over to local laptop: 
+***** on local machine:
+***** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_avgCSD_csdOverlay_2-bu037038046@os.png ~/Desktop/
+***** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_avgCSD_csdOverlay_2-ma033034023@os.png ~/Desktop/
+***** scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/A1/analysis/NHP_avgCSD_csdOverlay_2-rb051052020@os.png ~/Desktop/
+**** Put these .png files in ~/Desktop/good_robin_speech_figs/robin_speech_avgCSD
+**** okay <-- so now have the "goal" figures! 
+** Now instead of avgCSD should try looking at wavelets: 
+*** this would be in load.py a1dat (erica branch)
+*** TO DO: 
+**** [DONE] update .csv files 
+***** [DONE] monkey
+***** [DONE] sim
+**** [DONE] scp .csv files to gcp
+***** [DONE] monkey
+****** on local machine (laptop) -- cd to ~/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+****** gcloud compute scp *.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/
+***** [DONE] sim 
+****** on local machine (laptop) -- cd to ~/Desktop/NEUROSIM/A1/data/simDataFiles/speech/
+****** gcloud compute scp *.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/
+**** [DONE] scp speech .mat (monkey) files to gcp
+***** on local machine (laptop) -- cd to ~/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/
+***** gcloud compute scp *.mat ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/
+**** [DONE] scp speech .pkl (sim) files to gcp 
+***** on local machine (laptop) -- cd to ~/Desktop/NEUROSIM/A1/data/simDataFiles/speech/
+***** gcloud compute scp *.pkl ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/
+*** [DONE] Set MONKEY load.py params:
+**** donetpyne=0
+**** basedir = 'MACHINE/DEPENDENT/A1/data/NHPdata/speech/contproc/A1/'
+**** dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv' 
+**** timeRange = [8,14]
+***** None will do whole file -- too long !
+***** trigger times would help 
+****** STIM ONSETS / START/END TIME FOR 2-ma033034023:
+First stim onset occurs at: 13.716363636363635 s
+Next stim onset occurs at: 15.764090909090909 s
+start time for plotting is: 12.216363636363635 s
+end time for plotting is: 14.716363636363635 s
+****** STIM ONSETS / START/END TIME FOR 2-bu037038046@os.mat
+ First stim onset occurs at: 10.367636363636363 s
+Next stim onset occurs at: 12.57190909090909 s
+start time for plotting is: 8.867636363636363 s
+end time for plotting is: 11.367636363636363 s
+***** for 2-ma --> timeRange = [11,16]
+***** [PRIORITY] for 2-bu --> [8,14] 
+*** [DONE] Run monkey 2-bu from 8-14 seconds: 
+**** on gcp: python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-bu037038046@os.mat
+**** on local machine: gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPEECH
+*** [DONE] Run monkey 2-ma from 11-16 seconds: 
+**** change load.py timeRange = [11,16]
+**** mkdir monkeySpeechWavelets
+**** mv *.png monkeySpeechWavelets/
+**** on gcp: python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-ma033034023@os.mat
+**** on local machine: gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPEECH
+*** [DONE] Set SIM load.py params:
+**** donetpyne = 1
+**** basedir = '/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/'
+**** dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/simDataLayers.csv',
+**** timeRange = None
+***** None -- will do the whole file; too long for monkey, but maybe not for .pkl? 
+***** [2,4]  if need to cut it down   #[2000,4000] if have to be in ms -- test 
+***** 2500ms (2.5s) is when the stim comes in -- make sure to span this range 
+*** [DONE] Run sim:
+**** on gcp -- in ~/a1dat (git branch --> erica) 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_4.pkl
+***** ^^ ERROR:  File "/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_4.pkl", line 1
+SyntaxError: Non-UTF-8 code starting with '\x80' in file
+/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_4.pkl
+on line 1, but no encoding declared; see
+http://python.org/dev/peps/pep-0263/ for details
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_1_1.pkl
+***** no error for this one 
+***** scp figures over! 
+****** on local machine
+****** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_1_SIM_gcp_wavelet_beta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/
+****** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_1_SIM_gcp_wavelet_gamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/
+****** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_1_SIM_gcp_wavelet_hgamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_1_0.pkl
+***** scp figs over:
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_0_SIM_gcp_wavelet_beta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_0_SIM_gcp_wavelet_alpha.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_0_SIM_gcp_wavelet_gamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/ 
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_1_0_SIM_gcp_wavelet_hgamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/ 
+
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_5.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_5_SIM_gcp_wavelet_alpha.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_5_SIM_gcp_wavelet_beta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_5_SIM_gcp_wavelet_gamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_5_SIM_gcp_wavelet_hgamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_5_SIM_gcp_wavelet_theta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_3.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_3_SIM_gcp_wavelet_beta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_3_SIM_gcp_wavelet_gamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_3_SIM_gcp_wavelet_hgamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+**** mv *.png simSpeechWavelets
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_1.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_1_SIM_gcp_wavelet_alpha.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_1_SIM_gcp_wavelet_beta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_1_SIM_gcp_wavelet_gamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_1_SIM_gcp_wavelet_hgamma.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+**** mv *.png simSpeechWavelets
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_2.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_2_SIM_gcp_wavelet_theta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v32_batch27_v32_batch27_0_0_1_0_2_SIM_gcp_wavelet_beta.png /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_0.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+**** mv *.png simSpeechWavelets
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_0_1_5.pkl
+**** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH
+**** mv *.png simSpeechWavelets
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_0_1_2.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_4.pkl
+
+** FORMATTING FIXED!! FOR LOAD.PY!! HURRAH! 
+** Run two more speech monkey wavelets after final load.py change to set timeRange to [40,55]: 
+*** [DONE] git pull origin erica (on gcp) 
+*** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-bu037038046@os.mat
+*** [DONE] scp over to laptop 
+*** [DONE] Add ^^ to monkey speech wavelet gdrive below
+*** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-ma033034023@os.mat
+*** [DONE] scp over to laptop 
+*** [DONE] Add ^^ to monkey speech wavelet gdrive below
+
+** sim speech wavelets gdrive: https://drive.google.com/drive/folders/1CbzfdohG2Ij0vGY9V9u437U7TQKA_H8t?usp=sharing
+** monkey speech wavelets: https://drive.google.com/drive/folders/1Z8U4aW454QCS1BcF2zuvutSItmCaZ2bu?usp=sharing
+** Now make SPONT WAVELETS:
+*** [DONE] SIM -- files:
+**** data files: .../NEUROSIM/A1/data/simDataFiles/spont/*.pkl
+**** [DONE] make sure all spont data files are scp'ed to gcp
+***** gcloud compute scp *.pkl ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+**** [DONE] csv up to date? -- yes 
+**** [DONE] make sure .csv is scp'ed to gcp 
+***** gcloud compute scp *.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+*** [DONE] MONKEY -- files: 
+**** data files: .../NEUROSIM/A1/data/NHPdata/spont/contproc/A1/*.mat
+**** [DONE -- 5 is enough for now] make sure correct spont files are scp'ed to gcp
+***** gcloud compute scp 2-rb031032016@os_eye06_20.mat ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/ 
+***** files:
++2-bu027028013@os_eye06_20.mat+	2-rb063064011@os_eye06_20.mat
++2-bu043044016@os_eye06_20.mat+	21feb02_A1_spont_layers.csv
++2-gt044045014@os_eye06_30.mat+	
++2-ma031032023@os_eye06_20.mat+	
++2-rb031032016@os_eye06_20.mat+	
+2-rb045046026@os_eye06_20.mat
+**** [DONE] csv up to date? -- yes
+**** [DONE] make sure .csv is scp'ed to gcp 
+***** gcloud compute scp *.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/ 
+*** [DONE] Change load.py: 
+**** [DONE] SIM: 
+***** donetpyne=1
+***** timeRange = None
+***** basedir, dbpath
+***** push/pull 
+**** [DONE] MONKEY: 
+***** donetpyne=0
+***** timeRange = [100,120]
+***** timeRange = [140,160]
+*** [DONE] Run SIM:
+**** [DONE] GRANULAR:
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_5.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPONT/gran/
+**** [DONE] INFRA: 
+***** change load lchan
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_1.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPONT/infra/
+**** [DONE] SUPRA:
+***** change load lchan
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_0.pkl
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPONT/supra/
+*** [DONE] Run MONKEY: 
+**** [DONE] GRANULAR:
+***** change load.py
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-ma031032023@os_eye06_20.mat
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPONT/gran/
+***** mv *.png monkeySpontWaveletsGran/
+**** [DONE] INFRA
+***** change load.py
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-bu043044016@os_eye06_20.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat 
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-ma031032023@os_eye06_20.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPONT/infra/
+***** mv *.png monkeySpontWaveletsInfra/ (mkdir first) 
+**** [DONE] SUPRA
+***** change load.py
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-bu043044016@os_eye06_20.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat 
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-ma031032023@os_eye06_20.mat
+***** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPONT/supra/
+***** mv *.png monkeySpontWaveletsSupra/ (have to mkdir first)
+***** move to gdrive 
+** [DONE] Go back and do some SPEECH wavelets for MONKEY:
+*** [done] in infra:
+**** [done] change load.py lchan to i1 and paths
+**** [done] push/pull 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-bu037038046@os.mat
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-ma033034023@os.mat
+**** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPEECH/infra/
+**** mv *.png monkeySpeechWaveletsInfra/ (have to mkdir first)
+**** move to gdrive 
+*** [done] in gran:
+**** [done] change load.py lchan to g 
+**** [done] push
+**** [done] pull 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-bu037038046@os.mat
++**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-ma033034023@os.mat+
+**** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_MONKEY_SPEECH/gran/
+**** mv *.png monkeySpeechWaveletsGran/ (have to mkdir first)
+**** move to gdrive
+** [DONE] Go back and do some speech wavelets for sim:
+*** [done] in infra:
+**** [done] change load.py lchan and timeRange and figname!!
+**** [done] push
+**** [done] pull 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_1_0_0_4.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_1_1_1_4.pkl 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_2.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_0_1_3.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_0_0_5.pkl
+**** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/infra/
+**** mv *.png simSpeechWaveletsInfra/ (have to mkdir first)
+**** move to gdrive
+*** [done] in gran:
+**** [done] change load.py lchan to g
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_1_0_0_4.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_1_1_1_4.pkl 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_1_0_2.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_0_1_3.pkl
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/speech/A1_v32_batch27_v32_batch27_0_0_0_0_5.pkl
+**** gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/wavelets_SIM_SPEECH/gran/
+**** mv *.png simSpeechWaveletsGran/ (have to mkdir first)
+**** move to gdrive
+* <2021-02-19 Fri -- cosyne>
+** spont wavelet figures:
+*** A1_v32_batch28_v32_batch28_1_SIM_gcp_wavelet_alpha.png --> LIGHTEN THIS SPECTROGRAM WITH VMIN VMAX 
+*** @samn says: adjust vmin and vmax for imshow -- The event viewer allows that with its specrange
+*** added this line (evv.specrange = (0,12)) <-- as seen in sam's nb to load.py main code block after evv.eventviewer() 
+*** Now run this again -- okay, this is sim spont, granular:
+**** meaning run command is: python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_1.pkl
+**** change load.py so donetpyne = 1
+**** change load.py paths, lchan = g
+**** saving changes -- nope fine
+**** can change so oscBand is just alpha
+**** pushed to origin erica
+*** login to gcp 
+*** gcloud beta compute ssh --zone "us-central1-f" "g1-n2-controller" --tunnel-through-iap --project "ecas2-nsf1904444"
+*** pulled a1dat changes on gcp 
+*** run in a1dat: python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_1.pkl
+*** ls --> scp .png files over to Desktop (laptop Desktop dir) 
+***  gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/ 
+*** (0,12) too strong!!! Try (0,15) -- push, pull, run python3 line again, scp again 
+*** Try (0,30) 
+** Need to match spont supra or infra: 
+*** have some decent alpha and beta examples from MONKEY:
+**** alpha: 
+***** 2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_alpha_t100
+***** 2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100.png 
+**** beta:
+***** 2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100.png 
+***** 2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_beta_t100.png
+***** 2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100.png
+*** gamma and hgamma both look meh in monkey -- try to see if you can get some good beta examples from sim
+*** Run sim:
+**** change load.py such that donetpyne=1, lchan=[s2], and oscBand is ['alpha', 'beta', 'theta', 'delta']
+**** maybe change load.py idx to 1 from 0 so different figs? yes. 
+**** sim run command: python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_0.pkl (do for 0-5)
+
+**** scp .png over to local machine (laptop) -- gcloud compute scp ext_ericaygriffith_gmail_com@g1-n2-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/ 
+**** mv files on gcp 
+*** Run sim -- try for beta again 
+*** Run sim -- try again but with infra 
+**** changes to load.py, push/pull etc. 
+**** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_1.pkl
+** Made a list of figures to have / what we have / what to do:
+*** working on re-recreating CSD spec/timeSeries comparison for spont:
+**** nhpspecdat.py 
+**** linewidth = 1, tight_layout() -- changes to plotting function
+*** CSD spec/timeSeries comparison for speech:
+**** nhpspecdat.py changes -- changed time of plotting for monkey speech
+**** do this on Desktop machine bc too slow on laptop
+**** scp over the figure afterwards: scp erica@68.160.218.237:/home/erica/Desktop/NEUROSIM/a1dat/*.png /Users/ericagriffith/Desktop
+**** add red arrow at stim onset time for both monkey and sim 
+**** First stim onset occurs at: 10.367636363636363 s
+Next stim onset occurs at: 12.57190909090909 s
+start time for plotting is: 8.867636363636363 s
+end time for plotting is: 12.317636363636362 s
+**** if darkening color map does not work --> go back to old time plotting, lw=1 and use that
+**** add red arrows to sim, add red arrows to monkey 
+*** run these two speech sims thru nhpspecdat.py: 
+*** v32_batch27_0_0_0_1_4.pkl ('A1_v32_batch27_v32_batch27_0_0_0_1_4.pkl') 
+*** v32_batch27_0_1_0_0_4.pkl ('A1_v32_batch27_v32_batch27_0_1_0_0_4.pkl') 
+** okay -- have 4 diff version of speech csd/spect comparison -- move on
+** LFP spectrogram
+*** have a decent version w/ half-sim
+*** do w/ full-density sim -- done. 
+*** do monkey spont -- 
+*** favorites so far from monkey (A1/data/figs/monkey_spont_spectrograms): 
+**** NHP_LFP_spect_2-gt044045014@os_eye06_30.png -- 
+***** 20_0_0
+***** 28_2 3250-4250 -- monkey 6000-7000 (meh) 
+***** 28_3 3500-4500 -- monkey 6000-7000
+**** NHP_LFP_spect_2-ma031032023@os_eye06_20.png -- 
+**** NHP_LFP_spect_2-rb031032016@os_eye06_20.png
+**** NHP_LFP_spect_2-bu043044016@os_eye06_20
+*****  20_0_0 1300-2300 -- monkey 7500-8500 
+*** favorite run of sim spect -- e_2_6_11_13
+**** A1_v32_batch20_v32_batch20_0_0.pkl_spect
+**** A1_v32_batch28_v32_batch28_2.pkl_spect
+**** A1_v32_batch28_v32_batch28_3.pkl_spect
+**** A1_v32_batch28_v32_batch28_4.pkl_spect
+**** A1_v32_batch28_v32_batch28_5.pkl_spect
+
+
+** FIGS SO FAR:
+*** for figs I have -- for spontaneous: wavelets, LFP spectrogram, CSD. 
+*** for speech I have CSD + working on these wavelets. everything except speech wavelets is formatted so looks nice / consistent. I won't be able to fit all on poster but have made some slides. 
+** wavelets for speech:
+*** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/2-bu037038046@os.mat
+*** commented out load.py after the dlms line -- switched paths etc and donetpyne to correct settings 
+*** [done] scp .wav files:
+**** gcloud beta compute ssh --zone "us-central1-f" "g1-n2-controller" --tunnel-through-iap --project "ecas2-nsf1904444"
+**** on local machine cd to stimuli folder
+**** on gcp, mkdir stimuli 
+**** gcloud compute scp *.wav ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/stimuli/
+** wavelet speech procedure so far:
+*** ## (1) Get dlms from load.py 
+*** python -i load.py ___.mat ### with everything commented out below dlms line 
+*** print(dlms)
+
+*** ## (2) Get trigtimes from the following lines (also listed in speech.py) 
+*** from nhpdat import *    ## NECESSARY?? NOT SURE. DEPENDS
+*** print('samprds :' + str(samprds))
+*** divby = getorigsampr(fn) / samprds # 4.0   
+*** trigtimes = [int(round(x)) for x in np.array(getTriggerTimes(fn)) / divby] # these are stimulus starting indices into the data
+*** trigIDs = remaptrigIDs(getTriggerIDs(fn))
+
+*** ## (3) Load in information about the speech stimuli 
+*** ### from speech import loadwavedat  # OR import loadwavedat # OR import *    # NECESSARY? PROBABLY. 
+*** dwave, dwavedur = loadwavedat('/home/erica/Desktop/NEUROSIM/A1/data/stimuli',samprds=samprds) # again check samprds
+*** dwave.keys()
+*** dwavedur.keys()
+
+*** ## (4) "concatenate the windowed spectrogram horizontally" ?? 
+*** chan = 11 
+*** ms = hstacklmsTFR(dlms[chan]) # takes a lot of memory - concatenates the windowed spectrogram horizontally
+*** ms.shape # (323, 1649999) #  e.g. (63, 19944896)
+*** CSD.shape # (21, 1650000)  # e.g. (21, 19944897)
+
+*** ## (5) 
+*** from speech import dmspecfull
+*** dms = getdmspecfull(ms, trigtimes, trigIDs, dwavedur)
+
+*** #### Now get into plotting?? No clue what next line will show tbh. Ah, that gigantic thing. or maybe not. not sure. 
+*** imshow(dms[1][1],extent=[0,dms[1][1].shape[1]/sampr,freqmin,freqmax],aspect='auto',origin='lower',cmap=plt.get_cmap('jet'),interpolation=None)
+
+** logged out / back into gcp
+*** gcloud beta compute ssh --zone "us-central1-f" "g1-n2-controller" --tunnel-through-iap --project "ecas2-nsf1904444"
+*** now on Desktop:
+**** python -i load.py /home/erica/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/2-bu037038046@os.mat
+**** ModuleNotFoundError: No module named 'filt' -- error from importing 'speech'
+**** ran -- but for some reason g (channel) = -1 ? no clue why getflayers didn't work 
+*** to load.py -- added 3 functions and one import line above main code block (2 funcs from speech, 1 from waveutils)
+*** pip install pysoundfile
+* <2021-02-22 Mon -- cosyne slides>
+** working on cosyne slides: https://docs.google.com/presentation/d/1gM52ASWXPJaTJXwx9wpDXcmdL87LLua6vu90fi_0mRc/edit#slide=id.gc00613e97b_0_332
+* <2021-02-23 Tue -- cosyne slides>
+** working on cosyne slides: https://docs.google.com/presentation/d/1gM52ASWXPJaTJXwx9wpDXcmdL87LLua6vu90fi_0mRc/edit#slide=id.gc00613e97b_0_332
+** SLIDES:
+*** (1) Intro/theory
+*** (2) Approach
+*** (3) Network Structure
+*** (4) Network Tuning
+*** (5) Results: model validation
+*** (6) Results: Speech 
+* <2021-02-24 Wed -- cosyne presentation>
+* <2021-02-25 Thu -- cosyne>
+* <2021-02-26 Fri -- cosyne>
+* <2021-03-01 Mon -- A1 draft>
+** gdoc: https://docs.google.com/document/d/1XfeTBGbulJQSgND_a9TLxrDFiAWCs4ARytSuEMYf_Hg/edit#
+** Single cell models: 
+*** could do a table?
+*** potential parameters for said table:
+**** resting potential
+**** membrane capacitance
+**** number of compartments
+**** leak conductance
+**** channels species present 
+**** inhibitory rebound --> +/-
+**** sag --> +/-
+**** adaptation --> +/-
+**** bursting --> +/- 
+*** Dendrite lengths --> which was the table / depiction that shows which dendrites go where? find this in nb. 
+*** Figures 8.3 and 8.4 /The Mammalian Auditory Pathways: Synaptic Organization and Microcircuits/
+* <2021-03-02 Tue -- A1 draft>
+** Calling the single neuron model sub-heading "Morphology and physiology of neuron classes"
+*** Taking out this text: 
+**** The following cell models are located in either the A1 cortical column or the thalamic portion of the overall network model. These models are all conductance-based neuron models with simplified morphologies. [*Put in some information about the fitting process*].  --- Each of these cell types (e.g. IT, VIP) were instantiated in the appropriate cortical layer(s), yielding *n* total populations of neurons within the cortical network. Here, a “class” or “type” or neuron refers to the categories listed above, while “population” refers to a layer-bound cell model of a particular class / type. Each population was labeled using both cell type and layer; in other words, a population of VIP neurons in layer 2 was labeled VIP2, while a population of NGF cells in layer 1 was labeled NGF1. 
+*** ^^ salvadord: no need to include any info on layer location, etc since I cover that… just biophys and morph (if any)
+*** also taking out this text since re-purposed in thal text: 
+**** Our thalamic model employs four different cell types (or just say six populations?). These populations are labeled according to their type and their location within the thalamus. The “TC” cell population corresponds to thalamocortical cells located in the core region (pathway?) of the MGB. The “TCM” population corresponds to thalamocortical cell models located in the matrix region (pathway?) of the MGB. Within the thalamic reticular nucleus, the inhibitory “IRE” cell population projects to the core region (pathway?) of the MGB, while the “IREM” population projects to the matrix region (pathway?) of the MGB. The “TI” cells are local thalamic interneuron models, located within the MGB. The “HTC” cell population is also located in the MGB, and consists of thalamocortical cell models that have the addition of a high-threshold T-type calcium channel mechanism.	
+*** text on stellate mechanisms:
+the following channel mechanisms (SOMA: leak channel, naz.mod – fast sodium, kv.mod – potassium; DENDS: leak channel, naz.mod – fast sodium, km.mod – slow, non-inactivating K+ channel based on IM, kca.mod – calcium-dependent K+ channel, Nca.mod – “HVA” (?) Ca2+ current, cadad.mod -- Fast mechanism for sub-membranal Ca++ concentration). Add in info about electrophysiology / firing patterns.
+*** some text on thal ints:
+**** ephys (oscillatory and rebound bursting. * mention data that this model is based on (some pub, some unpub) → https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=116862#tabs-1 ^^ not working in this link (as noted in preface; but working in my version)]
+*** text on IRE cells in TRN:
+Inhibitory reticular cells (IRE) from TRN projected to cells in the core pathway of the MGB, while another population of inhibitory reticular cells (IREM) projected to cells in the matrix pathway of MGB. (potential rephrase? → The TRN contained two inhibitory reticular cell populations that projected to cells in the core (IRE) and matrix (IREM) pathways of MGB.)  [--> add citations and descriptions of morph (1-cmp) and ephys]
+* <2021-03-03 Wed -- A1 draft>
+** single neuron models:
+*** took this text out from beginning: 
+Four excitatory and four interneuron cell types were instantiated in the A1 cortical network model, while the thalamic model contained two excitatory and two inhibitory cell types. 
+*** took out this text as well:
+This was done via either multi-objective evolutionary optimization algorithm or via hand-tuning.
+*** text from prev m1 paper on IT and PT and CT:
+IT: 
+“Previously we had optimized 6-compartment neuron models to reproduce somatic current clamp recordings from two IT cells in layers 5A and 5B. The layer 5A cell had a lower f-I slope (X) and higher rheobase (X) than that in layer 5B (X and X). Based on our own and published data, we found two broad IT categories based on projection and intrinsic properties: corticocortical IT cells found in upper layers 2/3 and 4 which exhibited a lower f-I slope (avg X) and higher rheobase (avg X) than IT corticostriatal cells in deeper layers 5A, 5B and 6 (avg X and X) [70, 62, 49].”
+
+CT: 
+“CT neurons’ f-I rheobase and slope (X and X) was closer to that of corticocortical neurons [49]. We therefore employed the layer 5A IT model for layers 2/3 and 4 IT neurons and layer 6 CT neurons, and the layer 5B IT model for layers 5A, 5B and 6 IT neurons. We further adapted cell models by modifying their apical dendrite length to match the average cortical depth of the layer, thus introducing small variations in the firing responses of neurons across layers.”
+*** text from prev m1 paper on SOM and PV: 
+PV and SOM: 
+“We implemented models for two major classes of GABAergic interneurons [18]: parvalbumin-expressing fast-spiking (PV) and somatostatin-expressing low-threshold spiking neurons (SOM). We employed existing simplified 3-compartment (soma, axon, dendrite) models [30] and increased their dendritic length to better match the average f-I slope and rheobase experimental values of cortical basket (PV) and Martinotti (SOM) cells (Neuroelectro online database [64]).”
+18: Kenneth D Harris and Gordon MG Shepherd. The neocortical circuit: themes and variations. Nature Neuroscience, 18(2):170–181, 2015.
+30: XANTHIPPI KONSTANTOUDAKI, Athanasia Papoutsi, Kleanthi Chalkiadaki, Panayiota Poirazi, and Kyriaki Sidiropoulou. Modulatory effects of inhibition on persistent activity in a cortical microcircuit model. Frontiers in Neural Circuits, 8:7, 2014.
+64: Shreejoy J. Tripathy, Shawn D. Burton, Matthew Geramita, Richard C. Gerkin, and Nathaniel N. Urban. Brain-wide analysis of electrophysiological diversity yields novel categorization of mammalian neuron types. Journal of Neurophysiology, 113(10):3474–3489, 2015.
+** L4 spiny stellate:
+*** (→ channels: leak, voltage-gated sodium and potassium, a slow non-inactivating potassium channel (IM) and a calcium-dependent potassium channel). 
+*** (from nb: Layer 4 spiny stellates gave adapting spike trains (no AHP or bursting noted))
+** NGF cells:
+*** NGF (from nb): Added an A-type potassium channel to induce delay (Kv4?) in first AP spike (https://pubmed.ncbi.nlm.nih.gov/21484879/, https://www.jneurosci.org/content/jneuro/20/11/4145.full.pdf) 
