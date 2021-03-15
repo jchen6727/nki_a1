@@ -37,7 +37,7 @@ cfg.cache_efficient = True
 cfg.printRunTime = 0.1
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [0, cfg.duration]
+cfg.printPopAvgRates = [500, cfg.duration]
 
 #------------------------------------------------------------------------------
 # Recording 
@@ -108,7 +108,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 0.05 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 1.0 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------
@@ -122,10 +122,10 @@ cfg.synWeightFractionII = [0.9, 0.1]  # SOM -> E GABAASlow to GABAB ratio (updat
 # Cortical
 cfg.addConn = 1
 
-cfg.EEGain = 4.0
-cfg.EIGain = 4.0 # 1.8600534795309025 	
-cfg.IEGain = 4.0 #0.75
-cfg.IIGain = 4.0 #0.5
+cfg.EEGain = 1.0
+cfg.EIGain = 1.0 # 1.8600534795309025 	
+cfg.IEGain = 1.0 #0.75
+cfg.IIGain = 1.0 #0.5
 
 ## E/I->E/I layer weights (L1-3, L4, L5, L6)
 cfg.EELayerGain = {'1': 1.0, '2': 1.0, '3': 1.0, '4': 1.0 , '5A': 1.0, '5B': 1.0, '6': 1.0}
@@ -145,9 +145,9 @@ cfg.addIntraThalamicConn = 1.0
 cfg.addCorticoThalamicConn = 1.0
 cfg.addThalamoCorticalConn = 1.0
 
-cfg.thalamoCorticalGain = 4.0
-cfg.intraThalamicGain = 4.0
-cfg.corticoThalamicGain = 4.0
+cfg.thalamoCorticalGain = 1.0
+cfg.intraThalamicGain = 1.0
+cfg.corticoThalamicGain = 1.0
 
 cfg.addSubConn = 1
 
@@ -157,13 +157,13 @@ cfg.addSubConn = 1
 #------------------------------------------------------------------------------
 cfg.addBkgConn = 1
 cfg.noiseBkg = 1.0  # firing rate random noise
-cfg.delayBkg = 4.0  # (ms)
+cfg.delayBkg = 5.0  # (ms)
 cfg.startBkg = 0  # start at 0 ms
 
 # cfg.weightBkg = {'IT': 12.0, 'ITS4': 0.7, 'PT': 14.0, 'CT': 14.0,
-#                 'PV': 28.0, 'SOM': 4.0, 'NGF': 80.0, 'VIP': 9.0,
+#                 'PV': 28.0, 'SOM': 5.0, 'NGF': 80.0, 'VIP': 9.0,
 #                 'TC': 1.8, 'HTC': 1.55, 'RE': 9.0, 'TI': 3.6}
-cfg.rateBkg = {'exc': 80, 'inh': 80}
+cfg.rateBkg = {'exc': 40, 'inh': 40}
 
 ## options to provide external sensory input
 #cfg.randomThalInput = True  # provide random bkg inputs spikes (NetStim) to thalamic populations 
