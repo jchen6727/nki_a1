@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 32
+netParams.version = 33
 
 #------------------------------------------------------------------------------
 #
@@ -731,4 +731,5 @@ v29 - Added EI specific layer gains
 v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
 v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
 v32 - Added IE presyn-cell-type specific gains
+v33 - Fixed bug in matrix thalamocortical conn (were very low)
 """
