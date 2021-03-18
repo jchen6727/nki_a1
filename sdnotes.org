@@ -8144,6 +8144,8 @@ overall similar although some pops slightly off (too high or too low)
 - IT5A, PV6, VIP6 silent; IT3 very low
 
 
+
+** v34_batch1 - same as v32_batch28 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
 ** blank
 
 
