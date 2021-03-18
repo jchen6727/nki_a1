@@ -647,8 +647,13 @@ pmat['CT6']['TC']	= 0.1
 pmat['CT6']['HTC']	= 0.1
 pmat['CT6']['IRE']	= 0.1
 pmat['CT6']['TI']	= 0.05
+
 pmat['IT5B']['TCM']	= 0.1
 pmat['PT5B']['TCM']	= 0.1
+pmat['IT5B']['IREM'] = 0.1
+pmat['PT5B']['IREM'] = 0.1
+pmat['IT5B']['TIM']	= 0.05
+pmat['PT5B']['TIM']	= 0.05
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
@@ -665,9 +670,13 @@ wmat['CT6']['TC']	= 0.7
 wmat['CT6']['HTC']	= 0.7
 wmat['CT6']['IRE']	= 0.23
 wmat['CT6']['TI']	= 0.23
+
 wmat['IT5B']['TCM']	= 0.7
 wmat['PT5B']['TCM']	= 0.7
-
+wmat['IT5B']['IREM'] = 0.23
+wmat['PT5B']['IREM'] = 0.23
+wmat['IT5B']['TIM']	= 0.23
+wmat['PT5B']['TIM']	= 0.23
 
 # --------------------------------------------------
 ## CORE THALAMOCORTICAL (from old model; partly from Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
