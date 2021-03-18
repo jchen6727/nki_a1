@@ -8101,11 +8101,13 @@ Run separately no stim vs speech:
 - start stim at 2.5 sec; stim dur = 1sec; allow 1 sec after stim; total = 4.5 sec
 
     params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
-** v33_batch1 - repeate v32_batch28 after fixing matrix thalamic conn bug
+** v33_batch1 - same as v32_batch28 after fixing matrix thalamic conn bug
 *** notes
 while writing paper I just found a bug that made all prob conn from matrix thalamus to cortex be <0.0005 :disappointed: (edited) 
 I’m gonna fix and rerun the latest sims, hopefully results don’t change too drastically
-
+*** results
+overall similar although some pops slightly off (too high or too low)
+** v33_batch2 - tuning; same as v32_batch19 but after fixing matrix thalamic conn bug
 ** blank
 
 
