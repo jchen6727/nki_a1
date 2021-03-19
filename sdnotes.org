@@ -8145,7 +8145,8 @@ overall similar although some pops slightly off (too high or too low)
 
 
 
-** v34_batch1 - same as v32_batch28 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
+** v34_batch1 - tuning; same as v32_batch28 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
+** v34_batch2 - tuning; from v32_batch1, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
 ** blank
 
 
