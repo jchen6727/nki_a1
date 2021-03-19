@@ -7936,13 +7936,13 @@ L1, L5A,L5B,L6 - 0.1-4
 *** results
 no good sols
 
-** v32_batch18 - tuning - best of v32_batch4, scaled to 100%; grid search of main params
+** v32_batch18 - tuning - best of v32_batch4; thal from v32_batch14; scaled to 100%; grid search of main params
 *** notes
 EE - [0.25, 0.5, 0.75, 1.0] - 16
 EI, IE, II - [0.5, 1.0, 1.5] - 9
 E-PV, E-SOM, E-NGF, E-VIP - [0.5, 1.0, 1.5] - 27
 total = 16*9*27 = 3888
-use thal from v32_batch11 or 13
+use thal from v32_batch14
 *** results
 - only solutions where all pops fire are with EE=1, but they don't fire at same time; different periods; pops inhibit each other
 - a few solutions with EE=0, show promising results, with some osc, but some layers (eg L5) and some upper pops (eg SOM) dont fire
