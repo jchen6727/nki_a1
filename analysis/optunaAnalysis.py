@@ -344,13 +344,13 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=0, loadDataFromFile=0)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=1, loadDataFromFile=1)
 
-    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
+    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
-    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
-    #plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
     # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 

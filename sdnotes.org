@@ -1527,7 +1527,8 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
 ** v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
 ** v32 - Added IE presyn-cell-type specific gains
-
+** v33 - Fixed bug in matrix thalamocortical conn (were very low)
+** v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -8145,8 +8146,10 @@ overall similar although some pops slightly off (too high or too low)
 
 
 
-** v34_batch1 - tuning; same as v32_batch28 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
-** v34_batch2 - tuning; from v32_batch1, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
+** v34_batch1 - tuning; same as v32_batch18 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
+** v34_batch2 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
+** v34_batch3 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4+-0.1; I->EI +-0.25
+
 ** blank
 
 
