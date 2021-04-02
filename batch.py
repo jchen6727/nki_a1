@@ -723,44 +723,46 @@ def custom():
 
     # from prev - best of 50% cell density
     import json
-    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+    with open('data/v34_batch3/trial_8760/trial_8760_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
-    # params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
-    # params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
-    # params[('ICThalInput', 'weightE')] = [0.25, 0.5]
-    # params[('ICThalInput', 'weightI')] = [0.25, 0.5]
-    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    # conn gains - total 3888 param combs
+    params['EEGain'] = [0.25, 0.5, 0.75, 1.0]
+    params['EIGain'] = [0.5, 1.0, 1.5]
+    params['IEGain'] = [0.5, 1.0, 1.5]
+    params['IIGain'] = [0.5, 1.0, 1.5]
+    params[('EICellTypeGain', 'PV')] = [0.5, 1.0, 1.5] 
+    params[('EICellTypeGain', 'SOM')] = [0.5, 1.0, 1.5]
+    params[('EICellTypeGain', 'VIP')] = [0.5, 1.0, 1.5] 
+    params[('EICellTypeGain', 'NGF')] = [0.5, 1.0, 1.5]
+    
 
-    #params[('ICThalInput', 'startTime')] = [2000, 5000] #, 8000]
-    
-    
-    groupedParams = [] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
     initCfg = {} # set default options from prev sim
-
-    initCfg['duration'] = 4500
-    initCfg['printPopAvgRates'] = [1500, 4500] 
+    
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
     initCfg['scaleDensity'] = 1.0
 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-                             'startTime': 2500, 
-                             'weightE': 1.0, 
-                             'weightI': 1.0, 
-                             'probE': 0, #0.12, 
-                             'probI': 0, #0.26, 
-                             'seed': 1}  
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    #                          'startTime': 2000, 
+    #                          'weightE': 1.0, 
+    #                          'weightI': 1.0, 
+    #                          'probE': 0.12, 
+    #                          'probI': 0.26, 
+    #                          'seed': 1}  
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -796,14 +798,6 @@ def custom():
         else:
             initCfg.update({p: cfgLoad2[p]})
 
-
-    # Include this to remove intracortical and thalamocortical conn  
-    # initCfg['EEGain'] = 0.0 #1.0
-    # initCfg['EIGain'] = 0.0 #1.0 # 1.8600534795309025 	
-    # initCfg['IEGain'] = 0.0 #1.0 #0.75
-    # initCfg['IIGain'] = 0.0
-    # initCfg['thalamoCorticalGain'] = 0.0
-    
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
@@ -1902,17 +1896,17 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
+    b = custom()
     # b = evolRates()
     # b = asdRates()
     # b = optunaRates()
     #b = optunaRatesLayers()
-    b = optunaRatesLayersThalL234()
+    # b = optunaRatesLayersThalL234()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch3' 
+    b.batchLabel = 'v34_batch4' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
