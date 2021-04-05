@@ -8149,11 +8149,29 @@ overall similar although some pops slightly off (too high or too low)
 ** v34_batch1 - tuning; same as v32_batch18 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
 ** v34_batch2 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
 ** v34_batch3 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4+-0.1; I->EI +-0.25
-** v34_batch4 - tuning; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main params
+** v34_batch4 - tuning; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main params; BUG: only L2-4+thal
+*** notes
+BUG! - ran only L2-4+thal -- good test to see if can use grid search to find similar/better solutions
+
+
+- trying same approach that worked before: take best of 50% scale, with thal for 100% scale, and grid search
+- note: thal from v34_batch3 doesn't matter which solution as they all use the same thal params; could also use thal from v32_batch14
+- however in this case might not work because the 50% scale is different from this 100% qualitatively, 
+i.e. fixed 2 matrix thalamic conn bugs (so maybe would have to tune 1st the 50% scale again with the bugs fixed)
+
+
+EE - [0.25, 0.5, 0.75, 1.0] - 16
+EI, IE, II - [0.5, 1.0, 1.5] - 9
+E-PV, E-SOM, E-NGF, E-VIP - [0.5, 1.0, 1.5] - 27
+total = 16*9*27 = 3888
+use thal from v32_batch14
+
+- if doesn't work, can continue tuning by layers -- eg. add L1, L5, L6
+** v34_batch5 - tuning; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main paramss
 *** notes
 - trying same approach that worked before: take best of 50% scale, with thal for 100% scale, and grid search
 - note: thal from v34_batch3 doesn't matter which solution as they all use the same thal params; could also use thal from v32_batch14
-- however in this case might not work because the50% scale is different from this 100% qualitatively, 
+- however in this case might not work because the 50% scale is different from this 100% qualitatively, 
 i.e. fixed 2 matrix thalamic conn bugs (so maybe would have to tune 1st the 50% scale again with the bugs fixed)
 
 
