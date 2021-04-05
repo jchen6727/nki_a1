@@ -30,7 +30,10 @@ if __name__ == '__main__':
     
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
-    df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
+    var = [('simData','popRates')]
+    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
+
+    # df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
     
     # ---------------------------------------------
     # Single sim plot funcs
