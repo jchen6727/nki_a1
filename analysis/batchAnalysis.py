@@ -9,7 +9,7 @@ Contributors: salvadordura@gmail.com
 #import matplotlib; matplotlib.use('Agg')  # to avoid graphics error in servers
 
 from batchAnalysisFilter import *
-#from batchAnalysisPlotSingle import *
+from batchAnalysisPlotSingle import *
 from batchAnalysisPlotCombined import *
 
 
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     dataFolder = '../data/'
     batchLabel = 'v34_batch4'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
-    loadAll = 0
+    loadAll = 1
 
     # ---------------------------------------------
     # Filtering wrapper funcs
@@ -30,10 +30,18 @@ if __name__ == '__main__':
     
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
-    var = [('simData','popRates')]
-    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
+    #var = [('simData','popRates')]
+    #params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
 
-    # df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Ipops = [                         # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    # df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]], Epops=Epops, Ipops=Ipops)
     
     # ---------------------------------------------
     # Single sim plot funcs
@@ -44,8 +52,10 @@ if __name__ == '__main__':
     #        'IT5A', 'PV5A', 'SOM5A','VIP5A','NGF5A',
     #        'IT5B', 'PT5B', 'PV5B', 'SOM5B','VIP5B','NGF5B',
     #        'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-           
-    # sim,data = loadPlot(dataFolder, batchLabel, include={'raster':allpops}) 
+
+    simLabels = ['v34_batch4_1_2_1_1_0_0_2_2', 'v34_batch4_2_2_2_1_0_0_2_2']
+
+    sim,data = loadPlot(dataFolder, batchLabel, simLabel=simLabels, include={'raster': Epops+Ipops}, timeRange=[1500,2500], ext='.pkl') 
                                                             
     #plotConnFile(dataFolder, batchLabel)
 

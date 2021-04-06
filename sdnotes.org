@@ -8167,6 +8167,23 @@ total = 16*9*27 = 3888
 use thal from v32_batch14
 
 - if doesn't work, can continue tuning by layers -- eg. add L1, L5, L6
+
+- analyzed via batchAnalysis.py
+1)  var = [('simData','popRates')]
+    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
+
+2)
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Ipops = [                         # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]], Epops=Epops, Ipops=Ipops)
+
+*** results
+great results, better than optuna! at least 2 good solutions with all firing
 ** v34_batch5 - tuning; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main paramss
 *** notes
 - trying same approach that worked before: take best of 50% scale, with thal for 100% scale, and grid search

@@ -385,7 +385,7 @@ def filterDepolBlock(dataFolder, batchLabel, loadAll, gids=None):
 
 
 
-def addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]]):
+def addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]], Epops=None, Ipops=None):
         
     params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll)
     df = utils.toPandas(params, data)
@@ -395,7 +395,8 @@ def addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,200
     pops = {}
 
     ## Exc pops
-    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    if not Epops:
+        Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
     
@@ -403,14 +404,15 @@ def addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,200
         pops[pop] = Etune
     
     ## Inh pops 
-    Ipops = ['NGF1',                            # L1
-            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
-            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
-            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
-            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
-            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
-            'IRE', 'IREM', 'TI']  # Thal 
+    if not Ipops:
+        Ipops = ['NGF1',                            # L1
+                'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+                'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+                'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+                'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+                'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+                'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+                'IRE', 'IREM', 'TI']  # Thal 
 
 
     Itune = {'target': 10, 'width': 15, 'min': 0.5}

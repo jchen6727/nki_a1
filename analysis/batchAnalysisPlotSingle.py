@@ -17,7 +17,7 @@ import collections
 plt.style.use('seaborn-whitegrid')
 
 
-def loadPlot(dataFolder, batchLabel, simLabel=None, include=None, copyFiles=False):
+def loadPlot(dataFolder, batchLabel, simLabel=None, include=None, timeRange=[0,1000], copyFiles=False, ext='.json'):
     from os import listdir
     from os.path import isfile, join
     
@@ -29,11 +29,11 @@ def loadPlot(dataFolder, batchLabel, simLabel=None, include=None, copyFiles=Fals
                 and not isfile(join(path, f[:-5] + '_traces.png'))]  # TEMPORARY - to avoid replacing existing ones !!
 
     if type(simLabel) is list:
-        outfiles = [f for f in onlyFiles if any([f.endswith(sl+'.json') for sl in simLabel])] 
+        outfiles = [f for f in onlyFiles if any([f.endswith(sl+ext) for sl in simLabel])] 
     elif type(simLabel) is '':
-        outfiles = [f for f in onlyFiles if f.endswith(simLabel+'.json')]
+        outfiles = [f for f in onlyFiles if f.endswith(simLabel+ext)]
     else:
-        outfiles = [f for f in onlyFiles if f.endswith('.json') ] 
+        outfiles = [f for f in onlyFiles if f.endswith(ext) ] 
         
     if not include:
         allpops = ['IT2','PV2','SOM2','IT4','IT5A','PV5A','SOM5A','IT5B','PT5B','PV5B','SOM5B','IT6','CT6','PV6','SOM6']
@@ -65,14 +65,14 @@ def loadPlot(dataFolder, batchLabel, simLabel=None, include=None, copyFiles=Fals
                 syncs=0,
                 hist=0, 
                 psd=0, 
-                traces=1, 
+                traces=0, 
                 grang=0, 
                 plotAll=0, 
-                timeRange=[0,1000], 
+                timeRange=timeRange, 
                 include=include, 
-                textTop='', 
+                textTop='')#, 
                 #popColors=popColors, 
-                orderBy=['pop','y'])
+                #orderBy=['pop','y'])
 
         if copyFiles:
             sourceFile1 = dataFolder+jsonFolder+'/'+outfile.split('.json')[0]+'_traces_gid_3136.png'

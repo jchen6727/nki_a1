@@ -229,7 +229,10 @@ def plotsFromFile(filename, raster=True, stats=True, rates=False, syncs=False, h
 
     # try:
     with open(filename, 'rb') as fileObj:
-        data = json.load(fileObj, object_pairs_hook=OrderedDict)
+        if filename.endswith('.json'):
+            data = json.load(fileObj, object_pairs_hook=OrderedDict)
+        elif filename.endswith('.pkl'):
+            data = pickle.load(fileObj)
     # except:
     #     print('Error opening file %s' % (filename))
     #     return 0
