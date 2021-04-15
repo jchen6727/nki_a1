@@ -18,7 +18,7 @@ if __name__ == '__main__':
     dataFolder = '../data/'
     batchLabel = 'v34_batch5'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
-    loadAll = 0
+    loadAll = 1
 
     # ---------------------------------------------
     # Filtering wrapper funcs
@@ -30,8 +30,8 @@ if __name__ == '__main__':
     
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
-    var = [('simData','popRates')]
-    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
+    # var = [('simData','popRates')]
+    # params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
 
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 'IT6', 'CT6']  # all layers
 
