@@ -8290,6 +8290,39 @@ layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
     params[('IELayerGain', '5A')] = [max(cfgLoad2['IELayerGain']['5A']-rangeV, minV), min(cfgLoad['IELayerGain']['5A']+rangeV, maxV)]
     params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
 
+** v34_batch7 - try grid search of thal + layer params with best sol from v34_batch5 
+*** notes
+    with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # conn gains 
+    # params['EEGain'] = [0.25, 0.5, 0.75, 1.0]
+    # params['EIGain'] = [0.5, 1.0, 1.5]
+    # params['IEGain'] = [0.5, 1.0, 1.5]
+    # params['IIGain'] = [0.5, 1.0, 1.5]
+    # params[('EICellTypeGain', 'PV')] = [0.5, 1.0, 1.5] 
+    # params[('EICellTypeGain', 'SOM')] = [0.5, 1.0, 1.5]
+    # params[('EICellTypeGain', 'VIP')] = [0.5, 1.0, 1.5] 
+    # params[('EICellTypeGain', 'NGF')] = [0.5, 1.0, 1.5]
+
+    flow = 0.5
+    fhigh = 1.5
+
+    params[('EILayerGain', '2')] = [cfgLoad['EILayerGain']['2']*flow, cfgLoad['EILayerGain']['2'], cfgLoad['EILayerGain']['2']*fhigh]
+    params[('EILayerGain', '3')] = [cfgLoad['EILayerGain']['3']*flow, cfgLoad['EILayerGain']['3'], cfgLoad['EILayerGain']['3']*fhigh]
+    params[('EILayerGain', '5A')] = [cfgLoad['EILayerGain']['5A']*flow, cfgLoad['EILayerGain']['5A'], cfgLoad['EILayerGain']['5A']*fhigh]
+    params[('EILayerGain', '5B')] = [cfgLoad['EILayerGain']['5B']*flow, cfgLoad['EILayerGain']['5B'], cfgLoad['EILayerGain']['5B']*fhigh]
+        
+    params[('IECellTypeGain', 'PV')] = [cfgLoad['IECellTypeGain']['PV']*flow, cfgLoad['IECellTypeGain']['PV'], cfgLoad['IECellTypeGain']['PV']*fhigh]
+    params[('IECellTypeGain', 'SOM')] = [cfgLoad['IECellTypeGain']['SOM']*flow, cfgLoad['IECellTypeGain']['SOM'], cfgLoad['IECellTypeGain']['SOM']*fhigh]
+    params[('IECellTypeGain', 'VIP')] = [cfgLoad['IECellTypeGain']['VIP']*flow, cfgLoad['IECellTypeGain']['VIP'], cfgLoad['IECellTypeGain']['VIP']*fhigh]
+    params[('IECellTypeGain', 'NGF')] = [cfgLoad['IECellTypeGain']['NGF']*flow, cfgLoad['IECellTypeGain']['NGF'], cfgLoad['IECellTypeGain']['NGF']*fhigh]
+
+
 ** blank
 
 

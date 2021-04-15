@@ -721,25 +721,38 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
 def custom():
     params = specs.ODict()
 
-    # from prev - best of 50% cell density
+    # from prev 
     import json
-    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+    with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch3/trial_8760/trial_8760_cfg.json', 'rb') as f:
+    with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
-    # conn gains - total 3888 param combs
-    params['EEGain'] = [0.25, 0.5, 0.75, 1.0]
-    params['EIGain'] = [0.5, 1.0, 1.5]
-    params['IEGain'] = [0.5, 1.0, 1.5]
-    params['IIGain'] = [0.5, 1.0, 1.5]
-    params[('EICellTypeGain', 'PV')] = [0.5, 1.0, 1.5] 
-    params[('EICellTypeGain', 'SOM')] = [0.5, 1.0, 1.5]
-    params[('EICellTypeGain', 'VIP')] = [0.5, 1.0, 1.5] 
-    params[('EICellTypeGain', 'NGF')] = [0.5, 1.0, 1.5]
-    
+    # conn gains 
+    # params['EEGain'] = [0.25, 0.5, 0.75, 1.0]
+    # params['EIGain'] = [0.5, 1.0, 1.5]
+    # params['IEGain'] = [0.5, 1.0, 1.5]
+    # params['IIGain'] = [0.5, 1.0, 1.5]
+    # params[('EICellTypeGain', 'PV')] = [0.5, 1.0, 1.5] 
+    # params[('EICellTypeGain', 'SOM')] = [0.5, 1.0, 1.5]
+    # params[('EICellTypeGain', 'VIP')] = [0.5, 1.0, 1.5] 
+    # params[('EICellTypeGain', 'NGF')] = [0.5, 1.0, 1.5]
+
+    flow = 0.5
+    fhigh = 1.5
+
+    params[('EILayerGain', '2')] = [cfgLoad['EILayerGain']['2']*flow, cfgLoad['EILayerGain']['2'], cfgLoad['EILayerGain']['2']*fhigh]
+    params[('EILayerGain', '3')] = [cfgLoad['EILayerGain']['3']*flow, cfgLoad['EILayerGain']['3'], cfgLoad['EILayerGain']['3']*fhigh]
+    params[('EILayerGain', '5A')] = [cfgLoad['EILayerGain']['5A']*flow, cfgLoad['EILayerGain']['5A'], cfgLoad['EILayerGain']['5A']*fhigh]
+    params[('EILayerGain', '5B')] = [cfgLoad['EILayerGain']['5B']*flow, cfgLoad['EILayerGain']['5B'], cfgLoad['EILayerGain']['5B']*fhigh]
+        
+    params[('IECellTypeGain', 'PV')] = [cfgLoad['IECellTypeGain']['PV']*flow, cfgLoad['IECellTypeGain']['PV'], cfgLoad['IECellTypeGain']['PV']*fhigh]
+    params[('IECellTypeGain', 'SOM')] = [cfgLoad['IECellTypeGain']['SOM']*flow, cfgLoad['IECellTypeGain']['SOM'], cfgLoad['IECellTypeGain']['SOM']*fhigh]
+    params[('IECellTypeGain', 'VIP')] = [cfgLoad['IECellTypeGain']['VIP']*flow, cfgLoad['IECellTypeGain']['VIP'], cfgLoad['IECellTypeGain']['VIP']*fhigh]
+    params[('IECellTypeGain', 'NGF')] = [cfgLoad['IECellTypeGain']['NGF']*flow, cfgLoad['IECellTypeGain']['NGF'], cfgLoad['IECellTypeGain']['NGF']*fhigh]
+
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -1097,7 +1110,12 @@ def optunaRates():
     params[('IILayerGain', '4')] = [0.1, 3.0]
     params[('IILayerGain', '5')] = [0.1, 3.0]
     params[('IILayerGain', '6')] = [0.1, 3.0]
-    
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV2, maxV)]
+
     # params['thalamoCorticalGain'] = [0.25, 2.0]
     # params['intraThalamicGain'] = [0.25, 2.0]
     # params['corticoThalamicGain'] = [0.25, 2.0]
@@ -1900,17 +1918,17 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    #b = custom()
+    b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
-    b = optunaRatesLayers()
+    # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL234()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch6' 
+    b.batchLabel = 'v34_batch7' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
