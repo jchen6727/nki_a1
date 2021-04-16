@@ -1891,7 +1891,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',
-            'skipCustom': '_raster.png'}
+            'skipCustom': '_raster_gid.png'}
             #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
             # --nodelist=compute1
 
