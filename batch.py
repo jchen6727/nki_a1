@@ -723,11 +723,11 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
+    with open('data/v34_batch5/v34_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
+    with open('data/v34_batch5/v34_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
     # conn gains 
