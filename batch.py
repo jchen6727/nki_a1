@@ -1228,14 +1228,16 @@ def optunaRatesLayers():
         cfgLoad = json.load(f)['simConfig']
     '''
 
-    # from prev - best of 50% cell density
+    # best from grid search
     import json
-    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
-        cfgLoad = json.load(f)['simConfig']
+    # with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch3/trial_8760/trial_8760_cfg.json', 'rb') as f:
+    with open('data/v34_batch5/v34_batch5_0_2_0_0_2_0_2_2_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
+
+    cfgLoad = cfgLoad2
 
     # --------------------------------------------------------
     # parameters
@@ -1257,11 +1259,11 @@ def optunaRatesLayers():
     params[('EICellTypeGain', 'VIP')] = [1.3, 1.7] 
     params[('EICellTypeGain', 'NGF')] = [1.3, 1.7] 
 
-    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
-    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
-    params[('IELayerGain', '4')] = [max(cfgLoad2['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
-    params[('IELayerGain', '5A')] = [max(cfgLoad2['IELayerGain']['5A']-rangeV, minV), min(cfgLoad['IELayerGain']['5A']+rangeV, maxV)]
-    params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad2['IELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad2['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad2['IELayerGain']['4']-rangeV, minV), min(cfgLoad2['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad2['IELayerGain']['5A']-rangeV, minV), min(cfgLoad2['IELayerGain']['5A']+rangeV, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad2['IELayerGain']['5B']+rangeV, maxV)]
 
     
     '''
@@ -1652,10 +1654,6 @@ def optunaRatesLayersThalL4():
 
 
 
-
-
-
-
 # ----------------------------------------------------------------------------------------------
 # Optuna optimization
 # ----------------------------------------------------------------------------------------------
@@ -1918,17 +1916,17 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    # b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
-    # b = optunaRatesLayers()
+    b = optunaRatesLayers()
     # b = optunaRatesLayersThalL234()
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch7' 
+    b.batchLabel = 'v34_batch6' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
