@@ -8328,6 +8328,8 @@ layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
     params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad2['IELayerGain']['5B']+rangeV, maxV)]
 
     
+*** results
+after 3k iterations, best fitness was ~290
 
 
 ** v34_batch7 - try grid search of thal + layer params with best sol from v34_batch5 
