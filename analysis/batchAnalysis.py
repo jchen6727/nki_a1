@@ -16,9 +16,9 @@ from batchAnalysisPlotCombined import *
 # Main code
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchLabel = 'v34_batch5'  # 'v50_batch1' #
+    batchLabel = 'v34_batch7'  # 'v50_batch1' #
     #batchLabels = ['v103_batch3/gen_%d' % (i) for i in range(68)]
-    loadAll = 1
+    loadAll = 0
 
     # ---------------------------------------------
     # Filtering wrapper funcs
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # filterStimRates(dataFolder, batchLabel, load=loadAll)
 
     # var = [('simData','popRates')]
-    # params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
+    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
 
     Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 'IT6', 'CT6']  # all layers
 
@@ -43,6 +43,7 @@ if __name__ == '__main__':
             'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
             'PV6', 'SOM6', 'VIP6', 'NGF6']      # L6 
 
+    loadAll = 1
     df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]], Epops=Epops, Ipops=Ipops)
     
     # ---------------------------------------------
