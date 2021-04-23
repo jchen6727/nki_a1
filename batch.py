@@ -1925,18 +1925,36 @@ def optunaRatesLayersThalL2345A():
     initCfg['recordLFP'] = None
     initCfg[('analysis', 'plotLFP')] = False
 
-    initCfg['EEGain'] = 1.0 	
-    initCfg['EIGain'] = 1.0 	
-    initCfg['IEGain'] = 1.0 	
-    initCfg['IIGain'] = 1.0 	
-
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
-    
-    initCfg.update({'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
-                    'intraThalamicGain': cfgLoad['intraThalamicGain'],
-                    'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
-                    'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoa2[p]})
 
     print(initCfg)
 
@@ -1948,7 +1966,7 @@ def optunaRatesLayersThalL2345A():
     
     ## Exc pops
     #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
-    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
 
     #Etune = {'target': 5, 'width': 20, 'min': 0.05}
     Etune = {'target': 5, 'width': 5, 'min': 0.5}
@@ -1969,7 +1987,7 @@ def optunaRatesLayersThalL2345A():
             'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
             'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
             'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
-            #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
             #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
             #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
             'IRE', 'IREM', 'TI']  # Thal 

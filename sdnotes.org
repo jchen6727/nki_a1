@@ -8370,6 +8370,9 @@ layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
 - bad - IT2, IT3, ITS4 and ITP4 never fire 
 ** v34_batch8 - tuning; L2-5A; best of v34_batch4; optuna with large range L5A, small range rest
 *** notes
+- bug: didnt include L5A in fitness; wasn't setting all conn params based on prev sim -- rerun
+
+
 def optunaRatesLayersThalL2345A():
 
     # from prev
