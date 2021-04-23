@@ -443,4 +443,8 @@ def addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,200
 
     df['fitness'] = [fitnessFunc(simData=row, **fitnessFuncArgs) for index, row in df.iterrows()]
 
+    # add also avg rates 
+    for k in df.iloc[0]['popRates'].keys():
+        df[k] = [np.mean([float(x) for x in r['popRates'][k].values()]) for i,r in df.iterrows()]
+
     return df

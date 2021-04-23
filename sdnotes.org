@@ -8149,7 +8149,7 @@ overall similar although some pops slightly off (too high or too low)
 ** v34_batch1 - tuning; same as v32_batch18 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
 ** v34_batch2 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
 ** v34_batch3 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4+-0.1; I->EI +-0.25
-** v34_batch4 - tuning; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main params; BUG: only L2-4+thal
+** v34_batch4 - tuning; L2-L4; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main params; BUG: only L2-4+thal
 *** notes
 BUG! - ran only L2-4+thal -- good test to see if can use grid search to find similar/better solutions
 
@@ -8184,7 +8184,7 @@ use thal from v32_batch14
 
 *** results
 great results, better than optuna! at least 2 good solutions with all firing
-** v34_batch5 - tuning; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main paramss
+** v34_batch5 - tuning; full net; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main paramss
 *** notes
 - trying same approach that worked before: take best of 50% scale, with thal for 100% scale, and grid search
 - note: thal from v34_batch3 doesn't matter which solution as they all use the same thal params; could also use thal from v32_batch14
@@ -8263,11 +8263,11 @@ include IE l2,3,4,5A,5B:  with [prev-0.5:prev+0.5]]
 Also added IE layer-specific gains for L2 and L3, since these seemed to be the more problematic, and set values based on v32_batch14 (full scale sim with only L2,3,4):
 layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
 
-** v34_batch6 - tuning, optuna based on best solutions of v34_batch5; plus added L2-5B specific IE gains since problematic layers
+** v34_batch6 - tuning; full net; optuna based on best solutions of v34_batch5; plus added L2-5B specific IE gains since problematic layers
 *** notes
 
 - params ranges based on v34_batch5 2 best solutions
-- added IE l2,3,5A,5B:  with [prev-0.25:prev+0.25]] since those layers problematic; prev = v34_batch5 
+- added IE l2,3,4, 5A,5B:  with [prev-0.25:prev+0.25]] since those layers problematic; prev = v34_batch5 
 
 
 - bug (1st attempt; wrong ranges):
@@ -8329,10 +8329,11 @@ layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
 
     
 *** results
-after 3k iterations, best fitness was ~290
+- after 3k iterations, best fitness was ~280
+- pretty bad - IT2, IT3 never fire; IT4S and IT4P very very low
 
 
-** v34_batch7 - try grid search of thal + layer params with best sol from v34_batch5 
+** v34_batch7 - tuning; full net; grid search of thal + layer params with best sol from v34_batch5 
 *** notes
     with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
@@ -8364,7 +8365,62 @@ after 3k iterations, best fitness was ~290
     params[('IECellTypeGain', 'VIP')] = [cfgLoad['IECellTypeGain']['VIP']*flow, cfgLoad['IECellTypeGain']['VIP'], cfgLoad['IECellTypeGain']['VIP']*fhigh]
     params[('IECellTypeGain', 'NGF')] = [cfgLoad['IECellTypeGain']['NGF']*flow, cfgLoad['IECellTypeGain']['NGF'], cfgLoad['IECellTypeGain']['NGF']*fhigh]
 
+*** results
+- >6500 sims, best fitness was 367
+- bad - IT2, IT3, ITS4 and ITP4 never fire 
+** v34_batch8 - tuning; L2-5A; best of v34_batch4; optuna with large range L5A, small range rest
+*** notes
+def optunaRatesLayersThalL2345A():
 
+    # from prev
+    import json
+    with open('data/v34_batch4/v34_batch4_2_2_2_1_0_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    minV = 0.1
+    maxV = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '5A')] = [minV, maxV]
+    params[('EILayerGain', '5A')] = [minV, maxV]
+    params[('IELayerGain', '5A')] = [minV, maxV]
+    params[('IILayerGain', '5A')] = [minV, maxV]
+
+*** results
 ** blank
 
 
