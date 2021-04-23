@@ -1954,7 +1954,7 @@ def optunaRatesLayersThalL2345A():
         if isinstance(p, tuple):
             initCfg.update({p: cfgLoad[p[0]][p[1]]})
         else:
-            initCfg.update({p: cfgLoa2[p]})
+            initCfg.update({p: cfgLoad[p]})
 
     print(initCfg)
 
