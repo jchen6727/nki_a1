@@ -2088,16 +2088,16 @@ def optunaRatesLayersThalL2345A5B():
     # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
 
     # potentially increase to +-0.25
-    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
-    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
-    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
-    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
 
     # potentially increase to +-0.25
-    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
-    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
-    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
-    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
 
     params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
     params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
