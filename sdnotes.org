@@ -8497,7 +8497,9 @@ best fitness: trial 2979; best from pandas: trial 4529
     params[('IELayerGain', '5B')] = [minV, maxV]
     params[('IILayerGain', '5B')] = [minV, maxV]
 *** results
+- after 2.7k sims, best fitness was 274
 
+** v34_batch10 - v34_batch9 increased IE range to 0.1-4
 
 
 ** blank
