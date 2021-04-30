@@ -42965,3 +42965,20 @@ PV and SOM:
 *** (from nb: Layer 4 spiny stellates gave adapting spike trains (no AHP or bursting noted))
 ** NGF cells:
 *** NGF (from nb): Added an A-type potassium channel to induce delay (Kv4?) in first AP spike (https://pubmed.ncbi.nlm.nih.gov/21484879/, https://www.jneurosci.org/content/jneuro/20/11/4145.full.pdf) 
+* <2021-03-24 Wed -- research day suny 2021>
+** 302_Griffith_Erica --> format of save name 
+* <2021-04-26 Mon -- catching up>
+** salva nb
+** salva google doc: https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit#heading=h.upu2zb6w5fla
+** Spontaneous data analysis
+*** see slack chat
+** Methods (single-cell) -- complete! (TO DO)
+* <2021-04-27 Tue -- reading>
+** Read thru latest tuning issues
+** Started going over code for spontaneous data analysis -- catching myself up back up from cosyne & re-organizing
+** Looked over code to see how LSTM signal--> speech is being carried out. not 100% familiarized but getting the gist. 
+* <2021-04-28 Wed -- thal int day>
+** see thal int nb
+* <2021-04-29 Thu -- thal int day>
+** see thal int nb
+* <2021-04-30 Fri -- thal int day & A1>

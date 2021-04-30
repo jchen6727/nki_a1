@@ -388,7 +388,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
   ## trigtimes --> should be relativeTrigTimesMS (NOTE: trigtimes changed from relativeTrigTimes=None)
   ## fn --> string --> input filename --> used for saving! 
   ## saveFolder --> string --> directory where figs should be saved
-  ## overlay --> Default TRUE --> plots avgERP CSP time series on top of CSD color map 
+  ## overlay --> Default TRUE --> plots avgERP CSD time series on top of CSD color map 
 
   # INTERPOLATION
   X = tt 
@@ -1255,7 +1255,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/speech/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1273,7 +1273,7 @@ if __name__ == '__main__':
     if '.mat' in file:
       dataFiles.append(file)
 
-  dataFiles_test = ['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+  dataFiles_test = ['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
   for dataFile in dataFiles: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
@@ -1285,7 +1285,7 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
     ## SET PATH TO .csv LAYER FILE: 
-    # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
@@ -1295,42 +1295,42 @@ if __name__ == '__main__':
     #   secondTrigger = tt[trigtimes[1]]*1e3
     #   print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
     #   print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-    #   startTime = firstTrigger-200.0
+    #   startTime = firstTrigger-500.0
     #   endTime = secondTrigger-100
     # else: 
     #   startTime = 4236.0 # in ms, for gcp 
     #   endTime = 5920.0 # in ms, for gcp 
 
-   # plotLFP(dat=LFP_data,tt=tt,timeRange=[2000,10000], plots=['PSD'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
-    ## GET AND PLOT CSD 
-    # plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[14000,15000],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
+    # GET AND PLOT CSD 
+    #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[startTime,endTime],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
     
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    for idx in trigtimes:
-      trigtimesMS.append(tt[idx]*1e3)
+    # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    # for idx in trigtimes:
+    #   trigtimesMS.append(tt[idx]*1e3)
 
-    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+    # print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
-    ### AVG CSD ### 
-    ## (1) Remove bad epochs 
-    ## (a) set epoch params
-    swindowms = 0     # start time relative to stimulus 
-    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+    # ### AVG CSD ### 
+    # ## (1) Remove bad epochs 
+    # ## (a) set epoch params
+    # swindowms = 0     # start time relative to stimulus 
+    # ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
     
-    ## (b) set sigma thresh
-    sigmathresh=4 
+    # ## (b) set sigma thresh
+    # sigmathresh=4 
 
-    ## (c) 
-    trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
+    # ## (c) 
+    # trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-    ## calculate average CSD ERP ###
-    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
+    # ## calculate average CSD ERP ###
+    # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-    plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+    # plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
 
 
