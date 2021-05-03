@@ -15,7 +15,7 @@ try:
         data = f.read()
         match = re.findall(r'Best is trial \d+ with value: \d+\.\d\d', data)
         matchUnique = unique(match)
-        matchUnique = [m.replace('Best is t', '    T').replace(' with value:',':\t') for m in matchUnique]
+        matchUnique = [m.replace('Best is t', '   T').replace(' with value:',':\t') for m in matchUnique]
         print('\n')
         for m in matchUnique: print(m) #pprint(matchUnique)
 except:
