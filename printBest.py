@@ -18,6 +18,7 @@ try:
         matchUnique = [m.replace('Best is t', '   T').replace(' with value:',':\t') for m in matchUnique]
         print('\n')
         for m in matchUnique: print(m) #pprint(matchUnique)
+        print('\n')
 except:
     print ('Could not find screenlog.0')
     
