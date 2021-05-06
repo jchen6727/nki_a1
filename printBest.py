@@ -14,12 +14,15 @@ try:
     with open('screenlog.0', 'r') as f:
         data = f.read()
         match = re.findall(r'Best is trial \d+ with value: \d+\.\d\d', data)
+
         matchUnique = unique(match)
         matchUnique = [m.replace('Best is t', '   T').replace(' with value:',':\t') for m in matchUnique]
         print('')
         for m in matchUnique: print(m) #pprint(matchUnique)
         print('')
-        print(match[-1])
+        trials = re.findall(r'Trial \d+ finished with value', data)
+        lastTrial = trials[-1].replace('Trial', '').replace('finished with value')
+        print('Last trial: ')
         print('')
 except:
     print ('Could not find screenlog.0')
