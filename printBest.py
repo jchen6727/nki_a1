@@ -16,9 +16,11 @@ try:
         match = re.findall(r'Best is trial \d+ with value: \d+\.\d\d', data)
         matchUnique = unique(match)
         matchUnique = [m.replace('Best is t', '   T').replace(' with value:',':\t') for m in matchUnique]
-        print('\n')
+        print('')
         for m in matchUnique: print(m) #pprint(matchUnique)
-        print('\n')
+        print('')
+        print(match[-1])
+        print('')
 except:
     print ('Could not find screenlog.0')
     
