@@ -22172,7 +22172,6 @@ NEURON: lambda_f not declared at the top level
 
 ** Now changed original vip cell hoc file to vipcr_cell_orig.hoc and changed this in VIP_test_orig.py as well [[tested & works]] 
 ** I made a copy of this .hoc file and it is named vipcr_cell.hoc and this is what I will be editing! 
-
 ** Created a copy of the VIP test python file and named it *VIP_test_edited.py* and it imports *vipcr_cell.hoc* from /cells in order to work. /tested/ --> runs 
 
 
@@ -26753,10 +26752,7 @@ thx!
 **** added def initdend1() in case want to make another dendrite --> all lines commented out for now 
 
 **** AN INCOMPLETE LIST !! -- see above in ACTIVE subsecton for more details
-
-
 *** save modified ITS4.py 
-
 ** Cell tuning algorithm (for .pkl files):
 *** This is all taking place in A1/cells/dend_edits (on cells branch) 
 *** (0) Change basics of 3 sets of scripts:
@@ -42981,4 +42977,51 @@ PV and SOM:
 ** see thal int nb
 * <2021-04-29 Thu -- thal int day>
 ** see thal int nb
-* <2021-04-30 Fri -- thal int day & A1>
+* <2021-04-30 Fri -- thal int day>
+* <2021-05-03 Mon -- A1 cell models text>
+** ITS4:
+*** --> took this out: "and contained ___ channels to replicate ___ behavior [from nb: Layer 4 spiny stellates gave adapting spike trains (no AHP or bursting noted)]." 
+*** Fitting entry: 10/04/2019
+** Added more info about VIP and SOM
+** NOTES:
+*** PV and SOM possibly fire out of phase (sam)
+*** VIP modified from orig geometry 
+** Messaged salva; reply: 
+*** I was thinking for paper methods will also need a brief section on any analysis methods we use plus on the experimental data
+*** so if you want maybe can start drafting those, maybe something on how we calculate CSD (very brief) and how we prepared/analyzed the exp data?
+** Added 'Data Analysis' section:
+*** "Heading 3"
+*** For spontaneous analysis: 
+**** LFP (all layers? supra/gran/infra?)
+**** CSD (supra/gran/infra)
+**** Morlet Wavelet Spectrograms 
+**** Stats about oscillation events...? 
+* <2021-05-04 Tue -- A1 text>
+** Added more to Data Analysis section
+*** also sent to sam 
+*** should I add in how LFP is calculated? 
+* <2021-05-05 Wed -- A1 text>
+** Data analysis --> LFP section
+*** From other papers:
+**** https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004584#sec017
+**** TEXT:
+     We calculated the model LFP signal from the transmembrane currents in the multi-compartmental neuron populations based on volume conduction theory and the line-source approximation implemented in the Python package LFPy (http://lfpy.github.io/) [34]. We first simulated transmembrane currents resulting from synaptic activity using the NEURON simulation environment [74,75] after which extracellular potentials were calculated as a weighted sum of those transmembrane currents [31,32,34]. The extracellular potentials were computed for 32 equispaced vertically aligned points in space (simulating a laminar multielectrode), set at 25 μm intervals along the central vertical axis of the 3D network cylinder (Fig 1B). For the analysis illustrated in the subsection “Spatial distribution of simulated LFP signal” the recording locations were set at different distances from the vertical axis of the 3D network cylinder. To directly match the LIF network simulations, morphological neurons used current synapses in the reference case, except in the simulation discussed in the subsection “Difference between current-based and conductance-based synapses for the LFP signal” were conductance synapses were adopted (Table 3E). The calculations of transmembrane currents in the morphological model were performed using passive neuron models with the parameters listed above (Table 4). Following volume conductor theory, the model neurons were assumed to be surrounded by an infinitely sized extracellular medium with conductivity assumed to be real, scalar (the same in all directions) and homogeneous (the same everywhere) with σ = 0.3 S/m [77]. For further discussion on these assumptions see [32]. The Python codes we used to generate LFP from artificial morphologies injected with LIF spike dynamics are available on the LFPy official site (http://lfpy.github.io/).
+**** https://www.karger.com/Article/FullText/481905
+**** TEXT:
+LFP was reconstructed from a 100 μm3 circuit model. Forward modelling technique [32, 33] was used to calculate extracellular potential from individual granule neuron compartments. The computational schema mainly involved 2 steps: (1) Estimation of transmembrane ionic current from granule neuron model. (2) Calculation of field potential from estimated transmembrane currents using the Line Source Approximation technique [32, 34].
+**** From salva's paper:
+**** TEXT:
+The LFP signal at each electrode is obtained by summing the
+extracellular potential contributed by each neuronal segment,
+calculated using the ‘line source approximation’ and assuming an Ohmic
+medium with conductivity 
+**** From netpyne tutorial:
+**** TEXT:
+The LFP signal in each electrode is obtained by summing the extracellular potential contributed by each segment of each neuron. Extracellular potentials are calculated using the “line source approximation” and assuming an Ohmic medium with conductivity sigma = 0.3 mS/mm. For more information on modeling LFPs see Scholarpedia or this article .
+* <2021-05-06 Thu -- A1 text>
+** Refined what was written about IC and cochlear nerve
+** Went thru other sections and made some spelling changes + couple minor grammar corrections (e.g. it's --> its) 
+** Took out this text:
+*** [old text:
+Following this, network connectivity was again activated, and the network was again driven with noisy background input. From here, high-level network parameters, specifically synaptic gain parameters (e.g. EEGain, EIGain, IEGain, IIGain) were optimized such that each cell population showed ecologically valid firing rates, similar to those seen at rest in in vivo multisite recordings. 
+Network optimization was performed using Optuna, a hyperparameter optimization framework, in a stepwise, layer-by-layer procedure. Parameters were first optimized within L4 alone. Once this layer achieved valid firing rates in all cell populations, gain parameters in this layer were frozen, and L2/3 connections were added. This was followed by L5A, L5B, L6, and lastly L1. Application of these algorithms to this large-scale, biologically detailed network required 1000s of parallel simulations on supercomputers. To the best of our knowledge, this is the first time evolutionary optimization has been successfully used for large-scale biophysically-detailed network models. ]
