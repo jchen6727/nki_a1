@@ -347,15 +347,15 @@ if __name__ == '__main__':
     # load evol data from files
     df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile)
 
-    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
+    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
-    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
     # plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
     # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT2', 'IT3'], skipCols=rateTimeRanges)
+    plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['SOM2','SOM3', 'PT5B'], skipCols=rateTimeRanges)
 
 
 
