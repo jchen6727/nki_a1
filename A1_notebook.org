@@ -43025,3 +43025,66 @@ The LFP signal in each electrode is obtained by summing the extracellular potent
 *** [old text:
 Following this, network connectivity was again activated, and the network was again driven with noisy background input. From here, high-level network parameters, specifically synaptic gain parameters (e.g. EEGain, EIGain, IEGain, IIGain) were optimized such that each cell population showed ecologically valid firing rates, similar to those seen at rest in in vivo multisite recordings. 
 Network optimization was performed using Optuna, a hyperparameter optimization framework, in a stepwise, layer-by-layer procedure. Parameters were first optimized within L4 alone. Once this layer achieved valid firing rates in all cell populations, gain parameters in this layer were frozen, and L2/3 connections were added. This was followed by L5A, L5B, L6, and lastly L1. Application of these algorithms to this large-scale, biologically detailed network required 1000s of parallel simulations on supercomputers. To the best of our knowledge, this is the first time evolutionary optimization has been successfully used for large-scale biophysically-detailed network models. ]
+* <2021-05-07 Fri -- A1 text>
+** IC and cochlear nerve
+*** looking thru salva's nb for details
+*** See feb06 2020 entry in sdnotes.org for more details ("Carney model for Auditory nerve fibers (ANF) and Inferior Colliculus (IC)")
+*** link to paper/info: https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
+*** ur_ear (UR_EAR_2020b --> from link above) corresponds to what is in A1 directory (ur_ear) (matlab) 
+* <2021-05-10 Mon -- A1 text & data processing>
+** IC and auditory nerve:
+*** Carney et al. 2015 (see above for link)
+*** "A phenomenological model of AN responses that includes several key nonlinearities, including rate saturation, adaptation, and synchrony capture (Zilany et al., 2009, 2014) provided the inputs to the models for two types of midbrain neurons (Fig. 2A). IC cells with BP MTFs were simulated using the same-frequency inhibition-excitation (SFIE) model (Nelson and Carney, 2004), which explains tuning for the amplitude modulation frequency by the interaction of excitatory and inhibitory inputs with different dynamics. IC cells with low-pass, band-reject (LPBR), or high-pass MTFs were simulated using an extension of the SFIE model; the LPBR model received excitatory input from the brainstem and inhibitory input from bandpass cells (Fig. 2B). Time-varying input rate functions to each model cell were convolved with  functions representing excitatory or inhibitory postsynaptic responses. The decay time constants of the  functions and the delays associated with synaptic responses were varied to produce MTFs tuned to different amplitude modulation frequencies (Nelson and Carney, 2004)."
+*** The model presented here, in contrast, includes the nonlinear attributes of AN responses, including level-dependent tuning bandwidth,
+synchrony capture, and saturation, all of which influence
+the neural fluctuations in response to speech sounds that
+ultimately project to the IC. The coding hypothesis here
+focuses on the F0-related fluctuations in the AN responses and how they vary across the population. These
+fluctuations are important because IC neurons are tuned
+to both audio and modulation frequencies. This tuning
+provides sensitivity to the contrast in low-frequency,
+pitch-related fluctuations across a population of neurons
+with different best frequencies (Fig. 1B,C). IC responses tuned to a range of modulation frequencies
+encode vowel formant frequencies across a range of pitches,
+capturing an essential aspect of speech (Diehl, 2008).
+*** MTF == "modulation transfer functions"
+*** BP == 'bandpass'
+*** LPBR == 'low-pass, band-reject' (IC) 
+*** BF == 'best frequency' 
+*** Auditory Nerve details:
+**** so --> basically there was an auditory nerve model that included several nonlinear responses ("level-dependent tuning bandwidth, synchrony capture (the dominance of a single stimulus frequency component on the response), and (rate) saturation") 
+**** ^^ These influence the neural fluctuations in response to speech sounds that ultimately project to the inferior colliculus.  
+**** "The coding hypothesis here focuses on the F0-related fluctuations in the AN responses and how they vary across the population."  {F0 == "voice pitch", aka the fundamental frequency} 
+**** ^^ These fluctuations are important because IC neurons are tuned to both audio and modulation frequencies. 
+**** This tuning (in IC?) provides sensitivity to the contrast in low-frequency, pitch-related fluctuations across a population of neurons with different BFs (Fig 1B,C) 
+*** Inferior Colliculus: 
+**** "Many inferior colliculus (IC) neurons display both spectral tuning, described by a most sensitive best frequency (BF), and tuning to the frequency of sinusoidal fluctuations in amplitude, described by a best modulation frequency (BMF; Krishna and Semple, 2000; Joris et al., 2004; Nelson and Carney, 2007)." 
+*** So let me try to explain. First in line we have a phenenological model of auditory nerve, which reflects/captures a number of nonlinear responses characteristic of this structure. These include rate saturation and synchrony capture. 
+*** These then +/- maybe sorta fed into a fixed cochlea nucleus model. 
+*** These signals were then fed into a phenomenological model of inferior colliculus, comprosed of different types of model cells. 
+
+** These models capture the nonlinear peripheral responses characteristic of 
+** Took out these bits that might be useful later;
+*** AN:
+Instead of using average firing rates or linear filter banks, the AN responses modeled here included several characteristic nonlinearities such as rate saturation and adaptation. 
+The phenomenological model of the auditory nerve used here captured several nonlinear responses (e.g. rate saturation) that are characteristic of this structure. 
+*** IC: 
+The IC model neurons broadly fell into types (bandpass, or band-reject), which both received input from earlier in the pathway and were connected to each other as part of a specified circuit (Carney et al., 2015, Nelson and Carney, 2004). The 
+*** GEN:
+Phenomenological models of peripheral auditory structures, such as auditory nerve and inferior colliculus, were used to capture the signal transformations occurring in these structures  (Carney et al., 2015). 
+*** DOWNSTREAM:
+Output from these models was used to drive thalamocortical cells in the more biologically-detailed, downstream areas of the auditory pathway. 
+
+	Output from the IC model was used to drive the population of thalamocortical (TC) cells located in the biophysically-detailed thalamic portion of the model. 
+
+
+*** ADVANTAGE/JUSTIFICATION:
+One main advantage of the model used here → eliminates issues w/ middle-to-high frequencies (phase locking degrades), and issues with moderate to high sound levels 
+** Took this out because this is the spontaneous paper --> maybe for speech or click paper? 
+Crucially, these peripheral models could receive arbitrary sound stimuli as input. This setup allowed us to present any arbitrary sound to the model, including the stimuli presented to awake macaque monkeys during experiments.
+ allowing us to present identical sound stimuli to both the macaques and to the model.
+
+** See text for addition on the phenom. models
+* <2021-05-11 Tue -- spontaneous data processing>
+** spontaneous data processing
+*** see cosyne scripts 
