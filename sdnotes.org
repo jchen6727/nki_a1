@@ -1795,18 +1795,6 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
 generated new weightNorm pkl files
 now values are reasonable -- not negative as before
 
-** Comparing conn
-update conn.py with Allen V1 vs BBP S1 vs custom A1 conn options
-
-run sim at 0.25 scale
-
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-
-sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_Allen_V1_prob_0.25.png' , saveData='conn/E->EI_Allen_V1_prob_0.25.pkl')
-
-sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_BBP_S1_prob_0.25.png' , saveData='conn/E->EI_BBP_S1_prob_0.25.pkl')
-
-sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn/EI->EI_Allen_custom_prob_0.25_fixed.png' , saveData='conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl')
 ** v16_batch1 - Small parameter on full net 200x200 um (12k cells); to get baseline
 *** code
 def custom():
