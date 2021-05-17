@@ -8733,6 +8733,10 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
     params[('EILayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV2, maxV)]
     params[('IELayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV2, maxV)]
     params[('IILayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV2, maxV)]
+
+** v34_batch14 - tuning; L2-5B; best of v34_batch11; optuna with L1,L6 +-0.15; IE,EI +-0.25; rest +-0.1; changed fitness func of I cells to be >0.05Hz (before >0.5)
+*** code
+
 ** blank
 
 
