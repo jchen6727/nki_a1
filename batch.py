@@ -2445,7 +2445,7 @@ def optunaRatesLayersThalL12345A5B6():
         pops[pop] = Itune
     
     fitnessFuncArgs['pops'] = pops
-    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['maxFitness'] = 2000
     fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
 
 
@@ -2578,7 +2578,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch16' 
+    b.batchLabel = 'v34_batch17' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
