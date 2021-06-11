@@ -2283,8 +2283,12 @@ def optunaRatesLayersThalL12345A5B6():
     rangeV1 = 0.2
     rangeV2 = 0.25
     rangeV3 = 2.0
+
+    scaleLow = 0.75
+    scaleHigh = 1.25
+
     minV = 0.1
-    maxV = 4.0
+    maxV = 5.0
 
     ''' potentially:
     layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
@@ -2298,56 +2302,56 @@ def optunaRatesLayersThalL12345A5B6():
     '''
 
     # E->I cell-type-specific
-    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV1, maxV)]
-    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV1, maxV)]
-    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV1, maxV)]
-    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['PV']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['SOM']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['VIP']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['NGF']*scaleHigh, maxV)]
 
     # I->E cell-type-specific
-    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV1, maxV)]
-    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV1, maxV)]
-    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV1, maxV)]
-    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['PV']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['SOM']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['VIP']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['NGF']*scaleHigh, maxV)]
 
     # L1
-    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV1, minV), min(cfgLoad['EILayerGain']['1']+rangeV1, maxV)]
-    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV1, minV), min(cfgLoad['IILayerGain']['1']+rangeV1, maxV)]
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']*scaleLow, minV), min(cfgLoad['EILayerGain']['1']*scaleHigh, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']*scaleLow, minV), min(cfgLoad['IILayerGain']['1']*scaleHigh, maxV)]
 
     # L2
-    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
-    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
-    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
-    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
 
     # L3
-    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
-    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
-    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
-    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
 
     # L4
-    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV1, minV), min(cfgLoad['EELayerGain']['4']+rangeV1, maxV)]
-    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV1, minV), min(cfgLoad['EILayerGain']['4']+rangeV1, maxV)]
-    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV1, minV), min(cfgLoad['IELayerGain']['4']+rangeV1, maxV)]
-    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV1, minV), min(cfgLoad['IILayerGain']['4']+rangeV1, maxV)]
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']*scaleLow, minV), min(cfgLoad['EELayerGain']['4']*scaleHigh, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']*scaleLow, minV), min(cfgLoad['EILayerGain']['4']*scaleHigh, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']*scaleLow, minV), min(cfgLoad['IELayerGain']['4']*scaleHigh, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']*scaleLow, minV), min(cfgLoad['IILayerGain']['4']*scaleHigh, maxV)]
     
     # L5A
-    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV1, minV), min(cfgLoad['EELayerGain']['5A']+rangeV1, maxV)]
-    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV1, minV), min(cfgLoad['EILayerGain']['5A']+rangeV1, maxV)]
-    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV1, minV), min(cfgLoad['IELayerGain']['5A']+rangeV1, maxV)]
-    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV1, minV), min(cfgLoad['IILayerGain']['5A']+rangeV1, maxV)]
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']*scaleLow, minV), min(cfgLoad['EELayerGain']['5A']*scaleHigh, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']*scaleLow, minV), min(cfgLoad['EILayerGain']['5A']*scaleHigh, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']*scaleLow, minV), min(cfgLoad['IELayerGain']['5A']*scaleHigh, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']*scaleLow, minV), min(cfgLoad['IILayerGain']['5A']*scaleHigh, maxV)]
 
     # L5B
-    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV1, minV), min(cfgLoad['EELayerGain']['5B']+rangeV1, maxV)]
-    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV1, minV), min(cfgLoad['EILayerGain']['5B']+rangeV1, maxV)]
-    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV1, minV), min(cfgLoad['IELayerGain']['5B']+rangeV1, maxV)]
-    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV1, minV), min(cfgLoad['IILayerGain']['5B']+rangeV1, maxV)]
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']*scaleLow, minV), min(cfgLoad['EELayerGain']['5B']*scaleHigh, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']*scaleLow, minV), min(cfgLoad['EILayerGain']['5B']*scaleHigh, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']*scaleLow, minV), min(cfgLoad['IELayerGain']['5B']*scaleHigh, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']*scaleLow, minV), min(cfgLoad['IILayerGain']['5B']*scaleHigh, maxV)]
 
     # L6
-    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV1, minV), min(cfgLoad['EELayerGain']['6']+rangeV1, maxV)]
-    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV1, minV), min(cfgLoad['EILayerGain']['6']+rangeV1, maxV)]
-    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV1, minV), min(cfgLoad['IELayerGain']['6']+rangeV1, maxV)]
-    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV1, minV), min(cfgLoad['IILayerGain']['6']+rangeV1, maxV)]
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']*scaleLow, minV), min(cfgLoad['EELayerGain']['6']*scaleHigh, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']*scaleLow, minV), min(cfgLoad['EILayerGain']['6']*scaleHigh, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']*scaleLow, minV), min(cfgLoad['IELayerGain']['6']*scaleHigh, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']*scaleLow, minV), min(cfgLoad['IILayerGain']['6']*scaleHigh, maxV)]
 
 
     groupedParams = []
@@ -2578,7 +2582,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch17' 
+    b.batchLabel = 'v34_batch18' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
