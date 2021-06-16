@@ -2284,8 +2284,8 @@ def optunaRatesLayersThalL12345A5B6():
     rangeV2 = 0.25
     rangeV3 = 2.0
 
-    scaleLow = 0.75
-    scaleHigh = 1.25
+    scaleLow = 0.9
+    scaleHigh = 1.1
 
     minV = 0.1
     maxV = 5.0
@@ -2319,15 +2319,15 @@ def optunaRatesLayersThalL12345A5B6():
 
     # L2
     params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
-    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
-    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
-    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('EILayerGain', '2')] = [minV, maxV]
+    params[('IELayerGain', '2')] = [minV, maxV]
+    params[('IILayerGain', '2')] = [minV, maxV]
 
     # L3
     params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
-    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
-    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
-    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('EILayerGain', '3')] = [minV, maxV]
+    params[('IELayerGain', '3')] = [minV, maxV]
+    params[('IILayerGain', '3')] = [minV, maxV]
 
     # L4
     params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']*scaleLow, minV), min(cfgLoad['EELayerGain']['4']*scaleHigh, maxV)]
@@ -2582,7 +2582,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch18' 
+    b.batchLabel = 'v34_batch19' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

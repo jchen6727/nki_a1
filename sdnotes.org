@@ -8356,7 +8356,7 @@ layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
 *** results
 - >6500 sims, best fitness was 367
 - bad - IT2, IT3, ITS4 and ITP4 never fire 
-** v34_batch8 - tuning; L2-5A; best of v34_batch4; optuna with large range L5A, small range rest
+** v34_batch8 - tuning; L2-5A; best of v34_batch4; optuna with large range L5A, small range rest (bug L2,3 EE)
 *** notes
 - bug: didnt include L5A in fitness; wasn't setting all conn params based on prev sim -- rerun
 
@@ -8417,7 +8417,7 @@ IT2 and CT5A a bit low (<0.1hz), and PV2 a bit high (~80hz); but rest good
 Note: missed CT5A in fitness func so that may explain why low!
 best fitness: trial 2979; best from pandas: trial 4529 
 
-** v34_batch9 - tuning; L2-5B; best of v34_batch8; optuna with large range L5B, small range rest
+** v34_batch9 - tuning; L2-5B; best of v34_batch8; optuna with large range L5B, small range rest (bug L2,3 EE)
 *** notes
     # from prev
     import json
@@ -8487,13 +8487,13 @@ best fitness: trial 2979; best from pandas: trial 4529
 *** results
 - after 2.7k sims, best fitness was 274
 
-** v34_batch10 - v34_batch9 increased IE range to 0.1-4
+** v34_batch10 - v34_batch9 increased IE range to 0.1-4 (bug L2,3 EE)
 *** notes
 *** results
 - fitness ~199 after 10k sims
 - SOM2, SOM3, PT5B silent
 
-** v34_batch11 -  tuning; L2-5B; best of v34_batch10; optuna with L2, L3, L5B, EI +-0.25; rest +0.1
+** v34_batch11 -  tuning; L2-5B; best of v34_batch10; optuna with L2, L3, L5B, EI +-0.25; rest +0.1 (bug L2,3 EE)
 *** code
 
 
@@ -8596,7 +8596,7 @@ best fitness: trial 2979; best from pandas: trial 4529
 trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
 
  
-** v34_batch12 - tuning; L2-5B; best of v34_batch10; optuna with L2, L3, L5B, EI +-0.25; rest +0.1; E-SOM, SOM-E, and L5B increased range to +-1.0
+** v34_batch12 - tuning; L2-5B; best of v34_batch10; optuna with L2, L3, L5B, EI +-0.25; rest +0.1; E-SOM, SOM-E, and L5B increased range to +-1.0 (bug L2,3 EE)
 *** code
 
     rangeV = 0.25
@@ -8660,7 +8660,7 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
     params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV3, minV), min(cfgLoad['IELayerGain']['5B']+rangeV3, maxV)]
     params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV3, minV), min(cfgLoad['IILayerGain']['5B']+rangeV3, maxV)]
 
-** v34_batch13 - tuning; L2-5B; best of v34_batch11; optuna with IE, L5B 0.1-4.0; L2, L3, EI +-0.25; rest +-0.1; similar to v32_batch1 (L2-L5B 50% density)
+** v34_batch13 - tuning; L2-5B; best of v34_batch11; optuna with IE, L5B 0.1-4.0; L2, L3, EI +-0.25; rest +-0.1; similar to v32_batch1 (L2-L5B 50% density) (bug L2,3 EE)
 *** code
     # from prev
     import json
@@ -8736,9 +8736,9 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
 
 *** results
 
-** v34_batch14 - tuning; L1-6; best of v34_batch11; optuna with L1,L6 +-0.15; IE,EI +-0.25; rest +-0.1; changed fitness func of I cells to be >0.05Hz (before >0.5)
+** v34_batch14 - tuning; L1-6; best of v34_batch11; optuna with L1,L6 +-0.15; IE,EI +-0.25; rest +-0.1; changed fitness func of I cells to be >0.05Hz (before >0.5) (bug L2,3 EE)
 *** code
-** v34_batch15 - tuning; L1-6; best of v34_batch14; optuna with all params +-0.2
+** v34_batch15 - tuning; L1-6; best of v34_batch14; optuna with all params +-0.2 (bug L2,3 EE)
 *** code
 
     # from prev
@@ -8959,7 +8959,7 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
 
     return b
 
-** v34_batch16 - tuning; L1-6; best of v34_batch15; optuna with all params +-0.2
+** v34_batch16 - tuning; L1-6; best of v34_batch15; optuna with all params +-0.2 (bug L2,3 EE)
 *** code
 
     # from prev
@@ -9180,7 +9180,7 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
 
     return b
 
-** v34_batch17 - tuning; L1-6; best of v34_batch15; optuna with all params +-0.2; maxFitness=2000
+** v34_batch17 - tuning; L1-6; best of v34_batch15; optuna with all params +-0.2; maxFitness=2000 (bug L2,3EE)
 *** code
 
     # from prev
@@ -9400,7 +9400,7 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
     }
 
     return b
-** v34_batch18 - tuning; L1-6; best of v34_batch15; optuna with all params +- 25%; maxFitness=2000; maxV=0.5
+** v34_batch18 - tuning; L1-6; best of v34_batch15; optuna with all params +- 25%; maxFitness=2000; maxV=0.5 (bug L2,3 EE)
 *** code
    rangeV1 = 0.2
     rangeV2 = 0.25
