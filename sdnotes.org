@@ -9474,6 +9474,25 @@ trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
     params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']*scaleLow, minV), min(cfgLoad['EILayerGain']['6']*scaleHigh, maxV)]
     params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']*scaleLow, minV), min(cfgLoad['IELayerGain']['6']*scaleHigh, maxV)]
     params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']*scaleLow, minV), min(cfgLoad['IILayerGain']['6']*scaleHigh, maxV)]
+** v34_batch19 - tuning; L1-6; best of v34_batch15; optuna with all params +- 10%; fixed bug, L2,3 EI, IE, II 0.1-5.0
+*** notes
+- there was a bug in the last 11 batch sims where L2/3 EI, IE, II params were set around L2/3 EE:
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+
+- therefore solutions found for L2/3 were not messed up in the following batch and the wrong param ranges were explored
+
+- to fix this, I reran the last batch (v34_batch18) with L2,3 EI, IE, II in range 0.1-5.0
 ** blank
 
 
