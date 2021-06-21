@@ -723,11 +723,11 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/v34_batch15/trial_8073/trial_8073_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/v34_batch15/trial_8073/trial_8073_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
     # conn gains 
@@ -2563,7 +2563,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch20' 
+    b.batchLabel = 'v34_batch21' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
