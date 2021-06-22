@@ -2486,6 +2486,187 @@ def optunaRatesLayersThalL12345A5B6():
     return b
 
 
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersWmat():
+
+    # from prev
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+
+    scaleLow = 0.2
+    scaleHigh = 5.0
+    
+    import pickle
+    with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    wmat = connData['wmat']
+    
+
+    weightsScale = [['IT2', 'PV2'],
+                    ['IT2', 'SOM2'], 
+                    ['IT3', 'PV2'],
+                    ['IT3', 'SOM2'],
+                    ['PV2', 'PV2'],
+                    ['PV2', 'VIP2'],
+                    ['PV3', 'PV2'],
+                    ['PV3', 'VIP2'],
+                    ['SOM2', 'PV2'],
+                    ['SOM2', 'VIP2'],
+                    ['SOM3', 'PV2'],
+                    ['SOM3', 'VIP2'],
+                    ['VIP2', 'SOM2'],
+                    ['VIP3', 'SOM2']]
+
+    for ws in weightScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow: wmat[ws[0]][ws[1]] * scaleHigh]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    # Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    #Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    #Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 2000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 60,
+        'time_sleep': 150,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
 # ----------------------------------------------------------------------------------------------
 # Run configurations
 # ----------------------------------------------------------------------------------------------
@@ -2564,18 +2745,20 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    #b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
+    b = optunaRatesLayersWmat()
+
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch22' 
+    b.batchLabel = 'v34_batch23' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
