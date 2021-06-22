@@ -2527,7 +2527,7 @@ def optunaRatesLayersWmat():
                     ['VIP3', 'SOM2']]
 
     for ws in weightScale:
-        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow: wmat[ws[0]][ws[1]] * scaleHigh]
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
 
     groupedParams = []
 
