@@ -731,7 +731,7 @@ def custom():
         cfgLoad2 = json.load(f)['simConfig']
 
     with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
-        wmat = connData['wmat']
+    wmat = connData['wmat']
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
