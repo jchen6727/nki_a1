@@ -730,6 +730,7 @@ def custom():
     with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
+    import pickle
     with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
     wmat = connData['wmat']
 
