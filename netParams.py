@@ -212,6 +212,8 @@ wmat = connData['wmat']
 bins = connData['bins']
 connDataSource = connData['connDataSource']
 
+wmat = cfg.wmat
+
 layerGainLabels = ['1', '2', '3', '4', '5A', '5B', '6']
 
 #------------------------------------------------------------------------------

@@ -723,15 +723,23 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch15/trial_8073/trial_8073_cfg.json', 'rb') as f:
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch15/trial_8073/trial_8073_cfg.json', 'rb') as f:
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
+    with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+        wmat = connData['wmat']
+
     # conn gains 
-    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 0.75]
+    params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
+    params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
+    params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
+
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -739,8 +747,8 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500
-    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['duration'] = 2500 #11500
+    initCfg['printPopAvgRates'] = [1500, 2500] #11500] 
     initCfg['scaleDensity'] = 1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -754,7 +762,7 @@ def custom():
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -2268,6 +2276,9 @@ def optunaRatesLayersThalL12345A5B6():
     scaleLow = 0.9
     scaleHigh = 1.1
 
+    scaleLow2 = 0.5
+    scaleHigh2 = 1.5
+
     minV = 0.1
     maxV = 5.0
 
@@ -2283,10 +2294,10 @@ def optunaRatesLayersThalL12345A5B6():
     '''
 
     # E->I cell-type-specific
-    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['PV']*scaleHigh, maxV)]
-    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['SOM']*scaleHigh, maxV)]
-    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['VIP']*scaleHigh, maxV)]
-    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['NGF']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['PV']*scaleHigh2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['SOM']*scaleHigh2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['VIP']*scaleHigh2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['NGF']*scaleHigh2, maxV)]
 
     # I->E cell-type-specific
     params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['PV']*scaleHigh, maxV)]
@@ -2299,16 +2310,16 @@ def optunaRatesLayersThalL12345A5B6():
     params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']*scaleLow, minV), min(cfgLoad['IILayerGain']['1']*scaleHigh, maxV)]
 
     # L2
-    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
-    params[('EILayerGain', '2')] = [minV, maxV]
-    params[('IELayerGain', '2')] = [minV, maxV]
-    params[('IILayerGain', '2')] = [minV, maxV]
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow2, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']*scaleLow2, minV), min(cfgLoad['EILayerGain']['2']*scaleHigh2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']*scaleLow2, minV), min(cfgLoad['IELayerGain']['2']*scaleHigh2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']*scaleLow2, minV), min(cfgLoad['IILayerGain']['2']*scaleHigh2, maxV)]
 
     # L3
-    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
-    params[('EILayerGain', '3')] = [minV, maxV]
-    params[('IELayerGain', '3')] = [minV, maxV]
-    params[('IILayerGain', '3')] = [minV, maxV]
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow2, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']*scaleLow2, minV), min(cfgLoad['EILayerGain']['3']*scaleHigh2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']*scaleLow2, minV), min(cfgLoad['IELayerGain']['3']*scaleHigh2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']*scaleLow2, minV), min(cfgLoad['IILayerGain']['3']*scaleHigh2, maxV)]
 
     # L4
     params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']*scaleLow, minV), min(cfgLoad['EELayerGain']['4']*scaleHigh, maxV)]
@@ -2563,7 +2574,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch21' 
+    b.batchLabel = 'v34_batch22' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

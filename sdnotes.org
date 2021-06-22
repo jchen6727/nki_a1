@@ -9575,7 +9575,7 @@ def custom():
 
  
 ** v34_batch21 - 3 long sims; best from v34_batch15 (trial_8073); 11.5-sec; with LFP; corticothalamicgain +- 25%
-**lank
+** blank
 
 
 
