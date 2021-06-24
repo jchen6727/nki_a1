@@ -2701,7 +2701,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'walltime': '6:00:00',
             'nodes': 4,
             'coresPerNode': 24,  # comet=24, bridges=28
-            'email': 'ericaygriffith@gmail.com',
+            'email': 'salvadordura@gmail.com',
             'folder': '/home/salvadord/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
             'script': 'init.py', 
             'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
@@ -2714,7 +2714,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'nodes': 1,
             'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
             'email': 'ericaygriffith@gmail.com',
-            'folder': '/home/ext_ericaygriffith_gmail_com/A1_layers/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'folder': '/home/ext_ericaygriffith_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',

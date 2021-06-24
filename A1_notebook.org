@@ -43312,13 +43312,22 @@ export N=root/nrn
 ** Sims: 
 *** TO DO:
 **** try running one thing, just to make sure it's working. 
-**** go thru the google doc and see what ideas you have for modifications to make
-**** go thru the slack chat and see what ideas you have for modifications to make 
-**** look at slack chat & corresponding github link for example script thing
-**** decide on some edits, and a rough order: 
-**** execute 1 or 2
-**** get on slack -- show salva / the channel 'results' and clear the plan with them 
-
-
-
+**** (0) how to change the code
+***** take a look at the code (custom() func) to re-familiarize
+***** make some basic edits to setRunCfg 
+***** where is data going to end up? 
+***** get former scp entries locked and loaded 
+**** (1) what to change it to
+***** go thru the google doc and see what ideas you have for modifications to make
+***** go thru the slack chat and see what ideas you have for modifications to make 
+***** look at slack chat & corresponding github link for example script thing
+***** decide on some edits, and a rough order: 
+**** (2) run some sims:
+***** get changes onto gcp
+***** execute 1 or 2 runs 
+***** get data back onto local machine (scp stuff -- may have to look at earlier entries!) 
+**** (3) communicate:
+***** get on slack 
+***** show salva / the channel 'results' of 1 or 2 runs 
+***** clear the plan with them 
 ** TO DO: get 2-FA for git/github 
