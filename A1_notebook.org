@@ -43105,4 +43105,12 @@ here’s an example setup: https://github.com/NathanKlineInstitute/A1/blob/salva
 **** view gcloud command (on the right) --> gcloud beta compute ssh --zone "us-central1-f" "g6-n2-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
 **** enter this command in terminal on local machine
 **** passcode is !peter88
-**** now get A1 on gcloud directory --> git clone 
+** A1 on gcp: 
+*** clone A1 onto new gcloud directory --> git clone https://github.com/NathanKlineInstitute/A1.git 
+*** pushed some changes to 'repro' branch, and pulled them on gcloud
+** merging in changes from salva_layers 
+*** now to merge in salva's changes --> which branch is he using? 'salva_layers'
+*** merge salva_layers with 'repro' and 'erica' or just repro? try repro for now.
+*** git checkout repro (doing this on local machine)
+*** add/commit any changes (to this nb)
+*** merge with salva_layers 
