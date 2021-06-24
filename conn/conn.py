@@ -647,8 +647,13 @@ pmat['CT6']['TC']	= 0.1
 pmat['CT6']['HTC']	= 0.1
 pmat['CT6']['IRE']	= 0.1
 pmat['CT6']['TI']	= 0.05
+
 pmat['IT5B']['TCM']	= 0.1
 pmat['PT5B']['TCM']	= 0.1
+pmat['IT5B']['IREM'] = 0.1
+pmat['PT5B']['IREM'] = 0.1
+pmat['IT5B']['TIM']	= 0.05
+pmat['PT5B']['TIM']	= 0.05
 
 # --------------------------------------------------
 ## Weights  (=unitary conn somatic PSP amplitude)
@@ -665,9 +670,13 @@ wmat['CT6']['TC']	= 0.7
 wmat['CT6']['HTC']	= 0.7
 wmat['CT6']['IRE']	= 0.23
 wmat['CT6']['TI']	= 0.23
+
 wmat['IT5B']['TCM']	= 0.7
 wmat['PT5B']['TCM']	= 0.7
-
+wmat['IT5B']['IREM'] = 0.23
+wmat['PT5B']['IREM'] = 0.23
+wmat['IT5B']['TIM']	= 0.23
+wmat['PT5B']['TIM']	= 0.23
 
 # --------------------------------------------------
 ## CORE THALAMOCORTICAL (from old model; partly from Bonj12, Bazhenov https://www.jneurosci.org/content/32/15/5250.full and discuss with Lakatos)
@@ -677,6 +686,7 @@ wmat['PT5B']['TCM']	= 0.7
 normProb =  data['TC_Cons2006_2015']['prob']['L4'] / data['TC_Ji2016']['amplitude']['L4_PV']
 
 # Use conn data from Ji et al 2016; layer and cell-type specific (consistent with Constantinople)
+# - use 'amplitude' data which represents conn strength (prob * unitary conn) and map to model prob conn, keeping weight fixed
 # - use SOM values for NGF 
 # - added inputs to IT3 and PV3 following Ji2016 data and Lakatos suggestion (didn't include SOM, VIP, NGF since very low)
 
@@ -801,34 +811,34 @@ for post in wmat['HTC'].keys():
 
 # Use conn data from Ji et al 2016; layer and cell-type specific
 # use SOM values for NGF
-pmat['TCM']['IT2']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * normProb  # orig value: 0.25
-pmat['TCM']['IT3']	    = data['TC_Ji2016']['innervated']['L23_Pyr'] * normProb  # orig value: 0.25
-pmat['TCM']['IT5A']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
-pmat['TCM']['IT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
-pmat['TCM']['PT5B']	    = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.15  
-pmat['TCM']['IT6']	    = data['TC_Ji2016']['innervated']['L6_Pyr'] * normProb  # orig value: 0.05  
-pmat['TCM']['CT5A']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
-pmat['TCM']['CT5B']     = data['TC_Ji2016']['innervated']['L5_Pyr'] * normProb  # orig value: 0.05  
-pmat['TCM']['CT6']      = data['TC_Ji2016']['innervated']['L6_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['IT2']	    = data['TC_Ji2016']['amplitude']['L23_Pyr'] * normProb  # orig value: 0.25
+pmat['TCM']['IT3']	    = data['TC_Ji2016']['amplitude']['L23_Pyr'] * normProb  # orig value: 0.25
+pmat['TCM']['IT5A']	    = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TCM']['IT5B']	    = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TCM']['PT5B']	    = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.15  
+pmat['TCM']['IT6']	    = data['TC_Ji2016']['amplitude']['L6_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT5A']     = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT5B']     = data['TC_Ji2016']['amplitude']['L5_Pyr'] * normProb  # orig value: 0.05  
+pmat['TCM']['CT6']      = data['TC_Ji2016']['amplitude']['L6_Pyr'] * normProb  # orig value: 0.05  
 
-pmat['TCM']['NGF1']	    = data['TC_Ji2016']['innervated']['L1'] * normProb  # orig value: 0.25
-pmat['TCM']['PV2']	    = data['TC_Ji2016']['innervated']['L23_PV'] * normProb  # orig value: 0.25
-pmat['TCM']['SOM2']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
-pmat['TCM']['NGF2']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
-pmat['TCM']['PV3']	    = data['TC_Ji2016']['innervated']['L23_PV'] * normProb # orig value: 0.25
-pmat['TCM']['SOM3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
-pmat['TCM']['NGF3']	    = data['TC_Ji2016']['innervated']['L23_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['NGF1']	    = data['TC_Ji2016']['amplitude']['L1'] * normProb  # orig value: 0.25
+pmat['TCM']['PV2']	    = data['TC_Ji2016']['amplitude']['L23_PV'] * normProb  # orig value: 0.25
+pmat['TCM']['SOM2']	    = data['TC_Ji2016']['amplitude']['L23_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['NGF2']	    = data['TC_Ji2016']['amplitude']['L23_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['PV3']	    = data['TC_Ji2016']['amplitude']['L23_PV'] * normProb # orig value: 0.25
+pmat['TCM']['SOM3']	    = data['TC_Ji2016']['amplitude']['L23_SOM'] * normProb # orig value: 0.25
+pmat['TCM']['NGF3']	    = data['TC_Ji2016']['amplitude']['L23_SOM'] * normProb # orig value: 0.25
 
-pmat['TCM']['PV5A']	    = data['TC_Ji2016']['innervated']['L5_PV'] * normProb  # orig value: 0.15  
-pmat['TCM']['SOM5A']    = data['TC_Ji2016']['innervated']['L5_SOM'] * normProb  # orig value: 0.15  
-pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb # orig value: 0.15  
-pmat['TCM']['PV5B']	    = data['TC_Ji2016']['innervated']['L5_PV'] * normProb # orig value: 0.15  
-pmat['TCM']['SOM5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb  # orig value: 0.15  
-pmat['TCM']['NGF5B']	= data['TC_Ji2016']['innervated']['L5_SOM'] * normProb# orig value: 0.15  
+pmat['TCM']['PV5A']	    = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb  # orig value: 0.15  
+pmat['TCM']['SOM5A']    = data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.15  
+pmat['TCM']['SOM5B']	= data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb # orig value: 0.15  
+pmat['TCM']['PV5B']	    = data['TC_Ji2016']['amplitude']['L5_PV'] * normProb # orig value: 0.15  
+pmat['TCM']['SOM5B']	= data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb  # orig value: 0.15  
+pmat['TCM']['NGF5B']	= data['TC_Ji2016']['amplitude']['L5_SOM'] * normProb# orig value: 0.15  
 
-pmat['TCM']['PV6']	    = data['TC_Ji2016']['innervated']['L6_PV'] * normProb # orig value: 0.05  
-pmat['TCM']['SOM6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * normProb # orig value: 0.05  
-pmat['TCM']['NGF6']	    = data['TC_Ji2016']['innervated']['L6_SOM'] * normProb # orig value: 0.05  
+pmat['TCM']['PV6']	    = data['TC_Ji2016']['amplitude']['L6_PV'] * normProb # orig value: 0.05  
+pmat['TCM']['SOM6']	    = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb # orig value: 0.05  
+pmat['TCM']['NGF6']	    = data['TC_Ji2016']['amplitude']['L6_SOM'] * normProb # orig value: 0.05  
 
 
 

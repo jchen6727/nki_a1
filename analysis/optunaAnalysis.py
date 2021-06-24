@@ -174,7 +174,6 @@ def plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=None
     plt.colorbar(label = 'fitness')
     plt.ylabel('Parameter value')
     plt.xlabel('Parameter')
-    plt.xticks(range(len(paramLabels)), paramLabels, rotation=45)
     plt.subplots_adjust(top=0.95, bottom=0.2, right=0.95)
     if ylim: plt.ylim(0, ylim)
     plt.savefig('%s/%s/%s_scatter_params_%s.png' % (dataFolder, batchSim, batchSim, 'excludeAbove-'+str(excludeAbove) if excludeAbove else ''))
@@ -313,17 +312,27 @@ def filterRates(df, condlist=['rates', 'I>E', 'E5>E6>E2', 'PV>SOM'], Epops=[], I
     return dfcond
 
 
+def calculateParamImportance(dataFolder, batchSim):
+    study = optuna.create_study(study_name=batchSim, storage='sqlite:///%s/%s/%s_storage.db' % (dataFolder, batchSim, batchSim), load_if_exists=True) 
+    importance = optuna.importance.get_param_importances(study=study)
+    print(importance)
+    return importance
+
+
+
+
 # -----------------------------------------------------------------------------
 # Main code
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v32_batch4'
+    batchSim = 'v34_batch19'
+    loadFromFile = 0
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
-    #allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
+    #allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] # , 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
 
-    rateTimeRanges = ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
+    #rateTimeRanges = ['1000_1250', '1250_1500', '1500_1750', '1750_2000']
     rateTimeRanges = ['1500_1750', '1750_2000', '2000_2250', '2250_2500']
 
     #pd.options.display.max_columns = None  
@@ -336,17 +345,17 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=True, loadDataFromFile=True)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile)
 
-    plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
+    #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
-    plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
-    plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    # plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
-    #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
+    # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    # plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['IT6'], skipCols=rateTimeRanges)
+    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['SOM2','SOM3', 'PT5B'], skipCols=rateTimeRanges)
 
 
 

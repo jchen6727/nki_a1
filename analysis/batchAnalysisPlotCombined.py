@@ -237,7 +237,7 @@ def plot4Dparams(dataFolder, batchLabel, df, par1, par2, par3, par4, val, valLab
         return
 
     if not valLabel: valLabel = val
-    
+
     dfsubset = df[[par1, par2, par3, par4, val]]    
     dfgroup = dfsubset.groupby(by=[par1,par2,par3,par4])
     if groupStat=='first':
@@ -336,7 +336,7 @@ def popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['IEweights_0','IIweig
 
     # convert to pandas and add pop Rates
     df1 = utils.toPandas(params, data)
-    dfpop = dfPopRates(df1, 7, pops=vals)
+    dfpop = dfPopRates(df1, 8, pops=vals)
 
     if query: dfpop = dfpop.query(query)
 
@@ -359,6 +359,7 @@ def popRateAnalysis(dataFolder, batchLabel, loadAll, pars=['IEweights_0','IIweig
             #dfpop.iloc[i,dfpop.columns.get_loc('PT5B')] = row['PT5B'] - zdval
             dfpop.iloc[i,dfpop.columns.get_loc('PT5B')] = (zdval/row['PT5B'])-1.0
         print('MISSING: '+str(missing))
+        
 
     # plot param grids
     if len(pars) == 1:
