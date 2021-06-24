@@ -43087,4 +43087,22 @@ Crucially, these peripheral models could receive arbitrary sound stimuli as inpu
 ** See text for addition on the phenom. models
 * <2021-05-11 Tue -- spontaneous data processing>
 ** spontaneous data processing
-*** see cosyne scripts 
+*** Data: 
+**** macaque data on google drive: https://drive.google.com/drive/u/1/folders/0AJZ4deB_2EwUUk9PVA
+*** Scripts:
+**** ~/Desktop/NEUROSIM/A1/analysis/dataAnalysis.py
+**** ~/Desktop/NEUROSIM/a1dat --> this contains sam's OEvent pkg scripts (on 'erica' branch right now) 
+* <2021-06-24 Thu -- manual sims>
+** gcloud info:
+*** salvadord  12:59 PM
+erica for ~<10 sims you can use g6-n2-controller (non-preemptible); otherwise g9-n2-controller (preemptible)
+*** salvadord  12:48 PM
+here’s an example setup: https://github.com/NathanKlineInstitute/A1/blob/salva_layers/batch.py#L721
+*** gcloud login info: 
+**** https://console.cloud.google.com/compute/instances?cloudshell=true&project=ecas2-nsf1904444
+**** compute engine --> vm instances 
+**** go to g6-n2-controller for ~<10 min sims
+**** view gcloud command (on the right) --> gcloud beta compute ssh --zone "us-central1-f" "g6-n2-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+**** enter this command in terminal on local machine
+**** passcode is !peter88
+**** now get A1 on gcloud directory --> git clone 
