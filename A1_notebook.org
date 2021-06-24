@@ -43309,3 +43309,16 @@ export N=root/nrn
 @ 
 *** ERROR WAS QUITE SIMPLE --> just had a missing ' at the end. inserted, saved, etc. all good! 
 ** netpyne now working on gcp --> python3; import netpyne; from neuron import h --> all working 
+** Sims: 
+*** TO DO:
+**** try running one thing, just to make sure it's working. 
+**** go thru the google doc and see what ideas you have for modifications to make
+**** go thru the slack chat and see what ideas you have for modifications to make 
+**** look at slack chat & corresponding github link for example script thing
+**** decide on some edits, and a rough order: 
+**** execute 1 or 2
+**** get on slack -- show salva / the channel 'results' and clear the plan with them 
+
+
+
+** TO DO: get 2-FA for git/github 

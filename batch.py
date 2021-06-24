@@ -2701,7 +2701,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'walltime': '6:00:00',
             'nodes': 4,
             'coresPerNode': 24,  # comet=24, bridges=28
-            'email': 'salvadordura@gmail.com',
+            'email': 'ericaygriffith@gmail.com',
             'folder': '/home/salvadord/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
             'script': 'init.py', 
             'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
@@ -2713,8 +2713,8 @@ def setRunCfg(b, type='mpi_bulletin'):
             'walltime': '24:00:00', #'48:00:00',
             'nodes': 1,
             'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
-            'email': 'salvadordura@gmail.com',
-            'folder': '/home/ext_salvadordura_gmail_com/A1_layers/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'email': 'ericaygriffith@gmail.com',
+            'folder': '/home/ext_ericaygriffith_gmail_com/A1_layers/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',
@@ -2745,14 +2745,14 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    #b = custom()
+    b = custom() ## ERICA NOTE: changing this function above 
     # b = evolRates()
     # b = asdRates()
-    #b = optunaRates()
+    # b = optunaRates()
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    b = optunaRatesLayersWmat()
+    # b = optunaRatesLayersWmat() ## ERICA NOTE: this is the one that was uncommented originally 
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
