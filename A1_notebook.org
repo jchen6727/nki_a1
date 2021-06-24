@@ -43114,3 +43114,198 @@ here’s an example setup: https://github.com/NathanKlineInstitute/A1/blob/salva
 *** git checkout repro (doing this on local machine)
 *** add/commit any changes (to this nb)
 *** merge with salva_layers 
+*** merge conflicts resolved 
+**** batch.py, analysis/batchAnalysis.py, cfg.py, sdnotes.org
+**** should be all set now! 
+*** [done] pull these changes on gcloud
+** Make sure my netpyne on current machine is up to date (even) with neurosim:
+*** cd ~/Desktop/NEUROSIM/netpyne/ (on local machine)
+*** DEVELOPMENT BRANCH: 
+**** git branch --> git checkout development 
+**** added / committed / pushed minor changes i had made to lfp recording examples files
+**** git checkout development
+**** git fetch upstream
+**** git merge upstream/development 
+**** git push origin development (now my fork should be 'even' with Neurosim-lab:development)
+*** CSD BRANCH: 
+**** git checkout csd
+**** git merge development
+**** fixed some merge conflict(s)
+**** add/commit
+**** git push origin csd
+*** NOTE: merge conflict w/ development in csd (my fork of netpyne)
+**** cell_lfp.py: deleted these lines --> 
+<<<<<<< HEAD
+#simConfig.analysis['plotTraces'] = {'include': [('E',0)], 'oneFigPer':'cell', 'overlay': True, 'figSize': (5,3),'saveFig': True}      # Plot recorded traces for this list of cells
+#simConfig.analysis['plotLFP'] = {'includeAxon': False, 'plots': ['timeSeries',  'locations'], 'figSize': (5,9), 'saveFig': True}
+#simConfig.analysis['getCSD'] = {'spacing_um': 150, 'vaknin': True} # 'timeRange': [10,45],
+#simConfig.analysis['plotCSD'] = {'LFP_overlay':True}
+=======
+**** net_lfp.py:
+<<<<<<< HEAD
+#simConfig.analysis['plotCSD'] = {'timeRange':[100,3000], 'LFP_overlay': 0}
+=======
+** [done] Install netpyne in home folder (guessing development branch?) 
+*** Also see entry on 5/21 (and 09/01, and 06/25 etc) for more notes on how to do this! 
+*** (1) Clone my fork of netpyne into my home directory on gcp 
+**** Fork exists at: https://github.com/ericaygriffith/netpyne
+**** clone it to gcp
+***** ssh into g6-n2-controller
+***** git clone https://github.com/ericaygriffith/netpyne.git
+***** clone exists in: ~/netpyne (/home/ext_ericaygriffith_gmail_com/netpyne)
+**** NOTE: git branch --> development 
+*** (2) CHECK REMOTES: 
+**** cd to netpyne subdir above
+**** git remote -v    --> 
+**** origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+**** origin	https://github.com/ericaygriffith/netpyne.git (push)
+*** (3) ADD UPSTREAM:
+**** git remote add upstream https://github.com/Neurosim-lab/netpyne
+**** VERIFY --> git remote -v --> 
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push)
+**** NOTE: my fork is "origin", official netpyne repo is "upstream"
+*** (4) Sync my fork and my clone to the official netpyne repo
+**** INFO: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
+**** cd ~/netpyne
+**** git fetch upstream
+**** git checkout development
+**** git merge upstream/development
+** GCLOUD (A1, netpyne, neuron, python):
+*** A1 is cloned and merged, etc. (see above)
+*** netpyne is in home dir on gcloud (see above)
+*** copy-pasted salva's bashrc into my ~/.bashrc on gcloud (see vim commands below) 
+**** vim ~/.bashrc
+**** i   (--> gets into interactive mode)
+**** ctrl-v  (--> to paste salva's ~/.bashrc)
+**** esc
+**** :w to save
+**** :q to quit 
+** Try to run a sim on gcloud:
+*** from A1 repo on gcp --> python3 batch.py --> no module named netpyne
+*** bashrc missing --> pythonpath pretty much empty
+*** (on gcp), salva says copy and modify /usr/local/site/.bashrc 
+*** put this into my ~/.bashrc 
+*** quit terminal and re-open gcp to see if this worked. 
+** VIM COMMANDS:
+*** to select and copy text in vim: cursor where you want --> v to go to visual mode --> move cursor to end --> y (yank)
+*** to paste --> p
+*** press i to enter interactive mode once opened the file
+*** esc to exit this mode
+*** :w to save
+*** :q to quit 
+*** :q! to really quit 
+** gcp bash issues [FIXED]:
+*** Error on logging back in :
+-bash: /home/ext_ericaygriffith_gmail_com/.bashrc: line 38: unexpected EOF while looking for matching `''
+-bash: /home/ext_ericaygriffith_gmail_com/.bashrc: line 42: syntax error: unexpected end of file
+*** /usr/local/site bashrc:
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+i# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+    export PATH=/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONPATH=~/netpyne:$PYTHONPATH
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+# User specific aliases and functions
+
+*** ~/.bashrc
+
+# User specific aliases and function
+
+
+export N=root/nrn
+    export CPU=x86_64
+    export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=$N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    export SITE=/usr/local/site
+    export NEURONHOME=$N/share/nrn
+    export MODL_INCLUDE=$SITE/local/mod
+    export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+    alias cpgs='gsutil -m cp -r
+
+
+
+
+*** salva's bashrc:
+[ext_ericaygriffith_gmail_com@g6-n2-controller home]$ cd ext_salvadordura_gmail_com/
+[ext_ericaygriffith_gmail_com@g6-n2-controller ext_salvadordura_gmail_com]$ vim ~/.bashrc
+
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and function
+
+
+export N=root/nrn
+    export CPU=x86_64
+    export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=$N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    export SITE=/usr/local/site
+    export NEURONHOME=$N/share/nrn
+    export MODL_INCLUDE=$SITE/local/mod
+    export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+@ 
+*** ERROR WAS QUITE SIMPLE --> just had a missing ' at the end. inserted, saved, etc. all good! 
+** netpyne now working on gcp --> python3; import netpyne; from neuron import h --> all working 
