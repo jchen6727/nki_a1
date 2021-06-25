@@ -43706,4 +43706,8 @@ _=/usr/bin/env
 *** python -- same
 *** python3 -- same
 *** nrniv -python --> works now!!!!!! 
-
+** Try running sim again:
+*** ^^ ran for much longer this time, but still don't see a raster
+*** gsutil -m cp -r ~/A1/data/v34_batch15_REPRO_TEST/trial_5955_4/ gs://eyg_data/A1 
+*** looking at .run --> ah, error: ERROR: Some mechanisms and/or ions were not inserted (for details run with cfg.verbose=True). Make sure the required mod files are compiled.
+*** compile the mod files!! --> done, successful. 
