@@ -43450,3 +43450,14 @@ sqpa
 
 
 *** transfer data over to eyg_data (rm -r ~/.gsutil  ; gsutil -m cp -r ~/A1/data/v34_batch23/ gs://eyg_data/A1  -- this was all done on controller node)
+*** on gcp -- made subdirs A1/data/v34_batch15_REPRO_TEST/trial_5955_0 and trial_5955_1 for repro tests 
+*** transfer data over to eyg_data (rm -r ~/.gsutil  ; gsutil -m cp -r ~/A1/data/v34_batch15_REPRO_TEST/trial_5955_1/ gs://eyg_data/A1  -- this was all done on controller node) 
+** ERROR w/ mpi on gcp:
+*** Try loading libmpi and libmpich
+load_mpi: libmpich.so: cannot open shared object file: No such file or directory
+Is openmpi, mpich, intel-mpi, sgi-mpt etc. installed? If not in default location, need a LD_LIBRARY_PATH.
+could not dynamically load libmpi.so or libmpich.so
+*** added LD_LIBRARY_PATH line to bashrc on gcp:
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+ 
+*** quit -- reopened (gcloud beta compute ssh --zone "us-central1-f" "g6-n2-controller"  --tunnel-through-iap --project "ecas2-nsf1904444")
