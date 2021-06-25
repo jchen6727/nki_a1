@@ -43394,4 +43394,14 @@ export N=root/nrn
 *** ^^ also look at his repos or sdnotes.org or something else (gdoc) for ideas! 
 * <2021-06-25 Fri -- manual sims>
 ** trying no change at first to batch.py just for test sim. 
-** 
+** need to get data/v34_batch15/trial_5955/trial_5955_cfg.json into data subdir on gcp 
+*** on gcp: in /home/ext_ericaygriffith_gmail_com/A1/data --> mkdir v34_batch15
+*** get this .json from salvador bucket 
+*** have it now! on local machine
+*** scp it onto gcp 
+**** EXAMPLE --> use scp:
+***** SPONT: on local machine, cd ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+***** gcloud compute scp simDataLayers.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+**** on local machine, go to A1/data/v34_batch15 (location of .json)
+**** on local terminal: gcloud compute scp trial_5955_cfg.json ext_ericaygriffith_gmail_com@g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch15/
+**** worked! 
