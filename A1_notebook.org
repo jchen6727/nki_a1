@@ -43310,14 +43310,52 @@ export N=root/nrn
 *** ERROR WAS QUITE SIMPLE --> just had a missing ' at the end. inserted, saved, etc. all good! 
 ** netpyne now working on gcp --> python3; import netpyne; from neuron import h --> all working 
 ** Sims: 
-*** TO DO:
-**** try running one thing, just to make sure it's working. 
-**** (0) how to change the code
-***** take a look at the code (custom() func) to re-familiarize
-***** make some basic edits to setRunCfg 
-***** where is data going to end up? 
-***** get former scp entries locked and loaded 
-**** (1) what to change it to
+*** TO DO -- First goal --> try running one thing, just to make sure it's working:
+**** [DONE] (0) a (re-)orientation:
+***** [DONE] take a look at the code (custom() func) to (re-)familiarize
+***** [DONE] make some basic edits to setRunCfg 
+***** [DONE] where is data going to end up? --> /home/ext_ericaygriffith_gmail_com/A1/data
+****** subdirs will be determined by e.g. b.batchLabel = 'v34_batch23' at the end of batch.py 
+****** b.saveFolder = 'data/'+b.batchLabel  --> determine location of subdirs  ('data') in this case
+***** [DONE] get former scp entries locked and loaded 
+****** NOTE: bucket --> eyg_data --> A1 subdir for data from runs!! 
+****** 10/12 entry? about buckets and scp and zaid 
+****** from 10/08:
+******* gcloud storage: 
+******** on the left --> STORAGE --> Create bucket
+******** bucket name: ericaygriffith_a1batch  (NOTE FROM 06/24/2021: eyg_data is your bucket) 
+******** run this command on gcp terminal that you're using: 
+********* gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+******** run this command on local machine:
+********* gsutil -m cp -r gs://[bucket_path] [local_path]
+****** [scp: from cluster --> local] from 10/14:
+******* GCP data issues: 
+******** on browser, on gcp console (https://console.cloud.google.com/home?organizationId=728762063943&project=ecas-2019) --> storage --> eyg_data is my bucket
+******** try scp to local machine: 
+******** gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+******** ^^ will this work w/ controller node? have to do login node maybe? 
+****** [gsutil: from cluster --> bucket] from 10/14 & 10/15:
+******* 10/14 --> FROM CLUSTER TO BUCKET:
+******** run this in terminal on local machine that is ssh'ed into gcp!!): gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+******** ^^ path in cluster is /home/ext_ericaygriffith_gmail_com/A1/data
+******** ^^ bucket path is gs://eyg_data 
+******* 10/15 --> gsutil issues (resolved!!):
+******** Try what zaid suggested:
+********* "The problem seemed to be that gsutil will cache credentials which may not have the correct scopes. there is a directory in you home at ~/.gsutil on the VM.  Delete ~/.gsutil, and try to copy files via  gsutil. Let me know if this works."
+********* first ssh into gcloud (login node)
+********* now look for this dir in ~ --> see it when I do 'ls -a' (.gsutil)
+********* look at it first:
+********** $ cd .gsutil
+********** $ ls
+********** credstore2  credstore2.lock  gcecredcache  gcecredcache.lock  tracker-files
+********* okay now delete it, as suggested (cd ~ ; rm -r .gsutil) 
+********* now try gsutil again --> didn't work from login node
+******** Tried controller node --> WORKED!!
+
+**** (1) modifying the code:
+***** jsons for batch.py custom():
+****** figure out which .json is being used for the thal
+****** figure out which .json(s) to use for the cortical gains
 ***** go thru the google doc and see what ideas you have for modifications to make
 ***** go thru the slack chat and see what ideas you have for modifications to make 
 ***** look at slack chat & corresponding github link for example script thing
@@ -43331,3 +43369,28 @@ export N=root/nrn
 ***** show salva / the channel 'results' of 1 or 2 runs 
 ***** clear the plan with them 
 ** TO DO: get 2-FA for git/github 
+** Looking at batch.py code:
+*** in custom() function, these lines do the same thing twice, right...?
+    # from prev 
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+*** ^^ no they don't! (cfgLoad vs. cfgLoad2) 
+**** commenting out the first with open() --> assuming it's the second one that matters, and hmm. consult salva, but later. I do see cfgLoad2 though. hmmm. 
+**** uncommented! 
+*** so I have to know which does which where...
+**** okay, so they are taken into account in the latter half of the custom() func, when params are being updated in "for p in updateParams:" and "for p in updateParams2" 
+**** seems as if these separate out the purely cortical gains from the intrathalamic and thalamocortical gains
+**** ^^ so then what about corticothalamic? this is, I suppose, the CT cells. ah. so this is actually probably taken care of in... hmm.. actually I see in cfg.py that this is the only thalamus-related gain factor that isn't accounted for here. 
+** QUESTIONS / THINGS TO BRING UP TO SALVADOR:
+*** no corticothalamicgain? in batch.py? cfgLoad2 
+*** in analysis/batchAnalysis.py --> line 76 --> just a 1? 
+*** I see that cfgLoad is for the cortical gains, and the cfgLoad2 is for the thalamic gains --> which .json for which, would you recommend? 
+*** ^^ also look at his repos or sdnotes.org or something else (gdoc) for ideas! 
+* <2021-06-25 Fri -- manual sims>
+** so, which to load for 
