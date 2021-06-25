@@ -43393,4 +43393,5 @@ export N=root/nrn
 *** I see that cfgLoad is for the cortical gains, and the cfgLoad2 is for the thalamic gains --> which .json for which, would you recommend? 
 *** ^^ also look at his repos or sdnotes.org or something else (gdoc) for ideas! 
 * <2021-06-25 Fri -- manual sims>
-** so, which to load for 
+** trying no change at first to batch.py just for test sim. 
+** 

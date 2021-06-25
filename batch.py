@@ -736,10 +736,10 @@ def custom():
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 0.75]
-    params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
-    params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
-    params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
+    params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 1] #[wmat['IT2']['PV2'] * 0.75]
+    # params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
+    # params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
+    # params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
 
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
