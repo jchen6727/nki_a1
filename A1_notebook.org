@@ -43405,3 +43405,48 @@ export N=root/nrn
 **** on local machine, go to A1/data/v34_batch15 (location of .json)
 **** on local terminal: gcloud compute scp trial_5955_cfg.json ext_ericaygriffith_gmail_com@g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch15/
 **** worked! 
+**** on gcp: mkdir A1/data/v34_batch15/trial_5955/ --> mv the .json file into this subdir (done)
+** running trial sim (no changes to v34_batch15 trial 5955):
+*** python3 batch.py (after adding, pulling, scp-ing etc.  -- see above)
+*** bokeh? --> 
+Warning: could not import interactive plotting functions; make sure the "bokeh" package is installed.
+
+*** $ python3 batch.py
+Warning: could not import interactive plotting functions; make sure the "bokeh" package is installed.
+Saving batch to data/v34_batch23/v34_batch23_batch.json ... 
+(0,) (1.49,)
+('wmat', 'IT2', 'PV2') = 1.49
+Saving simConfig to data/v34_batch23/v34_batch23_0_cfg.json ... 
+Submitting job  data/v34_batch23/v34_batch23_0
+#!/bin/bash
+#SBATCH --job-name=v34_batch23_0
+#SBATCH -A default
+#SBATCH -t 24:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=80
+#SBATCH -o data/v34_batch23/v34_batch23_0.run
+#SBATCH -e data/v34_batch23/v34_batch23_0.err
+#SBATCH --mail-user=ericaygriffith@gmail.com
+#SBATCH --mail-type=end
+
+
+
+source ~/.bashrc
+cd /home/ext_ericaygriffith_gmail_com/A1/
+mpirun -n 80 nrniv -python -mpi init.py simConfig=data/v34_batch23/v34_batch23_0_cfg.json netParams=data/v34_batch23/v34_batch23_netParams.py
+wait
+                    
+
+--------------------------------------------------------------------------------
+   Finished submitting jobs for grid parameter exploration   
+--------------------------------------------------------------------------------
+*** how to check again? 
+sinfo
+sdetail
+sq
+sqra
+sqpa
+.run and .err files
+
+
+*** transfer data over to eyg_data (rm -r ~/.gsutil  ; gsutil -m cp -r ~/A1/data/v34_batch23/ gs://eyg_data/A1  -- this was all done on controller node)
