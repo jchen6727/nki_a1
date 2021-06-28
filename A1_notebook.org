@@ -45322,9 +45322,6 @@ ericagriffith% diff salva_cfg.json eyg_cfg.json
 gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch15_REPRO_TEST/trial_5955 /Users/ericagriffith/Desktop/
 **** gsutil works for transfer from gcp cluster to eyg_data bucket  
  gsutil -m cp -r ~/A1/data/v34_batch15_REPRO_TEST/trial_5955/ gs://eyg_data/A1
-
-
-
 *** (1) modifying the code:
 **** [DONE] jsons for batch.py custom():
 ****** figure out which .json is being used for the thal
@@ -45346,10 +45343,20 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 **** show salva / the channel 'results' of 1 or 2 runs 
 **** clear the plan with them 
 ** Trying new sims:
-*** VIP --> SOM ; manually reduce VIP to SOM in L2/3 
-**** ^^ params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5] 
+*** edit0 --> VIP --> SOM ; manually reduce VIP to SOM in L2/3 
+**** params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5] 
 **** ^^ in batch.py 
 **** b.batchLabel = edit0_v34_batch15
 **** I copied the trial_5955_cfg.json into /home/ext_ericaygriffith_gmail_com/A1/data/edit0_v34_batch15
 **** I changed in batch.py where to look for the above cfg file
 **** add/ commit / push / pull 
+***** RECALL (see admin nb) that personal access token is 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 <-- should be used in place of password when pushing / pulling etc.  
+**** run on gcp
+***** in A1 repo: python3 batch.py 
+***** running! 
+***** to copy data to bucket after done: 
+ gsutil -m cp -r ~/A1/data/edit0_v34_batch15/ gs://eyg_data/A1
+*** edit1 --> VIP3 --> SOM manual reduction
+**** params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5]
+**** params[('wmat', 'VIP3', 'SOM3')] = [wmat['VIP3']['SOM3'] * 0.5]
+**** 
