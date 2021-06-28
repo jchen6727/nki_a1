@@ -2524,7 +2524,13 @@ def optunaRatesLayersWmat():
                     ['SOM3', 'PV2'],
                     ['SOM3', 'VIP2'],
                     ['VIP2', 'SOM2'],
-                    ['VIP3', 'SOM2']]
+                    ['VIP3', 'SOM2'],
+                    
+                    # add these; load above from v34_batch23 and explore +-20%
+                    ['IT2', 'SOM3'], 
+                    ['IT3', 'SOM3'],
+                    ['VIP2', 'SOM3'],
+                    ['VIP3', 'SOM3']]
 
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
