@@ -2491,7 +2491,7 @@ def optunaRatesLayersWmat():
 
     # from prev
     import json
-    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
 
@@ -2499,8 +2499,8 @@ def optunaRatesLayersWmat():
     # parameters
     params = specs.ODict()
 
-    scaleLow = 0.2
-    scaleHigh = 5.0
+    scaleLow = 0.75
+    scaleHigh = 1.25
 
     scaleLow2 = 0.5
     scaleHigh2 = 2.0
@@ -2523,16 +2523,17 @@ def optunaRatesLayersWmat():
                     ['SOM3', 'PV2'],
                     ['SOM3', 'VIP2'],
                     ['VIP2', 'SOM2'],
-                    ['VIP3', 'SOM2']]
+                    ['VIP3', 'SOM2'],
+                    ['IT2', 'SOM3'], 
+                    ['IT3', 'SOM3'],
+                    ['VIP2', 'SOM3'],
+                    ['VIP3', 'SOM3']]
                     
 
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
 
-    weightsScale2 = [['IT2', 'SOM3'], 
-                    ['IT3', 'SOM3'],
-                    ['VIP2', 'SOM3'],
-                    ['VIP3', 'SOM3']]
+    weightsScale2 = []
 
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
@@ -2755,20 +2756,20 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    #b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    #b = optunaRatesLayersWmat()
+    b = optunaRatesLayersWmat()
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch24' 
+    b.batchLabel = 'v34_batch25' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
