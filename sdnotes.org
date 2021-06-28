@@ -9662,7 +9662,7 @@ def custom():
     b.method = 'grid'
 
     return b
-** v34_batch23 - tuning; v34_batch15_trial_5955; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) - deleted by accident!
+** v34_batch23 - tuning; v34_batch15_trial_5955; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) 
 *** code
     # from prev
     import json
@@ -9755,8 +9755,10 @@ def custom():
 
     print(initCfg)
 
-
-** v34_batch24 - tuning; v34_batch15_trial_5955; optuna with 16 L2,3 cell-type-specific weight params (targeting PV2, SOM2, VIP2, SOM3)
+*** results
+good solution: trial_1937
+** v34_batch24 - 1 long sims; best from v34_batch23 (trial_1937); 11.5-sec; with LFP; corticothalamicgain +- 25%
+** v34_batch25 - pending (improve sol around v34_batch23 best)
 ** blank
 
 
