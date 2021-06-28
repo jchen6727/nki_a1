@@ -723,23 +723,20 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
-        cfgLoad2 = json.load(f)['simConfig']
+    #with open('data/v34_batch23/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    #    cfgLoad2 = json.load(f)['simConfig']
 
     import pickle
     with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
     wmat = connData['wmat']
 
     # conn gains 
-    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 0.75]
-    params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
-    params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
-    params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
 
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
@@ -748,8 +745,8 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 2500 #11500
-    initCfg['printPopAvgRates'] = [1500, 2500] #11500] 
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, 11500] 
     initCfg['scaleDensity'] = 1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -763,7 +760,7 @@ def custom():
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -2502,10 +2499,12 @@ def optunaRatesLayersWmat():
     # parameters
     params = specs.ODict()
 
-
     scaleLow = 0.2
     scaleHigh = 5.0
-    
+
+    scaleLow2 = 0.5
+    scaleHigh2 = 2.0
+
     import pickle
     with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
     wmat = connData['wmat']
@@ -2524,16 +2523,21 @@ def optunaRatesLayersWmat():
                     ['SOM3', 'PV2'],
                     ['SOM3', 'VIP2'],
                     ['VIP2', 'SOM2'],
-                    ['VIP3', 'SOM2'],
+                    ['VIP3', 'SOM2']]
                     
-                    # add these; load above from v34_batch23 and explore +-20%
-                    ['IT2', 'SOM3'], 
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
+
+    weightsScale2 = [['IT2', 'SOM3'], 
                     ['IT3', 'SOM3'],
                     ['VIP2', 'SOM3'],
                     ['VIP3', 'SOM3']]
 
     for ws in weightsScale:
-        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
+
+
 
     groupedParams = []
 
@@ -2751,20 +2755,20 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    #b = custom()
+    b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    b = optunaRatesLayersWmat()
+    #b = optunaRatesLayersWmat()
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch23' 
+    b.batchLabel = 'v34_batch24' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

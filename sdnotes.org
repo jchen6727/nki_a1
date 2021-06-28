@@ -9662,7 +9662,7 @@ def custom():
     b.method = 'grid'
 
     return b
-** v34_batch23 - tuning; v34_batch15_trial_5955; optuna with 16 L2 cell-type-specific weight params 
+** v34_batch23 - tuning; v34_batch15_trial_5955; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) - deleted by accident!
 *** code
     # from prev
     import json
@@ -9756,6 +9756,7 @@ def custom():
     print(initCfg)
 
 
+** v34_batch24 - tuning; v34_batch15_trial_5955; optuna with 16 L2,3 cell-type-specific weight params (targeting PV2, SOM2, VIP2, SOM3)
 ** blank
 
 
