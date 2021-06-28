@@ -723,11 +723,11 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch15_REPRO_TEST/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/edit0_v34_batch15/trial_5955_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
     # good thal params for 100% cell density 
-    with open('data/v34_batch15_REPRO_TEST/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/edit0_v34_batch15/trial_5955_cfg.json', 'rb') as f:
         cfgLoad2 = json.load(f)['simConfig']
 
     import pickle
@@ -735,12 +735,12 @@ def custom():
     wmat = connData['wmat']
 
     # conn gains 
-    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 1] #[wmat['IT2']['PV2'] * 0.75]
+    # params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 1] #[wmat['IT2']['PV2'] * 0.75]
     # params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
     # params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
     # params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
-
+    params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -2758,7 +2758,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch15_REPRO_TEST' 
+    b.batchLabel = 'edit0_v34_batch15' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
