@@ -723,7 +723,7 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
+    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
@@ -737,8 +737,8 @@ def custom():
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('seeds', 'conn')] = [4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = [1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -2771,7 +2771,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch26' 
+    b.batchLabel = 'v34_batch27' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
