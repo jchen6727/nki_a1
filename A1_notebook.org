@@ -45371,9 +45371,15 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 *** Look at another batch --> e.g. v34_batch21 --> also shows this in a random sampling that I'm looking at. 
 *** Does this happen in earlier versions, e.g. before v34? looks like v33 has a bug, and the random samples I'm looking at from v32 are not long enough for this to happen, seems like. 
 *** okay, so focus on v34, and within that, batch27 is reasonable choice to look at. 
-** Next step --> recreate on local machine when loading in .json files
 ** QUESTION about .pkl files:
 *** what is in the .pkl files that is / is not in the .json files?
 *** why when I download the .pkl files directly from the v34_batch27 gcp bucket directory, I get one name, and when I click and then download, I get a longer one? are these the same files or different? do diff to check out. okay evidently they do differ. interesting. hm. 
-** NOTE: Made a subdir in ~/Desktop/NEUROSIM/A1/sim_data_files just to look at this stuff. Should I put this somewhere else? maybe in extant data subdir? 
-** 
+*** Noticing that the shorter file name (the one I get when I download directly without clicking through first) is not the correct size. 
+** NOTE: Made a subdir in ~/Desktop/NEUROSIM/A1/sim_data_files just to look at this stuff. Should I put this somewhere else? maybe in extant data subdir? --> data/lfpSimFiles. yup. moved previous subdir to trash. 
+** Next step --> recreate on local machine
+*** Open A1/analysis/plotCSD.py and change the lines to reflect what I want. 
+*** how to load .pkl? this one uses .json by default --> try this line: sim = utils.loadFromFile('../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_1.pkl')
+*** in load.py (in a1dat) --> sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file 
+*** ^^ this this instead. 
+** Make new script --> A1/analysis/lfpDebug.py 
+** ^^ with the above script, can re-create the artifact. 
