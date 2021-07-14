@@ -45369,3 +45369,11 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 *** .json files (and others) from v34_batch27 --> https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch27;tab=objects?prefix=&forceOnObjectsSortingFiltering=false
 *** ^^ LFP .png files from this run shows that a bunch of them (all? didn't look at every single one) have this artifact
 *** Look at another batch --> e.g. v34_batch21 --> also shows this in a random sampling that I'm looking at. 
+*** Does this happen in earlier versions, e.g. before v34? looks like v33 has a bug, and the random samples I'm looking at from v32 are not long enough for this to happen, seems like. 
+*** okay, so focus on v34, and within that, batch27 is reasonable choice to look at. 
+** Next step --> recreate on local machine when loading in .json files
+** QUESTION about .pkl files:
+*** what is in the .pkl files that is / is not in the .json files?
+*** why when I download the .pkl files directly from the v34_batch27 gcp bucket directory, I get one name, and when I click and then download, I get a longer one? are these the same files or different? do diff to check out. okay evidently they do differ. interesting. hm. 
+** NOTE: Made a subdir in ~/Desktop/NEUROSIM/A1/sim_data_files just to look at this stuff. Should I put this somewhere else? maybe in extant data subdir? 
+** 
