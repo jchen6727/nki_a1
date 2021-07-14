@@ -45356,7 +45356,16 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 ***** running! 
 ***** to copy data to bucket after done: 
  gsutil -m cp -r ~/A1/data/edit0_v34_batch15/ gs://eyg_data/A1
+***** no change 
 *** edit1 --> VIP3 --> SOM manual reduction
 **** params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5]
 **** params[('wmat', 'VIP3', 'SOM3')] = [wmat['VIP3']['SOM3'] * 0.5]
-**** 
+**** to copy data to bucket after done: 
+ gsutil -m cp -r ~/A1/data/edit1_v34_batch15/ gs://eyg_data/A1
+* <2021-06-30 Wed -- see thal int>
+* <2021-07-14 Wed -- LFP artifact>
+** So what's going on with LFP around >8000 ms?
+** Look at long sim files:
+*** .json files (and others) from v34_batch27 --> https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch27;tab=objects?prefix=&forceOnObjectsSortingFiltering=false
+*** ^^ LFP .png files from this run shows that a bunch of them (all? didn't look at every single one) have this artifact
+*** Look at another batch --> e.g. v34_batch21 --> also shows this in a random sampling that I'm looking at. 
