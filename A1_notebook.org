@@ -45382,4 +45382,24 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 *** in load.py (in a1dat) --> sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file 
 *** ^^ this this instead. 
 ** Make new script --> A1/analysis/lfpDebug.py 
-** ^^ with the above script, can re-create the artifact. 
+*** ^^ with the above script, can re-create the artifact. 
+*** Taking out 'PSD' for now, since timeSeries and spectrogram are sufficient to show artifact. 
+*** going thru LFP code now. 
+*** Changed the timeRange in plotLFP such that it focuses in on the 8000-8500 ms range. 
+*** Why is it that LFP spectrogram shows this kind of beam-me-up-scotty kind of UFO beam while LFP timeSeries shows that after ~8250 ms, there is a solid block? what would each mean?
+**** LFP spectrogram okay --> so, this would mean that there is high amount of broadband power, meaning... in this time space where what I'm calling "the UFO beam" is, namely between approx 8200-8300 ms, all frequencies are highly represented, and then this fades out in some kind of symmetric looking way.  
+**** With respect to the LFP time series --> what would this mean? It's like the graph is wrong, i mean obviously, but the way this looks now, it looks like there is more than one LFP value for each time point. As if, at that time point, every possible LFP value is represented. And this continues until the end of the simulation. This is in contrast to the LFP spectrogram, which shows that this phenomenon fades out by around 8300 ms. 
+**** So they start at the same time, but don't end at the same time, if you will. 
+** What gets printed out as the LFP value at, e.g. time point 8300 ms? I tried this, and it looks like there is a single value for lfp (for electrode 10, which is what I'm plotting above). so then potentially something in the actual plotting as opposed to the calculation? 
+** Try recreating the literal plotLFP lines in lfpDebug.py to see if can figure out where things get wonky. 
+*** put in timeRange
+*** extract lfp from sim (and cut using timeRange)
+*** don't do filtFreq, detrend, or normSignal 
+*** focus first on timeSeries
+**** don't do ydisp or offset yet 
+**** calculate 't' --> t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+**** ^^ tested. len(t) matches len(lfp) 
+**** hm --> still get this when I do the most basic kind of plotting, implying that there IS something odd about the actual lfp data, even though I don't see it when I try to plot it out. 
+*** Interestingly, the y-value on the LFP time series (once it gets problematic) stops exactly (?) at 0.0, goes no higher than that. hm. a clue, perhaps? 
+** Potential plotLFP arguments that could be causing this: 
+*** 

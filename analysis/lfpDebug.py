@@ -1,19 +1,31 @@
 from netpyne import sim
 import numpy as np
+import matplotlib.pyplot as plt 
 
-
-# Load sim from .pkl file 
+## Load sim from .pkl file 
 fn = '../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_1.pkl'
 sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file 
 
 
 
-# Plot LFP 
-lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
-sim.analysis.plotLFP(plots=['timeSeries', 'PSD', 'spectrogram'], timeRange=[1500,11500], electrodes=[10])
+## Plot LFP 
+#lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
+#sim.analysis.plotLFP(plots=['timeSeries', 'spectrogram'], timeRange=[8000,8500], electrodes=[10])   # 'PSD' 
 
 
+## Try literally re-creating the lfp plotting lines to see where things get weird 
+timeRange = [0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
 
+lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
+elec = 10    # this is the electrode you want to plot 
+lfpPlot = lfp[:, elec] 
+
+#plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
+plt.plot(t,lfp[:,10])
+
+###########################################
 # ## from cfg json file 
 # "electrodes": [
 #                     10
