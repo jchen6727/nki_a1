@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from neuron import h
 
 ## Load sim from .pkl file 
-fn = '../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_1.pkl'
+fn = '../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
 sim.load(fn)#,instantiate=False) # fn should be .pkl netpyne sim file 
 
 
@@ -15,25 +15,33 @@ sim.load(fn)#,instantiate=False) # fn should be .pkl netpyne sim file
 
 
 ## Try literally re-creating the lfp plotting lines to see where things get weird 
-timeRange = [8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
+timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
 
 lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
-elec = 10    # this is the electrode you want to plot 
+elec = 2    # this is the electrode you want to plot 
 lfpPlot = lfp[:, elec] 
 
-#plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
 
-#plt.plot(t,lfp[:,10])
-#plt.show()
+
 
 ## Figure out which indices lfp goes to zero to see how often this happens 
 lfpZeroInd = np.where(lfpPlot==0)
 lfpZeroInd = list(lfpZeroInd[0])
 
+print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
+print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
+print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
+print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
+print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
+print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
 
 
+## Plot LFP 
+#plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
+plt.plot(t,lfp[:,10])
+plt.show()
 
 ###########################################
 # ## from cfg json file 
