@@ -14,7 +14,7 @@ sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file
 
 
 ## Try literally re-creating the lfp plotting lines to see where things get weird 
-timeRange = [0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
+timeRange = [8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
 
 lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
@@ -24,6 +24,7 @@ lfpPlot = lfp[:, elec]
 
 #plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
 plt.plot(t,lfp[:,10])
+plt.show()
 
 ###########################################
 # ## from cfg json file 

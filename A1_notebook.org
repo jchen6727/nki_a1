@@ -45400,6 +45400,12 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 **** calculate 't' --> t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 **** ^^ tested. len(t) matches len(lfp) 
 **** hm --> still get this when I do the most basic kind of plotting, implying that there IS something odd about the actual lfp data, even though I don't see it when I try to plot it out. 
-*** Interestingly, the y-value on the LFP time series (once it gets problematic) stops exactly (?) at 0.0, goes no higher than that. hm. a clue, perhaps? 
-** Potential plotLFP arguments that could be causing this: 
-*** 
+*** Interestingly, the y-value on the LFP time series (once it gets problematic) stops exactly (?) at 0.0, goes no higher than that. hm. a clue, perhaps? hm. 
+** Ah interesting --> seems as if the LFP itself actually goes up and down to 0.0 and there is no... how do I say. only 1 lfp value for each time point is true, unlike it appears when not zoomed in.
+* <2021-07-15 Thu -- SfN submission>
+** Submitted SfN 2021 abstract
+** gdrive draft: https://docs.google.com/document/d/11EI0EkTU9FzfN6qyWuFbKU6wzVwZiw-melNW7if8GJ8/edit
+* <2021-07-16 Fri -- LFP artifact>
+** So, determined on wednesday that LFP artifact is not from plotting, but most likely from calculation. 
+** So where do I go from here, knowing that info? 
+** I would say, let me first load in the .pkl file, extract the LFP, and see which time points does the LFP signal go to 0. --> Figure out, from this, how often this is happening, because it did look quite regular on the graph. 
