@@ -30,18 +30,46 @@ lfpPlot = lfp[:, elec]
 lfpZeroInd = np.where(lfpPlot==0)
 lfpZeroInd = list(lfpZeroInd[0])
 
-print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
-print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
-print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
-print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
-print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
-print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
+# print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
+# print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
+# print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
+# print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
+# print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
+# print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
 
 
 ## Plot LFP 
 #plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
-plt.plot(t,lfp[:,10])
-plt.show()
+# plt.plot(t,lfp[:,10])
+# plt.show()
+
+
+## Testing tr and im 
+cell0 = sim.net.compartCells[0]
+cell1 = sim.net.compartCells[1]
+
+gid0 = cell0.gid
+gid1 = cell1.gid
+
+im0 = cell0.getImemb()
+im1 = cell1.getImemb()
+
+print('im0: ' + str(im0))
+print('im1: ' + str(im1))
+
+tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
+tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
+
+print('tr0: ' + str(tr0))
+print('tr1: ' + str(tr1))
+
+ecp0 = np.dot(tr0, im0)
+ecp1 = np.dot(tr1, im1)
+
+print('ecp0: ' + str(ecp0))
+print('ecp1: ' + str(ecp1))
+
+
 
 ###########################################
 # ## from cfg json file 

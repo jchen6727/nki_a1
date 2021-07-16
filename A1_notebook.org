@@ -45558,3 +45558,9 @@ lfpZeroInd[5]: 82551
 *** So ecp is the dot product of the transfer resistance and the membrane current. and that ends up being zero --> most likely explanation is that one of these vectors is composed entirely of zeros. 
 *** are either of them (im or tr) ever set to 0 anywhere? 
 *** ^^ YES --> in recxelectrode.py --> in def calcTransferResistance() --> tr = np.zeros((self.nsites,nseg)) 
+** ALSO, sim.simData['LFP'] itself is set to np.zeros in def setupRecordLFP() in setup.py 
+** So, two top running hypotheses are that:
+*** (A) the zeroes in sim.simData['LFP'] itself don't get recorded over, if you will --> BUT this only happens if sim.cfg.saveLFPCells is True. hm. 
+*** (B) tr (transfer resistances) 
+** But --> is tr (transfer resistance) being calculated for each cell at each time point? because I know calculateLFP() is being calculated at each time point, at least according to what it says above def calculateLFP() --> I guess it's just being 'gotten' not necessarily being calculated. --> question is if it's changing. probably not? 
+** Ran lfpDebug.py --> I see that the last lfp value(s) in the array are all zeroes (lfp[-1]) --> 
