@@ -45412,4 +45412,69 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 *** lfpZeroInd = np.where(lfpPlot==0)
 *** lfpZeroInd = list(lfpZeroInd[0])
 ** Looks like this occurs every 3 indices. okay good to know. --> in time steps that is ~0.3 ms 
-** Now look in lfp.py code in netpyne analysis/analysis 
+** Now look in lfp.py code in netpyne analysis/analysis: lfp.py in netpyne/netpyne/analysis only has plotLFP.py --> where is lfp calculated? --> where is plotLFP deriving the lfp data
+*** okay --> so, looks like lfp data should already be in sim.allSimData --> how does it get there? 
+*** It's recorded in cfg --> cfg.recordLFP = blahblah 
+*** in netpyne/netpyne/sim/gather.py --> 
+ # remove data structures used to calculate LFP
+    if gatherLFP and sim.cfg.recordLFP and hasattr(sim.net, 'compartCells') and sim.cfg.createNEURONObj:
+        for cell in sim.net.compartCells:
+            try:
+                del cell.imembVec
+                del cell.imembPtr
+                del cell._segCoords
+            except:
+                pass
+        for pop in list(sim.net.pops.values()):
+            try:
+                del pop._morphSegCoords
+            except:
+                pass
+*** in netpyne/netpyne/sim/run.py --> 
+ # handler for recording LFP
+    if sim.cfg.recordLFP:
+        def recordLFPHandler():
+            sim.cvode.event(h.t + float(sim.cfg.recordStep),
+        sim.calculateLFP)
+*** sim.calculateLFP looks promising! 
+*** ^^ on line 197 of netpyne/netpyne/sim/run.py --> 
+def calculateLFP():
+    """
+    Function for/to <short description of `netpyne.sim.run.calculateLFP`>
+    """
+
+
+    from .. import sim
+
+    # Set pointers to i_membrane in each cell (required form LFP calc )
+    for cell in sim.net.compartCells:
+        cell.setImembPtr()
+
+    # compute
+    saveStep = int(np.floor(h.t / sim.cfg.recordStep))
+    for cell in sim.net.compartCells: # compute ecp only from the biophysical cells
+        gid = cell.gid
+        im = cell.getImemb() # in nA
+        tr = sim.net.recXElectrode.getTransferResistance(gid)  # in MOhm
+        ecp = np.dot(tr, im)  # in mV (= R * I = MOhm * nA)
+
+        if sim.cfg.saveLFPCells:
+            sim.simData['LFPCells'][gid][saveStep - 1,:] = ecp  # contribution of individual cells (stored optionally)
+
+        sim.simData['LFP'][saveStep - 1,:] += ecp  # sum of all cells
+
+*** okay, so have the lines, and now how to test / debug? is there a way I can access this function from my lfpDebug.py script? 
+*** hm --> so when I run A1/analysis/lfpDebug.py and it loads the .pkl file, and I try to look at sim.net.compartCells I see an empty list! wonder why that is. 
+*** ^^ wonder if the sim.load(fn, instantiate=False) --> instantiate=False --> is that what's making sim.net.compartCells an empty list? Try commenting out instantiate=False and look at the list again. 
+*** ^^ correct! --> 
+>>> len(sim.net.compartCells)
+12908
+*** saveData set to False in .json file, so maybe that's why >>> sim.cfg.saveLFPCells --> output: False and len(sim.simData['LFPCells']) == 0. hmm. 
+*** ^^ Does this matter? can I still keep testing? what does this obstruct? 
+** okay going thru calculateLFP() step-by-step:
+*** In theory this uses the line source method
+*** okay so this fx:
+*** Goes thru each cell ("for cell in sim.net.compartCells:")
+*** Then it sets pointer(s) to i_membrane in each cell
+**** does this w/ cell.setImembPtr()
+**** cell.setImembPtr() is located in netpyne/netpyne/cell/compartCell.py 

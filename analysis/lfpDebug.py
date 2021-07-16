@@ -1,10 +1,11 @@
 from netpyne import sim
 import numpy as np
 import matplotlib.pyplot as plt 
+from neuron import h
 
 ## Load sim from .pkl file 
 fn = '../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_1.pkl'
-sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file 
+sim.load(fn)#,instantiate=False) # fn should be .pkl netpyne sim file 
 
 
 
