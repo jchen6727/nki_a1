@@ -23,8 +23,16 @@ elec = 10    # this is the electrode you want to plot
 lfpPlot = lfp[:, elec] 
 
 #plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
-plt.plot(t,lfp[:,10])
-plt.show()
+
+#plt.plot(t,lfp[:,10])
+#plt.show()
+
+## Figure out which indices lfp goes to zero to see how often this happens 
+lfpZeroInd = np.where(lfpPlot==0)
+lfpZeroInd = list(lfpZeroInd[0])
+
+
+
 
 ###########################################
 # ## from cfg json file 

@@ -45409,3 +45409,7 @@ gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com
 ** So, determined on wednesday that LFP artifact is not from plotting, but most likely from calculation. 
 ** So where do I go from here, knowing that info? 
 ** I would say, let me first load in the .pkl file, extract the LFP, and see which time points does the LFP signal go to 0. --> Figure out, from this, how often this is happening, because it did look quite regular on the graph. 
+*** lfpZeroInd = np.where(lfpPlot==0)
+*** lfpZeroInd = list(lfpZeroInd[0])
+** Looks like this occurs every 3 indices. okay good to know. --> in time steps that is ~0.3 ms 
+** Now look in lfp.py code in netpyne analysis/analysis 
