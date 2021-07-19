@@ -45563,4 +45563,68 @@ lfpZeroInd[5]: 82551
 *** (A) the zeroes in sim.simData['LFP'] itself don't get recorded over, if you will --> BUT this only happens if sim.cfg.saveLFPCells is True. hm. 
 *** (B) tr (transfer resistances) 
 ** But --> is tr (transfer resistance) being calculated for each cell at each time point? because I know calculateLFP() is being calculated at each time point, at least according to what it says above def calculateLFP() --> I guess it's just being 'gotten' not necessarily being calculated. --> question is if it's changing. probably not? 
-** Ran lfpDebug.py --> I see that the last lfp value(s) in the array are all zeroes (lfp[-1]) --> 
+** Ran lfpDebug.py --> I see that the last lfp value(s) in the array are all zeroes (lfp[-1]) --> yeah --> seems as if it is the i_membrane not the transfer resistance that is 0. okay! hm. 
+* <2021-07-19 Mon -- LFP artifact>
+** convo w/ sam and salva: 
+*** ericaygriffith: 
+I have narrowed it down to seeing that it's something with the imemb recording (vs. the transfer resistance) for each cell, and that the issue appears every 3rd time point starting at a the same time point for each of the v34 runs. seems as if every 3rd time point all the cells imemb is recorded as 0 after ~8254 ms. tried to recreate this error (or something similar) with different sims (ran them for longer time periods, etc.) but haven't yet seen it recreated outside of v34, so I'm currently trying to figure out if it's something w/ this particular batch or if it's something that would happen in other circumstances as well.
+*** samn:
+sounds like getting there. wonder what particular of that branch/model would lead to such a strange artifact.
+*** salvadord  10:31 AM
+interesting about the LFP every 3rd point… sounds like could be some bug perhaps at the NEURON level, or related to the mpi simulation itself (e.g. not enough memory or resources maybe)
+
+I was just checking and have a bunch of longer LFP recordings from eg
+M1 that don’t show that artifact… eg this is 13 secs
+
+so could be something triggered specifically by the A1 model… perhaps an error calculating currents of some specific cell type?! mysterious…
+*** samn  10:37 AM
+interesting, is it easy to toggle which cells contribute to LFP? what about recording a separate LFP for each excitatory cell type?
+*** salvadord  10:38 AM
+yeah, there is a flag that saves individual lfp for each cell
+*** samn  10:39 AM
+ic, so maybe a good strategy for debugging
+*** salvadord  10:39 AM
+cfg.saveLFPCells = True
+
+yeah, though haven’t tried with this many cells, might run out of
+memory…. would be ~12k lfp traces
+*** samn  10:40 AM
+ic, and can define LFP at certain depths so could probably do same for individual populations
+*** salvadord 
+note different depths not same as different pops since dendritic currents also contribute… this is an interesting comparison to study at some point
+*** samn 
+or maybe could scale down network and try
+with all cells (though maybe artifact disappears then)
+*** salvadord  10:41 AM
+yeah could try smaller net
+
+** Ideas from above convo:
+*** Potential sources of the error: 
+**** (1) Bug at the NEURON level
+***** FOR:
+***** AGAINST: 
+**** (2) Bug related to mpi simulation itself (e.g. not enough memory or resources maybe)
+***** FOR:
+***** AGAINST: 
+**** (3) Something triggered specifically by the A1 model (e.g. error calculating currents of some specific cell type) 
+***** FOR:
+***** AGAINST: 
+**** (4) Something triggered specifically by this version (v34) of the A1 model
+***** FOR:
+***** AGAINST:  
+*** Potential things to try: 
+**** (1) Record a separate LFP for each excitatory cell type:
+***** REASONING: perhaps this is caused by error in calculating current of specific cell type(s) 
+***** NOTES: 
+(1) there is a flag that saves individual lfp for each cell (cfg.saveLFPCells = True)
+(2) Might run out of memory, since would be ~12k lfp traces 
+**** (2) "Can define LFP at certain depths so could probably do same for individual populations"
+***** QUESTIONS: 
+(i) define LFP? 
+(ii) at certain depths?
+(iii) what is "same" in reference to? 
+***** NOTE: Different depths not same as different pops since dendritic currents also contribute. "Interesting comparison to study at some point" <-- ? 
+**** Scale down network and try recording LFP with all cells 
+***** NOTES: 
+****** can run on gcp if just 1 sim
+****** artifact may disappear!  
