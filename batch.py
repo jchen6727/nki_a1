@@ -723,25 +723,22 @@ def custom():
 
     # from prev 
     import json
-    with open('data/edit1_v34_batch15/trial_5955_cfg.json', 'rb') as f:
+    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
 
     # good thal params for 100% cell density 
-    with open('data/edit1_v34_batch15/trial_5955_cfg.json', 'rb') as f:
-        cfgLoad2 = json.load(f)['simConfig']
+    #with open('data/v34_batch23/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    #    cfgLoad2 = json.load(f)['simConfig']
 
-    import pickle
-    with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
-    wmat = connData['wmat']
+    # import pickle
+    # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    # wmat = connData['wmat']
 
     # conn gains 
-    # params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    # params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 1] #[wmat['IT2']['PV2'] * 0.75]
-    # params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
-    # params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
-    # params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
-    params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5]
-    params[('wmat', 'VIP3', 'SOM3')] = [wmat['VIP3']['SOM3'] * 0.5]
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -749,8 +746,8 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 2500 #11500
-    initCfg['printPopAvgRates'] = [1500, 2500] #11500] 
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, 11500] 
     initCfg['scaleDensity'] = 1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -764,7 +761,8 @@ def custom():
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -792,7 +790,7 @@ def custom():
             initCfg.update({p: cfgLoad[p]})
 
     # good thal params for 100% cell density 
-    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
 
     for p in updateParams2:
         if isinstance(p, tuple):
@@ -2495,7 +2493,7 @@ def optunaRatesLayersWmat():
 
     # from prev
     import json
-    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
 
@@ -2503,14 +2501,16 @@ def optunaRatesLayersWmat():
     # parameters
     params = specs.ODict()
 
+    scaleLow = 0.75
+    scaleHigh = 1.25
 
-    scaleLow = 0.2
-    scaleHigh = 5.0
-    
-    import pickle
-    with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
-    wmat = connData['wmat']
-    
+    scaleLow2 = 0.5
+    scaleHigh2 = 2.0
+
+    # import pickle
+    # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    # wmat = connData['wmat']
+    wmat = cfgLoad['wmat']    
 
     weightsScale = [['IT2', 'PV2'],
                     ['IT2', 'SOM2'], 
@@ -2525,10 +2525,22 @@ def optunaRatesLayersWmat():
                     ['SOM3', 'PV2'],
                     ['SOM3', 'VIP2'],
                     ['VIP2', 'SOM2'],
-                    ['VIP3', 'SOM2']]
+                    ['VIP3', 'SOM2'],
+                    ['IT2', 'SOM3'], 
+                    ['IT3', 'SOM3'],
+                    ['VIP2', 'SOM3'],
+                    ['VIP3', 'SOM3']]
+                    
 
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
+
+    weightsScale2 = []
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
+
+
 
     groupedParams = []
 
@@ -2746,20 +2758,20 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom() ## ERICA NOTE: changing this function above 
+    b = custom()
     # b = evolRates()
     # b = asdRates()
     # b = optunaRates()
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    # b = optunaRatesLayersWmat() ## ERICA NOTE: this is the one that was uncommented originally 
+    # b = optunaRatesLayersWmat()
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'edit1_v34_batch15' 
+    b.batchLabel = 'v34_batch27' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
