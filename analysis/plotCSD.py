@@ -1,5 +1,6 @@
 import utils
 from matplotlib import pyplot as plt
+#from netpyne import sim ## added for lfp artifact debugging 
 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
@@ -12,3 +13,10 @@ plt.savefig('v25_batch5_0_0_2_1100-1400.png')
 
 
 
+
+## from lfp debug attempt -- now in different script (lfpDebug.py)
+
+#sim = utils.loadFromFile('../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_1.pkl')
+
+# fn = '../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_1.pkl'
+# sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file 

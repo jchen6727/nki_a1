@@ -45624,7 +45624,58 @@ yeah could try smaller net
 (ii) at certain depths?
 (iii) what is "same" in reference to? 
 ***** NOTE: Different depths not same as different pops since dendritic currents also contribute. "Interesting comparison to study at some point" <-- ? 
-**** Scale down network and try recording LFP with all cells 
+**** (3) Scale down network and try recording LFP with all cells 
 ***** NOTES: 
 ****** can run on gcp if just 1 sim
 ****** artifact may disappear!  
+** Next steps:
+*** so what am I thinking here.... --> probably not bug at neuron or mpi level, unless re-running it showed that the artifact went away (seems unlikely) -- guess I could also check on neurosim, to see if also reproduced there. would imply that the error is at gcp, or some interaction of gcp with mpi or something. 
+*** it's probably not a bug at neuron level also bc salva noted that long runs of M1 model (~13 sec) don't show this bug -- although, maybe it's not to do with the length of time, and instead some kind of glitch that would show up in a different way / different circumstances with M1 / other models. 
+*** if A1 model --> two things come to mind here --> if it's the A1 model itself, then longer sims of different versions (e.g. v33) would also show this artifact. if it's this particular version, then other versions would be able to be run for 10 sec without showing this artifact (most likely). 
+* <2021-07-20 Tue -- LFP artifact>
+** Scale down the model to 1/2 and set cfg.recordLFPCells to True
+*** run on gcp & see if artifact persists
+*** How to run on gcp? 
+**** --> ~/Desktop/NEUROSIM/A1/batch.py --> edit this file 
+**** pick a good .json cfg file (I have 0_0 and 0_1 from v34 already in A1 data subdir on local machine)
+**** probably have to get this / these files onto gcp 
+** gcloud info:
+*** for ~<10 sims, use g6-n2-controller (non-preemptible); otherwise g9-n2-controller (preemptible)
+*** gcloud login info: 
+**** https://console.cloud.google.com/compute/instances?cloudshell=true&project=ecas2-nsf1904444
+**** compute engine --> vm instances 
+**** go to g6-n2-controller for ~<10 min sims
+**** view gcloud command (on the right) --> gcloud beta compute ssh --zone "us-central1-f" "g6-n2-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+**** enter this command in terminal on local machine
+**** passcode is !peter88
+** Merge in changes from salva_layers 
+*** merge in salva's changes --> which branch is he using? 'salva_layers'
+*** merge salva_layers with 'repro' and 'erica' or just repro? try repro for now.
+*** git checkout repro (doing this on local machine)
+*** add/commit any changes (to this nb)
+*** merge with salva_layers 
+*** merge conflicts resolved 
+**** batch.py, analysis/batchAnalysis.py, cfg.py, sdnotes.org
+**** should be all set now! 
+*** pull these changes on gcloud
+** REMINDER -- VIM COMMANDS:
+*** to select and copy text in vim: cursor where you want --> v to go to visual mode --> move cursor to end --> y (yank)
+*** to paste --> p
+*** press i to enter interactive mode once opened the file
+*** esc to exit this mode
+*** :w to save
+*** :q to quit 
+*** :q! to really quit 
+
+
+** Get data and files back and forth from cluster --> bucket --> local machine:
+*** From cluster --> bucket:
+**** gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+**** NOTE: eyg_data is name of my bucket on gcp 
+*** From cluster --> local machine: 
+**** scp from gcloud to local machine: 
+***** Example: 
+***** gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data 
+*** From bucket --> local machine: just download straight from browser - go to gcp console then bucket (https://console.cloud.google.com/storage/browser/eyg_data;tab=objects?forceOnBucketsSortingFiltering=false&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false)
+*** From local machine --> cluster:
+**** 
