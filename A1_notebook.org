@@ -45895,6 +45895,8 @@ fi
 *** ^^ to correct .json file --> with open('data/lfpSimFiles/v34_batch27_0_0_cfg.json', 'rb') as f:
 * <2021-07-21 Wed -- LFP artifact>
 ** login to gcloud -- look at VM instances to see which instances are live today (g6-n2-controller seems to be working today?) 
+*** gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** g6-n2-controller is also live 
 ** When logged into g6-n2-controller, scp v34 batch27 0_0 cfg json file over into A1/data/lfpSimFiles/ on gcp --> 
 gcloud compute scp v34_batch27_0_0_cfg.json ext_ericaygriffith_gmail_com@g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/lfpSimFiles/
 
@@ -45914,3 +45916,11 @@ gcloud compute scp v34_batch27_0_0_cfg.json ext_ericaygriffith_gmail_com@g6-n2-c
     #range(5)]
 *** Can I leave the groupedParams = [] empty? Try it. 
 *** Further changes --> scaleDensity is actually going to be 0.25 for a first try, and shortening duration to 9000ms. 
+*** Added/committed/pushed to repro branch
+*** pulled onto gcp (don't forget PAT for github):
+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
+** python3 batch.py --> got an error because I was using wrong downloaded version of cfg .json files!!  --> went back and re-downloaded the correct versions of 0_0 and 0_1
+** python3 batch.py --> worked 
+** Checking run --> sq or sqra --> Finished in 16+ min
+** Data is in A1/data/v34_batch27 --> hmm, seeing that there is no raster or LFP plot --> checking v34_batch27.run and I see that it exits with "mpirun noticed that process rank 0 with PID 2619 on node g5-n1-compute-0-1 exited on signal 11 (Segmentation fault)." --> this happened after "gathering data..." so presumably this is because this is too large!! :( :( :( 
+** Try running again but maybe at VERY low density --> 0.075 
