@@ -723,7 +723,7 @@ def custom():
 
     # from prev 
     import json
-    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+    with open('data/lfpSimFiles/v34_batch27_0_0_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
@@ -746,9 +746,9 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500
-    initCfg['printPopAvgRates'] = [1500, 11500] 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['duration'] = 10000 #11500
+    initCfg['printPopAvgRates'] = [1500,10000] #[1500, 11500] 
+    initCfg['scaleDensity'] = 0.5 #1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 
@@ -763,6 +763,8 @@ def custom():
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['saveLFPCells'] = True # Default is False ! 
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}

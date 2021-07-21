@@ -45648,25 +45648,236 @@ yeah could try smaller net
 **** view gcloud command (on the right) --> gcloud beta compute ssh --zone "us-central1-f" "g6-n2-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
 **** enter this command in terminal on local machine
 **** passcode is !peter88
-** Merge in changes from salva_layers 
-*** merge in salva's changes --> which branch is he using? 'salva_layers'
-*** merge salva_layers with 'repro' and 'erica' or just repro? try repro for now.
-*** git checkout repro (doing this on local machine)
-*** add/commit any changes (to this nb)
-*** merge with salva_layers 
-*** merge conflicts resolved 
-**** batch.py, analysis/batchAnalysis.py, cfg.py, sdnotes.org
-**** should be all set now! 
-*** pull these changes on gcloud
+** Merge in changes from salva_layers on local machine
+*** salva's branch -->  'salva_layers'
+*** git checkout repro
+*** git add/commit/push 
+*** git checkout salva_layers
+*** git pull
+*** git checkout repro
+*** git merge salva_layers 
+*** Resolve merge conflicts:
+****     # conn gains 
+<<<<<<< HEAD
+    # params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 1] #[wmat['IT2']['PV2'] * 0.75]
+    # params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
+    # params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
+    # params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
+    params[('wmat', 'VIP2', 'SOM2')] = [wmat['VIP2']['SOM2'] * 0.5]
+    params[('wmat', 'VIP3', 'SOM3')] = [wmat['VIP3']['SOM3'] * 0.5]
+=======
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
+>>>>>>> salva_layers
+
+****     # good thal params for 100% cell density 
+<<<<<<< HEAD
+    with open('data/edit1_v34_batch15/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+=======
+    #with open('data/v34_batch23/trial_5955/trial_5955_cfg.json', 'rb') as f:
+    #    cfgLoad2 = json.load(f)['simConfig']
+>>>>>>> salva_layers
+
+**** <<<<<<< HEAD
+    # b = optunaRatesLayersWmat() ## ERICA NOTE: this is the one that was uncommented originally 
+=======
+    # b = optunaRatesLayersWmat()
+>>>>>>> salva_layers
+
+**** <<<<<<< HEAD
+    b.batchLabel = 'edit1_v34_batch15' 
+=======
+    b.batchLabel = 'v34_batch27' 
+>>>>>>> salva_layers
+*** other files that were modified:
+**** analysis/optunaAnalysis.py
+**** cfg.py
+**** sdnotes.org
+
+*** REMINDER: All done on LOCAL MACHINE
+** Login to gcloud:
+*** gcloud beta compute ssh --zone "us-central1-f" "g6-n2-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** passcode is !peter88
+*** hm --> ERRORS!
+ERROR: (gcloud.beta.compute.start-iap-tunnel) Error while connecting [4033: 'not authorized'].
+kex_exchange_identification: Connection closed by remote host
+ERROR: (gcloud.beta.compute.ssh) [/usr/bin/ssh] exited with return
+code [255].
+*** Ah, when I go to https://console.cloud.google.com/compute/instances?cloudshell=true&project=ecas2-nsf1904444 --> I see that this instance is stopped 
+*** I see that g5-n1-controller is active: 
+*** gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** WORKED
+** Pull changes onto repro branch on gcp:
+*** login as above
+*** jesus lord --> none of my files or anything are here :( 
+*** have to re-create like I did before!??!!
+*** netpyne not there, etc. 
+
+** START OVER ON GCP -- NOTHING THERE NOW UGH:
+*** A1:
+**** git clone A1 by url (in home dir on gcp)
+**** password is PAT for git now: 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
+*** NETPYNE: 
+**** (1) Clone my fork of netpyne into my home directory on gcp 
+***** Fork exists at: https://github.com/ericaygriffith/netpyne
+***** clone it to gcp
+****** ssh into g6-n2-controller
+****** git clone https://github.com/ericaygriffith/netpyne.git
+****** clone exists in: ~/netpyne (/home/ext_ericaygriffith_gmail_com/netpyne)
+***** NOTE: git branch --> development 
+**** (2) CHECK REMOTES: 
+***** cd to netpyne subdir above
+***** git remote -v    --> 
+***** origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+***** origin	https://github.com/ericaygriffith/netpyne.git (push)
+**** (3) ADD UPSTREAM:
+***** git remote add upstream https://github.com/Neurosim-lab/netpyne
+***** VERIFY --> git remote -v --> 
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push)
+***** NOTE: my fork is "origin", official netpyne repo is "upstream"
+**** (4) Sync my fork and my clone to the official netpyne repo
+***** INFO: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
+***** cd ~/netpyne
+***** git fetch upstream
+***** git checkout development
+***** git merge upstream/development
+*** bashrc:
+**** [OLD] full file:
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and function
+
+
+    #export N=root/nrn
+    #export CPU=x86_64
+    #export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=/usr/local/lib64/python3.6/site-packages/:/usr/local/lib/python3.6/site-packages:/usr/local/python:~/netpyne:$PYTHONPATH    
+    #export PYTHONPATH= $N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export SITE=/usr/local/site
+    #export NEURONHOME=$N/share/nrn
+    #export MODL_INCLUDE=$SITE/local/mod
+    #export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+    
+    export PATH=/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+    
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+    alias cpgs='gsutil -m cp -r'
+**** ^^ nrniv -python still doesn't work, and which nrniv turns up nothing
+**** Added the following to my bashrc, according to my above record of salva's bashrc:
+export LD_LIBRARY_PATH=/usr/local/lib64/python3.6/site-packages/:/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+export PYTHONHOME="/usr"
+
+NOTE ^^ I added just the first part of the path to LD_LIBRARY_PATH;
+the second part was already there! 
+
+**** Added neuron lines to ~/.bashrc (didn't seem to make a huge diff): 
+export N=/usr/local/nrn
+export NEURONHOME=$N/share/nrn
+**** Added the following line to path (DID seem to work!!):
+export PATH=/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$PATH
+
+^^ Added the /usr/local/nrn/x86_64/bin to path above~
+**** full file:
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+    export N=/usr/local/nrn
+    export NEURONHOME=$N/share/nrn
+    #export N=root/nrn
+    #export CPU=x86_64
+    #export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=/usr/local/lib64/python3.6/site-packages/:/usr/local/lib/python3.6/site-packages:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export PYTHONPATH= $N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export SITE=/usr/local/site
+    #export NEURONHOME=$N/share/nrn
+    #export MODL_INCLUDE=$SITE/local/mod
+    #export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+
+    export PATH=/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/lib64/python3.6/site-packages/:/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+    alias cpgs='gsutil -m cp -r'
+~                                  
+*** Now the following work! :
+**** whch nrniv, which nrnivmodl
+**** nrniv -python
+**** python3 --> import netpyne --> from neuron import h
+** ^^ Now, neuron, netpyne, python3, etc. all working on gcp again. 
+** [DONE] Compile mod files in A1
+*** [NOT NECESSARY - DOES NOT EXIST YET] rm -r mod/x86_64
+*** ln -s mod/x86_64 x86_64
+*** cd mod
+*** nrnivmodl 
+
+** [DONE] get cfg .json files from v34 onto gcp:
+*** on gcp --> cd A1/data --> mkdir lfpSimFiles
+*** on local machine, go to A1/data/lfpSimFiles (location of .json)
+*** on local terminal: gcloud compute scp v34_batch27_0_0_cfg.json ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/lfpSimFiles/
 ** REMINDER -- VIM COMMANDS:
 *** to select and copy text in vim: cursor where you want --> v to go to visual mode --> move cursor to end --> y (yank)
-*** to paste --> p
+*** to paste --> p (ctrl-v if pasting from clipboard??) 
 *** press i to enter interactive mode once opened the file
 *** esc to exit this mode
 *** :w to save
 *** :q to quit 
 *** :q! to really quit 
-
 
 ** Get data and files back and forth from cluster --> bucket --> local machine:
 *** From cluster --> bucket:
@@ -45679,3 +45890,21 @@ yeah could try smaller net
 *** From bucket --> local machine: just download straight from browser - go to gcp console then bucket (https://console.cloud.google.com/storage/browser/eyg_data;tab=objects?forceOnBucketsSortingFiltering=false&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false)
 *** From local machine --> cluster:
 **** 
+** Now that gcp is finally re-set up, scale down the model to 1/2 and set the recordLFPCells to True 
+*** in batch.py, change with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+*** ^^ to correct .json file --> with open('data/lfpSimFiles/v34_batch27_0_0_cfg.json', 'rb') as f:
+* <2021-07-21 Wed -- LFP artifact>
+** login to gcloud -- look at VM instances to see which instances are live today (g6-n2-controller seems to be working today?) 
+** When logged into g6-n2-controller, scp v34 batch27 0_0 cfg json file over into A1/data/lfpSimFiles/ on gcp --> 
+gcloud compute scp v34_batch27_0_0_cfg.json ext_ericaygriffith_gmail_com@g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/lfpSimFiles/
+
+** To scale the density down to 1/2 --> 
+*** Can do this in initcfg in custom() in batch.py OR can do it directly in the cfg file 
+*** Probably do it in initCfg since I'm going to be loading the cfg file from .json 
+*** initCfg['scaleDensity'] = 1.0 --> initCfg['scaleDensity'] = 0.5 
+*** Changing some params in initCfg (duration, printPopAvgRates, and scaleDensity):
+ initCfg['duration'] = 10000 #11500
+ initCfg['printPopAvgRates'] = [1500,10000] #[1500, 11500] 
+ initCfg['scaleDensity'] = 0.5 #1.0
+*** Want to add cfg.saveLFPCells = True --> initCfg['saveLFPCells'] = True
+*** Add/commit/push these changes to 'repro' then pull them on gcp 
