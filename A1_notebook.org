@@ -45939,15 +45939,145 @@ ok you can now save a subset of lfp cells only using usual format, eg cfg.saveLF
 need to pull latest netpyne dev
 *** Make mini model of A1 (w/ just maybe ~1 of each cell type in the LFP tutorial example) and running for ~10 seconds and seeing what happens
 *** Run previous version of A1 (anything prior to v34 -- probably v32 or v33?) for 11.5 s (without cfg.recordLFPCells) and see if this happens in prior versions as well. 
-** To save subset of LFP cells:
-*** 
 ** Trying w/ subset of LFP cells saved:
 *** [TO DO] need to pull latest netpyne dev 
-**** process:
-*** Ask salva if number in saveLFPCells example he gave me corresponds to number of each cell type? Assuming so, but maybe good to ask? 
+**** process on local machine: 
+***** LOCAL MACHINE --> cd ~/Desktop/NEUROSIM/netpyne
+***** git branch 
+  csd
+\* development
+
+***** git checkout development 
+Already on 'development'
+Your branch is up to date with 'origin/development'.
+***** git pull upstream development 
+error: Your local changes to the following files would be overwritten by merge:
+	examples/LFPrecording/net_lfp.py
+Please commit your changes or stash them before you merge.
+Aborting
+***** git restore examples/LFPrecording/net_lfp.py
+***** git pull upstream development --> WORKED
+From https://github.com/Neurosim-lab/netpyne
+ * branch              development -> FETCH_HEAD
+Updating 23950b78..a90d2ea8
+Fast-forward
+ .github/workflows/tests.yml                             |    3 +-
+ .gitignore                                              |    5 +-
+ CHANGES.md                                              |    2 +
+ doc/source/about.rst                                    |    2 +
+ doc/source/contrib.rst                                  |   16 +
+ doc/source/index.rst                                    |    2 +
+ doc/source/reference.rst                                |    2 +-
+ examples/HHTut/HHTut_export.py                          |   13 +
+ examples/HybridTut/HybridTut_export.py                  |    6 +
+ examples/LFPrecording/net_lfp.py                        |    6 +
+ examples/M1/M1_export.py                                |    5 +
+ examples/NeuroMLImport/LEMS_SimpleNet.xml               |    8 +-
+ examples/NeuroMLImport/RS.mod                           |    6 +-
+ examples/NeuroMLImport/SimpleNet.json                   |  447 +++++++++
+ examples/NeuroMLImport/SimpleNet.net.nml                |    6 +-
+ examples/NeuroMLImport/SimpleNet_import.py              |    5 +-
+ examples/NeuroMLImport/poissonFiringSyn.mod             |    6 +-
+ examples/RL_arm/main.py                                 |   10 +-
+ examples/intervalSaveWeights/{README => README.md}      |    0
+ examples/intervalSaveWeights/init.py                    |    6 +-
+ netpyne/analysis/csd.py                                 |    2 +-
+ netpyne/analysis/network.py                             |   21 +-
+ netpyne/analysis/spikes.py                              |    2 +-
+ netpyne/batch/batch.py                                  |   11 +
+ netpyne/conversion/neuromlFormat.py                     |  329 ++++---
+ netpyne/conversion/pythonScript.py                      |   13 +-
+ netpyne/conversion/sonataImport.py                      |   19 +-
+ netpyne/network/subconn.py                              |    2 +-
+ netpyne/sim/load.py                                     |  131 +--
+ netpyne/sim/run.py                                      |   51 +-
+ netpyne/sim/save.py                                     |   19 +-
+ netpyne/sim/setup.py                                    |    7 +-
+ netpyne/sim/utils.py                                    |   74 +-
+ netpyne/sim/wrappers.py                                 |   18 +-
+ .../tutorials/netpyne-course-2021/import_cells.ipynb    |    1 +
+ .../netpyne-course-2021/netpyne_analysis_plotting.ipynb |    1 +
+ .../netpyne-course-2021/netpyne_batch_evol.ipynb        |    1 +
+ .../netpyne-course-2021/netpyne_batch_tut8.ipynb        |    1 +
+ .../netpyne-course-2021/tut_netpyne_artif_stim.ipynb    |    1 +
+ .../netpyne-course-2021/tut_netpyne_import.ipynb        |    1 +
+ .../netpyne-course-2021/tut_netpyne_osc_start.ipynb     |    1 +
+ .../netpyne-course-2021/tut_netpyne_stim.ipynb          |    1 +
+ netpyne/tutorials/netpyne_tut1/netpyne_tut1_ide.ipynb   | 1192 ++++++++++++++++++++++
+ netpyne/tutorials/netpyne_tut1/netpyne_tut1_web.ipynb   | 1201 +++++++++++++++++++++++
+ .../tutorials/voltage_movie_tut/voltage_movie_tut.ipynb |  361 +++++++
+ .../tutorials/voltage_movie_tut/voltage_movie_tut.py    |  141 +++
+ setup.py                                                |  107 +-
+ 47 files changed, 3915 insertions(+), 350 deletions(-)
+ create mode 100644 doc/source/contrib.rst
+ create mode 100644 examples/NeuroMLImport/SimpleNet.json
+ rename examples/intervalSaveWeights/{README => README.md} (100%)
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/import_cells.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/netpyne_analysis_plotting.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/netpyne_batch_evol.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/netpyne_batch_tut8.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/tut_netpyne_artif_stim.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/tut_netpyne_import.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/tut_netpyne_osc_start.ipynb
+ create mode 100644 netpyne/tutorials/netpyne-course-2021/tut_netpyne_stim.ipynb
+ create mode 100644 netpyne/tutorials/netpyne_tut1/netpyne_tut1_ide.ipynb
+ create mode 100644 netpyne/tutorials/netpyne_tut1/netpyne_tut1_web.ipynb
+ create mode 100644 netpyne/tutorials/voltage_movie_tut/voltage_movie_tut.ipynb
+ create mode 100644 netpyne/tutorials/voltage_movie_tut/voltage_movie_tut.py
+
+***** NOTE: git push origin development --> didn't work apparently due to 2-FA changes..? hm! might have to re-clone or something eventually? 
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/ericaygriffith/netpyne.git
+ ! [remote rejected]   development -> development (refusing to allow a Personal Access Token to create or update workflow `.github/workflows/tests.yml` without `workflow` scope)
+error: failed to push some refs to 'https://github.com/ericaygriffith/netpyne.git'
+**** process on gcp:
+***** on gcp --> cd ~/netpyne 
+***** git branch
+\* development
+***** git checkout development
+Already on 'development'
+Your branch is ahead of 'origin/development' by 63 commits.
+  (use "git push" to publish your local commits)
+***** ^^ interesting, hmm... I didn't push or do anything, just letting that go for now. not sure what that's referring to...?
+***** git status --> working directory clean, hm! oh well, leave alone for now!
+***** git remote -v
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push)
+***** git pull upstream development --> appears to have worked! hopefully!
+remote: Enumerating objects: 251, done.
+remote: Counting objects: 100% (163/163), done.
+remote: Compressing objects: 100% (57/57), done.
+remote: Total 101 (delta 76), reused 59 (delta 44), pack-reused 0
+Receiving objects: 100% (101/101), 20.95 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (76/76), completed with 36 local objects.
+From https://github.com/Neurosim-lab/netpyne
+ * branch            development -> FETCH_HEAD
+Updating 2c43b7f..a90d2ea
+Fast-forward
+ CHANGES.md                                            |    2 +
+ doc/source/reference.rst                              |    2 +-
+ examples/LFPrecording/net_lfp.py                      |    6 +
+ examples/intervalSaveWeights/{README => README.md}    |    0
+ netpyne/analysis/spikes.py                            |    2 +-
+ netpyne/batch/batch.py                                |   11 +
+ netpyne/conversion/sonataImport.py                    |   19 +-
+ netpyne/network/subconn.py                            |    2 +-
+ netpyne/sim/run.py                                    |    2 +-
+ netpyne/sim/save.py                                   |    2 +-
+ netpyne/sim/setup.py                                  |    7 +-
+ netpyne/tutorials/netpyne_tut1/netpyne_tut1_ide.ipynb | 1192 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ netpyne/tutorials/netpyne_tut1/netpyne_tut1_web.ipynb | 1201 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ setup.py                                              |  107 +++----
+ 14 files changed, 2484 insertions(+), 71 deletions(-)
+ rename examples/intervalSaveWeights/{README => README.md} (100%)
+ create mode 100644 netpyne/tutorials/netpyne_tut1/netpyne_tut1_ide.ipynb
+ create mode 100644 netpyne/tutorials/netpyne_tut1/netpyne_tut1_web.ipynb
 *** Changing batch.py
 **** b.batchLabel goes back to v34_batch27 --> now in A1/data (on gcp) there are v34_batch27_halfDensity, v34_batch27_lowDensity, and now there will be v34_batch27 
 **** in custom func --> 
 ***** change duration back to 11500 --> (initCfg['duration'] = 11500 # 9000)
 ***** change printPopAvgRates back to original time Range --> initCfg['printPopAvgRates'] = [1500, 11500] # [1500,9000]  
 ***** change scale density back to 1 --> initCfg['scaleDensity'] = 1.0 
+***** [TO DO] Change saveLFPCells from True to recording subset of cells --> initCfg['saveLFPCells'] = 
