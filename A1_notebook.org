@@ -45908,3 +45908,9 @@ gcloud compute scp v34_batch27_0_0_cfg.json ext_ericaygriffith_gmail_com@g6-n2-c
  initCfg['scaleDensity'] = 0.5 #1.0
 *** Want to add cfg.saveLFPCells = True --> initCfg['saveLFPCells'] = True
 *** Add/commit/push these changes to 'repro' then pull them on gcp 
+*** Commented out the following two params lines:
+    #params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in
+    #range(5)]
+*** Can I leave the groupedParams = [] empty? Try it. 
+*** Further changes --> scaleDensity is actually going to be 0.25 for a first try, and shortening duration to 9000ms. 

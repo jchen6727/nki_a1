@@ -737,8 +737,8 @@ def custom():
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
+    #params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -746,9 +746,9 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 10000 #11500
-    initCfg['printPopAvgRates'] = [1500,10000] #[1500, 11500] 
-    initCfg['scaleDensity'] = 0.5 #1.0
+    initCfg['duration'] = 9000 #11500
+    initCfg['printPopAvgRates'] = [1500,9000] #[1500, 11500] 
+    initCfg['scaleDensity'] = 0.25 #1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 
