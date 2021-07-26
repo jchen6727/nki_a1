@@ -799,7 +799,7 @@ def custom():
             initCfg.update({p: cfgLoad[p]})
 
     # good thal params for 100% cell density 
-    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain'] #, 'wmat']
 
     for p in updateParams2:
         if isinstance(p, tuple):

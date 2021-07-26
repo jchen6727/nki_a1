@@ -46151,5 +46151,14 @@ gcloud compute scp --recurse g5-n1-controller:/home/ext_ericaygriffith_gmail_com
 *** on gcp:
 **** pulled changes 
 **** already have dir --> A1/data/v32_batch28
+*** Error w/ python3 batch.py (wmat):
+Traceback (most recent call last):
+  File "batch.py", line 2770, in <module>
+    b = custom()
+  File "batch.py", line 808, in custom
+    initCfg.update({p: cfgLoad2[p]})
+KeyError: 'wmat'
+*** Commented out 'wmat' in updateParams2 in batch.py?? 
+---> updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain'] #, 'wmat']
 ** ^^ while earlier version is running at full-scale without recording, see how to load individual lfp traces from quarter-density run. 
 
