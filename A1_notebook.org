@@ -46102,3 +46102,13 @@ Fast-forward
 **** Q: should I also change custom function, such that the initCfg['duration'] is 10000 vs 11500 ms? and subsequently change initCfg['printPopAvgRates'] 
 * <2021-07-26 Mon -- LFP artifact>
 ** Try scaling down without recording and seeing if artifact is still there 
+** g5-n1-controller 
+*** gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** ^^ login
+*** Changes to batch.py:
+**** initCfg['scaleDensity'] = 0.25
+**** v34_batch27_0_0_cfg --> same
+**** b.batchLabel = 'v34_batch27_quarterDensity'
+**** commented out lines initCfg['saveLFPCells']
+**** on gcp, in A1/data --> mkdir v34_batch27_quarterDensity
+

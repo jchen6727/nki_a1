@@ -748,7 +748,7 @@ def custom():
     
     initCfg['duration'] = 11500 # 9000 
     initCfg['printPopAvgRates'] = [1500, 11500] # [1500,9000]  
-    initCfg['scaleDensity'] = 1.0   #0.075 #0.25 
+    initCfg['scaleDensity'] = 0.25 #1.0   #0.075 #0.25 
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 
@@ -765,13 +765,13 @@ def custom():
     initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
 
-    # save LFP trace from first cell of each pop 
-    initCfg['saveLFPCells'] = [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0]),
-                                ('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
-                                ('ITP4', [0]), ('ITS4', [0]), ('SOM4', [0]), ('PV4', [0]), ('VIP4', [0]), ('NGF4', [0]),
-                                ('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
-                                ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0]), 
-                                ('IT6', [0]), ('CT6', [0]), ('SOM6', [0]), ('PV6', [0]), ('VIP6', [0]), ('NGF6', [0])] # [3, 'PYR', ('PV2', 5)] # True # Default is False ! 
+    ## save LFP trace from first cell of each pop 
+    #initCfg['saveLFPCells'] = [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0]),
+                                # ('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
+                                # ('ITP4', [0]), ('ITS4', [0]), ('SOM4', [0]), ('PV4', [0]), ('VIP4', [0]), ('NGF4', [0]),
+                                # ('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
+                                # ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0]), 
+                                # ('IT6', [0]), ('CT6', [0]), ('SOM6', [0]), ('PV6', [0]), ('VIP6', [0]), ('NGF6', [0])] # [3, 'PYR', ('PV2', 5)] # True # Default is False ! 
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -2780,7 +2780,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27'  # lowDensity == 0.075 == 7.5% density 
+    b.batchLabel = 'v34_batch27_quarterDensity'  # lowDensity == 0.075 == 7.5% density 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
