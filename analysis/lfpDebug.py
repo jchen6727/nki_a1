@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 from neuron import h
 
 ## Load sim from .pkl file 
-fn = '../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
-sim.load(fn)#,instantiate=False) # fn should be .pkl netpyne sim file 
+fn = '../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl' #'../data/v32_batch28/v32_batch28_data.pkl' #'../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl'	#'../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
 
+sim.load(fn,instantiate=False) # fn should be .pkl netpyne sim file 
+# NOTE: instantiate=False makes sim.net.compartCells an empty list 
 
 
 ## Plot LFP 
@@ -14,7 +15,7 @@ sim.load(fn)#,instantiate=False) # fn should be .pkl netpyne sim file
 #sim.analysis.plotLFP(plots=['timeSeries', 'spectrogram'], timeRange=[8000,8500], electrodes=[10])   # 'PSD' 
 
 
-## Try literally re-creating the lfp plotting lines to see where things get weird 
+## Try re-creating the lfp plotting lines to see where things get weird 
 timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
 
 lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
@@ -30,44 +31,59 @@ lfpPlot = lfp[:, elec]
 lfpZeroInd = np.where(lfpPlot==0)
 lfpZeroInd = list(lfpZeroInd[0])
 
-# print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
-# print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
-# print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
-# print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
-# print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
-# print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
-
+print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
+print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
+print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
+print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
+print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
+print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
+print('lfpZeroInd[6]: ' + str(lfpZeroInd[6]))
+print('lfpZeroInd[7]: ' + str(lfpZeroInd[7]))
 
 ## Plot LFP 
-#plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
+# plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
 # plt.plot(t,lfp[:,10])
 # plt.show()
 
 
-## Testing tr and im 
-cell0 = sim.net.compartCells[0]
-cell1 = sim.net.compartCells[1]
+# ## Testing tr and im 
+# cell0 = sim.net.compartCells[0]
+# cell1 = sim.net.compartCells[1]
 
-gid0 = cell0.gid
-gid1 = cell1.gid
+# gid0 = cell0.gid
+# gid1 = cell1.gid
 
-im0 = cell0.getImemb()
-im1 = cell1.getImemb()
+# im0 = cell0.getImemb()
+# im1 = cell1.getImemb()
 
-print('im0: ' + str(im0))
-print('im1: ' + str(im1))
+# print('im0: ' + str(im0))
+# print('im1: ' + str(im1))
 
-tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
-tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
+# tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
+# tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
 
-print('tr0: ' + str(tr0))
-print('tr1: ' + str(tr1))
+# print('tr0: ' + str(tr0))
+# print('tr1: ' + str(tr1))
 
-ecp0 = np.dot(tr0, im0)
-ecp1 = np.dot(tr1, im1)
+# ecp0 = np.dot(tr0, im0)
+# ecp1 = np.dot(tr1, im1)
 
-print('ecp0: ' + str(ecp0))
-print('ecp1: ' + str(ecp1))
+# print('ecp0: ' + str(ecp0))
+# print('ecp1: ' + str(ecp1))
+
+
+###########################################
+# Loading individual LFP traces
+LFPCellDict = sim.allSimData['LFPCells']
+print('Dict keys for LFPCells: ' + str(LFPCellDict.keys()))
+
+LFPCells = LFPCellDict.keys()
+for cell in LFPCells:
+	elec = 4  	# arbitrary -- which electrode do you want to plot?
+	LFPtrace = LFPCellDict[cell][:,elec]
+	LFPtrace = list(LFPtrace) ## necessary?
+	plt.plot(t,LFPtrace)
+	plt.show()
 
 
 

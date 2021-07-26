@@ -46100,7 +46100,7 @@ Fast-forward
 **** in custom() function, change file being opened --> with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb') as f:
 **** in main code at bottom, change b.batchLabel to change where data will be saved --> b.batchLabel = 'v32_batch28'
 **** Q: should I also change custom function, such that the initCfg['duration'] is 10000 vs 11500 ms? and subsequently change initCfg['printPopAvgRates'] 
-* <2021-07-26 Mon -- LFP artifact>
+* <2021-07-26 Mon -- LFP artifact and wavelet code>
 ** Try scaling down without recording and seeing if artifact is still there 
 ** Run quarter-scale density with no lfp recording for 11500 ms: 
 *** g5-n1-controller 
@@ -46159,6 +46159,170 @@ Traceback (most recent call last):
     initCfg.update({p: cfgLoad2[p]})
 KeyError: 'wmat'
 *** Commented out 'wmat' in updateParams2 in batch.py?? 
----> updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain'] #, 'wmat']
+---> updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain',
+'EbkgThalamicGain', 'IbkgThalamicGain'] #, 'wmat']
+*** python3 batch.py --> running! --> ran!
+*** get from cluster to bucket (do this on gcp) --> 
+gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/v32_batch28
+gs://eyg_data/A1/v32_batch28
+*** get from cluster --> local machine (do this on local machine) --> 
+gcloud compute scp --recurse
+g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v32_batch28
+/Users/ericagriffith/Desktop/NEUROSIM/A1/data 
 ** ^^ while earlier version is running at full-scale without recording, see how to load individual lfp traces from quarter-density run. 
+** Now having some trouble loading .pkl file w/ new netpyne --> did I make sure to pull new netpyne onto local machine? 
+*** Yes I believe I did, but do it again
+*** cd ~/NEUROSIM/netpyne (on local machine)
+*** git branch  --> * development
+*** git checkout development
+*** git pull upstream development
+Fast-forward
+ examples/LFPrecording/net_lfp.py |  8 +----
+ netpyne/analysis/lfp.py          | 67 +++++++++++++---------------------------
+ netpyne/sim/gather.py            |  7 +++--
+ netpyne/sim/load.py              | 25 +++++++++------
+ netpyne/sim/save.py              | 56 ++++++++++++++++++++-------------
+ 5 files changed, 78 insertions(+), 85 deletions(-)
+*** Try again --> same error
+Loading net...
+  Created 3209 cells
+  Created 0 connections
+  Created 9627 stims
+  Done; re-instantiate net time = 1.38 s
+Loading simData...
+Recording 0 traces of 0 types on node 0
+Traceback (most recent call last):
+  File "lfpDebug.py", line 8, in <module>
+    sim.load(fn)#,instantiate=False) # fn should be .pkl netpyne sim file 
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/wrappers.py", line 387, in load
+    simData = sim.setupRecording()              # setup variables to record for each cell (spikes, V traces, etc)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/setup.py", line 441, in setupRecording
+    setupRecordLFP()
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/setup.py", line 327, in setupRecordLFP
+    sim.net.calcSegCoords()  # calculate segment coords for each cell
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/network/shape.py", line 42, in calcSegCoords
+    cell.calcAbsSegCoords()
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/cell/compartCell.py", line 1356, in calcAbsSegCoords
+    p3dsoma = self.getSomaPos()
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/cell/compartCell.py", line 1333, in getSomaPos
+    sec['hObj'].push()
+TypeError: 'Dict' object is not callable
+>>> 
+** Although error (see above) is happening, seems that most of the data does get loaded, so proceed anyway. fix later. --> instantiate = False gets rid of this error --> why did I comment this out in the first place? --> makes sim.net.compartCells an empty list. needed this list to not be empty in order to look at Imemb, etc. (see lfpDebug.py) 
+** quarterdensity --> although note that this DOESN'T have lfp traces recorded!!! 
+*** lfp zero indices:
+>>> print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
+lfpZeroInd[0]: 2
+>>> print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
+lfpZeroInd[1]: 46
+>>> print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
+lfpZeroInd[2]: 752
+>>> print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
+lfpZeroInd[3]: 12046
+>>> print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
+lfpZeroInd[4]: 82548
+>>> print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
+lfpZeroInd[5]: 82551
+*** yup!!! Happens at 8254 ms like it does at full density. 
+*** after this timepoint, appears to occur every 3 timepoints, like it does at full density. 
+** QD_rec --> this DOES have lfp traces recorded 
+*** not all of the lfp traces, but 1 cell each from IT2, ITS4 and PV3
+*** how to access?
+*** from netpyne documentation ---> saveLFPCells - Store LFP generated individually by each cell in sim.allSimData['LFPCells']
+** MEETING:
+*** focusing more on comparison or more on model-building? 
+*** model-building + validation
+*** compare spontaneous -- but depends on level of detail, select whatever looks good. 
+*** the data is available --> all the features were extracted, and all the stuff that's in the oscillations paper is available, and somewhere on NKI machines. 
+*** firing rates per population --> what salva did for the M1 paper, not sure there is anything like that for A1 -- without the spike sporting it's hard to get those numbers, which is a pretty big effort on the kinds of electrodes, don't think it's been done that much -- so we can just try with these results then if the reviewers complain then we'll figure that out --> 
+*** LFP artifact 
+*** most benefit as having matlab as a front end for neuron -- new grant 
+*** matlab has bunch of auditory stuff and toolboxes 
+** Revive cosyne figure process:
+*** a1dat/load.py
+*** use A1/data/lfpSimFiles --> A1_v34_batch27_v34_batch27_0_0.pkl (or 0_1, 0_3, 0_3, 0_4, 1_0, etc.)
+*** ^^ Could look on salvador's bucket on gcp (on browser -- salvadord_data2) to look at raster, etc. for one that looks best / fun / good! but stick with the ones I have for now I think. 
+*** Put these in A1/data/simDataFiles/spont on local machine --> scp them over to gcp 
+**** Files copied from A1/data/lfpSimFiles to A1/data/simDataFiles/spont:
+A1_v34_batch27_v34_batch27_0_0.pkl
+A1_v34_batch27_v34_batch27_0_1.pkl
+A1_v34_batch27_v34_batch27_0_2.pkl
+A1_v34_batch27_v34_batch27_0_3.pkl
+A1_v34_batch27_v34_batch27_0_4.pkl
+A1_v34_batch27_v34_batch27_1_0.pkl
+**** [DONE] scp them over to gcp:
+***** cd on local machine to A1/data/simDataFiles/spont
+***** gcloud compute scp A1_v34_batch27_v34_batch27_0_0.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** TO GET ALL OF THEM AT ONCE: gcloud compute scp A1_v34_batch27_v34_batch27_0_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** gcloud compute scp A1_v34_batch27_v34_batch27_1_0.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+**** [DONE] scp over simDataLayers.csv as well:
+gcloud compute scp simDataLayers.csv ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+*** Get most recent version of a1dat on gcp g5-n1-controller:
+**** --> branch *erica (on local machine)
+**** I see there are two files with modifications that haven't been committed -- speech.py and simdat.py (imagine these were for cosyne -- would have to go back and see what they were for, but commit for now, and push) 
+**** [DONE] clone a1dat onto gcp:
+***** url on github: https://github.com/NathanKlineInstitute/a1dat
+***** clone command: git clone https://github.com/NathanKlineInstitute/a1dat.git
+***** on gcp --> cd ~ --> git clone https://github.com/NathanKlineInstitute/a1dat.git
+***** git checkout erica 
+***** git pull origin erica
+**** [DONE] make local modifications to load.py, push on local, pull on gcp just to test it's all working:
+***** changed donetpyne from =0 to =1
+***** Changed basedir under "if donetpyne:" to /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/ (change from last subdir in path being 'speech')
+***** WORKED
+**** see what gcp setup I was using for cosyne as well:
+*** How load.py was run previously: 
+**** From previous entry:
+run in a1dat: python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_1.pkl
+**** From entry from 02/11:
+***** Trying to run load.py on gcp again (v32, batch20_0 -- full density, 1s, w/ LFP):
+****** on gcp: cd ~/a1dat
+****** git branch: erica
+****** git pull origin erica (load.py changes pulled)
+****** python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch20_v32_batch20_0_0.pkl
+****** Works!!
+**** From entry on 2/10:
+***** Run load.py on gcp:
+****** Had to install h5py and hdf5storage -- 'sudo pip3 install h5py' and 'sudo pip3 install hdf5storage'
+****** monkey:
+******* on gcp
+******* cd ~/a1dat
+******* python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 
+****** sim:
+******* on gcp
+******* cd ~/a1dat
+******* [WORKED!] python3 load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch5_v32_batch5_0.pkl
+**** So -- warning, may have to install h5py and hdf5storage:
+Had to install h5py and hdf5storage -- 'sudo pip3 install h5py' and 'sudo pip3 install hdf5storage'
 
+*** NOTES on a1dat usage for figures from previous entries:
+**** speech wavelet procedure outlined in part in 02/19 entry! for future reference. 
+**** spont wavelets --> 02/18 -- make SPONT wavelets sub-entry!! 
+** a1dat wavelet generation:
+*** Believe this is done w/ load.py (in a1dat) 
+*** (1) for sim data --> donetpyne=1
+*** (2) make sure basedir and dbpath are correct 
+**** basedir --> path to dir w/ the data files 
+**** dbpath --> path to .csv file 
+*** (3) lchan determines what channel / layer (e.g. supragranular, granular, infragranular) is being looked at -->
+s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+lchan = [g]
+*** (4) timeRange --> see comments for more info --> default to None I believe is okay if want the full range?
+*** (5) oscBands --> 
+**** oscBands = ['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
+**** then it goes band by band ("for oscBand in oscBands:") --> but potentially can change this list to just one at a time I think if need / want to look more closely at something specific? 
+*** Then run load.py (on gcp) --> 
+python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v32_batch28_v32_batch28_0.pkl
+*** Then scp over to local machine to take a look at the figures:
+gcloud compute scp ext_ericaygriffith_gmail_com@g5-n1-controller:'/home/ext_ericaygriffith_gmail_com/a1dat/*.png' /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/v34_simFigs/
+** CSD time series / spec comparison:
+*** Believe this is done with nhpspecdat.py (in a1dat)
+*** Set dataType (sim or monkey)
+*** Set recordingType (speech or spont)
+*** Set correct based (path to directory with data files) 
+**** NOTE: right now, this is set to path on local machine, presumably this could be done on gcp
+*** Set lfn --> 
+**** If doing all .pkl files, set with for loop, and I assume commment out the line lfp = []
+**** Or if doing one or two files, set lfn = [] to list with specific .pkl files. 
+*** Change or keep savefig line that determines name/location of saved .png file
+*** If on gcp, scp .png files over to local machine to take a look. 
