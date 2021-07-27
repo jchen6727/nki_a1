@@ -46326,3 +46326,255 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g5-n1-controller:'/home/ext_eric
 **** Or if doing one or two files, set lfn = [] to list with specific .pkl files. 
 *** Change or keep savefig line that determines name/location of saved .png file
 *** If on gcp, scp .png files over to local machine to take a look. 
+** Try wavelet generation using v34:
+*** (1) donetpyne = 1
+*** (2) basedir --> correct; dbpath --> correct
+*** (3) lchan --> currently set to granular; fine (lchan = [g])
+*** (4) timeRange --> keeping at [0,150] for now, just for testing
+*** (5) keeping all oscBands for now
+*** on gcp --> cd to a1dat
+*** run load.py --> python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+*** Had to install h5py and hdf5storage -- 'sudo pip3 install h5py' and 'sudo pip3 install hdf5storage'
+*** soundfile issue:
+**** No module named soundfile --> sudo pip3 install pysoundfile
+**** ^^ seemed like it worked, but when running load.py:
+Traceback (most recent call last):
+  File "load.py", line 2384, in <module>
+    import soundfile as sf # pip install pysoundfile
+  File "/usr/local/lib64/python3.6/site-packages/soundfile.py", line 267, in <module>
+    _snd = _ffi.dlopen('sndfile')
+  File "/usr/local/lib64/python3.6/site-packages/cffi/api.py", line 150, in dlopen
+    lib, function_cache = _make_ffi_library(self, name, flags)
+  File "/usr/local/lib64/python3.6/site-packages/cffi/api.py", line 832, in _make_ffi_library
+    backendlib = _load_backend_lib(backend, libname, flags)
+  File "/usr/local/lib64/python3.6/site-packages/cffi/api.py", line 827, in _load_backend_lib
+    raise OSError(msg)
+OSError: ctypes.util.find_library() did not manage to locate a library called 'sndfile'
+**** Tried 'sudo pip3 install soundfile'
+WARNING: Running pip install with root privileges is generally not a good idea. Try `pip3 install --user` instead.
+Collecting soundfile
+  Downloading https://files.pythonhosted.org/packages/eb/f2/3cbbbf3b96fb9fa91582c438b574cff3f45b29c772f94c400e2c99ef5db9/SoundFile-0.10.3.post1-py2.py3-none-any.whl
+Requirement already satisfied: cffi>=1.0 in /usr/local/lib64/python3.6/site-packages (from soundfile)
+Requirement already satisfied: pycparser in /usr/local/lib/python3.6/site-packages (from cffi>=1.0->soundfile)
+Installing collected packages: soundfile
+Successfully installed soundfile-0.10.3.post1
+**** Tried running again --> 
+Traceback (most recent call last):
+  File "load.py", line 2384, in <module>
+    import soundfile as sf # pip install pysoundfile
+  File "/usr/local/lib64/python3.6/site-packages/soundfile.py", line 142, in <module>
+    raise OSError('sndfile library not found')
+OSError: sndfile library not found
+**** stack overflow: 
+https://stackoverflow.com/questions/55086834/cant-import-soundfile-python
+**** github:
+ https://github.com/bastibe/python-soundfile#breaking-changes
+**** sudo apt-get --> apt-get: command not found
+**** however, which yum --> /usr/bin/yum    --> from what I'm reading, yum and apt-get are both package managers and can use yum to install this libsndfile1 package -- though some are sayilibsndfile1-dev...? which to do? 
+**** Try installing libsndfile1-dev with yum: 
+sudo yum install libsndfile1-dev
+---> No package libsndfile1-dev available.
+**** alternatives to try if the above doesn't work:
+***** sudo yum install libsndfile1 ---> No package libsndfile1 available.
+***** sudo yum install libsndfile-dev --> No package libsndfile-dev available.
+**** for now --> commenting out line about import soundfile as sf (line 2384) --> 
+***** will affect loadwavedat() function and readwav() function
+*** load.py RAN --> issue w/ channel:
+**** see partial output: total number of events = 161
+lcyckeys completed
+columns.append completed
+levent loop starting
+band: delta
+chan: -1
+levent loop starting
+band: delta
+chan: -1
+levent loop starting
+band: theta
+chan: -1
+levent loop starting
+band: theta
+chan: -1
+levent loop starting
+band: alpha
+chan: -1
+levent loop starting
+band: alpha
+chan: -1
+levent loop starting
+band: beta
+chan: -1
+levent loop starting
+band: beta
+chan: -1
+levent loop starting
+band: gamma
+chan: -1
+levent loop starting
+band: gamma
+chan: -1
+levent loop starting
+band: hgamma
+chan: -1
+levent loop starting
+band: hgamma
+chan: -1
+df -- GetDFrame completed
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 0
+dfs length of hgamma = 0
+**** so, total number of events detected was 161, but, chan: -1 usually means something going wrong, so look at .csv file --> ah! not a grepstr() problem, but instead I didn't add the files to the .csv. Change this!
+**** Added files to .csv 
+**** comma delimited, utf-8 encoding
+**** scp this over to gcp: 
+***** on local machine, cd to ~/A1/data/simDataFiles/spont
+***** gcloud compute scp simDataLayers.csv ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+**** okay now little test seems to work:
+***** python3 --> from nhpdat import * --> set dbpath and fn --> s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+**** try load.py again! 
+*** Trying again after fixing issue w/ channel:
+python3 -i load.py
+/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+*** RAN!  (partial output below)
+total number of events = 151
+lcyckeys completed
+columns.append completed
+levent loop starting
+band: delta
+chan: 9
+levent loop starting
+band: delta
+chan: 9
+levent loop starting
+band: theta
+chan: 9
+levent loop starting
+band: theta
+chan: 9
+levent loop starting
+band: alpha
+chan: 9
+levent loop starting
+band: alpha
+chan: 9
+levent loop starting
+band: beta
+chan: 9
+levent loop starting
+band: beta
+chan: 9
+levent loop starting
+band: gamma
+chan: 9
+levent loop starting
+band: gamma
+chan: 9
+levent loop starting
+band: hgamma
+chan: 9
+levent loop starting
+band: hgamma
+chan: 9
+df -- GetDFrame completed
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 1
+channel:9, event:121, power:5.0
+gamma: minF:53.5 Hz, maxF:75.5 Hz, peakF:62.25 Hz, Foct:0.34
+-71.1218552185519 -42.171565715656925
+duration:57.9 ms, 4 peaks, 3.6 cycles, filtsigcor:0.67
+15.729013290133025 44.679302793028
+dfs length of hgamma = 0
+*** Now in a1dat.py: A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_gamma.png
+*** scp this file over to local machine:
+gcloud compute scp --recurse g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_gamma.png /Users/ericagriffith/Desktop
+** wavelet generation successful 
+* <2021-07-27 Tue -- wavelets and CSD comparison figs>
+** wavelet generation successful yesterday -- more work to do in terms of zeroing in on a specific frequency band, and broadening the time range, but come back to this later, after doing more on CSD comparison figures. 
+** CSD figures:
+*** nhpspecdat.py 
+*** in a1dat/nhpspecdat.py (in 'erica' branch) --> notes:
+**** set recordingType = 'spont' (from 'speech') 
+**** based --> right now this is set to a directory on my local machine; change this to gcp directory or continue to run locally...? 
+**** what is the point of dlyr lines..? I understand what they do but don't recall their significance. 
+**** startTime and endTime -- 
+***** currently these are set to 1 and 4. respectively. Surely this isn't in ms...? looks like they are in seconds, which makes sense given the ms to s conversion noted/referenced in comments of load.py for sim data. 
+***** However, what was the sim.cfg.duration of these runs? ah, okay so v32_batch28 cfg json file shows that duration was 4500ms, so this is reasonable. 
+**** msn = getspec(args) -- what are all the args exactly:
+***** okay CSD_data is self-explanatory
+***** sampr is the sampling rate, and is derived from loadone()
+***** chan is the channel and it's iterating over lchan, which is declared outside the larger 'for ln in lfn' loop in the dlyr lines 
+***** freqmin -- currently 0.25
+***** freqmax -- currently 80
+***** freqstep -- currently 0.25
+***** start time & end time -- set just before this 'for chan in lchan' loop 
+**** Any issues that I see in the figure generation...? I wonder if this is potentially only printing one per filename, but is that okay, or is that potentially missing any? I think not, because this is for the CSD time series and spectrogram for supra/gran/infragran layers, so it's not like it is for the wavelet generation, so, okay! 
+*** Things to check/change in nhpspecdat.py main code block:
+**** dataType (sim or monkey)
+**** recordingType (spont or speech)
+**** based --> this is path to directory with data files & csv file 
+**** lfn --> manually set in list, or comment out if processing all .pkl files 
+**** startTime and endTime 
+*** Changes to nhpspecdat.py:
+**** Changed the way path to data files is concatenated:
+***** added a machineType variable (local, gcp, or neurosim)
+***** deleted the following lines: 
+	# if recordingType == 'spont':
+	# 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont'	# directory with data files 
+	# 	csvFile = '/simDataLayers.csv'
+	# elif recordingType == 'speech':
+	# 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech'			#'/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1'	# directory with data files 
+	# 	csvFile = '/simDataLayers.csv'
+
+**** Changed the way .pkl data files are gathered for processing
+***** allDataFiles = 0 /// someDataFiles = 1
+*** Trying run of nhpspecdat.py on local machine!! --> worked!!!! 
+** Pull a1dat changes onto gcp (can run locally, but pull changes if want to work on gcp):
+gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+** Plan for figures:
+*** First deal with sim figures -- 
+**** (1) Download all the v34 sims from salvador's bucket (.pkl at least, mabye not .cfg for now)
+**** (2) Put all of these on local machine (~/Desktop/NEUROSIM/A1/data/simDataFiles/spont)
+**** (3) Put all of these on gcp (scp to A1/data/simDataFiles/spont)
+**** (4) Update .csv file -- OR update code to reflect that all sim files will use the same layer to channel correspondence? 
+***** Is there a way for the sim to just use the same layers for all of them vs. having to put each and every one into the .csv file...? seems silly since we know for sure that they will all be the same. 
+***** Either way -- either update relevant code somehow (what code? load.py? anything else?), or scp the .csv to gcp after updating it on local machine. 
+**** (5) For each of the v34 sim variations (could look thru bucket raster plots, etc. to see which ones are "good" - or do all of them?), find wavelets: 
+***** Try to find wavelets in each frequency band? 
+***** Look for wavelets in all layers 
+***** Anecdotally, note any layer x wavelet combinations that do not occur, ones that are especially prevalent, etc. 
+**** (6) For each of the v34 sim variations (either all of them or 'good'), generate CSD time series & spectrogram figures for each. (question of time range elaborated on below)
+***** What time range to look at here? entire time range? probably at least prior to 8254 ms. 
+***** Break it up into chunks...? or just have entire time range for now...? Will I need to change any figure sizing for this, or anything else? 
+
+
+*** Then deal with NHP figures -- 
+**** (1) Locate the NHP recordings
+***** look in all possible places (gcp, local, neurosim, gdrive, dropbox)
+***** look thru nb entries to refresh myself on info regarding where they are
+***** at some point, ask sam?
+**** (2) Look at the .csv file(s):
+***** What files are accounted for there?
+***** Which ones are not?
+***** Where are those excel sheets from noelle, etc.? 
+***** Updated version, or latest version rather -- make sure it is scp'ed to gcp as well (g5-n1-controller)
+**** (3) Revive & re-test wavelet code from load.py for macaque recordings
+***** Generate at least 1 example to make sure it's working! 
+**** (4) Revive & re-test CSD time series and spectrogram code from nhpspecdat.py for spontaneous macaque recordings
+***** Make sure to generate at least 1 in order to show that it works!
+***** time range...? break it up or do it in chunks? same or similar or different to sim? 
+***** any other code to clean up, similar (or different!) to small organizational changes made for sim? 
+
+*** Then start making comparisons:
+**** (1) Wavelets:
+***** Comparisons btwn each layer area for starters -- supragranular, granular, and infragranular -- gather wavelets from each layer. 
+***** THEN, within layer, make comparisons of wavelets from different frequency bands. 
+***** If there are mismatches here (e.g. if there are no alpha wavelets in infragranular for macaque, but there are for sim), make note of these!! 
+**** (2) CSD time series / spectrograms:
+***** Direct comparison should be relatively easy to do visually?
+***** But. how to decide on time range? start with .... 5s or something? ask sam/salva? 
