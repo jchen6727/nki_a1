@@ -46926,3 +46926,34 @@ python3 -i load.py
     #s1,s2,g,i1,i2 = [0, 4, 9, 12, 16]  
     s1,s2,g,i1,i2 = [0, 5, 10, 13, 17]
     lchan = [s1,s2,g,i1,i2]
+**** ^^ If need to expand at some point, can just go over every single channel and go by general range (depth) 
+*** Changes are in, and pulled on gcp
+*** Now run for each of the v34 sims:
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_1.pkl   
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_2.pkl 
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_3.pkl 
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_4.pkl 
+
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_1_0.pkl 
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_1_1.pkl 
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_1_2.pkl 
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_1_3.pkl 
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_1_4.pkl 
+
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_2_0.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_2_1.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_2_2.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_2_3.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_2_4.pkl
+
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_0.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_1.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_2.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_3.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_4.pkl
+
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_0.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_1.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_2.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_3.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl
