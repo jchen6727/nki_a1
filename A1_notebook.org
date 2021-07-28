@@ -46758,8 +46758,8 @@ gcloud compute scp --recurse
 g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_gamma.png
 /Users/ericagriffith/Desktop
 ****** FIGURES ARE SAME! 
-**** (5) Ensure that I am getting figures of every single wavelet being detected in a given .pkl data file
-**** (6) Refine organization of figure output:
+**** (5) [DONE] Ensure that I am getting figures of every single wavelet being detected in a given .pkl data file
+**** (6) [DONE] Refine organization of figure output:
 ***** I would like for the figures to be organized by layer first (supragranular, granular, infragranular), then by frequency band.  
 **** (7) For each of the v34 sim variations (could look thru bucket raster plots, etc. to see which ones are "good" - or do all of them?), find wavelets: 
 ***** Try to find wavelets in each frequency band? 
@@ -46801,7 +46801,7 @@ g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_bat
 python3 -i load.py
 /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
 *** Right now, load.py is configured to save only one wavelet from each frequency band detected. 
-*** ^^ Is this bc idx=0? Try changing this --> 
+*** [YES] ^^ Is this bc idx=0? Try changing this --> 
 **** idx set to 0 under the conditional statement 'if len(dfs) > 0'
 **** idx is then used in the context of evv.draw(dfs.index[idx]...) --> I'm going to try running load.py again in gcp, and then before closing it out, I'm going to try len(dfs.index) to see if this is a way that I can iterate over the whole length of of dfs.index --> okay, this is accessible. 
 **** Put the drawing into a for loop and added str(idx) to naming. see if this works! 
@@ -46810,6 +46810,17 @@ python3 -i load.py
 python3 -i load.py
 /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
 
+**** ^^ If this works, should expect to see the old beta and gamma .pngs, but also 8 new gamma .png's and 1 new beta .png -- CORRECT
+**** [DONE] ^^ scp these over to local machine for a look:
+***** run these commands on local machine
+***** command for new gamma figs <-- * doesn't work!! use \* ?? <-- okay that worked. 
+gcloud compute scp --recurse
+g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_gamma_\*.png
+/Users/ericagriffith/Desktop/wavelet_figs
+***** command for new beta fig:
+gcloud compute scp --recurse
+g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_beta_\*.png
+/Users/ericagriffith/Desktop/wavelet_figs
 
 **** One question I have is regarding what this output means:
 0
@@ -46821,21 +46832,97 @@ gamma 91 199.12622334850803 4.406372556605287
 beta 5 2.2988011749626054 2.480484366024969
 gamma 10 13.18028447278807 0.923531420806756
 
-
 **** ^^ look to where this is generated. 
+*** Okay, so now address the question regarding what the output means that hints at the possibility of more than just these wavelets being detected.
+**** So, earlier in the code's output, there is stuff like:
+0
+theta 5 2.9512648869245495 0.9753191942444974
+alpha 10 1.5912979376014342 1.672238295754798
+beta 23 67.36859425093623 4.361558583710786
+gamma 91 199.12622334850803 4.406372556605287
+1
+beta 5 2.2988011749626054 2.480484366024969
+gamma 10 13.18028447278807 0.923531420806756
 
-*** NOTE: should I be using more than just the three layers, esp for sim? 
-**** Should I be using getflayers(...,abbrev=False)? This would give me more than just the 3 layers. at least I could do that for sims? Think about this. 
-**** Of course this would be hardcoded as well. Might as well put that in there, since I technically have that info, I believe. 
-**** Actually ^^ I don't have that info, but run getflayers(abbrev=False) to get that info:
-***** on local machine --> cd ~/Desktop/NEUROSIM/a1dat
-***** open terminal --> python --> from nhpdat import *
-***** dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv'
-***** fn = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl'
-***** getflayers(fn,dbpath=dbpath,abbrev=False) ---- what is output? 
+**** Can see that there is reference to 'theta' etc., but then when it comes time for the figure generation at the end, only detects 1 beta and 8 gamma. 
+**** Is this because (a) These are being detected in different frequency bands (outside of 4, 9, 12)? or (b) They didn't make the 'cut' in terms of df.Foct<1.5 & df.ncycle>3 & df.filtsigcor>0.6 ?
+**** Look to where these print statements are generated for more clues. 
+**** Run load.py again -- 
+python3 -i load.py
+/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+**** df -- GetDFrame completed
+^^ This occurs after load.py line that generates df (df = GetDFrame())
+**** total number of events = 455 <-- occurs with GetDFrame() (GetDFrame() defined in load.py)
+**** dout completed <-- prints in main code block of load.py after getIEIstatsbyBand (defined in load.py) 
+*** okay, so 'df' generated in main code block of load.py is the structure that holds all of the wavelets detected. dfs then filters them by oscillation band, etc. 
+*** am now looping over idx in range(len(dfs.index)) as opposed to just idx=0 (first one)
+*** ^^ I asked before if dfs.index is the same len as dfs, but it appeared that they were so I left it alone, but potentially worth coming back to? 
+*** Now am pretty sure that this is detecting all qualified events, and saving them. 
+** Refine organization of figure output:
+*** Looping now over each channel (for chan in lchan), and creating subdir(s) based on name of .pkl data file, then by channel number 
+*** Added lines that create these subdirectories and also that include these paths in savefig
+*** Added/committed/pushed on local -- pulled on gcp 
+*** Now test with run of load.py:
+python3 -i load.py
+/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+*** ^^ I expect to see from this that there is now a subdir in A1/data/ called figs/wavelets --> and that within this directory there is a subdir based on the .pkl file name, and that within that subdir there are subdirs for each channel (or at least the channels with qualified wavelets detected), and that within those subdirs are the relevant .pngs from wavelets from that channel, with the oscBand in the .png filename. 
+*** ^^ WORKED!! 
+
+** Now move onto finding wavelets for each of the v34 sim runs:
+*** What needs to be changed in load.py? 
+**** timeRange probably -- but maybe shouldn't extend past the 8254ms mark --> timeRange=[0,8]
+***** ^^ ah, timeRange was set to [0,150] but since it was supposed to in seconds, rather than ms, it didn't actually change anything about tt, CSD, etc. 
+***** Set this to [0,8] then? 
+**** okay, now add more channels (hardcoded) to lchan for sim. 
+***** Use getflayers() to determine channel to layer correspondence more granularly: 
+****** Should I be using getflayers(...,abbrev=False)? This would give me more than just the 3 layers. at least I could do that for sims? Think about this. 
+****** Of course this would be hardcoded as well. Might as well put that in there, since I technically have that info, I believe. 
+****** Actually ^^ I don't have that info, but run getflayers(abbrev=False) to get that info:
+******* on local machine --> cd ~/Desktop/NEUROSIM/a1dat
+******* open terminal --> python --> from nhpdat import *
+******* dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv'
+******* fn = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl'
+******* getflayers(fn,dbpath=dbpath,abbrev=False) ---- what is output? 
 ['A1_v34_batch27_v34_batch27_0_0.pkl', 'A1', '0', '1', '2', '9', '10', '11', '12', '15', '16', '19']
 -1 0 1 8 9 10 11 14 15 18 0 4 9 12 16
 (0, 4, 9, 12, 16)
-**** s1,s2,g,i1,i2 ==> [0, 4, 9, 12, 16]
-**** is s1 = 0 a valid construct...? 
-**** ^^ s1,s2,g,i1,i2 ==> [0, 4, 9, 12, 16]
+****** s1,s2,g,i1,i2 ==> [0, 4, 9, 12, 16]
+****** is s1 = 0 a valid construct...? 
+****** ^^ s1,s2,g,i1,i2 ==> [0, 4, 9, 12, 16]
+***** ^^ will s1=0 work for this, or will I have to add one to the index? 
+***** Testing this by setting lchan directly under the 'if donetpyne:' statement for each condition 
+***** This DOES work (0 is fine and is indeed a channel), but after looking again at getflayers() I see that there is a -1 subtracted for each of the channels listed, but I'm not sure that's at all necessary in this case. This is not matlab-based, as the dbpath .csv files would be for the nhp macaque files. 
+***** Re-calculating these s2low,etc. values with the previous point in mind, each channel should have +1 added to it. 
+>>> from nhpdat import *
+>>> fn = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl'
+>>> dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv'
+>>> s = grepstr(dbpath,os.path.split(fn)[-1])
+>>> s
+'A1_v34_batch27_v34_batch27_0_0.pkl,A1,0,1,2,9,10,11,12,15,16,19'
+>>> ls = s.split(',')
+>>> ls
+['A1_v34_batch27_v34_batch27_0_0.pkl', 'A1', '0', '1', '2', '9', '10', '11', '12', '15', '16', '19']
+>>> lint = [int(x)-1 for x in ls[2:]]
+>>> lint1=[int(x) for x in ls[2:]]
+>>> lint1
+[0, 1, 2, 9, 10, 11, 12, 15, 16, 19]
+>>> s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = lint1
+>>> lint1
+[0, 1, 2, 9, 10, 11, 12, 15, 16, 19]
+>>> s1 = int((s1low+s1high)/2.0)
+>>> s2 = int((s2low+s2high)/2.0)
+>>> g = int((glow+ghigh)/2.0)
+>>> i1 = int((i1low+i1high)/2.0)
+>>> i2 = int((i2low+i2high)/2.0)
+>>> print(s1,s2,g,i1,i2)
+0 5 10 13 17
+***** Hard-coding these new values into load.py main code block. 
+  if donetpyne:
+    dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/simDataLayers.csv' #'/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/simDataLayers.csv' # gcp: /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/simDataLayers.csv # local machine: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv'
+    #s2,g,i1 = [] # hardcode these since they will be the same for all sim files 
+    # s2 = 4
+    # g = 9
+    # i1 = 12
+    #s1,s2,g,i1,i2 = [0, 4, 9, 12, 16]  
+    s1,s2,g,i1,i2 = [0, 5, 10, 13, 17]
+    lchan = [s1,s2,g,i1,i2]
