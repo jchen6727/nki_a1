@@ -46536,22 +46536,108 @@ gcloud compute scp --recurse g5-n1-controller:/home/ext_ericaygriffith_gmail_com
 *** Trying run of nhpspecdat.py on local machine!! --> worked!!!! 
 ** Pull a1dat changes onto gcp (can run locally, but pull changes if want to work on gcp):
 gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
-** Plan for figures:
+** Plan for comparison figures:
 *** First deal with sim figures -- 
-**** (1) Download all the v34 sims from salvador's bucket (.pkl at least, mabye not .cfg for now)
-**** (2) Put all of these on local machine (~/Desktop/NEUROSIM/A1/data/simDataFiles/spont)
-**** (3) Put all of these on gcp (scp to A1/data/simDataFiles/spont)
-**** (4) Update .csv file -- OR update code to reflect that all sim files will use the same layer to channel correspondence? 
-***** Is there a way for the sim to just use the same layers for all of them vs. having to put each and every one into the .csv file...? seems silly since we know for sure that they will all be the same. 
-***** Either way -- either update relevant code somehow (what code? load.py? anything else?), or scp the .csv to gcp after updating it on local machine. 
-**** (5) For each of the v34 sim variations (could look thru bucket raster plots, etc. to see which ones are "good" - or do all of them?), find wavelets: 
+**** (1) [DONE] Download all the v34 sims from salvador's bucket (.pkl at least, mabye not .cfg for now)
+**** (2) [DONE] Put all of these on local machine (~/Desktop/NEUROSIM/A1/data/simDataFiles/spont)
+**** (3) [DONE] Put all of these on gcp (scp to A1/data/simDataFiles/spont)
+***** NOTE: These are being scp'ed to g5-n1-controller node 
+***** On local machine, cd ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_1_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_2_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_3_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_4_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+**** (4) [DONE] Update .csv file -- OR update code to reflect that all sim files will use the same layer to channel correspondence? 
+***** QUESTIONS/NOTES:
+****** Is there a way for the sim to just use the same layers for all of them vs. having to put each and every one into the .csv file...? seems silly since we know for sure that they will all be the same. 
+****** Either way -- either update relevant code somehow (what code? load.py? anything else?), or scp the .csv to gcp after updating it on local machine. 
+****** YES --> in load.py, put s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True) under the if donetpyne, else conditional statement above where it is now. 
+****** QUESTION -- Should I be adding 1 to the hardcoded channel numbers, since orig function (getflayers()) is dealing with a MATLAB indexing situation...? leave alone for now but think about this. 
+***** IMPLEMENTATION: 
+****** In load.py, put s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True) under the if donetpyne, else conditional statement above where it is now.
+****** Keep the s2,g,i1 = getflayers() function as is for the "else" part of the statement (i.e. not a sim, so layers may vary). 
+****** Hardcode the s2,g,i1 values for the donetpyne condition, because these will be the same for every sim. Below is the output for getflayers() when using the current .csv file:
+>>> s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+['A1_v34_batch27_v34_batch27_0_0.pkl', 'A1', '0', '1', '2', '9', '10', '11', '12', '15', '16', '19']
+-1 0 1 8 9 10 11 14 15 18 0 4 9 12 16
+>>> s2
+4
+>>> g
+9
+>>> i1
+12
+****** Thus, can see that s2 is 4, g is 9, and i1 is 12. Use these values for now. 
+***** [DONE] Test new load.py setup -- (worked!!):
+****** added/committed/pushed changes on local machine ('erica' branch of a1dat)
+****** pulled changes on gcp (g5-n1-controller)
+****** on gcp --> cd ~/a1dat --> python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl --> RAN! --> partial output below:
+total number of events = 151
+lcyckeys completed
+columns.append completed
+levent loop starting
+band: delta
+chan: 9
+levent loop starting
+band: delta
+chan: 9
+levent loop starting
+band: theta
+chan: 9
+levent loop starting
+band: theta
+chan: 9
+levent loop starting
+band: alpha
+chan: 9
+levent loop starting
+band: alpha
+chan: 9
+levent loop starting
+band: beta
+chan: 9
+levent loop starting
+band: beta
+chan: 9
+levent loop starting
+band: gamma
+chan: 9
+levent loop starting
+band: gamma
+chan: 9
+levent loop starting
+band: hgamma
+chan: 9
+levent loop starting
+band: hgamma
+chan: 9
+df -- GetDFrame completed
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 1
+channel:9, event:121, power:5.0
+gamma: minF:53.5 Hz, maxF:75.5 Hz, peakF:62.25 Hz, Foct:0.34
+-71.1218552185519 -42.171565715656925
+duration:57.9 ms, 4 peaks, 3.6 cycles, filtsigcor:0.67
+15.729013290133025 44.679302793028
+dfs length of hgamma = 0
+****** ^^ output looks similar to what I remember from yesterday
+****** scp over figure for comparison (run below command on local machine): 
+gcloud compute scp --recurse
+g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_gamma.png
+/Users/ericagriffith/Desktop
+****** FIGURES ARE SAME! 
+**** (5) Ensure that I am getting figures of every single wavelet being detected in a given .pkl data file
+**** (6) Refine organization of figure output:
+***** I would like for the figures to be organized by layer first (supragranular, granular, infragranular), then by frequency band.  
+**** (7) For each of the v34 sim variations (could look thru bucket raster plots, etc. to see which ones are "good" - or do all of them?), find wavelets: 
 ***** Try to find wavelets in each frequency band? 
 ***** Look for wavelets in all layers 
 ***** Anecdotally, note any layer x wavelet combinations that do not occur, ones that are especially prevalent, etc. 
-**** (6) For each of the v34 sim variations (either all of them or 'good'), generate CSD time series & spectrogram figures for each. (question of time range elaborated on below)
+**** (8) For each of the v34 sim variations (either all of them or 'good'), generate CSD time series & spectrogram figures for each. (question of time range elaborated on below)
 ***** What time range to look at here? entire time range? probably at least prior to 8254 ms. 
 ***** Break it up into chunks...? or just have entire time range for now...? Will I need to change any figure sizing for this, or anything else? 
-
 
 *** Then deal with NHP figures -- 
 **** (1) Locate the NHP recordings
@@ -46578,3 +46664,178 @@ gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-thro
 **** (2) CSD time series / spectrograms:
 ***** Direct comparison should be relatively easy to do visually?
 ***** But. how to decide on time range? start with .... 5s or something? ask sam/salva? 
+* <2021-07-28 Wed -- wavelets and CSD comparison figs>
+** See previous entry for detailed to-do list! copied here as well. 
+** Plan for comparison figures:
+*** First deal with sim figures -- 
+**** (1) [DONE] Download all the v34 sims from salvador's bucket (.pkl at least, mabye not .cfg for now)
+**** (2) [DONE] Put all of these on local machine (~/Desktop/NEUROSIM/A1/data/simDataFiles/spont)
+**** (3) [DONE] Put all of these on gcp (scp to A1/data/simDataFiles/spont)
+***** NOTE: These are being scp'ed to g5-n1-controller node 
+***** On local machine, cd ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_1_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_2_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_3_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+***** [DONE] gcloud compute scp A1_v34_batch27_v34_batch27_4_*.pkl ext_ericaygriffith_gmail_com@g5-n1-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+**** (4) [DONE] Update .csv file -- OR update code to reflect that all sim files will use the same layer to channel correspondence? 
+***** QUESTIONS/NOTES:
+****** Is there a way for the sim to just use the same layers for all of them vs. having to put each and every one into the .csv file...? seems silly since we know for sure that they will all be the same. 
+****** Either way -- either update relevant code somehow (what code? load.py? anything else?), or scp the .csv to gcp after updating it on local machine. 
+****** YES --> in load.py, put s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True) under the if donetpyne, else conditional statement above where it is now. 
+****** QUESTION -- Should I be adding 1 to the hardcoded channel numbers, since orig function (getflayers()) is dealing with a MATLAB indexing situation...? leave alone for now but think about this. 
+***** IMPLEMENTATION: 
+****** In load.py, put s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True) under the if donetpyne, else conditional statement above where it is now.
+****** Keep the s2,g,i1 = getflayers() function as is for the "else" part of the statement (i.e. not a sim, so layers may vary). 
+****** Hardcode the s2,g,i1 values for the donetpyne condition, because these will be the same for every sim. Below is the output for getflayers() when using the current .csv file:
+>>> s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+['A1_v34_batch27_v34_batch27_0_0.pkl', 'A1', '0', '1', '2', '9', '10', '11', '12', '15', '16', '19']
+-1 0 1 8 9 10 11 14 15 18 0 4 9 12 16
+>>> s2
+4
+>>> g
+9
+>>> i1
+12
+****** Thus, can see that s2 is 4, g is 9, and i1 is 12. Use these values for now. 
+***** [DONE] Test new load.py setup -- (worked!!):
+****** added/committed/pushed changes on local machine ('erica' branch of a1dat)
+****** pulled changes on gcp (g5-n1-controller)
+****** on gcp --> cd ~/a1dat --> python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl --> RAN! --> partial output below:
+total number of events = 151
+lcyckeys completed
+columns.append completed
+levent loop starting
+band: delta
+chan: 9
+levent loop starting
+band: delta
+chan: 9
+levent loop starting
+band: theta
+chan: 9
+levent loop starting
+band: theta
+chan: 9
+levent loop starting
+band: alpha
+chan: 9
+levent loop starting
+band: alpha
+chan: 9
+levent loop starting
+band: beta
+chan: 9
+levent loop starting
+band: beta
+chan: 9
+levent loop starting
+band: gamma
+chan: 9
+levent loop starting
+band: gamma
+chan: 9
+levent loop starting
+band: hgamma
+chan: 9
+levent loop starting
+band: hgamma
+chan: 9
+df -- GetDFrame completed
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 1
+channel:9, event:121, power:5.0
+gamma: minF:53.5 Hz, maxF:75.5 Hz, peakF:62.25 Hz, Foct:0.34
+-71.1218552185519 -42.171565715656925
+duration:57.9 ms, 4 peaks, 3.6 cycles, filtsigcor:0.67
+15.729013290133025 44.679302793028
+dfs length of hgamma = 0
+****** ^^ output looks similar to what I remember from yesterday
+****** scp over figure for comparison (run below command on local machine): 
+gcloud compute scp --recurse
+g5-n1-controller:/home/ext_ericaygriffith_gmail_com/a1dat/A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_gamma.png
+/Users/ericagriffith/Desktop
+****** FIGURES ARE SAME! 
+**** (5) Ensure that I am getting figures of every single wavelet being detected in a given .pkl data file
+**** (6) Refine organization of figure output:
+***** I would like for the figures to be organized by layer first (supragranular, granular, infragranular), then by frequency band.  
+**** (7) For each of the v34 sim variations (could look thru bucket raster plots, etc. to see which ones are "good" - or do all of them?), find wavelets: 
+***** Try to find wavelets in each frequency band? 
+***** Look for wavelets in all layers 
+***** Anecdotally, note any layer x wavelet combinations that do not occur, ones that are especially prevalent, etc. 
+**** (8) For each of the v34 sim variations (either all of them or 'good'), generate CSD time series & spectrogram figures for each. (question of time range elaborated on below)
+***** What time range to look at here? entire time range? probably at least prior to 8254 ms. 
+***** Break it up into chunks...? or just have entire time range for now...? Will I need to change any figure sizing for this, or anything else? 
+*** Then deal with NHP figures -- 
+**** (1) Locate the NHP recordings
+***** look in all possible places (gcp, local, neurosim, gdrive, dropbox)
+***** look thru nb entries to refresh myself on info regarding where they are
+***** at some point, ask sam?
+**** (2) Look at the .csv file(s):
+***** What files are accounted for there?
+***** Which ones are not?
+***** Where are those excel sheets from noelle, etc.? 
+***** Updated version, or latest version rather -- make sure it is scp'ed to gcp as well (g5-n1-controller)
+**** (3) Revive & re-test wavelet code from load.py for macaque recordings
+***** Generate at least 1 example to make sure it's working! 
+**** (4) Revive & re-test CSD time series and spectrogram code from nhpspecdat.py for spontaneous macaque recordings
+***** Make sure to generate at least 1 in order to show that it works!
+***** time range...? break it up or do it in chunks? same or similar or different to sim? 
+***** any other code to clean up, similar (or different!) to small organizational changes made for sim? 
+*** Then start making comparisons:
+**** (1) Wavelets:
+***** Comparisons btwn each layer area for starters -- supragranular, granular, and infragranular -- gather wavelets from each layer. 
+***** THEN, within layer, make comparisons of wavelets from different frequency bands. 
+***** If there are mismatches here (e.g. if there are no alpha wavelets in infragranular for macaque, but there are for sim), make note of these!! 
+**** (2) CSD time series / spectrograms:
+***** Direct comparison should be relatively easy to do visually?
+***** But. how to decide on time range? start with .... 5s or something? ask sam/salva? 
+** Right now am on the step where I want to make sure I am generating one figure per wavelet detected in each of the .pkl data files. 
+*** How to do this? 
+*** First try expanding lchan:
+**** Do this in main code block of load.py, such that it includes not just g, but s2 and i1 as well 
+**** Add/commit/push on local, pull on gcp
+**** Run load.py on gcp and see if more than one fig is generated:
+python3 -i load.py
+/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+*** Right now, load.py is configured to save only one wavelet from each frequency band detected. 
+*** ^^ Is this bc idx=0? Try changing this --> 
+**** idx set to 0 under the conditional statement 'if len(dfs) > 0'
+**** idx is then used in the context of evv.draw(dfs.index[idx]...) --> I'm going to try running load.py again in gcp, and then before closing it out, I'm going to try len(dfs.index) to see if this is a way that I can iterate over the whole length of of dfs.index --> okay, this is accessible. 
+**** Put the drawing into a for loop and added str(idx) to naming. see if this works! 
+***** add/commit/push on local, pull on gcp
+***** run:
+python3 -i load.py
+/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+
+
+**** One question I have is regarding what this output means:
+0
+theta 5 2.9512648869245495 0.9753191942444974
+alpha 10 1.5912979376014342 1.672238295754798
+beta 23 67.36859425093623 4.361558583710786
+gamma 91 199.12622334850803 4.406372556605287
+1
+beta 5 2.2988011749626054 2.480484366024969
+gamma 10 13.18028447278807 0.923531420806756
+
+
+**** ^^ look to where this is generated. 
+
+*** NOTE: should I be using more than just the three layers, esp for sim? 
+**** Should I be using getflayers(...,abbrev=False)? This would give me more than just the 3 layers. at least I could do that for sims? Think about this. 
+**** Of course this would be hardcoded as well. Might as well put that in there, since I technically have that info, I believe. 
+**** Actually ^^ I don't have that info, but run getflayers(abbrev=False) to get that info:
+***** on local machine --> cd ~/Desktop/NEUROSIM/a1dat
+***** open terminal --> python --> from nhpdat import *
+***** dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv'
+***** fn = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl'
+***** getflayers(fn,dbpath=dbpath,abbrev=False) ---- what is output? 
+['A1_v34_batch27_v34_batch27_0_0.pkl', 'A1', '0', '1', '2', '9', '10', '11', '12', '15', '16', '19']
+-1 0 1 8 9 10 11 14 15 18 0 4 9 12 16
+(0, 4, 9, 12, 16)
+**** s1,s2,g,i1,i2 ==> [0, 4, 9, 12, 16]
+**** is s1 = 0 a valid construct...? 
+**** ^^ s1,s2,g,i1,i2 ==> [0, 4, 9, 12, 16]
