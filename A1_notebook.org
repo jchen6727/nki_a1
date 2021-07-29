@@ -46957,3 +46957,6 @@ python3 -i load.py
 **** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_2.pkl
 **** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_3.pkl
 **** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl
+*** [INCOMPLETE] (*g5-n1-controller closed!) Re-running the commands above with added channels in load.py so I can get some more wavelet choices:
+**** got up to before g5-n1-controller node closed :( --> python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_0.pkl 
+** TOMORROW -- hopefully g5-n1-controller VM instance will be back up --> finish above commands, get figures over to eyg_data bucket --> scp them over to local machine as well (selectively). 
