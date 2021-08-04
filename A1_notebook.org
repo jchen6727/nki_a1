@@ -46960,3 +46960,318 @@ python3 -i load.py
 *** [INCOMPLETE] (*g5-n1-controller closed!) Re-running the commands above with added channels in load.py so I can get some more wavelet choices:
 **** got up to before g5-n1-controller node closed :( --> python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_0.pkl 
 ** TOMORROW -- hopefully g5-n1-controller VM instance will be back up --> finish above commands, get figures over to eyg_data bucket --> scp them over to local machine as well (selectively). 
+* <2021-07-29 Thu -- csd figures and wavelets>
+** Noticed that g5-n1-controller VM instance is still offline -- asked Salva about it over slack; awaiting response -- now up!
+*** gcloud beta compute ssh --zone "us-central1-f" "g5-n1-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+** Finish generating the wavelet figures for v34 runs:
+*** [DONE] Finish running the rest of the load.py commands as stated in previous entry and below:
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_1.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_2.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_3.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_4.pkl
+
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_0.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_1.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_2.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_3.pkl
+**** [DONE] python3 -i load.py /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl
+*** Get files over to eyg_data bucket:
+**** gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+**** gsutil configurations tried but didn't do as desired:
+***** [nah...] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_0/ gs://eyg_data/A1/wavelets/v34_batch27_0_0/
+***** [worked fine, but not most efficient] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ gs://eyg_data/A1/wavelets/
+**** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/ gs://eyg_data/A1/
+***** <-- took a gamble here that only the last subdir in the path would be the one that gets tacked onto eyg_data/A1/ but looks like that worked! (last subdir == 'wavelets', and of course also included all subsequent subdirs)
+**** Overview documentation of subdirs on gcp storage: 
+***** https://cloud.google.com/storage/docs/folders?hl=id
+***** seems like cloud storage actually uses a flat namespace, but that gsutil and cloud console give the illusion of a hierarchical file structure 
+*** Get files over to local machine to view more easily
+**** Go to wavelets "subdir" in eyg_data bucket --> gs://eyg_data/A1/wavelets 
+**** Manually selected all the folders (A1_v34_batch27_v34_batch27_*) 
+**** Clicked download 
+**** Copied the gsutil -m cp -r command offered automatically
+gsutil -m cp -r \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_0_0/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_0_1/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_0_2/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_0_3/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_0_4/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_1_0/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_1_1/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_1_2/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_1_3/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_1_4/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_2_0/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_2_1/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_2_2/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_2_3/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_2_4/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_3_0/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_3_1/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_3_2/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_3_3/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_3_4/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_4_0/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_4_1/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_4_2/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_4_3/" \
+  "gs://eyg_data/A1/wavelets/A1_v34_batch27_v34_batch27_4_4/" \
+  . 
+**** Pasted this command into terminal on local machine without editing 
+**** This resulted in figure subdirs being downloaded into my home dir
+**** Manually moved them over w/ finder window into ~/Desktop/NEUROSIM/A1/data/figs/wavelets/
+** Make a google doc w/ list of "favorite" / best-looking wavelets examples from v34:
+*** https://docs.google.com/document/d/1ZJnopJtERfVgfRyVPa9b5GbAWj9Bni3ntGKI-xEIwH8/edit
+*** okay now all of the non-horrible wavelet figures are in this above google doc, organized by filename, with filename, channel number, and frequency band info noted
+*** Now, put a key at the top with the layer-to-channel correspondences and just do a quick sort with those too. 
+*** Supragranular → 0, 4, 5
+*** Granular →  9,10 
+*** Infragranular → 12, 13, 16, 17
+** Work on csd figures
+*** a1dat/nhpspecdat.py 
+*** I have all the v34 .pkl data files on my local machine ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+* <2021-08-03 Tue -- LFP and figures>
+** Finish organizing that google doc with the sim figures 
+*** https://docs.google.com/document/d/1ZJnopJtERfVgfRyVPa9b5GbAWj9Bni3ntGKI-xEIwH8/edit
+*** finished labeling each figure w/ supragranular, granular, or infragranular 
+*** SUPRAGRANULAR:
+alpha 9
+beta 30
+gamma 27
+delta 2
+theta 3
+*** GRANULAR:
+beta 7
+gamma 23
+delta 3
+theta 8
+*** INFRAGRANULAR: 
+alpha 5
+beta 11
+gamma 20
+delta 3
+theta 5
+*** NOTES from above counts:
+**** no alpha in granular layer ! 
+** monkey wavelets:
+*** I have a number of finished wavelet figs on local machine in ~/Desktop/NEUROSIM/cosyne_figs/wavelets_MONKEY_SPONT
+*** Some good examples:
+**** Supragranular:
+***** alpha (4)
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_alpha_t100
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+***** beta (5) 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_beta_t100
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-rb031032016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** gamma (0) 
+***** delta (1) 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_delta_t100
+***** theta (0) 
+**** Granular:
+***** alpha (3) 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_alpha_t100
+***** beta (3) 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** gamma (1) 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_gamma_t100
+***** delta (0) 
+***** theta (2) 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100
+**** Infragranular:
+***** alpha (3)
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100
+***** beta (4) 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-bu043044016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_beta_t100
+2-rb031032016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** gamma (1)
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_gamma_t100
+***** delta (1)
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_delta_t100
+***** theta (2)
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100
+2-rb031032016@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100
+** Potential matches:
+*** Supragranular:
+**** alpha (1):
+***** (1) 
+A1_v34_batch27_v34_batch27_2_3_SIM_gcp_wavelet_chan_5_alpha_1
+and
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100.png
+**** beta (4):
+***** (1) 
+A1_v34_batch27_v34_batch27_0_4_SIM_gcp_wavelet_chan_5_beta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** (2) 
+A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_4_beta_2
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** (3) 
+A1_v34_batch27_v34_batch27_2_4_SIM_gcp_wavelet_chan_4_beta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+or
+2-rb031032016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** (4) 
+A1_v34_batch27_v34_batch27_3_0_SIM_gcp_wavelet_chan_5_beta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+
+**** delta (0):
+***** no good matches 
+
+**** NO gamma and NO theta detected in current nhp data sets / timepoints evaluated. 
+*** Granular:
+**** beta
+***** (1)
+A1_v34_batch27_v34_batch27_2_1_SIM_gcp_wavelet_chan_9_beta_1
+and 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100.png
+^^ not the best match, but hey 
+***** (2)
+A1_v34_batch27_v34_batch27_4_2_SIM_gcp_wavelet_chan_10_beta_0
+and 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100.png
+^^ also not the best, but hey. 
+**** gamma
+***** (1)
+A1_v34_batch27_v34_batch27_3_4_SIM_gcp_wavelet_chan_9_gamma_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_gamma_t100.png
+**** theta
+***** (1) 
+A1_v34_batch27_v34_batch27_0_2_SIM_gcp_wavelet_chan_9_theta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+
+***** (2)
+A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_9_theta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+^^ not the best match, what about units on the left of CSD...? 
+***** (3)
+A1_v34_batch27_v34_batch27_3_0_SIM_gcp_wavelet_chan_9_theta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+**** NO alpha wavelets in granular layers detected in current sim version
+**** NO delta wavelets in granular layers detected in current nhp data sets / time points examined 
+*** Infragranular: 
+**** beta
+***** a good sim candidate but doesn't quite fit: A1_v34_batch27_v34_batch27_2_4_SIM_gcp_wavelet_chan_17_beta_0
+**** alpha:
+***** a good potential sim candidate but doesn't quite fit, also ... CSD units on the left??!
+A1_v34_batch27_v34_batch27_1_2_SIM_gcp_wavelet_chan_12_alpha_0
+
+**** gamma:
+***** (1)
+A1_v34_batch27_v34_batch27_0_1_SIM_gcp_wavelet_chan_12_gamma_2
+and
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_gamma_t100.png
+^^ not the best match but hey 
+* <2021-08-04 Wed -- continue matching figures btwn sim and NHP>
+** Copy-pasting entry from yesterday re: figure matches and adding to it below. 
+** Potential matches:
+*** Supragranular:
+**** alpha (1):
+***** (1) 
+A1_v34_batch27_v34_batch27_2_3_SIM_gcp_wavelet_chan_5_alpha_1
+and
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100.png
+**** beta (4):
+***** (1) 
+A1_v34_batch27_v34_batch27_0_4_SIM_gcp_wavelet_chan_5_beta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** (2) 
+A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_4_beta_2
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** (3) 
+A1_v34_batch27_v34_batch27_2_4_SIM_gcp_wavelet_chan_4_beta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+or
+2-rb031032016@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+***** (4) 
+A1_v34_batch27_v34_batch27_3_0_SIM_gcp_wavelet_chan_5_beta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+**** delta (0):
+***** no good matches 
+**** NO gamma and NO theta detected in current nhp data sets / timepoints evaluated. 
+*** Granular:
+**** beta
+***** (1)
+A1_v34_batch27_v34_batch27_2_1_SIM_gcp_wavelet_chan_9_beta_1
+and 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100.png
+^^ not the best match, but hey 
+***** (2)
+A1_v34_batch27_v34_batch27_4_2_SIM_gcp_wavelet_chan_10_beta_0
+and 
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100.png
+^^ also not the best, but hey. 
+**** gamma
+***** (1)
+A1_v34_batch27_v34_batch27_3_4_SIM_gcp_wavelet_chan_9_gamma_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_gamma_t100.png
+**** theta
+***** (1) 
+A1_v34_batch27_v34_batch27_0_2_SIM_gcp_wavelet_chan_9_theta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+***** (2)
+A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_9_theta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+^^ not the best match, what about units on the left of CSD...? 
+***** (3)
+A1_v34_batch27_v34_batch27_3_0_SIM_gcp_wavelet_chan_9_theta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+**** NO alpha wavelets in granular layers detected in current sim version
+**** NO delta wavelets in granular layers detected in current nhp data sets / time points examined 
+*** Infragranular: 
+**** beta
+***** a good sim candidate but doesn't quite fit: A1_v34_batch27_v34_batch27_2_4_SIM_gcp_wavelet_chan_17_beta_0
+**** alpha:
+***** a good potential sim candidate but doesn't quite fit, also ... CSD units on the left??!
+      A1_v34_batch27_v34_batch27_1_2_SIM_gcp_wavelet_chan_12_alpha_0
+**** gamma:
+***** (1)
+A1_v34_batch27_v34_batch27_0_1_SIM_gcp_wavelet_chan_12_gamma_2
+and
+2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_gamma_t100.png
+^^ not the best match but hey 
+**** theta
+***** not a good match, but:
+A1_v34_batch27_v34_batch27_0_3_SIM_gcp_wavelet_chan_13_theta_0
+and
+2-rb031032016@os_eye06_20_MACAQUE_gcp_wavelet_theta_t100.png
+**** delta:
+***** not a good match, but hey:
+A1_v34_batch27_v34_batch27_3_4_SIM_gcp_wavelet_chan_13_delta_0
+and 
+2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_delta_t100.png
+** Made a google doc w/ potential matches:
+*** https://docs.google.com/document/d/18y0CQTZtvMoltyaUbi3hXYLaWW89ryXEUW4st9ALSck/edit
+*** This lists the matches by layer and frequency
+*** At the bottom, there is also a list of unused good sim wavelets that have not been matched with anything from NHP. 
+** Why are the CSD units different for the most part...? Does this matter...? 
+*** Generally they are larger on the sim side of things, but I'm noticing that wasn't necessarily the case for the cosyne runs --> jk it was. 
+*** Okay so they were like that too for cosyne, but I was more focused on morphology and layer than on the CSD units, hm. 
