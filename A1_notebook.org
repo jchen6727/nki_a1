@@ -45888,8 +45888,6 @@ fi
 ***** Example: 
 ***** gcloud compute scp --recurse g6-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data 
 *** From bucket --> local machine: just download straight from browser - go to gcp console then bucket (https://console.cloud.google.com/storage/browser/eyg_data;tab=objects?forceOnBucketsSortingFiltering=false&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false)
-*** From local machine --> cluster:
-**** 
 ** Now that gcp is finally re-set up, scale down the model to 1/2 and set the recordLFPCells to True 
 *** in batch.py, change with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
 *** ^^ to correct .json file --> with open('data/lfpSimFiles/v34_batch27_0_0_cfg.json', 'rb') as f:
@@ -47300,3 +47298,127 @@ and
 *** boot disk: centos-7-neuron-7-7-netpyne
 *** region: us-central1, zone: us-central1-f
 *** gcloud command to ssh: gcloud beta compute ssh --zone "us-central1-f" "erica-vm-instance1" --project "ecas2-nsf1904444"
+*** ^^ no tunnel-through-iap in this command, why? 
+** Recreate setup on new VM instance:
+*** A1:
+**** git clone A1 by url (in home dir on gcp) 
+**** cd ~ 
+**** git clone https://github.com/NathanKlineInstitute/A1.git
+**** password is PAT for git now: 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
+*** NETPYNE: 
+**** (1) Clone my fork of netpyne into my home directory on gcp 
+***** Fork exists at: https://github.com/ericaygriffith/netpyne
+***** clone it to gcp
+****** git clone https://github.com/ericaygriffith/netpyne.git
+****** clone exists in: ~/netpyne (/home/ext_ericaygriffith_gmail_com/netpyne)
+***** NOTE: git branch --> development 
+**** (2) CHECK REMOTES: 
+***** cd to netpyne subdir above
+***** git remote -v    --> 
+***** origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+***** origin	https://github.com/ericaygriffith/netpyne.git (push)
+**** (3) ADD UPSTREAM:
+***** git remote add upstream https://github.com/Neurosim-lab/netpyne
+***** VERIFY --> git remote -v --> 
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push)
+***** NOTE: my fork is "origin", official netpyne repo is "upstream"
+**** (4) Sync my fork and my clone to the official netpyne repo
+***** INFO: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
+***** cd ~/netpyne
+***** git fetch upstream
+***** git checkout development
+***** git merge upstream/development
+*** bashrc:
+**** full file:
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+    export N=/usr/local/nrn
+    export NEURONHOME=$N/share/nrn
+    #export N=root/nrn
+    #export CPU=x86_64
+    #export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=/usr/local/lib64/python3.6/site-packages/:/usr/local/lib/python3.6/site-packages:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export PYTHONPATH= $N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export SITE=/usr/local/site
+    #export NEURONHOME=$N/share/nrn
+    #export MODL_INCLUDE=$SITE/local/mod
+    #export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+
+    export PATH=/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/lib64/python3.6/site-packages/:/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+    alias cpgs='gsutil -m cp -r'
+~                                  
+**** Edited by doing: 
+***** vim ~/.bashrc
+***** i --> interactive mode
+***** copy-pasted the above text from 'full file' (ctrl-c, ctrl-v)
+***** esc --> exits interactive mode
+***** :w to save
+***** :q to quit 
+*** Now the following work! :
+**** whch nrniv, which nrnivmodl
+**** nrniv -python
+**** python3 --> import netpyne --> from neuron import h
+** Get more NHP wavelets:
+*** [3 NOTES / QUESTIONS] Log into new vm instance on gcp:
+**** gcloud beta compute ssh --zone "us-central1-f" "erica-vm-instance1" --project "ecas2-nsf1904444"
+***** --> "Updating project ssh metadata:... done." 
+**** NOTE: Noticing that upon login, I don't get the SLURM thing that I do with the others that I log into 
+**** NOTE: Also noticing that pwd --> /home/ericagriffith as opposed to ext_ericaygriffith_gmail type username. hm! 
+**** NOTE: Cloud API access scopes different than other instances...?
+*** clone a1dat onto gcp 
+*** [DONE] scp data files over to gcp:
+**** location on local machine --> ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/*.mat
+**** transfer to gcp by running below command on local machine --> 
+**** cd /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
+**** gcloud compute scp *.mat ericagriffith@erica-vm-instance1:/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1
+*** [DONE] scp .csv file over to gcp:
+**** location on local machine --> ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv 
+**** on local machine --> /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
+**** gcloud compute scp *.csv ericagriffith@erica-vm-instance1:/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1
+*** Make necessary edits to load.py:
+**** donetpyne=0
+**** Change basedir to reflect path in gcp 
+**** Change timeRange
+**** change dbpath to reflect path in gcp 
+
+
+
+
+** To scp files from gcloud to local machine: 
+*** Example --> do this on local machine
+*** gcloud compute scp --recurse g5-n1-controller:/home/ericagriffith/A1/data/v34_batch27_quarterDensity /Users/ericagriffith/Desktop/NEUROSIM/A1/data 
+
