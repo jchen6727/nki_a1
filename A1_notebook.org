@@ -47275,3 +47275,28 @@ and
 ** Why are the CSD units different for the most part...? Does this matter...? 
 *** Generally they are larger on the sim side of things, but I'm noticing that wasn't necessarily the case for the cosyne runs --> jk it was. 
 *** Okay so they were like that too for cosyne, but I was more focused on morphology and layer than on the CSD units, hm. 
+** Get more NHP wavelet figures
+*** Make a VM on gcp 
+**** create
+**** set up w/ bashrc file 
+**** install neuron
+**** install netpyne (or make sure it works)
+**** may need to install those other packages (see previous entries) 
+**** clone a1dat onto gcp home dir
+**** clone A1 onto gcp home dir
+*** Use scp to get .dat files over to appropriate location on gcp 
+*** Use scp to get channel-to-layer file(s) over to appropriate location on gcp 
+*** Revive the code necessary to do run wavelets on nhp (load.py) 
+*** Test it out!!
+*** Debug whatever's necessary
+*** Run a bunch of non-test runs
+*** Get results over to eyg_data bucket
+*** Get results over to local machine 
+** [TO DO] Perform more nhp to sim comparisons
+* <2021-08-05 Thu -- new gcp VM instance + NHP wavelets>
+** Created new VM instance on gcp:
+*** erica-vm-instance1
+*** machine type: n2-standard-16 (16 vCPUs, 64 GB memory)
+*** boot disk: centos-7-neuron-7-7-netpyne
+*** region: us-central1, zone: us-central1-f
+*** gcloud command to ssh: gcloud beta compute ssh --zone "us-central1-f" "erica-vm-instance1" --project "ecas2-nsf1904444"
