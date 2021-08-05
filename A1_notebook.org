@@ -47399,7 +47399,7 @@ fi
 **** NOTE: Noticing that upon login, I don't get the SLURM thing that I do with the others that I log into 
 **** NOTE: Also noticing that pwd --> /home/ericagriffith as opposed to ext_ericaygriffith_gmail type username. hm! 
 **** NOTE: Cloud API access scopes different than other instances...?
-*** clone a1dat onto gcp 
+*** [DONE] clone a1dat onto gcp 
 *** [DONE] scp data files over to gcp:
 **** location on local machine --> ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/*.mat
 **** transfer to gcp by running below command on local machine --> 
@@ -47409,16 +47409,41 @@ fi
 **** location on local machine --> ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv 
 **** on local machine --> /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
 **** gcloud compute scp *.csv ericagriffith@erica-vm-instance1:/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1
-*** Make necessary edits to load.py:
+*** [DONE] Make necessary edits to load.py:
 **** donetpyne=0
 **** Change basedir to reflect path in gcp 
-**** Change timeRange
+basedir = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/' 
 **** change dbpath to reflect path in gcp 
+dbpath = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+**** change pathToSave 
+pathToSave= '/home/ericagriffith/A1/data/figs/wavelets/' + figSubDir
 
+**** Change timeRange
+***** was timeRange = [0,8] for sim
+***** now timeRange = None 
 
+*** [DONE] Add/commit/push changes to a1dat, pull on gcp 
+*** Try running load.py on gcp:
+**** Anticipate that I'll need to install some of those packages for load.py
+**** cd ~/a1dat
+**** python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat
+**** Yup --> "No module named 'h5py'" --> sudo pip3 install h5py
+**** No module named hdf5storange --> sudo pip3 install hdf5storage
+*** RAN!! Generated a bunch of wavelet figures, BUT all chans were -1, hm! Means there's something wrong with how the .csv file is getting processed. 
+** Test getflayers w/ nhp .csv file:
+*** lines to test:
+fn = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat'
+dbpath = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+*** on gcp --> cd into a1dat
+*** python3
+*** from nhpdat import *
+*** fn = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat'
+*** dbpath = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'
+*** s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
+*** Try with a different fn --> fn= '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat'
 
-
-** To scp files from gcloud to local machine: 
+** NOTE: To scp files from gcloud to local machine: 
 *** Example --> do this on local machine
 *** gcloud compute scp --recurse g5-n1-controller:/home/ericagriffith/A1/data/v34_batch27_quarterDensity /Users/ericagriffith/Desktop/NEUROSIM/A1/data 
 
