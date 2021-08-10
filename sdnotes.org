@@ -9758,8 +9758,10 @@ def custom():
 *** results
 good solution: trial_1937
 ** v34_batch24 - 1 long sims; best from v34_batch23 (trial_1937); 11.5-sec; with LFP
-** v34_batch25 - pending (improve sol around v34_batch23 best)
+** v34_batch25 - tuning; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) around best sol of v34_batch23 (trial_1937)
 ** v34_batch26 - 5x5 seeds; best from v34_batch23 (trial_1937); 11.5-sec; with LFP
+** v34_batch27 - 5x5 seeds; best from v34_batch25 (trial_2142); 11.5-sec; with LFP
+
 ** blank
 
 

@@ -2493,7 +2493,7 @@ def optunaRatesLayersWmat():
 
     # from prev
     import json
-    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
+    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
 
@@ -2512,30 +2512,23 @@ def optunaRatesLayersWmat():
     # wmat = connData['wmat']
     wmat = cfgLoad['wmat']    
 
-    weightsScale = [['IT2', 'PV2'],
-                    ['IT2', 'SOM2'], 
-                    ['IT3', 'PV2'],
-                    ['IT3', 'SOM2'],
-                    ['PV2', 'PV2'],
-                    ['PV2', 'VIP2'],
-                    ['PV3', 'PV2'],
-                    ['PV3', 'VIP2'],
-                    ['SOM2', 'PV2'],
-                    ['SOM2', 'VIP2'],
-                    ['SOM3', 'PV2'],
-                    ['SOM3', 'VIP2'],
-                    ['VIP2', 'SOM2'],
-                    ['VIP3', 'SOM2'],
-                    ['IT2', 'SOM3'], 
-                    ['IT3', 'SOM3'],
-                    ['VIP2', 'SOM3'],
-                    ['VIP3', 'SOM3']]
+    weightsScale = [['IT6', 'NGF6'],
+                    ['PV6', 'NGF6'],
+                    ['SOM6', 'NGF6'],
+                    ['VIP6', 'NGF6'],
+                    ['NGF6', 'NGF6'],
+                    ['IT6', 'SOM6'],
+                    ['PV6', 'SOM6'],
+                    ['SOM6', 'SOM6'],
+                    ['VIP6', 'SOM6'],
+                    ['NGF6', 'SOM6'],         
+                    ['IT6', 'PV6'],
+                    ['PV6', 'PV6'],
+                    ['SOM6', 'PV6'],
+                    ['VIP6', 'PV6'],
+                    ['NGF6', 'PV6']]        
                     
 
-    for ws in weightsScale:
-        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
-
-    weightsScale2 = []
 
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
@@ -2758,20 +2751,20 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom()
+    # b = custom()
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    # b = optunaRatesLayersWmat()
+    b = optunaRatesLayersWmat()
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch27' 
+    b.batchLabel = 'v34_batch28' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
