@@ -2529,7 +2529,6 @@ def optunaRatesLayersWmat():
                     ['NGF6', 'PV6']]        
                     
 
-
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
 
