@@ -76,7 +76,7 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
             #     print('Skipped trial %d' % (i))
             
         for p, rates in popRates.items():
-            df.insert(len(df.columns), p, rates)
+            df.insert(len(df.columns), p, rates+[0]*(len(df)-len(rates)))
 
         with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
             pickle.dump(df, f)
@@ -349,7 +349,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile, maxNumber=4678)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile, maxNumber=4)
 
     #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
