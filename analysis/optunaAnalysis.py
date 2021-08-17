@@ -349,7 +349,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile, maxNumber=4)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile, maxNumber=4678)
 
     #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
