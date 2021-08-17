@@ -19,7 +19,7 @@ def getParamLabels(dataFolder, batchSim):
         paramLabels = [str(x['label'][0])+str(x['label'][1]) if isinstance(x['label'], list) else str(x['label']) for x in json.load(f)['batch']['params']]
     return paramLabels
 
-def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=False, loadDataFromFile=False):
+def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=False, loadDataFromFile=False, maxNumber=None):
  
     if loadStudyFromFile:
         with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
@@ -53,7 +53,9 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
                 except:
                     print('%s not found ...' % (p+'_'+t))
 
-        for i in df.number:
+        if not maxNumber:
+            maxNumber = len(df.number)
+        for i in range(maxNumber):
             # try:
                 filename = '%s/%s/trial_%d/trial_%d' % (dataFolder, batchSim, int(i), int(i))
                 if os.path.exists(filename+'.json'):
@@ -347,7 +349,7 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile, maxNumber=4678)
 
     #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
