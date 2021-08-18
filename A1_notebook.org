@@ -47446,4 +47446,110 @@ s2,g,i1 = getflayers(fn,dbpath=dbpath,abbrev=True)
 ** NOTE: To scp files from gcloud to local machine: 
 *** Example --> do this on local machine
 *** gcloud compute scp --recurse g5-n1-controller:/home/ericagriffith/A1/data/v34_batch27_quarterDensity /Users/ericagriffith/Desktop/NEUROSIM/A1/data 
+* <2021-08-06 Fri -- NHP wavelet figures>
+** Run load.py on the following files:
+*** 2-bu027028013@os_eye06_20.mat
+*** 2-gt044045014@os_eye06_30.mat
+*** 2-ma031032023@os_eye06_20.mat
+*** 2-rb031032016@os_eye06_20.mat
+*** 2-rb045046026@os_eye06_20.mat
+*** 2-rb063064011@os_eye06_20.mat
+** [DONE] Generate more NHP wavelets: 
+*** Login to gcp
+gcloud beta compute ssh --zone "us-central1-f" "erica-vm-instance1" --project "ecas2-nsf1904444"
+*** cd ~/a1dat
+*** [DONE] python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+**** ERROR --> 
+  File "load.py", line 2510, in <module>
+    dout = getIEIstatsbyBand(dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth,getphase=True,savespec=savespec,endfctr=endfctr) # this function does most of the work, calculating the spectral events, and returning them organized by frequency band
+  File "load.py", line 1133, in getIEIstatsbyBand
+    lmsnorm = [normop(ms.TFR) for ms in lms] # normalize wavelet specgram by median (when normop==mednorm) or unitnorm (sub avg div std)
+  File "load.py", line 1133, in <listcomp>
+    lmsnorm = [normop(ms.TFR) for ms in lms] # normalize wavelet specgram by median (when normop==mednorm) or unitnorm (sub avg div std)
+  File "load.py", line 214, in mednorm
+    out = zeros((nrow,ncol))
+MemoryError: Unable to allocate 271. MiB for an array with shape
+    (323, 110000) and data type float64
+**** line 2510: 
+  dout = getIEIstatsbyBand(dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth,getphase=True,savespec=savespec,endfctr=endfctr) # this function does most of the work, calculating the spectral events, and returning them organized by frequency band
 
+**** Taking a very long time!!! Change timeRange:
+***** First find out length of time in recording:
+****** on gcp --> cd ~/a1dat --> python3
+****** fn = '/home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat'
+****** from nhpdat import *
+****** samprds = 11e3
+****** getbipolar = False
+****** sampr,dat,dt,tt,CSD,MUA = loadfile(fn,samprds,getbipolar=getbipolar)
+****** tt.size ---> 4039705
+****** tt[-1] --> 367.24581818181815
+****** I think this is in seconds! 
+
+***** Set timeRange in load.py to timeRange = [100,200]
+
+
+*** [DONE] python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat
+*** [DONE] python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-ma031032023@os_eye06_20.mat
+*** [DONE] python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat
+*** [DONE] python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-rb045046026@os_eye06_20.mat
+*** [DONE] python3 -i load.py /home/ericagriffith/A1/data/NHPdata/spont/contproc/A1/2-rb063064011@os_eye06_20.mat
+** Changed VM instance machine type from n2-standard-16 (64 GB memory) to n2-standard-32 (128 GB memory) --> hopefully this will help resolve above memory error with load.py? 
+*** If it doesn't --> look into the lack of SLURM that pops up when I login to this vm instance?? Is that what's causing the issue? 
+
+** [DONE] Get files over to gcp bucket: 
+*** on gcp 
+*** gsutil -m cp -r /home/ericagriffith/A1/data/figs/wavelets/ gs://eyg_data/A1/
+*** ERROR --> AccessDeniedException: 403 Insufficient Permission         
+*** Stopped the VM instance, edited it such that it has access to all API (?) --> restarted. see if this changes anything!!
+*** Nope --> still has an error. 
+*** WAIT!!! Need to delete cached credentials (https://stackoverflow.com/questions/27275063/gsutil-copy-returning-accessdeniedexception-403-insufficient-permission-from)
+*** on gcp --> rm -r ~/.gsutil
+*** gsutil -m cp -r /home/ericagriffith/A1/data/figs/wavelets/ gs://eyg_data/A1/
+*** WORKED!! 
+
+** [DONE] Get files over to local machine to view more easily
+*** Go to wavelets "subdir" in eyg_data bucket --> gs://eyg_data/A1/wavelets 
+*** Manually select all the folders you want to copy over  
+*** Click download 
+*** Copy the gsutil -m cp -r command offered automatically
+gsutil -m cp -r \
+  "gs://eyg_data/A1/wavelets/1-bu031032017@os_eye06_20/" \
+  "gs://eyg_data/A1/wavelets/2-bu027028013@os_eye06_20/" \
+  "gs://eyg_data/A1/wavelets/2-gt044045014@os_eye06_30/" \
+  "gs://eyg_data/A1/wavelets/2-ma031032023@os_eye06_20/" \
+  "gs://eyg_data/A1/wavelets/2-rb031032016@os_eye06_20/" \
+  "gs://eyg_data/A1/wavelets/2-rb045046026@os_eye06_20/" \
+  "gs://eyg_data/A1/wavelets/2-rb063064011@os_eye06_20/" \
+  .
+*** Paste this command into terminal on local machine without editing 
+*** This should result in figure subdirs being downloaded into my current directory
+*** [If necessary] --> Manually move them over w/ finder window into ~/Desktop/NEUROSIM/A1/data/figs/wavelets
+* <2021-08-09 Mon -- wavelet matching and more LFP>
+** Added more NHP figure matches (potential) to A1 wavelet matches google doc: https://docs.google.com/document/d/18y0CQTZtvMoltyaUbi3hXYLaWW89ryXEUW4st9ALSck/edit
+** Auditory meeting w/ salva sam and bill 
+** LFP suggestions:
+*** Run sim but take out cells type by type (starting w/ the ones that are not in M1)
+*** Forum search for LFP post
+*** Forum post for LFP if cannot find search 
+*** Try a much older version w/out the two .cfg files -- is it possible that there is something going on here with how this gets loaded? 
+* <2021-08-10 Tue -- thal int ctrl figs>
+** See thal int nb for more details  
+* <2021-08-11 Wed -- thal int ctrl figs>
+** See thal int nb for more details 
+* <2021-08-12 Thu -- OEvent code>
+** Looking at load.py for OEvent stats 
+** Reviewing the taxonomy paper for more info on what can be generated 
+* <2021-08-13 Fri -- LFP artifact & OEvent code>
+** Searching NEURON forum for LFP issues:
+*** came across fast_memb post, but no relevant info that I could glean
+*** people talking about python implementations; also not super relevant
+*** people talking about even older implementations; almost certainly not very relevant
+*** searched LFP, imemb, memb -- haven't seen much of anything
+*** TO DO: go thru rest of the pages that come up with 'LFP' search term in more detail  
+** see a1dat for more info on OEvent code
+* <2021-08-16 Mon -- LFP artifact & OEvent code>
+** Finishing NEURON forum search for LFP search term
+*** Went over in more detail and didn't find anything super relevant
+** see a1dat for more info on OEvent code 
+* <2021-08-18 Wed -- >
+** See thal int 
