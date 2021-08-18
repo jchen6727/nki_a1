@@ -2504,8 +2504,8 @@ def optunaRatesLayersWmat():
     scaleLow = 0.75
     scaleHigh = 1.25
 
-    scaleLow2 = 0.5
-    scaleHigh2 = 2.0
+    scaleLow2 = 0.2
+    scaleHigh2 = 4.0
 
     # import pickle
     # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
@@ -2763,7 +2763,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch28' 
+    b.batchLabel = 'v34_batch29' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
