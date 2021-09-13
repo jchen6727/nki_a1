@@ -457,10 +457,10 @@ def plot_net_conn_cns20poster():
     plt.savefig('../conn/'+filename, dpi=300)
 
 
-def fig_raster():
+def fig_raster(simLabel):
     dataFolder = '../data/'
     batchLabel = 'v34_batch27/'
-    simLabel = 'v34_batch27_0_0'
+    #simLabel = 'v34_batch27_0_0'
 
     sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
 
@@ -678,6 +678,9 @@ if __name__ == '__main__':
     # plot_empirical_conn()
     # plot_net_conn_cns20poster()
     
-    fig_raster()
+    for iseed in range(5):
+        for jseed in range(5):
+            simLabel = 'v34_batch27_%d_%d' %(iseed, jseed)
+            fig_raster(simLabel)
 
     #fig_optuna_fitness()
