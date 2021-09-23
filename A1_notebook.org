@@ -47551,5 +47551,7 @@ gsutil -m cp -r \
 ** Finishing NEURON forum search for LFP search term
 *** Went over in more detail and didn't find anything super relevant
 ** see a1dat for more info on OEvent code 
-* <2021-08-18 Wed -- >
+* <2021-08-18 Wed -- thal int>
 ** See thal int 
+* <2021-08-20 Fri -- thal int>
+** See thal int notebook 
