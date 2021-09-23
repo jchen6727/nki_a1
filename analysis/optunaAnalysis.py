@@ -19,7 +19,7 @@ def getParamLabels(dataFolder, batchSim):
         paramLabels = [str(x['label'][0])+str(x['label'][1]) if isinstance(x['label'], list) else str(x['label']) for x in json.load(f)['batch']['params']]
     return paramLabels
 
-def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=False, loadDataFromFile=False):
+def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=False, loadDataFromFile=False, maxNumber=None):
  
     if loadStudyFromFile:
         with open('%s/%s/%s_df_study.pkl' % (dataFolder, batchSim, batchSim), 'rb') as f:
@@ -53,7 +53,9 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
                 except:
                     print('%s not found ...' % (p+'_'+t))
 
-        for i in df.number:
+        if not maxNumber:
+            maxNumber = len(df.number)
+        for i in range(maxNumber):
             # try:
                 filename = '%s/%s/trial_%d/trial_%d' % (dataFolder, batchSim, int(i), int(i))
                 if os.path.exists(filename+'.json'):
@@ -74,7 +76,7 @@ def loadData(dataFolder, batchSim, pops, rateTimeRanges = [], loadStudyFromFile=
             #     print('Skipped trial %d' % (i))
             
         for p, rates in popRates.items():
-            df.insert(len(df.columns), p, rates)
+            df.insert(len(df.columns), p, rates+[0]*(len(df)-len(rates)))
 
         with open('%s/%s/%s_df.pkl' % (dataFolder, batchSim, batchSim), 'wb') as f:
             pickle.dump(df, f)
@@ -138,6 +140,8 @@ def plotScatterTrialVsParams(dataFolder, batchsim, df, excludeAbove=None, skipCo
                 plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'trial', param.replace('tune', '')), dpi=300)
             except:
                 print('Error plotting %s vs %s' % ('fitness',param))
+
+                
 def plotJointplotFitnessVsParams(dataFolder, batchsim, df, excludeAbove=None):
 
     if excludeAbove:
@@ -326,8 +330,8 @@ def calculateParamImportance(dataFolder, batchSim):
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v34_batch25'
-    loadFromFile = 1
+    batchSim = 'v34_batch29'
+    loadFromFile = 0
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     #allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] # , 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
@@ -345,15 +349,15 @@ if __name__ == '__main__':
     paramLabels = getParamLabels(dataFolder, batchSim)
 
     # load evol data from files
-    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile)
+    df = loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile, maxNumber=3038)
 
     #plotParamsVsFitness(dataFolder, batchSim, df, paramLabels, excludeAbove=200, ylim=None)
 
     #plotScatterFitnessVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
-    # plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
+    #plotScatterTrialVsParams(dataFolder, batchSim, df, excludeAbove=None, skipCols=rateTimeRanges)
 
-    # plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
+    #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
     #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['SOM2','SOM3', 'PT5B'], skipCols=rateTimeRanges)
 

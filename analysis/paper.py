@@ -26,8 +26,7 @@ import IPython as ipy
 
 # ---------------------------------------------------------------------------------------------------------------
 # Population params
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM']
-
+allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM', 'IC']
 
 
 def loadSimData(dataFolder, batchLabel, simLabel):
@@ -35,7 +34,7 @@ def loadSimData(dataFolder, batchLabel, simLabel):
     root = dataFolder+batchLabel+'/'
     sim,data,out = None, None, None
     if isinstance(simLabel, str): 
-        filename = root+simLabel+'.json'
+        filename = root+simLabel+'.pkl'
         print(filename)
         sim,data,out = utils.plotsFromFile(filename, raster=0, stats=0, rates=0, syncs=0, hist=0, psd=0, traces=0, grang=0, plotAll=0)
     
@@ -324,7 +323,6 @@ def plot_empirical_conn():
     #import IPython; IPython.embed()
 
 
-
 def plot_net_conn():
     # load custom A1 conn
     with open('../conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl', 'rb') as f:
@@ -458,8 +456,231 @@ def plot_net_conn_cns20poster():
     filename = 'prob_conn_net_v25_batch4.png'
     plt.savefig('../conn/'+filename, dpi=300)
 
-#### main
-# fig_conn()
-# compare_conn()
-plot_empirical_conn()
-plot_net_conn_cns20poster()
+
+def fig_raster(simLabel):
+    dataFolder = '../data/'
+    batchLabel = 'v34_batch27/'
+    #simLabel = 'v34_batch27_0_0'
+
+    sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
+
+    timeRange = [1000, 11000] #[2000, 4000]
+    
+    # raste
+    include = allpops
+    orderBy = ['pop'] #, 'y']
+    #filename = '%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
+    fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
+        popRates=0, orderInverse=True, lw=0, markerSize=3.5, marker='.',  
+        showFig=0, saveFig=0, figSize=(8.5, 13), orderBy=orderBy)# 
+    ax = plt.gca()
+
+    [i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
+    #plt.tick_params(axis='both', which='both', bottom='off', top='off', labelbottom='off', right='off', left='off', labelleft='off')  #remove ticks
+    plt.xticks([1000, 2000, 3000, 4000, 5000, 6000], ['1', '2', '3', '4', '5', '6'])
+    plt.yticks([0, 5000, 10000], [0, 5000, 10000])
+    
+    plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
+    plt.xlabel('Time (s)')
+    
+    plt.title('')
+    filename='%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
+    plt.savefig(filename, dpi=600)
+
+
+    # stats
+    fig2 = sim.analysis.plotSpikeStats(include=['eachPop'], stats=['rate'], timeRange=timeRange, includeRate0=True,
+        showFig=0, saveFig=0, figSize=(8.5, 13))
+
+    plt.xlim([0, 120])
+    plt.title('')
+    filename='%s%s_stats_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
+    plt.savefig(filename, dpi=600)
+
+
+def fig_stats():
+    pass
+
+def fig_traces():
+    '''
+    plt.figure(figsize=(18,24)) 
+    time = np.linspace(0, 2000, 20001)
+    plt.ylabel('V (mV)', fontsize=16)
+    plt.xlabel('time (ms)', fontsize=16)
+    plt.xlim(0, 2000)
+    # plt.ylim(-80, -30)
+    plt.ylim(-6670,20)
+    plt.yticks(np.arange(-6540,60,120),popParamLabels[::-1], fontsize=14)
+    plt.xticks(fontsize=14)
+
+    paramsName = paramsNameList[3]
+    number = 0
+    for popName in popParamLabels:   
+        for metype in popNameName[popName]:
+            cellNames = cellNameName[metype]
+            for cellName in cellNames:
+                Vt = np.array(data[paramsName]['simData']['V_soma'][cellName])
+                plt.plot(time, (Vt-number*120.0)) 
+        number = number + 1
+
+    plt.savefig('Vt_full_' + paramsName + '.png', facecolor = 'white', bbox_inches='tight' , dpi=300)
+'''
+
+def fig_optuna_fitness():
+    import optunaAnalysis as oa
+    import seaborn as sns
+
+    dataFolder = '../data/'
+    batchSim = 'v34_batch14'
+    loadFromFile = 1
+    
+    allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
+    rateTimeRanges = ['1500_1750', '1750_2000', '2000_2250', '2250_2500']
+
+    # set font size
+    plt.rcParams.update({'font.size': 18})
+
+    # get param labelsc
+    paramLabels = oa.getParamLabels(dataFolder, batchSim)
+
+    # load evol data from files
+    df = oa.loadData(dataFolder, batchSim, pops=allpops, rateTimeRanges=rateTimeRanges, loadStudyFromFile=loadFromFile, loadDataFromFile=loadFromFile)
+
+    trial_fitness_single = 1
+    params_fitness_all = 1
+    rates_fitness_all = 1
+    rates_fitness_single = 1
+
+    # PLOTS
+    skipCols = rateTimeRanges
+
+    # plot trial vs fitness
+    if trial_fitness_single:
+        excludeAbove = 1000
+
+        if excludeAbove:
+            df = df[df.value < excludeAbove]
+
+        df.reset_index()
+        df.number=range(len(df))
+
+        dfcorr=df.corr('pearson')
+
+        min=df.iloc[0]['value']
+        minlist=[]
+        for x in df.value:
+            if x < min:
+                minlist.append(x)
+                min = x
+            else:
+                minlist.append(min)
+
+        param = 'value'
+        if not any([skipCol in param for skipCol in skipCols]): 
+            print('Plotting scatter of %s vs %s param (R=%.2f) ...' %('fitness', param, dfcorr['value'][param]))
+            #df.plot.scatter(param, 'value', s=4, c='number', colormap='viridis', alpha=0.5, figsize=(8, 8), colorbar=False)
+            plt.figure(figsize=(8, 8))
+            df.plot.scatter('number', param, s=6, c='blue', colormap='jet_r', alpha=0.5, figsize=(8, 8), colorbar=False, vmin=50, vmax=400)
+
+            #import IPython; IPython.embed()
+
+            plt.plot(list(df['value'].rolling(window=10).mean()), c='orange', label='mean')
+            plt.plot(minlist, c='red', label='min')
+            # f = plt.gcf()
+            # cax = f.get_axes()[1]
+            # cax.set_ylabel('Fitness Error')
+            plt.ylabel('Fitness Error')
+            plt.xlabel('Trial')
+            plt.ylim([0,1000])
+            plt.legend()
+            #plt.title('%s vs %s R=%.2f' % ('trial', param.replace('tune', ''), dfcorr['value'][param]))
+            plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'trial', param.replace('tune', '')), dpi=300)
+
+
+    # plot params vs fitness
+    if params_fitness_all:
+        excludeAbove = 400
+        ylim = None
+        if excludeAbove:
+            df = df[df.value < excludeAbove]
+
+        df2 = df.drop(['value', 'number'], axis=1)
+        fits = list(df['value'])
+        plt.figure(figsize=(16, 8))
+
+        paramsData = list(df2[paramLabels].items())
+
+        for i, (k,v) in enumerate(paramsData):
+            y = v #(np.array(v)-min(v))/(max(v)-min(v)) # normalize
+            x = np.random.normal(i, 0.04, size=len(y))         # Add some random "jitter" to the x-axis
+            s = plt.scatter(x, y, alpha=0.3, c=[int(f-1) for f in fits], cmap='jet_r') #)
+        plt.colorbar(label = 'Fitness Error')
+        plt.ylabel('Parameter value')
+        plt.xlabel('Parameter')
+        if ylim: plt.ylim(0, ylim)
+        paramLabels = [x.replace('Gain','') for x in paramLabels]
+        plt.xticks(range(len(paramLabels)), paramLabels, rotation=75)
+        plt.subplots_adjust(top=0.99, bottom=0.30, right=1.05, left=0.05)
+        plt.savefig('%s/%s/%s_scatter_params_%s.png' % (dataFolder, batchSim, batchSim, 'excludeAbove-'+str(excludeAbove) if excludeAbove else ''))
+        #plt.show()
+
+
+    # plot rates vs fitness
+    if rates_fitness_all:
+        excludeAbove = 400
+        ylim = None
+        if excludeAbove:
+            df = df[df.value < excludeAbove]
+
+        df2 = df[allpops]
+        fits = list(df['value'])
+        plt.figure(figsize=(16, 8))
+
+        paramsData = list(df2[allpops].items())
+
+        for i, (k,v) in enumerate(paramsData):
+            y = v #(np.array(v)-min(v))/(max(v)-min(v)) # normalize
+            x = np.random.normal(i, 0.04, size=len(y))         # Add some random "jitter" to the x-axis
+            s = plt.scatter(x, y, alpha=0.3, c=[int(f-1) for f in fits], cmap='jet_r') #)
+        plt.colorbar(label = 'Fitness Error')
+        plt.ylabel('Firing Rate (Hz)')
+        plt.xlabel('Population')
+        if ylim: plt.ylim(0, ylim)
+        plt.xticks(range(len(allpops)), allpops, rotation=75)
+        plt.subplots_adjust(top=0.99, bottom=0.30, right=1.05, left=0.05)
+        plt.savefig('%s/%s/%s_scatter_rates_all%s.png' % (dataFolder, batchSim, batchSim, 'excludeAbove-'+str(excludeAbove) if excludeAbove else ''))
+        #plt.show()
+
+
+    # plot pop rate vs fitness
+    if rates_fitness_single:
+        excludeAbove = 1000
+        if excludeAbove:
+            df = df[df.value < excludeAbove]
+
+        dfcorr=df.corr('pearson')
+
+        for param in ['PV4']:
+            if not any([skipCol in param for skipCol in skipCols]): 
+                print('Plotting scatter of %s vs %s param (R=%.2f) ...' %('fitness', param, dfcorr['value'][param]))
+                df.plot.scatter(param, 'value', s=6, c='blue', colormap='jet_r', alpha=0.5, figsize=(8, 8), colorbar=False, vmin=0, vmax=1000) #, colorbar=False)
+                plt.ylabel('Fitness Error')
+                plt.xlabel('PV4 Rate (Hz)')
+                plt.xlim([0,30])
+                #plt.title('%s vs %s R=%.2f' % ('fitness', param.replace('tune', ''), dfcorr['value'][param]))
+                plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
+
+
+# Main
+if __name__ == '__main__':
+    # fig_conn()
+    # compare_conn()
+    # plot_empirical_conn()
+    # plot_net_conn_cns20poster()
+    
+    for iseed in range(5):
+        for jseed in range(5):
+            simLabel = 'v34_batch27_%d_%d' %(iseed, jseed)
+            fig_raster(simLabel)
+
+    #fig_optuna_fitness()

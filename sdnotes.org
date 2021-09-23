@@ -9774,8 +9774,57 @@ def custom():
 *** results
 good solution: trial_1937
 ** v34_batch24 - 1 long sims; best from v34_batch23 (trial_1937); 11.5-sec; with LFP
-** v34_batch25 - pending (improve sol around v34_batch23 best)
+** v34_batch25 - tuning; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) around best sol of v34_batch23 (trial_1937)
 ** v34_batch26 - 5x5 seeds; best from v34_batch23 (trial_1937); 11.5-sec; with LFP
+** v34_batch27 - 5x5 seeds; best from v34_batch25 (trial_2142); 11.5-sec; with LFP
+
+** v34_batch28 - tuning; optuna with 16 L6 cell-type-specific weight params 0.5-2.0 (targeting PV6, SOM6, NGF6) around best sol of v34_batch25 (trial_2142); 2.5 sec
+** v34_batch29 - tuning; optuna with 16 L6 cell-type-specific weight params 0.2-4.0 (targeting PV6, SOM6, NGF6) around best sol of v34_batch25 (trial_2142); 2.5 sec
+*** code
+def optunaRatesLayersWmat():
+
+    # from prev
+    import json
+    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    scaleLow = 0.75
+    scaleHigh = 1.25
+
+    scaleLow2 = 0.2
+    scaleHigh2 = 4.0
+
+    # import pickle
+    # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    # wmat = connData['wmat']
+    wmat = cfgLoad['wmat']    
+
+    weightsScale = [['IT6', 'NGF6'],
+                    ['PV6', 'NGF6'],
+                    ['SOM6', 'NGF6'],
+                    ['VIP6', 'NGF6'],
+                    ['NGF6', 'NGF6'],
+                    ['IT6', 'SOM6'],
+                    ['PV6', 'SOM6'],
+                    ['SOM6', 'SOM6'],
+                    ['VIP6', 'SOM6'],
+                    ['NGF6', 'SOM6'],         
+                    ['IT6', 'PV6'],
+                    ['PV6', 'PV6'],
+                    ['SOM6', 'PV6'],
+                    ['VIP6', 'PV6'],
+                    ['NGF6', 'PV6']]        
+                    
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
+
+
 ** blank
 
 
