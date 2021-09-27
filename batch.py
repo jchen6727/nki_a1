@@ -2493,7 +2493,10 @@ def optunaRatesLayersWmat():
 
     # from prev
     import json
-    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+    #with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+    #    cfgLoad = json.load(f)['simConfig']
+
+    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
 
 
@@ -2504,8 +2507,11 @@ def optunaRatesLayersWmat():
     scaleLow = 0.75
     scaleHigh = 1.25
 
-    scaleLow2 = 0.1
-    scaleHigh2 = 10.0
+    #scaleLow2 = 0.1
+    #scaleHigh2 = 10.0
+
+    scaleLow2 = 0.5
+    scaleHigh2 = 2.0
 
     # import pickle
     # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
@@ -2551,31 +2557,64 @@ def optunaRatesLayersWmat():
     #                 ['NGF6', 'VIP6']]        
     
     # only those with pmat > 0.08
-    weightsScale =  [['IT6', 'PV6'], 
+    # weightsScale =  [['IT6', 'PV6'], 
+    #                 ['IT6', 'SOM6'], 
+    #                 ['IT6', 'VIP6'], 
+    #                 ['IT6', 'NGF6'], 
+    #                 ['CT6', 'PV6'], 
+    #                 ['CT6', 'SOM6'], 
+    #                 ['CT6', 'VIP6'], 
+    #                 ['CT6', 'NGF6'], 
+    #                 ['PV6', 'IT6'], 
+    #                 ['PV6', 'CT6'], 
+    #                 ['PV6', 'PV6'], 
+    #                 ['PV6', 'SOM6'], 
+    #                 ['PV6', 'VIP6'], 
+    #                 ['PV6', 'NGF6'], 
+    #                 ['SOM6', 'IT6'], 
+    #                 ['SOM6', 'CT6'], 
+    #                 ['VIP6', 'PV6'], 
+    #                 ['VIP6', 'SOM6'], 
+    #                 ['VIP6', 'VIP6'], 
+    #                 ['VIP6', 'NGF6'], 
+    #                 ['NGF6', 'IT6'], 
+    #                 ['NGF6', 'CT6']]
+
+
+    weightsScale = [['IT2', 'PV2'],
+                    ['IT2', 'SOM2'], 
+                    ['IT3', 'PV2'],
+                    ['IT3', 'SOM2'],
+                    ['PV2', 'PV2'],
+                    ['PV2', 'VIP2'],
+                    ['PV3', 'PV2'],
+                    ['PV3', 'VIP2'],
+                    ['SOM2', 'PV2'],
+                    ['SOM2', 'VIP2'],
+                    ['SOM3', 'PV2'],
+                    ['SOM3', 'VIP2'],
+                    ['VIP2', 'SOM2'],
+                    ['VIP3', 'SOM2'],
+                    ['IT2', 'SOM3'], 
+                    ['IT3', 'SOM3'],
+                    ['VIP2', 'SOM3'],
+                    ['VIP3', 'SOM3'],
+                    
+                    ['IT6', 'PV6'], 
                     ['IT6', 'SOM6'], 
                     ['IT6', 'VIP6'], 
-                    ['IT6', 'NGF6'], 
-                    ['CT6', 'PV6'], 
-                    ['CT6', 'SOM6'], 
-                    ['CT6', 'VIP6'], 
-                    ['CT6', 'NGF6'], 
-                    ['PV6', 'IT6'], 
-                    ['PV6', 'CT6'], 
-                    ['PV6', 'PV6'], 
-                    ['PV6', 'SOM6'], 
-                    ['PV6', 'VIP6'], 
-                    ['PV6', 'NGF6'], 
-                    ['SOM6', 'IT6'], 
-                    ['SOM6', 'CT6'], 
-                    ['VIP6', 'PV6'], 
-                    ['VIP6', 'SOM6'], 
-                    ['VIP6', 'VIP6'], 
-                    ['VIP6', 'NGF6'], 
-                    ['NGF6', 'IT6'], 
-                    ['NGF6', 'CT6']]
+                    ['IT6', 'NGF6']]
+                    
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
+
+    weightsScale2 = []
 
     for ws in weightsScale:
         params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
+
+
 
 
 
@@ -2808,7 +2847,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch30' 
+    b.batchLabel = 'v34_batch31' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

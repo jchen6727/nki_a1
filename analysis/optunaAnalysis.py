@@ -330,8 +330,8 @@ def calculateParamImportance(dataFolder, batchSim):
 # -----------------------------------------------------------------------------
 if __name__ == '__main__': 
     dataFolder = '../data/'
-    batchSim = 'v34_batch30'
-    loadFromFile = 0
+    batchSim = 'v34_batch25'
+    loadFromFile = 1
     
     allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
     #allpops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4','IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] # , 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  #, 'IC']
@@ -359,7 +359,7 @@ if __name__ == '__main__':
 
     #plotJointplotFitnessVsParams(dataFolder, batchSim, df, excludeAbove=500)
 
-    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['SOM2','SOM3', 'PT5B'], skipCols=rateTimeRanges)
+    #plotScatterPopVsParams(dataFolder, batchSim, df, pops = ['NGF6','SOM6', 'SOM2', 'SOM3'], skipCols=rateTimeRanges)
 
 
 
