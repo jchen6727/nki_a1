@@ -47671,13 +47671,10 @@ responses in the neocort
 ***** determine the location (channel -- correspond this to layer / depth / something localizable in terms of the model) of the oscillation event in the sim
 ***** list out what cell types are there
 ***** look at traces from these cell types, in this layer, at this time 
-
 ** IDEAS for this and/or later papers:
 *** Single cell analysis...? a la higley book "terminal arborization" part; similar to swadlow et al. (citation 7 in higley 2011 book). 
 *** Intracortical vs. ascending inputs -- use CSD analysis to do this (see above for citations on this)
 *** Phase-locking and CSD-MUA coherence? See alpha oscillations mechanism paper w/ charlie s as one of the authors. 
-
-
 ** Thoughts: 
 *** So, is the idea here that I have an oscillation event. 
 The oscillation event, IS, at the heart of it, an oscillation occurring in the CSD signal. 
@@ -47689,3 +47686,45 @@ a given oscillation event, and I need to see what this looks like in
 terms of the current source/sink color map type thing. 
 
 What will that tell me? I guess it depends what that looks like. 
+** plotPaper.py:
+*** Lines i'm going to comment out:
+### Plot traces
+#cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in allpops], 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
+sim.analysis.plotTraces('include': [(pop, 0) for pop in allpops], 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(12,8))
+
+### CSD -- 
+fullPath = based + fn
+#timeRange=[1100, 1400]
+#sim = utils.loadFromFile('../data/v25_batch5/v25_batch5_0_0_2.json')
+sim.load(fullPath, instantiate=False)
+sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, LFP_overlay=True, layer_lines=True, saveFig=1, showFig=0)
+#plt.savefig('v25_batch5_0_0_2_1100-1400.png')   
+
+
+### LFP -- 
+for fn in testpkl: #pklfn: 
+	fullPath = based + fn
+	sim.load(fullPath, instantiate=False) 	# instantiate=False gets rid of hoc error 
+	# lfp_data = np.array(sim.allSimData['LFP'])
+	# dt = sim.cfg.recordStep/1000.0 # this is in ms by default -- convert to seconds
+	# sampr = 1./dt 	# sampling rate (Hz)
+	# spacing_um = sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1]
+	# CSD_data = sim.analysis.getCSD()
+
+	#[lfp_data, CSD_data, sampr, spacing_um, dt] = sim.analysis.getCSD(getAllData=True)
+	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_timeSeries.png'
+	figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' + fn + '_spect.png'
+	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_PSD.png'
+
+	sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300],saveFig=figname,showFig=True)#,saveFig=True)#, 'PSD', 'spectrogram'])
+
+	# # get onset of stim and other info about speech stim
+	# if 'speech' in based:
+	# 	thalInput = sim.cfg.ICThalInput
+	# 	stimFile = thalInput['file']#.split('/')[-1]
+	# 	stimStart = thalInput['startTime']
+*** plotLFP works
+*** plotCSD:
+**** saying unexpected keyword LFP_overlay=True ?? 
+*** plot Traces --> works! Things I'd like to improve:
+**** have each trace labeled with the cell label (e.g. 'PV2', etc.) 
