@@ -25,13 +25,40 @@ layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 
 ### all pops: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
-'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']#, 'IC']
+L1pops = ['NGF1']
+L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
+L3pops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3']
+L4pops = ['ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4']
+L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+ThalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B']
+ICortPops = ['NGF1', 
+			'PV2', 'SOM2', 'VIP2', 'NGF2', 
+			'PV3', 'SOM3', 'VIP3', 'NGF3',
+			'PV4', 'SOM4', 'VIP4', 'NGF4',
+			'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
+			'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
+			'PV6', 'SOM6', 'VIP6', 'NGF6']
+EThalPops = ['TC', 'TCM', 'HTC']				# TEpops = ['TC', 'TCM', 'HTC']
+IThalPops = ['IRE', 'IREM', 'TI', 'TIM']		# TIpops = ['IRE', 'IREM', 'TI', 'TIM']
+reticPops = ['IRE', 'IREM']
+matrixPops = ['TCM', 'IREM']
+corePops = ['TC', 'HTC', 'IRE']
 
+
+
+
+
+### Plot traces
+cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in allpops], 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
 
 
 ### CSD -- 
 fullPath = based + fn
-timeRange=[1100, 1400]
+#timeRange=[1100, 1400]
 #sim = utils.loadFromFile('../data/v25_batch5/v25_batch5_0_0_2.json')
 sim.load(fullPath, instantiate=False)
 sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, LFP_overlay=True, layer_lines=True, saveFig=1, showFig=0)
