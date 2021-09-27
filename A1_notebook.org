@@ -47555,3 +47555,137 @@ gsutil -m cp -r \
 ** See thal int 
 * <2021-08-20 Fri -- thal int>
 ** See thal int notebook 
+* <2021-09-26 Sun -- figures>
+** Update Spontaneous CSD and LFP figure / add comparison to experimental data
+*** Fig X-LFP-Spont. LFP and CSD [update; add comparison to experimental data]
+** Update 'Response to auditory stimulus' CSD and LFP / add comparison to data
+*** Fig X-LFP_stim. Example LFP/CSD response to auditory stimulus
+** Cell and circuit mechanisms underlying physiological oscillations ?
+*** cell types involved in oscillations (reduce/remove different cell types)
+*** Core vs matrix thalamic inputs regulate oscillations
+** Fig X. Mechanisms of physiological oscillations?
+** Single cell models --> Table.X. Table w/ parameters? (similar to other cell model papers?)
+** Any other single cell model figures to use? 
+** Discussion section of the text
+** From sam and salva: 
+*** sam summary --> 
+compare a few interesting events (oscillation events, presumably) in detail and to look at neurons activated during those events, something the model could offer insight into. 
+*** salva summary --> 
+don't do full stats right away, just show some similar looking CSDs,
+and analyze one or more in more detail to show advtange of the model,
+i.e. insights into how the event was generated 
+*** from slack: 
+**** salva:
+***** --> I think analysis and getting ready the figure comparing spontaneous activity would be really useful
+**** sam:
+***** --> some form of stat comparison across frequencies and layers? i'm guessing they'll align mostly due to wavelets having same properties in both
+***** --> so might not offer too much insight (number of cycles, etc.)
+***** --> and if there are differences, leads to questions...
+***** --> so might also make sense to compare a few interesting events in detail and to look at neurons activated during those events, something the model could offer insights into
+**** salvadord 
+***** --> yes I think the latter is a great idea
+***** --> as bill suggested, maybe dont need to do the full stats right away, just show some similar looking CSDs
+***** --> and analyze one in more detail to show advantage of model, ie. provide insights of how generated
+*** To do all this --> 
+**** Pick out some interesting "matches" in CSD -- have a google doc with possibilities here: https://docs.google.com/document/d/18y0CQTZtvMoltyaUbi3hXYLaWW89ryXEUW4st9ALSck/edit
+**** okay, that's reasonable
+**** Then, have to understand how CSD can be used effectively to understand which neurons are activated during the events. 
+***** To do this --> I have to first read about how this is done usually. 
+***** Then, I have to generate whatever material is necessary for me to be able to follow a method that I glean from the literature. 
+** Reading about CSD and using this to determine population activity: 
+*** Sources:
+**** http://higleylab.org/wp-content/uploads/2017/04/2011_Higley_SpringerBook-1.pdf
+***** "CSD analysis has been used by a number of groups to construct functional maps of the flow of information through cortical networks in vivo."
+
+**** Quantification of mid and late evoked sinks in laminar current source density profiles of columns in the primary auditory cortex
+***** file:///Users/ericagriffith/Downloads/fncir-09-00052.pdf
+***** https://www.frontiersin.org/articles/10.3389/fncir.2015.00052/full
+**** Generator localization by current source density (CSD): Implications of volume conduction and field closure at intracranial and scalp resolutions
+***** https://psychophysiology.cpmc.columbia.edu/pdf/tenke2012a.pdf
+**** "Current Source Density Analysis of Ongoing Neural Activity: Theory and Application"
+***** http://www.physics.gsu.edu/dhamala/publications/CSDchapter_dhamala.pdf
+
+**** "Neuronal Mechanisms of Cortical Alpha Oscillations in Awake-Behaving Macaques"
+***** https://www.jneurosci.org/content/jneuro/28/40/9976.full.pdf
+**** "Independent Components of Neural Activity Carry Information on Individual Populations"
+***** https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0105071
+**** "Laminar structure of spontaneous and sensory-evoked population activity in auditory cortex"
+***** https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2778614/
+** really basic resources:
+*** wiki: 
+https://en.wikipedia.org/wiki/Current_sources_and_sinks
+*** some lecture stuff:
+http://web.mit.edu/9.013/www/lectures/17-18_MCP_Model_Systems_for_Plasticity.pdf
+*** a definition: 
+https://www.physiologyweb.com/glossary/i/inward_current.html
+** NOTES from reading:
+*** Higley book from 2011
+**** see highlights in .pdf 
+**** simple CSD analysis like outlined in fig 1 can help determine contribution of ascending vs. horizontal inputs: 
+***** citations 5, 6, 22
+***** 6) Higley and Contreras (2007). "Cellular mechanisms..."
+https://journals.physiology.org/doi/pdf/10.1152/jn.00777.2006
+***** 5) Happel et al., 2010. "Spectral integration..."
+****** ^^ This paper evidently showed that for A1, long-range horizontal (intracortical) connections terminating in SUPERFICIAL LAYERS are critical to the generation of spectral tuning fields!!! 
+****** https://www.jneurosci.org/content/jneuro/30/33/11114.full.pdf
+***** 22) Chen et al., 2007. "Functional anatomy..." 
+https://watermark.silverchair.com/bhl067.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAAskwggLFBgkqhkiG9w0BBwagggK2MIICsgIBADCCAqsGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMGxfLQUUQGjZ8E0SkAgEQgIICfHXnUNrSRIEAyAvcGsxr_XIiNuQSfTqs8sHWKVNdVSzI9hxbkBz0ZZOfKD-SiBBsNvQNvl4frJEokFKDFHJ01JP5R4ZirtkACKaZEY5qMJdbT607QVDW0gzkdKOeykLacCw0kcVVyEgaimWmIWYQSDZIpUBwxqugzKaDxARDzhz-QajcMgISSB_qh9YChfQAEYR2tXyW8mYnHC9mY3fzwylwGVPHTlMzsWulsTY4fBNUBqYw84LptltrbKEleLc5nRvXgGIhtgJbyNqtfBnTLX85Tmv-O810wy0XVAobMKiBDyK3gCNuqHKgcY1scePI9_GeOjQLLwvF629s9VuMebvsdwRuVGdqowovGceU-YqEXoC9XRshHi4CUN9SGr7QtpCCO2a1KCEe5nbDTkbmQHgNJTJY38QPu1Q5GgoAcY7IG7InxEL50m-1hZoqrrgWcQEm1AA77vmGgoGGnzapeXIGq5lGD-OEATdquQHz-aNI_gxHHIxbbv_wzHFLUXQIX_GKQbVWp1sj1jUVazsljZrNBpThTqaF_fN0txiMhAxQqOg91C6zOlvfWHXArQ95Mwz2iYAzwbR1pNwHSO4F22TCeh7n2qHmdbV2MWlaB_DgrWVD4xzF-EZNRQv47wTEcXKNSKYerp8bdvjElHnoeQICi8HfRIBTuYd-CLN5jLnkU59aEk6j8f1Y46CwrUJxQq1JHgAlKuWTjEZnQils7fOjkpCOJfhX1UmUWsB7PI-oUm3KDb3kD74VbsLflfP8vRS-5AbYIsE1LdQgYDfwUfiw7otM1Pmvrbxi2G6RIF1SE082Xu4dmEglQdQ1vldr1Yh-NLmwLcM4UBK7Sw
+**** simple (?) CSD analysis has been used to analyze the anatomical substrates of spontaneously occurring oscillations in the rodent cortex and hippocampus (citation 24):
+Kandel A, Buzsaki G (1997) Cellular-synaptic
+generation of sleep spindles, spike-and-wave
+discharges, and evoked thalamocortical
+responses in the neocort
+
+*** Alpha oscillations mechanism paper:
+**** This paper is making it sound like the oscillations are occurring in the LFP signal (field potential oscillations), and also that in results, it states that the "robust alpha oscillations" could be "readily seen in LFP recordings"
+**** "To assess more quantitatively the extent to which the firing probability of the local neurons around a given current generator is phase locked to the alpha current oscillation, we estimated the coherence between CSD and MUA for each alpha current generator."
+**** They have a 3-step process it seems for analyzing the oscillation mechanisms. The first is that transmembrane current generators are identified with the CSD method. The second is that potential pacemaking ability? This is demo'ed it seems with high CSD / MUA coherence. And then lastly they use granger causality analysis to some end (to identify the "primary" local pacemaking generator). 
+**** I think I'm starting to see what they did sorta. ah. so since the MUA corresponds most to the intensity of pyramidal cell firing, if you look at the coherence between MUA and CSD during an oscillation event, you're better able to tell which 'current generator' is phase-locked to the oscillation, aka which could be producing it.
+**** ^^ what does that look like here, in terms of... what does MUA activity look like, what does it consist of -- and how does that differ in terms of the model and what is being recorded during a simulation run. 
+**** ^^ I believe, if what I have read before is correct, that MUA can be calculated as the high-frequency component of the LFP. 
+***** Okay but question does this just confirm what one could already suspect from the CSD? basically what i'm saying it... CSD has a reasonable amount of spatial specificity or whatever. The CSD is the 2nd spatial derivative of the LFP data, and MUA is the high-pass filtered LFP data, if I understand this correctly. 
+***** So then, wouldn't you expect that the layer in which the CSD oscillatory event is occurring is also where the MUA is most synced? Is this just more being done than for confirmatory sake, or is there some extra info that is gleaned by looking at this? 
+*** So then what do I need to do next? 
+**** Pick a couple matches that look good --> 
+***** (1) 
+(LEFT) A1_v34_batch27_v34_batch27_2_4_SIM_gcp_wavelet_chan_4_beta_0
+(RIGHT) 2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_beta_t100
+
+***** (2) 
+(LEFT) A1_v34_batch27_v34_batch27_2_4_SIM_gcp_wavelet_chan_17_beta_0
+(RIGHT) 2-gt044045014@os_eye06_30_MACAQUE_gcp_wavelet_chan_14_beta_3.png
+
+***** (3) 
+(LEFT) A1_v34_batch27_v34_batch27_2_3_SIM_gcp_wavelet_chan_5_alpha_1
+(RIGHT) 2-ma031032023@os_eye06_20_MACAQUE_gcp_wavelet_alpha_t100.png
+
+
+**** QUESTION: The oscillations in CSD are a lot "larger" in the simulation -- what are the implications here? what does this mean? 
+**** Okay, so now I have a couple matches that I can look at. What should I do next? 
+**** For the macaque --> I suppose I could do a similar thing compared to what was done in the alpha oscillations paper...? Look at CSD-MUA coherence...? 
+**** For the simulation -->
+***** What is the equivalent of what they did that paper? aka the CSD-MUA coherence to look at which generators are contributing? 
+***** What are some other things I could do? 
+***** I suppose I could look at the whole CSD (meaning all layers) at this point in time. or even --> I could look at the specific location where the oscillation event is occurring. I presumably have the channel where it's happening, right? Then what. 
+***** well --> determine the time of the oscillation event in the sim
+***** determine the location (channel -- correspond this to layer / depth / something localizable in terms of the model) of the oscillation event in the sim
+***** list out what cell types are there
+***** look at traces from these cell types, in this layer, at this time 
+
+** IDEAS for this and/or later papers:
+*** Single cell analysis...? a la higley book "terminal arborization" part; similar to swadlow et al. (citation 7 in higley 2011 book). 
+*** Intracortical vs. ascending inputs -- use CSD analysis to do this (see above for citations on this)
+*** Phase-locking and CSD-MUA coherence? See alpha oscillations mechanism paper w/ charlie s as one of the authors. 
+
+
+** Thoughts: 
+*** So, is the idea here that I have an oscillation event. 
+The oscillation event, IS, at the heart of it, an oscillation occurring in the CSD signal. 
+This is happening over a certain period of time, as indicated by the
+x-axis. 
+This is happening in a certain location. What does this mean exactly. 
+I think to resolve the above uncertainty (in my mind), I need to take
+a given oscillation event, and I need to see what this looks like in
+terms of the current source/sink color map type thing. 
+
+What will that tell me? I guess it depends what that looks like. 

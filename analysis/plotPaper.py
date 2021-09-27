@@ -1,0 +1,64 @@
+from netpyne import sim
+import os
+import utils
+from matplotlib import pyplot as plt
+
+### set path to data files
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+
+### set path to .csv layer file 
+dbpath = based + 'simDataLayers.csv'
+
+### get .pkl data filenames 
+allFiles = os.listdir(based)
+pklfn = []
+for file in allFiles:
+	if '.pkl' in file:
+		pklfn.append(file)
+
+
+
+### set layer bounds:
+layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+
+
+### all pops: 
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'IC']
+
+
+
+### CSD -- 
+fullPath = based + fn
+timeRange=[1100, 1400]
+#sim = utils.loadFromFile('../data/v25_batch5/v25_batch5_0_0_2.json')
+sim.load(fullPath, instantiate=False)
+sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, LFP_overlay=True, layer_lines=True, saveFig=1, showFig=0)
+#plt.savefig('v25_batch5_0_0_2_1100-1400.png')   
+
+
+### LFP -- 
+testpkl = ['A1_v32_batch20_v32_batch20_0_0.pkl']
+
+for fn in testpkl: #pklfn: 
+	fullPath = based + fn
+	sim.load(fullPath, instantiate=False) 	# instantiate=False gets rid of hoc error 
+	# lfp_data = np.array(sim.allSimData['LFP'])
+	# dt = sim.cfg.recordStep/1000.0 # this is in ms by default -- convert to seconds
+	# sampr = 1./dt 	# sampling rate (Hz)
+	# spacing_um = sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1]
+	# CSD_data = sim.analysis.getCSD()
+
+	#[lfp_data, CSD_data, sampr, spacing_um, dt] = sim.analysis.getCSD(getAllData=True)
+	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_timeSeries.png'
+	figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' + fn + '_spect.png'
+	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_PSD.png'
+
+	sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300],saveFig=figname,showFig=True)#,saveFig=True)#, 'PSD', 'spectrogram'])
+
+	# # get onset of stim and other info about speech stim
+	# if 'speech' in based:
+	# 	thalInput = sim.cfg.ICThalInput
+	# 	stimFile = thalInput['file']#.split('/')[-1]
+	# 	stimStart = thalInput['startTime']
