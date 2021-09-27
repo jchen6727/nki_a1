@@ -52,8 +52,8 @@ testFiles = ['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch2
 
 ### PLOTTING 
 LFP = 0
-CSD = 0
-traces = 1
+CSD = 1
+traces = 0
 
 
 if len(testFiles) > 0:
@@ -62,9 +62,9 @@ if len(testFiles) > 0:
 	if LFP == 1:
 		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300], showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
 	if CSD == 1:
-		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], saveFig=0, showFig=1) # LFP_overlay=True, # layer_lines=True, 
+		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], saveFig=False, showFig=True, layer_lines=True, layer_bounds=layer_bounds, overlay='CSD_bandpassed') # LFP_overlay=True, # layer_lines=True, 
 	if traces == 1:
-		sim.analysis.plotTraces(include=[(pop, 0) for pop in thal Pops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(8,8))
+		sim.analysis.plotTraces(include=[(pop, 0) for pop in thalPops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(8,8))
 
 
 

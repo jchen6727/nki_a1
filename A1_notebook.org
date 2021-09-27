@@ -47726,5 +47726,31 @@ for fn in testpkl: #pklfn:
 *** plotLFP works
 *** plotCSD:
 **** saying unexpected keyword LFP_overlay=True ?? 
+**** Have to change the plotCSD function in netpyne such that showFig if statement at the end isn't dependent on bool or 0/1!! 
 *** plot Traces --> works! Things I'd like to improve:
 **** have each trace labeled with the cell label (e.g. 'PV2', etc.) 
+* <2021-09-27 Mon>
+** From meeting:
+*** --> re-run possibly multiple simulations, with different subsets of cells recorded (to see contribution to LFP) 
+*** can use g9-n2 (pre-emptible)
+*** basic idea is to keep going with what I have and to keep filling out that script and making sure that the figure(s) can be generated. 
+** OEvent saves absolute time!! -- see chats from sam 
+** Change CSD code -- first step; make sure my fork of branch etc is all up to date! 
+*** (1) On local machine --> cd ~/Desktop/NEUROSIM/netpyne --> git branch --> git checkout development
+*** (2) git pull upstream development
+*** (3) git push origin development --> ERROR [RESOLVED -- see below]
+**** refusing to allow a Personal Access Token to create or update workflow `.github/workflows/tests.yml` without `workflow` scope
+**** Went on github, to my account --> Settings --> Developer Settings --> Personal Access Token --> went to the scopes and checked 'workflow' and then updated the token 
+**** restarted terminal, tried again
+**** WORKED 
+*** (4) git checkout csd
+*** (5) git merge development
+**** one conflict with examples/LFPrecording/cell_lfp.py
+**** fixed! 
+*** (6) git add + commit the changes from step (5) 
+*** (7) git push origin csd 
+** CSD changes:
+*** plotCSD() function lives in netpyne/netpyne/analysis/csd.py
+*** (1) Changing 'if showFig is True' (last lines) --> to if showFig: 
+**** ^^ This way user can use boolean or 1/0
+
