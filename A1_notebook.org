@@ -47753,4 +47753,7 @@ for fn in testpkl: #pklfn:
 *** plotCSD() function lives in netpyne/netpyne/analysis/csd.py
 *** (1) Changing 'if showFig is True' (last lines) --> to if showFig: 
 **** ^^ This way user can use boolean or 1/0
-
+*** (2) Change the way that it labels the layer lines --> 
+**** Can see from testing on A1/analysis/plotPaper.py that whatever schema I used was too specific to whatever I tested this on initially. Now L6 is the only one that shows up and it's in the very middle of the fig. 
+**** Changed the indenting for layerKeys = [] etc. 
+**** Changed vertical alignment of layer labels to 'center' 
