@@ -81,18 +81,6 @@ else:
 
 
 
-# ### TRACES -- 
-# #cfg.analysis['plotTraces'] = {'include': [(pop, 0) for pop in allpops], 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(12,8)} #[(pop,0) for pop in alltypes]		## Seen in M1 cfg.py (line 68) 
-# sim.analysis.plotTraces('include': [(pop, 0) for pop in allpops], 'oneFigPer': 'trace', 'overlay': False, 'saveFig': True, 'showFig': False, 'figSize':(12,8))
-
-# ### CSD -- 
-# fullPath = based + fn
-# #timeRange=[1100, 1400]
-# #sim = utils.loadFromFile('../data/v25_batch5/v25_batch5_0_0_2.json')
-# sim.load(fullPath, instantiate=False)
-# sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, LFP_overlay=True, layer_lines=True, saveFig=1, showFig=0)
-# #plt.savefig('v25_batch5_0_0_2_1100-1400.png')   
-
 
 # ### LFP -- 
 # for fn in testpkl: #pklfn: 
