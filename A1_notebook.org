@@ -47781,3 +47781,16 @@ OEvent also stores the absolute time
 absminT, absmaxT
 and i think abspeakT (?)
 *** look in load.py, in 'erica' branch of a1dat 
+*** absminT:
+**** Mentioned 5 times in load.py
+**** 2x in def getinterpeakdistrib 
+**** 1x in def GetDFrame ---> THINK THIS IS PROBABLY THE ONE I WANT
+**** 1x in def getburststats
+**** 1x in def getinterTIEI
+*** absmaxT:
+**** Mentioned 3 times in load.py
+**** 1x in def GetDFrame
+**** 1x in def getburststats
+**** 1x in getinterTIEI
+*** abspeakT: 
+**** 
