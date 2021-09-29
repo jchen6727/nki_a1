@@ -47757,3 +47757,27 @@ for fn in testpkl: #pklfn:
 **** Can see from testing on A1/analysis/plotPaper.py that whatever schema I used was too specific to whatever I tested this on initially. Now L6 is the only one that shows up and it's in the very middle of the fig. 
 **** Changed the indenting for layerKeys = [] etc. 
 **** Changed vertical alignment of layer labels to 'center' 
+
+* <2021-09-28 Tue -- more csd plotting changes and figure script>
+** Made some changes to csd in netpyne:
+*** changed figsize
+*** Changed gs_outer 
+*** Smoothing and interpolation:
+**** orig --> smooth=None
+**** interpolation='none'
+* <2021-09-29 Wed -- csd pull request + OEvent absolute times>
+** Make a pull request for csd branch on my fork:
+*** https://github.com/Neurosim-lab/netpyne/compare/development...ericaygriffith:csd?expand=1
+*** base repository: neurosim-lab/netpyne
+*** base: development
+*** head repository: ericaygriffith/netpyne
+*** compare: csd
+*** "Minor changes to arguments and plotting in plotCSD()" --> comment: "Changed showFig if statement in plotCSD() so boolean and 1/0 both acceptable inputs for argument. Made changes to plotting format as well."
+*** ^^ Create pull request (#629)
+** Absolute times from OEvent for oscillation events:
+*** from sam:
+samn:
+OEvent also stores the absolute time
+absminT, absmaxT
+and i think abspeakT (?)
+*** look in load.py, in 'erica' branch of a1dat 

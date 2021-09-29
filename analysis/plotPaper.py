@@ -62,7 +62,7 @@ if len(testFiles) > 0:
 	if LFP == 1:
 		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300], showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
 	if CSD == 1:
-		sim.analysis.plotCSD(fontSize=8, figSize=[8,8],spacing_um=100, timeRange=[1000,1200], saveFig=False, showFig=True, layer_lines=True, layer_bounds=layer_bounds, overlay='CSD_bandpassed', hlines=1) # LFP_overlay=True, # layer_lines=True, 
+		sim.analysis.plotCSD(timeRange=[800,925], saveFig=False, showFig=True, layer_lines=True, layer_bounds=layer_bounds, hlines=0, overlay = 'CSD_bandpassed') # spacing_um=100, # figSize=[8,8], # LFP_overlay=True, # layer_lines=True, 
 	if traces == 1:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in thalPops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(8,8))
 
