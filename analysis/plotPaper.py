@@ -68,39 +68,17 @@ if len(testFiles) > 0:
 
 
 
-else:
-	for fn in allDataFiles:
-		fullPath = based + fn
-		sim.load(fullPath, instantiate=False)
-		if LFP == 1:
-			sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
-		if CSD == 1:
-			sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
-		if traces == 1:
-			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+# else:
+# 	for fn in allDataFiles:
+# 		fullPath = based + fn
+# 		sim.load(fullPath, instantiate=False)
+# 		if LFP == 1:
+# 			sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
+# 		if CSD == 1:
+# 			sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
+# 		if traces == 1:
+# 			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
 
 
-# ### LFP -- 
-# for fn in testpkl: #pklfn: 
-# 	fullPath = based + fn
-# 	sim.load(fullPath, instantiate=False) 	# instantiate=False gets rid of hoc error 
-# 	# lfp_data = np.array(sim.allSimData['LFP'])
-# 	# dt = sim.cfg.recordStep/1000.0 # this is in ms by default -- convert to seconds
-# 	# sampr = 1./dt 	# sampling rate (Hz)
-# 	# spacing_um = sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1]
-# 	# CSD_data = sim.analysis.getCSD()
-
-# 	#[lfp_data, CSD_data, sampr, spacing_um, dt] = sim.analysis.getCSD(getAllData=True)
-# 	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_timeSeries.png'
-# 	figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' + fn + '_spect.png'
-# 	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_PSD.png'
-
-# 	sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300],saveFig=figname,showFig=True)#,saveFig=True)#, 'PSD', 'spectrogram'])
-
-# 	# # get onset of stim and other info about speech stim
-# 	# if 'speech' in based:
-# 	# 	thalInput = sim.cfg.ICThalInput
-# 	# 	stimFile = thalInput['file']#.split('/')[-1]
-# 	# 	stimStart = thalInput['startTime']

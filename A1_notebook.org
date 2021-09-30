@@ -47801,4 +47801,29 @@ and i think abspeakT (?)
 *** GetDFrame --> 
 **** I think the GetDFrame lines are probably the most relevant, bc I believe that is a relevant function mentioned in the main code of load.py --> yes. --> line below:
 ***** df = GetDFrame(dout,sampr, CSD, MUA, alignby='bywaveletpeak', haveMUA=False) # this creates a pandas data frame with all the information, easier to use it to select/search for specific types of events
-**** so, for line above, does this mean 
+**** so, for line above, does this mean ...
+* <2021-09-30 Thu -- load.py & plotPaper.py>
+** commenting out the following in plotPaper.py:
+# ### LFP -- 
+# for fn in testpkl: #pklfn: 
+# 	fullPath = based + fn
+# 	sim.load(fullPath, instantiate=False) 	# instantiate=False gets rid of hoc error 
+# 	# lfp_data = np.array(sim.allSimData['LFP'])
+# 	# dt = sim.cfg.recordStep/1000.0 # this is in ms by default -- convert to seconds
+# 	# sampr = 1./dt 	# sampling rate (Hz)
+# 	# spacing_um = sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1]
+# 	# CSD_data = sim.analysis.getCSD()
+
+# 	#[lfp_data, CSD_data, sampr, spacing_um, dt] = sim.analysis.getCSD(getAllData=True)
+# 	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_timeSeries.png'
+# 	figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' + fn + '_spect.png'
+# 	#figname = '/Users/ericagriffith/Desktop/NEUROSIM/A1/analysis/' + fn + '_PSD.png'
+
+# 	sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300],saveFig=figname,showFig=True)#,saveFig=True)#, 'PSD', 'spectrogram'])
+
+# 	# # get onset of stim and other info about speech stim
+# 	# if 'speech' in based:
+# 	# 	thalInput = sim.cfg.ICThalInput
+# 	# 	stimFile = thalInput['file']#.split('/')[-1]
+# 	# 	stimStart = thalInput['startTime']
+** Making changes to load.py to test on local machine (donetpyne base path(s))
