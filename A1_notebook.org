@@ -47793,4 +47793,12 @@ and i think abspeakT (?)
 **** 1x in def getburststats
 **** 1x in getinterTIEI
 *** abspeakT: 
-**** 
+**** Mentioned 14 times
+**** 1x in def getpeakTIEI
+**** 5x in def getvarwindCV2
+**** 5x in def getdCV2
+**** 2x in def GetDFrame (and 1x in a comment) 
+*** GetDFrame --> 
+**** I think the GetDFrame lines are probably the most relevant, bc I believe that is a relevant function mentioned in the main code of load.py --> yes. --> line below:
+***** df = GetDFrame(dout,sampr, CSD, MUA, alignby='bywaveletpeak', haveMUA=False) # this creates a pandas data frame with all the information, easier to use it to select/search for specific types of events
+**** so, for line above, does this mean 
