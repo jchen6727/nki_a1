@@ -47827,3 +47827,52 @@ and i think abspeakT (?)
 # 	# 	stimFile = thalInput['file']#.split('/')[-1]
 # 	# 	stimStart = thalInput['startTime']
 ** Making changes to load.py to test on local machine (donetpyne base path(s))
+* <2021-10-01 Fri -- load.py & plotPaper.py>
+** Changes to load.py:
+*** added args absminT, absmaxT, abspeakT to df = GetDFrame line (2513) 
+*** but how?? I just thought I could do that, but then... the args don't support that; how do I have access to it? I see that it's listed in the "columns" 
+*** Might just have to run the code and then see if I can access it interactively. 
+*** Run on local machine. 
+**** cd ~/Desktop/NEUROSIM/a1dat 
+**** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl
+**** ^^ have to change some params in the main code block
+***** donetpyne = 1
+***** basedir = basedir = '/home/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+**** output:
+['load.py', '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl']
+
+Start time:  2021-10-01 14:36:32.727888
+Loading file /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl ... 
+  Done; file loading time = 1.82 s
+Loading simConfig...
+Loading netParams...
+Loading net...
+Loading simData...
+Recording 0 traces of 0 types on node 0
+[[-1.38777878e-18 -4.16333634e-18 -6.93889390e-18 ... -2.71050543e-21
+   1.69406589e-21  5.08219768e-22]]
+fn is /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl getbipolar: False winsz: 10 medthresh: 4.0 useCSD: True useDynThresh: 0 dolaggedcoh False mspecwidth: 7.0 docfc: False dolaggedcohnoband: False dosim: 0 endfctr: 0.5
+original CSD shape: (18, 115000)
+original dat shape: (18, 115000)
+original tt shape: (115000,)
+new CSD shape: (18, 0)
+new dat shape: (18, 0)
+new tt shape: (0,)
+Traceback (most recent call last):
+  File "load.py", line 2486, in <module>
+    print('Starting timepoint: ' + str(tt[0]))
+IndexError: index 0 is out of bounds for axis 0 with size 0
+**** Error probably due to timeRange being in ms not in s (line 2473) 
+***** timeRange = [100,200]
+***** Try timeRange = None --> ?? too long? 
+***** If too large, try timeRange = [0,5] ?? 
+**** Also changed pathToSave to:
+pathToSave= '/home/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
+**** Ran a bunch, then got error: 
+Traceback (most recent call last):
+  File "load.py", line 2523, in <module>
+    os.mkdir(pathToSave)
+FileNotFoundError: [Errno 2] No such file or directory:
+  '/home/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/'
+**** ^^ Changed pathToSave again to:
+/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets
