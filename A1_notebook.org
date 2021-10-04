@@ -48022,10 +48022,51 @@ dfs length of hgamma = 0
 * <2021-10-04 Mon -- figure plotting>
 ** Absolute timing info (continued -- see last entry) 
 *** changed the saving such that the event # (index) is saved in the file name 
-*** so --> the channel info is encoded in the file saving architecture
-*** what I need also is the index, corresponded w/ the absminT, absmaxT, absPeakT, and the absWaveletPeakT 
-*** ^^ maybe I could save this in a text file...?
-*** okay --> I added some lines in load.py, in the main code block that should do this. Make sure that these lines are in place for both (yes -- should be fine!). 
+*** NOTES on text file creation:
+**** so --> the channel info is encoded in the file saving architecture
+**** what I need also is the index, corresponded w/ the absminT, absmaxT, absPeakT, and the absWaveletPeakT 
+**** ^^ maybe I could save this in a text file...?
+**** okay --> I added some lines in load.py, in the main code block that should do this. Make sure that these lines are in place for both (yes -- should be fine!). 
+
+**** Use open('filename', 'access_mode') # 'w', 'r', 'a'
+**** Access modes:
+r: read
+r+: read & write
+w: write only
+a: append only
+a+: append; file created if doesn't exist
+**** Do a test run of this ^^ (DONE -- see below)
+***** file_obj = open(filename, access mode)
+***** file_obj.write(), .writelines(), .close() 
+***** Test on desktop file:
+>>> testFile = 'testFile2.txt'
+>>> file_obj = open('testFile2.txt', 'w')
+>>> file_obj.write('hello\n')
+6
+>>> file_obj.close()
+>>> file_obj = open('testFile2.txt', 'a')
+>>> file_obj.write('hello testing\n')
+14
+>>> file_obj.close()
+>>> file_obj = open('testFile2.txt', 'a')
+>>> file_obj.writelines('hello' \n 1414 \n testtest')
+>>> file_obj.close()
+***** lines that made errors: 
+>>> file_obj.open('w')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: '_io.TextIOWrapper' object has no attribute 'open'
+
+>>> file_obj.write('hello testing\n')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: I/O operation on closed file.
+
+>>> file_obj.writelines('hello', '1414')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: writelines() takes exactly one argument (2 given)
+
 ** plotPaper.py:
 *** in A1/analysis:
 *** Taking out these lines because I consolidated this into a single for loop:
@@ -48050,5 +48091,13 @@ dfs length of hgamma = 0
 # 			sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
 # 		if traces == 1:
 # 			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+
+
+
+
+*** text file
+
+
+
 
 

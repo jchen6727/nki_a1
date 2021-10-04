@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 ### set layer bounds:
 layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
 
-### all pops: 
+### Cell populations: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']#, 'IC']
@@ -30,8 +30,8 @@ ICortPops = ['NGF1',
 EThalPops = ['TC', 'TCM', 'HTC']				# TEpops = ['TC', 'TCM', 'HTC']
 IThalPops = ['IRE', 'IREM', 'TI', 'TIM']		# TIpops = ['IRE', 'IREM', 'TI', 'TIM']
 reticPops = ['IRE', 'IREM']
-matrixPops = ['TCM', 'IREM']
-corePops = ['TC', 'HTC', 'IRE']
+matrixPops = ['TCM', 'TIM', 'IREM']
+corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
 ### set path to data files
@@ -70,31 +70,6 @@ for fn in dataFiles:
 		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
 	if traces == 1:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
-
-
-
-	fullPath  = based + testFiles[0]
-	sim.load(fullPath, instantiate=False)
-	if LFP == 1:
-		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300], showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
-	if CSD == 1:
-		sim.analysis.plotCSD(timeRange=[800,925], saveFig=False, showFig=True, layer_lines=True, layer_bounds=layer_bounds, hlines=0, overlay = 'CSD_bandpassed') # spacing_um=100, # figSize=[8,8], # LFP_overlay=True, # layer_lines=True, 
-	if traces == 1:
-		sim.analysis.plotTraces(include=[(pop, 0) for pop in thalPops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(8,8))
-
-
-
-# else:
-# 	for fn in allDataFiles:
-# 		fullPath = based + fn
-# 		sim.load(fullPath, instantiate=False)
-# 		if LFP == 1:
-# 			sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
-# 		if CSD == 1:
-# 			sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
-# 		if traces == 1:
-# 			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
-
 
 
 
