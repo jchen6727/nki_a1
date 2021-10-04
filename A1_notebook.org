@@ -48094,7 +48094,9 @@ TypeError: writelines() takes exactly one argument (2 given)
 # 			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 ** So, now have the text file w/ the wavelet info for each
-** Should now have a way in donetpyne=1 to go through all channels. 
+** Should now have a way in donetpyne=1 to go through all channels: 
+*** have to set lchan
+*** Have a feeling I should look at the .csv file 
 
 
 
