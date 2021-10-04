@@ -47876,3 +47876,155 @@ FileNotFoundError: [Errno 2] No such file or directory:
   '/home/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/'
 **** ^^ Changed pathToSave again to:
 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets
+**** okay but ran most of the way before saving at least, so at least experiment with GetDFrame to see if can get the measures I need:
+***** df 
+****** >>> df
+     chan         dur  maxvalbefore  ...     cyc_peakw   cyc_troughw   OSCscore
+194     9   68.700687 -1.000000e+09  ...     [0, 0, 0]        [21.8]   0.676929
+528    16   29.100291 -1.000000e+09  ...           [0]            []   0.654545
+380    12   48.400484 -1.000000e+09  ...        [21.7]        [0, 0]   1.848709
+239     9   44.500445 -1.000000e+09  ...        [0, 0]            []   0.618483
+158     9  899.608996 -1.000000e+09  ...  [0.0, 237.3]  [257.4, 0.0]   2.295754
+..    ...         ...           ...  ...           ...           ...        ...
+596    16    3.600240  3.993225e+00  ...           [0]            []  13.022376
+595    16    3.900260  3.995403e+00  ...           [0]            []  21.213433
+293     9   29.301954  3.994125e+00  ...    [0.0, 6.0]    [6.1, 0.0]  10.090041
+456    12   14.400960  3.921667e+00  ...        [0, 0]         [5.3]   3.807948
+162     9   71.104741  3.999489e+00  ...            []            []   0.139196
+
+[608 rows x 125 columns]
+***** df.columns
+Index(['chan', 'dur', 'maxvalbefore', 'maxval', 'maxvalafter', 'ncycle', 'dom',
+       'dombefore', 'domafter', 'domevent',
+       ...
+       'cyc_npeak', 'cyc_ntrough', 'cyc_peakCV2', 'cyc_troughCV2', 'cyc_amp',
+       'cyc_midts', 'cyc_peaktroughsym', 'cyc_peakw', 'cyc_troughw',
+       'OSCscore'],
+      dtype='object', length=125)
+***** df.absminT, df.absmaxT, df.absPeakT --> these all work to get the timing. 
+**** Have to get df.absminT, absmaxT, and absPeakT for each index --> should I put this in the filename for ease of access...?? nah... 
+**** df.absminT is how you get these types of measures, then if you want to get a specific one, df.absminT[index] . 
+**** Added some lines to saving fig lines at the end of donetpyne lines, but commented out the lines about clf(), etc. above that, so wouldn't draw out each figure. but then seeing that there are repeats in the wavelet info. hm. 
+**** okay changed indexing of these values. now check to make sure they are all distinct (parse the below lines):
+***** Now saving figures in: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_4/
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 3
+
+channel:4, event:63, power:5.3
+gamma: minF:61.5 Hz, maxF:80.75 Hz, peakF:72.75 Hz, Foct:0.27
+-69.19836988957832 -40.54770990839643
+duration:57.4 ms, 4 peaks, 4.2 cycles, filtsigcor:0.76
+16.853438137525245 45.504098118707134
+WAVELET INFO:  INDEX --> 63 absminT: 2614.4522900916036 absmaxT:
+2671.8534381375252 absPeakT: 2653.1530641225645 absWaveletPeakT:
+2655.0
+
+channel:4, event:40, power:6.2
+gamma: minF:25.75 Hz, maxF:45.0 Hz, peakF:34.75 Hz, Foct:0.56
+-111.28139825593053 -59.93037121484895
+duration:102.7 ms, 3 peaks, 3.6 cycles, filtsigcor:0.64
+42.77168286731421 94.12270990839579
+WAVELET INFO:  INDEX --> 40 absminT: 3481.3696287851512 absmaxT:
+3584.0716828673144 absPeakT: 3527.4705508220327 absWaveletPeakT:
+3541.3
+
+channel:4, event:66, power:10.8
+gamma: minF:59.75 Hz, maxF:80.75 Hz, peakF:78.5 Hz, Foct:0.3
+-59.85607001663084 -29.005372214889576
+duration:61.8 ms, 5 peaks, 4.9 cycles, filtsigcor:0.67
+32.79586383455262 63.64656163629388
+WAVELET INFO:  INDEX --> 66 absminT: 4731.294627785111 absmaxT:
+4793.095863834553 absPeakT: 4755.595113804552 absWaveletPeakT: 4760.3
+
+dfs length of hgamma = 0
+
+***** Now saving figures in: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_9/
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 3
+
+channel:9, event:114, power:7.8
+gamma: minF:44.0 Hz, maxF:80.75 Hz, peakF:57.0 Hz, Foct:0.61
+-73.13510314104656 -39.7843613744551
+duration:66.8 ms, 4 peaks, 3.8 cycles, filtsigcor:0.69
+27.016974678987026 60.36771644557848
+WAVELET INFO:  INDEX --> 114 absminT: 781.915638625545 absmaxT:
+848.7169746789871 absPeakT: 814.816296651866 absWaveletPeakT: 821.7
+
+channel:9, event:109, power:5.6
+gamma: minF:45.0 Hz, maxF:59.25 Hz, peakF:51.75 Hz, Foct:0.28
+-66.308491341214 -34.35777431097267
+duration:64.0 ms, 3 peaks, 3.3 cycles, filtsigcor:0.66
+29.643505740229557 61.59422277047088
+WAVELET INFO:  INDEX --> 109 absminT: 2111.2422256890272 absmaxT:
+2175.2435057402295 absPeakT: 2139.542791711668 absWaveletPeakT: 2145.6
+
+channel:9, event:112, power:6.0
+gamma: minF:46.75 Hz, maxF:61.75 Hz, peakF:53.5 Hz, Foct:0.28
+-55.39552546399409 -25.244839793591836
+duration:60.4 ms, 3 peaks, 3.2 cycles, filtsigcor:0.68
+35.156368254730296 65.30705392513255
+WAVELET INFO:  INDEX --> 112 absminT: 2757.955160206408 absmaxT:
+2818.35636825473 absPeakT: 2785.6557142285687 absWaveletPeakT: 2783.2
+
+
+dfs length of hgamma = 0
+
+***** Now saving figures in: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_12/
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 2
+
+channel:12, event:158, power:6.5
+gamma: minF:32.5 Hz, maxF:60.25 Hz, peakF:41.0 Hz, Foct:0.62
+-94.06213748549999 -53.811332453298746
+duration:80.5 ms, 4 peaks, 3.3 cycles, filtsigcor:0.77
+26.69027761110374 66.94108264330498
+WAVELET INFO:  INDEX --> 158 absminT: 4433.288667546702 absmaxT:
+4513.790277611104 absPeakT: 4477.189545581823 absWaveletPeakT: 4487.1
+
+channel:12, event:165, power:5.9
+gamma: minF:42.75 Hz, maxF:62.5 Hz, peakF:52.75 Hz, Foct:0.38
+-48.75423412414784 -20.103574142965954
+duration:57.4 ms, 3 peaks, 3.0 cycles, filtsigcor:0.68
+37.297573902955264 65.94823388413715
+WAVELET INFO:  INDEX --> 165 absminT: 4821.196425857034 absmaxT:
+4878.597573902955 absPeakT: 4847.396949877994 absWaveletPeakT: 4841.3
+
+
+dfs length of hgamma = 0
+
+
+***** Now saving figures in: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_16/
+dfs length of delta = 0
+dfs length of theta = 0
+dfs length of alpha = 0
+dfs length of beta = 0
+dfs length of gamma = 1
+
+channel:16, event:224, power:4.7
+gamma: minF:64.75 Hz, maxF:77.5 Hz, peakF:70.5 Hz, Foct:0.18
+-47.32958018320733 -21.379061162446533
+duration:51.9 ms, 4 peaks, 3.7 cycles, filtsigcor:0.63
+30.521976879075055 56.47249589983585
+WAVELET INFO:  INDEX --> 224 absminT: 1046.9209388375534 absmaxT:
+1098.821976879075 absPeakT: 1074.8214968598743 absWaveletPeakT: 1068.3
+
+
+dfs length of hgamma = 0
+* <2021-10-04 Mon -- figure plotting>
+** Absolute timing info (continued -- see last entry) 
+*** changed the saving such that the event # (index) is saved in the file name 
+*** so --> the channel info is encoded in the file saving architecture
+*** what I need also is the index, corresponded w/ the absminT, absmaxT, absPeakT, and the absWaveletPeakT 
+*** ^^ maybe I could save this in a text file...?
+*** okay --> I added some lines in load.py, in the main code block that should do this. Make sure that these lines are in place for both (yes -- should be fine!). 
+*** 
+
