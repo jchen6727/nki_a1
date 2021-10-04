@@ -48026,5 +48026,29 @@ dfs length of hgamma = 0
 *** what I need also is the index, corresponded w/ the absminT, absmaxT, absPeakT, and the absWaveletPeakT 
 *** ^^ maybe I could save this in a text file...?
 *** okay --> I added some lines in load.py, in the main code block that should do this. Make sure that these lines are in place for both (yes -- should be fine!). 
-*** 
+** plotPaper.py:
+*** in A1/analysis:
+*** Taking out these lines because I consolidated this into a single for loop:
+	fullPath  = based + testFiles[0]
+	sim.load(fullPath, instantiate=False)
+	if LFP == 1:
+		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],timeRange=[1300,2300], showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
+	if CSD == 1:
+		sim.analysis.plotCSD(timeRange=[800,925], saveFig=False, showFig=True, layer_lines=True, layer_bounds=layer_bounds, hlines=0, overlay = 'CSD_bandpassed') # spacing_um=100, # figSize=[8,8], # LFP_overlay=True, # layer_lines=True, 
+	if traces == 1:
+		sim.analysis.plotTraces(include=[(pop, 0) for pop in thalPops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(8,8))
+
+
+
+# else:
+# 	for fn in allDataFiles:
+# 		fullPath = based + fn
+# 		sim.load(fullPath, instantiate=False)
+# 		if LFP == 1:
+# 			sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300], # saveFig=figname, #,saveFig=True)#, 'PSD', 'spectrogram'])
+# 		if CSD == 1:
+# 			sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
+# 		if traces == 1:
+# 			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+
 

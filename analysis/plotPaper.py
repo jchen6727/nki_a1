@@ -57,6 +57,22 @@ traces = 0
 
 
 if len(testFiles) > 0:
+	dataFiles = testFiles
+else:
+	dataFiles = allDataFiles 
+
+for fn in dataFiles:
+	fullPath = based + fn
+	sim.load(fullPath, instantiate=False)
+	if LFP == 1:
+		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	if CSD == 1:
+		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
+	if traces == 1:
+		sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+
+
+
 	fullPath  = based + testFiles[0]
 	sim.load(fullPath, instantiate=False)
 	if LFP == 1:
