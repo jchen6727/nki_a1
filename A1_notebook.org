@@ -48001,7 +48001,6 @@ WAVELET INFO:  INDEX --> 165 absminT: 4821.196425857034 absmaxT:
 
 dfs length of hgamma = 0
 
-
 ***** Now saving figures in: /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_16/
 dfs length of delta = 0
 dfs length of theta = 0
@@ -48067,6 +48066,8 @@ Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 TypeError: writelines() takes exactly one argument (2 given)
 
+*** Test the new lines in load.py --> 
+**** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_4_4.pkl
 ** plotPaper.py:
 *** in A1/analysis:
 *** Taking out these lines because I consolidated this into a single for loop:
@@ -48092,11 +48093,8 @@ TypeError: writelines() takes exactly one argument (2 given)
 # 		if traces == 1:
 # 			sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
-
-
-
-*** text file
-
+** So, now have the text file w/ the wavelet info for each
+** Should now have a way in donetpyne=1 to go through all channels. 
 
 
 
