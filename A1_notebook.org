@@ -48097,7 +48097,17 @@ TypeError: writelines() takes exactly one argument (2 given)
 ** Should now have a way in donetpyne=1 to go through all channels: 
 *** have to set lchan
 *** Have a feeling I should look at the .csv file 
-
-
-
-
+*** Actual test I did was just to set the lchan under if donetpyne to hardcoded numbers. Did get this error when I included 18 & 19 in there:
+anized by frequency band
+  File "load.py", line 1128, in getIEIstatsbyBand
+    sig = dat[chan,:] # signal (either CSD or LFP)
+IndexError: index 18 is out of bounds for axis 0 with size 18
+* <2021-10-05 Tue -- LFP contributions>
+** okay --> changed the load.py main code and got this to give me the actual timing info; which will help with the LFP. 
+** Submit some A1 runs to gcp, with LFP contribution info turned on!
+** Additional changes that should be made to plotPaper.py:
+*** (1) Calling load.py possibly, or having the timeRange entered manually?
+**** What else other than timeRange? 
+**** Need to have the figure as well. How to do this? 
+*** (2) Look at spiking activity in the timeRange specified for each oscillation in question
+*** (3) Look at LFP in the timeRange specific for each oscillation in question 

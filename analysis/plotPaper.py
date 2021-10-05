@@ -38,7 +38,7 @@ corePops = ['TC', 'HTC', 'TI', 'IRE']
 based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 
 ### set path to .csv layer file 
-dbpath = based + 'simDataLayers.csv'
+#dbpath = based + 'simDataLayers.csv'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -72,4 +72,9 @@ for fn in dataFiles:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
+
+## ADD LINES FOR:
+### (1) Calling load.py possibly, or having the timeRange entered manually?
+### (2) Look at spiking activity in the timeRange specified for each oscillation in question
+### (3) Look at LFP in the timeRange specific for each oscillation in question 
 
