@@ -48122,3 +48122,16 @@ IndexError: index 18 is out of bounds for axis 0 with size 18
 
 ** How to submit on gcp:
 *** python -i batch.py, once I ssh into the correct VM and make sure that this is all merged and everything. 
+*** Merged in changes from salva_layers:
+modified:   analysis/optunaAnalysis.py
+modified:   batch.py
+modified:   sdnotes.org
+*** gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** Set up A1, netpyne, etc. 
+*** cloned A1:
+**** pat: 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
+**** git clone https://github.com/NathanKlineInstitute/A1.git
+*** seems like neuron and netpyne work though --
+**** was able to do import netpyne in python3
+**** was able to run nrnivmodl in A1/mod 
+*** 
