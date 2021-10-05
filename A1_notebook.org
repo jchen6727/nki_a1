@@ -48111,3 +48111,14 @@ IndexError: index 18 is out of bounds for axis 0 with size 18
 **** Need to have the figure as well. How to do this? 
 *** (2) Look at spiking activity in the timeRange specified for each oscillation in question
 *** (3) Look at LFP in the timeRange specific for each oscillation in question 
+
+** MEETING TODAY:
+*** Submitted pull request for CSD changes for netpyne 
+*** made a bunch of changes to load.py (on my branch), tested on both sim and macaque data files. What I settled on for now is that I've changed the osc figure filenames so they are indexed by oscillation event number, and now when I run load.py it also generates a waveletInfo.txt file that contains information about each wavelet, organized by index number. the way I have the saving worked now is that in whatever like, figure saving subdirectory you specify, it creates subdirs for each channel and then saves the wavelet figures from each channel into that channel's subdirectory. and within that same subdirectory, it saves the wavelet info file. So, basically now when I run load.py I have a separate text file with the info for each wavelet. 
+*** ^^ Which means I have the absolute timing for each -- right now, i'm working on a non-manual way to get that into my A1 script. I can change the timeRange manually of course, so having that text file is helpful, but this morning was working on just having the script read the time directly from the relevant .txt file. 
+*** Also the plots I'm generating for CSD, spiking, etc. are all in separate windows. So I can look at the spiking, the CSD, the oscillation event, etc. but I need to combine them into something that looks nice so I'm working on that now too. 
+
+*** NEED TO SUBMIT some A1 runs with the LFP contribution for each cell type turned on. Do that before meeting!!!
+
+** How to submit on gcp:
+*** python -i batch.py, once I ssh into the correct VM and make sure that this is all merged and everything. 
