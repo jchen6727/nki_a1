@@ -718,12 +718,15 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
 # ----------------------------------------------------------------------------------------------
 # Custom
 # ----------------------------------------------------------------------------------------------
-def custom():
+def custom(filename):
     params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
 
     # from prev 
     import json
-    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+    with open(filename, 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
@@ -737,8 +740,8 @@ def custom():
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -761,8 +764,9 @@ def custom():
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+    initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -2841,37 +2845,27 @@ if __name__ == '__main__':
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    b = optunaRatesLayersWmat()
+    #b = optunaRatesLayersWmat()
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch31' 
-    b.saveFolder = 'data/'+b.batchLabel
+    # b.batchLabel = 'v34_batch31' 
+    # b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
-    b.run() # run batch
+    # setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    # b.run() # run batch
 
 
-    # #Submit set of batch sims together (eg. for weight norm)
-
-    # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    # popsWeightNorm =    {#'IT2_reduced': ['CT5A', 'CT5B']}#, #'IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-    #                      'ITS4_reduced': ['ITS4']}
-    # # #                     'PV_reduced': ['PV2', 'SOM2'],
-    #                      'VIP_reduced': ['VIP2'],
-    #                      #'NGF_reduced': ['NGF2']} #,
-    # #                     #'RE_reduced': ['IRE', 'TC', 'HTC'],
-    # #                     #'TI_reduced': ['TI']}
- 
-    # batchIndex = 7
-    # for k, v in popsWeightNorm.items(): 
-    #     b = weightNorm(pops=v, rule=k)
-    #     b.batchLabel = 'v24_batch'+str(batchIndex) 
-    #     b.saveFolder = 'data/'+b.batchLabel
-    #     b.method = 'grid'  # evol
-    #     setRunCfg(b, 'mpi_bulletin')
-    #     b.run()  # run batch
-    #     batchIndex += 1
+    trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
+    batchIndex = 32
+    for trial in trials: 
+        b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
+        b.batchLabel = 'v34_batch'+str(batchIndex) 
+        b.saveFolder = 'data/'+b.batchLabel
+        b.method = 'grid'  # evol
+        setRunCfg(b, 'hpc_slurm_gcp')
+        b.run()  # run batch
+        batchIndex += 1
 
