@@ -723,7 +723,7 @@ def custom():
 
     # from prev 
     import json
-    with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb') as f:
+    with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_0_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
@@ -766,7 +766,7 @@ def custom():
 
 
     # save LFP trace from first cell of each pop 
-    initCfg['saveLFPCells'] = [('IT2', [0]), ('PV3', [0])] #[('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0]),
+    initCfg['saveLFPCells'] = [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])]#,
                                 # ('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
                                 # ('ITP4', [0]), ('ITS4', [0]), ('SOM4', [0]), ('PV4', [0]), ('VIP4', [0]), ('NGF4', [0]),
                                 # ('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
@@ -799,7 +799,7 @@ def custom():
             initCfg.update({p: cfgLoad[p]})
 
     # good thal params for 100% cell density 
-    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain'] #, 'wmat']
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
 
     for p in updateParams2:
         if isinstance(p, tuple):
@@ -2856,7 +2856,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch31' 
+    b.batchLabel = 'v34_batch27_0_0_LFP_L2' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

@@ -48154,12 +48154,33 @@ https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch25/
 *** gcp:
 **** login:
 gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
-**** 
+**** Have to get the .json files over to gcp!
+***** path: /home/ext_ericaygriffith_gmail_com/A1/data --> after this the subdirs /simDataFiles/spont/cfgJsonFiles do not exist yet! 
+***** How to scp files over to gcp? 
+****** to scp files from gcloud to local, e.g.:
+gcloud compute scp --recurse g1-n2-login0:/home/ext_ericaygriffith_gmail_com/A1/data/v29_batch2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+****** to scp files from local to gcloud, e.g.:
+cd ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
+gcloud compute scp 21feb02_A1_spont_layers.csv ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
+****** scp over .json cfg files:
+****** (1) on local machine, cd /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+****** (2) gcloud compute scp --recurse /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/jsonCfgFiles g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+
+***** [done]
+
+
 
 *** Changes to batch.py:
-**** Changes below are happening in custom func:
-**** with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb') <-- from with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb')
-**** initCfg['scaleDensity'] = 1.0 (from 0.25) 
-**** <--- from initCfg['saveLFPCells'] = [('IT2', [0]), ('PV3', [0])]
+**** (1) {custom} CHANGE CFG JSON FILE BEING USED:
+with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_0_cfg.json', 'rb') as f: <-- from with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb')
+**** (2) {custom} SCALE DENSITY OF SIM UP TO 1:
+initCfg['scaleDensity'] = 1.0 <--- from 0.25
+**** (3) {custom} SAVE LFP CONTRIBUTIONS FROM L2 CELLS: 
+initCfg['saveLFPCells'] = [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])] <--- from initCfg['saveLFPCells'] = [('IT2', [0]), ('PV3', [0])]
+**** (4) {main} CHANGE BATCH LABEL:
+b.batchLabel = 'v34_batch27_0_0_LFP_L2'  <--- from 'v34_batch31'
+**** (5) {custom} UNCOMMENTED WMAT:
+Uncommented wmat from updateParams2 --> I commented this out before because I got a key error on a previous submission. Not sure if that will happen now. Don't think it should? I see 'wmat' as a key in the relevant .json file(s). 
+
 
 ** load.py (a1dat):
