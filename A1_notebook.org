@@ -48135,3 +48135,23 @@ modified:   sdnotes.org
 **** was able to do import netpyne in python3
 **** was able to run nrnivmodl in A1/mod 
 *** 
+* <2021-10-06 Wed -- LFP contributions>
+** plotPaper.py (in A1/analysis):
+** batch.py (A1):
+*** Change the line in custom func so it loads in the correct .json file
+*** savaldord on slack:
+think the one I’ve been using is v34_batch25/trial_2142/trial_2142_cfg.json
+ah yeah ok that’s same as v34_batch27 (just multiple seeds)
+*** Get the .json file from salva's bucket:
+**** bucket link below: 
+https://console.cloud.google.com/storage/browser/salvadord_data2;tab=objects?forceOnBucketsSortingFiltering=false&project=ecas2-nsf1904444
+**** 
+*** Where to put the .json file? 
+
+*** Changes to batch.py:
+**** Changes below are happening in custom func:
+**** with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb') <-- from with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb')
+**** initCfg['scaleDensity'] = 1.0 (from 0.25) 
+**** <--- from initCfg['saveLFPCells'] = [('IT2', [0]), ('PV3', [0])]
+
+** load.py (a1dat):

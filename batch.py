@@ -748,7 +748,7 @@ def custom():
     
     initCfg['duration'] = 11500 
     initCfg['printPopAvgRates'] = [1500, 11500] 
-    initCfg['scaleDensity'] = 0.25 #1.0   #0.075 #0.25 
+    initCfg['scaleDensity'] = 1.0   #0.075 #0.25 
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 
