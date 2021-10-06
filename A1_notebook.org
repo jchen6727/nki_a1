@@ -48151,6 +48151,18 @@ https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch25/
 *** Where to put the .json files? 
 **** I currently have a line in the batch.py custom func that directs to A1/data/lfpSimFiles --> could keep this as is? make a new subdir just for .json files? 
 **** Put them in ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/jsonCfgFiles
+*** Changes to batch.py:
+**** (1) {custom} CHANGE CFG JSON FILE BEING USED:
+with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_0_cfg.json', 'rb') as f: <-- from with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb')
+**** (2) {custom} SCALE DENSITY OF SIM UP TO 1:
+initCfg['scaleDensity'] = 1.0 <--- from 0.25
+**** (3) {custom} SAVE LFP CONTRIBUTIONS FROM L2 CELLS: 
+initCfg['saveLFPCells'] = [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])] <--- from initCfg['saveLFPCells'] = [('IT2', [0]), ('PV3', [0])]
+**** (4) {main} CHANGE BATCH LABEL:
+b.batchLabel = 'v34_batch27_0_0_LFP_L2'  <--- from 'v34_batch31'
+**** (5) {custom} UNCOMMENTED WMAT:
+Uncommented wmat from updateParams2 --> I commented this out before because I got a key error on a previous submission. Not sure if that will happen now. Don't think it should? I see 'wmat' as a key in the relevant .json file(s). 
+
 *** gcp:
 **** login:
 gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
@@ -48168,19 +48180,96 @@ gcloud compute scp 21feb02_A1_spont_layers.csv ext_ericaygriffith_gmail_com@g1-n
 
 ***** [done]
 
+**** Changes to batch.py (see above) 
+**** Now, on gcp --> from A1 directory --> try python3 batch.py 
+**** sq and sqra -- not working bc bash script is not set up (see below) -- WORKING NOW
+**** running! 
 
+** REMINDER -- VIM COMMANDS:
+*** to select and copy text in vim: cursor where you want --> v to go to visual mode --> move cursor to end --> y (yank)
+*** to paste --> p (ctrl-v if pasting from clipboard??) 
+*** press i to enter interactive mode once opened the file
+*** esc to exit this mode
+*** :w to save
+*** :q to quit 
+*** :q! to really quit 
+** Have to re-setup .bashrc on gcp:
+*** NETPYNE: 
+**** (1) Clone my fork of netpyne into my home directory on gcp 
+***** Fork exists at: https://github.com/ericaygriffith/netpyne
+***** clone it to gcp
+****** ssh into g9-n2-pre-controller
+****** git clone https://github.com/ericaygriffith/netpyne.git
+****** clone exists in: ~/netpyne (/home/ext_ericaygriffith_gmail_com/netpyne)
+***** NOTE: git branch --> development 
+**** (2) CHECK REMOTES: 
+***** cd to netpyne subdir above
+***** git remote -v    --> 
+***** origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+***** origin	https://github.com/ericaygriffith/netpyne.git (push)
+**** (3) ADD UPSTREAM:
+***** git remote add upstream https://github.com/Neurosim-lab/netpyne
+***** VERIFY --> git remote -v --> 
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push)
+***** NOTE: my fork is "origin", official netpyne repo is "upstream"
+**** (4) Sync my fork and my clone to the official netpyne repo
+***** INFO: https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
+***** cd ~/netpyne
+***** git fetch upstream
+***** git checkout development
+***** git merge upstream/development
+*** bashrc, I believe this file worked on previous VM instance: 
+**** full file:
+# .bashrc
 
-*** Changes to batch.py:
-**** (1) {custom} CHANGE CFG JSON FILE BEING USED:
-with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_0_cfg.json', 'rb') as f: <-- from with open('data/lfpSimFiles/v32_batch28_0_cfg.json', 'rb')
-**** (2) {custom} SCALE DENSITY OF SIM UP TO 1:
-initCfg['scaleDensity'] = 1.0 <--- from 0.25
-**** (3) {custom} SAVE LFP CONTRIBUTIONS FROM L2 CELLS: 
-initCfg['saveLFPCells'] = [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])] <--- from initCfg['saveLFPCells'] = [('IT2', [0]), ('PV3', [0])]
-**** (4) {main} CHANGE BATCH LABEL:
-b.batchLabel = 'v34_batch27_0_0_LFP_L2'  <--- from 'v34_batch31'
-**** (5) {custom} UNCOMMENTED WMAT:
-Uncommented wmat from updateParams2 --> I commented this out before because I got a key error on a previous submission. Not sure if that will happen now. Don't think it should? I see 'wmat' as a key in the relevant .json file(s). 
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
 
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
 
-** load.py (a1dat):
+# User specific aliases and functions
+
+    export N=/usr/local/nrn
+    export NEURONHOME=$N/share/nrn
+    #export N=root/nrn
+    #export CPU=x86_64
+    #export PATH="$N/$CPU/bin:/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$SITE/scripts/:$SITE/config:$PATH"
+    export PYTHONPATH=/usr/local/lib64/python3.6/site-packages/:/usr/local/lib/python3.6/site-packages:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export PYTHONPATH= $N/lib/python:$NB/share/python/lib64/python:/usr/local/python:~/netpyne:$PYTHONPATH
+    #export SITE=/usr/local/site
+    #export NEURONHOME=$N/share/nrn
+    #export MODL_INCLUDE=$SITE/local/mod
+    #export HOC_LIBRARY_PATH=$N/share/nrn/lib/hoc:$SITE/local/hoc
+
+    export PATH=/usr/local/nrn/x86_64/bin:/usr/lib64/openmpi/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/lib64/python3.6/site-packages/:/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+    export PYTHONHOME="/usr"
+    export NRN_PYLIB=/lib64/libpython3.6m.so.1.0
+
+    export OMP_NUM_THREADS=1
+    export USE_SIMPLE_THREADED_LEVEL3=1
+
+    # Aliases
+    alias mysudo='sudo -E env "PATH=$PATH"'
+    alias ipy='ipython'
+    alias huc='hg pull; hg up -C'
+    alias lsl='ls -lrtah'
+    alias upnp='cd $SITE/nrniv/local/python/netpyne/; sudo git pull; cd ~/m1/sim'
+    alias sq='squeue -u $USER -o "%.18i %.9P %.12j %.8u %.2t %.10M %.6D %R"; squeue -u $USER | wc -l'
+    alias sqr='squeue -u $USER -t RUNNING; squeue -u $USER -t RUNNING | wc -l'
+    alias sqra='squeue -t RUNNING; squeue -t RUNNING | wc -l'
+    alias sqp='squeue -u $USER -t PENDING; squeue -u $USER -t PENDING | wc -l'
+    alias sqpa='squeue -t PENDING --partition=compute -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R %p"; squeue -t PENDING --partition=compute | wc -l'
+    alias sdetail='scontrol show job'
+    alias tarc='tar -zcvf'
+    alias mpi='mpirun -np \!:1 nrniv -mpi -python \!:2'
+    alias cpgs='gsutil -m cp -r'
+~                                  
+
+*** Now 'sq' and 'sqra' work to check on progress of a submitted run. 
