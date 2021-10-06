@@ -48142,11 +48142,19 @@ modified:   sdnotes.org
 *** savaldord on slack:
 think the one I’ve been using is v34_batch25/trial_2142/trial_2142_cfg.json
 ah yeah ok that’s same as v34_batch27 (just multiple seeds)
-*** Get the .json file from salva's bucket:
+*** Get the .json files from salva's bucket:
 **** bucket link below: 
 https://console.cloud.google.com/storage/browser/salvadord_data2;tab=objects?forceOnBucketsSortingFiltering=false&project=ecas2-nsf1904444
+**** bucket link to v34_batch25/trial_2142:
+https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch25/trial_2142?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false
+**** Got cfg.json files for v34_batch27 as well --> up to batch27_3_1_cfg.json (NETWORK CONNECTIVITY ISSUES UGH) --> can get the rest later when have better internet. 
+*** Where to put the .json files? 
+**** I currently have a line in the batch.py custom func that directs to A1/data/lfpSimFiles --> could keep this as is? make a new subdir just for .json files? 
+**** Put them in ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/jsonCfgFiles
+*** gcp:
+**** login:
+gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
 **** 
-*** Where to put the .json file? 
 
 *** Changes to batch.py:
 **** Changes below are happening in custom func:
