@@ -723,7 +723,7 @@ def custom():
 
     # from prev 
     import json
-    with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_0_cfg.json', 'rb') as f:
+    with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_1_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
