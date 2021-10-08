@@ -48277,6 +48277,22 @@ fi
 ** See thal int materials
 * <2021-10-08 Fri -- LFP contributions>
 ** Runs didn't go through, but get all details by looking at .err and .run files
-** Submit more on g9-n2:
 *** login to gcp: 
+gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** scp those over to local computer to take a look, or to bucket
+*** from cluster to bucket:
+**** gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+**** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L2 gs://eyg_data/A1/
+*** Looking at the .err file online, looks like MyExpSyn2BB file wasn't compiled or something. 
+*** re-compile:
+**** cd ~/A1 --> rm -r mod/x86_64 --> no such dir
+**** ln -s mod/x86_64 x86_64
+**** cd mod
+**** nrnivmodl
+**** cd .. 
+** Submit more on g9-n2:
+*** python3 batch.py --> try again 
+*** sq / sqra to check progress 
+** 0_0 (v34_batch27 - ran!!) 
+
 
