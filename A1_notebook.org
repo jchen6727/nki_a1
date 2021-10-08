@@ -48273,3 +48273,10 @@ fi
 ~                                  
 
 *** Now 'sq' and 'sqra' work to check on progress of a submitted run. 
+* <2021-10-07 Thu -- Thal Int>
+** See thal int materials
+* <2021-10-08 Fri -- LFP contributions>
+** Runs didn't go through, but get all details by looking at .err and .run files
+** Submit more on g9-n2:
+*** login to gcp: 
+
