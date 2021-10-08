@@ -48294,6 +48294,6 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-
 *** python3 batch.py --> try again 
 *** sq / sqra to check progress 
 ** 0_0 (v34_batch27 - ran!!) 
-** Change batch.py for L3 cells:
+** Change batch.py for --> L3 + L4 cells for 0_0
+** I should target my runs to the wavelets I want to look at: 
 *** 
-
