@@ -48512,7 +48512,10 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 
 
 
-** THINGS TO FIX: 
+
+
+
+** [DONE] Netpyne issues to address: 
 *** CSD layer_bounds, layer_lines situation 
 **** fix in netpyne!! 
 **** ^^ fixed (see below) 
@@ -48562,8 +48565,7 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
         #         subaxs[chan].plot(X, CSD_data_noBandpass[chan,:], color='red', linewidth=0.4)
     
         #elif overlay == 'CSD_bandpassed':
-
-** Note on maybe how to correspond gid to cell type:
+** Note on how to correspond gid to cell type:
 *** These lines are from traces.py in netpyne/analysis:
 *** 
 if 'plotTraces' in sim.cfg.analysis and 'include' in sim.cfg.analysis['plotTraces']:
@@ -48596,7 +48598,10 @@ for itrace, trace in enumerate(tracesList):
 ## ADD LINES FOR:
 ### (1) Calling load.py possibly, or having the timeRange entered manually?
 ### (2) Look at spiking activity in the timeRange specified for each oscillation in question
-### (3) Look at LFP in the timeRange specific for each oscillation in question 
+### (3) Look at LFP in the timeRange specific for each oscillation in
+##question 
+*** Taking out this line for cells included:
+# include = sim.cfg.analysis['plotTraces']['include'] + sim.cfg.recordCells 
 ** Notes on transitioning to making function(s) in plotPaper.py:
 *** ## SHOULD MAKE THIS INTO A FUNCTION With timeRange as arg
 **** #### if timeRange = None, then use whole thing

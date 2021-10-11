@@ -52,12 +52,15 @@ for file in allFiles:
 testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
 
 
+###### Set timeRange ######
+timeRange = [1100, 1500]
+
+
 ###### PLOTTING LFP, CSD, TRACES #######
 LFP = 0
 CSD = 0
 traces = 0
 
-timeRange = [1100, 1500]
 
 if len(testFiles) > 0:
 	dataFiles = testFiles
@@ -77,16 +80,30 @@ for fn in dataFiles:
 
 
 
+###### cell GID <--> cell type correspondence ######
+include = sim.cfg.saveLFPCells # + sim.cfg.analysis['plotTraces']['include']
+cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
+
+cellIDs = {}
+
+for i in range(len(cellsIncluded)):
+	cellGID = cellsIncluded[i]['gid']
+	cellPop = cellsIncluded[i]['tags']['pop']
+	cellIDs[cellGID] = cellPop
+
+
+
 ###### Individual cell LFP contributions ######
 LFPCells = sim.allSimData['LFPCells']
-cells = list(LFPCells.keys()) 
+cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
 
 ##### Time #####
 fullTimeRange = [0, sim.cfg.duration]
 t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
 t_full = list(t_full)  # turn into a list so .index function can be used 
 
-timeRange = [1100,1500] ### DECLARED EARLIER ### Desired time range to look at 
+## NOTE: timeRange is declared earlier
 t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
 t = list(t)
 
@@ -95,9 +112,7 @@ beginIndex = t_full.index(timeRange[0])
 endIndex = t_full.index(timeRange[-1])
 
 
-
-
-## Plot 
+## Plot individual cell LFPs
 for cell in cells[0:2]:
 	elec = 4  							# arbitrary -- which electrode do you want to plot?
 	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
@@ -109,13 +124,7 @@ for cell in cells[0:2]:
 #plt.show()
 
 
-#### cell GID <--> cell type correspondence ####
-# include = sim.cfg.analysis['plotTraces']['include'] + sim.cfg.recordCells
-# OR
-include = sim.cfg.saveLFPCells 
-cellsInclude, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
-cellIDs = {}
 
 
 ## ADD LINES FOR:
