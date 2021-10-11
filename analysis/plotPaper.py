@@ -2,6 +2,7 @@ from netpyne import sim
 import os
 import utils
 from matplotlib import pyplot as plt
+import numpy as np
 
 
 ### set layer bounds:
@@ -35,8 +36,9 @@ corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
 ### set path to data files
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_batch27_0_0_LFP_L5_REDO/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v32_batch28/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v32_batch28/'
 
 ### set path to .csv layer file 
 #dbpath = based + 'simDataLayers.csv'
@@ -48,7 +50,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
+testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
 
 
 ### PLOTTING 
@@ -73,13 +75,53 @@ for fn in dataFiles:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
-## Get LFP cell contributions:
-allSimData = sim.allSimData
-LFPCells = allSimData['LFPCells']
+###########################################
+## full LFP
+#lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+
+###########################################
+## Individual LFP cell contributions 
+LFPCells = sim.allSimData['LFPCells']
 cells = list(LFPCells.keys()) 
 
-for cell in cells:
+## Time 
+timeRange = [0, sim.cfg.duration]
+t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
+## Plot 
+for cell in cells[0:2]:
+	elec = 4  	# arbitrary -- which electrode do you want to plot?
+	LFPtrace = LFPCells[cell][:,elec]
+	LFPtrace = list(LFPtrace) ## necessary?
+	plt.plot(t,LFPtrace)
+
+plt.show()
+
+
+
+
+# ## Get LFP cell contributions:
+# allSimData = sim.allSimData
+# LFPCells = allSimData['LFPCells']
+# cells = list(LFPCells.keys()) 
+
+# for cell in cells:
+# 	print('cell --> ' + str(cell))
+
+
+# ###########################################
+# # Loading individual LFP traces
+# LFPCellDict = sim.allSimData['LFPCells']
+# print('Dict keys for LFPCells: ' + str(LFPCellDict.keys()))
+
+# LFPCells = LFPCellDict.keys()
+# for cell in LFPCells:
+# 	elec = 4  	# arbitrary -- which electrode do you want to plot?
+# 	LFPtrace = LFPCellDict[cell][:,elec]
+# 	LFPtrace = list(LFPtrace) ## necessary?
+# 	plt.plot(t,LFPtrace)
+# 	plt.show()
 
 
 ## ADD LINES FOR:

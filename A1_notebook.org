@@ -48414,12 +48414,20 @@ No layer boundaries given
 ***** (ii) popAvgRates Dict() not defined error? --> STILL PRESENT
 ***** (iii) plotLFP invalid array struct error? --> RESOLVED
 **** ^^ If so, move on for now to looking at LFP contributions! 
+*** g*) Trying another run: 
+**** This time netpyne is on branch csd on gcp. 
+**** I also changed spikes.py in 'csd' branch of my fork of netpyne (added, committed, pushed, pulled onto gcp, etc.)  
+**** batch.py is set to have a 0.25 density and far fewer cell LFP recordings to hopefully reduce runtime
+**** OKAY --> trying python3 batch.py   --> running on gcp 
+**** Transfer over this run once complete and see if the following are resolved:
+***** (1) plotCSD error?
+***** (2) popAvgRates Dict() not defined error? 
 
 
 
 
 
-*** g*) Look at alternative run w/ LFP cell contributions recorded:
+*** g**) Look at alternative run w/ LFP cell contributions recorded:
 **** v32_batch28 --> A1/data/v34_batch28 --> this run has a couple of cell LFP contributions recorded!
 **** 2a: how to do this?
 ***** --> sim.allSimData['LFPCells'] 
@@ -48432,7 +48440,8 @@ No layer boundaries given
 *** 4a: Finish wavelets for all of v34_batch27 0_0 --> 4_4: 
 **** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
 **** DONE: 0_0, 0_1, 0_2, 0_3, 0_4
-**** DONE: 1_0, 1_1, 1_2,  
+**** DONE: 1_0, 1_1, 1_2, 1_3, 1_4
+**** DONE: 2_0, 
 *** 4b: Look thru new wavelets from sim -- any to add to gdoc(s)? 
 **** gdocs: 
 ***** (1) sim wavelets: https://docs.google.com/document/d/1ZJnopJtERfVgfRyVPa9b5GbAWj9Bni3ntGKI-xEIwH8/edit
@@ -48445,5 +48454,7 @@ No layer boundaries given
 
 ** THINGS TO FIX: 
 *** CSD layer_bounds, layer_lines situation 
+**** fix in netpyne!! 
 *** Dict() still not defined for popAvgRates() -- should this be dict()? not Dict()? 
 **** NO --> this is defined in netpyne specs (class Dict(dict):) 
+**** MENTIONED TO SALVA!!! 
