@@ -35,7 +35,8 @@ corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
 ### set path to data files
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v32_batch28/'
 
 ### set path to .csv layer file 
 #dbpath = based + 'simDataLayers.csv'
@@ -47,12 +48,12 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
+testFiles = ['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
 
 
 ### PLOTTING 
 LFP = 0
-CSD = 1
+CSD = 0
 traces = 0
 
 
@@ -67,9 +68,17 @@ for fn in dataFiles:
 	if LFP == 1:
 		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 	if CSD == 1:
-		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], LFP_overlay=True, layer_lines=True, saveFig=0, showFig=1)
+		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], overlay=True, layer_lines=True, saveFig=0, showFig=1) # LFP_overlay=True
 	if traces == 1:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+
+
+## Get LFP cell contributions:
+allSimData = sim.allSimData
+LFPCells = allSimData['LFPCells']
+cells = list(LFPCells.keys()) 
+
+for cell in cells:
 
 
 

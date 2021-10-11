@@ -748,7 +748,7 @@ def custom():
     
     initCfg['duration'] = 11500 
     initCfg['printPopAvgRates'] = [1500, 11500] 
-    initCfg['scaleDensity'] = 1.0   #0.075 #0.25 
+    initCfg['scaleDensity'] = 0.25 #1.0   #0.075 #0.25 
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 
@@ -766,15 +766,15 @@ def custom():
 
 
     # save LFP trace from first cell of each pop 
-    initCfg['saveLFPCells'] = [('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
-                                ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0])]#, #[('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
+    initCfg['saveLFPCells'] = [('IT5A', [0]), ('CT5A', [0])]#, #('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
+                                #('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0])]#, #[('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
                                 #('ITP4', [0]), ('ITS4', [0]), ('SOM4', [0]), ('PV4', [0]), ('VIP4', [0]), ('NGF4', [0])]#,
                                 # ('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
                                 # ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0]), 
                                 # ('IT6', [0]), ('CT6', [0]), ('SOM6', [0]), ('PV6', [0]), ('VIP6', [0]), ('NGF6', [0])] # [3, 'PYR', ('PV2', 5)] # True # Default is False ! 
                                 # [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])],
     # changed directly in cfg.py    
-    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'overlay': 'LFP', 'layer_lines': 1, 'saveFig': 1, 'showFig': 0} # 'LFP_overlay'
+    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'layer_lines': 0, 'saveFig': 1, 'showFig': 0} # 'overlay': 'LFP', # 'LFP_overlay'
     initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     initCfg['saveCellSecs'] = False
@@ -2856,7 +2856,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_0_LFP_L5_REDO' 
+    b.batchLabel = 'v34_batch27_0_0_LFP_L5_smallTest' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
