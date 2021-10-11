@@ -3,6 +3,7 @@ import os
 import utils
 from matplotlib import pyplot as plt
 import numpy as np
+import netpyne
 
 
 ### set layer bounds:
@@ -40,8 +41,6 @@ based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_bat
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v32_batch28/'
 
-### set path to .csv layer file 
-#dbpath = based + 'simDataLayers.csv'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -53,10 +52,10 @@ for file in allFiles:
 testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
 
 
-### PLOTTING 
+###### PLOTTING LFP, CSD, TRACES #######
 LFP = 0
 CSD = 0
-traces = 1
+traces = 0
 
 timeRange = [1100, 1500]
 
@@ -77,22 +76,13 @@ for fn in dataFiles:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
-###########################################
-## full LFP
-#lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
-
-###########################################
-## SHOULD MAKE THIS INTO A FUNCTION With timeRange as arg
-#### if timeRange = None, then use whole thing
-#### else: use whatever is given in argument
-
-## Individual LFP cell contributions 
+###### Individual cell LFP contributions ######
 LFPCells = sim.allSimData['LFPCells']
 cells = list(LFPCells.keys()) 
 
 ##### Time #####
-fullTimeRange = [0, sim.cfg.duration] 								## Fill in with whatever! 
+fullTimeRange = [0, sim.cfg.duration]
 t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
 t_full = list(t_full)  # turn into a list so .index function can be used 
 
@@ -101,13 +91,13 @@ t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array 
 t = list(t)
 
 ## Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
-beginIndex = t_full.index(timeRange[0])   			#time.index(timeRange[0])	#time.index(timeRange[0])
-endIndex = t_full.index(timeRange[-1])							#time.index(timeRange[-1])		#time.index(timeRange[1])
+beginIndex = t_full.index(timeRange[0])
+endIndex = t_full.index(timeRange[-1])
 
 
 
 
-# Plot 
+## Plot 
 for cell in cells[0:2]:
 	elec = 4  							# arbitrary -- which electrode do you want to plot?
 	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
@@ -119,11 +109,17 @@ for cell in cells[0:2]:
 #plt.show()
 
 
+#### cell GID <--> cell type correspondence ####
+# include = sim.cfg.analysis['plotTraces']['include'] + sim.cfg.recordCells
+# OR
+include = sim.cfg.saveLFPCells 
+cellsInclude, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
+cellIDs = {}
 
 
 ## ADD LINES FOR:
-### (1) Calling load.py possibly, or having the timeRange entered manually?
-### (2) Look at spiking activity in the timeRange specified for each oscillation in question
-### (3) Look at LFP in the timeRange specific for each oscillation in question 
+### (1) timeRange --> manually or call from load.py?
+### (2) If taking timeRange from load.py --> have this correspond to timeRange variable as it functions now
+
 
