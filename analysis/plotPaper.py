@@ -81,47 +81,43 @@ for fn in dataFiles:
 
 
 ###########################################
+## SHOULD MAKE THIS INTO A FUNCTION With timeRange as arg
+#### if timeRange = None, then use whole thing
+#### else: use whatever is given in argument
+
 ## Individual LFP cell contributions 
 LFPCells = sim.allSimData['LFPCells']
 cells = list(LFPCells.keys()) 
 
-## Time 
-timeRange = [0, sim.cfg.duration]
-t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+##### Time #####
+fullTimeRange = [0, sim.cfg.duration] 								## Fill in with whatever! 
+t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+t_full = list(t_full)  # turn into a list so .index function can be used 
 
-## Plot 
+timeRange = [1100,1500] ### Desired time range to look at 
+t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+t = list(t)
+
+## Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+beginIndex = t_full.index(timeRange[0])   			#time.index(timeRange[0])	#time.index(timeRange[0])
+endIndex = t_full.index(timeRange[-1])							#time.index(timeRange[-1])		#time.index(timeRange[1])
+
+
+
+
+# Plot 
 for cell in cells[0:2]:
-	elec = 4  	# arbitrary -- which electrode do you want to plot?
-	LFPtrace = LFPCells[cell][:,elec]
-	LFPtrace = list(LFPtrace) ## necessary?
-	plt.plot(t,LFPtrace)
+	elec = 4  							# arbitrary -- which electrode do you want to plot?
+	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
+	LFPtrace = list(LFPtrace)  
+	LFPtrace = LFPtrace[beginIndex:endIndex]  	 # This is the segmented LFP trace, by time point
+	#plt.plot(t,LFPtrace)
+	# save? clear plot then save? 
 
-plt.show()
-
-
-
-
-# ## Get LFP cell contributions:
-# allSimData = sim.allSimData
-# LFPCells = allSimData['LFPCells']
-# cells = list(LFPCells.keys()) 
-
-# for cell in cells:
-# 	print('cell --> ' + str(cell))
+#plt.show()
 
 
-# ###########################################
-# # Loading individual LFP traces
-# LFPCellDict = sim.allSimData['LFPCells']
-# print('Dict keys for LFPCells: ' + str(LFPCellDict.keys()))
 
-# LFPCells = LFPCellDict.keys()
-# for cell in LFPCells:
-# 	elec = 4  	# arbitrary -- which electrode do you want to plot?
-# 	LFPtrace = LFPCellDict[cell][:,elec]
-# 	LFPtrace = list(LFPtrace) ## necessary?
-# 	plt.plot(t,LFPtrace)
-# 	plt.show()
 
 
 ## ADD LINES FOR:
