@@ -48364,8 +48364,8 @@ Total time = 6430.03 s
 ***** so ^^ error in cfg --> LFP_overlay for plotCSD --> should just be overlay!!
 ***** invalid array struct in plotLFP? ah, some kind of error in popAvgRates() function? this is a netpyne function? hm. 
 
-**** 
-
+**** L3_L4 --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L3_L4 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings
+**** L5 --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L5 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings
 ** Changes to batch.py:
 *** Uncommented plotCSD and recordLFP lines in batch.py (says they are changed directly in cfg.py, but I am going to update them here instead)
 *** changed plotCSD argument 'LFP_overlay': 1 --> to --> 'overlay': 'LFP' 
