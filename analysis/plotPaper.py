@@ -6,7 +6,7 @@ import numpy as np
 
 
 ### set layer bounds:
-layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
 
 ### Cell populations: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
@@ -56,23 +56,25 @@ testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #
 ### PLOTTING 
 LFP = 0
 CSD = 0
-traces = 0
+traces = 1
 
+timeRange = [1100, 1500]
 
 if len(testFiles) > 0:
 	dataFiles = testFiles
 else:
 	dataFiles = allDataFiles 
 
+
 for fn in dataFiles:
 	fullPath = based + fn
 	sim.load(fullPath, instantiate=False)
 	if LFP == 1:
-		sim.analysis.plotLFP(plots=['spectrogram'],electrodes=[2,6,11,13],showFig=True)# timeRange=[1300,2300] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+		sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange)# timeRange=[1300,2300] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 	if CSD == 1:
-		sim.analysis.plotCSD(spacing_um=100, timeRange=[1000,1200], overlay=True, layer_lines=True, saveFig=0, showFig=1) # LFP_overlay=True
+		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
 	if traces == 1:
-		sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+		sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
 ###########################################
@@ -94,7 +96,7 @@ fullTimeRange = [0, sim.cfg.duration] 								## Fill in with whatever!
 t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
 t_full = list(t_full)  # turn into a list so .index function can be used 
 
-timeRange = [1100,1500] ### Desired time range to look at 
+timeRange = [1100,1500] ### DECLARED EARLIER ### Desired time range to look at 
 t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
 t = list(t)
 
