@@ -48318,3 +48318,57 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-
 **** note: can look rough! try to get it all in the same window, depending. 
 *** (10) Any synthesis / analysis / observations based on LFP contribution(s) or CSD?
 *** (11) Put something based on all of this into the auditory channel  
+** Go thru steps above
+** (1) Transfer over successful gcp runs, with LFP contributions recorded, onto my local machine:
+*** a) Login to gcp
+**** https://console.cloud.google.com/compute/instances?project=ecas2-nsf1904444
+**** gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+**** !peter88
+*** b) Look in data subfolder for runs
+**** L2, L3_L4, and L5 all ran (or at least, all generated raster.png, traces.png, and have .run and .err files)
+**** L2 path: /home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L2 
+**** L3/L4 path: /home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L3_L4
+**** L5 path: /home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L5
+*** c) Transfer these runs (above) over to local machine:
+**** on local machine; terminal 
+**** make a subdir A1/data/lfpCellRecordings to capture all these runs 
+**** L2 --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_L2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings
+***** ^^ Transferred over L2... raster looks a little ... chunky? like the dots are very thick? I don't know. 
+***** Also, from .run file:
+Analyzing...
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m  Cells: 12908
+  Connections: 0 (0.00 per cell)
+  Spikes: 309293 (2.08 Hz)
+  Simulated time: 11.5 s; 80 workers
+  Run time: 5560.70 s
+  There was an exception in popAvgRates(): 
+    name 'Dict' is not defined 
+    (<class 'NameError'>, NameError("name 'Dict' is not defined",), <traceback object at 0x7f02434e2fc8>)
+[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0m[0mSaving output as data/v34_batch27_0_0_LFP_L2/v34_batch27_0_0_LFP_L2_data.pkl ... 
+Finished saving!
+  Done; saving time = 6.76 s.
+  There was an exception in plotCSD(): 
+    plotCSD() got an unexpected keyword argument 'LFP_overlay' 
+    (<class 'TypeError'>, TypeError("plotCSD() got an unexpected keyword argument 'LFP_overlay'",), <traceback object at 0x7f024456a708>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    invalid __array_struct__ 
+    (<class 'ValueError'>, ValueError('invalid __array_struct__',), <traceback object at 0x7f024456a688>)
+Preparing spike data...
+Plotting raster...
+Plotting recorded cell traces ... trace
+  Done; plotting time = 142.24 s
+
+Total time = 6430.03 s
+[0m
+***** so ^^ error in cfg --> LFP_overlay for plotCSD --> should just be overlay!!
+***** invalid array struct in plotLFP? ah, some kind of error in popAvgRates() function? this is a netpyne function? hm. 
+
+**** 
+
+** Changes to batch.py:
+*** Uncommented plotCSD and recordLFP lines in batch.py (says they are changed directly in cfg.py, but I am going to update them here instead)
+*** changed plotCSD argument 'LFP_overlay': 1 --> to --> 'overlay': 'LFP' 
+**** Correct argument is overlay not LFP_overlay, and also takes a string not a 1/0, but should probably change that at some point. 
+**** ^^ should I change this in cfg.py as well? 
+**** ^^ Just took out the argument there in cfg.py 

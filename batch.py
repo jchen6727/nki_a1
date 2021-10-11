@@ -774,8 +774,8 @@ def custom():
                                 # ('IT6', [0]), ('CT6', [0]), ('SOM6', [0]), ('PV6', [0]), ('VIP6', [0]), ('NGF6', [0])] # [3, 'PYR', ('PV2', 5)] # True # Default is False ! 
                                 # [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])],
     # changed directly in cfg.py    
-    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
-    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'overlay': 'LFP', 'layer_lines': 1, 'saveFig': 1, 'showFig': 0} # 'LFP_overlay'
+    initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
