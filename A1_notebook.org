@@ -48295,5 +48295,26 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-
 *** sq / sqra to check progress 
 ** 0_0 (v34_batch27 - ran!!) 
 ** Change batch.py for --> L3 + L4 cells for 0_0
-** I should target my runs to the wavelets I want to look at: 
-*** 
+** I should target my runs to the wavelets I want to look at
+* <2021-10-11 Mon -- figure>
+** Next steps:
+*** (1) Transfer successful gcp runs, with LFP contributions recorded, onto my local machine.
+*** (2) Look at LFP contribution(s)
+**** 2a: how to do this?
+**** 2b: segment by timeRange?
+*** (3) 'Knit together' LFP contributions from different files (runs)
+*** (4) Determine runs to re-run based on desired wavelets (check new + gdoc)
+**** 4a: Look thru new wavelets from sim -- any to add to gdoc(s)? 
+**** 4b: Any that make good new matches? 
+**** 4c: Make a list of runs to re-run 
+*** (5) Submit gcp runs specified above
+*** (6) -- small break --
+*** (7) Transfer over relevant gcp runs from above to local machine
+*** (8) Work the plotPaper.py code such that:
+**** 8a: all data is loaded (CSD, LFP (psd, spect, etc.), LFP contributions, *wavelet*) 
+***** ^^ hmmm, re: wavelet. what to do there?? 
+**** 8b: Make sure all data loaded can be segmented by the same timeRange, if relevant. 
+*** (9) Cobble these together (from step 8), into a figure draft
+**** note: can look rough! try to get it all in the same window, depending. 
+*** (10) Any synthesis / analysis / observations based on LFP contribution(s) or CSD?
+*** (11) Put something based on all of this into the auditory channel  
