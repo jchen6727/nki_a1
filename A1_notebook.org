@@ -48717,4 +48717,13 @@ for itrace, trace in enumerate(tracesList):
 *** I want to correspond CSD closely with wavelet -- did this in time, now want to do this in space. 
 *** From there, maybe better understanding of what LFP contribution(s) to look at .
 ** Cleaning up plotPaper.py code:
-*** 
+*** Put in attribution at the top
+*** Put main code line at the bottom
+*** Good candidates for args:
+**** timeRange --> actually this comes from load.py wavelet now...? 
+**** cells[] --> hm. 
+**** based 
+*** What functions should I make? 
+**** Break the script up into sections 
+**** (1) get absminT and absmaxT (wavelet timing info) 
+**** (2) Plotting functions 

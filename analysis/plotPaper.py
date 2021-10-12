@@ -80,6 +80,8 @@ with open(waveletFile) as f:
 # absminT = {}
 # absmaxT = {}
 
+
+#### TIMING INFO --> good candidate for function 
 for line in lines:
 	if 'absminT' in line:
 		absminT = float(line[12:-1])
@@ -94,6 +96,13 @@ print('absmaxT = ' + str(absmaxT))
 #timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
 timeRange = [4446, 4569]
 #timeRange = [round(absminT), round(absmaxT)]
+
+
+
+# return timeRange 
+# have timeRange as an arg? --> then if timeRange is None, use this. 
+
+
 
 
 ###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
