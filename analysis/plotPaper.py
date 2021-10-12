@@ -53,14 +53,16 @@ testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #
 
 
 ###### Set timeRange ######
-timeRange = [1100, 1500]
+timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
+
 
 
 ###### PLOTTING LFP, CSD, TRACES #######
-LFP = 1
+LFP = 0
 CSD = 0
 traces = 0
-multiplePkls = 0
+#multiplePkls = 0
+electrodes = [5]  			## Change this to desired electrodes!!! 
 
 
 if len(testFiles) > 0:
@@ -72,6 +74,8 @@ else:
 for fn in dataFiles:
 	fullPath = based + fn
 	sim.load(fullPath, instantiate=False)
+
+
 	if LFP:
 		sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange) # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 	if CSD:
@@ -80,70 +84,95 @@ for fn in dataFiles:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
+	## Create time lists 
+	fullTimeRange = [0, sim.cfg.duration]
+	t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+	t_full = list(t_full)  # turn into a list so .index function can be used 
+
+	## NOTE: timeRange is declared earlier
+	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+	t = list(t)
+
+	## Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+	beginIndex = t_full.index(timeRange[0])
+	endIndex = t_full.index(timeRange[-1])
+
+
 	# for saving from multiple pkl files:
 	cellDataByFile = {}
+	cellDataByFile[fn] = {} 
 
-	if multiplePkls: # What info do I need exactly from each? 
-		cellDataByFile[fn] = {} 
+	#cellDataByFile[fn]['include'] = sim.cfg.saveLFPCells
+	include = sim.cfg.saveLFPCells
 
-		cellDataByFile[fn]['include'] = sim.cfg.saveLFPCells
-
-		cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(cellDataByFile[fn]['include'])
-
-		cellDataByFile[fn]['cellIDs'] = {} 			 #cellIDs = {}
-
-		for i in range(len(cellsIncluded)):
-			cellGID = cellsIncluded[i]['gid']
-			cellPop = cellsIncluded[i]['tags']['pop']
-			cellDataByFile[fn]['cellIDs'][cellGID] = cellPop    #cellIDs[cellGID] = cellPop
+	#cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(cellDataByFile[fn]['include'])
+	cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
 
+	#cellDataByFile[fn]['cellIDs'] = {} 			 
+	cellIDs = {}
+
+	for i in range(len(cellsIncluded)):
+		cellGID = cellsIncluded[i]['gid']
+		cellPop = cellsIncluded[i]['tags']['pop']
+		#cellDataByFile[fn]['cellIDs'][cellGID] = cellPop    
+		cellIDs[cellGID] = cellPop
+
+	#cellDataByFile[fn]['LFPCells'] = sim.allSimData['LFPCells']
+	LFPCells = sim.allSimData['LFPCells']
+
+	#cells = list(cellDataByFile[fn]['LFPCells'].keys())  # List of cell GIDs
+	cells = list(LFPCells.keys())
+
+	for cell in cells:
+		cellDataByFile[fn][cellIDs[cell]] = {}
+		for elec in electrodes:
+			electrodeKey = 'elec_' + str(elec)
+			cellDataByFile[fn][cellIDs[cell]][electrodeKey] = {}
+
+			fullLFPTrace = list(LFPCells[cell][:,elec])			#cellDataByFile[fn]['LFPCells'][cell][:,elec]
+			cellDataByFile[fn][cellIDs[cell]][electrodeKey]['fullLFP'] = fullLFPTrace
+
+			LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
+			cellDataByFile[fn][cellIDs[cell]][electrodeKey]['timeRangeLFP'] = LFPTrace
 
 
-###### cell GID <--> cell type correspondence ######
-include = sim.cfg.saveLFPCells # + sim.cfg.analysis['plotTraces']['include']
-cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
-
-cellIDs = {}
-
-for i in range(len(cellsIncluded)):
-	cellGID = cellsIncluded[i]['gid']
-	cellPop = cellsIncluded[i]['tags']['pop']
-	cellIDs[cellGID] = cellPop
 
 
 
-###### Individual cell LFP contributions ######
-LFPCells = sim.allSimData['LFPCells']
-cells = list(LFPCells.keys()) ## This is a list of cell GIDs
-## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
 
-##### Time #####
-fullTimeRange = [0, sim.cfg.duration]
-t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
-t_full = list(t_full)  # turn into a list so .index function can be used 
+# ###### cell GID <--> cell type correspondence ######
+# include = sim.cfg.saveLFPCells # + sim.cfg.analysis['plotTraces']['include']
+# cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
-## NOTE: timeRange is declared earlier
-t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
-t = list(t)
+# cellIDs = {}
 
-## Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
-beginIndex = t_full.index(timeRange[0])
-endIndex = t_full.index(timeRange[-1])
+# for i in range(len(cellsIncluded)):
+# 	cellGID = cellsIncluded[i]['gid']
+# 	cellPop = cellsIncluded[i]['tags']['pop']
+# 	cellIDs[cellGID] = cellPop
 
 
-## Plot individual cell LFPs
-for cell in cells:
-	elec = 5  							# arbitrary -- which electrode do you want to plot?
-	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
-	LFPtrace = list(LFPtrace)  
-	LFPtrace = LFPtrace[beginIndex:endIndex]  	 # This is the segmented LFP trace, by time point
-	plt.plot(t,LFPtrace, label=cellIDs[cell])
-	plt.legend()
-	# Create option to not overlay these traces!! 
 
-plt.title('Individual cell contributions to LFP')
-plt.show()
+# ###### Individual cell LFP contributions ######
+# LFPCells = sim.allSimData['LFPCells']
+# cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+# ## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
+
+
+
+# ## Plot individual cell LFPs
+# for cell in cells:
+# 	elec = 5  							# arbitrary -- which electrode do you want to plot?
+# 	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
+# 	LFPtrace = list(LFPtrace)  
+# 	LFPtrace = LFPtrace[beginIndex:endIndex]  	 # This is the segmented LFP trace, by time point
+# 	plt.plot(t,LFPtrace, label=cellIDs[cell])
+# 	plt.legend()
+# 	# Create option to not overlay these traces!! 
+
+# plt.title('Individual cell contributions to LFP')
+# plt.show()
 
 
 
