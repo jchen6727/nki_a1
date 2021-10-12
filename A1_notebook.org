@@ -48712,4 +48712,9 @@ for itrace, trace in enumerate(tracesList):
 ** Have to clean up the code as is; create some functions and expand some stuff, but have the basics. 
 ** But --> have to figure out how to either get these all into the same figure, OR just do that manually. 
 ** If I choose to do that manually, what are the things i'd like to include? 
-** 
+** Now --> I have to think about --> 
+*** What am I trying to convey with this figure? 
+*** I want to correspond CSD closely with wavelet -- did this in time, now want to do this in space. 
+*** From there, maybe better understanding of what LFP contribution(s) to look at .
+** Cleaning up plotPaper.py code:
+*** 

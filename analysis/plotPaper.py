@@ -1,3 +1,10 @@
+"""
+plotPaper.py
+
+Wavelet and CSD/LFP plotting for oscillation events in A1 model, using NetPyNE 
+
+Contributors: ericaygriffith@gmail.com 
+"""
 from netpyne import sim
 import os
 import utils
@@ -40,9 +47,8 @@ corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
 ### set path to data files
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_batch27_0_0_LFP_L5_REDO/'
-#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
-#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v32_batch28/'
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_batch27_0_0_LFP_L5_REDO/'
 
 
 ### get .pkl data filenames 
@@ -52,13 +58,15 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
+testFiles = ['A1_v34_batch27_v34_batch27_1_4.pkl']	
+#testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
 
 
 ###### WAVELETS ######
 
 ## Add in a line that will ... maybe extract the subdir, but for now hard-code it
-waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_5/'
+waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_4/' 
+#waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_5/'
 ## Add in line(s) that will line the chan_# up with the electrodes list
 
 waveletFile = waveletDir + 'waveletInfo.txt'
@@ -68,6 +76,9 @@ with open(waveletFile) as f:
 	lines = f.readlines() 
 
 ## Add in line(s) that will account for index # of the oscillation event!!
+
+# absminT = {}
+# absmaxT = {}
 
 for line in lines:
 	if 'absminT' in line:
@@ -81,8 +92,8 @@ print('absmaxT = ' + str(absmaxT))
 
 ###### Set timeRange ######
 #timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
-timeRange = [round(absminT), round(absmaxT)]
-
+timeRange = [4446, 4569]
+#timeRange = [round(absminT), round(absmaxT)]
 
 
 ###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
@@ -114,31 +125,32 @@ for fn in dataFiles:
 
 	include = sim.cfg.saveLFPCells
 
-	cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
+	if include is not False:
+		cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
-	cellIDs = {}
+		cellIDs = {}
 
-	for i in range(len(cellsIncluded)):
-		cellGID = cellsIncluded[i]['gid']
-		cellPop = cellsIncluded[i]['tags']['pop']
-		cellIDs[cellGID] = cellPop
+		for i in range(len(cellsIncluded)):
+			cellGID = cellsIncluded[i]['gid']
+			cellPop = cellsIncluded[i]['tags']['pop']
+			cellIDs[cellGID] = cellPop
 
-	LFPCells = sim.allSimData['LFPCells']
+		LFPCells = sim.allSimData['LFPCells']
 
-	cells = list(LFPCells.keys()) ## This is a list of cell GIDs
-	## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
+		cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+		## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
 
-	for cell in cells:
-		cellLFPData[cellIDs[cell]] = {}
-		numElectrodes = LFPCells[cell].shape[1]
-		for elec in range(numElectrodes):
-			cellLFPData[cellIDs[cell]][elec] = {}
+		for cell in cells:
+			cellLFPData[cellIDs[cell]] = {}
+			numElectrodes = LFPCells[cell].shape[1]
+			for elec in range(numElectrodes):
+				cellLFPData[cellIDs[cell]][elec] = {}
 
-			fullLFPTrace = list(LFPCells[cell][:,elec])
-			cellLFPData[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
+				fullLFPTrace = list(LFPCells[cell][:,elec])
+				cellLFPData[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
 
-			LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
-			cellLFPData[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
+				LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
+				cellLFPData[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
 
 
 ########################
@@ -146,10 +158,10 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### 
-LFP = 1
-LFPcellContrib = 1
+LFP = 0
+LFPcellContrib = 0
 CSD = 1
-traces = 1
+traces = 0
 waveletNum = 1
 electrodes = [5]  	# CHANGE THIS TO DESIRED ELECTRODES 
 
@@ -159,7 +171,9 @@ gs = GridSpec(nrows = 2, ncols = LFP + LFPcellContrib + CSD + traces + len(elect
 
 
 ### Plot Wavelet ###
-waveletImgFile = waveletDir + 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368' + '.png'
+imgName = 'A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_4_beta_268' 
+#imgName = 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368'
+waveletImgFile = waveletDir + imgName + '.png'
 
 ## Add in line for reading in image
 img = mpimg.imread(waveletImgFile)
@@ -171,28 +185,33 @@ ax0.imshow(img)
 ### INDIVIDUAL LFP CONTRIBUTION ###  
 # cells = []  		# CHANGE THIS TO DESIRED CELLS 		--> ## ANOTHER GOOD CANDIDATE FOR AN ARG? 
 
-cells = list(cellLFPData.keys())
-for cell in cells:
-	for elec in electrodes:
-		ax1 = fig.add_subplot(gs[0,2])
-		ax1.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
-		#plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
-		#plt.legend()
-		#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
-		#plt.show()
+if LFPcellContrib:
+	cells = list(cellLFPData.keys())
+	for cell in cells:
+		for elec in electrodes:
+			ax1 = fig.add_subplot(gs[0,2])
+			ax1.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+			#plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+			#plt.legend()
+			#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
+			#plt.show()
 
 
 ### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
 if LFP:
 	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 if CSD:
-	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay=None, hlines=1, layerLines=1, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
 if traces:
 	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Bpops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
 
+# ----------------------------------------------------------------------------------------------
+# Main code
+# ----------------------------------------------------------------------------------------------
 
+if __name__ == '__main__':
 
 
 
