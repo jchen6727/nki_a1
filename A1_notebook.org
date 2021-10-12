@@ -48606,9 +48606,12 @@ plt.show()
 **** 8b: Make sure all data loaded can be segmented by the same timeRange, if relevant. 
 
 **** Okay --> now focus on how to get wavelet in here:
-***** 
-
-
+***** okay I can now read the waveletInfo.txt file, but need to fix this up a little more
+**** Open wavelet png:
+***** https://matplotlib.org/stable/tutorials/introductory/images.html
+***** (1) get the name of the .png file into the script
+***** (2) Use this to open to the .png 
+***** https://www.tutorialspoint.com/how-to-insert-a-small-image-on-the-corner-of-a-plot-with-matplotlib
 ** [DONE] Netpyne issues to address: 
 *** CSD layer_bounds, layer_lines situation 
 **** fix in netpyne!! 
@@ -48701,3 +48704,12 @@ for itrace, trace in enumerate(tracesList):
 **** #### if timeRange = None, then use whole thing
 **** #### else: use whatever is given in argument
 ** TO DO --> 'Knit together' LFP contributions from different files (runs) -- will be necessary if planning to save in subsets 
+* <2021-10-12 Tue -- wavelet figure>
+** Taking out these lines from A1/analysis/plotPaper.py:
+*** ## ADD LINES FOR:
+### (1) timeRange --> manually or call from load.py? --> Called from load.py!! 
+### (2) If taking timeRange from load.py --> have this correspond to timeRange variable as it functions now
+** Have to clean up the code as is; create some functions and expand some stuff, but have the basics. 
+** But --> have to figure out how to either get these all into the same figure, OR just do that manually. 
+** If I choose to do that manually, what are the things i'd like to include? 
+** 

@@ -2,6 +2,9 @@ from netpyne import sim
 import os
 import utils
 from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+import matplotlib.image as mpimg
+from PIL import Image
 import numpy as np
 import netpyne
 
@@ -55,10 +58,11 @@ testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #
 ###### WAVELETS ######
 
 ## Add in a line that will ... maybe extract the subdir, but for now hard-code it
-waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_0/'
+waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_5/'
 ## Add in line(s) that will line the chan_# up with the electrodes list
 
 waveletFile = waveletDir + 'waveletInfo.txt'
+
 
 with open(waveletFile) as f:
 	lines = f.readlines() 
@@ -75,11 +79,11 @@ print('absminT = ' + str(absminT))
 print('absmaxT = ' + str(absmaxT))
 
 
-
-
 ###### Set timeRange ######
 #timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
 timeRange = [round(absminT), round(absmaxT)]
+
+
 
 ###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
 if len(testFiles) > 0:
@@ -142,19 +146,26 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### 
-LFP = 0
-CSD = 0
-traces = 0
+LFP = 1
+LFPcellContrib = 1
+CSD = 1
+traces = 1
+waveletNum = 1
 electrodes = [5]  	# CHANGE THIS TO DESIRED ELECTRODES 
 
+### Set up figure ###
+fig = plt.figure(figsize=(10,6))
+gs = GridSpec(nrows = 2, ncols = LFP + LFPcellContrib + CSD + traces + len(electrodes) + waveletNum)
 
-### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
-if LFP:
-	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange) # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-if CSD:
-	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
-if traces:
-	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+
+### Plot Wavelet ###
+waveletImgFile = waveletDir + 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368' + '.png'
+
+## Add in line for reading in image
+img = mpimg.imread(waveletImgFile)
+#imgplot = plt.imshow(img)
+ax0 = fig.add_subplot(gs[0,0])
+ax0.imshow(img)
 
 
 ### INDIVIDUAL LFP CONTRIBUTION ###  
@@ -163,20 +174,28 @@ if traces:
 cells = list(cellLFPData.keys())
 for cell in cells:
 	for elec in electrodes:
-		plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
-	plt.legend()
-
-plt.title('Individual cell contrib to LFP')
-plt.show()
-
-
-
+		ax1 = fig.add_subplot(gs[0,2])
+		ax1.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+		#plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+		#plt.legend()
+		#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
+		#plt.show()
 
 
+### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
+if LFP:
+	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+if CSD:
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
+if traces:
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Bpops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
-## ADD LINES FOR:
-### (1) timeRange --> manually or call from load.py?
-### (2) If taking timeRange from load.py --> have this correspond to timeRange variable as it functions now
+
+
+
+
+
+
 
 
