@@ -52,9 +52,34 @@ for file in allFiles:
 testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
 
 
-###### Set timeRange ######
-timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
+###### WAVELETS ######
 
+## Add in a line that will ... maybe extract the subdir, but for now hard-code it
+waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_0/'
+## Add in line(s) that will line the chan_# up with the electrodes list
+
+waveletFile = waveletDir + 'waveletInfo.txt'
+
+with open(waveletFile) as f:
+	lines = f.readlines() 
+
+## Add in line(s) that will account for index # of the oscillation event!!
+
+for line in lines:
+	if 'absminT' in line:
+		absminT = float(line[12:-1])
+	if 'absmaxT' in line:
+		absmaxT = float(line[12:-1])
+
+print('absminT = ' + str(absminT))
+print('absmaxT = ' + str(absmaxT))
+
+
+
+
+###### Set timeRange ######
+#timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
+timeRange = [round(absminT), round(absmaxT)]
 
 ###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
 if len(testFiles) > 0:
@@ -67,23 +92,21 @@ for fn in dataFiles:
 	fullPath = based + fn
 	sim.load(fullPath, instantiate=False)
 
-	## Create time lists 
+	# Create time lists 
 	fullTimeRange = [0, sim.cfg.duration]
 	t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
 	t_full = list(t_full)  # turn into a list so .index function can be used 
 
-	## NOTE: timeRange is declared earlier
+	# NOTE: timeRange is declared earlier
 	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
 	t = list(t)
 
-	## Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+	# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
 	beginIndex = t_full.index(timeRange[0])
 	endIndex = t_full.index(timeRange[-1])
 
-
 	# for saving from multiple pkl files:
-	cellDataByFile = {}
-	#cellDataByFile[fn] = {} 
+	cellLFPData = {}
 
 	include = sim.cfg.saveLFPCells
 
@@ -102,32 +125,27 @@ for fn in dataFiles:
 	## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
 
 	for cell in cells:
-		#cellDataByFile[fn][cellIDs[cell]] = {}
-		cellDataByFile[cellIDs[cell]] = {}
+		cellLFPData[cellIDs[cell]] = {}
 		numElectrodes = LFPCells[cell].shape[1]
 		for elec in range(numElectrodes):
-			#electrodeKey = 'elec_' + str(elec)
-			cellDataByFile[cellIDs[cell]][elec] = {}
-			#cellDataByFile[cellIDs[cell]][electrodeKey] = {}
-			#cellDataByFile[fn][cellIDs[cell]][electrodeKey] = {}
+			cellLFPData[cellIDs[cell]][elec] = {}
 
 			fullLFPTrace = list(LFPCells[cell][:,elec])
-			cellDataByFile[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
-			#cellDataByFile[cellIDs[cell]][electrodeKey]['fullLFP'] = fullLFPTrace
-			#cellDataByFile[fn][cellIDs[cell]][electrodeKey]['fullLFP'] = fullLFPTrace
+			cellLFPData[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
 
 			LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
-			cellDataByFile[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
-			#cellDataByFile[cellIDs[cell]][electrodeKey]['timeRangeLFP'] = LFPTrace
-			#cellDataByFile[fn][cellIDs[cell]][electrodeKey]['timeRangeLFP'] = LFPTrace
+			cellLFPData[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
 
 
+########################
+####### PLOTTING #######
+########################
 
-###### PLOTTING LFP, CSD, TRACES, INDIVIDUAL LFP CONTRIBUTION #######  ## Add wavelets into the mix? 
+### LFP, CSD, TRACES ### 
 LFP = 0
 CSD = 0
 traces = 0
-electrodes = [5]  			## Change this to desired electrode list!!!!! 
+electrodes = [5]  	# CHANGE THIS TO DESIRED ELECTRODES 
 
 
 ### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
@@ -139,42 +157,19 @@ if traces:
 	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
+### INDIVIDUAL LFP CONTRIBUTION ###  
+# cells = []  		# CHANGE THIS TO DESIRED CELLS 		--> ## ANOTHER GOOD CANDIDATE FOR AN ARG? 
+
+cells = list(cellLFPData.keys())
+for cell in cells:
+	for elec in electrodes:
+		plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+	plt.legend()
+
+plt.title('Individual cell contrib to LFP')
+plt.show()
 
 
-
-
-# ###### cell GID <--> cell type correspondence ######
-# include = sim.cfg.saveLFPCells # + sim.cfg.analysis['plotTraces']['include']
-# cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
-
-# cellIDs = {}
-
-# for i in range(len(cellsIncluded)):
-# 	cellGID = cellsIncluded[i]['gid']
-# 	cellPop = cellsIncluded[i]['tags']['pop']
-# 	cellIDs[cellGID] = cellPop
-
-
-
-# ###### Individual cell LFP contributions ######
-# LFPCells = sim.allSimData['LFPCells']
-# cells = list(LFPCells.keys()) ## This is a list of cell GIDs
-# ## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
-
-
-
-# ## Plot individual cell LFPs
-# for cell in cells:
-# 	elec = 5  							# arbitrary -- which electrode do you want to plot?
-# 	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
-# 	LFPtrace = list(LFPtrace)  
-# 	LFPtrace = LFPtrace[beginIndex:endIndex]  	 # This is the segmented LFP trace, by time point
-# 	plt.plot(t,LFPtrace, label=cellIDs[cell])
-# 	plt.legend()
-# 	# Create option to not overlay these traces!! 
-
-# plt.title('Individual cell contributions to LFP')
-# plt.show()
 
 
 

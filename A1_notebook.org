@@ -48522,11 +48522,42 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 ****** What info do I need from each? 
 ****** --> timeRange should be the same for all
 ****** --> LFP, CSD, plotTraces should be the same for all 
-****** 
+****** okay --> added in several lines and whatnot 
+***** Taking out these plotting lines since they have now been used / re-used / modified in the earlier loop: 
+# ###### cell GID <--> cell type correspondence ######
+# include = sim.cfg.saveLFPCells # + sim.cfg.analysis['plotTraces']['include']
+# cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
+
+# cellIDs = {}
+
+# for i in range(len(cellsIncluded)):
+# 	cellGID = cellsIncluded[i]['gid']
+# 	cellPop = cellsIncluded[i]['tags']['pop']
+# 	cellIDs[cellGID] = cellPop
 
 
 
+# ###### Individual cell LFP contributions ######
+# LFPCells = sim.allSimData['LFPCells']
+# cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+# ## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
 
+
+
+# ## Plot individual cell LFPs
+# for cell in cells:
+# 	elec = 5  							# arbitrary -- which electrode do you want to plot?
+# 	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
+# 	LFPtrace = list(LFPtrace)  
+# 	LFPtrace = LFPtrace[beginIndex:endIndex]  	 # This is the segmented LFP trace, by time point
+# 	plt.plot(t,LFPtrace, label=cellIDs[cell])
+# 	plt.legend()
+# 	# Create option to not overlay these traces!! 
+
+# plt.title('Individual cell contributions to LFP')
+# plt.show()
+
+***** lines for reference: 
 ###### cell GID <--> cell type correspondence ######
 include = sim.cfg.saveLFPCells # + sim.cfg.analysis['plotTraces']['include']
 cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
@@ -48573,6 +48604,9 @@ plt.title('Individual cell contributions to LFP')
 plt.show()
 
 **** 8b: Make sure all data loaded can be segmented by the same timeRange, if relevant. 
+
+**** Okay --> now focus on how to get wavelet in here:
+***** 
 
 
 ** [DONE] Netpyne issues to address: 
