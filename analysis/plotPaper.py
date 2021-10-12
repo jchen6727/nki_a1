@@ -57,9 +57,10 @@ timeRange = [1100, 1500]
 
 
 ###### PLOTTING LFP, CSD, TRACES #######
-LFP = 0
+LFP = 1
 CSD = 0
 traces = 0
+multiplePkls = 0
 
 
 if len(testFiles) > 0:
@@ -71,12 +72,31 @@ else:
 for fn in dataFiles:
 	fullPath = based + fn
 	sim.load(fullPath, instantiate=False)
-	if LFP == 1:
-		sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange)# timeRange=[1300,2300] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-	if CSD == 1:
+	if LFP:
+		sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange) # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	if CSD:
 		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
-	if traces == 1:
+	if traces:
 		sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+
+
+	# for saving from multiple pkl files:
+	cellDataByFile = {}
+
+	if multiplePkls: # What info do I need exactly from each? 
+		cellDataByFile[fn] = {} 
+
+		cellDataByFile[fn]['include'] = sim.cfg.saveLFPCells
+
+		cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(cellDataByFile[fn]['include'])
+
+		cellDataByFile[fn]['cellIDs'] = {} 			 #cellIDs = {}
+
+		for i in range(len(cellsIncluded)):
+			cellGID = cellsIncluded[i]['gid']
+			cellPop = cellsIncluded[i]['tags']['pop']
+			cellDataByFile[fn]['cellIDs'][cellGID] = cellPop    #cellIDs[cellGID] = cellPop
+
 
 
 
@@ -113,15 +133,17 @@ endIndex = t_full.index(timeRange[-1])
 
 
 ## Plot individual cell LFPs
-for cell in cells[0:2]:
-	elec = 4  							# arbitrary -- which electrode do you want to plot?
+for cell in cells:
+	elec = 5  							# arbitrary -- which electrode do you want to plot?
 	LFPtrace = LFPCells[cell][:,elec] 	# This is the whole trace, unsegmented 
 	LFPtrace = list(LFPtrace)  
 	LFPtrace = LFPtrace[beginIndex:endIndex]  	 # This is the segmented LFP trace, by time point
-	#plt.plot(t,LFPtrace)
-	# save? clear plot then save? 
+	plt.plot(t,LFPtrace, label=cellIDs[cell])
+	plt.legend()
+	# Create option to not overlay these traces!! 
 
-#plt.show()
+plt.title('Individual cell contributions to LFP')
+plt.show()
 
 
 
