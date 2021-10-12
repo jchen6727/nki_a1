@@ -254,7 +254,7 @@ def plot_empirical_conn():
     pmat = connData['pmat']
     lmat = connData['lmat']
 
-    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC',  'TI', 'IRE', 'IREM']
         
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
@@ -289,10 +289,23 @@ def plot_empirical_conn():
     h = plt.axes()
     plt.imshow(connMatrix, interpolation='nearest', cmap='viridis', vmin=vmin, vmax=vmax)  #_bicolormap(gap=0)
 
+
+    ipopBoundaries = [1, 6, 11, 17, 23, 30, 40]
     for ipop, pop in enumerate(popsPre):
-        plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-',c=(0.7,0.7,0.7))
+        if ipop in ipopBoundaries: # thicker, brighter, dotted lines for layer boundaries
+            plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-',c=(0.8,0.8,0.8), lw=3)
+        else:
+            plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-',c=(0.7,0.7,0.7))
     for ipop, pop in enumerate(popsPost):
-        plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-',c=(0.7,0.7,0.7))
+        if ipop in ipopBoundaries: # thicker, brighter, dotted lines for layer boundaries
+            plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-',c=(0.8,0.8,0.8), lw=3)
+        else:
+            plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-',c=(0.7,0.7,0.7))
+
+    ipop = 36 # thal boundary
+    plt.plot(np.array([0,len(popsPost)])-0.5,np.array([ipop,ipop])-0.5,'-', c='orange', lw=3)
+    plt.plot(np.array([ipop,ipop])-0.5,np.array([0,len(popsPre)])-0.5,'-', c='orange', lw=3)
+
 
     # Make pretty
     h.set_yticks(list(range(len(popsPre))))
@@ -675,12 +688,12 @@ def fig_optuna_fitness():
 if __name__ == '__main__':
     # fig_conn()
     # compare_conn()
-    # plot_empirical_conn()
+    plot_empirical_conn()
     # plot_net_conn_cns20poster()
     
-    for iseed in range(5):
-        for jseed in range(5):
-            simLabel = 'v34_batch27_%d_%d' %(iseed, jseed)
-            fig_raster(simLabel)
+    # for iseed in range(5):
+    #     for jseed in range(5):
+    #         simLabel = 'v34_batch27_%d_%d' %(iseed, jseed)
+    #         fig_raster(simLabel)
 
     #fig_optuna_fitness()

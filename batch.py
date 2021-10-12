@@ -2858,8 +2858,10 @@ if __name__ == '__main__':
     # b.run() # run batch
 
 
-    trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
-    batchIndex = 32
+    #trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
+    trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]
+    
+    batchIndex = 40
     for trial in trials: 
         b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
         b.batchLabel = 'v34_batch'+str(batchIndex) 
