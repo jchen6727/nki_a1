@@ -56,15 +56,7 @@ testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #
 timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
 
 
-
-###### PLOTTING LFP, CSD, TRACES #######
-LFP = 0
-CSD = 0
-traces = 0
-#multiplePkls = 0
-electrodes = [5]  			## Change this to desired electrodes!!! 
-
-
+###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
 if len(testFiles) > 0:
 	dataFiles = testFiles
 else:
@@ -74,15 +66,6 @@ else:
 for fn in dataFiles:
 	fullPath = based + fn
 	sim.load(fullPath, instantiate=False)
-
-
-	if LFP:
-		sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange) # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-	if CSD:
-		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
-	if traces:
-		sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
-
 
 	## Create time lists 
 	fullTimeRange = [0, sim.cfg.duration]
@@ -100,41 +83,60 @@ for fn in dataFiles:
 
 	# for saving from multiple pkl files:
 	cellDataByFile = {}
-	cellDataByFile[fn] = {} 
+	#cellDataByFile[fn] = {} 
 
-	#cellDataByFile[fn]['include'] = sim.cfg.saveLFPCells
 	include = sim.cfg.saveLFPCells
 
-	#cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(cellDataByFile[fn]['include'])
 	cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
-
-	#cellDataByFile[fn]['cellIDs'] = {} 			 
 	cellIDs = {}
 
 	for i in range(len(cellsIncluded)):
 		cellGID = cellsIncluded[i]['gid']
 		cellPop = cellsIncluded[i]['tags']['pop']
-		#cellDataByFile[fn]['cellIDs'][cellGID] = cellPop    
 		cellIDs[cellGID] = cellPop
 
-	#cellDataByFile[fn]['LFPCells'] = sim.allSimData['LFPCells']
 	LFPCells = sim.allSimData['LFPCells']
 
-	#cells = list(cellDataByFile[fn]['LFPCells'].keys())  # List of cell GIDs
-	cells = list(LFPCells.keys())
+	cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+	## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
 
 	for cell in cells:
-		cellDataByFile[fn][cellIDs[cell]] = {}
-		for elec in electrodes:
-			electrodeKey = 'elec_' + str(elec)
-			cellDataByFile[fn][cellIDs[cell]][electrodeKey] = {}
+		#cellDataByFile[fn][cellIDs[cell]] = {}
+		cellDataByFile[cellIDs[cell]] = {}
+		numElectrodes = LFPCells[cell].shape[1]
+		for elec in range(numElectrodes):
+			#electrodeKey = 'elec_' + str(elec)
+			cellDataByFile[cellIDs[cell]][elec] = {}
+			#cellDataByFile[cellIDs[cell]][electrodeKey] = {}
+			#cellDataByFile[fn][cellIDs[cell]][electrodeKey] = {}
 
-			fullLFPTrace = list(LFPCells[cell][:,elec])			#cellDataByFile[fn]['LFPCells'][cell][:,elec]
-			cellDataByFile[fn][cellIDs[cell]][electrodeKey]['fullLFP'] = fullLFPTrace
+			fullLFPTrace = list(LFPCells[cell][:,elec])
+			cellDataByFile[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
+			#cellDataByFile[cellIDs[cell]][electrodeKey]['fullLFP'] = fullLFPTrace
+			#cellDataByFile[fn][cellIDs[cell]][electrodeKey]['fullLFP'] = fullLFPTrace
 
 			LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
-			cellDataByFile[fn][cellIDs[cell]][electrodeKey]['timeRangeLFP'] = LFPTrace
+			cellDataByFile[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
+			#cellDataByFile[cellIDs[cell]][electrodeKey]['timeRangeLFP'] = LFPTrace
+			#cellDataByFile[fn][cellIDs[cell]][electrodeKey]['timeRangeLFP'] = LFPTrace
+
+
+
+###### PLOTTING LFP, CSD, TRACES, INDIVIDUAL LFP CONTRIBUTION #######  ## Add wavelets into the mix? 
+LFP = 0
+CSD = 0
+traces = 0
+electrodes = [5]  			## Change this to desired electrode list!!!!! 
+
+
+### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
+if LFP:
+	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=[2,6,11,13],showFig=True, timeRange=timeRange) # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+if CSD:
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', layerLines=0, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
+if traces:
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Apops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
 
 
 
