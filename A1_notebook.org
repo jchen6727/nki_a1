@@ -47757,7 +47757,7 @@ for fn in testpkl: #pklfn:
 **** Can see from testing on A1/analysis/plotPaper.py that whatever schema I used was too specific to whatever I tested this on initially. Now L6 is the only one that shows up and it's in the very middle of the fig. 
 **** Changed the indenting for layerKeys = [] etc. 
 **** Changed vertical alignment of layer labels to 'center' 
-
+     
 * <2021-09-28 Tue -- more csd plotting changes and figure script>
 ** Made some changes to csd in netpyne:
 *** changed figsize
@@ -48727,3 +48727,31 @@ for itrace, trace in enumerate(tracesList):
 **** Break the script up into sections 
 **** (1) get absminT and absmaxT (wavelet timing info) 
 **** (2) Plotting functions 
+* <2021-10-13 Wed -- wavelet figure>
+** Pulling changes from netpyne described by salva:
+*** from salva over slack: 
+**** erica, I added a new feature in netpyne to record the LFP contribution of different populations; this does not save individual cells per se, but the contribution of whole populations (ie adds LFP signal of all cells in a pop), so you can run a single sim and save the LFP for different pops
+**** you just need to set eg. cfg.saveLFPPops = ['I2', 'E4']
+**** the output will be in eg sim.allSimData['LFPPops']['E4']
+**** and you can plot LFP for individual pops using eg sim.analysis.plotLFP = (pop= E2, timeRange= [100,3000], saveFig= True)
+*** on local machine: 
+**** cd ~/Desktop/NEUROSIM/netpyne
+**** git branch (--> on csd)
+**** git status (--> no changes to add/commit etc)
+**** git checkout development
+**** git pull upstream development
+**** git push origin development
+**** git checkout csd
+**** git merge development
+***** I didn't add a commit message so just quit out of the terminal
+**** cd ~/Desktop/NEUROSIM/netpyne --> git branch --> on csd
+**** git status --> shows modified files to be committed
+**** git commit -m 'merged in files and changes from development branch'
+[csd a4934d18] merged in files and changes from development branch
+**** git push origin csd 
+*** on gcp:
+**** gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+**** cd netpyne
+**** git branch (--> on csd)
+**** git pull origin csd 
+**** successful! 
