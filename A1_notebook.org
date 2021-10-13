@@ -48755,3 +48755,14 @@ for itrace, trace in enumerate(tracesList):
 **** git branch (--> on csd)
 **** git pull origin csd 
 **** successful! 
+** Intro to A1 paper: 
+*** Bullet points from gdoc:
+**** The auditory system is involved in speech processing, and … ; and is associated with X disease.
+**** Understanding this system is complicated due to the many interareal pathways, inter- and intralaminar circuitry, network coding mechanisms. and different cell types with specific biophysics and dynamics. 
+**** Increasing availability of experimental data; need for a theoretical/computational framework to integrate and make sense of these disparate findings; across different scales and using different experimental methods. 
+**** Model specific to macaque circuits, with features different from those of other species (e.g. layer boundaries, neuronal densities and distribution, thalamocortical projections)
+**** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia
+**** Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
+**** Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
+**** Unique model in terms of: macaque-specific dimensions, populations and connectivity; diversity of cell types (4 E and 4 I); detailed thalamic circuits; full thalamocortical loop; realistic inputs from cochlea/IC.
+
