@@ -740,8 +740,8 @@ def custom(filename):
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -2620,8 +2620,6 @@ def optunaRatesLayersWmat():
 
 
 
-
-
     groupedParams = []
 
     # --------------------------------------------------------
@@ -2838,7 +2836,7 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
+    b = custom('data/v34_batch31/trial_5214/trial_5214_cfg.json')
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
@@ -2851,23 +2849,23 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    # b.batchLabel = 'v34_batch31' 
-    # b.saveFolder = 'data/'+b.batchLabel
+    b.batchLabel = 'v34_batch49' 
+    b.saveFolder = 'data/'+b.batchLabel
 
-    # setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
-    # b.run() # run batch
+    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    b.run() # run batch
 
 
     #trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
-    trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]
+    # trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]
     
-    batchIndex = 40
-    for trial in trials: 
-        b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
-        b.batchLabel = 'v34_batch'+str(batchIndex) 
-        b.saveFolder = 'data/'+b.batchLabel
-        b.method = 'grid'  # evol
-        setRunCfg(b, 'hpc_slurm_gcp')
-        b.run()  # run batch
-        batchIndex += 1
+    # batchIndex = 40
+    # for trial in trials: 
+    #     b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
+    #     b.batchLabel = 'v34_batch'+str(batchIndex) 
+    #     b.saveFolder = 'data/'+b.batchLabel
+    #     b.method = 'grid'  # evol
+    #     setRunCfg(b, 'hpc_slurm_gcp')
+    #     b.run()  # run batch
+    #     batchIndex += 1
 
