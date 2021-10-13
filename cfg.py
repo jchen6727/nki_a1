@@ -52,6 +52,8 @@ cfg.recordTime = False  		## SEen in M1 cfg.py
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
 # cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]
+cfg.recordLFP = [[x, 1000, 100] for x in range(100, 2200, 200)] #+[[100, 2500, 200], [100,2700,200]]
+cfg.recordLFPPops = cfg.allpops
 
 #------------------------------------------------------------------------------
 # Saving
