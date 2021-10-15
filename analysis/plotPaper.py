@@ -181,7 +181,7 @@ gs = GridSpec(nrows = 2, ncols = LFP + LFPcellContrib + CSD + traces + len(elect
 
 ### Plot Wavelet ###
 imgName = 'A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_4_beta_268' 
-#imgName = 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368'
+#imgName = 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368' 
 waveletImgFile = waveletDir + imgName + '.png'
 
 ## Add in line for reading in image

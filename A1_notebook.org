@@ -48765,4 +48765,47 @@ for itrace, trace in enumerate(tracesList):
 **** Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
 **** Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
 **** Unique model in terms of: macaque-specific dimensions, populations and connectivity; diversity of cell types (4 E and 4 I); detailed thalamic circuits; full thalamocortical loop; realistic inputs from cochlea/IC.
-
+*** The auditory system is involved in...:
+**** speech processing, and … ;
+***** speech (language) processing
+****** https://www.sciencedirect.com/science/article/abs/pii/S0092867421008783?via%3Dihub
+****** https://www.sciencedirect.com/science/article/abs/pii/S0028393211000285?via%3Dihub
+****** https://www.nature.com/articles/ncomms5694?origin=ppub
+****** https://www.sciencedirect.com/science/article/pii/S0378595507002894?via%3Dihub
+***** sound localization
+****** https://www.jneurosci.org/content/31/18/6759.short
+****** https://www.sciencedirect.com/science/article/abs/pii/S007477420570012X
+****** https://www.sciencedirect.com/science/article/pii/S0378595513001792?casa_token=9WmgEGRogCIAAAAA:i-CYSBQlXRG8UX1C2F3BRf8QjdVBH6OiOlb-QOu6r8MwTrtnbjhHVE3GKLCwIbu72fpGrKRQScM
+****** https://journals.physiology.org/doi/abs/10.1152/jn.1982.47.6.987
+***** pitch discrimination
+****** https://pubmed.ncbi.nlm.nih.gov/11784735/
+****** https://pubmed.ncbi.nlm.nih.gov/16597761/
+****** https://pubmed.ncbi.nlm.nih.gov/22957087/
+****** https://pubmed.ncbi.nlm.nih.gov/17959204/
+***** voice recognition 
+****** https://www.sciencedirect.com/science/article/pii/S096098221300496X
+****** https://www.sciencedirect.com/science/article/pii/S1053811921003840
+**** ... and is associated with X disease.:
+***** Congenital amusia 
+****** https://academic.oup.com/brain/article/136/5/1639/286809?login=true
+***** Hyperacusis 
+****** https://www.ncbi.nlm.nih.gov/pmc/articles/PMC539655/
+**** Sentence / section drafts:
+***** The auditory system allows for (underpins?) critical functions such as language processing, sound localization, and 
+*** Model specific to macaque circuits, with features different from those of other species (e.g. layer boundaries, neuronal densities and distribution, thalamocortical projections)
+**** Layer boundary / size differences --> find examples and citations
+**** Cell types --> any that are unique to macaque / mammals? What about NGF1? 
+**** Thalamic interneuron density in sensory thalamic nuclei --> diff in mammals vs. others
+**** Anything else? 
+*** Study Oscillations, have a role in speech segmentation, and diseases such as autism and schizophrenia
+**** Oscillations have... a (critical? crucial?) role in critical brain functions, including sleep, ____ (memory consolidation? pick something else), and sensory processing. Indeed, oscillations in auditory brain regions have been implicated in the segmentation of continuous streams of speech, and in 
+**** Oscillations and speech comprehension:
+***** https://www.frontiersin.org/articles/10.3389/fpsyg.2012.00320/full
+***** https://www.frontiersin.org/articles/10.3389/fpsyg.2012.00170/full
+***** https://www.frontiersin.org/articles/10.3389/fnhum.2014.00311/full
+* <2021-10-14 Thu -- thal int>
+** See thal int materials
+* <2021-10-15 Fri -- wavelet figure>
+** Changes to batch.py
+*** 
+** Pulling changes to netpyne development / csd on gcp 
