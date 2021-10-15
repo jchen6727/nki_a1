@@ -48807,5 +48807,6 @@ for itrace, trace in enumerate(tracesList):
 ** See thal int materials
 * <2021-10-15 Fri -- wavelet figure>
 ** Changes to batch.py
-*** 
+*** Changed density back to 1.0 
+***  
 ** Pulling changes to netpyne development / csd on gcp 
