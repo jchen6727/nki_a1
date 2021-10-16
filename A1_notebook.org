@@ -48806,7 +48806,109 @@ for itrace, trace in enumerate(tracesList):
 * <2021-10-14 Thu -- thal int>
 ** See thal int materials
 * <2021-10-15 Fri -- wavelet figure>
-** Changes to batch.py
-*** Changed density back to 1.0 
-***  
-** Pulling changes to netpyne development / csd on gcp 
+** Pulled changes to netpyne development / csd on gcp
+** Changes to batch.py: 
+*** Changed scaleDensity back to 1.0 in custom func
+*** Changed b.batchLabel = 'v34_batch27_0_0_LFP_E2' in main code block
+*** Changed custom func to comment out initCfg['saveLFPCells'] 
+*** Changed custom func by adding a line initCfg['saveLFPPops'] = ['E2'] --> trying excitatory layer 2 cells first I suppose!
+*** added / committed / pushed changes to repro
+*** pull these changes on gcp
+*** running --> python3 batch.py from A1 dir on gcp (on repro branch)
+*** sq / sqra to check 
+*** NOTE: I also had already pulled changes to netpyne, etc. 
+** List of runs to re-run:
+*** 0_1, 0_2, 0_3, 0_4
+*** 1_4
+*** 2_1, 2_3, 2_4
+*** 3_0, 3_4
+*** 4_0, 4_2
+** ^^ All of these .json files are already on gcp 
+** Intro:
+*** The auditory system is involved in a number of crucial sensory functions, including speech processing, sound localization, pitch discrimination, and voice recognition. 
+*** Aberrations in this pathway --> 
+**** Drafts:
+***** Aberrations in this pathway can occur in the periphery 
+lead to 
+-  auditory pathologies that result in 
+-  disorders of loudness perception, pitch discrimination
+-  auditory pathologies with increased sensitivity to sound volume, or
+   even difficult processing 
+***** Aberrations can occur throughout this pathway, 
+with lesions in peripheral areas causing pathologies that can result
+in hearing loss, 
+***** Aberrations in this pathway can result in a wide variety of pathologies, with symptoms that can range from hearing loss to increased sensitivity to sound volume, to 
+difficulty processing music 
+
+hearing loss
+tinnitus
+increased sensitivity to sound volume
+cortical deafness
+difficulty processing music
+
+hearing loss from both peripheral or central lesions, difficulty
+processing music, increased sensitivity to sound volume, 
+**** FINAL SENTENCE USED:
+Aberrations in this pathway can result in a wide variety of pathologies. Lesions in both the peripheral and central parts of this pathway can result in hearing loss, while other more complex disorders can result in increased sensitivity to sound volume or difficulty processing music. 
+**** --> Aberrations in this pathway can result in a wide variety of pathologies. Hearing loss, for example, can result from lesions in either the peripheral (1, 2) or central (1, 2, 3) parts of this pathway, while other complex disorders can result in increased sensitivity to sound volume (1) or difficulty processing music (1, 2). 
+**** Peripheral hearing loss citations:
+***** 1: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2577191/
+***** 2: https://www.cambridge.org/core/journals/journal-of-laryngology-and-otology/article/abs/congenital-conductive-hearing-loss/F117EBE2E9B91E3669EBD2909E0E64E6
+**** Central hearing loss ciations: 
+***** 1: https://www.sciencedirect.com/science/article/abs/pii/S0303846700000901
+***** 2: https://journals.lww.com/otology-neurotology/Fulltext/2013/09000/Recurrent_Contralateral_Hearing_Loss_After_2.11.aspx?casa_token=pnT12lXNQA0AAAAA:uDDFUb3ibuHEs1sSLook2PPLnBLgKCz6OjNzII1pagAruEHBUjQaPoX5mWgwvmBwv8auxtuCEfXMrLxehdOy7Mk
+***** 3: https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0029909
+**** Increased sensitivity to sound volume (hyperacusis):
+***** 1: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC539655/
+**** Difficulty processing music:
+***** congenital amusia
+***** 1: https://www.jneurosci.org/content/35/9/3815.short
+***** 2: https://academic.oup.com/brain/article/136/5/1639/286809?login=true
+***** ^^ (*note: controversial whether deficits are in auditory or frontal cortex, or in their connectivity)
+*** Sentence 1:
+The auditory system is involved in a number of crucial sensory functions, including speech processing (1, 2, 3, 4), sound localization (5, 6, 7), pitch discrimination (8, 9, 10, 11), and voice recognition (12, 13). Aberrations in this pathway can result in a wide variety of pathologies. Hearing loss, for example, can result from lesions in either the peripheral (1, 2) or central (1, 2, 3) parts of this pathway, while other complex disorders can result in increased sensitivity to sound volume (1) or difficulty processing music (1, 2). 
+
+*** Model specific to macaque circuits:
+**** thalamic interneuron density:
+***** citation from paper --> Jager2020-fb
+"Dual midbrain and forebrain origins of thalamic inhibitory interneurons"
+***** Evangelio2018-sf
+Thalamocortical Projection Neuron and Interneuron Numbers in the Visual Thalamic Nuclei of the Adult {C57BL/6} Mouse
+***** Braak1985-ra 
+"The percentage of projection neurons and interneurons in the human lateral geniculate nucleus"
+***** Arcelli1997-fv
+{GABAergic} neurons in mammalian thalamus: a marker of thalamic complexity?
+***** ^^ hm, none are really giving me what I want right now! 
+**** NGF cell electrophysiology: 
+https://pubmed.ncbi.nlm.nih.gov/17122314/
+**** Cortical pathway weights:
+https://pubmed.ncbi.nlm.nih.gov/21045004/
+*** Maybe put the oscillations line first?
+**** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia
+**** Or maybe put it at the end, because the 'understanding this system' sentence flows nicely after that. 
+*** Put these sentences together:
+**** Understanding this system is complicated due to the many interareal pathways, inter- and intralaminar circuitry, network coding mechanisms. and different cell types with specific biophysics and dynamics. 
+**** Increasing availability of experimental data; need for a theoretical/computational framework to integrate and make sense of these disparate findings; across different scales and using different experimental methods. 
+**** --> Achieving a full understanding of this system is complicated by the many interareal pathways, the complexity of the inter- and intralaminar circuitry, the variety of cell types, each with their own set of biophysical properties, and the diversity of network coding mechanisms. 
+**** Additionally, a growing body of experimental data exists, with findings being drawn from different experimental methods at different biological scales, from single cell response properties to cortical network dynamics. 
+**** The aggregate complexity of the biological system, combined with this growing body of data, begets the need for a theoretical framework which can integrate these disparate findings, building them into a unified computational framework which can be used to investigate the system as a whole. 
+**** This complexity, combined with a growing body of experimental data, with findings being drawn from different biological scales using different experimental methods, begets the need for a framework which can integrate these disparate findings and be used to investigate the system as a whole.  
+*** The above sentences; 3 options: 
+**** (1) Achieving a full understanding of this system is complicated by the many interareal pathways, the complexity of the inter- and intralaminar circuitry, the variety of cell types, each with their own set of biophysical properties, and the diversity of network coding mechanisms. This complexity, combined with a growing body of experimental data, begets (promotes? engenders? generates? produces?) the need for a (theoretical / computational) framework which can integrate and make sense of these disparate findings as they occur across different scales, from different experimental methods. 
+**** (2) Achieving a full understanding of this system is complicated by the many interareal pathways, the complexity of the inter- and intralaminar circuitry, the variety of cell types, each with their own set of biophysical properties, and the diversity of network coding mechanisms. This complexity, combined with a growing body of experimental data, with findings being drawn from different biological scales using different experimental methods, begets the need for a framework which can integrate these disparate findings and be used to investigate the system as a whole.
+**** (3) Achieving a full understanding of this system is complicated by the many interareal pathways, the complexity of the inter- and intralaminar circuitry, the variety of cell types, each with their own set of biophysical properties, and the diversity of network coding mechanisms. Additionally, a growing body of experimental data exists, with findings being drawn from different experimental methods at different biological scales, from single cell response properties to cortical network dynamics. The aggregate complexity of the biological system, combined with this growing body of data, begets the need for a theoretical framework which can integrate these disparate findings, building them into a unified computational framework which can be used to investigate the system as a whole. 
+***** draft text:
+occurring at different scales and from different experimental methods, begets (promotes? engenders? +effects?+ generates? produces?) the need for a (theoretical / computational) framework which can integrate and make sense of these disparate findings as they occur across different scales, from different experimental methods. 
+***** more draft text:
+ This complexity, combined with a growing body of experimental data, begets (promotes? engenders? generates? produces?) the need for a (theoretical / computational) framework which can integrate and make sense of these disparate findings as they occur across different scales, from different experimental methods. 
+
+*** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia
+**** Schizophrenia-oscillation abnormalities in auditory cortex → citations:
+***** 1: https://journals.sagepub.com/doi/abs/10.1177/1550059420914201
+***** 2: https://link.springer.com/article/10.1186/1471-2202-10-85
+***** 3: https://www.sciencedirect.com/science/article/abs/pii/S2451902217301507
+**** Autism-oscillation abnormalities in auditory cortex → citations:
+***** 1: https://www.frontiersin.org/articles/10.3389/fnhum.2015.00171/full
+***** 2: https://link.springer.com/article/10.1007/s10803-013-1904-x
+***** 3: https://www.frontiersin.org/articles/10.3389/fnint.2019.00034/full
+***** 4: https://www.sciencedirect.com/science/article/abs/pii/S0006322310010000?casa_token=JkdyE2-PXq4AAAAA:nHtkYmlW_6nBZrVIXHbfaOWz8D9bCyCTxJjrCCtGY7RS-iglFYsL191HjlcLaPF3uLrEu8b3Tg#bib7
