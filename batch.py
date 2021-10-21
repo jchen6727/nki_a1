@@ -742,6 +742,9 @@ def custom(filename):
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
     params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    params['saveLFPPops'] = [['IT3', 'PV3', 'SOM3', 'VIP3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
+                            ['IT3', 'PV3', 'SOM3', 'VIP3', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
+                            ['IT3', 'PV3', 'IT5B', 'PT5B', 'PV5B']]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -749,8 +752,8 @@ def custom(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 2500
-    initCfg['printPopAvgRates'] = [1500, 2500] 
+    initCfg['duration'] = 1000 #2500
+    initCfg['printPopAvgRates'] = [500, 1000] #[1500, 2500] 
     initCfg['scaleDensity'] = 1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -763,7 +766,7 @@ def custom(filename):
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
