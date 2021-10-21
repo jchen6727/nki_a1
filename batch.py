@@ -742,9 +742,14 @@ def custom(filename):
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
     params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
-    params['saveLFPPops'] = [['IT3', 'PV3', 'SOM3', 'VIP3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
-                            ['IT3', 'PV3', 'SOM3', 'VIP3', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
-                            ['IT3', 'PV3', 'IT5B', 'PT5B', 'PV5B']]
+    params['recordLFP'] = [[[100, 1000, 100]], 
+                            [[100, 1000, 100], [500, 1000, 100]],
+                            [[100, 1000, 100], [500, 1000, 100], [1000, 1000, 100]],
+                            [[100, 1000, 100], [500, 1000, 100], [1000, 1000, 100], [1500, 1000, 100]]]
+
+    #params['saveLFPPops'] = [['IT3', 'PV3', 'SOM3', 'VIP3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
+    #                        ['IT3', 'PV3', 'SOM3', 'VIP3', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
+    #                        ['IT3', 'PV3', 'IT5B', 'PT5B', 'PV5B']]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -752,8 +757,8 @@ def custom(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 1000 #2500
-    initCfg['printPopAvgRates'] = [500, 1000] #[1500, 2500] 
+    initCfg['duration'] = 1500
+    initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['scaleDensity'] = 1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -2852,7 +2857,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch50' 
+    b.batchLabel = 'v34_batch51' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
