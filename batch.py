@@ -742,10 +742,9 @@ def custom(filename):
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
     params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
-    params['recordLFP'] = [[[100, 1000, 100]], 
-                            [[100, 1000, 100], [500, 1000, 100]],
-                            [[100, 1000, 100], [500, 1000, 100], [1000, 1000, 100]],
-                            [[100, 1000, 100], [500, 1000, 100], [1000, 1000, 100], [1500, 1000, 100]]]
+    params['recordLFP'] = [[[x, 500, 100] for x in range(100, 2200, 200)],
+                        [[x, 1000, 100] for x in range(100, 2200, 200)],
+                        [[x, 1500, 100] for x in range(100, 2200, 200)]]
 
     #params['saveLFPPops'] = [['IT3', 'PV3', 'SOM3', 'VIP3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
     #                        ['IT3', 'PV3', 'SOM3', 'VIP3', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
@@ -2857,7 +2856,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch51' 
+    b.batchLabel = 'v34_batch52' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

@@ -52,8 +52,8 @@ cfg.recordTime = False  		## SEen in M1 cfg.py
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
 # cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]
-cfg.recordLFP = [[x, 1000, 100] for x in range(100, 200, 100)] # 2200, 200)] #+[[100, 2500, 200], [100,2700,200]]
-cfg.saveLFPPops = cfg.allpops  #['IT3', 'PV3', 'SOM3', 'VIP3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B']
+cfg.recordLFP = [[x, 1000, 100] for x in range(100, 2200, 200)] #+[[100, 2500, 200], [100,2700,200]]
+cfg.saveLFPPops = [p for p in cfg.allpops if p not in ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'VIP4', 'NGF4', 'VIP5A', 'NGF5A', 'VIP5B', 'NGF5B','VIP6', 'TC','TCM','HTC','IRE','IREM','TI','TIM']]
 
 #------------------------------------------------------------------------------
 # Saving
