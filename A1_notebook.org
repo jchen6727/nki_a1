@@ -48912,3 +48912,15 @@ occurring at different scales and from different experimental methods, begets (p
 ***** 2: https://link.springer.com/article/10.1007/s10803-013-1904-x
 ***** 3: https://www.frontiersin.org/articles/10.3389/fnint.2019.00034/full
 ***** 4: https://www.sciencedirect.com/science/article/abs/pii/S0006322310010000?casa_token=JkdyE2-PXq4AAAAA:nHtkYmlW_6nBZrVIXHbfaOWz8D9bCyCTxJjrCCtGY7RS-iglFYsL191HjlcLaPF3uLrEu8b3Tg#bib7
+* <2021-10-25 Mon -- figure and intro>
+** Was on vacation previous week! 
+** A1 intro -->
+*** Finish up this draft 
+*** Change the citation format to Author et al., Year
+** Figure --> 
+*** Figure out what's going on w/ gcp runs --> what did I last run...? Did it work? --> I believe I last ran something that used the new cell pop designation for LFP --> Check on this and see what happened. 
+*** Re-run the runs listed above in Fri 10/15 entry
+*** Keep working on plotPaper.py code ...? What needs to be done exactly. 
+
+** GCP runs:
+*** To log in --> gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
