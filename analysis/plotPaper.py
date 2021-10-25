@@ -166,7 +166,7 @@ for fn in dataFiles:
 ####### PLOTTING #######
 ########################
 
-### LFP, CSD, TRACES ### 
+### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
 LFP = 0
 LFPcellContrib = 0
 CSD = 1

@@ -48924,3 +48924,11 @@ occurring at different scales and from different experimental methods, begets (p
 
 ** GCP runs:
 *** To log in --> gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** Looks like the most recent batch run ran! I see it in the data subdir in my A1 repo on gcp. 
+*** # save LFP traces from populations 
+    initCfg['saveLFPPops'] = ['E2']
+*** Transfer this run over to local machine to look at results:
+**** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_E2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+**** ^^ Run this on local machine terminal (worked!)  
+**** Now look at the LFP contribution -- how? [see below]
+**** 
