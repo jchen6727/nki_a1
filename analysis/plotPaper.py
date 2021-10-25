@@ -167,16 +167,16 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 0
+LFP = 1
 LFPcellContrib = 0
 CSD = 1
-traces = 0
+traces = 1
 waveletNum = 1
 electrodes = [5]  	# CHANGE THIS TO DESIRED ELECTRODES 
 
 ### Set up figure ###
-fig = plt.figure(figsize=(10,6))
-gs = GridSpec(nrows = 2, ncols = LFP + LFPcellContrib + CSD + traces + len(electrodes) + waveletNum)
+fig = plt.figure(figsize=(5,5))#(figsize=(10,6))
+gs = GridSpec(nrows = 2, ncols=1)#ncols = LFP + LFPcellContrib + CSD + traces + len(electrodes) + waveletNum)
 
 
 ### Plot Wavelet ###
@@ -208,11 +208,11 @@ if LFPcellContrib:
 
 ### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
 if LFP:
-	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange, figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 if CSD:
-	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay=None, hlines=1, layerLines=1, layerBounds = layerBounds,saveFig=0, showFig=1) # LFP_overlay=True
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay=None, hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 if traces:
-	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Bpops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(12,8))
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Bpops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(6,8))#figSize=(12,8))
 
 
 
@@ -220,7 +220,7 @@ if traces:
 # Main code
 # ----------------------------------------------------------------------------------------------
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
 
 
 

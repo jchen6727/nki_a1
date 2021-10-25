@@ -48931,4 +48931,10 @@ occurring at different scales and from different experimental methods, begets (p
 **** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_E2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
 **** ^^ Run this on local machine terminal (worked!)  
 **** Now look at the LFP contribution -- how? [see below]
-**** 
+**** cd into A1/data/v34_batch27_0_0_LFP_E2
+***** python
+***** from netpyne import sim
+***** sim.load('v34_batch27_0_0_LFP_E2_data.pkl', instantiate=False)
+***** the output will be in eg sim.allSimData['LFPPops']['E4']
+***** ^^ this didn't work!! 
+**** ^^ This didn't work! Try w/ new version of netpyne -- salva said bug was fixed. --> Submitted again 
