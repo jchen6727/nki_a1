@@ -48954,15 +48954,30 @@ occurring at different scales and from different experimental methods, begets (p
 ** GCP runs --> 
 *** So, yesterday's run still didn't work in terms of delivering an LFPPops key in sim.allSimData !
 *** Strategies to try:
-**** (1) Try from 'development' branch of netpyne (vs. 'csd')
-**** (2) Look at lfp.py example --> examine & run. 
+**** [DONE] (1) Look at lfp.py example --> examine & run. 
 ***** ^ Ah, of course, have to use one of the pops specified. 
 ***** Ran net_lfp.py in netpyne/examples/LFPrecording and it worked locally (sim.allSimData['LFPPops'] is there and populated with the correct populations). 
-*** Changes to batch.py:
+**** [TRY THIS ONLY IF CHANGES BASED ON (1) DO NOT WORK] (2) Try from 'development' branch of netpyne (vs. 'csd') 
+*** Changes to batch.py (Recording LFP from IT2 & CT5B pops):
 **** Based on what I figured out in LFPRecording example
 **** Changed b.batchLabel = 'v34_batch27_0_0_LFP_IT2_CT5B' 
 **** Also changed initCfg['saveLFPPops'] = ['IT2', 'CT5B']
 **** Add/commit/push/pull 
+**** ^^ Pulled on gcp 
+**** python3 batch.py from A1 on gcp (g9-n2-pre-controller)
+*** ^ Submitted batch.py to record IT2 & CT5B LFP contributions. 
+*** ^^ Exited with a seg fault it looks like? Transfer over data to be sure.
+**** Transfer command:
+gcloud compute scp --recurse
+g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/LFPtestRuns/v34_batch27_0_0_LFP_IT2_CT5B
+/Users/ericagriffith/Desktop/NEUROSIM/A1/data 
+**** .run file, last lines:
+11.4s
+  Done; run time = 6179.73 s; real-time ratio: 0.00.
+
+Gathering data...
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 2660 on node g9-n2-pre-compute-0-0 exited on signal 11 (Segmentation fault).
 ** A1 intro:
 *** Changed the citations in the intro text to author et al., year format
 
