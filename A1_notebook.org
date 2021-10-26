@@ -48938,3 +48938,26 @@ occurring at different scales and from different experimental methods, begets (p
 ***** the output will be in eg sim.allSimData['LFPPops']['E4']
 ***** ^^ this didn't work!! 
 **** ^^ This didn't work! Try w/ new version of netpyne -- salva said bug was fixed. --> Submitted again 
+* <2021-10-26 Tue -- gcp and figure and intro text>
+** GCP run from yesterday --> 
+*** Checked on gcp (g9-n2-pre-controller) --> yes! looks like it ran. 
+*** Transfer over to local machine:
+**** on local machine: 
+**** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_0_LFP_E2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** load .pkl file to look at LFPPops in sim.allSimData:
+**** cd ~/Desktop/NEUROSIM/A1/data/v34_batch27_0_0_LFP_E2
+**** python
+**** from netpyne import sim
+**** sim.load('v34_batch27_0_0_LFP_E2_data.pkl', instantiate=False)
+**** allData = sim.allSimData --> hm... also seems like it wasn't working...? 
+**** ^ I don't see an LFPPops key in sim.allSimData
+** GCP runs --> 
+*** So, yesterday's run still didn't work in terms of delivering an LFPPops key in sim.allSimData !
+*** Strategies to try:
+**** (1) Try from 'development' branch of netpyne (vs. 'csd')
+**** (2) Look at lfp.py example --> examine & run. 
+***** ^ Ah, of course, have to use one of the pops specified. 
+***** Ran net_lfp.py in netpyne/examples/LFPrecording and it worked locally (sim.allSimData['LFPPops'] is there and populated with the correct populations). 
+** A1 intro:
+*** Changed the citations in the intro text to author et al., year format
+
