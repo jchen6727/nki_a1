@@ -48980,4 +48980,9 @@ Gathering data...
 mpirun noticed that process rank 0 with PID 2660 on node g9-n2-pre-compute-0-0 exited on signal 11 (Segmentation fault).
 ** A1 intro:
 *** Changed the citations in the intro text to author et al., year format
-
+*** Oscillations subsection --> 
+**** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia
+**** okaaay, write this! 
+**** The involvement of cortical oscillations in speech processing has been... investigated? 
+**** Furthermore, this model can be used to make predictions concerning oscillations that are seen in the auditory cortex. Cortical oscillations have been linked to speech processing. 
+**** There is a growing body of work investigating the role of auditory cortex oscillations (of oscillation in auditory cortex) 
