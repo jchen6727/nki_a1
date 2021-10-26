@@ -48958,6 +48958,11 @@ occurring at different scales and from different experimental methods, begets (p
 **** (2) Look at lfp.py example --> examine & run. 
 ***** ^ Ah, of course, have to use one of the pops specified. 
 ***** Ran net_lfp.py in netpyne/examples/LFPrecording and it worked locally (sim.allSimData['LFPPops'] is there and populated with the correct populations). 
+*** Changes to batch.py:
+**** Based on what I figured out in LFPRecording example
+**** Changed b.batchLabel = 'v34_batch27_0_0_LFP_IT2_CT5B' 
+**** Also changed initCfg['saveLFPPops'] = ['IT2', 'CT5B']
+**** Add/commit/push/pull 
 ** A1 intro:
 *** Changed the citations in the intro text to author et al., year format
 

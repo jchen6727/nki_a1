@@ -775,7 +775,7 @@ def custom():
                                 # [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])],
     
     # save LFP traces from populations 
-    initCfg['saveLFPPops'] = ['E2']
+    initCfg['saveLFPPops'] = ['IT2', 'CT5B']
 
     # changed directly in cfg.py    
     initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'layer_lines': 0, 'saveFig': 1, 'showFig': 0} # 'overlay': 'LFP', # 'LFP_overlay'
@@ -2860,7 +2860,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_0_LFP_E2' 
+    b.batchLabel = 'v34_batch27_0_0_LFP_IT2_CT5B' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
