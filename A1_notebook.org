@@ -49052,12 +49052,28 @@ Cortical pathway weights (1)
 ** A1 manuscript:
 *** see above for previous
 *** autism and schiz -- oscillation section finished
+**** --> an old piece of text:
+In schizophrenia, studies have shown increased oscillatory activity in certain frequency bands at rest (Hirano et al., 2020), along with increased cross-frequency synchronization (Spencer et al., 2009, Hirano et al., 2018), which may be linked to auditory hallucinations (Spencer et al., 2009). In autism spectrum disorder, studies have demonstrated impaired phase-locking between oscillations in auditory cortex and incoming speech stimuli (Gandal et al., 2010, De Stefano et al., 2019, Jochaut et al., 2015), as well as oscillatory abnormalities related to delays in auditory evoked responses (Edgar et al., 2013, Gandal et al., 2010). 
+
+**** ^^ replaced by: 
+Increased oscillatory activity at rest (Hirano et al., 2020), strong cross-frequency synchronization (Spencer et al., 2009, Hirano et al., 2018), and impaired phase-locking between auditory cortex oscillations and incoming speech stimuli (Gandal et al., 2010, De Stefano et al., 2019, Jochaut et al., 2015) have been observed in these disorders and may help explain some of the auditory processing deficits seen in these disease states (Spencer et al., 2009, Edgar et al., 2013, Gandal et al., 2010). 
 *** Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
-**** → Given the importance and complexity of 
-**** Given the importance and mechanistic complexity of these oscillations, a model that incorporates 
+**** Given the mechanistic complexity of these oscillations, a model that incorporates biophysical information at different scales is needed to gain insights into the mechanisms underlying these events. 
+
+**** For example, using this model, 
+
+**** This model, for example, can be used to investigate the 
+
+**** This model, for example, can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region, by looking at the contributions of different inhibitory cell populations, core vs. matrix pathways in thalamus,  
+
 **** This model can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region. 
 
 
+
+**** 
+
+
 *** Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
+**** By incorporating physiologic information  [at different scales...??] , we can gain insights into the biophysical mechanisms underlying experimental recordings occurring at different scales (e.g. single cell recordings, MUA, LFP/CSD, EEG/MEG, fMRI). 
 
 *** Unique model in terms of: macaque-specific dimensions, populations and connectivity; diversity of cell types (4 E and 4 I); detailed thalamic circuits; full thalamocortical loop; realistic inputs from cochlea/IC.
