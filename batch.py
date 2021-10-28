@@ -742,14 +742,7 @@ def custom(filename):
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
     params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
-    params['recordLFP'] = [[[x, 500, 100] for x in range(100, 2200, 200)],
-                        [[x, 1000, 100] for x in range(100, 2200, 200)],
-                        [[x, 1500, 100] for x in range(100, 2200, 200)]]
-
-    #params['saveLFPPops'] = [['IT3', 'PV3', 'SOM3', 'VIP3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
-    #                        ['IT3', 'PV3', 'SOM3', 'VIP3', 'IT5B', 'PT5B', 'PV5B', 'SOM5B', 'VIP5B'],
-    #                        ['IT3', 'PV3', 'IT5B', 'PT5B', 'PV5B']]
-
+    
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
@@ -759,6 +752,7 @@ def custom(filename):
     initCfg['duration'] = 1500
     initCfg['printPopAvgRates'] = [500, 1500] 
     initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 1.0
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 
@@ -772,7 +766,7 @@ def custom(filename):
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     # changed directly in cfg.py    
@@ -2856,7 +2850,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch52' 
+    b.batchLabel = 'v34_batch53' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

@@ -17,6 +17,7 @@ import os
 import pickle
 import batchAnalysis as ba
 from netpyne.support.scalebar import add_scalebar
+from netpyne import analysis
 from matplotlib import cm
 from bicolormap import bicolormap 
 
@@ -27,6 +28,10 @@ import IPython as ipy
 # ---------------------------------------------------------------------------------------------------------------
 # Population params
 allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM', 'IC']
+colorList = analysis.utils.colorList
+popColor = {}
+for i,pop in enumerate(allpops):
+    popColor[pop] = colorList[i]
 
 
 def loadSimData(dataFolder, batchLabel, simLabel):
@@ -253,8 +258,6 @@ def plot_empirical_conn():
     with open('../conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
     pmat = connData['pmat']
     lmat = connData['lmat']
-
-    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC',  'TI', 'IRE', 'IREM']
         
     popsPre = allpops
     popsPost = allpops  # NOTE: not sure why CT5B and PT5B order was switched
@@ -470,82 +473,96 @@ def plot_net_conn_cns20poster():
     plt.savefig('../conn/'+filename, dpi=300)
 
 
-def fig_raster(simLabel):
+def fig_raster(batchLabel, simLabel):
     dataFolder = '../data/'
-    batchLabel = 'v34_batch49' #v34_batch27/'
+    #batchLabel = 'v34_batch49' #v34_batch27/'
     #simLabel = 'v34_batch27_0_0'
 
     sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
 
     timeRange = [1000, 6000] #[2000, 4000]
     
-    # raster
-    # include = allpops
-    # orderBy = ['pop'] #, 'y']
-    # #filename = '%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
-    # fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
-    #     popRates=0, orderInverse=True, lw=0, markerSize=3.5, marker='.',  
-    #     showFig=0, saveFig=0, figSize=(8.5, 13), orderBy=orderBy)# 
-    # ax = plt.gca()
+    #raster
+    include = allpops
+    orderBy = ['pop'] #, 'y']
+    #filename = '%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
+    fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
+        popRates=False, orderInverse=True, lw=0, markerSize=3.5, marker='.',  
+        showFig=0, saveFig=0, figSize=(9, 13), orderBy=orderBy)# 
+    ax = plt.gca()
 
-    # [i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
-    # #plt.tick_params(axis='both', which='both', bottom='off', top='off', labelbottom='off', right='off', left='off', labelleft='off')  #remove ticks
-    # plt.xticks([1000, 2000, 3000, 4000, 5000, 6000], ['1', '2', '3', '4', '5', '6'])
-    # plt.yticks([0, 5000, 10000], [0, 5000, 10000])
+    [i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
+    #plt.tick_params(axis='both', which='both', bottom='off', top='off', labelbottom='off', right='off', left='off', labelleft='off')  #remove ticks
+    plt.xticks([1000, 2000, 3000, 4000, 5000, 6000], ['1', '2', '3', '4', '5', '6'])
+    plt.yticks([0, 5000, 10000], [0, 5000, 10000])
     
-    # plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
-    # plt.xlabel('Time (s)')
+    plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
+    plt.xlabel('Time (s)')
     
-    # plt.title('')
-    # filename='%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
-    # plt.savefig(filename, dpi=600)
+    plt.title('')
+    filename='%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
+    plt.savefig(filename, dpi=300)
 
 
-    # stats
+def fig_stats(batchLabel, simLabel):
+
+    dataFolder = '../data/'
+    #batchLabel = 'v34_batch49' #v34_batch27/'
+    #simLabel = 'v34_batch27_0_0'
+    
+    popColor['SOM'] = popColor['SOM2'] 
+    popColor['PV'] = popColor['PV2'] 
+    popColor['VIP'] = popColor['VIP2'] 
+    popColor['NGF'] = popColor['NGF2'] 
+    
+
+    sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
+
+    timeRange = [1000, 6000] #[2000, 4000]
+
     statPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6',
                 ('SOM2','SOM3','SOM4','SOM5A','SOM5B','SOM6'),
                 ('PV2','PV3','PV4','PV5A','PV5B','PV6'),
                 ('VIP2', 'VIP3', 'VIP4', 'VIP5A', 'VIP5B', 'VIP6'),
                 ('NGF1', 'NGF2', 'NGF3', 'NGF4','NGF5A','NGF5B','NGF6'),
-                'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM', 'IC']
+                'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
     
     labels = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6',
-             'SOM', 'PV', 'VIP', 'NGF', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM', 'IC']
-    
-    xlim = [0,50]
+            'SOM', 'PV', 'VIP', 'NGF', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
 
-    fig1,modelData = sim.analysis.plotSpikeStats(include=statPops, stats=['rate'], timeRange=timeRange, includeRate0=True,
-        showFig=0, saveFig=0, figSize=(8.5, 13), )
-
-    fontsiz = 18
+    colors = [popColor[p] for p in labels]
     
-    plt.figure(figsize=(10,12))
+    xlim = [0,40]
+
+    fig1,modelData = sim.analysis.plotSpikeStats(include=statPops, stats=['rate'], timeRange=timeRange, includeRate0=False,
+        showFig=0, saveFig=0, figSize=(8.5, 13))
+    modelData = modelData['statData']
+
+    plt.figure(figsize=(6*2, 6.5*2))
     meanpointprops = dict(marker = (5, 1, 0), markeredgecolor = 'black', markerfacecolor = 'white')
+    fontsiz = 20    
 
-    ipy.embed()
-    
-    bp=plt.boxplot(modelData[::-1], labels=labels[::-1], notch=False, sym='k+', meanprops=meanpointprops, whis=1.5, widths=0.6, vert=False, showmeans=True, patch_artist=True)  #labels[::-1] #positions=np.array(range(len(statData)))+0.4,
-
+    bp=plt.boxplot(modelData[::-1], labels=labels[::-1], notch=False, sym='k+', meanprops=meanpointprops, whis=1.5, widths=0.6, vert=False, showmeans=True, showfliers=False, patch_artist=True)  #labels[::-1] #positions=np.array(range(len(statData)))+0.4,
     plt.xlabel('Rate (Hz)', fontsize=fontsiz)
     plt.ylabel('Population', fontsize = fontsiz)
     plt.subplots_adjust(left=0.3,right=0.95, top=0.9, bottom=0.1)
 
-    # icolor=0
-    # borderColor = 'k'
-    # for i in range(0, len(bp['boxes'])):
-    #     icolor = i
-    #     bp['boxes'][i].set_facecolor(colors[::-1][icolor])
-    #     bp['boxes'][i].set_linewidth(2)
-    #     # we have two whiskers!
-    #     bp['whiskers'][i*2].set_color(borderColor)
-    #     bp['whiskers'][i*2 + 1].set_color(borderColor)
-    #     bp['whiskers'][i*2].set_linewidth(2)
-    #     bp['whiskers'][i*2 + 1].set_linewidth(2)
-    #     bp['medians'][i].set_color(borderColor)
-    #     bp['medians'][i].set_linewidth(3)
-    #     for c in bp['caps']:
-    #         c.set_color(borderColor)
-    #         c.set_linewidth(2)
+    icolor=0
+    borderColor = 'k'
+    for i in range(0, len(bp['boxes'])):
+        icolor = i
+        bp['boxes'][i].set_facecolor(colors[::-1][icolor])
+        bp['boxes'][i].set_linewidth(2)
+        # we have two whiskers!
+        bp['whiskers'][i*2].set_color(borderColor)
+        bp['whiskers'][i*2 + 1].set_color(borderColor)
+        bp['whiskers'][i*2].set_linewidth(2)
+        bp['whiskers'][i*2 + 1].set_linewidth(2)
+        bp['medians'][i].set_color(borderColor)
+        bp['medians'][i].set_linewidth(3)
+        for c in bp['caps']:
+            c.set_color(borderColor)
+            c.set_linewidth(1)
 
     ax = plt.gca()
     ax.spines['top'].set_visible(False)
@@ -561,38 +578,64 @@ def fig_raster(simLabel):
     axisFontSize(ax, fontsiz)
 
     plt.title('')
-    filename='%s%s_stats_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1])
+    filename='%s%s_stats_%d_%d.png'%(root, simLabel, timeRange[0], timeRange[1])
     plt.savefig(filename, dpi=300)
 
 
-    ipy.embed()
 
 
 
-def fig_traces():
-    '''
-    plt.figure(figsize=(18,24)) 
-    time = np.linspace(0, 2000, 20001)
-    plt.ylabel('V (mV)', fontsize=16)
-    plt.xlabel('time (ms)', fontsize=16)
-    plt.xlim(0, 2000)
-    # plt.ylim(-80, -30)
-    plt.ylim(-6670,20)
-    plt.yticks(np.arange(-6540,60,120),popParamLabels[::-1], fontsize=14)
-    plt.xticks(fontsize=14)
+def fig_traces(batchLabel, simLabel):
+    dataFolder = '../data/'
+    #batchLabel = 'v34_batch49' #v34_batch27/'
+    #simLabel = 'v34_batch27_0_0'
 
-    paramsName = paramsNameList[3]
-    number = 0
-    for popName in popParamLabels:   
-        for metype in popNameName[popName]:
-            cellNames = cellNameName[metype]
-            for cellName in cellNames:
-                Vt = np.array(data[paramsName]['simData']['V_soma'][cellName])
-                plt.plot(time, (Vt-number*120.0)) 
-        number = number + 1
+    sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
+    #popParamLabels = list(data['simData']['popRates'])
 
-    plt.savefig('Vt_full_' + paramsName + '.png', facecolor = 'white', bbox_inches='tight' , dpi=300)
-'''
+    allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM', 'IC']
+
+    firingpops = ['NGF1', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3',  'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B',  'PV5B', 'VIP5B', 'NGF5B',  'VIP6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+
+    firingpops = ['NGF1', 'PV2', 'NGF2', 'IT3',  'SOM3',  'VIP3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'IT5A', 'CT5A', 'SOM5A', 'VIP5A', 'IT5B', 'CT5B',  'PV5B', 'NGF5B', 'TC', 'HTC', 'IRE', 'TI']
+
+    timeRanges = [[1000,3000]] #[[3000, 5000], [5000, 7000], [7000, 9000], [9000,11000]]
+
+    cellNames = data['simData']['V_soma'].keys()
+    popCells = {}
+    for popName,cellName in zip(allpops,cellNames):
+        popCells[popName] = cellName
+
+    fontsiz = 20   
+    for timeRange in timeRanges:
+
+        plt.figure(figsize=(5*2, 6.5*2)) 
+        time = np.linspace(0, 2000, 20001)
+        plt.ylabel('V (mV)', fontsize=fontsiz)
+        plt.xlabel('Time (s)', fontsize=fontsiz)
+        plt.xlim(0, 2000)
+        # plt.ylim(-80, -30)
+        plt.ylim(-120*len(firingpops),20)
+        plt.yticks(np.arange(-120*len(firingpops)+60,60,120), firingpops[::-1], fontsize=fontsiz)
+        plt.xticks([0,1000,2000], [1,2,3], fontsize=fontsiz)
+        #ipy.embed()
+
+        number = 0
+        
+        for popName in firingpops: #allpops:
+            cellName = popCells[popName]   
+            Vt = np.array(data['simData']['V_soma'][cellName][timeRange[0]*10:(timeRange[1]*10)+1])
+            plt.plot(time, (Vt-number*120.0), color=popColor[popName]) 
+            number = number + 1
+
+        ax = plt.gca()
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['bottom'].set_visible(False)
+
+        filename='%s%s_%d_%d_firingTraces.png'%(root, simLabel, timeRange[0], timeRange[1])
+        plt.savefig(filename, facecolor = 'white', bbox_inches='tight' , dpi=300)
+
 
 def fig_optuna_fitness():
     import optunaAnalysis as oa
@@ -746,7 +789,10 @@ if __name__ == '__main__':
     # plot_empirical_conn()
     # plot_net_conn_cns20poster()
     
-    fig_raster('v34_batch49_0_0')
+    #fig_raster('v34_batch27', 'v34_batch27_0_0')
+    fig_traces('v34_batch27', 'v34_batch27_0_0')
+    fig_stats('v34_batch27', 'v34_batch27_0_0')
+    
 
     # for iseed in range(5):
     #     for jseed in range(5):
