@@ -49051,29 +49051,119 @@ Cortical pathway weights (1)
 * <2021-10-28 Thu -- A1 manuscript + figure + starting SfN>
 ** A1 manuscript:
 *** see above for previous
-*** autism and schiz -- oscillation section finished
+*** [DONE] autism and schiz -- oscillation section finished
 **** --> an old piece of text:
 In schizophrenia, studies have shown increased oscillatory activity in certain frequency bands at rest (Hirano et al., 2020), along with increased cross-frequency synchronization (Spencer et al., 2009, Hirano et al., 2018), which may be linked to auditory hallucinations (Spencer et al., 2009). In autism spectrum disorder, studies have demonstrated impaired phase-locking between oscillations in auditory cortex and incoming speech stimuli (Gandal et al., 2010, De Stefano et al., 2019, Jochaut et al., 2015), as well as oscillatory abnormalities related to delays in auditory evoked responses (Edgar et al., 2013, Gandal et al., 2010). 
 
 **** ^^ replaced by: 
 Increased oscillatory activity at rest (Hirano et al., 2020), strong cross-frequency synchronization (Spencer et al., 2009, Hirano et al., 2018), and impaired phase-locking between auditory cortex oscillations and incoming speech stimuli (Gandal et al., 2010, De Stefano et al., 2019, Jochaut et al., 2015) have been observed in these disorders and may help explain some of the auditory processing deficits seen in these disease states (Spencer et al., 2009, Edgar et al., 2013, Gandal et al., 2010). 
-*** Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
-**** Given the mechanistic complexity of these oscillations, a model that incorporates biophysical information at different scales is needed to gain insights into the mechanisms underlying these events. 
+*** [DONE] Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
+**** Scraps:
+***** Given the mechanistic complexity of these oscillations, a model that incorporates biophysical information at different scales is needed to gain insights into the mechanisms underlying these events. 
 
-**** For example, using this model, 
+***** A model that incorporates biophysical information at different scales is needed to gain insights into the mechanisms underlying these oscillation events.  
 
-**** This model, for example, can be used to investigate the 
+***** For example, using this model, 
 
-**** This model, for example, can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region, by looking at the contributions of different inhibitory cell populations, core vs. matrix pathways in thalamus,  
+***** This model, for example, can be used to investigate the 
 
-**** This model can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region. 
+***** This model, for example, can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region, by looking at the contributions of different inhibitory cell populations, core vs. matrix pathways in thalamus,  
 
+***** This model can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region. 
 
+***** To investigate the mechanistic origin of these oscillation events, 
+***** The mechanisms underlying these oscillation events
 
-**** 
+***** To investigate the cellular- and network-level mechanisms underlying these oscillation events, we can use this model to study the role of different cortical and thalamic populations, the contribution of different inhibitory cell populations, differences between core vs. matrix pathways in the thalamus. 
 
+***** This model can be used to investigate the cellular- and network-level mechanisms underlying these oscillation events, by reproducing these oscillations /in silico/ and examining the activity occurring at different scales. 
 
-*** Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
+***** of different cortical and thalamic populations, the contribution of different inhibitory cell 
+
+**** This model can be used to investigate the cellular- and network-level mechanisms underlying these oscillation events, by reproducing oscillations in silico and examining the activity occurring at different scales, from subthreshold currents and dendritic effects, to activity in different thalamic pathways (e.g. core vs. matrix). 
+*** [DONE] Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
 **** By incorporating physiologic information  [at different scales...??] , we can gain insights into the biophysical mechanisms underlying experimental recordings occurring at different scales (e.g. single cell recordings, MUA, LFP/CSD, EEG/MEG, fMRI). 
+**** by incorporating physiologic information that ranges from subthreshold currents and dendritic effects, to core vs. matrix pathway connectivity in the thalamus
+**** By incorporating physiologic information that ranges from subcellular (e.g. subthreshold currents), to cellular (e.g. dendritic effects), to population-level (e.g. core vs. matrix pathway connectivity in the thalamus), we are able to gain insights into the biophysical mechanisms underlying experimental recordings that occur at different scales (e.g. single cell recordings, MUA, LFP/CSD, EEG/MEG).  
 
 *** Unique model in terms of: macaque-specific dimensions, populations and connectivity; diversity of cell types (4 E and 4 I); detailed thalamic circuits; full thalamocortical loop; realistic inputs from cochlea/IC.
+**** ^^ The macaque-specific cortical dimensions, data-driven population connectivity, diversity of excitatory and inhibitory cell types, detailed thalamic circuits (including a full thalamocortical loop), and realistic inputs from upstream structures such as cochlea and inferior colliculus, all make this a unique model that can be used to bridge scales of complexity. 
+
+**** This is a unique model, with macaque-specific cortical dimensions, data-driven population connectivity, a diversity of excitatory and inhibitory cell types, detailed thalamic circuits (including a full thalamocortical loop), and realistic inputs from upstream structures such as cochlea and inferior colliculus.
+
+**** The model we present here uses multiscale, data-driven information, with macaque-specific cortical dimensions, a diversity of excitatory and inhibitory cell types, detailed thalamic circuits (including a full thalamocortical loop) (Markov et al., 2011), and realistic inputs from upstream structures such as cochlea and inferior colliculus.
+
+**** features mentioned: 
+macaque-specific cortical dimensions
+cortical layer depth
+
+diversity of excitatory and inhibitory cell types
+
+cell electrophysiology (Povysheva et al., 2007)
+
+neuron population density
+
+data-driven population connectivity
+
+detailed thalamic circuits (including a full thalamocortical loop)
+thalamocortical connectivity (Markov et al., 2011)
+
+realistic inputs from upstream structures such as cochlea and inferior
+colliculus
+
+
+
+**** The model we present here uses multiscale information, with features including cortical layer depth, thalamocortical connectivity (Markov et al., 2011), cell electrophysiology (Povysheva et al., 2007), and neuron population density drawn from experimental data. 
+**** This is a unique model, with macaque-specific cortical dimensions, data-driven population connectivity, a diversity of excitatory and inhibitory cell types, detailed thalamic circuits (including a full thalamocortical loop), and realistic inputs from upstream structures such as cochlea and inferior colliculus.
+
+**** The model we present here uses multiscale, data-driven information, with macaque-specific cortical dimensions, a diveristy of excitatory and inhibitory cell types with data-driven electrophysiology (Povysheva et al., 2007), data-drive population density and connectivity, detailed thalamic circuits (including a full thalamocortical loop) (Markov et al., 2011), and realistic inputs from upstream structures such as cochlea and inferior colliculus. 
+
+
+** THESE ARE THE POINTS THAT ARE DONE SO FAR:
+*** The auditory system is involved in speech processing, and … ; and is associated with X disease.
+Normal: 
+Speech processing (1, 2, 3, 4)
+Sound localization (5, 6, 7)
+Pitch discrimination (8, 9, 10, 11)
+Voice recognition (12, 13)
+Pathological:
+Peripheral hearing loss (1, 2)
+Central hearing loss (‘cortical deafness’) (1, 2, 3) 
+Congenital amusia (*note: controversial whether deficits are in auditory or frontal cortex, or in their connectivity) (1, 2) 
+Hyperacusis (1)
+→ The auditory system is involved in a number of crucial sensory functions, including speech processing (1, 2, 3, 4), sound localization (5, 6, 7), pitch discrimination (8, 9, 10, 11), and voice recognition (12, 13). Aberrations in this pathway can result in a wide variety of pathologies. Hearing loss, for example, can result from lesions in either the peripheral (1, 2) or central (1, 2, 3) parts of this pathway, while other abnormalities can result in increased sensitivity to sound volume (1) or difficulty processing music (1, 2). 
+*** Understanding this system is complicated due to the many interareal pathways, inter- and intralaminar circuitry, network coding mechanisms. and different cell types with specific biophysics and dynamics. 
+→ Achieving a full understanding of this system is complicated by the many interareal pathways, the complexity of the inter- and intralaminar circuitry, the variety of cell types, each with their own set of biophysical properties, and the diversity of network coding mechanisms. 
+*** Increasing availability of experimental data; need for a theoretical/computational framework to integrate and make sense of these disparate findings; across different scales and using different experimental methods. 
+(1) → This complexity, combined with a growing body of experimental data, begets (promotes? engenders? generates? produces?) the need for a (theoretical / computational) framework which can integrate and make sense of these disparate findings as they occur across different scales, from different experimental methods. 
+(2) → This complexity, combined with a growing body of experimental data, with findings being drawn from different experimental methods at different biological scales, begets the need for a framework which can integrate these disparate findings and be used to investigate the system as a whole.
+(3) → Additionally, a growing body of experimental data exists, with findings being drawn from different experimental methods at different biological scales, from single cell response properties to cortical network dynamics. The aggregate complexity of the biological system, combined with this growing body of data, begets the need for a theoretical framework which can integrate these disparate findings, building them into a unified computational framework which can be used to investigate the system as a whole. 
+*** Model specific to macaque circuits, with features different from those of other species (e.g. layer boundaries, neuronal densities and distribution, thalamocortical projections)
+Thalamic interneuron density 
+NGF cell electrophysiology (1)
+Cortical pathway weights (1)
+→ The model we present here uses this kind of multiscale information, with features including cortical layer depth, neuronal density and distribution, and thalamocortical connectivity, being drawn specifically from experimental data on macaques.     
+
+*** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia 
+*** Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
+*** Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
+
+
+** OLD:
+The model we present here uses multiscale information, with features
+including cortical layer depth, thalamocortical connectivity (Markov
+et al., 2011), cell electrophysiology (Povysheva et al., 2007), and
+neuron population density drawn from experimental data. 
+** NEW:
+The model we present here uses multiscale information, with
+macaque-specific cortical dimensions, a diversity of excitatory and
+inhibitory cell types with data-driven electrophysiology (Povysheva et
+al., 2007), data-driven population density and connectivity, detailed
+thalamic circuits (including a full thalamocortical loop) (Markov et
+al., 2011), and realistic inputs from upstream structures such as
+cochlea and inferior colliculus.
+
+
+** End:
+*** By creating a biophysically-detailed, data-driven model of the auditory pathway, 
+*** Hm, do I need a better sort of concluding sentence for the intro? 
