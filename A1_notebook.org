@@ -49051,4 +49051,13 @@ Cortical pathway weights (1)
 * <2021-10-28 Thu -- A1 manuscript + figure + starting SfN>
 ** A1 manuscript:
 *** see above for previous
-*** autism and schiz -- oscillation section finish 
+*** autism and schiz -- oscillation section finished
+*** Use model to study role of different cortical and thalamic populations to oscillation generation at different frequencies; including core vs matrix thalamus; different inhibitory populations, dendritic effects, subthreshold currents, etc  
+**** → Given the importance and complexity of 
+**** Given the importance and mechanistic complexity of these oscillations, a model that incorporates 
+**** This model can be used to study the role of different cortical and thalamic populations in the generation of oscillations in this brain region. 
+
+
+*** Bridge scales, insights into biophysical mechanisms underlying experimental recordings at different scales (single cell, MUA, LFP/CSD, EEG/MEG, fMRI)
+
+*** Unique model in terms of: macaque-specific dimensions, populations and connectivity; diversity of cell types (4 E and 4 I); detailed thalamic circuits; full thalamocortical loop; realistic inputs from cochlea/IC.
