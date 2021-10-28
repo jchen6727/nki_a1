@@ -48980,9 +48980,75 @@ Gathering data...
 mpirun noticed that process rank 0 with PID 2660 on node g9-n2-pre-compute-0-0 exited on signal 11 (Segmentation fault).
 ** A1 intro:
 *** Changed the citations in the intro text to author et al., year format
-*** Oscillations subsection --> 
+*** Oscillations subsection (first sentence) --> 
 **** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia
-**** okaaay, write this! 
-**** The involvement of cortical oscillations in speech processing has been... investigated? 
-**** Furthermore, this model can be used to make predictions concerning oscillations that are seen in the auditory cortex. Cortical oscillations have been linked to speech processing. 
-**** There is a growing body of work investigating the role of auditory cortex oscillations (of oscillation in auditory cortex) 
+**** Oscillations in auditory cortex may be of particular importance in speech processing. 
+**** The significance of cortical oscillations 
+ for information processing has emerged in speech 
+scillations in auditory cortex have emerged as  particular significance 
+ importance for processing information such as speech. 
+
+**** Cortical oscillations have emerged as a significant feature (component? element?) of information processing. In auditory cortex, oscillations in various frequency bands synchronize to and track the dynamic properties of speech waveforms [Giraud and Poeppel], and in some cases can be used to predict speech intelligibility [Ghitza 2011, Dimitrijevic et al 2017].
+
+**** In auditory cortex, there is a growing body of evidence linking speech processing to oscillatory behavior (Dimitrijevic et al., 2017, Giraud & Poeppel, 2012, Ghitza, 2011).    
+
+
+*** Context of speech / pathology --> 
+**** This has been investigated in both pathologic and non-pathologic contexts, with ______ (fact about speech and oscillations) ____
+
+**** ^^ Cortical oscillations synchronize to and track the dynamic properties of speech waveforms [Giraud and Poeppel], and can be used to predict speech intelligibility [Ghitza 2011, Dimitrijevic et al 2017]. 
+
+ 
+**** ^^ ... with evidence emerging that ___ may contribute to ___ and ___ (something to that effect). 
+**** Furthermore, ---  Abnormalities in gamma frequency band oscillations in auditory cortex have been observed in schizophrenia (citation) and autism (citations).    
+**** ... with additional (derangements? abnormalities? synonyms...) ___ seen in cross-frequency interaction. 
+**** Additional 
+**** In fact, reduced synchrony across frequency bands and reduced phase-locking have been associated with verbal impairments in autism (Jochaut et al., 2015). 
+
+**** SCRAPS (1):
+***** okaaay, write this! 
+***** The involvement of cortical oscillations in speech processing has been... investigated? 
+***** Furthermore, this model can be used to make predictions concerning oscillations that are seen in the auditory cortex. Cortical oscillations have been linked to speech processing. 
+***** There is a growing body of work investigating the role of auditory cortex oscillations (of oscillations in auditory cortex) in speech processing... and in pathological contexts as well.
+***** The complexity of this model also allows us (one?) to create predictions about an important phenomenon noted in cortex - namely, oscillations. 
+***** This complexity of this model also allows us to make predictions 
+**** SCRAPS (2): 
+***** Given the multiscale detail of this model, it can also be used to make predictions about the cellular and network level mechanisms governing the oscillations seen in auditory cortex. 
+***** Oscillations in auditory cortex have been (identified? noted? linked?) linked to 
+***** Oscillations in auditory cortex have been investigated as 
+***** Oscillations in auditory cortex have been linked to speech processing
+***** Oscillations in auditory cortex have been identified as having an important role in speech processing. 
+***** Oscillations in auditory cortex have been proposed as having a 
+* <2021-10-27 Wed -- A1 manuscript>
+** more to add to intro: 
+*** See above also 
+*** Study Oscillations, have a role in speech segmentation, and disease such as autism and schizophrenia --> 
+Speech segmentation oscillations → citations: Dimitrijevic et al., 2017, Giraud & Poeppel, 2012, Ghitza, 2011 
+Schizophrenia-oscillation abnormalities in auditory cortex → citations: Hirano et al., 2020, Spencer et al., 2009, Hirano et al., 2018
+Autism-oscillation abnormalities in auditory cortex → citations: Jochaut et al., 2015, Edgar et al., 2013, De Stefano et al., 2019, Gandal et al., 2010 
+→ Given the multiscale detail of this model, it can also be used to make predictions about the cellular and network level mechanisms governing the oscillations seen in auditory cortex. 
+→ Cortical oscillations have emerged as a significant feature (component? element?) of information processing.  → OR → The significance of cortical oscillations in information processing has emerged in a number of _subfields??__, including _visual perception?? other stuff?_.
+→ In auditory cortex, cortical oscillations may be of particular importance for speech processing (Dimitrijevic et al., 2017, Giraud & Poeppel, 2012, Ghitza, 2011).   → OR → In auditory cortex, there is a growing body of evidence linking oscillatory behavior and speech processing (Dimitrijevic et al., 2017, Giraud & Poeppel, 2012, Ghitza, 2011).    
+→ Oscillations in auditory cortex can synchronize to and track the dynamic properties of speech waveforms (Giraud & Poeppel, 2012), and in some cases can be used to predict speech intelligibility (Ghitza, 2011, Dimitrijevic et al., 2017). 
+→ Abnormalities in gamma frequency band oscillations in auditory cortex have been observed in schizophrenia (Hirano et al., 2020, Spencer et al., 2009, Hirano et al., 2018) and autism (Gandal et al., 2010, De Stefano et al., 2019). 
+Abnormal findings in schizophrenia:
+High beta/gamma synchrony in schizophrenia -- association w/ auditory hallucinations (Spencer et al., 2009) 
+Unusual cross-frequency interactions observed in schizophrenia (Hirano et al., 2018)
+Increased gamma broadband power & impaired gamma synchrony to 40Hz ASSR (Hirano et al., 2020)
+In schizophrenia, studies have demonstrated increased oscillatory activity in certain frequency bands at rest (Hirano et al., 2020), as well as increased cross-frequency synchronization (Spencer et al., 2009, Hirano et al., 2018) that may be associated with auditory hallucinations (Spencer et al., 2009).   
+Abnormal findings in autism:
+Reduced gamma-frequency phase-locking and delayed auditory evoked response(s) (Gandal et al., 2010)
+Impaired gamma-frequency phase-locking in older adults with autism (De Stefano et al., 2019)
+Oscillatory abnormalities related to timing / delay of evoked response(s) (Edgar et al., 2013)
+Theta oscillations do not track speech (and don’t downregulate gamma) (Jochaut et al., 2015) 
+→ In autism spectrum disorder, studies have demonstrated impaired phase-locking between oscillations in auditory cortex and incoming speech stimuli (Gandal et al., 2010, De Stefano et al., 2019, Jochaut et al., 2015), as well as oscillatory abnormalities related to delays in auditory evoked responses (Edgar et al., 2013, Gandal et al., 2010). 
+*** Model specific to macaque circuits, with features different from those of other species (e.g. layer boundaries, neuronal densities and distribution, thalamocortical projections)
+Thalamic interneuron density 
+NGF cell electrophysiology (1)
+Cortical pathway weights (1)
+→ The model we present here uses this kind of multiscale information, with features including cortical layer depth, neuronal density and distribution, and thalamocortical connectivity, being drawn specifically from experimental data on macaques.     
+** Thal int -- see other nb
+* <2021-10-28 Thu -- A1 manuscript + figure + starting SfN>
+** A1 manuscript:
+*** see above for previous
+*** autism and schiz -- oscillation section finish 
