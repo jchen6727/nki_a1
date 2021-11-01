@@ -49710,3 +49710,11 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 **** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
 *** okay looks like a different but okay wavelet in there! potentially! when looking at the CSD at least --> run load.py on it to see:
 python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT/v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl
+** Pops recorded on shorter run:
+*** [DONE] IT2, PT5B 
+*** NGF1, IT5A, CT5A (running)
+*** IT3, ITP4, ITS4  
+**** batchLabel --> 'v34_batch27_0_3_EPops_L3_L4_SHORT'
+*** Rest of E pops:
+**** IT3, ITP4, ITS4, IT5B, CT5B, IT6, CT6
+
