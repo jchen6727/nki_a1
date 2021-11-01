@@ -49716,14 +49716,19 @@ python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_
 **** ran 
 **** transfer over:
 gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
-*** IT3, ITP4, ITS4 (running!) 
+*** [DONE] IT3, ITP4, ITS4
 **** pulled on gcp -- yet to submit
-**** SUBMITTED 
+**** SUBMITTED --> RAN
 **** batchLabel --> 'v34_batch27_0_3_EPops_L3_L4_SHORT'
-*** IT5B, CT5B 
+**** transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_EPops_L3_L4_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** IT5B, CT5B (running!) 
+**** (pulled on gcp --> yet to submit!) 
 **** batchLabel --> 'v34_batch27_0_3_EPops_IT5B_CT5B_SHORT'
-**** 
+*** IT6, CT6 
+**** batchLabel = 'v34_batch27_0_3_EPops_L6_SHORT'
 *** Rest of E pops:
 **** IT3, ITP4, ITS4 --> RUNNING NOW
-**** IT5B, CT5B, IT6, CT6
+**** IT5B, CT5B --> pulled on gcp; yet to submit
+**** IT6, CT6
 

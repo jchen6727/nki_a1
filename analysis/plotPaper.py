@@ -127,20 +127,6 @@ for fn in dataFiles:
 	endIndex = t_full.index(timeRange[-1])
 
 
-	allData = sim.allSimData
-	#LFPData = allData['LFP']
-	LFPPops = allData['LFPPops'].keys()
-
-	for pop in LFPPops:
-		electrodeShortData1 = allData['LFPPops'][pop][beginIndex:endIndex,1]
-
-
-	for pop in LFPPops:
-		plt.plot(t_full, allData['LFPPops'][pop][:, 1], label=pop)
-
-	plt.legend()
-	plt.show()
-
 	# # for saving from multiple pkl files:
 	# cellLFPData = {}
 
@@ -179,12 +165,13 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 0
+LFP = 1
 LFPcellContrib = 0
-CSD = 1
+LFPPops = 1
+CSD = 0
 traces = 0
 waveletNum = 1
-electrodes = ['all']#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
+electrodes = [4,5,6,7] #['all']  	# CHANGE THIS TO DESIRED ELECTRODES 
 waveletImg = 0
 
 
@@ -202,10 +189,28 @@ if LFPcellContrib:
 			#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
 			#plt.show()
 
+if LFPPops:
+	allData = sim.allSimData
+
+	LFPPops = allData['LFPPops'].keys() # list of pops recorded from 
+
+	## Truncate the LFP Pops data according to timeRange 
+	LFP_pop_dict = {}
+	for pop in LFPPops:
+		LFP_pop_dict[pop] = allData['LFPPops'][pop][beginIndex:endIndex,:]
+
+		for elec in electrodes:
+			plt.plot(t, LFP_pop_dict[pop][:, elec], label=pop)
+			plt.legend()
+
+		plt.show()
+
+	ydisp = 
+
 
 ### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
 if LFP:
-	sim.analysis.plotLFP(plots=['PSD', 'timeSeries', 'spectrogram'],electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 if CSD:
 	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 if traces:
