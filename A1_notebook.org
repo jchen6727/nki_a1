@@ -49702,3 +49702,11 @@ if traces:
 gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 --tunnel-through-iap --project "ecas2-nsf1904444"
 *** Let's hope it doesn't segfault out of there this time. 
+*** ^^ it did 
+** Trying a shorter run (up to 1500 seconds) 
+*** with LFPPops saving IT2 and PT5B
+*** salva says that it won't be the same probably bc some things depend on duration unfortunately
+*** well it ran -- so transfer over the data and see 
+**** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** okay looks like a different but okay wavelet in there! potentially! when looking at the CSD at least --> run load.py on it to see:
+python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT/v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl

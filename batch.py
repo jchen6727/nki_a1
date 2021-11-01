@@ -746,8 +746,8 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 1500 #11500 
-    initCfg['printPopAvgRates'] = [0,1500] #[1500, 11500] 
+    initCfg['duration'] = 1000 #11500 
+    initCfg['printPopAvgRates'] = [0,1000] #[1500, 11500] 
     initCfg['scaleDensity'] = 1.0   #0.075 #0.25 
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -780,7 +780,7 @@ def custom():
     initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     # save LFP traces from populations 
-    initCfg['saveLFPPops'] = ['IT2', 'PT5B']
+    initCfg['saveLFPPops'] = ['NGF1', 'IT5A', 'CT5A'] #['IT2', 'PT5B']
     initCfg[('analysis', 'plotLFP')] = {'pop': 'PT5B', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True}
 
 
@@ -2863,7 +2863,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_IT2_PT5B_SHORT' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT'     #IT2_PT5B_SHORT' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

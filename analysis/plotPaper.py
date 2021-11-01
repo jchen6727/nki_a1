@@ -47,9 +47,9 @@ corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
 ### set path to data files
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_batch27_0_0_LFP_L5_REDO/'
-
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT/'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -58,7 +58,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['A1_v34_batch27_v34_batch27_0_3.pkl']
+testFiles = ['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
 
 
 ###### Set timeRange ######
@@ -71,7 +71,7 @@ testFiles = ['A1_v34_batch27_v34_batch27_0_3.pkl']
 #timeRange = [3425, 3550]			# 0_2.pkl, gamma (chan 16 & 17) 
 
 timeRange = [180, 500] 			# !! 0_3.pkl, alpha (chan 13, 19), beta (chan 11, 13, 19)
-timeRange = [175, 300]
+#timeRange = [175, 300]
 
 #timeRange = [1875, 2200] 			# 0_4.pkl (alpha, chan 6 & 12)
 
@@ -163,10 +163,10 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 1
+LFP = 0
 LFPcellContrib = 0
-CSD = 1
-traces = 1
+CSD = 0
+traces = 0
 waveletNum = 1
 electrodes = ['all']#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
 waveletImg = 0
@@ -195,6 +195,8 @@ if CSD:
 if traces:
 	sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
 
+
+#### VERIFY saveLFPPops worked 
 
 
 # ----------------------------------------------------------------------------------------------
