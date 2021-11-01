@@ -14,6 +14,7 @@ import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
 import netpyne
+from numbers import Number
 
 
 ### set layer bounds:
@@ -49,7 +50,7 @@ corePops = ['TC', 'HTC', 'TI', 'IRE']
 ### set path to data files
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_batch27_0_0_LFP_L5_REDO/'
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT/'
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -58,7 +59,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
+testFiles = ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl']#['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
 
 
 ###### Set timeRange ######
@@ -168,26 +169,26 @@ for fn in dataFiles:
 LFP = 1
 LFPcellContrib = 0
 LFPPops = 1
-CSD = 0
+CSD = 1
 traces = 0
 waveletNum = 1
-electrodes = [4,5,6,7] #['all']  	# CHANGE THIS TO DESIRED ELECTRODES 
+electrodes = [3, 4, 5, 6, 7, 8, 9] #['all']	#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
 waveletImg = 0
 
 
 ### INDIVIDUAL LFP CONTRIBUTION ###  
 # cells = []  		# CHANGE THIS TO DESIRED CELLS 		--> ## ANOTHER GOOD CANDIDATE FOR AN ARG? 
 
-if LFPcellContrib:
-	cells = list(cellLFPData.keys())
-	for cell in cells:
-		for elec in electrodes:
-			ax1 = fig.add_subplot(gs[0,2])
-			ax1.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
-			#plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
-			#plt.legend()
-			#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
-			#plt.show()
+# if LFPcellContrib:
+# 	cells = list(cellLFPData.keys())
+# 	for cell in cells:
+# 		for elec in electrodes:
+# 			ax1 = fig.add_subplot(gs[0,2])
+# 			ax1.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+# 			#plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+# 			#plt.legend()
+# 			#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
+# 			#plt.show()
 
 if LFPPops:
 	allData = sim.allSimData
@@ -196,35 +197,71 @@ if LFPPops:
 
 	## Truncate the LFP Pops data according to timeRange 
 	LFP_pop_dict = {}
+
 	for pop in LFPPops:
 		LFP_pop_dict[pop] = allData['LFPPops'][pop][beginIndex:endIndex,:]
 
-		for elec in electrodes:
-			plt.plot(t, LFP_pop_dict[pop][:, elec], label=pop)
-			plt.legend()
+		#for elec in electrodes:
+#		#	plt.plot(t, LFP_pop_dict[pop][:, elec], label=pop)
+#		#	plt.legend()
 
-		plt.show()
+#		# plt.show()
 
-	ydisp = 
+		lfp = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+		data = {'lfp': lfp}  # returned data
+		ydisp = np.absolute(lfp).max() * 1.0 ##1.0 --> separation)
+		offset = 1.0*ydisp
+
+		for i,elec in enumerate(electrodes):
+			if isinstance(elec, Number): 
+				lfpPlot = lfp[:, elec]  #color = colors[i%len(colors)]
+				lw = 1.0
+
+            # if len(t) < len(lfpPlot):
+            #     lfpPlot = lfpPlot[:len(t)]
+
+			#plt.plot(t[0:len(lfpPlot)], -lfpPlot+(i*ydisp), color=color, linewidth=lw)
+			plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw) #color=color,
+			if len(electrodes) > 1:
+				plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, ha='center', va='top', fontweight='bold') # fontsize=fontSize, color=color,
+
+		ax = plt.gca()
+
+		data['lfpPlot'] = lfpPlot
+		data['ydisp'] =  ydisp
+		data['t'] = t
+
+		if len(electrodes) > 1:
+			plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', rotation=90) # fontSize=fontSize, 
+			plt.ylim(-offset, (len(electrodes))*ydisp)
+		else:
+			plt.suptitle('LFP Signal', fontweight='bold') #fontSize=fontSize, 
+		ax.invert_yaxis()
+		plt.xlabel('time (ms)') # fontsize=fontSize
+		ax.spines['top'].set_visible(False)
+		ax.spines['right'].set_visible(False)
+		ax.spines['left'].set_visible(False)
+
+# 	# #ydisp = 
 
 
-### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
-if LFP:
-	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-if CSD:
-	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
-if traces:
-	sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
+# ### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
+# # if LFP:
+# # 	sim.analysis.plotLFP(plots=['timeSeries'],pop='IT5A',filtFreq = [13,30],normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+# # if CSD:
+# # 	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+# # if traces:
+# # 	sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
 
 
-#### VERIFY saveLFPPops worked 
+# #### VERIFY saveLFPPops worked 
 
 
-# ----------------------------------------------------------------------------------------------
-# Main code
-# ----------------------------------------------------------------------------------------------
+# # ----------------------------------------------------------------------------------------------
+# # Main code
+# # ----------------------------------------------------------------------------------------------
 
-#if __name__ == '__main__':
+# #if __name__ == '__main__':
 
 
 

@@ -49722,13 +49722,23 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 **** batchLabel --> 'v34_batch27_0_3_EPops_L3_L4_SHORT'
 **** transfer over:
 gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_EPops_L3_L4_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
-*** IT5B, CT5B (running!) 
+*** [DONE] IT5B, CT5B
 **** (pulled on gcp --> yet to submit!) 
 **** batchLabel --> 'v34_batch27_0_3_EPops_IT5B_CT5B_SHORT'
-*** IT6, CT6 
+**** done! pull over --> 
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_EPops_IT5B_CT5B_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** IT6, CT6  -- running! 
 **** batchLabel = 'v34_batch27_0_3_EPops_L6_SHORT'
+**** edited / added / committed locally
+**** pulled on gcp --> submitted!! 
+**** to transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_EPops_L6_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** IT2, PT5B REDO:
+**** have not yet edited batch.py 
+
+*** HAVE TO REDO IT2, PT5B on 1000ms run --> shit. did it w/ 1500 ms. stupid. 
 *** Rest of E pops:
-**** IT3, ITP4, ITS4 --> RUNNING NOW
-**** IT5B, CT5B --> pulled on gcp; yet to submit
-**** IT6, CT6
+**** IT3, ITP4, ITS4 --> COMPLETE 
+**** IT5B, CT5B --> RUNNING
+**** IT6, CT6 --> pulled, yet to submit
 
