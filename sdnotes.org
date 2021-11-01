@@ -10142,7 +10142,8 @@ def optunaRatesLayersWmat():
 *** code
 ** v34_batch51 - v34_batch31 (trial_5214); all LFP pops at 1 horizontal distance
 ** v34_batch52 - v34_batch31 (trial_5214); selected LFP pops at 20 horizontal distances
-** v34_batch53 - v34_batch25 (trial_2142); record dipole and EEG for first time!
+** v34_batch53 - v34_batch31 (trial_5214); record dipole and EEG for first time!
+** v34_batch54 - v34_batch25 (trial_2142); testing LFPpops for long 11.5sec sim
 ** blank
 
 
