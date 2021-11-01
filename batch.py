@@ -746,8 +746,8 @@ def custom():
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500 
-    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['duration'] = 1500 #11500 
+    initCfg['printPopAvgRates'] = [0,1500] #[1500, 11500] 
     initCfg['scaleDensity'] = 1.0   #0.075 #0.25 
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -2863,7 +2863,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_L5Cells' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_L5Cells_SHORT' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
