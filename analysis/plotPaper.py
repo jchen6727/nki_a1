@@ -70,8 +70,9 @@ testFiles = ['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_ba
 
 #timeRange = [3425, 3550]			# 0_2.pkl, gamma (chan 16 & 17) 
 
-timeRange = [180, 500] 			# !! 0_3.pkl, alpha (chan 13, 19), beta (chan 11, 13, 19)
+#timeRange = [180, 500] 			# !! 0_3.pkl, alpha (chan 13, 19), beta (chan 11, 13, 19)
 #timeRange = [175, 300]
+timeRange = [175, 350] 			## !! 0_3 SHORT RUN 
 
 #timeRange = [1875, 2200] 			# 0_4.pkl (alpha, chan 6 & 12)
 
@@ -125,37 +126,52 @@ for fn in dataFiles:
 	beginIndex = t_full.index(timeRange[0])
 	endIndex = t_full.index(timeRange[-1])
 
-	# for saving from multiple pkl files:
-	cellLFPData = {}
 
-	include = sim.cfg.saveLFPCells
+	allData = sim.allSimData
+	#LFPData = allData['LFP']
+	LFPPops = allData['LFPPops'].keys()
 
-	if include is not False:
-		cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
+	for pop in LFPPops:
+		electrodeShortData1 = allData['LFPPops'][pop][beginIndex:endIndex,1]
 
-		cellIDs = {}
 
-		for i in range(len(cellsIncluded)):
-			cellGID = cellsIncluded[i]['gid']
-			cellPop = cellsIncluded[i]['tags']['pop']
-			cellIDs[cellGID] = cellPop
+	for pop in LFPPops:
+		plt.plot(t_full, allData['LFPPops'][pop][:, 1], label=pop)
 
-		LFPCells = sim.allSimData['LFPCells']
+	plt.legend()
+	plt.show()
 
-		cells = list(LFPCells.keys()) ## This is a list of cell GIDs
-		## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
+	# # for saving from multiple pkl files:
+	# cellLFPData = {}
 
-		for cell in cells:
-			cellLFPData[cellIDs[cell]] = {}
-			numElectrodes = LFPCells[cell].shape[1]
-			for elec in range(numElectrodes):
-				cellLFPData[cellIDs[cell]][elec] = {}
+	# include = sim.cfg.saveLFPCells
 
-				fullLFPTrace = list(LFPCells[cell][:,elec])
-				cellLFPData[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
+	# if include is not False:
+	# 	cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
 
-				LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
-				cellLFPData[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
+	# 	cellIDs = {}
+
+	# 	for i in range(len(cellsIncluded)):
+	# 		cellGID = cellsIncluded[i]['gid']
+	# 		cellPop = cellsIncluded[i]['tags']['pop']
+	# 		cellIDs[cellGID] = cellPop
+
+	# 	LFPCells = sim.allSimData['LFPCells']
+
+	# 	cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+	# 	## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
+
+	# 	for cell in cells:
+	# 		cellLFPData[cellIDs[cell]] = {}
+	# 		numElectrodes = LFPCells[cell].shape[1]
+	# 		for elec in range(numElectrodes):
+	# 			cellLFPData[cellIDs[cell]][elec] = {}
+
+	# 			fullLFPTrace = list(LFPCells[cell][:,elec])
+	# 			cellLFPData[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
+
+	# 			LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
+	# 			cellLFPData[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
 
 
 ########################
@@ -165,7 +181,7 @@ for fn in dataFiles:
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
 LFP = 0
 LFPcellContrib = 0
-CSD = 0
+CSD = 1
 traces = 0
 waveletNum = 1
 electrodes = ['all']#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 

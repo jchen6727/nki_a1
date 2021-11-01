@@ -49712,9 +49712,18 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_IT2_PT5B_SHORT/v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl
 ** Pops recorded on shorter run:
 *** [DONE] IT2, PT5B 
-*** NGF1, IT5A, CT5A (running)
-*** IT3, ITP4, ITS4  
+*** [DONE] NGF1, IT5A, CT5A 
+**** ran 
+**** transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** IT3, ITP4, ITS4 (running!) 
+**** pulled on gcp -- yet to submit
+**** SUBMITTED 
 **** batchLabel --> 'v34_batch27_0_3_EPops_L3_L4_SHORT'
+*** IT5B, CT5B 
+**** batchLabel --> 'v34_batch27_0_3_EPops_IT5B_CT5B_SHORT'
+**** 
 *** Rest of E pops:
-**** IT3, ITP4, ITS4, IT5B, CT5B, IT6, CT6
+**** IT3, ITP4, ITS4 --> RUNNING NOW
+**** IT5B, CT5B, IT6, CT6
 
