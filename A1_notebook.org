@@ -47729,7 +47729,7 @@ for fn in testpkl: #pklfn:
 **** Have to change the plotCSD function in netpyne such that showFig if statement at the end isn't dependent on bool or 0/1!! 
 *** plot Traces --> works! Things I'd like to improve:
 **** have each trace labeled with the cell label (e.g. 'PV2', etc.) 
-* <2021-09-27 Mon>
+* <2021-09-27 Mon -- CSD and OEvent>
 ** From meeting:
 *** --> re-run possibly multiple simulations, with different subsets of cells recorded (to see contribution to LFP) 
 *** can use g9-n2 (pre-emptible)
@@ -49162,8 +49162,537 @@ al., 2007), data-driven population density and connectivity, detailed
 thalamic circuits (including a full thalamocortical loop) (Markov et
 al., 2011), and realistic inputs from upstream structures such as
 cochlea and inferior colliculus.
-
-
 ** End:
 *** By creating a biophysically-detailed, data-driven model of the auditory pathway, 
 *** Hm, do I need a better sort of concluding sentence for the intro? 
+* <2021-10-29 Fri -- SfN>
+** 5-10 slides + ~5 min of me talking over each slide -- submit by NOV 1 (MON)
+** Sections to include in slides:
+*** study’s introduction
+*** experimental design
+*** analytical methods
+*** conclusions
+*** acknowledgements of funding sources.
+** See google docs -- made animated & flat version as well 
+*** animated, for presentation: https://docs.google.com/presentation/d/1aLnpXXbHWGrxwq5xvps17K4b_OGKUL82xAjxOIEhYe0/edit#slide=id.gcb682970d5_1_680
+*** flat, for upload: https://docs.google.com/presentation/d/1lSYkG1xpuYwbiodOH1nUS70YTSiYtwMJkbeXKMlxUqg/edit#slide=id.gfb999a5c43_0_155
+* <2021-10-30 Sat -- SfN>
+** To do:
+*** The transcript
+*** The recording
+*** The oscillation generator figure
+*** The re-framing of speech stuff in 1-2 slides (see sam's notes from slack)
+**** Could mention both or that oscillation events are a method that can characterize dynamics of baseline spontaneous vs speech listening
+**** Long term interest is still speech so can move in that direction later on, whenever we get to it
+*** Submission to SfN
+*** "technical check" for SfN platform 
+** Oscillation generator figure
+*** Alpha mechanisms paper (Bollimunta et al., 2008)
+**** ^^ For this -->
+**** We analyzed laminar profiles of: (1) spontaneous local field potentials and (2) multiunit activity (MUA) recorded with linear array multielectrodes. 
+**** Current source density (CSD) analysis was combined with CSD–MUA coherence to identify intracortical alpha current generators. 
+**** ^^ So, the recordings / data needed:
+***** laminar profile of spontaneous LFPs
+***** laminar profile of multiunit activity (MUA) 
+***** CSD 
+**** Analyses conducted on the above data:
+***** "CSD analysis" --> not sure what this means - find out in paper --> I think it might just literally mean CSD analysis of the LFP signals! 
+***** CSD-MUA coherence 
+***** ^^ These two analyses were "combined" (?) to identify generators. 
+*** Find more papers about oscillation generators:
+**** Look for papers that cite the above paper & use search 
+**** (1) Infragranular Sources of Sustained Local Field Potential Responses in Macaque Primary Visual Cortex 
+***** https://www.jneurosci.org/content/31/6/1971.full
+***** Used CSD ...?  
+**** (2) Laminar Profile and Physiology of the α Rhythm in Primary Visual, Auditory, and Somatosensory Regions of Neocortex
+***** https://www.jneurosci.org/content/35/42/14341.full
+***** Similar to the other papers from this/our group -- CSD analysis of LFP to reveal generators + a CSD-MUA coherence 
+**** (3) The Generation and Propagation of the Human Alpha Rhythm
+***** https://www.biorxiv.org/content/10.1101/202564v2.full
+***** harder to interpret than the others -- think similar, but would have to read more thoroughly
+**** (4) Neuronal Mechanisms and Attentional Modulation of Corticothalamic Alpha Oscillations
+***** https://www.jneurosci.org/content/31/13/4935.short
+***** same as the others -- CSD from LFP, then CSD-MUA coherence
+**** (5) Generator localization by current source density (CSD): Implications of volume conduction and field closure at intracranial and scalp resolutions 
+***** https://www.sciencedirect.com/science/article/pii/S1388245712004683?casa_token=SuDcQUsMLWsAAAAA:AUJXo5pebwsZwm7qgcK8hoF80EzokYcX2HsT7kx3jplzabOa4lF31iI-24A_LwSN0Pzn3wzP7w
+***** Explains background etc -- seems like a good review paper 
+**** (6) Characterizing Oscillatory Cortical Networks with Granger Causality
+***** https://link.springer.com/chapter/10.1007/978-1-4419-0389-1_9
+***** pdf --> https://link.springer.com/content/pdf/10.1007%2F978-1-4419-0389-1_9.pdf
+***** Seems like there's a focus of some degree on Granger Causality, but also looks like there is also section addressing LFP in neuronal mechanisms of oscillation ("finally"). 
+**** (7) Neuronal Mechanisms of Cortical Alpha Oscillations in Awake-Behaving Macaques
+***** https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2692971/
+***** See above. 
+
+
+
+** Neuronal Mechanisms of Cortical Alpha Oscillations in Awake-Behaving Macaques
+*** "Laminar generators of the alpha rhythm were identified by phase-aligned LFP analyses, augmented by current source density (CSD) analysis."
+*** "CSD–MUA coherence tested the rhythmic relationship of transmembrane current oscillations to the action potentials outputs"
+*** "Coherence and Granger causality analyses evaluated the interaction between different laminar alpha generators."
+*** "CSD depth profile allows the localization of transmembrane current generators to specific cortical layers. Concomitant MUA helps assess the physiological processes (i.e., excitability changes) that current generators are associated with."
+
+*** "MUA gauges the intensity of pyramidal cell firing"
+
+*** Analysis protocol (3 main steps):
+**** (1) CSD performed on PRAT-analyzed LFP data --> From this, somehow 'transmembrane current generators' that give rise to oscillations are identified. Need more info. 
+***** ... transmembrane current generators that give rise to field oscillations at the alpha frequency are identified with the CSD method. 
+***** Traditionally, CSD analysis is performed on field potentials averaged with respect to a repetitive sensory stimulus (Mitzdorf, 1985; Schroeder et al., 1991, 1995). 
+***** The CSD of ongoing neural activity is more difficult to ascertain. Single-trial CSD estimates tend to be noisy (Shah et al., 2004; Lakatos et al., 2005, 2007), and because there is no stimulus-related trigger, LFP averaging requires an alternate procedure for the alignment of trials. 
+***** The phase-realigned averaging technique (PRAT; see below) is such a procedure that was used here to identify the alpha current generators within the cortical column.
+**** (2) Once appropriate CSD 'section' (time block?) is identified, then CSD-MUA coherence is performed to see if the 'generator' identified by the CSD (see (1)) has the potential of being a pacemaker. 
+***** ... alpha current generators that have the potential of pacemaking are identified with CSD–MUA coherence. 
+***** ... a source or sink is considered active if simultaneously recorded MUA is depressed or enhanced
+***** ... significant phase coherence between CSD and MUA is used to indicate that a current generator is accompanied by rhythmic firing and thus has the potential of being a pacemaker. 
+**** (3) Granger causality analysis on bipolar LFPs (believe this is 1st deriv of LFP) --> delineates which of the potential pacemakers identified in step (2) is the primary local pacemaking generator. 
+
+*** QUESTIONS --> (1) What does 'generator' mean in this context? How are these identified using the CSD?
+
+*** "Thus, evaluation of the causal relation between two bipolar LFP time series forms the basis for identifying the layer containing the pacemaking cells in a column."
+
+** Next steps:
+*** Rank the papers in terms of priority 
+*** Read
+
+
+** Thoughts / questions:
+*** So when people talk about CSD as the analysis used to find oscillation generators --> I guess my question is, what is the precursor to this? In other words - I was exposed to oscillation event detection via CSD as a primary mechanism. But I think I have to assume from what I've been reading that ... pepple were detecting cortical oscillations during tasks / spontaneously using a different modality that has less spatial specificity in terms of something like cortical depth. So .... EEG? Other? I believe EEG is a good bet basd on some other sentences I've read yes? 
+
+*** It would seem that a decent chunk of these papers are 'novel' in the sense that they can go from -- oh, there's oscillations here, to oh --> they're happening due to populations in these particular laminar locations. So then I guess the thing that we can extend to is... they are happening due to contributions from THESE particular populations, yes? Is that the idea? 
+*** ^^ But then, furthering that line of thought  <-- what's the bridge from here to there, so to speak? I guess I'd have to figure out... what's the furthest specificity they can reach, and how. And how can I use our model data to take it further. I'm guessing that this is where the contributions of specific cells/populations comes into play. 
+*** ^^ so, say that our code detects an oscillation event in a particular location / channel / layer, whatever you wanna call it. 
+
+*** ^^ Question about EEG oscillations ... so, if this was the primary modality of detecting oscillations... how does this signal come through the noise, if you will? How do these oscillation events within the cortex (detected by OEvent via CSD, for example) correlate to the activity that's detected on EEG? How the hell does EEG work? hm. 
+* <2021-10-31 Sun -- SfN>
+** To do: 
+*** [DONE] Tell the channel about my LFP difficulties / give updates 
+*** The transcript
+*** The recording
+*** [PROGRESS] The oscillation generator figure -- updated sam & salva 
+*** [DONE] The re-framing of speech stuff in 1-2 slides (see sam's notes from slack)
+**** Could mention both or that oscillation events are a method that can characterize dynamics of baseline spontaneous vs speech listening
+**** Long term interest is still speech so can move in that direction later on, whenever we get to it
+*** Submission to SfN
+*** "technical check" for SfN platform 
+** okay --> wrote some in my regular (analog) notebook as well musing about the averaging difficulties --> transcribe later HOWEVER, when I overlay LFP onto CSD in plotPaper.py, I do actually see some decent waveforms I THINK. However, the channel stuff is a little messed up btwn the wavelet output subdirs in A1/data/figs/wavelets vs. in calculations / what it looks like in the CSD figure (depth). I added vaknin correction = True into load.py (was False!!) to see if this helps correct the discrepancy. 
+** Re-ran 1_4.pkl
+python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_1_4.pkl
+** Re-running again with all channels included --> ran from 0-17 
+** Going to re-run again to see if channels 18,19 work now 
+** Getting another (2_4)
+*** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_2_4.pkl
+
+** So I'm noticing that for 2_4 --> a gamma oscillation was detected in the same time frame for a couple of different channels. 
+** 0_0.pkl
+*** 6078-6206 (channel 1, index 104)
+*** 6096-6191 (channel 12, index 1074)
+*** 6074-6214 (channel 9, index 809, gamma) 
+** 0_1.pkl 
+** plotPaper.py with comments (full):
+"""
+plotPaper.py
+
+Wavelet and CSD/LFP plotting for oscillation events in A1 model, using NetPyNE 
+
+Contributors: ericaygriffith@gmail.com 
+"""
+from netpyne import sim
+import os
+import utils
+from matplotlib import pyplot as plt
+from matplotlib.gridspec import GridSpec
+import matplotlib.image as mpimg
+from PIL import Image
+import numpy as np
+import netpyne
+
+
+### set layer bounds:
+layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+
+### Cell populations: 
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']#, 'IC']
+L1pops = ['NGF1']
+L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
+L3pops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3']
+L4pops = ['ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4']
+L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B']
+ICortPops = ['NGF1', 
+			'PV2', 'SOM2', 'VIP2', 'NGF2', 
+			'PV3', 'SOM3', 'VIP3', 'NGF3',
+			'PV4', 'SOM4', 'VIP4', 'NGF4',
+			'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
+			'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
+			'PV6', 'SOM6', 'VIP6', 'NGF6']
+EThalPops = ['TC', 'TCM', 'HTC']				# TEpops = ['TC', 'TCM', 'HTC']
+IThalPops = ['IRE', 'IREM', 'TI', 'TIM']		# TIpops = ['IRE', 'IREM', 'TI', 'TIM']
+reticPops = ['IRE', 'IREM']
+matrixPops = ['TCM', 'TIM', 'IREM']
+corePops = ['TC', 'HTC', 'TI', 'IRE']
+
+
+### set path to data files
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/lfpCellRecordings/v34_batch27_0_0_LFP_L5_REDO/'
+
+
+### get .pkl data filenames 
+allFiles = os.listdir(based)
+allDataFiles = []
+for file in allFiles:
+	if '.pkl' in file:
+		allDataFiles.append(file)
+
+testFiles = ['A1_v34_batch27_v34_batch27_1_2.pkl']	#['A1_v34_batch27_v34_batch27_1_4.pkl']	
+#testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
+
+
+# ###### WAVELETS ######
+
+# ## Add in a line that will ... maybe extract the subdir, but for now hard-code it
+# waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_9/' 
+# #waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_5/'
+# ## Add in line(s) that will line the chan_# up with the electrodes list
+
+# waveletFile = waveletDir + 'waveletInfo.txt'
+
+
+# with open(waveletFile) as f:
+# 	lines = f.readlines() 
+
+# ## Add in line(s) that will account for index # of the oscillation event!!
+
+# # absminT = {}
+# # absmaxT = {}
+
+
+# #### TIMING INFO --> good candidate for function 
+# for line in lines:
+# 	if 'absminT' in line:
+# 		absminT = float(line[12:-1])
+# 	if 'absmaxT' in line:
+# 		absmaxT = float(line[12:-1])
+
+# print('absminT = ' + str(absminT))
+# print('absmaxT = ' + str(absmaxT))
+
+
+###### Set timeRange ######
+#timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
+#timeRange = [4446, 4569] 
+#timeRange = [800,1200]
+#timeRange = [round(absminT), round(absmaxT)]
+
+#timeRange = [2197, 2356] #2_4.pkl, beta 228, chan_3
+#timeRange = [205, 433] #2_4.pkl, beta 436, chan_6
+#timeRange = [160, 450] # 2_4.pkl, beta 625, chan_9
+
+#timeRange = [170, 450] # 0_3.pkl, channels 11, 13, 19
+#timeRange = [170, 350] # 0_3.pkl
+
+#timeRange = [4150, 4400] # 1_0.pkl, channels 1 (beta), 11 (beta, gamma), 13 (gamma) 
+
+#timeRange = [5100, 5350] # 1_1.pkl, (Beta -- chan 6, 18, 19) (Gamma -- chan 6, 11)
+
+#timeRange = [1350, 2175] # 1_2.pkl, chan 11 & 12 -- theta
+timeRange = [3800, 3950] # 1_2.pkl, chan 10 & 14 -- theta
+
+
+###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
+if len(testFiles) > 0:
+	dataFiles = testFiles
+else:
+	dataFiles = allDataFiles 
+
+
+for fn in dataFiles:
+	fullPath = based + fn
+	sim.load(fullPath, instantiate=False)
+
+	# Create time lists 
+	fullTimeRange = [0, sim.cfg.duration]
+	t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+	t_full = list(t_full)  # turn into a list so .index function can be used 
+
+	# NOTE: timeRange is declared earlier
+	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+	t = list(t)
+
+	# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+	beginIndex = t_full.index(timeRange[0])
+	endIndex = t_full.index(timeRange[-1])
+
+	# for saving from multiple pkl files:
+	cellLFPData = {}
+
+	include = sim.cfg.saveLFPCells
+
+	if include is not False:
+		cellsIncluded, cellGids, _ = netpyne.analysis.utils.getCellsInclude(include)
+
+		cellIDs = {}
+
+		for i in range(len(cellsIncluded)):
+			cellGID = cellsIncluded[i]['gid']
+			cellPop = cellsIncluded[i]['tags']['pop']
+			cellIDs[cellGID] = cellPop
+
+		LFPCells = sim.allSimData['LFPCells']
+
+		cells = list(LFPCells.keys()) ## This is a list of cell GIDs
+		## ^^ to get the name / pop of these cells --> cellIDs[cells[i]]
+
+		for cell in cells:
+			cellLFPData[cellIDs[cell]] = {}
+			numElectrodes = LFPCells[cell].shape[1]
+			for elec in range(numElectrodes):
+				cellLFPData[cellIDs[cell]][elec] = {}
+
+				fullLFPTrace = list(LFPCells[cell][:,elec])
+				cellLFPData[cellIDs[cell]][elec]['fullLFP'] = fullLFPTrace
+
+				LFPTrace = fullLFPTrace[beginIndex:endIndex]	# This is the segmented LFP trace, by time point
+				cellLFPData[cellIDs[cell]][elec]['timeRangeLFP'] = LFPTrace
+
+
+########################
+####### PLOTTING #######
+########################
+
+### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
+LFP = 0
+LFPcellContrib = 0
+CSD = 1
+traces = 1
+waveletNum = 1
+electrodes = [4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
+waveletImg = 0
+
+### Set up figure ###
+
+
+# ### Plot Wavelet ###
+# imgName = 'A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_4_beta_268' 
+# #imgName = 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368' 
+# waveletImgFile = waveletDir + imgName + '.png'
+
+## Add in line for reading in image
+if waveletImg:
+	fig = plt.figure(figsize=(5,5))#(figsize=(10,6))
+	gs = GridSpec(nrows = 2, ncols=1)#ncols = LFP + LFPcellContrib + CSD + traces + len(electrodes) + waveletNum)
+	img = mpimg.imread(waveletImgFile)
+	#imgplot = plt.imshow(img)
+	ax0 = fig.add_subplot(gs[0,0])
+	ax0.imshow(img)
+
+
+### INDIVIDUAL LFP CONTRIBUTION ###  
+# cells = []  		# CHANGE THIS TO DESIRED CELLS 		--> ## ANOTHER GOOD CANDIDATE FOR AN ARG? 
+
+if LFPcellContrib:
+	cells = list(cellLFPData.keys())
+	for cell in cells:
+		for elec in electrodes:
+			ax1 = fig.add_subplot(gs[0,2])
+			ax1.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+			#plt.plot(t, cellLFPData[cell][elec]['timeRangeLFP'], label = cell)
+			#plt.legend()
+			#plt.title('Individual cell contrib to LFP, electrode ' + str(elec))
+			#plt.show()
+
+
+### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
+if LFP:
+	sim.analysis.plotLFP(plots=['PSD', 'timeSeries', 'spectrogram'],electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+if CSD:
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+if traces:
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in ECortPops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Main code
+# ----------------------------------------------------------------------------------------------
+
+#if __name__ == '__main__':
+
+
+
+
+
+
+
+** 0_0 --> 3_0.pkl completed:
+*** 0_0:
+**** chan 0, gamma, 65, 2688 - 2765
+**** chan 1, beta, 103, 1719 - 1873
+**** chan 1, beta, 104, 6078 - 6206
+**** chan 1, gamma, 156, 4739 - 4784
+**** chan 2, beta, 185, 6047 - 6217
+**** chan 6, beta, 550, 599 - 761
+**** chan 6, gamma, 584, 2851 - 2930 
+**** chan 9, gamma, 809, 6074 - 6214
+**** chan 9, gamma, 833, 2351 - 2415
+**** chan 11, gamma, 994, 6107 - 6197
+**** chan 12, beta, 1043, 6079 - 6217
+**** chan 12, gamma, 1074, 6096 - 6191
+**** By Frequency (Beta): 
+***** chan 1, beta, 103,   1719 - 1873
+***** chan 6, beta, 550,   599 - 761
+***** chan 1, beta, 104,   6078 - 6206
+***** chan 2, beta, 185,   6047 - 6217
+***** chan 12, beta, 1043, 6079 - 6217
+**** By Frequency (Gamma): 
+***** chan 9, gamma, 833,   2351 - 2415
+***** chan 0, gamma, 65,    2688 - 2765
+***** chan 6, gamma, 584,   2851 - 2930 
+***** chan 1, gamma, 156,   4739 - 4784
+***** chan 9, gamma, 809,   6074 - 6214
+***** chan 11, gamma, 994,  6107 - 6197
+***** chan 12, gamma, 1074, 6096 - 6191
+**** BETA GROUP:
+***** chan 1, beta, 104,   6078 - 6206
+***** chan 2, beta, 185,   6047 - 6217
+***** chan 12, beta, 1043, 6079 - 6217
+**** GAMMA GROUP:
+***** chan 9, gamma, 809,   6074 - 6214
+***** chan 11, gamma, 994,  6107 - 6197
+***** chan 12, gamma, 1074, 6096 - 6191
+
+*** 0_1:
+**** chan 2, gamma, 201,   551 - 645
+**** chan 8, gamma, 742,   834 - 893
+**** chan 13, gamma, 1147, 839 - 879
+**** chan 0, gamma, 68,    3004 - 3054
+**** chan 19, gamma, 1662, 3524 - 3574
+**** chan 1, gamma, 128,   5954 - 6017
+
+*** 0_2:
+**** chan 4, gamma, 430, 2717 - 2815
+**** chan 4, gamma, 431, 2082 - 2151
+**** chan 12, alpha, 1066, 361 - 580
+**** chan 14, gamma, 1228, 18 - 1193
+**** chan 16, gamma, 1455, 3450 - 3507
+**** chan 17, gamma, 1501, 3444 - 3501
+**** GAMMA GROUP:
+***** chan 14, gamma, 1228, 18 - 1193
+***** chan 16, gamma, 1455, 3450 - 3507
+***** chan 17, gamma, 1501, 3444 - 3501
+*** 0_3: 
+**** chan 8, beta, 713, 5277 - 5518
+**** chan 9, beta, 811, 1472 - 1777
+**** chan 9, gamma, 839, 3543 - 3619
+**** chan 9, gamma, 830, 5105 - 5170
+**** chan 11, beta, 968, 213 - 437
+**** chan 13, alpha, 1166, 217 - 458
+**** chan 13, beta, 1167, 215 - 427
+**** chan 14, alpha, 1260, 4519 - 4761
+**** chan 14, beta, 1268, 4540 - 4712
+**** chan 14, theta, 1253, 106 - 905
+**** chan 19, alpha, 1683, 201 - 475 
+**** chan 19, alpha, 1685, 932 - 1222
+**** chan 19, beta, 1693, 235 - 417
+**** Alpha:
+***** chan 19, alpha, 1683, 201 - 475 
+***** chan 13, alpha, 1166, 217 - 458
+
+***** chan 19, alpha, 1685, 932 - 1222
+***** chan 14, alpha, 1260, 4519 - 476
+**** Beta:
+***** chan 11, beta, 968,  213 - 437
+***** chan 13, beta, 1167, 215 - 427
+***** chan 19, beta, 1693, 235 - 417
+
+***** chan 9, beta, 811,   1472 - 1777
+***** chan 14, beta, 1268, 4540 - 4712
+***** chan 8, beta, 713,   5277 - 5518
+
+**** Gamma:
+***** chan 9, gamma, 839, 3543 - 3619
+***** chan 9, gamma, 830, 5105 - 5170
+**** Theta: 
+***** chan 14, theta, 1253, 106 - 905
+*** 0_4:
+**** chan 4, gamma, 433, 1102 - 1150
+**** chan 5, gamma, 539, 4232 - 4279
+**** chan 6, alpha, 549, 1880 - 2183
+**** chan 8, gamma, 779, 346 - 407
+**** chan 12, alpha, 1090, 1882 - 2167
+**** Alpha:
+***** chan 6, alpha, 549, 1880 - 2183
+***** chan 12, alpha, 1090, 1882 - 2167
+*** 1_0: 
+**** chan 10, gamma, 926,  380 - 444
+**** chan 8, alpha, 708,   2070 - 2396
+**** chan 13, gamma, 1195, 2737 - 2794
+**** chan 9, gamma, 834,   2972 - 3053
+**** chan 11, gamma, 1025, 3657 - 3730
+**** chan 2, gamma, 220,   6223 - 6303
+
+**** chan 1, beta, 104,    4202 - 4364
+**** chan 11, gamma, 1008, 4203 - 4359
+**** chan 11, beta, 977,   4209 - 4406
+**** chan 13, gamma, 1193, 4208 - 4371
+*** 2_0: 
+**** chan 0, gamma, 59,  4772 - 4837
+**** chan 1, gamma, 157, 2861 - 2944
+**** chan 2, gamma, 263, 3978 - 4029
+**** chan 7, beta, 670,  5887 - 6015
+**** chan 7, gamma, 716, 5932 - 6028
+**** chan 9, gamma, 917, 1011 - 1064
+*** 2_1: 
+**** chan 0, gamma, 35,    5692 - 5788
+**** chan 0, gamma, 83,    1073 - 1116
+**** chan 1, gamma, 138,   5645 - 5766
+**** chan 2, gamma, 230,   2065 - 2143
+**** chan 3, gamma, 306,   2075 - 2134
+**** chan 7, beta, 601,    4020 - 4146
+**** chan 7, gamma, 629,   4047 - 4146
+**** chan 7, gamma, 661,   4644 - 4694
+**** chan 10, gamma, 926,  2527 - 2579
+**** chan 12, gamma, 1124, 5791 - 5831
+**** chan 13, gamma, 1199, 4396 - 4460
+*** 2_2:
+**** chan 1, gamma, 136, 3188 - 3310 
+**** chan 1, gamma, 138, 2159 - 2249
+**** chan 10, delta, 842, 0 - 2548
+**** chan 10, gamma, 916, 5792 - 5843
+**** chan 12, gamma, 1086, 3827 - 3932
+**** chan 13, gamma, 1168, 1010 - 1091
+
+** CSD papers / OScillation generator papers:
+*** https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2692971/
+*** https://www.jneurosci.org/content/jneuro/31/6/1971.full.pdf
+*** https://www.jneurosci.org/content/jneuro/35/42/14341.full.pdf
+*** https://link.springer.com/content/pdf/10.1007%2F978-1-4419-0389-1_9.pdf
+*** https://www.jneurosci.org/content/jneuro/31/13/4935.full.pdf
+*** https://www.biorxiv.org/content/10.1101/202564v2.full.pdf
+* <2021-11-01 Mon -- SfN>
+** Finishing recording and figure
+** Figure:
+*** See slack group chat w/ samn and salvadord to review opinions from yesterday
+*** v34_batch27 --> 0_3.pkl is the file I want to focus on. 
+*** Data that I need:
+**** "True MUA" --> This is the spiking / firing activity of the cells:
+***** Traces:
+****** (i) how many cells have the actual traces recorded? 
+****** (ii) Is it possible to record from all or some larger subset if it's only 1 per pop? 
+***** Spkt / spkid:
+****** Does the run, at default, have spiking data for ALL cells?
+****** ^^ If so: how to correspond spkid with cell type? --> /look at raster for clues?/
+****** ^^ If not: how to get this info recorded?
+***** LFP: 
+****** new options --> 'saveLFPCells' and 'saveLFPPops' 
+****** ^^ The problem is, that when I did saveLFPPops several times, it didn't run all the way thru!! 
+
+** Runs:
+*** Changes to batch.py:
+**** custom() func now uploads 0_3 cfg.json (v34, batch 27)
+**** batchLabel changed to --> 

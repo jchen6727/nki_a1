@@ -58,52 +58,46 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['A1_v34_batch27_v34_batch27_1_4.pkl']	
-#testFiles = ['v34_batch27_0_0_LFP_L5_REDO_data.pkl']	#['v32_batch28_data.pkl'] #['A1_v34_batch27_v34_batch27_2_4.pkl'] # ['A1_v32_batch20_v32_batch20_0_0.pkl'] 
-
-
-###### WAVELETS ######
-
-## Add in a line that will ... maybe extract the subdir, but for now hard-code it
-waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_4/' 
-#waveletDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/chan_5/'
-## Add in line(s) that will line the chan_# up with the electrodes list
-
-waveletFile = waveletDir + 'waveletInfo.txt'
-
-
-with open(waveletFile) as f:
-	lines = f.readlines() 
-
-## Add in line(s) that will account for index # of the oscillation event!!
-
-# absminT = {}
-# absmaxT = {}
-
-
-#### TIMING INFO --> good candidate for function 
-for line in lines:
-	if 'absminT' in line:
-		absminT = float(line[12:-1])
-	if 'absmaxT' in line:
-		absmaxT = float(line[12:-1])
-
-print('absminT = ' + str(absminT))
-print('absmaxT = ' + str(absmaxT))
+testFiles = ['A1_v34_batch27_v34_batch27_2_3.pkl']
 
 
 ###### Set timeRange ######
-#timeRange = [1100, 1500]		# CHANGE THIS TO DESIRED TIME RANGE ## GOOD CANDIDATE FOR AN ARGUMENT (when turning it into a function)
-timeRange = [4446, 4569]
-#timeRange = [round(absminT), round(absmaxT)]
 
+#timeRange = [6050, 6250] 			# 0_0.pkl, beta group (1, 2, 12)
+#timeRange = [6050, 6250]			# 0_0.pkl, gamma group (9, 11, 12)
 
+#timeRange = [800, 900]				# 0_1.pkl, gamma
 
-# return timeRange 
-# have timeRange as an arg? --> then if timeRange is None, use this. 
+#timeRange = [3425, 3550]			# 0_2.pkl, gamma (chan 16 & 17) 
 
+#timeRange = [180, 500] 			# !! 0_3.pkl, alpha (chan 13, 19), beta (chan 11, 13, 19)
 
+#timeRange = [1875, 2200] 			# 0_4.pkl (alpha, chan 6 & 12)
 
+#timeRange = [4150, 4400] 			# 1_0.pkl, channels 1 (beta), 11 (beta, gamma), 13 (gamma) 
+
+#timeRange = [5100, 5350] 			# 1_1.pkl, (Beta -- chan 6, 18, 19) (Gamma -- chan 6, 11)
+
+#timeRange = [1350, 2175] 			# 1_2.pkl, chan 11 & 12 -- theta
+#timeRange = [3800, 3950] 			# 1_2.pkl, chan 10 & 14 -- theta
+
+#timeRange = [5850, 6050]			# 2_0.pkl
+
+#timeRange = [2000, 2150]			# 2_1.pkl (gamma, chan 2 & 3)
+
+#timeRange = [175, 800] 			# ** !! 2_3.pkl (alpha / theta --> chan 14) (alpha --> chan 19)
+#timeRange = [200, 500]				# ** !! 
+#[3500, 3600] #[5150, 5300]			# 2_3.pkl
+timeRange = [2200, 2300]
+
+#timeRange = [2197, 2356] 			# 2_4.pkl, beta 228, chan_3
+#timeRange = [205, 433] 			# ** !! 2_4.pkl, beta 436, chan_6
+#timeRange = [160, 450] 			# ** !! 2_4.pkl, beta 625, chan_9 (& beta chan 5)
+#timeRange = [275 , 375]			# ** !!  gamma, chan 4 , 320
+#timeRange = [2450, 2550]			# gamma, chan 4, 330
+#timeRange = [4130, 4300]
+
+#timeRange = [350, 675]				# 3_0.pkl
 
 ###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
 if len(testFiles) > 0:
@@ -167,28 +161,13 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 1
+LFP = 0
 LFPcellContrib = 0
 CSD = 1
 traces = 1
 waveletNum = 1
-electrodes = [5]  	# CHANGE THIS TO DESIRED ELECTRODES 
-
-### Set up figure ###
-fig = plt.figure(figsize=(5,5))#(figsize=(10,6))
-gs = GridSpec(nrows = 2, ncols=1)#ncols = LFP + LFPcellContrib + CSD + traces + len(electrodes) + waveletNum)
-
-
-### Plot Wavelet ###
-imgName = 'A1_v34_batch27_v34_batch27_1_4_SIM_gcp_wavelet_chan_4_beta_268' 
-#imgName = 'A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_5_beta_368' 
-waveletImgFile = waveletDir + imgName + '.png'
-
-## Add in line for reading in image
-img = mpimg.imread(waveletImgFile)
-#imgplot = plt.imshow(img)
-ax0 = fig.add_subplot(gs[0,0])
-ax0.imshow(img)
+electrodes = [4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
+waveletImg = 0
 
 
 ### INDIVIDUAL LFP CONTRIBUTION ###  
@@ -208,11 +187,11 @@ if LFPcellContrib:
 
 ### Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
 if LFP:
-	sim.analysis.plotLFP(plots=['timeSeries'],electrodes=electrodes,showFig=True, timeRange=timeRange, figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	sim.analysis.plotLFP(plots=['PSD', 'timeSeries', 'spectrogram'],electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 if CSD:
-	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay=None, hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 if traces:
-	sim.analysis.plotTraces(include=[(pop, 0) for pop in L5Bpops], timeRange = timeRange, oneFigPer='trace', overlay=False, saveFig=False, showFig=True, figSize=(6,8))#figSize=(12,8))
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in ECortPops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
 
 
 

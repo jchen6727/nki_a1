@@ -723,7 +723,7 @@ def custom():
 
     # from prev 
     import json
-    with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_0_cfg.json', 'rb') as f:
+    with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json', 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
@@ -762,7 +762,7 @@ def custom():
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
 
     # save LFP trace from first cell of each pop 
@@ -774,12 +774,15 @@ def custom():
                                 # ('IT6', [0]), ('CT6', [0]), ('SOM6', [0]), ('PV6', [0]), ('VIP6', [0]), ('NGF6', [0])] # [3, 'PYR', ('PV2', 5)] # True # Default is False ! 
                                 # [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])],
     
-    # save LFP traces from populations 
-    initCfg['saveLFPPops'] = ['IT2', 'CT5B']
 
     # changed directly in cfg.py    
     initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'layer_lines': 0, 'saveFig': 1, 'showFig': 0} # 'overlay': 'LFP', # 'LFP_overlay'
     initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    # save LFP traces from populations 
+    initCfg['saveLFPPops'] = ['PT5B']
+    initCfg[('analysis', 'plotLFP')] = {'pop': 'PT5B', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True}
+
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -2860,7 +2863,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_0_LFP_IT2_CT5B' 
+    b.batchLabel = 'v34_batch27_0_3_PT5B' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
