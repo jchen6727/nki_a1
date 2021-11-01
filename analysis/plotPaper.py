@@ -86,8 +86,12 @@ else:
 allLFPData = {}
 allLFPData['LFPPops'] = {}
 
+
+# firstFile = True ## for trace data 
+
 for fn in dataFiles:
 	fullPath = based + fn
+
 	sim.load(fullPath, instantiate=False)
 
 	# Create time lists 
@@ -113,6 +117,8 @@ for fn in dataFiles:
 
 
 
+
+
 ########################
 ####### PLOTTING #######
 ########################
@@ -120,17 +126,59 @@ for fn in dataFiles:
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
 LFP = 0
 LFPcellContrib = 0
-LFPPopContrib = 1
+LFPPopContrib = 0
+filtFreq = 0 #[10, 30]
 CSD = 0
+MUA = 1 ## spiking activity 
 traces = 0
 waveletNum = 1
 #electrodes = [3,5, 7, 9, 11, 13, 15, 17, 19] #[3, 4, 5] #['all']	#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
-electrodes = [4, 6, 8, 10, 12, 14, 16, 18]
+electrodes = [4, 5, 6]#, 10]#, 12, 14, 16, 18]
 waveletImg = 0
 
 
-#### Plot LFP Pops contribution: 
 
+### SPIKING DATA 
+if MUA:
+	fileNameFull = based + dataFiles[0]
+
+	sim.load(fileNameFull, instantiate=True)
+
+	pops = list(sim.net.pops.keys())  # Is this empty because instantiate is false? Yes
+
+	spkt = sim.allSimData['spkt'] 
+	spkid = sim.allSimData['spkid']
+	
+	spikeGids = {}
+	for pop in pops:
+		spikeGids[pop] = sim.net.pops[pop].cellGids
+
+	spktTimeRange = []
+	spkidTimeRange = []
+
+	for t in spkt:
+		if t >= timeRange[0] and t <= timeRange[1]:
+			spktTimeRange.append(t)
+			spkidTimeRange.append(spkid[spkt.index(t)])
+
+
+	spikes = {}
+
+	for pop in pops:
+		spikes[pop] = []
+		for i in range(len(spkidTimeRange)):
+			if spkidTimeRange[i] in spikeGids[pop]:
+				spikes[pop].append(spktTimeRange[i])
+
+		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+
+	## PLOTTING
+	# for pop in pops:
+	# 	val = pops.index(pop)
+		#spikeActivity = np.array(spikes[pop])
+
+
+#### Plot LFP Pops contribution: 
 if LFPPopContrib:
 	plt.figure(figsize=(6,8))
 	#allData = sim.allSimData
@@ -139,13 +187,14 @@ if LFPPopContrib:
 	LFPPops = list(allLFPData['LFPPops'].keys())
 	LFPPops.remove('NGF1')
 
+	LFPPops = ['ITP4', 'ITS4']
+
 	for pop in LFPPops:
 
 		popColorNum = LFPPops.index(pop)
 		color = colorList[popColorNum%len(colorList)]
 		print('pop: ' + str(pop) + ' color: ' + str(color))
 
-		#lfp = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 		lfp = np.array(allLFPData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
 
@@ -154,10 +203,26 @@ if LFPPopContrib:
 		offset = 1.0*ydisp
 
 
+		if filtFreq:
+			from scipy import signal
+			fs = 1000.0/sim.cfg.recordStep
+			nyquist = fs/2.0
+			filtOrder = 3
+			if isinstance(filtFreq, list): # bandpass
+				Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+				b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+			elif isinstance(filtFreq, Number): # lowpass
+				Wn = filtFreq/nyquist
+				b, a = signal.butter(filtOrder, Wn)
+			for i in range(lfp.shape[1]):
+				lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+
+
+
 		first = True ## for labeling purposes!! 
 		for i,elec in enumerate(electrodes):
 			if isinstance(elec, Number): 
-				lfpPlot = lfp[:, elec]  #color = colors[i%len(colors)]
+				lfpPlot = lfp[:, elec]
 				lw = 1.0
 
 			if first:
@@ -188,22 +253,22 @@ if LFPPopContrib:
 	ax.spines['right'].set_visible(False)
 	ax.spines['left'].set_visible(False)
 	ax.get_yaxis().set_visible(False)
+	plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
 
 	filename = based + 'try_this.png'
-	plt.savefig(filename)
+	plt.savefig(filename,bbox_inches='tight')
 
 
 
 ## Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
-# allData = sim.allSimData
-# LFPPops = allData['LFPPops'].keys()
+LFPPops = list(allLFPData['LFPPops'].keys())
 if LFP:
-	#for pop in LFPPops:
-	sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = [13,30],normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	for pop in LFPPops:
+		sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = [13,30],normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 if CSD:
 	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 if traces:
-	sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in L4pops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
 
 
 
