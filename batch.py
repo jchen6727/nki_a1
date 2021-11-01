@@ -766,8 +766,8 @@ def custom():
 
 
     # save LFP trace from first cell of each pop 
-    #initCfg['saveLFPCells'] = [('IT5A', [0]), ('CT5A', [0])]#, #('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
-                                #('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0])]#, #[('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
+    initCfg['saveLFPCells'] = [('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
+                                ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0])]#, #[('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
                                 #('ITP4', [0]), ('ITS4', [0]), ('SOM4', [0]), ('PV4', [0]), ('VIP4', [0]), ('NGF4', [0])]#,
                                 # ('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
                                 # ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0]), 
@@ -780,8 +780,8 @@ def custom():
     initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     # save LFP traces from populations 
-    initCfg['saveLFPPops'] = ['PT5B']
-    initCfg[('analysis', 'plotLFP')] = {'pop': 'PT5B', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True}
+    #initCfg['saveLFPPops'] = ['PT5B']
+    #initCfg[('analysis', 'plotLFP')] = {'pop': 'PT5B', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True}
 
 
     initCfg['saveCellSecs'] = False
@@ -2863,7 +2863,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_PT5B' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_L5Cells' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

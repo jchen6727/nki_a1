@@ -58,7 +58,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['A1_v34_batch27_v34_batch27_2_3.pkl']
+testFiles = ['A1_v34_batch27_v34_batch27_0_3.pkl']
 
 
 ###### Set timeRange ######
@@ -70,7 +70,8 @@ testFiles = ['A1_v34_batch27_v34_batch27_2_3.pkl']
 
 #timeRange = [3425, 3550]			# 0_2.pkl, gamma (chan 16 & 17) 
 
-#timeRange = [180, 500] 			# !! 0_3.pkl, alpha (chan 13, 19), beta (chan 11, 13, 19)
+timeRange = [180, 500] 			# !! 0_3.pkl, alpha (chan 13, 19), beta (chan 11, 13, 19)
+timeRange = [175, 300]
 
 #timeRange = [1875, 2200] 			# 0_4.pkl (alpha, chan 6 & 12)
 
@@ -88,7 +89,7 @@ testFiles = ['A1_v34_batch27_v34_batch27_2_3.pkl']
 #timeRange = [175, 800] 			# ** !! 2_3.pkl (alpha / theta --> chan 14) (alpha --> chan 19)
 #timeRange = [200, 500]				# ** !! 
 #[3500, 3600] #[5150, 5300]			# 2_3.pkl
-timeRange = [2200, 2300]
+#timeRange = [2200, 2300]
 
 #timeRange = [2197, 2356] 			# 2_4.pkl, beta 228, chan_3
 #timeRange = [205, 433] 			# ** !! 2_4.pkl, beta 436, chan_6
@@ -109,6 +110,7 @@ else:
 for fn in dataFiles:
 	fullPath = based + fn
 	sim.load(fullPath, instantiate=False)
+	#sim.load(dataFile, instantiate=False)
 
 	# Create time lists 
 	fullTimeRange = [0, sim.cfg.duration]
@@ -161,12 +163,12 @@ for fn in dataFiles:
 ########################
 
 ### LFP, CSD, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 0
+LFP = 1
 LFPcellContrib = 0
 CSD = 1
 traces = 1
 waveletNum = 1
-electrodes = [4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
+electrodes = ['all']#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
 waveletImg = 0
 
 
@@ -191,7 +193,7 @@ if LFP:
 if CSD:
 	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 if traces:
-	sim.analysis.plotTraces(include=[(pop, 0) for pop in ECortPops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
+	sim.analysis.plotTraces(include=[(pop, 0) for pop in allpops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
 
 
 
