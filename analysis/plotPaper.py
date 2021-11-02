@@ -129,7 +129,7 @@ LFPcellContrib = 0
 LFPPopContrib = 0
 filtFreq = 0 #[10, 30]
 CSD = 0
-MUA = L4pops.copy() #1 ## spiking activity  ## can be list of pops
+MUA = ECortPops.copy() #L4pops.copy() #1 ## spiking activity  ## can be list of pops
 traces = 0
 waveletNum = 1
 electrodes = [4, 5, 6]#, 10]#, 12, 14, 16, 18]
@@ -198,6 +198,7 @@ if MUA:
 		plt.text(timeRange[0]-20, val*2, pop, color=color)
 
 	#plt.legend()
+	ax.invert_yaxis()
 	ax = plt.gca()
 	ax.spines['top'].set_visible(False)
 	ax.spines['right'].set_visible(False)
