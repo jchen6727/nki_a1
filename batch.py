@@ -780,7 +780,7 @@ def custom():
     initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     # save LFP traces from populations 
-    initCfg['saveLFPPops'] = ['PV2', 'SOM2', 'VIP2', 'NGF2'] #['PV2', 'SOM2', 'VIP2', 'NGF2', 
+    initCfg['saveLFPPops'] = ['PV3', 'SOM3', 'VIP3', 'NGF3'] #['PV2', 'SOM2', 'VIP2', 'NGF2', 
             #'PV3', 'SOM3', 'VIP3', 'NGF3',
             #'PV4', 'SOM4', 'VIP4', 'NGF4',
             #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
@@ -2868,7 +2868,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_inhib_L2_SHORT'     #IT2_PT5B_SHORT' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_inhib_L3_SHORT'     #IT2_PT5B_SHORT' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

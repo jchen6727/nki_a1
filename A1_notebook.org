@@ -50150,3 +50150,11 @@ if LFPPops:
 # 	LFPPops = list(singleSimData['LFPPops'].keys())
 # 	for pop in LFPPops:
 # 		allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]
+** Recording LFP contributions of inhibitory cells:
+*** L1 inhib -- already done
+*** L2 inhib -- running! 
+**** batchLabel = 'v34_batch27_0_3_inhib_L2_SHORT'
+**** to transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_inhib_L2_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** L3 inhib -- 
+**** 
