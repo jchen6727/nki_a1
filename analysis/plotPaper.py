@@ -32,7 +32,7 @@ L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
 L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
 L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
-ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B']
+ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']
 ICortPops = ['NGF1', 
 			'PV2', 'SOM2', 'VIP2', 'NGF2', 
 			'PV3', 'SOM3', 'VIP3', 'NGF3',
@@ -83,36 +83,36 @@ else:
 
 
 
-allLFPData = {}
-allLFPData['LFPPops'] = {}
+# allLFPData = {}
+# allLFPData['LFPPops'] = {}
 
 
-# firstFile = True ## for trace data 
+# # firstFile = True ## for trace data 
 
-for fn in dataFiles:
-	fullPath = based + fn
+# for fn in dataFiles:
+# 	fullPath = based + fn
 
-	sim.load(fullPath, instantiate=False)
+# 	sim.load(fullPath, instantiate=False)
 
-	# Create time lists 
-	fullTimeRange = [0, sim.cfg.duration]
-	t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
-	t_full = list(t_full)  # turn into a list so .index function can be used 
+# 	# Create time lists 
+# 	fullTimeRange = [0, sim.cfg.duration]
+# 	t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+# 	t_full = list(t_full)  # turn into a list so .index function can be used 
 
-	# NOTE: timeRange is declared earlier
-	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
-	t = list(t)
+# 	# NOTE: timeRange is declared earlier
+# 	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+# 	t = list(t)
 
-	# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
-	beginIndex = t_full.index(timeRange[0])
-	endIndex = t_full.index(timeRange[-1])
+# 	# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+# 	beginIndex = t_full.index(timeRange[0])
+# 	endIndex = t_full.index(timeRange[-1])
 
 
-	## LFP contributions knitted together:
-	singleSimData = sim.allSimData
-	LFPPops = list(singleSimData['LFPPops'].keys())
-	for pop in LFPPops:
-		allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]
+# 	## LFP contributions knitted together:
+# 	singleSimData = sim.allSimData
+# 	LFPPops = list(singleSimData['LFPPops'].keys())
+# 	for pop in LFPPops:
+# 		allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]
 
 
 
@@ -129,10 +129,9 @@ LFPcellContrib = 0
 LFPPopContrib = 0
 filtFreq = 0 #[10, 30]
 CSD = 0
-MUA = 1 ## spiking activity 
+MUA = L4pops.copy() #1 ## spiking activity  ## can be list of pops
 traces = 0
 waveletNum = 1
-#electrodes = [3,5, 7, 9, 11, 13, 15, 17, 19] #[3, 4, 5] #['all']	#[4,5,6,7]  	# CHANGE THIS TO DESIRED ELECTRODES 
 electrodes = [4, 5, 6]#, 10]#, 12, 14, 16, 18]
 waveletImg = 0
 
@@ -172,14 +171,85 @@ if MUA:
 
 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
 
-	## PLOTTING
-	# for pop in pops:
+
+	### TOTAL SPIKING ACTIVITY (in timeRange) PER POP ####
+	totalSpikes = {}
+	for pop in MUA:
+		print('total spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+		totalSpikes[pop] = len(spikes[pop])
+
+
+	### if you want to order the pops by highest -- lowest spiking:
+	popRatesOrdered = []
+
+	x = totalSpikes.copy() 
+	for pop in MUA:
+		highestRatePop = max(x, key=x.get)
+		popRatesOrdered.append(highestRatePop)
+		x.pop(highestRatePop)
+	# popRatesOrdered will give the pops in decending order of spiking activity 
+
+	#### PLOTTING ####
+	for pop in MUA:
+		color=colorList[MUA.index(pop)%len(colorList)]
+		val = MUA.index(pop)
+		spikeActivity = np.array(spikes[pop])
+		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+		plt.text(timeRange[0]-20, val*2, pop, color=color)
+
+	#plt.legend()
+	ax = plt.gca()
+	ax.spines['top'].set_visible(False)
+	ax.spines['right'].set_visible(False)
+	ax.spines['left'].set_visible(False)
+	ax.get_yaxis().set_visible(False)
+
+
+	# for pop in MUA: 
 	# 	val = pops.index(pop)
-		#spikeActivity = np.array(spikes[pop])
+	# 	spikeActivity = np.array(spikes[pop])
+	# 	plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), 'x', label=pop)
+	# plt.legend()
+	# ax = plt.gca()
+	# ax.spines['top'].set_visible(False)
+	# ax.spines['right'].set_visible(False)
+	# ax.spines['left'].set_visible(False)
+	# ax.get_yaxis().set_visible(False)
+
 
 
 #### Plot LFP Pops contribution: 
 if LFPPopContrib:
+	allLFPData = {}
+	allLFPData['LFPPops'] = {}
+
+	for fn in dataFiles:
+		fullPath = based + fn
+
+		sim.load(fullPath, instantiate=False)
+
+		# Create time lists 
+		fullTimeRange = [0, sim.cfg.duration]
+		t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+		t_full = list(t_full)  # turn into a list so .index function can be used 
+
+		# NOTE: timeRange is declared earlier
+		t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+		t = list(t)
+
+		# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+		beginIndex = t_full.index(timeRange[0])
+		endIndex = t_full.index(timeRange[-1])
+
+
+		## LFP contributions knitted together:
+		singleSimData = sim.allSimData
+		LFPPops = list(singleSimData['LFPPops'].keys())
+		for pop in LFPPops:
+			allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]
+
+
+
 	plt.figure(figsize=(6,8))
 	#allData = sim.allSimData
 
@@ -190,7 +260,6 @@ if LFPPopContrib:
 	LFPPops = ['ITP4', 'ITS4']
 
 	for pop in LFPPops:
-
 		popColorNum = LFPPops.index(pop)
 		color = colorList[popColorNum%len(colorList)]
 		print('pop: ' + str(pop) + ' color: ' + str(color))
@@ -261,10 +330,10 @@ if LFPPopContrib:
 
 
 ## Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
-LFPPops = list(allLFPData['LFPPops'].keys())
+#LFPPops = list(allLFPData['LFPPops'].keys())
 if LFP:
-	for pop in LFPPops:
-		sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = [13,30],normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	#for pop in LFPPops: # indent following line if putting this back in 
+	sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = [13,30],normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 if CSD:
 	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='LFP', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 if traces:
