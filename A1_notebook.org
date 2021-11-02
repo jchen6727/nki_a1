@@ -50097,4 +50097,56 @@ if LFPPops:
 *** v34_batch27_0_3_EPops_L6_SHORT/v34_batch27_0_3_EPops_L6_SHORT_data.pkl
 *** v34_batch27_0_3_IT2_PT5B_SHORT_REDO/v34_batch27_0_3_IT2_PT5B_SHORT_REDO_data.pkl
 ** Make new dir for short run .pkl files:
-*** 
+** plotPaper.py changes:
+*** ordering of spike totals lines (commenting out for now):
+##### COMMENTING OUT FOR NOW BC NOT SURE IF THESE LINES ARE USEFUL RIGHT NOW 
+	# totalSpikes = {}
+	# for pop in MUA:
+	# 	print('total spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+	# 	totalSpikes[pop] = len(spikes[pop])
+
+
+	# ### if you want to order the pops by highest -- lowest spiking:
+	# popRatesOrdered = []
+
+	# x = totalSpikes.copy() 
+	# for pop in MUA:
+	# 	highestRatePop = max(x, key=x.get)
+	# 	popRatesOrdered.append(highestRatePop)
+	# 	x.pop(highestRatePop)
+	# # popRatesOrdered will give the pops in decending order of spiking activity 
+
+############
+
+*** Taking out these lines for LFP (recreated elsewhere):
+
+# allLFPData = {}
+# allLFPData['LFPPops'] = {}
+
+
+# # firstFile = True ## for trace data 
+
+# for fn in dataFiles:
+# 	fullPath = based + fn
+
+# 	sim.load(fullPath, instantiate=False)
+
+# 	# Create time lists 
+# 	fullTimeRange = [0, sim.cfg.duration]
+# 	t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+# 	t_full = list(t_full)  # turn into a list so .index function can be used 
+
+# 	# NOTE: timeRange is declared earlier
+# 	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+# 	t = list(t)
+
+# 	# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+# 	beginIndex = t_full.index(timeRange[0])
+# 	endIndex = t_full.index(timeRange[-1])
+
+
+# 	## LFP contributions knitted together:
+# 	singleSimData = sim.allSimData
+# 	LFPPops = list(singleSimData['LFPPops'].keys())
+# 	for pop in LFPPops:
+# 		allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]

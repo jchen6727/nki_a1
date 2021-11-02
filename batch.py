@@ -780,7 +780,12 @@ def custom():
     initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     # save LFP traces from populations 
-    initCfg['saveLFPPops'] = ['IT2', 'PT5B'] #['IT6', 'CT6']	#['IT5B', 'CT5B']	#['IT3', 'ITP4', 'ITS4']	#['NGF1', 'IT5A', 'CT5A'] #['IT2', 'PT5B']
+    initCfg['saveLFPPops'] = ['PV2', 'SOM2', 'VIP2', 'NGF2'] #['PV2', 'SOM2', 'VIP2', 'NGF2', 
+            #'PV3', 'SOM3', 'VIP3', 'NGF3',
+            #'PV4', 'SOM4', 'VIP4', 'NGF4',
+            #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
+            #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
+            #'PV6', 'SOM6', 'VIP6', 'NGF6'] #['IT2', 'PT5B'] #['IT6', 'CT6']	#['IT5B', 'CT5B']	#['IT3', 'ITP4', 'ITS4']	#['NGF1', 'IT5A', 'CT5A'] #['IT2', 'PT5B']
     initCfg[('analysis', 'plotLFP')] = {'pop': 'PT5B', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True}
 
 
@@ -2863,7 +2868,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_IT2_PT5B_SHORT_REDO'     #IT2_PT5B_SHORT' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_inhib_L2_SHORT'     #IT2_PT5B_SHORT' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
