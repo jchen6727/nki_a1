@@ -5,7 +5,7 @@ from neuron import h
 
 ## Load sim from .pkl file 
 #fn = '../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl' #'../data/v32_batch28/v32_batch28_data.pkl' #'../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl'	#'../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
-fn = '../data/v34_batch27_0_3_QD_membRecord0/v34_batch27_0_3_QD_membRecord0_data.pkl'
+fn = '../data/v34_batch27_0_3_QD_membRecord1/v34_batch27_0_3_QD_membRecord1_data.pkl'
 
 
 sim.load(fn,instantiate=True) # fn should be .pkl netpyne sim file 

@@ -754,6 +754,7 @@ def custom():
     initCfg['recordStep'] = 0.025 # CHANGING FROM 0.1 ms? 
 
     ## record Current as well
+    initCfg['use_fast_imem'] = True
     initCfg['recordTraces'] = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}, 'I_soma':{'sec':'soma','loc':0.5,'var':'i_membrane_'}}  # 'sec':'soma','loc':0.5,
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
@@ -2874,7 +2875,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_QD_membRecord1'     #IT2_PT5B_SHORT' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_QD_membRecord2'     #IT2_PT5B_SHORT' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
