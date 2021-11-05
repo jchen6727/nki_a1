@@ -107,8 +107,8 @@ else:
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
 LFP = 0
 LFPcellContrib = 0
-LFPPopContrib = ['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
-filtFreq = False #[10, 30]
+LFPPopContrib = ['ITP4', 'ITS4']#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+filtFreq = [13,30]
 CSD = 0
 MUA = 0#ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
@@ -220,7 +220,7 @@ if LFPPopContrib:
 
 
 		data = {'lfp': lfp}  # returned data
-		ydisp = 0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
+		ydisp = 0.01 #0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
 		offset = 1.0*ydisp
 
 

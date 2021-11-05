@@ -50157,4 +50157,24 @@ if LFPPops:
 **** to transfer over:
 gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_inhib_L2_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
 *** L3 inhib -- 
-**** 
+**** pulled onto gcp
+**** batchLabel = 'v34_batch27_0_3_inhib_L3_SHORT'
+**** to transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_inhib_L3_SHORT /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+* <2021-11-02 Tue -- SfN>
+** Due at midnight tonight!
+** Read (skim) the sherman paper --> 
+
+** Thoughts from yesterday:
+*** Differences btwn the recordings where there's only one isolated wavelet detected in that time period, vs. when there are oscillations detected in different layers?
+*** Will we find abstract commonalities btwn the mechanisms that cause different types of events in different locations?
+*** Find e.g. all the beta in granular, all the frequencies in blahblah
+*** can use the MUA / spiking etc to dissect that proposed circuit, of course. 
+*** See sherman --> but also need to / should / could look at subthreshold activity..? 
+* <2021-11-03 Weds -- Beta osc paper>
+** See Sherman et al. notes -- transfer these to nb
+* <2021-11-04 Thu -- osc generator papers>
+** Sherman et al. 2016 notes:
+*** Beta: 15-29 Hz
+*** human MEG + computational modeling + laminar recordings in animals
+
