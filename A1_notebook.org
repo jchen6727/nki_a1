@@ -50198,3 +50198,7 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 ***     initCfg['recordTraces'] = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}, 'I_soma':{'sec':'soma','loc':0.5,'var':'i_membrane_'}}  
 *** b.batchLabel = 'v34_batch27_0_3_QD_membRecord1'
 *** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_membRecord1 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+** Trying again --> 
+*** asked salva and he mentioned that use_fast_imem should be set to true --> changed this and trying again!
+*** to transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_membRecord2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
