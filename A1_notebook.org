@@ -45489,8 +45489,6 @@ def calculateLFP():
 ** lfpZeroInd[4] --> that's when it hits index 82548 for A1_v34_batch27_v34_batch27_0_0.pkl --> try for A1_v34_batch27_v34_batch27_0_1.pkl --> hmm, same for both. try with others in v34_batch27. --> coincidence or another clue? 
 *** Downloaded a few other .pkl files (put them in A1/data/lfpSimFiles)
 ** Trying with A1_v34_batch27_v34_batch27_0_3.pkl
-
-
 ** lfpZeroInd --> which indices is the ecp of all cells supposedly 0?
 *** NOTE: keep in mind, these are values for electrode 10 
 *** ^^ try for different electrodes as well  

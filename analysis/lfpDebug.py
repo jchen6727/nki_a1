@@ -16,8 +16,8 @@ sim.load(fn,instantiate=True) # fn should be .pkl netpyne sim file
 
 
 ## Try re-creating the lfp plotting lines to see where things get weird 
-#timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
-timeRange=[8000,8500]
+timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
+#timeRange=[8000,8500]
 
 lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
@@ -27,25 +27,34 @@ elec = 2    # this is the electrode you want to plot
 lfpPlot = lfp[:, elec] 
 
 
+#####
+allData = sim.allSimData
+
+
 
 # ## Figure out which indices lfp goes to zero to see how often this happens 
-# lfpZeroInd = np.where(lfpPlot==0)
-# lfpZeroInd = list(lfpZeroInd[0])
+lfpZeroInd = np.where(lfpPlot==0)
+lfpZeroInd = list(lfpZeroInd[0])
 
-# print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
-# print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
-# print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
-# print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
-# print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
-# print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
-# print('lfpZeroInd[6]: ' + str(lfpZeroInd[6]))
-# print('lfpZeroInd[7]: ' + str(lfpZeroInd[7]))
+print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
+print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
+print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
+print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
+print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
+print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
+print('lfpZeroInd[6]: ' + str(lfpZeroInd[6]))
+print('lfpZeroInd[7]: ' + str(lfpZeroInd[7]))
+
+
+
+cfg.recordTraces = {'V_soma':{'sec':'soma', 'loc':0.5, 'var':'v'}, 'I_memb':{'sec':'soma', 'loc':0.5, 'var': 'i'}
+
 
 #### Plot LFP 
-#plt.plot(t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
-#plt.plot(t,lfp[:,elec]) # 10
-plt.plot(t, lfpPlot, linewidth=1.0)
-plt.show()
+# #plt.plot(t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
+# #plt.plot(t,lfp[:,elec]) # 10
+# plt.plot(t, lfpPlot, linewidth=1.0)
+# plt.show()
 
 
 ## Testing tr and im 
@@ -71,11 +80,11 @@ for i in range(len(sim.net.compartCells)):
 
 print('count: ' + str(count))
 
-tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
-tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
+# tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
+# tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
 
-print('tr0: ' + str(tr0))
-print('tr1: ' + str(tr1))
+# print('tr0: ' + str(tr0))
+# print('tr1: ' + str(tr1))
 
 # ecp0 = np.dot(tr0, im0)
 # ecp1 = np.dot(tr1, im1)
