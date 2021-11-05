@@ -11,18 +11,20 @@ sim.load(fn,instantiate=True) # fn should be .pkl netpyne sim file
 
 
 ## Plot LFP 
-lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
-sim.analysis.plotLFP(plots=['timeSeries'], timeRange=[8000,8500], electrodes=[5, 10])   # 'PSD'  # , 'spectrogram'
+#lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
+#sim.analysis.plotLFP(plots=['timeSeries'], timeRange=[8000,8500], electrodes=[5, 10])   # 'PSD'  # , 'spectrogram'
 
 
-# ## Try re-creating the lfp plotting lines to see where things get weird 
-# timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
+## Try re-creating the lfp plotting lines to see where things get weird 
+#timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
+timeRange=[8000,8500]
 
-# lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
-# elec = 2    # this is the electrode you want to plot 
-# lfpPlot = lfp[:, elec] 
+elec = 2    # this is the electrode you want to plot 
+
+lfpPlot = lfp[:, elec] 
 
 
 
@@ -39,10 +41,11 @@ sim.analysis.plotLFP(plots=['timeSeries'], timeRange=[8000,8500], electrodes=[5,
 # print('lfpZeroInd[6]: ' + str(lfpZeroInd[6]))
 # print('lfpZeroInd[7]: ' + str(lfpZeroInd[7]))
 
-# # Plot LFP 
-# plt.plot( t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
-# plt.plot(t,lfp[:,10])
-# plt.show()
+#### Plot LFP 
+#plt.plot(t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
+#plt.plot(t,lfp[:,elec]) # 10
+plt.plot(t, lfpPlot, linewidth=1.0)
+plt.show()
 
 
 ## Testing tr and im 
@@ -58,11 +61,21 @@ im1 = cell1.getImemb()
 print('im0: ' + str(im0))
 print('im1: ' + str(im1))
 
-# tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
-# tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
+#### look at all membrane currents at the end
+count = 0
+for i in range(len(sim.net.compartCells)):
+	cell = sim.net.compartCells[i]
+	im = cell.getImemb()
+	if not list(im ==0):
+		count += 1
 
-# print('tr0: ' + str(tr0))
-# print('tr1: ' + str(tr1))
+print('count: ' + str(count))
+
+tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
+tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
+
+print('tr0: ' + str(tr0))
+print('tr1: ' + str(tr1))
 
 # ecp0 = np.dot(tr0, im0)
 # ecp1 = np.dot(tr1, im1)
@@ -89,8 +102,8 @@ print('im1: ' + str(im1))
 ###########
 ## Look at membrane voltages 
 
-# allData = sim.allSimData 
-# print(allData.keys())
+allData = sim.allSimData 
+print(allData.keys())
 # membraneVoltage = allData['V_soma']
 # cells = list(membraneVoltage.keys())
 

@@ -50177,4 +50177,12 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 ** Sherman et al. 2016 notes:
 *** Beta: 15-29 Hz
 *** human MEG + computational modeling + laminar recordings in animals
-
+* <2021-11-05 Fri -- lfp debug & osc gen reading>
+** Submitted new run on gcp (g9-n2-pre-controller) w/ dt and recordStep the same and both changed to 0.025ms -- might take forever but I guess we'll see? Did this to see if using the default time step for the neuron solver would eliminate the lfp bug -- submitted (check later). 
+** Met w/ Claire Short re: running OEvent code --
+*** python -i simdat.py -- giving her issues. 
+*** after going thru some of her setup + trying several things, conclusion was need to get anaconda3 installed + netpyne + neuron on either main or new virtual environment. 
+*** Check back in after. 
+** Check on membrane currents using lfpDebug.py:
+*** okay running a new run(s) on gcp to look at different dt and recordSteps but -- in the meantime, how to look at membrane currents?
+*** 
