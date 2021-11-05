@@ -4,10 +4,16 @@ import matplotlib.pyplot as plt
 from neuron import h
 
 ## Load sim from .pkl file 
-fn = '../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl' #'../data/v32_batch28/v32_batch28_data.pkl' #'../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl'	#'../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
+#fn = '../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl' #'../data/v32_batch28/v32_batch28_data.pkl' #'../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl'	#'../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
+fn = '../data/v34_batch27_0_3_QD_membRecord0/v34_batch27_0_3_QD_membRecord0_data.pkl'
+
 
 sim.load(fn,instantiate=True) # fn should be .pkl netpyne sim file 
 # NOTE: instantiate=False makes sim.net.compartCells an empty list 
+
+#####
+allData = sim.allSimData
+print(allData.keys())
 
 
 ## Plot LFP 
@@ -15,39 +21,36 @@ sim.load(fn,instantiate=True) # fn should be .pkl netpyne sim file
 #sim.analysis.plotLFP(plots=['timeSeries'], timeRange=[8000,8500], electrodes=[5, 10])   # 'PSD'  # , 'spectrogram'
 
 
-## Try re-creating the lfp plotting lines to see where things get weird 
-timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
-#timeRange=[8000,8500]
+# ## Try re-creating the lfp plotting lines to see where things get weird 
+# timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
+# #timeRange=[8000,8500]
 
-lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+# lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
-elec = 2    # this is the electrode you want to plot 
+# elec = 2    # this is the electrode you want to plot 
 
-lfpPlot = lfp[:, elec] 
-
-
-#####
-allData = sim.allSimData
+# lfpPlot = lfp[:, elec] 
 
 
 
-# ## Figure out which indices lfp goes to zero to see how often this happens 
-lfpZeroInd = np.where(lfpPlot==0)
-lfpZeroInd = list(lfpZeroInd[0])
-
-print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
-print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
-print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
-print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
-print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
-print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
-print('lfpZeroInd[6]: ' + str(lfpZeroInd[6]))
-print('lfpZeroInd[7]: ' + str(lfpZeroInd[7]))
 
 
+# # ## Figure out which indices lfp goes to zero to see how often this happens 
+# lfpZeroInd = np.where(lfpPlot==0)
+# lfpZeroInd = list(lfpZeroInd[0])
 
-cfg.recordTraces = {'V_soma':{'sec':'soma', 'loc':0.5, 'var':'v'}, 'I_memb':{'sec':'soma', 'loc':0.5, 'var': 'i'}
+# print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
+# print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
+# print('lfpZeroInd[2]: ' + str(lfpZeroInd[2]))
+# print('lfpZeroInd[3]: ' + str(lfpZeroInd[3]))
+# print('lfpZeroInd[4]: ' + str(lfpZeroInd[4]))
+# print('lfpZeroInd[5]: ' + str(lfpZeroInd[5]))
+# print('lfpZeroInd[6]: ' + str(lfpZeroInd[6]))
+# print('lfpZeroInd[7]: ' + str(lfpZeroInd[7]))
+
+
+
 
 
 #### Plot LFP 
@@ -57,28 +60,28 @@ cfg.recordTraces = {'V_soma':{'sec':'soma', 'loc':0.5, 'var':'v'}, 'I_memb':{'se
 # plt.show()
 
 
-## Testing tr and im 
-cell0 = sim.net.compartCells[0]
-cell1 = sim.net.compartCells[1]
+# ## Testing tr and im 
+# cell0 = sim.net.compartCells[0]
+# cell1 = sim.net.compartCells[1]
 
-gid0 = cell0.gid
-gid1 = cell1.gid
+# gid0 = cell0.gid
+# gid1 = cell1.gid
 
-im0 = cell0.getImemb()
-im1 = cell1.getImemb()
+# im0 = cell0.getImemb()
+# im1 = cell1.getImemb()
 
-print('im0: ' + str(im0))
-print('im1: ' + str(im1))
+# print('im0: ' + str(im0))
+# print('im1: ' + str(im1))
 
-#### look at all membrane currents at the end
-count = 0
-for i in range(len(sim.net.compartCells)):
-	cell = sim.net.compartCells[i]
-	im = cell.getImemb()
-	if not list(im ==0):
-		count += 1
+# #### look at all membrane currents at the end
+# count = 0
+# for i in range(len(sim.net.compartCells)):
+# 	cell = sim.net.compartCells[i]
+# 	im = cell.getImemb()
+# 	if not list(im ==0):
+# 		count += 1
 
-print('count: ' + str(count))
+# print('count: ' + str(count))
 
 # tr0 = sim.net.recXElectrode.getTransferResistance(gid0)
 # tr1 = sim.net.recXElectrode.getTransferResistance(gid1)
@@ -111,8 +114,8 @@ print('count: ' + str(count))
 ###########
 ## Look at membrane voltages 
 
-allData = sim.allSimData 
-print(allData.keys())
+# allData = sim.allSimData 
+# print(allData.keys())
 # membraneVoltage = allData['V_soma']
 # cells = list(membraneVoltage.keys())
 

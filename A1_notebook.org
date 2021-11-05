@@ -50183,4 +50183,19 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 *** Check back in after. 
 ** Check on membrane currents using lfpDebug.py:
 *** okay running a new run(s) on gcp to look at different dt and recordSteps but -- in the meantime, how to look at membrane currents?
-*** 
+*** okay used cell_lfp.py in netpyne examples as a test run --> can record anything as long as it's something that is referenced. trick is to do it like neuron would (http://www.netpyne.org/reference.html?highlight=cvode). I can fathom how to do this for individual currents, but wondering if it will work when I try to do i_membrane_ (http://www.netpyne.org/_modules/netpyne/cell/compartCell.html <-- using i_membrane_ bc of the _ref_i_membrane_ I see in this link)
+*** Submitted a VERY short batch at quarter density just as a test. 
+*** ran! .pngs are generated and everything. transfer over locally:
+**** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_membRecord0 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** current plot is blank -- load .pkl and look at it. 
+*** try again 
+*** orig:
+    initCfg['recordTraces'] =
+    {'V_soma':{'sec':'soma','loc':0.5,'var':'v'},
+    'I_soma':{'var':'i_membrane_'}}  # 'sec':'soma','loc':0.5,
+
+** Try again 
+***     initCfg['recordTraces'] = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}, 'I_soma':{'sec':'soma','loc':0.5,'var':'i_membrane_'}}  
+*** b.batchLabel = 'v34_batch27_0_3_QD_membRecord1'
+
+    
