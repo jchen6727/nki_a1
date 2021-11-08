@@ -3,27 +3,87 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from neuron import h
 
-## Load sim from .pkl file 
-#fn = '../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl' #'../data/v32_batch28/v32_batch28_data.pkl' #'../data/v34_batch27_QD_rec/v34_batch27_QD_rec_data.pkl'	#'../data/lfpSimFiles/A1_v34_batch27_v34_batch27_0_0.pkl'
-fn = '../data/v34_batch27_0_3_QD_membRecord1/v34_batch27_0_3_QD_membRecord1_data.pkl'
+
+### Function to load sim from .pkl file:
+def loadFile(batchLabel):
+	fn = batchLabel + '_data.pkl'
+	fullPath = '../data/' + batchLabel + '/' + fn
+	sim.load(fullPath, instantiate=True) # instantiate = False gives empty sim.net.compartCells
 
 
-sim.load(fn,instantiate=True) # fn should be .pkl netpyne sim file 
-# NOTE: instantiate=False makes sim.net.compartCells an empty list 
+### Plot LFP 
+def plotLFP(plotTypes, timeRange, electrodes):
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+	else:
+		timeRange = timeRange
 
-#####
+	if electrodes is None:
+		electrodes = [3, 10, 13, 18]
+	else:
+		electrodes = electrodes
+
+	if plotTypes is None:
+		plotTypes = ['timeSeries']
+	else:
+		plotTypes = plotTypes
+
+	sim.analysis.plot(plots=plotTypes, timeRange=timeRange, electrodes=electrodes)
+
+
+### Figure out where LFP signal is going to zero 
+def zeroesLFP(timeRange, electrode):
+	if timeRange is None:
+		timeRange = [0,sim.cfg.duration]
+	#t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+	
+	if electrode is None:
+		elec = 10
+	else:
+		elec = electrode
+
+	lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+	lfpElec = lfp[:, elec] 
+
+	lfpZeroInd = np.where(lfpElec==0)
+	lfpZeroInd = list(lfpZeroInd[0])
+	return lfpZeroInd
+
+
+
+
+
+
+
+#### Main code block:
+
+
+# load sim file 
+batchLabel = 'v34_batch27_0_3_QD_currentRecord1'   #fn = '../data/v34_batch27_0_3_QD_currentRecord1/v34_batch27_0_3_QD_currentRecord1_data.pkl'
+loadFile(batchLabel)
+
+
+# print data types stored in sim.allSimData 
 allData = sim.allSimData
 print(allData.keys())
 
 
+
+
 ## Plot LFP 
+plotLFP(plotTypes=['timeSeries'], timeRange=None, electrodes=[5,10])
 #lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
 #sim.analysis.plotLFP(plots=['timeSeries'], timeRange=[8000,8500], electrodes=[5, 10])   # 'PSD'  # , 'spectrogram'
+#sim.analysis.plotLFP(plots=['timeSeries'], electrodes=[5, 10])   # timeRange=[8000,8500], # 'PSD'  # , 'spectrogram'
 
 
-# ## Try re-creating the lfp plotting lines to see where things get weird 
-# timeRange = [0,sim.cfg.duration] #[8250,8260] #[0,sim.cfg.duration] # can adjust as desired --> e.g. timeRange = [8000,8500]
-# #timeRange=[8000,8500]
+
+
+
+## Figure out which indices lfp goes to zero to see how often this happens 
+lfpZeroInd = zeroesLFP(timeRange=None, electrode=None)
+print('number of times lfp goes to zero: ' + str(len(lfpZeroInd)))
+
 
 # lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 # t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
@@ -32,13 +92,6 @@ print(allData.keys())
 
 # lfpPlot = lfp[:, elec] 
 
-
-
-
-
-# # ## Figure out which indices lfp goes to zero to see how often this happens 
-# lfpZeroInd = np.where(lfpPlot==0)
-# lfpZeroInd = list(lfpZeroInd[0])
 
 # print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
 # print('lfpZeroInd[1]: ' + str(lfpZeroInd[1]))
@@ -123,6 +176,29 @@ print(allData.keys())
 
 # plt.plot(t, membraneVoltage[cells[0]])
 # plt.show()
+
+###########
+
+# timeRange = [0,sim.cfg.duration]
+# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
+# ## Look at membrane currents
+# membraneCurrent = allData['I_soma']
+# cells = list(membraneCurrent.keys())
+# print(len(cells))
+# if len(membraneCurrent[0]) == len(t):
+# 	print('TIME and I_soma[0] EQUAL')
+
+# membraneCurrent0 = membraneCurrent[cells[0]]
+# membraneCurrent1 = membraneCurrent[cells[1]]
+
+# for cell in cells[40:-1]:
+# 	membraneCurrentCell = membraneCurrent[cell]
+# 	plt.plot(t, membraneCurrentCell[1:])
+
+
+
+
 
 ###########################################
 # ## from cfg json file 

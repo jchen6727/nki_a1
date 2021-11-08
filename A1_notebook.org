@@ -50219,3 +50219,10 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord /Users/ericagriffith/Desktop/NEUROSIM/A1/data
 *** Seems like it just seg-faulted out of there? try again? 
 *** Trying again but this time set recordStep to 0.1 (but kept dt at 0.025), quarter density, for 11.5seconds --> and set batchLabel to b.batchLabel = 'v34_batch27_0_3_QD_currentRecord1'
+*** okay this one ran!
+*** transfer over:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord1 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+** Okay looking at new run: 
+*** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord1 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** weird!!!! now the lfp artifact is from 4000-8000 ms.... 
+*** this was with 0.025 as dt, and 0.1ms as recordStep, at full-length (11.5 seconds), at quarter-density. 
