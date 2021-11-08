@@ -740,6 +740,11 @@ def custom():
     #params[('seeds', 'conn')] = list(range(5)) #[4321+(17*i) for i in range(5)]
     #params[('seeds', 'stim')] = list(range(5)) #[1234+(17*i) for i in range(5)]
 
+
+    # different dt and recordSteps
+    params['dt'] = [0.025, 0.05, 0.1]
+    params['recordStep'] = [0.05, 0.1]
+    
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
@@ -2875,7 +2880,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch27_0_3_QD_currentRecord1'     #IT2_PT5B_SHORT' # Change this!  
+    b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2'     #IT2_PT5B_SHORT' # Change this!  
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

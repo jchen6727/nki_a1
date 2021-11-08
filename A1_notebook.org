@@ -50226,3 +50226,10 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 *** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord1 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
 *** weird!!!! now the lfp artifact is from 4000-8000 ms.... 
 *** this was with 0.025 as dt, and 0.1ms as recordStep, at full-length (11.5 seconds), at quarter-density. 
+** Try a different recordStep and dt --> 
+*** instead now try with 0.05 as dt and 0.05ms as recordStep -- so, equal. full-length (11.5 seconds), at quarter-density. 
+*** batchLabel = 'v34_batch27_0_3_QD_currentRecord2'
+*** also added this to batch:
+# different dt and recordSteps
+    params['dt'] = [0.025, 0.05, 0.1]
+    params['recordStep'] = [0.05, 0.1]
