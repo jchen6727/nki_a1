@@ -50202,3 +50202,20 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 *** asked salva and he mentioned that use_fast_imem should be set to true --> changed this and trying again!
 *** to transfer over:
 gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_membRecord2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** yes that fixed it!!
+** okay --> now submit a full-length quarter density run with the same setup. 
+*** edited then added / committed / pushed, then pulled on gcp
+*** running now
+*** to transfer over once done:
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+* <2021-11-08 Mon -- CSD fig for grant + membrane currents>
+** Look at run that I submitted on friday w/ successful current recording
+*** login to gcp:
+gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
+--tunnel-through-iap --project "ecas2-nsf1904444"
+*** Check to see if it ran --> seems like it didn't fully run? what happened? 
+**** cd A1/data/v34_batch27_0_3_QD_currentRecord
+*** transfer over to see: 
+gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** Seems like it just seg-faulted out of there? try again? 
+*** Trying again but this time set recordStep to 0.1 (but kept dt at 0.025), quarter density, for 11.5seconds --> and set batchLabel to b.batchLabel = 'v34_batch27_0_3_QD_currentRecord1'
