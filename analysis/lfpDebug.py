@@ -5,9 +5,13 @@ from neuron import h
 
 
 ### Function to load sim from .pkl file:
-def loadFile(batchLabel):
-	fn = batchLabel + '_data.pkl'
-	fullPath = '../data/' + batchLabel + '/' + fn
+def loadFile(batchLabel, gridNumber): 				#if fullPath is None: # Change the args up alittle -- confusing 
+	if gridNumber is None:    
+		fn = batchLabel + '_data.pkl'
+		fullPath = '../data/' + batchLabel + '/' + fn
+	else:
+		fn = batchLabel + '_' + gridNumber + '_data.pkl'
+		fullPath = '../data/' + batchLabel + '/' + gridNumber + '/' + fn
 	sim.load(fullPath, instantiate=True) # instantiate = False gives empty sim.net.compartCells
 
 
@@ -59,8 +63,8 @@ def zeroesLFP(timeRange, electrode):
 
 
 # load sim file 
-batchLabel = 'v34_batch27_0_3_QD_currentRecord1'   #fn = '../data/v34_batch27_0_3_QD_currentRecord1/v34_batch27_0_3_QD_currentRecord1_data.pkl'
-loadFile(batchLabel)
+batchLabel = 'v34_batch27_0_3_QD_currentRecord2'   #fn = '../data/v34_batch27_0_3_QD_currentRecord1/v34_batch27_0_3_QD_currentRecord1_data.pkl'
+loadFile(batchLabel=batchLabel, gridNumber='0_1')
 
 
 # print data types stored in sim.allSimData 

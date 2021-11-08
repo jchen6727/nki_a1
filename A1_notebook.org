@@ -50233,3 +50233,46 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 # different dt and recordSteps
     params['dt'] = [0.025, 0.05, 0.1]
     params['recordStep'] = [0.05, 0.1]
+*** 6 runs going at the moment!! 
+*** Have to figure out which is which (ran as a grid), then transfer over each. 
+**** 0_0, 0_1, 1_0, 1_1, 2_0, 2_1 
+**** the first corresponds to 'dt' -- 3 options (0.025, 0.05, 0.1)
+**** the second corresponds to recordStep -- 2 options (0.05, 0.1) 
+**** so probably:
+***** 0_0 --> dt 0.025, recordStep 0.05
+***** 0_1 --> dt 0.025, recordStep 0.1
+***** 1_0 --> dt 0.05, recordStep 0.05
+***** 1_1 --> dt 0.05, recordStep 0.1
+***** 2_0 --> dt 0.1, recordStep 0.05
+***** 2_1 --> dt 0.1, recordStep 0.1 
+**** ^^ Based on the above, which ones don't make sense? 2_0 (where 0.1 is dt, but recordStep is smaller at 0.05) 
+**** Which ones ran / did not run fully?
+***** 0_0 --> didn't run
+Gathering data...
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 2682 on node g9-n2-pre-compute-0-0 exited on signal 6 (Aborted).
+***** 0_1 --> ran
+***** 1_0 --> didn't run
+Gathering data...
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 2682 on node g9-n2-pre-compute-0-2 exited on signal 6 (Aborted).
+***** 1_1 --> ran
+***** 2_0 --> didn't run
+Gathering data...
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 2668 on node g9-n2-pre-compute-0-4 exited on signal 6 (Aborted).
+***** 2_1 --> ran 
+**** maybe recordStep of 0.05 is just too small? transfer over to see
+***** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/v34_batch27_0_3_QD_currentRecord2 /Users/ericagriffith/Desktop/NEUROSIM/A1/data
+*** Verify which runs correspond to which params:
+**** 0_1:
+***** dt 0.025
+***** recordStep: 0.1
+**** 1_1:
+***** dt: 0.05 
+***** recordStep: 0.1
+**** 2_1:
+***** dt: 0.1
+***** recordStep: 0.1 
+*** okay now look at lfp for each of the above:
+**** 0_1 (dt 0.025, recordStep 0.1)  --> this is the same as the run for currentRecord1 
