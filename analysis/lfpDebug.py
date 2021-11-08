@@ -69,28 +69,17 @@ print(allData.keys())
 
 
 
-
 ## Plot LFP 
 plotLFP(plotTypes=['timeSeries'], timeRange=None, electrodes=[5,10])
-#lfp_data = np.array(sim.allSimData['LFP']) # LFP data from sim
-#sim.analysis.plotLFP(plots=['timeSeries'], timeRange=[8000,8500], electrodes=[5, 10])   # 'PSD'  # , 'spectrogram'
-#sim.analysis.plotLFP(plots=['timeSeries'], electrodes=[5, 10])   # timeRange=[8000,8500], # 'PSD'  # , 'spectrogram'
+# plt.plot(t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
+# plt.plot(t,lfp[:,elec]) # 10
+# plt.plot(t, lfpPlot, linewidth=1.0)
+# plt.show()
 
 
-
-
-
-## Figure out which indices lfp goes to zero to see how often this happens 
+## Figure out which indices of lfp goes to zero to see how often this happens 
 lfpZeroInd = zeroesLFP(timeRange=None, electrode=None)
 print('number of times lfp goes to zero: ' + str(len(lfpZeroInd)))
-
-
-# lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
-
-# elec = 2    # this is the electrode you want to plot 
-
-# lfpPlot = lfp[:, elec] 
 
 
 # print('lfpZeroInd[0]: ' + str(lfpZeroInd[0]))
@@ -105,15 +94,8 @@ print('number of times lfp goes to zero: ' + str(len(lfpZeroInd)))
 
 
 
-
-#### Plot LFP 
-# #plt.plot(t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
-# #plt.plot(t,lfp[:,elec]) # 10
-# plt.plot(t, lfpPlot, linewidth=1.0)
-# plt.show()
-
-
-# ## Testing tr and im 
+###########################################
+## Testing tr and im 
 # cell0 = sim.net.compartCells[0]
 # cell1 = sim.net.compartCells[1]
 
@@ -178,11 +160,11 @@ print('number of times lfp goes to zero: ' + str(len(lfpZeroInd)))
 # plt.show()
 
 ###########
+## Look at membrane currents
 
 # timeRange = [0,sim.cfg.duration]
 # t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
-# ## Look at membrane currents
 # membraneCurrent = allData['I_soma']
 # cells = list(membraneCurrent.keys())
 # print(len(cells))
@@ -197,39 +179,3 @@ print('number of times lfp goes to zero: ' + str(len(lfpZeroInd)))
 # 	plt.plot(t, membraneCurrentCell[1:])
 
 
-
-
-
-###########################################
-# ## from cfg json file 
-# "electrodes": [
-#                     10
-#                 ],
-#                 "figSize": [
-#                     8,
-#                     4
-#                 ],
-#                 "maxFreq": 80,
-#                 "plots": [
-#                     "timeSeries",
-#                     "PSD",
-#                     "spectrogram"
-#                 ],
-#                 "saveData": false,
-#                 "saveFig": true,
-#                 "showFig": false,
-#                 "timeRange": [
-#                     1500,
-#                     11500
-#                 ]
-
-
-# ## CSD plotting lines from a1dat load.py, in case helpful 
-# sampr = 1./dt  # sampling rate (Hz) (1/sec)
-# spacing_um =  sim.cfg.recordLFP[1][1] - sim.cfg.recordLFP[0][1] # spacing between electrodes in microns
-# # get CSD data 
-# CSD = getCSD(lfps=lfp_data,sampr=sampr,spacing_um=spacing_um,vaknin=False) # getCSD() in nhpdat.py 
-# # Get tt  -- default unit: MILLISECONDS  -- conversion required -- not like macaque data where default unit is sec
-# fullTimeRange = [0,(sim.cfg.duration/1000.0)] # units: seconds   #[0,(sim.cfg.duration/1000.0)] # sim.cfg.duration is a float # timeRange should be the entire sim duration 
-# tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt)  # units: seconds 
-# dat = CSD
