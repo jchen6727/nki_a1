@@ -742,9 +742,9 @@ def custom():
 
 
     # different dt and recordSteps
-    params['dt'] = [0.025, 0.05, 0.1]
+    params['dt'] = [0.05, 0.1]
     params['recordStep'] = [0.05, 0.1]
-    
+
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
@@ -755,12 +755,12 @@ def custom():
     initCfg['printPopAvgRates'] = [1500, 11500] # [0,1000] #[1500, 11500] 
     initCfg['scaleDensity'] = 0.25 #1.0   #0.075 #0.25 
 
-    initCfg['dt'] = 0.025 # CHANGING FROM 0.05 ms? 
-    initCfg['recordStep'] = 0.1 #0.025 # CHANGING FROM 0.1 ms? 
+    #initCfg['dt'] = 0.025 # CHANGING FROM 0.05 ms? 
+    #initCfg['recordStep'] = 0.1 #0.025 # CHANGING FROM 0.1 ms? 
 
     ## record Current as well
     initCfg['use_fast_imem'] = True
-    initCfg['recordTraces'] = {'V_soma':{'sec':'soma','loc':0.5,'var':'v'}, 'I_soma':{'sec':'soma','loc':0.5,'var':'i_membrane_'}}  # 'sec':'soma','loc':0.5,
+    initCfg['recordTraces'] = {'I_soma':{'sec':'soma','loc':0.5,'var':'i_membrane_'}} # 'V_soma':{'sec':'soma','loc':0.5,'var':'v'},  # 'sec':'soma','loc':0.5,
 
     # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
     #                          'startTime': 2000, 

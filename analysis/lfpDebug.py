@@ -32,7 +32,7 @@ def plotLFP(plotTypes, timeRange, electrodes):
 	else:
 		plotTypes = plotTypes
 
-	sim.analysis.plot(plots=plotTypes, timeRange=timeRange, electrodes=electrodes)
+	sim.analysis.plotLFP(plots=plotTypes, timeRange=timeRange, electrodes=electrodes)
 
 
 ### Figure out where LFP signal is going to zero 
@@ -64,7 +64,7 @@ def zeroesLFP(timeRange, electrode):
 
 # load sim file 
 batchLabel = 'v34_batch27_0_3_QD_currentRecord2'   #fn = '../data/v34_batch27_0_3_QD_currentRecord1/v34_batch27_0_3_QD_currentRecord1_data.pkl'
-loadFile(batchLabel=batchLabel, gridNumber='0_1')
+loadFile(batchLabel=batchLabel, gridNumber='1_1')
 
 
 # print data types stored in sim.allSimData 
@@ -74,7 +74,7 @@ print(allData.keys())
 
 
 ## Plot LFP 
-plotLFP(plotTypes=['timeSeries'], timeRange=None, electrodes=[5,10])
+plotLFP(plotTypes=['timeSeries'], timeRange=None, electrodes=[5, 10])
 # plt.plot(t[0:len(lfpPlot)], lfpPlot, linewidth=1.0)
 # plt.plot(t,lfp[:,elec]) # 10
 # plt.plot(t, lfpPlot, linewidth=1.0)

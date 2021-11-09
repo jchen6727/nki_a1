@@ -50275,4 +50275,53 @@ mpirun noticed that process rank 0 with PID 2668 on node g9-n2-pre-compute-0-4 e
 ***** dt: 0.1
 ***** recordStep: 0.1 
 *** okay now look at lfp for each of the above:
-**** 0_1 (dt 0.025, recordStep 0.1)  --> this is the same as the run for currentRecord1 
+**** 0_1:
+***** dt 0.025, recordStep 0.1 
+***** ^^ this is the same as the run for currentRecord1 
+***** ^^ correct! looks same. ~4000-8000 ms 
+**** 1_1:
+***** dt 0.05, recordStep: 0.1
+***** okay now ~8000 to the end 
+***** This makes sense since this was what we were seeing before, and these are the params we were using before. 
+**** 2_1: 
+***** dt: 0.1, recordStep: 0.1
+***** now lfp only went to zero 5 times!! 
+** CSD figure:
+*** What I did / used for the sims:
+**** wavelet identified using OEvent code (load.py)
+**** timeRange of the wavelet, also identified using the modified OEvent code (load.py)
+**** plotPaper.py (in A1/analysis) -- used sim.analysis.plotCSD with the timeRange specified above. 
+*** What I'll need for doing this in the monkey data:
+**** Wavelet identified using OEvent code (load.py)
+**** timeRange of the wavelet, also identified using the modified OEvent code (load.py)
+**** SCRIPT to plot CSD --> what did I use for the other monkey CSD plots that I have scattered throughout the A1 directory??? --> A1/analysis/dataAnalysis.py 
+* <2021-11-09 Tue -- SfN & experimental CSD fig>
+** SfN:
+*** Morning -- SfN poster "presentation"
+*** 1-2PM -- Minisymposium on decoding speech; videos available until nov 30th? 
+** CSD figure:
+*** (1) wavelets from macaque data:
+**** see below for load.py changes
+**** try running load.py again w/ macaque data just to make sure I still get the .txt file with the wavelet info, like I added for when I was doing the sim wavelets. 
+**** ^^ channel is messing up for 1-bu031032017@os_eye06_20.mat <-- saying all are -1 
+**** ^^ possible that the dbpath set in load.py was not correct --> /home was the first part of the path but should be /Users  -->    dbpath = '/Users/ericagriffith/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
+**** trying again!! 
+** load.py changes --> 
+*** in a1dat repo, branch 'erica'
+*** changing the donetpyne organization 
+*** moved 'samprds = 1e3' under the if dosim: statement 
+*** moved dbpath line & s2, g, i1, i2 & lchan lines from if donetpyne: statement below 
+**** taking out these comments:
+#'/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/simDataLayers.csv' #'/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/simDataLayers.csv' # gcp: /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/simDataLayers.csv 
+          # local machine: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/simDataLayers.csv'
+          # s2,g,i1 = [] # hardcode these since they will be the same for all sim files 
+          # s2 = 4
+          # g = 9
+          # i1 = 12
+          #s1,s2,g,i1,i2 = [0, 4, 9, 12, 16]  
+          #s1,s2,g,i1,i2 = [0, 5, 10, 13, 17]
+          #lchan = [s1,s2,g,i1,i2]
+          ### SHOULD I EXPAND THE CHANNELS BEING LOOKED AT TO ALL OF THEM?? 
+*** okay -- just try running load.py on a spontaneous macaque file just to make sure it works. 
+*** last time I did this was only a couple months ago apparently, so should be fine. 
+*** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat

@@ -242,10 +242,13 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   ## LFP_data --> numpy array of LFP data 
 
   
-  if trigtimes:
+  if trigtimes is not None:
     trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
     for idx in trigtimes:
       trigtimesMS.append(tt[idx]*1e3)
+  else:
+    trigtimesMS = None
+
 
 
   tt = tt*1e3 # Convert units from seconds to ms 
@@ -331,7 +334,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
   ## ADD ARROW POINTING TO STIMULUS TIMES      ## NOTE: this was taken from (v) in plotAvgCSD() & main code block
-  if trigtimesMS:
+  if trigtimesMS is not None:
     for time in trigtimesMS:
       if time >= xmin and time <= xmax:
         axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
@@ -1275,7 +1278,7 @@ if __name__ == '__main__':
 
   dataFiles_test = ['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
-  for dataFile in dataFiles: # or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles_test: #dataFiles or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -1301,12 +1304,14 @@ if __name__ == '__main__':
     #   startTime = 4236.0 # in ms, for gcp 
     #   endTime = 5920.0 # in ms, for gcp 
 
-    plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+   # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
 
     # GET AND PLOT CSD 
     #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[startTime,endTime],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
-    
+    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=None,timeRange=[1100,1200],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
+
+
     # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
     # for idx in trigtimes:
     #   trigtimesMS.append(tt[idx]*1e3)
