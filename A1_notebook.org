@@ -50300,12 +50300,31 @@ mpirun noticed that process rank 0 with PID 2668 on node g9-n2-pre-compute-0-4 e
 *** Morning -- SfN poster "presentation"
 *** 1-2PM -- Minisymposium on decoding speech; videos available until nov 30th? 
 ** CSD figure:
-*** (1) wavelets from macaque data:
+*** (1) Get (more) wavelets from macaque data:
 **** see below for load.py changes
 **** try running load.py again w/ macaque data just to make sure I still get the .txt file with the wavelet info, like I added for when I was doing the sim wavelets. 
 **** ^^ channel is messing up for 1-bu031032017@os_eye06_20.mat <-- saying all are -1 
 **** ^^ possible that the dbpath set in load.py was not correct --> /home was the first part of the path but should be /Users  -->    dbpath = '/Users/ericagriffith/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
-**** trying again!! 
+**** trying again!! --> nope; still having an encoding error. --> NOPE actually dbpath is incorrect!!!
+**** try again!!
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat 
+**** ^^ did up to 25 seconds of 1-bu031032017@os_eye06_20.mat
+**** Should get a few more later!! But first, move on to next part. 
+*** (2) timeRange of each wavelet, should be identified in waveletInfo.txt 
+**** ^^ PROBLEM!! Seems that the wavelet files are getting overwritten??? But I don't THINK that was true for when I was doing the sims?? 
+**** ^^ commented out a couple lines where I open it in mode 'w' as oppose to just 'a' -- ah, but then I think it's going to append ALL of the lines, which I don't want. 
+*** (3) Plotting CSD based on wavelet:
+**** Previously I used A1/analysis/dataAnalysis.py to plot CSD figures from NHP data -- tried it again last night and it does work. 
+**** However, the formatting is different than what results from netpyne plotCSD() function!
+**** Changes to dataAnalysis.py plotCSD function:
+***** new tt:
+#tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
+tt = np.arange(timeRange[0], timeRange[1], dt)
+***** fontSize:
+****** (1) added fontSize = 12 as an argument to plotCSD
+****** (2) added--> plt.rcParams.update({'font.size': fontSize})
+***** Changed gs_outer:
+gs_outer = matplotlib.gridspec.GridSpec(1,1)
 ** load.py changes --> 
 *** in a1dat repo, branch 'erica'
 *** changing the donetpyne organization 

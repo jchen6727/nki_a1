@@ -231,7 +231,7 @@ def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True):
+def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
@@ -253,22 +253,27 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
   tt = tt*1e3 # Convert units from seconds to ms 
   dt = tt[1] - tt[0] # dt is the time step of the recording # UNITS: in ms after converstion
-
+  print('tt --> last time point: ' + str(tt[-1]))
 
   if timeRange is None:
     timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording (ms)
   else:
     dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # SLICE CSD DATA APPROPRIATELY
-    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
+    #tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
+    tt = np.arange(timeRange[0], timeRange[1], dt)
+    print('tt --> new, last time point: ' + str(tt[-1]))
 
-  # INTERPOLATION
+  # PLOTTING
   X = tt 
   Y = np.arange(dat.shape[0]) 
+
+  # interpolation 
   CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
   Y_plot = np.linspace(0,dat.shape[0],num=1000) 
   Z = CSD_spline(Y_plot,X)
 
   # (i) Set up axes
+  plt.rcParams.update({'font.size': fontSize}) # this is from plotCSD in netpyne -- is fontSize valid here? 
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
   ymin = 1    # 0 in csd.py in netpyne 
@@ -276,19 +281,17 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
-  fig = plt.figure()
+  fig = plt.figure() # plt.figure(figsize = figSize) <-- would have to add figSize as an argument above 
 
   # (iii) Create plots w/ common axis labels and tick marks
   axs = []
-
   numplots = 1 # HOW TO DETERMINE THIS? WHAT IF MORE THAN ONE? 
-
-  gs_outer = matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
+  gs_outer = matplotlib.gridspec.GridSpec(1,1) #matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
 
   for i in range(numplots):
     axs.append(plt.Subplot(fig,gs_outer[i*2:i*2+2]))
     fig.add_subplot(axs[i])
-    axs[i].set_xlabel('Time (ms)',fontsize=12)
+    axs[i].set_xlabel('Time (ms)',fontsize=fontSize) #fontsize=12)
     #axs[i].tick_params(axis='y', which='major', labelsize=8)
     axs[i].set_yticks(np.arange(ymin, ymax, step=1))
 
@@ -1276,7 +1279,7 @@ if __name__ == '__main__':
     if '.mat' in file:
       dataFiles.append(file)
 
-  dataFiles_test = ['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+  dataFiles_test = ['1-bu031032017@os_eye06_20.mat']  #['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
 
   for dataFile in dataFiles_test: #dataFiles or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
