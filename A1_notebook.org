@@ -50348,3 +50348,45 @@ gs_outer = matplotlib.gridspec.GridSpec(1,1)
 *** okay -- just try running load.py on a spontaneous macaque file just to make sure it works. 
 *** last time I did this was only a couple months ago apparently, so should be fine. 
 *** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat
+** Fix to netpyne csd per salva's question about layer boundary labels:
+
+
+
+    if layerLines:  
+        if layerBounds is None:
+            print('No layer boundaries given -- will not overlay layer boundaries on CSD plot')
+        else:
+            layerKeys = []
+            for i in layerBounds.keys():
+                axs[0].hlines(layerBounds[i], xmin, xmax, colors='black', linewidth=1, linestyles='dotted') 
+                layerKeys.append(i) # makes a list with names of each layer, as specified in layerBounds dict argument 
+
+            for n in range(len(layerKeys)): # label the horizontal layer lines with the proper layer label 
+                if n == 0:
+                    axs[0].text(xmax+5, layerBounds[layerKeys[n]]/2, layerKeys[n], color='black', fontsize=fontSize)
+                else:
+                    axs[0].text(xmax+5, (layerBounds[layerKeys[n]] + layerBounds[layerKeys[n-1]])/2, layerKeys[n], color='black', fontsize=fontSize, verticalalignment='center')
+
+    # set vertical line at stimulus onset
+    if type(stim_start_time) is int or type(stim_start_time) is float:
+
+
+
+
+
+    if layer_lines: 
+        if layer_bounds is None:
+            print('No layer boundaries given')
+        else:
+            layerKeys = []
+        for i in layer_bounds.keys():
+            axs[0].hlines(layer_bounds[i], xmin, xmax, colors='black', linewidth=1, linestyles='dotted') 
+        layerKeys.append(i)
+
+        for n in range(len(layerKeys)):
+            if n == 0:
+                axs[0].text(xmax+5, layer_bounds[layerKeys[n]]/2, layerKeys[n], color='black', fontsize=fontSize)
+            else:
+                axs[0].text(xmax+5, (layer_bounds[layerKeys[n]] + layer_bounds[layerKeys[n-1]])/2, layerKeys[n], color='black', fontsize=fontSize)
+* <2021-11-10 Wed -- CSD figure>
+** Changed A1/analysis/dataAnalysis.py so that it can use layer boundary labels 

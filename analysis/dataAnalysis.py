@@ -311,15 +311,15 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
   # interpolation 
   CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
-  Y_plot = np.linspace(0,dat.shape[0],num=1000) 
-  Z = CSD_spline(Y_plot,X)
+  Y_plot = np.linspace(0,dat.shape[0]-1,num=1000)  # dat.shape[0] - 1 --> cuts off the noise at the bottom 
+  Z = CSD_spline(Y_plot,X) 
 
   # (i) Set up axes
   plt.rcParams.update({'font.size': fontSize}) # this is from plotCSD in netpyne -- is fontSize valid here? 
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
-  ymin = 0 #1    # 0 in csd.py in netpyne 
-  ymax = 22   #22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  ymin = 0 #1#0 #1    # 0 in csd.py in netpyne 
+  ymax = dat.shape[0]-1 #21 #24 #20   #22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
@@ -335,11 +335,14 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
     fig.add_subplot(axs[i])
     axs[i].set_xlabel('Time (ms)',fontsize=fontSize) #fontsize=12)
     #axs[i].tick_params(axis='y', which='major', labelsize=8)
-    axs[i].set_yticks(np.arange(ymin, ymax, step=1))
+    axs[i].set_yticks(np.arange(ymin, ymax, step=3))
+    #axs[i].tick_params(axis='y', which='major', labelsize=fontSize)
+    axs[i].tick_params(axis='x', which='major', labelsize=fontSize)
+
 
   # (iv) PLOT INTERPOLATED CSD COLOR MAP
   spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
-  axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
+  axs[0].set_ylabel('Channel', fontsize = fontSize) # Contact depth (um) -- convert this eventually 
 
 
   # (v) OVERLAY -- SETTING ASIDE FOR NOW -- THAT IS NEXT GOAL 
@@ -668,7 +671,7 @@ def getflayers (fn, dbpath,getmid=True,abbrev=False):
   ls = s.split(',')
   print(ls)
   try:
-    lint = [int(x)-1 for x in ls[2:]]
+    lint = [int(x)-1 for x in ls[2:]] #[int(x)-1 for x in ls[2:]] # TRY NOT SUBTRACTING 1 
     if not monoinc(lint):
       if abbrev:
         return [-1 for i in range(3)]
@@ -1353,12 +1356,30 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    ## GET LAYERS FOR OVERLAY
-    s2,g,i1 = getflayers(fullPath,dbpath=dbpath,abbrev=True) # fullPath is to data file, dbpath is to .csv layers file 
+    ## GET LAYERS FOR OVERLAY ###
+    # s2,g,i1 = getflayers(fullPath,dbpath=dbpath,abbrev=True) # fullPath is to data file, dbpath is to .csv layers file 
+    # lchan = {}
+    # lchan['S'] = s2
+    # lchan['G'] = g
+    # lchan['I'] = i1
+
+    # s1,s2,g,i1,i2 = getflayers(fullPath,dbpath=dbpath,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+    # lchan = {}
+    # lchan['S'] = s2
+    # lchan['G'] = g
+    # lchan['I1'] = i1
+    # lchan['I2'] = i2
+
+    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
     lchan = {}
-    lchan['s2'] = s2
-    lchan['g'] = g
-    lchan['i1'] = i1
+    lchan['S'] = s2high
+    lchan['G'] = ghigh
+    lchan['I'] = CSD_data.shape[0]-1 #i2high
+    # lchan['S1'] = s1high
+    # lchan['S2'] = s2high
+    # lchan['G'] = ghigh
+    # lchan['I1'] = i1high
+    # lchan['I2'] = CSD_data.shape[0]-1 
 
     # # HOW TO TELL HOW LONG THESE STIMS ARE? 
     # if trigtimes is not None:
