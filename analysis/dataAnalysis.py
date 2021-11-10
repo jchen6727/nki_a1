@@ -85,24 +85,60 @@ def Vaknin(x):
     return x_new
 
 
+def removemean(x, ax=1):
+    """
+    Function to subtract the mean from an array or list
+
+    Parameters
+    ----------
+    x : array 
+        Data to be processed.
+        **Default:** *required*
+
+    ax : int
+        The axis to remove the mean across.
+        **Default:** ``1``
+
+
+    Returns
+    -------
+    data : array
+        The processed data.
+
+    """
+  
+    mean = np.mean(x, axis=ax, keepdims=True)
+    x -= mean
+
+
 # get CSD - first do a lowpass filter. lfps is a list or numpy array of LFPs arranged spatially by column
-def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300):
+def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300, vaknin=True, norm=True):
 
   # convert from uV to mV ## Does this already happen in rdmat() ?? 
   # lfps = lfps/1000
 
+  # Bandpass filter the LFP data with getbandpass() fx defined above
   datband = getbandpass(lfps,sampr,minf,maxf)
+  
+  # Take CSD along smaller dimension
   if datband.shape[0] > datband.shape[1]: # take CSD along smaller dimension
     ax = 1
   else:
     ax = 0
 
+  # Vaknin correction
+  if vaknin:
+    datband = Vaknin(datband)
+
+  if norm:
+    removemean(datband,ax=ax)
+
+
+  # Convert spacing from microns to um 
   spacing_mm = spacing_um/1000
   # when drawing CSD make sure that negative values (depolarizing intracellular current) drawn in red,
   # and positive values (hyperpolarizing intracellular current) drawn in blue
   CSD = -np.diff(datband,n=2,axis=ax)/spacing_mm**2 # now each column (or row) is an electrode -- CSD along electrodes
-
-  #CSD = Vaknin(CSD)
 
   return CSD
 
@@ -231,7 +267,7 @@ def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12):
+def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12, figSize=(8,8), layerLines=False, layerBounds=None):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
@@ -240,7 +276,13 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   ## saveFolder --> string -- path to directory where figs should be saved
   ## overlay --> can be 'LFP' or 'CSD' to overlay time series of either dataset 
   ## LFP_data --> numpy array of LFP data 
+  ## layerLines : bool 
+    #     Whether to plot horizontal lines over CSD plot at layer boundaries. 
+    #     **Default:** ``False`` 
 
+  ## layerBounds : dict
+    #     Dictionary containing layer labels as keys, and layer boundaries as values, e.g. {'L1':100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+    #     **Default:** ``None``
   
   if trigtimes is not None:
     trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
@@ -259,8 +301,8 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
     timeRange = [0,tt[-1]] # if timeRange is not specified, it takes the entire time range of the recording (ms)
   else:
     dat = dat[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # SLICE CSD DATA APPROPRIATELY
-    #tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
-    tt = np.arange(timeRange[0], timeRange[1], dt)
+    tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)] # DO THE SAME FOR TIME POINT ARRAY 
+    #tt = np.arange(timeRange[0], timeRange[1], dt)
     print('tt --> new, last time point: ' + str(tt[-1]))
 
   # PLOTTING
@@ -276,12 +318,12 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   plt.rcParams.update({'font.size': fontSize}) # this is from plotCSD in netpyne -- is fontSize valid here? 
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
-  ymin = 1    # 0 in csd.py in netpyne 
+  ymin = 0 #1    # 0 in csd.py in netpyne 
   ymax = 22   #22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
   # (ii) Set up figure
-  fig = plt.figure() # plt.figure(figsize = figSize) <-- would have to add figSize as an argument above 
+  fig = plt.figure(figsize=figSize) # plt.figure(figsize = figSize) <-- would have to add figSize as an argument above 
 
   # (iii) Create plots w/ common axis labels and tick marks
   axs = []
@@ -301,17 +343,31 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
   # (v) OVERLAY -- SETTING ASIDE FOR NOW -- THAT IS NEXT GOAL 
-  if overlay is 'LFP' or overlay is 'CSD':
+  if overlay is None:
+    print('No data being overlaid')
+    axs[0].set_title('NHP Current Source Density (CSD)', fontsize=fontSize)
+
+  elif overlay is 'CSD' or overlay is 'LFP':
     nrow = dat.shape[0] # number of channels
     gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0) 
     subaxs = []
 
     # go down grid and add data from each channel 
-    if overlay == 'LFP':
+    if overlay == 'CSD':
+      axs[0].set_title('NHP CSD with time series overlay', fontsize=fontSize)
+      for chan in range(nrow):
+          subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+          fig.add_subplot(subaxs[chan])
+          subaxs[chan].margins(0.0,0.01)
+          subaxs[chan].get_xaxis().set_visible(False)
+          subaxs[chan].get_yaxis().set_visible(False)
+          subaxs[chan].plot(X,dat[chan,:],color='green',linewidth=0.3)
+
+    elif overlay == 'LFP':
       if LFP_data is None:
         print('no LFP data provided!')
       else:
-        axs[0].set_title('NHP CSD with LFP overlay', fontsize=14)
+        axs[0].set_title('NHP CSD with LFP overlay', fontsize=fontSize)
         LFP_data = LFP_data[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] # slice LFP data according to timeRange
         for chan in range(nrow):
           subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
@@ -319,21 +375,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
           subaxs[chan].margins(0.0,0.01)
           subaxs[chan].get_xaxis().set_visible(False)
           subaxs[chan].get_yaxis().set_visible(False)
-          subaxs[chan].plot(X,LFP_data[chan,:],color='gray',linewidth=0.3)
-
-    elif overlay == 'CSD':
-      axs[0].set_title('NHP CSD with CSD time series overlay', fontsize=14)
-      for chan in range(nrow):
-          subaxs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
-          fig.add_subplot(subaxs[chan])
-          subaxs[chan].margins(0.0,0.01)
-          subaxs[chan].get_xaxis().set_visible(False)
-          subaxs[chan].get_yaxis().set_visible(False)
-          subaxs[chan].plot(X,dat[chan,:],color='red',linewidth=0.3)
-
-  else:
-    axs[0].set_title('NHP Current Source Density (CSD)', fontsize=14)
-
+          subaxs[chan].plot(X,LFP_data[chan,:],color='gray',linewidth=0.3) #LFP_data[:,chan] in netpyne csd 
 
 
   ## ADD ARROW POINTING TO STIMULUS TIMES      ## NOTE: this was taken from (v) in plotAvgCSD() & main code block
@@ -342,6 +384,22 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
       if time >= xmin and time <= xmax:
         axs[0].annotate(' ', xy = (time,24), xytext = (time,24), arrowprops = dict(facecolor='red', shrink=0.1, headwidth=4,headlength=4),annotation_clip=False)
         axs[0].vlines(time,ymin=ymin,ymax=ymax,linestyle='dashed')
+
+
+  if layerLines:
+    if layerBounds is None:
+      print('No layer boundaries given -- will not overlay layer boundaries on CSD plot')
+    else:
+      layerKeys = []
+      for i in layerBounds.keys():
+        axs[0].hlines(layerBounds[i], xmin, xmax, colors='black', linewidth=1, linestyles='dotted')
+        layerKeys.append(i) # makes a list with names of each layer, as specified in layerBounds dict argument 
+
+      for n in range(len(layerKeys)): # label the horizontal layer lines with the proper layer label 
+        if n==0:
+          axs[0].text(xmax+5, layerBounds[layerKeys[n]]/2, layerKeys[n], color='black', fontsize=fontSize)
+        else:
+          axs[0].text(xmax+5, (layerBounds[layerKeys[n]] + layerBounds[layerKeys[n-1]])/2, layerKeys[n], color='black', fontsize=fontSize, verticalalignment='center')
 
 
 
@@ -1295,6 +1353,13 @@ if __name__ == '__main__':
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
+    ## GET LAYERS FOR OVERLAY
+    s2,g,i1 = getflayers(fullPath,dbpath=dbpath,abbrev=True) # fullPath is to data file, dbpath is to .csv layers file 
+    lchan = {}
+    lchan['s2'] = s2
+    lchan['g'] = g
+    lchan['i1'] = i1
+
     # # HOW TO TELL HOW LONG THESE STIMS ARE? 
     # if trigtimes is not None:
     #   firstTrigger = tt[trigtimes[0]]*1e3
@@ -1312,7 +1377,7 @@ if __name__ == '__main__':
 
     # GET AND PLOT CSD 
     #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[startTime,endTime],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
-    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=None,timeRange=[1100,1200],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
+    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=None,timeRange=[3300,3500],showFig=True, figSize=(5,5), layerLines=True, layerBounds=lchan) # timeRange=[14000,15000] # timeRange=[1100,1200],
 
 
     # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)

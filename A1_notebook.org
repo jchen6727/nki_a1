@@ -50325,6 +50325,10 @@ tt = np.arange(timeRange[0], timeRange[1], dt)
 ****** (2) added--> plt.rcParams.update({'font.size': fontSize})
 ***** Changed gs_outer:
 gs_outer = matplotlib.gridspec.GridSpec(1,1)
+**** Changes to dataAnalysis.py getCSD function:
+***** added removemean() function earlier
+***** added Vaknin and norm (both True) as args to getCSD()
+***** added norm and vaknin correction to getCSD
 ** load.py changes --> 
 *** in a1dat repo, branch 'erica'
 *** changing the donetpyne organization 
