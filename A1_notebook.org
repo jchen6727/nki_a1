@@ -50401,4 +50401,19 @@ gs_outer = matplotlib.gridspec.GridSpec(1,1)
 ** Changes to plotPaper.py and dataAnalysis.py -- 
 *** Have to clean up these functions !! 
 * <2021-11-15 Mon -- CSD matches>
-** 
+** Renamed two my analysis scripts:
+*** dataAnalysis.py --> NHPdataAnalysis.py
+*** plotPaper.py --> simDataAnalysis.py 
+*** ^^ more accurately represents their content!
+*** May eventually combine these? 
+** Question: 
+*** Bring this up in meeting
+*** --> one thing that's been giving me issues is the electrode numbering in the CSD data. 
+*** okay so, there's obviously more variation in the electrode placement vs. the sim data. I learned how to do this from noelle. here's what's confusing me a little -->
+*** so the electrode options for them range btwn 1-21, it would appear -- at least considering the info / protocol that noelle laid out for me. 
+*** but then, if I do the vaknin correction (which I do have set as default), I get 23 channels of info. the LFP data that gets extracted from the .mat files seems, by default, to have 23 channels available. 
+*** so I'm just a little confused bc I have the plotting / interpolation functions -- and those require like, on the y-axis, a range of channels. I looked back at some old code from you sam and i saw that in one CSD plotting situation you used a ymax of 23 or 24. 
+*** so basically --> just trying to reconcile these things:
+**** channel # <--> layer match, bc this seems to be based on a 1-21 channel setup
+**** vaknin gives me 23 channels (0-22), but if I turn that off I get 22 (0-21). 
+
