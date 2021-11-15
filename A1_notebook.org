@@ -50390,3 +50390,15 @@ gs_outer = matplotlib.gridspec.GridSpec(1,1)
                 axs[0].text(xmax+5, (layer_bounds[layerKeys[n]] + layer_bounds[layerKeys[n-1]])/2, layerKeys[n], color='black', fontsize=fontSize)
 * <2021-11-10 Wed -- CSD figure>
 ** Changed A1/analysis/dataAnalysis.py so that it can use layer boundary labels 
+*** also made some changes to ymin/ymax, Y_plot and Y 
+** ok, so now I have all three pieces in place really.
+** Next step is just to find an appropriate CSD figure -- question: does salva want something that matches the wavelet? or something that is just a decent matching CSD?
+** Plot a whole bunch of them -- base this off of salva's code 
+* <2021-11-11 Thu -- CSD figure>
+** Read more about Sherman et al. -- have some questions written in regular notebook -- transcribe here
+* <2021-11-12 Fri -- OEvent code & CSD>
+** Changes to OEvent load.py with donetpyne() and dorun()
+** Changes to plotPaper.py and dataAnalysis.py -- 
+*** Have to clean up these functions !! 
+* <2021-11-15 Mon -- CSD matches>
+** 

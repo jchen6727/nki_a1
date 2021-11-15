@@ -267,7 +267,7 @@ def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12, figSize=(8,8), layerLines=False, layerBounds=None):
+def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12, figSize=(8,8), layerLines=False, layerBounds=None, dpi=300):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
@@ -408,26 +408,36 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
   # SAVE FIGURE
   if saveFig:
-    if fn is None:
-      if overlay == 'LFP':
-        figname = 'NHP_CSD_withLFP.png'
-      elif overlay == 'CSD':
-        figname = 'NHP_CSD_csdOverlay.png'
-      else:
-        figname = 'NHP_CSD_fig.png'
+    if isinstance(saveFig, basestring):
+      filename = saveFig
     else:
-      #filename = fn[31:-4] # takes out the .mat from the filename given as arg
-      filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
-      if overlay == 'LFP':
-        figname = 'NHP_CSD_withLFP_%s.png' % filename
-      elif overlay == 'CSD':
-        figname = 'NHP_CSD_csdOverlay_%s.png' % filename
-      else:
-        figname = 'NHP_CSD_fig_%s.png' % filename
+      filename = 'CSD_fig.png'
     try:
-      plt.savefig(figname) # dpi
+      plt.savefig(filename, dpi=dpi)
     except:
-      plt.savefig('NHP_CSD_fig.png')
+      plt.savefig('CSD_fig.png', dpi=dpi)
+
+  # if saveFig:
+  #   if fn is None:
+  #     if overlay == 'LFP':
+  #       figname = 'NHP_CSD_withLFP.png'
+  #     elif overlay == 'CSD':
+  #       figname = 'NHP_CSD_csdOverlay.png'
+  #     else:
+  #       figname = 'NHP_CSD_fig.png'
+  #   else:
+  #     #filename = fn[31:-4] # takes out the .mat from the filename given as arg
+  #     filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
+  #     if overlay == 'LFP':
+  #       figname = 'NHP_CSD_withLFP_%s.png' % filename
+  #     elif overlay == 'CSD':
+  #       figname = 'NHP_CSD_csdOverlay_%s.png' % filename
+  #     else:
+  #       figname = 'NHP_CSD_fig_%s.png' % filename
+  #   try:
+  #     plt.savefig(figname, dpi=dpi) # dpi
+  #   except:
+  #     plt.savefig('NHP_CSD_fig.png', dpi=dpi)
 
     # move saved fig to appropriate directory 
     if saveFolder is not None:
@@ -1340,7 +1350,15 @@ if __name__ == '__main__':
     if '.mat' in file:
       dataFiles.append(file)
 
-  dataFiles_test = ['1-bu031032017@os_eye06_20.mat']  #['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+  dataFiles_test = ['2-rb045046026@os_eye06_20.mat']  #['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
+  # '1-bu031032017@os_eye06_20.mat'
+  # 2-bu027028013@os_eye06_20
+  # 2-bu043044016@os_eye06_20
+  # 2-gt044045014@os_eye06_30
+  # '2-ma031032023@os_eye06_20'
+  # '2-rb031032016@os_eye06_20'
+  # 
+  # 2-rb063064011@os_eye06_20
 
   for dataFile in dataFiles_test: #dataFiles or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
@@ -1395,10 +1413,22 @@ if __name__ == '__main__':
 
    # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
+    ## Set up time Ranges for loop
+    tranges = [[x, x+200] for x in range(200, 55000, 200)] # bring it down to 175-250 if possible
+
+    # Plot batch of CSDs:
+    for t in tranges:
+      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+            trigtimes=None,timeRange=[t[0], t[1]],
+            showFig=False, figSize=(6,9), 
+            layerLines=True, layerBounds=lchan, 
+            overlay='LFP', LFP_data=LFP_data, 
+            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+
 
     # GET AND PLOT CSD 
     #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[startTime,endTime],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
-    plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=None,timeRange=[3300,3500],showFig=True, figSize=(5,5), layerLines=True, layerBounds=lchan) # timeRange=[14000,15000] # timeRange=[1100,1200],
+    #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=None,timeRange=[3300,3500],showFig=True, figSize=(5,5), layerLines=True, layerBounds=lchan, overlay='CSD', LFP_data=LFP_data) # timeRange=[14000,15000] # timeRange=[1100,1200],
 
 
     # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
