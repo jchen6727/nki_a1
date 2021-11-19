@@ -152,6 +152,22 @@ def getTriggerTimes (fn):
   fp.close()
   return val  
 
+def getTriggerTimesNEW (fn):
+  fp = h5py.File(fn,'r')
+  hdf5obj = fp['trig/anatrig']
+  #x = np.array(fp[hdf5obj.name])   # fp[hdf5obj.name] == hdf5obj
+  #x = np.array(hdf5obj)  # NEW LINE
+  x = hdf5obj
+  z = np.array(fp[x[0,0]])  # NEW LINE 
+  #val = [y[0] for y in fp[x[0,0]].value]
+  #z[0,0] and z[1,0] -- thru z[799,0]
+  val = []
+  for i in range(len(z)):
+    val.append(z[i,0])
+  #val = [y[0] for y in z[0]]
+  fp.close()
+  return val  
+
 #
 def loadfile (fn,samprds,spacing_um=100):
   # load a .mat data file (fn) using sampling rate samprds (should be integer factor of original sampling rate (44000)),
@@ -167,7 +183,7 @@ def loadfile (fn,samprds,spacing_um=100):
   divby = 44e3 / samprds
   trigtimes = None
   try: # not all files have stimuli
-    trigtimes = [int(round(x)) for x in np.array(getTriggerTimes(fn)) / divby] # divby since downsampled signals by factor of divby
+    trigtimes = [int(round(x)) for x in np.array(getTriggerTimesNEW(fn)) / divby] # divby since downsampled signals by factor of divby
   except:
     pass
   #trigIDs = getTriggerIDs(fn)
