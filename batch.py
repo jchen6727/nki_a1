@@ -764,7 +764,7 @@ def custom(filename):
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
