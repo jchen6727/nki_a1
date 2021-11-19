@@ -41602,7 +41602,7 @@ chan: 4
 ***** gcloud compute scp A1_v32_batch5_v32_batch5_0.pkl ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
 **** monkey .mat files: 
 ***** on local machine, cd ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1
-***** gcp compute scp *.mat ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
+***** gcloud compute scp *.mat ext_ericaygriffith_gmail_com@g1-n2-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
 
 ** From salva:
 *** erica here’s the data of the best full density simulation: https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch19/trial_974
@@ -50464,3 +50464,15 @@ gs_outer = matplotlib.gridspec.GridSpec(1,1)
 ***** 2-ma033034023
 ***** "bad" (don't recall why) --> 2-rb051052020
 **** ^^ look for these on spreadsheet to find corresponding spontaneous file
+**** ^^ didn't find them; emailed Noelle to ask if she has info on corresponding spont files!! 
+*** Run scripts on gcp -- 
+**** did this before on desktop machine, since WAY too long / large to run locally, but can't ssh into that machine right now! not working! 
+**** a1dat/nhpspecdat.py is mostly set up to extract the trigger times etc. so maybe start here! 
+**** Have to scp over the .mat file(s) and .csv!
+***** on local machine, cd ~/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1
+***** gcloud compute scp *.mat ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/
+***** gcloud compute scp A1_speech_layers.csv ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/
+**** ^^ change variables to reflect gcp:
+***** dataType = 'monkey'
+***** recordingType = 'speech'
+***** machineType = 'gcp'
