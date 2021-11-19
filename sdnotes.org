@@ -638,6 +638,7 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    IT6 - depol
 ** checked bkg (only long-range) rates in M1 model
 * 19Oct2020 Tuning by layers
+
 ** Allen V1 paper
 "Optimizing a full recurrent network at once was very challenging; instead, we followed a stepwise, layer-by-layer procedure. 
 We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
@@ -738,6 +739,42 @@ Salva
    M2 : 1.158 Hz
    OC : 2.462 Hz
 
+** 18Nov2021 Paper result figs
+
+- multiscale output: raster, stats, voltage traces, LFP/CSD, current dipoles, EEG
+
+model validation:
+- comparison of laminar LFP/CSD exp vs model
+- comparison of osc events; examples for supra, gran, infra (Cosyne poster)
+
+model predictions:
+- select example LFP signal from single electrode from examples above (model and exp), 
+and show contributions from each population: raw LFP and potentially spectrogram; can include spike raster and spectrogram (for comparison with LFP)
+
+other easy/fast potential model predictions:
+- lesion different popuations and/or core vs thal matrix and show effects on dynamics (raster, LFP/CSD)
+** 19Nov20201 Exp data
+*** noelle response
+I also just got part of a response from noelle (have a couple follow-up questions and need to look closer at some figs she sent), 
+but basically she thinks the two weird monkeys I showed you yesterday are actually "real" (the very "regular" one, and the one with the blips in the lower layers). 
+she thinks the lower-layer blips aren't an artifact and that they might have pierced a white matter tract right there by accident 
+(and still reading her response about the regularity of the that other one). but at least we can know that she also sees 
+/ saw the same things with those monkeys too! the figs she sent had diff timescales than mine so going to plot them myself w/ her timescales and just make sure they look the same.
+*** 2-rb04 
+very regular CSD data across all 50 secs -- gamma (50-70 Hz) across most channels; occasional beta ~10 Hz
+*** 2-rb03
+- longer osc events - ~75-175ms (~7-15 Hz) 
+- most in L1/2 (top electrodes) - top-down cortical feedback?? artifact? what if remove top 2 electrodes?
+- some coupled osc? gamma over beta?
+- similar to model??
+*** 1-bu3
+- shows more differences across layers than 2-rb03 and 2-rb04
+- infragranular - stroner and faster (gamma); supragran+gran - longer events (50ms to >200ms)
+- some similar to model - long (~200-1000 ms) of strong activation of same channe/layer, including L4
+*** 2-ma03
+- weird blips at infragran electrode (white matter tract??)
+*** model
+- most peaks happen at L4/L5A and L1; variable durations
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -865,7 +902,7 @@ https://sci-hub.se/10.1121/1.429460 - "Complex tone processing in primary audito
 "It is likely that MUA recordings, particularly in the thalamorecipient zone, include contributions from thalamo-cortical
 axons and stellate cells, in addition to pyramidal cells."
 
-*** Wange 2010 (yes); avian
+*** Wang 2010 (yes); avian
 https://www.pnas.org/content/pnas/107/28/12676.full.pdf
 
 *** Harris and Shepherd 2015 (yes); mice
@@ -941,7 +978,7 @@ Handbook of Basal Ganglia Structure and Function. (2016). Handbook of Basal Gang
 are called pyramidal tract neurons (PT). It is currently thought that there are no exclusively corticostriatal cells, but that the cortical afferents are collaterals of other projections (i.e., IT and PT neurons)."
 
 *** Winer and Prieto, 2001; cat
-Layer V in Cat Primary Auditory Cortex (AI): Cellular Architecture and Identification of Projection Neurons - https://sci-hub.se/10.1002/cne.1183
+"Layer V in Cat Primary Auditory Cortex (AI): Cellular Architecture and Identification of Projection Neurons" - https://sci-hub.se/10.1002/cne.1183
 
 Large pyr cells: 
 - They were concentrated in layer Vb (Fig. 1B: 1a) and dispersed in Va.  
@@ -1016,7 +1053,7 @@ The extent to which CT and PT neurons in A1 receive direct input from the audito
 consistent with patterns seen in other areas. In the other direction, the CT and PT innervation of TC neurons in the subdivisions of the MGB has also not been fully determined, b
 ut the available anatomical data indicate reciprocity, with auditory cortical projections overlapping extensively with auditory thalamic subregions projecting back to auditory cortical areas87,88.""
 
-*** Bakken 2021
+*** Bakken 2020
 "Evolution of cellular diversity in primary motor cortex of human, marmoset monkey, and mouse"
 
 "The L5 extratelencephalic-projecting (ET) types (also known as pyramidal tract, PT, or subcerebral types),"

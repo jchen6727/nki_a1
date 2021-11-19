@@ -730,18 +730,16 @@ def custom(filename):
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
-    # good thal params for 100% cell density 
-    #with open('data/v34_batch23/trial_5955/trial_5955_cfg.json', 'rb') as f:
-    #    cfgLoad2 = json.load(f)['simConfig']
-
-    # import pickle
-    # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
-    # wmat = connData['wmat']
+    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
     
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -749,18 +747,18 @@ def custom(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500
-    initCfg['printPopAvgRates'] = [500, 11500] 
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 1
 
-    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-    #                          'startTime': 2000, 
-    #                          'weightE': 1.0, 
-    #                          'weightI': 1.0, 
-    #                          'probE': 0.12, 
-    #                          'probI': 0.26, 
-    #                          'seed': 1}  
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -768,6 +766,15 @@ def custom(filename):
     #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
     initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 1.0, 
+                            'weightI': 1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.26, 
+                            'seed': 1}  
+
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -808,6 +815,9 @@ def custom(filename):
     b.method = 'grid'
 
     return b
+
+
+
 
 
 
@@ -2850,7 +2860,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch54' 
+    b.batchLabel = 'v34_batch55' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

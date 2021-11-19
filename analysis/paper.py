@@ -473,29 +473,38 @@ def plot_net_conn_cns20poster():
     plt.savefig('../conn/'+filename, dpi=300)
 
 
-def fig_raster(batchLabel, simLabel):
+def fig_raster(batchLabel, simLabel, timeRange=[500,1500]):
     dataFolder = '../data/'
     #batchLabel = 'v34_batch49' #v34_batch27/'
     #simLabel = 'v34_batch27_0_0'
 
     sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
 
-    timeRange = [1000, 6000] #[2000, 4000]
+    #timeRange = [1000, 6000] #[2000, 4000]
     
     #raster
     include = allpops
     orderBy = ['pop'] #, 'y']
-    #filename = '%s%s_raster_%d_%d_%s.png'%(root, simLabel, timeRange[0], timeRange[1], orderBy)
+    
+    # # use these params if long 6-sec raster 
+    # fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
+    #     popRates=False, orderInverse=True, lw=0, markerSize=3.5, marker='.',  
+    #     showFig=0, saveFig=0, figSize=(9, 13), orderBy=orderBy)# 
+
+    # use these params if short 1-sec raster 
     fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
-        popRates=False, orderInverse=True, lw=0, markerSize=3.5, marker='.',  
-        showFig=0, saveFig=0, figSize=(9, 13), orderBy=orderBy)# 
+        popRates=False, orderInverse=True, lw=0, markerSize=12, marker='.',  
+        showFig=0, saveFig=0, figSize=(9*0.95, 13*0.9), orderBy=orderBy)# 
     ax = plt.gca()
 
     [i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
     #plt.tick_params(axis='both', which='both', bottom='off', top='off', labelbottom='off', right='off', left='off', labelleft='off')  #remove ticks
-    plt.xticks([1000, 2000, 3000, 4000, 5000, 6000], ['1', '2', '3', '4', '5', '6'])
-    plt.yticks([0, 5000, 10000], [0, 5000, 10000])
+    #plt.xticks([1000, 2000, 3000, 4000, 5000, 6000], ['1', '2', '3', '4', '5', '6'])
+    #plt.yticks([0, 5000, 10000], [0, 5000, 10000])
     
+    plt.xticks(timeRange, ['0', '1'])
+    plt.yticks([0, 5000, 10000], [0, 5000, 10000])
+
     plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
     plt.xlabel('Time (s)')
     
@@ -504,7 +513,7 @@ def fig_raster(batchLabel, simLabel):
     plt.savefig(filename, dpi=300)
 
 
-def fig_stats(batchLabel, simLabel):
+def fig_stats(batchLabel, simLabel, timeRange):
 
     dataFolder = '../data/'
     #batchLabel = 'v34_batch49' #v34_batch27/'
@@ -518,7 +527,7 @@ def fig_stats(batchLabel, simLabel):
 
     sim, data, out, root = loadSimData(dataFolder, batchLabel, simLabel)
 
-    timeRange = [1000, 6000] #[2000, 4000]
+    #timeRange = [1000, 6000] #[2000, 4000]
 
     statPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6',
                 ('SOM2','SOM3','SOM4','SOM5A','SOM5B','SOM6'),
@@ -585,7 +594,7 @@ def fig_stats(batchLabel, simLabel):
 
 
 
-def fig_traces(batchLabel, simLabel):
+def fig_traces(batchLabel, simLabel, timeRange):
     dataFolder = '../data/'
     #batchLabel = 'v34_batch49' #v34_batch27/'
     #simLabel = 'v34_batch27_0_0'
@@ -599,7 +608,7 @@ def fig_traces(batchLabel, simLabel):
 
     firingpops = ['NGF1', 'PV2', 'NGF2', 'IT3',  'SOM3',  'VIP3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'IT5A', 'CT5A', 'SOM5A', 'VIP5A', 'IT5B', 'CT5B',  'PV5B', 'NGF5B', 'TC', 'HTC', 'IRE', 'TI']
 
-    timeRanges = [[1000,3000]] #[[3000, 5000], [5000, 7000], [7000, 9000], [9000,11000]]
+    timeRanges = [timeRange] #[[3000, 5000], [5000, 7000], [7000, 9000], [9000,11000]]
 
     cellNames = data['simData']['V_soma'].keys()
     popCells = {}
@@ -609,15 +618,18 @@ def fig_traces(batchLabel, simLabel):
     fontsiz = 20   
     for timeRange in timeRanges:
 
-        plt.figure(figsize=(5*2, 6.5*2)) 
-        time = np.linspace(0, 2000, 20001)
+        plt.figure(figsize=(9*1.05, 1.2*2)) 
+        time = np.linspace(timeRange[0], timeRange[1], 10001)
         plt.ylabel('V (mV)', fontsize=fontsiz)
-        plt.xlabel('Time (s)', fontsize=fontsiz)
-        plt.xlim(0, 2000)
+        plt.xlabel('Time (ms)', fontsize=fontsiz)
+        plt.xlim(500, 1500)
         # plt.ylim(-80, -30)
         plt.ylim(-120*len(firingpops),20)
         plt.yticks(np.arange(-120*len(firingpops)+60,60,120), firingpops[::-1], fontsize=fontsiz)
-        plt.xticks([0,1000,2000], [1,2,3], fontsize=fontsiz)
+        #plt.xticks([0,1000,2000], [1,2,3], fontsize=fontsiz)
+        #ipy.embed()
+        #plt.xticks(timeRange, ['0', '1'])
+
         #ipy.embed()
 
         number = 0
@@ -636,6 +648,38 @@ def fig_traces(batchLabel, simLabel):
         filename='%s%s_%d_%d_firingTraces.png'%(root, simLabel, timeRange[0], timeRange[1])
         plt.savefig(filename, facecolor = 'white', bbox_inches='tight' , dpi=300)
 
+
+
+
+def fig_CSD():
+    from netpyne import sim
+    
+    targetFolder = 'data/v34_batch27'
+
+    filenames = ['data/v34_batch27/v34_batch27_%d_%d.pkl' % (iseed, cseed) for iseed in [0] for cseed in [0]]
+
+    # find all individual sim labels whose files need to be gathered
+    #filenames = [targetFolder+f for f in os.listdir(targetFolder) if f.endswith('.pkl')]
+
+    layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+
+    for filename in filenames:
+        sim.load(filename, instantiate=False)
+        
+        tranges = [[x, x+1000] for x in range(500, 600, 100)]
+        for t in tranges:# (2100, 2200,100):    
+            sim.analysis.plotCSD(**{
+                'spacing_um': 100, 
+                'layer_lines': 1, 
+                'layer_bounds': layer_bounds, 
+                'overlay': 'LFP',
+                'timeRange': [t[0], t[1]], 
+                'smooth': 30,
+                'saveFig': filename[:-4]+'_CSD_LFP_%d-%d' % (t[0], t[1]), 
+                'figSize': (4.1,8.2), 
+                'dpi': 300, 
+                'showFig': 0})
+            
 
 def fig_optuna_fitness():
     import optunaAnalysis as oa
@@ -789,10 +833,15 @@ if __name__ == '__main__':
     # plot_empirical_conn()
     # plot_net_conn_cns20poster()
     
-    #fig_raster('v34_batch27', 'v34_batch27_0_0')
-    fig_traces('v34_batch27', 'v34_batch27_0_0')
-    fig_stats('v34_batch27', 'v34_batch27_0_0')
+    #fig_raster('v34_batch27', 'v34_batch27_0_0', timeRange=[500,1500])
+    #fig_traces('v34_batch27', 'v34_batch27_0_0', timeRange=[500,1500])  
+    #fig_stats('v34_batch27', 'v34_batch27_0_0', timeRange=[500,1500])
     
+    fig_raster('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
+    # fig_traces('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
+    # fig_stats('v34_batch27', 'v34_batch27_1_2', timeRange=[1000,6000])
+
+
 
     # for iseed in range(5):
     #     for jseed in range(5):
