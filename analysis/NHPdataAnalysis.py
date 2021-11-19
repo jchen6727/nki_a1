@@ -267,7 +267,7 @@ def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
 
 ### PLOTTING FUNCTIONS ### 
 # PLOT CSD 
-def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12, figSize=(8,8), layerLines=False, layerBounds=None, dpi=300):
+def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=None,trigtimes=None,saveFig=True,showFig=True, fontSize=12, figSize=(8,8), layerLines=False, layerBounds=None, smooth=None, dpi=300):
   ## dat --> CSD data as numpy array
   ## timeRange --> time range to be plotted (in ms)
   ## trigtimes --> trigtimes from loadfile() (indices -- must be converted)
@@ -318,7 +318,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
   plt.rcParams.update({'font.size': fontSize}) # this is from plotCSD in netpyne -- is fontSize valid here? 
   xmin = int(X[0])
   xmax = int(X[-1]) + 1 
-  ymin = 0 #1#0 #1    # 0 in csd.py in netpyne 
+  ymin = 0 #1   # 0 in csd.py in netpyne 
   ymax = dat.shape[0]-1 #21 #24 #20   #22 # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
   extent_xy = [xmin, xmax, ymax, ymin]
 
@@ -339,6 +339,10 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
     #axs[i].tick_params(axis='y', which='major', labelsize=fontSize)
     axs[i].tick_params(axis='x', which='major', labelsize=fontSize)
 
+
+  # SMOOTHING
+  if smooth:
+    Z = scipy.ndimage.filters.gaussian_filter(Z, smooth, mode='nearest')
 
   # (iv) PLOT INTERPOLATED CSD COLOR MAP
   spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
@@ -1408,7 +1412,7 @@ if __name__ == '__main__':
             trigtimes=None,timeRange=[t[0], t[1]],
             showFig=False, figSize=(6,9), 
             layerLines=True, layerBounds=lchan, 
-            overlay='LFP', LFP_data=LFP_data, 
+            overlay='LFP', LFP_data=LFP_data, smooth=33,
             saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
 
 
