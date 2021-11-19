@@ -50416,4 +50416,28 @@ gs_outer = matplotlib.gridspec.GridSpec(1,1)
 *** so basically --> just trying to reconcile these things:
 **** channel # <--> layer match, bc this seems to be based on a 1-21 channel setup
 **** vaknin gives me 23 channels (0-22), but if I turn that off I get 22 (0-21). 
+* <2021-11-16 Tue -- CSD>
+** lab meeting
+** Get rid of vaknin for NHP CSD 
+** Implement smoothing for CSD -- see netpyne updates 
+
+* <2021-11-17 Wed -- teaching & meetings & CSD>
+** Meeting w/ salva --
+*** CSD:
+**** fwd to annie 
+**** match by wavelets?
+**** smoothing? to 33? 
+**** downsampling to same rate?
+**** amplitudes --> LFP recorded further away? 
+**** upload the NHP csd data (to google drive) 
+* <2021-11-18 Thu -- CSD figure matching>
+** To do list: 
+*** read noelle's email /  fwd to annie 
+*** match by wavelets?
+*** smoothing? to 33? 
+*** downsampling to same rate?
+*** amplitudes --> LFP recorded further away? 
+*** Put lfp data thru CSD code in netpyne to verify same same 
+*** [DONE] upload the NHP csd data (to google drive) 
+*** [DONE] NKI telecommuting 
 

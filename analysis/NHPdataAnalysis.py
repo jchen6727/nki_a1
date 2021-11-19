@@ -1219,8 +1219,7 @@ def sortFiles(pathToData,regions):
   return DataFiles # Change this...? 
 
 
-## REVAMP THIS  ## work for any type of file / flexible, or just .mat? 
-def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irrelevant .mat files
+def moveDataFiles(pathToData,option):  ## deletes or moves irrelevant .mat files
   # pathToData -- path to parent dir with unsorted or unwanted .mat files 
   # option -- delete or move to 'other'
 
@@ -1247,6 +1246,7 @@ def moveDataFiles(pathToData,option): # RENAME THIS ## deletes or moves irreleva
 
 ##################################  
 ### CSD PROCESSING FUNCTIONS #### 
+### ** needs work ** 
 ##################################
 
 # What functions do I need? 
@@ -1331,8 +1331,8 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 
 if __name__ == '__main__':
 
-  # Parent data directory containing unsorted .mat files
-  origDataDir = '../data/NHPdata/spont/contproc/'   #'/Users/ericagriffith/Documents/MATLAB/macaque_A1/click/contproc/'
+  # Parent data directory containing .mat files
+  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1340,27 +1340,23 @@ if __name__ == '__main__':
   ## Delete or move unwanted / unworted .mat data files 
   # moveDataFiles(origDataDir,'move')
 
-  # ############# 
-  recordingArea = 'A1/' #'A1/' # 'MGB/' 
+  ############### 
+  recordingArea = 'A1/' # 'MGB/' 
   
-  dataPath = origDataDir + recordingArea
-  dataFilesList = os.listdir(dataPath) # ensure this only includes .mat files --> appears so upon check 
-  dataFiles = []
-  for file in dataFilesList:
-    if '.mat' in file:
-      dataFiles.append(file)
+  test = 0 # set to 1 if going through all files in data dir, or 0 if using test files
+  testFiles =  ['2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  
+  if test:
+    dataPath = origDataDir + recordingArea
+    dataFilesList = os.listdir(dataPath) 
+    dataFiles = []
+    for file in dataFilesList:
+      if '.mat' in file:
+        dataFiles.append(file)
+  else:
+    dataFiles = testFiles
 
-  dataFiles_test = ['2-rb045046026@os_eye06_20.mat']  #['2-bu043044016@os_eye06_20.mat']  #['2-rb051052020@os.mat'] ##['2-bu027028013@os_eye06_20.mat']#['2-bu027028013@os_eye06_20.mat', '2-bu043044016@os_eye06_20.mat', '2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] #['2-bu027028013@os_eye06_20.mat'] #['2-gt044045014@os_eye06_30.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat', '2-rb063064011@os_eye06_20.mat'] # ['2-bu043044016@os_eye06_20.mat'] #'2-bu027028011@os_eye06_20.mat', '2-bu043044014@os_eye06_20.mat', '2-bu001002015@os_eye06_20.mat']
-  # '1-bu031032017@os_eye06_20.mat'
-  # 2-bu027028013@os_eye06_20
-  # 2-bu043044016@os_eye06_20
-  # 2-gt044045014@os_eye06_30
-  # '2-ma031032023@os_eye06_20'
-  # '2-rb031032016@os_eye06_20'
-  # 
-  # 2-rb063064011@os_eye06_20
-
-  for dataFile in dataFiles_test: #dataFiles or dataFiles_test if want specific files # dataFiles[2:3] --> '2-um040041020@os_eye06_30.mat'
+  for dataFile in dataFiles: 
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
 
     [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
@@ -1369,25 +1365,12 @@ if __name__ == '__main__':
             # trigtimes is array of stim trigger indices
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
-    ## SET PATH TO .csv LAYER FILE: 
+    ##### SET PATH TO .csv LAYER FILE ##### 
     dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
-    ## GET LAYERS FOR OVERLAY ###
-    # s2,g,i1 = getflayers(fullPath,dbpath=dbpath,abbrev=True) # fullPath is to data file, dbpath is to .csv layers file 
-    # lchan = {}
-    # lchan['S'] = s2
-    # lchan['G'] = g
-    # lchan['I'] = i1
-
-    # s1,s2,g,i1,i2 = getflayers(fullPath,dbpath=dbpath,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
-    # lchan = {}
-    # lchan['S'] = s2
-    # lchan['G'] = g
-    # lchan['I1'] = i1
-    # lchan['I2'] = i2
-
+    ##### GET LAYERS FOR OVERLAY #####
     s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
     lchan = {}
     lchan['S'] = s2high
@@ -1399,7 +1382,7 @@ if __name__ == '__main__':
     # lchan['I1'] = i1high
     # lchan['I2'] = CSD_data.shape[0]-1 
 
-    # # HOW TO TELL HOW LONG THESE STIMS ARE? 
+    ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
     # if trigtimes is not None:
     #   firstTrigger = tt[trigtimes[0]]*1e3
     #   secondTrigger = tt[trigtimes[1]]*1e3
@@ -1411,12 +1394,15 @@ if __name__ == '__main__':
     #   startTime = 4236.0 # in ms, for gcp 
     #   endTime = 5920.0 # in ms, for gcp 
 
-   # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+    ##### LFP #####
+    # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
 
-    ## Set up time Ranges for loop
+    ##### CSD #####
+
+    ### Plot batches of CSDs:
+    ## Set up time ranges for loop
     tranges = [[x, x+200] for x in range(200, 55000, 200)] # bring it down to 175-250 if possible
 
-    # Plot batch of CSDs:
     for t in tranges:
       plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
             trigtimes=None,timeRange=[t[0], t[1]],
@@ -1424,11 +1410,6 @@ if __name__ == '__main__':
             layerLines=True, layerBounds=lchan, 
             overlay='LFP', LFP_data=LFP_data, 
             saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
-
-
-    # GET AND PLOT CSD 
-    #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=trigtimes,timeRange=[startTime,endTime],showFig=True) # timeRange=[14000,15000] # timeRange=[1100,1200],
-    #plotCSD(fn=fullPath,dat=CSD_data,tt=tt,trigtimes=None,timeRange=[3300,3500],showFig=True, figSize=(5,5), layerLines=True, layerBounds=lchan, overlay='CSD', LFP_data=LFP_data) # timeRange=[14000,15000] # timeRange=[1100,1200],
 
 
     # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
@@ -1439,7 +1420,7 @@ if __name__ == '__main__':
 
 
 
-    # ### AVG CSD ### 
+    # ### LOOK AT AVG CSD ### 
     # ## (1) Remove bad epochs 
     # ## (a) set epoch params
     # swindowms = 0     # start time relative to stimulus 
@@ -1462,7 +1443,7 @@ if __name__ == '__main__':
 
   ###################
 
-    # # MOVE .PNG FILES 
+    # # MOVE .PNG FILES IF NECESSARY 
     # pngFiles = [f for f in os.listdir() if os.path.isfile(f)]
     # pngFiles = [f for f in pngFiles if '.png' in f]
     # dataPrefixes = []
