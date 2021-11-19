@@ -1371,7 +1371,7 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
     ##### SET PATH TO .csv LAYER FILE ##### 
-    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'   # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
     # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
@@ -1382,6 +1382,7 @@ if __name__ == '__main__':
     lchan['S'] = s2high
     lchan['G'] = ghigh
     lchan['I'] = CSD_data.shape[0]-1 #i2high
+    print('s2high: ' + str(s2high))
     # lchan['S1'] = s1high
     # lchan['S2'] = s2high
     # lchan['G'] = ghigh
