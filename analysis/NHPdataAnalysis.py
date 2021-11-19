@@ -112,7 +112,7 @@ def removemean(x, ax=1):
 
 
 # get CSD - first do a lowpass filter. lfps is a list or numpy array of LFPs arranged spatially by column
-def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300, vaknin=True, norm=True):
+def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300, vaknin=False, norm=True):
 
   # convert from uV to mV ## Does this already happen in rdmat() ?? 
   # lfps = lfps/1000
