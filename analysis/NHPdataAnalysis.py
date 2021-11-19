@@ -1336,7 +1336,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing .mat files
-  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
+  origDataDir = '../data/NHPdata/speech/contproc/'   # LOCAL DIR 
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1347,18 +1347,19 @@ if __name__ == '__main__':
   ############### 
   recordingArea = 'A1/' # 'MGB/' 
   
-  test = 0 # set to 1 if going through all files in data dir, or 0 if using test files
-  testFiles =  ['2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
+  testFiles =  ['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
   
   if test:
+    dataFiles = testFiles
+  else:
     dataPath = origDataDir + recordingArea
     dataFilesList = os.listdir(dataPath) 
     dataFiles = []
     for file in dataFilesList:
       if '.mat' in file:
         dataFiles.append(file)
-  else:
-    dataFiles = testFiles
+
 
   for dataFile in dataFiles: 
     fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
@@ -1370,7 +1371,8 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
     ##### SET PATH TO .csv LAYER FILE ##### 
-    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'  # LOCAL # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
@@ -1387,33 +1389,34 @@ if __name__ == '__main__':
     # lchan['I2'] = CSD_data.shape[0]-1 
 
     ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
-    # if trigtimes is not None:
-    #   firstTrigger = tt[trigtimes[0]]*1e3
-    #   secondTrigger = tt[trigtimes[1]]*1e3
-    #   print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
-    #   print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-    #   startTime = firstTrigger-500.0
-    #   endTime = secondTrigger-100
-    # else: 
-    #   startTime = 4236.0 # in ms, for gcp 
-    #   endTime = 5920.0 # in ms, for gcp 
+    if trigtimes is not None:
+      firstTrigger = tt[trigtimes[0]]*1e3
+      secondTrigger = tt[trigtimes[1]]*1e3
+      print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
+      print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
+      startTime = firstTrigger-500.0
+      endTime = secondTrigger-100
+    else: 
+      startTime = 4236.0 # in ms, for gcp 
+      print('trigger times not given --> startTime: 4236, endTime: 5290')
+      endTime = 5920.0 # in ms, for gcp 
 
     ##### LFP #####
     # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+
 
     ##### CSD #####
 
     ### Plot batches of CSDs:
     ## Set up time ranges for loop
-    tranges = [[x, x+200] for x in range(200, 55000, 200)] # bring it down to 175-250 if possible
-
-    for t in tranges:
-      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
-            trigtimes=None,timeRange=[t[0], t[1]],
-            showFig=False, figSize=(6,9), 
-            layerLines=True, layerBounds=lchan, 
-            overlay='LFP', LFP_data=LFP_data, smooth=33,
-            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+    # tranges = [[x, x+200] for x in range(200, 55000, 200)] # bring it down to 175-250 if possible
+    # for t in tranges:
+    #   plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+    #         trigtimes=None,timeRange=[t[0], t[1]],
+    #         showFig=False, figSize=(6,9), 
+    #         layerLines=True, layerBounds=lchan, 
+    #         overlay='LFP', LFP_data=LFP_data, smooth=33,
+    #         saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
 
 
     # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)

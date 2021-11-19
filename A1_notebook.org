@@ -50440,4 +50440,27 @@ gs_outer = matplotlib.gridspec.GridSpec(1,1)
 *** Put lfp data thru CSD code in netpyne to verify same same 
 *** [DONE] upload the NHP csd data (to google drive) 
 *** [DONE] NKI telecommuting 
+** NHP csd figs on google drive: 
+*** https://drive.google.com/drive/u/0/folders/14b85qqGjeLwCd5q4FiLNnVa2d43yHXB-
 
+* <2021-11-19 Fri -- speech CSDs>
+** discussed w/ sam and salva re: matching
+*** amplitudes re: LFP recorded further away (probably okay then to let this go? sam said not necessary to worry about amplitudes)
+*** downsampling to same rate: meh
+*** added smoothing to NHPdataAnalysis.py 
+** Added NHP data to google drive folder:
+*** https://drive.google.com/drive/u/0/folders/14b85qqGjeLwCd5q4FiLNnVa2d43yHXB-
+*** data is in a folder called 'data' and also included relevant .csv file 
+*** sent Salva link to NHPdataAnalysis.py (in A1/analysis) and gave instructions on variales to change + other files necessary (downsample.py and filter.py, both in A1/analysis)
+** Speech CSDs:
+*** Salva wants examples of speech CSDs!
+**** ^^ Asked what format; he said let's start with something similar to what we have for spontaneous
+*** Use A1/analysis/NHPdataAnalysis.py to generate --> make sure speech input works the same
+*** Generate an averaged CSD based on stimulus (have done this for click)
+*** Find speech file that matches a spont file: 
+**** Copy-pasted the spreadsheet from lakatos et al. with the corresponding files for speech/click/sppont etc.
+**** speech files that I have layers for:
+***** 2-bu037038046
+***** 2-ma033034023
+***** "bad" (don't recall why) --> 2-rb051052020
+**** ^^ look for these on spreadsheet to find corresponding spontaneous file
