@@ -277,7 +277,7 @@ def getIndividualERP(dat,sampr,trigtimes,swindowms,ewindowms,ERPindex):
   for chan in range(nrow): # go through channels
     sidx = max(0,trigidx+swindowidx)
     eidx = min(dat.shape[1],trigidx+ewindowidx)
-    individualERP[chan,:] = dat[chan, sidx:eidx] # add together data points from each time window
+    individualERP[chan,:] = dat[chan, sidx:eidx] # (don't?) add together data points from each time window
   return tt,individualERP
 
 
@@ -609,7 +609,10 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
     #plt.close()
 
 
-def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
+def plotIndividualERP(dat,tt,saveFig=False,showFig=True): # trigtimes,
+  # trigtines unnecessary argument? 
+  # Add fn as argument? 
+
   # dat should be individual ERP from getIndividual ERP
   # tt should be ttavg from getAvgERP
   # trigtimes should be relativeTrigTimesMS -- NOT EVEN USED RIGHT NOW; Pre-emptive code below 
@@ -631,28 +634,65 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
   # for time in trigTimesMS:
   #   relativeTrigTimesMS.append(time-trigTimesMS[0])
 
+  ### CODE FROM AVG CSD #### 
+  # INTERPOLATION
+  X = tt 
+  Y = np.arange(dat.shape[0]) # number of channels
+  CSD_spline = scipy.interpolate.RectBivariateSpline(Y,X,dat)
+  Y_plot = np.linspace(0,dat.shape[0],num=1000) # ,num=1000 is included in csd.py in netpyne --> hmm. necessary? 
+  Z = CSD_spline(Y_plot,X)
 
-  ### MAKE FIGURE OF INDIVIDUAL ERP ### --- NOTE: are we sure this is what that does? VERIFY. 
- 
-  fig = plt.figure()
-  nrow = dat.shape[0] # number of channels
+  # (i) Set up axes
+  xmin = int(X[0])
+  xmax = int(X[-1]) + 1 
+  ymin = 1  # 0 in csd.py in netpyne 
+  ymax = 21 # 22  # dat.shape[0] # 24 in csd_verify.py, but it is spacing in microns in csd.py in netpyne --> WHAT TO DO HERE? TRY 24 FIRST! 
+  extent_xy = [xmin, xmax, ymax, ymin]
+
+  # (ii) Set up figure
+  fig = plt.figure(figsize=(5,8))
+
+  # (iii) Create plots w/ common axis labels and tick marks
   axs = []
 
+  numplots = 1 # HOW TO DETERMINE THIS? WHAT IF MORE THAN ONE? 
 
   gs_outer = matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
-  gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0)
 
-  for chan in range(nrow):
-    axs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
-    fig.add_subplot(axs[chan])
-    axs[chan].margins(0.0,0.01)
-    axs[chan].get_xaxis().set_visible(False)
-    axs[chan].get_yaxis().set_visible(False)
-    axs[chan].plot(tt,dat[chan,:],color='red',linewidth=0.3)
+  for i in range(numplots):
+    axs.append(plt.Subplot(fig,gs_outer[i*2:i*2+2]))
+    fig.add_subplot(axs[i])
+    axs[i].set_xlabel('Time (ms)',fontsize=12)
+    #axs[i].tick_params(axis='y', which='major', labelsize=8)
+    axs[i].set_yticks(np.arange(ymin, ymax, step=1))
 
-  plt.xlabel('Time (ms)')
-  plt.ylabel('Channel')  
-  #plt.show()
+  # (iv) PLOT INTERPOLATED CSD COLOR MAP
+  spline=axs[0].imshow(Z, extent=extent_xy, interpolation='none', aspect='auto', origin='upper', cmap='jet_r', alpha=0.9) # alpha controls transparency -- set to 0 for transparent, 1 for opaque
+  axs[0].set_ylabel('Channel', fontsize = 12) # Contact depth (um) -- convert this eventually 
+
+  ####### ### OLD CODE BEGINNING ###### 
+
+  # ### MAKE FIGURE OF INDIVIDUAL ERP ### --- NOTE: are we sure this is what that does? VERIFY. 
+ 
+  # fig = plt.figure()
+  # nrow = dat.shape[0] # number of channels
+  # axs = []
+
+
+  # gs_outer = matplotlib.gridspec.GridSpec(2, 2, figure=fig, wspace=0.4, hspace=0.2, height_ratios = [20, 1])
+  # gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0)
+
+  # for chan in range(nrow):
+  #   axs.append(plt.Subplot(fig,gs_inner[chan],frameon=False))
+  #   fig.add_subplot(axs[chan])
+  #   axs[chan].margins(0.0,0.01)
+  #   axs[chan].get_xaxis().set_visible(False)
+  #   axs[chan].get_yaxis().set_visible(False)
+  #   axs[chan].plot(tt,dat[chan,:],color='red',linewidth=0.3)
+
+  # plt.xlabel('Time (ms)')
+  # plt.ylabel('Channel')  
+  # #plt.show()
 
   if saveFig:
     figname = 'NHP_individualERP.png'
@@ -1490,7 +1530,7 @@ if __name__ == '__main__':
 
     ## Individual CSD ERP ##
     ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimesGood,swindowms, ewindowms, 5)
-    plotIndividualERP(individualERP,ttERP,trigtimesGood,saveFig=True,showFig=False)
+    plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
 
   ###################
 
