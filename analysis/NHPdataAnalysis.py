@@ -1448,7 +1448,7 @@ if __name__ == '__main__':
     ## (1) Remove bad epochs 
     ## (a) set epoch params
     swindowms = 0     # start time relative to stimulus 
-    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+    ewindowms = 200 #50 #200   # end time of epoch relative to stimulus onset 
     
     ## (b) set sigma thresh
     sigmathresh=4 

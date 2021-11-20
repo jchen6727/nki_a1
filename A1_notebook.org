@@ -50589,3 +50589,15 @@ def getTriggerTimesNEW (fn):
   fp.close()
   return val 
 ***** added / committed / pushed / pulled --> TESTING (on gcp) 
+**** Seems like it might work??
+*** Plotting avg CSD for speech file:
+**** Seeing if the fix made earlier for h5py 'works' in the sense that (1) the average CSD looks reasonable + (2) I can make sure the timing btwn stimuli is the same 
+**** (1) the average CSD looks reasonable
+***** uncommented lines for getting and plotting avgCSD in A1/analysis/NHPdataAnalysis.py 
+***** ^^ I have saveFig set to true, so hopefully should save it if not visible to me on local machine when outputs. 
+**** (2) I can make sure the timing btwn stimuli is the same 
+***** ^^ for this, look at trigtimes --> not just trigtimesMS[1] - trigtimesMS[0], but other indices as well 
+**** Should probably change how this saves avgCSD figs!!
+**** scp over trial fig:
+***** NHP_avgCSD_2-bu037038046@os.png
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_avgCSD_2-bu037038046@os.png /Users/ericagriffith/Desktop/
