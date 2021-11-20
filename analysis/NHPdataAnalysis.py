@@ -652,7 +652,34 @@ def plotIndividualERP(dat,tt,trigtimes,saveFig=False,showFig=True):
 
   plt.xlabel('Time (ms)')
   plt.ylabel('Channel')  
-  plt.show()
+  #plt.show()
+
+  if saveFig:
+    figname = 'NHP_individualERP.png'
+    plt.savefig(figname) #dpi
+    # if fn is None: 
+    #   if overlay:
+    #     figname = 'NHP_avgCSD_csdOverlay.png'
+    #   else:
+    #     figname = 'NHP_avgCSD.png'
+    # else: 
+    #   filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
+    #   print(filename)
+    #   if overlay:  
+    #     figname = 'NHP_avgCSD_csdOverlay_%s.png' % filename
+    #   else:
+    #     figname = 'NHP_avgCSD_%s.png' % filename
+    # try:
+    #   plt.savefig(figname) #dpi
+    # except:
+    #   plt.savefig('NHP_avgCSD.png')
+
+
+  # DISPLAY FINAL FIGURE
+  if showFig is True:
+    plt.show()
+    #plt.close()
+
 
 
 #### PLOT LFP FUNCTIONS ####
@@ -1457,13 +1484,13 @@ if __name__ == '__main__':
     trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
     ## calculate average CSD ERP ###
-    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
+   #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-    plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+    #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
-
-
-
+    ## Individual CSD ERP ##
+    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimesGood,swindowms, ewindowms, 5)
+    plotIndividualERP(individualERP,ttERP,trigtimesGood,saveFig=True,showFig=False):
 
   ###################
 

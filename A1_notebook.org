@@ -50601,3 +50601,7 @@ def getTriggerTimesNEW (fn):
 **** scp over trial fig:
 ***** NHP_avgCSD_2-bu037038046@os.png
 ***** gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_avgCSD_2-bu037038046@os.png /Users/ericagriffith/Desktop/
+***** looks good!!!
+**** do another trial fig but this time with 200ms epoch (vs. 50ms) 
+***** Also, automatically place it into the new figs dir I made for these 
+***** gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_avgCSD_2-bu037038046@os.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_avgCSD/
