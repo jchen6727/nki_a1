@@ -739,7 +739,7 @@ Salva
    M2 : 1.158 Hz
    OC : 2.462 Hz
 
-** 18Nov2021 Paper result figs
+* 18Nov2021 Paper result figs
 
 - multiscale output: raster, stats, voltage traces, LFP/CSD, current dipoles, EEG
 
@@ -753,7 +753,7 @@ and show contributions from each population: raw LFP and potentially spectrogram
 
 other easy/fast potential model predictions:
 - lesion different popuations and/or core vs thal matrix and show effects on dynamics (raster, LFP/CSD)
-** 19Nov20201 Exp data
+* 19Nov20201 Exp data
 *** noelle response
 I also just got part of a response from noelle (have a couple follow-up questions and need to look closer at some figs she sent), 
 but basically she thinks the two weird monkeys I showed you yesterday are actually "real" (the very "regular" one, and the one with the blips in the lower layers). 
@@ -775,6 +775,23 @@ very regular CSD data across all 50 secs -- gamma (50-70 Hz) across most channel
 - weird blips at infragran electrode (white matter tract??)
 *** model
 - most peaks happen at L4/L5A and L1; variable durations
+
+** Exp data analysis code
+ericaygriffith  7 hours ago
+
+okay so I put the .mat files and a .csv file w/ the layer-channel info (necessary for plotting NHP csds) into a subdir called 'data' (https://drive.google.com/drive/folders/14b85qqGjeLwCd5q4FiLNnVa2d43yHXB-?usp=sharing)
+
+I also have the script I used to plot large numbers of the spontaneous CSDs here on repro branch : https://github.com/NathanKlineInstitute/A1/blob/repro/analysis/NHPdataAnalysis.py
+
+the way it's set up now is to do that, but I've used it for other things as well (e.g. sorting .mat files, looking at the average CSD of click files, etc. so it can do other stuff too!)
+
+in the main code block at the bottom, there are some variables that can be changed (e.g. origDataDir is path to the directory w/ the .mat and .csv layer file, 'test' is an option to either iterate over all of the .mat files in a directory or look at a specific monkey, and dbpath is the path to the .csv file that has the layer info)
+
+the .csv file is used by the getflayers() function
+
+I import functions from two other files, both of which are also in A1/analysis (downsample.py and filter.py -- for downsampling and bandpass filtering respectively)
+
+let me know if anything isn't working / doesn't make sense and of course if you have any suggestions! I aspire to code with your efficiency and organizational skills!! lol
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -10183,6 +10200,64 @@ def optunaRatesLayersWmat():
 ** v34_batch54 - v34_batch25 (trial_2142); testing LFPpops for long 11.5sec sim at 1ms recordStep
 *** notes
 at 0.1 ms recordStep crashed when gathering
+** v34_batch55 - v34_batch25 (trial_2142); 4.5 secs; with LFP; WITH cochlear IC/speech input; diff thal->conn gains
+*** code
+   params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 1
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 1.0, 
+                            'weightI': 1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.26, 
+                            'seed': 1}  
+
 
 ** blank
 

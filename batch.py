@@ -734,7 +734,7 @@ def custom(filename):
     params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'weightE')] = [0.25, 0.5]
     params[('ICThalInput', 'weightI')] = [0.25, 0.5]
-    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]]
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
