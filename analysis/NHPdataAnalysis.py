@@ -1405,18 +1405,6 @@ if __name__ == '__main__':
     # lchan['I1'] = i1high
     # lchan['I2'] = CSD_data.shape[0]-1 
 
-    ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
-    if trigtimes is not None:
-      firstTrigger = tt[trigtimes[0]]*1e3
-      secondTrigger = tt[trigtimes[1]]*1e3
-      print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
-      print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-      startTime = firstTrigger-500.0
-      endTime = secondTrigger-100
-    else: 
-      startTime = 4236.0 # in ms, for gcp 
-      print('trigger times not given --> startTime: 4236, endTime: 5290')
-      endTime = 5920.0 # in ms, for gcp 
 
     ##### LFP #####
     # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
@@ -1435,31 +1423,43 @@ if __name__ == '__main__':
     #         overlay='LFP', LFP_data=LFP_data, smooth=33,
     #         saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
 
+    ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
+    if trigtimes is not None:
+      firstTrigger = tt[trigtimes[0]]*1e3
+      secondTrigger = tt[trigtimes[1]]*1e3
+      print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
+      print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
+      startTime = firstTrigger-500.0
+      endTime = secondTrigger-100
+    else: 
+      startTime = 4236.0 # in ms, for gcp 
+      print('trigger times not given --> startTime: 4236, endTime: 5290')
+      endTime = 5920.0 # in ms, for gcp 
 
-    # trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    # for idx in trigtimes:
-    #   trigtimesMS.append(tt[idx]*1e3)
+    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+    for idx in trigtimes:
+      trigtimesMS.append(tt[idx]*1e3)
 
-    # print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
-    # ### LOOK AT AVG CSD ### 
-    # ## (1) Remove bad epochs 
-    # ## (a) set epoch params
-    # swindowms = 0     # start time relative to stimulus 
-    # ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+    ### LOOK AT AVG CSD ### 
+    ## (1) Remove bad epochs 
+    ## (a) set epoch params
+    swindowms = 0     # start time relative to stimulus 
+    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
     
-    # ## (b) set sigma thresh
-    # sigmathresh=4 
+    ## (b) set sigma thresh
+    sigmathresh=4 
 
-    # ## (c) 
-    # trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
+    ## (c) 
+    trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-    # ## calculate average CSD ERP ###
-    # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
+    ## calculate average CSD ERP ###
+    ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-    # plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+    plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
 
 
