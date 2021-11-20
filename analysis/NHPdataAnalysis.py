@@ -1490,7 +1490,7 @@ if __name__ == '__main__':
 
     ## Individual CSD ERP ##
     ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimesGood,swindowms, ewindowms, 5)
-    plotIndividualERP(individualERP,ttERP,trigtimesGood,saveFig=True,showFig=False):
+    plotIndividualERP(individualERP,ttERP,trigtimesGood,saveFig=True,showFig=False)
 
   ###################
 
