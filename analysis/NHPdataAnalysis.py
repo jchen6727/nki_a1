@@ -1515,7 +1515,7 @@ if __name__ == '__main__':
     ## (1) Remove bad epochs 
     ## (a) set epoch params
     swindowms = 0     # start time relative to stimulus 
-    ewindowms = 200 #50 #200   # end time of epoch relative to stimulus onset 
+    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
     
     ## (b) set sigma thresh
     sigmathresh=4 
@@ -1529,7 +1529,7 @@ if __name__ == '__main__':
     #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
     ## Individual CSD ERP ##
-    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimesGood,swindowms, ewindowms, 5)
+    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
     plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
 
   ###################

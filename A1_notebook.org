@@ -50611,3 +50611,32 @@ def getTriggerTimesNEW (fn):
 **** scp it over to local machine:
 gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_individualERP.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_individualCSD_speech/
 **** ^^ hm, okay it's a blank lol. well no it's not --> it has the timeseries on it. add code to 
+**** trying again -- edited plotIndividualERP so it's plotted same way as avgERP and also took out trigtimes as argument to plotIndividualERP
+**** scp: 
+gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_individualERP.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_individualCSD_speech/
+* <2021-11-22 Mon -- A1 figures>
+** Wavelet matching --
+*** 1 match from all frequency bands 
+*** unclear if sam wants to see from each layer ??
+*** Alpha:
+**** looks okay!
+*** Beta:
+**** have so many!
+*** Delta:
+**** looks aight
+*** Theta:
+**** looks okay
+*** Gamma: 
+**** not the same peak frequency 
+* <2021-11-23 Tue -- A1 figures>
+** Had meeting yesterday
+** Things to work on:
+*** Get spontaneous files that are associated w/ the speech files
+**** ^^ what kind of work needs to be done on those?
+*** Spectrogram / csd figures 
+**** ^^ what specifically do we want there?
+*** Wavelet matches: 
+**** Find new gamma example w/ better match on peak frequency
+**** Re-format some of the wavelets so that they're more easily visible (see sam's specific suggestions -- reformat in load.py in a1dat)
+**** ^^ For the existing matches, be able to recreate re: timing, etc. so that I can re-load and re-format! 
+*** Add S/G/I to speech! 
