@@ -742,8 +742,8 @@ def custom_spont(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500
-    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['duration'] = 1000 #11500
+    initCfg['printPopAvgRates'] = [0,1000] #[1500, 11500] 
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
