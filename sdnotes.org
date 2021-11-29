@@ -785,7 +785,8 @@ I also have the script I used to plot large numbers of the spontaneous CSDs here
 
 the way it's set up now is to do that, but I've used it for other things as well (e.g. sorting .mat files, looking at the average CSD of click files, etc. so it can do other stuff too!)
 
-in the main code block at the bottom, there are some variables that can be changed (e.g. origDataDir is path to the directory w/ the .mat and .csv layer file, 'test' is an option to either iterate over all of the .mat files in a directory or look at a specific monkey, and dbpath is the path to the .csv file that has the layer info)
+in the main code block at the bottom, there are some variables that can be changed (e.g. origDataDir is path to the directory w/ the .mat and .csv layer file, 
+'test' is an option to either iterate over all of the .mat files in a directory or look at a specific monkey, and dbpath is the path to the .csv file that has the layer info)
 
 the .csv file is used by the getflayers() function
 
