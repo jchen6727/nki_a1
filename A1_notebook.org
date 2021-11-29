@@ -50640,3 +50640,33 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 **** Re-format some of the wavelets so that they're more easily visible (see sam's specific suggestions -- reformat in load.py in a1dat)
 **** ^^ For the existing matches, be able to recreate re: timing, etc. so that I can re-load and re-format! 
 *** Add S/G/I to speech! 
+** Other ideas:
+*** Any stats on wavelet numbers that might help bolster the case re: similarity...? 
+* <2021-11-29 Mon -- A1 figures>
+** gamma wavelet match:
+*** load.py (a1dat)
+*** Configure for going thru monkey data:
+**** donetpyne = 0
+**** basedir = '/home/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/'
+**** ^^ Should this be set to something else for use on gcp instead..? Try locally first. 
+*** Configure for going thru just gamma: 
+**** oscBands = ['gamma']
+**** Editing figure
+**** [NOT YET] ^^ evv.specrange(0,30) --> changed to evv.specrange(30,80)
+**** ^^ evv.draw(... ylspec=(1,50)) --> changed to evv.draw (...ylspec=(30,80))
+*** Try a run of this on local machine:
+**** python -i load.py ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-rb045046026@os_eye06_20.mat
+*** ^^ If this takes too long, change to run on gcp:
+*** timeRange = [35,40] <-- didn't yield anything, so widening range to [10,100]
+** Keep turning up nothing (aka no wavelets at all) for beta, gamma, hgamma for a couple different timeRanges --> 
+*** Is something going wrong? Not sure.... waveletInfo.txt is still getting saved in the correct location. Still appears to be re-processing the data file correctly? hm. 
+*** Trying to see --> (1) moved timeRange to [0,50] and then (2) put evv.specrange back to (0,30) and then (3) put back full complement of frequency ranges 
+*** ^^ If I get NOTHING after all these changes, something probably going oddly. Next step will be to try a different .mat file. 
+*** ^^ okay, I did get several wavelets on this try. 
+** Keep processing this file: 2-rb045046026@os_eye06_20.mat 
+*** make relevant frequency ranges only be gamma and hgamma
+*** Make next timeRange=[51,100] <-- keep moving this up 
+*** timeRange = [101, 150] <-- missing a full juicy second in here 
+*** ^^ I added back the other wavelets, bc again with just gamma and hgamma I didn't get anything on the [51,100] run, but that could just be coincidence. 
+** Next NHP file to process for gamma wavelets: 
+*** 2-bu027028013@os_eye06_20.mat
