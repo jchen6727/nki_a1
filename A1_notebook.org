@@ -50668,5 +50668,133 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 *** Make next timeRange=[51,100] <-- keep moving this up 
 *** timeRange = [101, 150] <-- missing a full juicy second in here 
 *** ^^ I added back the other wavelets, bc again with just gamma and hgamma I didn't get anything on the [51,100] run, but that could just be coincidence. 
+*** timeRange = [150,200]
 ** Next NHP file to process for gamma wavelets: 
 *** 2-bu027028013@os_eye06_20.mat
+*** Do this in chunks of 50 seconds also for timeRange
+**** timeRange = [0,50] --> [50,100] --> [100, 150] --> [150, 200]
+**** python -i load.py ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat
+*** Plenty of gamma here!
+** Now re-create / re-format the ones from A1_v34_batch27_v34_batch27_0_0 (sim)0
+*** ['gamma', 'hgamma'] for oscBands
+*** timeRange = [0,7]
+*** donetpyne=1
+*** python -i load.py ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+** Put some gamma wavelet matches into google doc -- shared link on auditory channel; wait for feedback!
+** Reformatting delta:
+*** Start with delta:
+**** Need to find / recreate these -- 
+**** SIM:
+***** A1_v34_batch27_v34_batch27_3_4_SIM_gcp_wavelet_chan_13_delta_0
+***** ^^ Already found match:  A1_v34_batch27_v34_batch27_3_4_SIM_gcp_wavelet_chan_13_delta_889 
+***** timeRange 1505.13 - 2496.35
+**** NHP:
+***** 2-rb045046026@os_eye06_20_MACAQUE_gcp_wavelet_chan_15_delta_0.png
+***** Already found match: 2-rb045046026@os_eye06_20_MACAQUE_gcp_wavelet_chan_15_delta_1674
+***** ^^ timeRange 7544.07 - 8897.08  
+**** Reformat SIM:
+***** donetpyne = 1
+***** oscBands = ['delta'] 
+***** timeRange = [1,3]
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_3_4.pkl
+***** ^^ Running -- check figs/wavelets -- hm, no wavelets -- ah, used wrong timeRange  
+***** Running again -- still no wavelets 
+***** ^^ Changed evv.draw param ylspec to 1,10, and changed timeRange to [0,4]
+***** 1 wavelet, delta. all messed up looking. 
+***** ^^ okay --> adding all oscBands back into the mix, changing timeRange to [0,8]
+***** Running again -- worked!!!
+**** Reformat NHP: 
+***** donetpyne = 0
+***** oscBands = ['delta'] --> TRY THIS FIRST
+***** timeRange = [5,10]
+***** ylspec in evv.draw is 1,10 
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-rb045046026@os_eye06_20.mat
+***** hmm
+***** widening timeRange to [0,12]
+***** better but didn't capture the right one
+***** widening timeRange to [0,50]
+***** changing timeRange to [50,100]
+***** changing timeRange to [100,150] 
+***** ^^ did this last change bc still didn't capture the wavelet I'm looking for and that I found this morning!! argh!!! 
+***** tried a billion other things and still stubbornly NOT reproducing this specific wavelet, lol. GOD. okay --> trying df.ncycle >=3, because I noticed that it is df.ncycle > 3, and the number of cycles is 3.0 --> it's probably not this bc it's found it 2 other times, but oh well. 
+***** trying timeRange [5,12] -- tried so many things!!! ugh. 
+***** Really not going well --> okay looked back earlier today to see what I'd done --> 
+***** ^^ looks like I had full complement of oscBands (check), evv.specrange was (0,30) (check), and I put ylspec at 30,80 in evv.draw just for consistency, and timeRange was [0,50] (check). 
+***** Running --> see what happens. 
+*** Try a different delta:
+**** Should be infragranular if it's to match what I already have for the sim delta! (v34, batch 27, 3_4.pkl) --> channel 14 
+**** 1-bu031032017@os_eye06_20.mat:
+***** I see a couple that look promising!! 
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat
+***** donetpyne = 0 
+***** oscBands = ['delta'] <-- vaguely superstitious that I need more of them in order to find the wavelets I want, but it really doesn't make sense that I should? can go re-look at this code if needed. 
+***** timeRange = [0,50] didn't do much (meaning didn't re-generate that delta; ) 
+***** Trying timeRange = [50,100] --> running!! 
+***** Now changing ylspec to (1,10) --> might as well if looking for delta! 
+***** Could try expanding number of channels...? Why not use all of them? 
+***** Actually contracting channels to just infragranular for now -- only looking for delta, infragranular
+**** 2-rb031032016@os_eye06_20
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat
+***** donetpyne = 0
+***** oscBands = ['delta']
+***** timeRange = [0,50]
+***** full lchan --> s1, s2, g, i1, i2
+*** SUCCESS WITH DELTA!!! Ended up just going through bunch of other files and generating as many as possible and finding another decent (BETTER!) match. 
+** Reformatting gamma:
+*** SIM:
+**** A1_v34_batch27_v34_batch27_0_0_SIM_gcp_wavelet_chan_9_gamma_890
+**** timing info:
+***** when it's 890 --> 2852.2 - 2916.1
+***** when it's 833 --> 2351.74 - 2415.14
+***** :( weird. why does this happen sometimes but not others? 
+**** try to re-create:
+***** donetpyne = 1
+***** oscBands = ['gamma', 'hgamma'] 
+***** timeRange = [0,4]
+***** ylspec = (30,95) 
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+***** ^^ ran but oh man it looks different!!! :[ Somehow it picked up more "oscillations" than it did before so that when I re-format it, it looks like it's 6 peaks rather than 4. Try reducing the maxF and ylspec by a bit. 
+***** Trying again:
+****** maxF = 90.0
+****** ylspec = (30,90) 
+***** ^^ still looks off; trying again:
+****** maxF = 85.0
+****** ylspec = (30,85) 
+*** NHP: 
+**** 2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_chan_14_gamma_2466
+**** timing info: 31701.47 - 31764.02 
+**** try to re-create:
+***** donetpyne = 0
+***** oscBands = ['gamma', 'hgamma']
+***** timeRange = [30,35] --> try [0,50] if this is funky. 
+***** ylspec = (30,90)
+***** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 
+***** ^^ RAN, but some observations:
+****** (1) the spectrogram was blank btwn the 80-90 Hz range
+****** (2) Noticed that the timing info is WAY off for the new version of the wavelet that it found; that explains why I couldn't re-find the other delta from before probably. what IS absminT then? if not the actual time stamp???
+***** CHANGES:
+****** ^^ (1) Seeing if evv.specrange = (30,90) will fix the spectrogram panel situation
+****** ^^ (2) Seeing if timeRange = [0, 35] helps 'reset' the timing info? 
+****** (1) <-- didn't work at all!!
+****** (2) <-- this did work! 
+***** Trying freqmax = 90.0 (from 80.0) to fix issue (2) above 
+****** ^^ looked at def of draw and drbox -- trying this now 
+***** Running again --> 
+****** evv.specrange = (0,30) 
+****** evv.draw (...ylspec=(30,90))
+****** freqmax = 90.0
+****** timeRange = [0,35]
+****** donetpyne = 0
+****** oscBands = ['gamma', 'hgamma'] 
+****** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 
+***** Ran! but now it's saying the max frequency for that event is 90.75 not 80.75 --> trying again:
+****** The change to maxF did increase the ymax on the spectrogram panel!!
+****** Also gave me a slightly diff result though, i.e. what I said above. 
+***** Running again with some changes to address the above: 
+****** maxF = 95.0
+****** timeRange = [30,35]
+****** lchan = [i1, i2] 
+****** ^^ for sake of efficiency 
+***** ^ Ran! but forgot to change ylspec to be (30,95)
+****** running again!
+***** DID IT 
