@@ -27,6 +27,7 @@ import matplotlib                         # for plotCSD()
 from matplotlib import pyplot as plt      # for plotCSD() 
 # trying to get sort()
 from pylab import *
+from netpyne import sim
 
 ## PRE-PROCESSING FUNCTIONS ## 
 ### Originally in rdmat.py ### 
@@ -370,7 +371,7 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
     print('No data being overlaid')
     axs[0].set_title('NHP Current Source Density (CSD)', fontsize=fontSize)
 
-  elif overlay is 'CSD' or overlay is 'LFP':
+  elif overlay == 'CSD' or overlay == 'LFP':
     nrow = dat.shape[0] # number of channels
     gs_inner = matplotlib.gridspec.GridSpecFromSubplotSpec(nrow, 1, subplot_spec=gs_outer[0:2], wspace=0.0, hspace=0.0) 
     subaxs = []
@@ -826,8 +827,11 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, triglines=False, electrodes=['
     ## saveFolder --> string -- path to directory where figs should be saved
     ## plotByLayer -- break the graphs up by supra/infra/gran or plot all on the same graph 
 
-  from testScalebar import add_scalebar
-  from testBokeh import colorList 
+  try:
+      from netpyne.plotting.plotter import add_scalebar, colorList
+  except:
+      from netpyne.analysis.utils import colorList
+      from netpyne.support.scalebar import add_scalebar
   from numbers import Number
 
 
@@ -1022,7 +1026,7 @@ def plotLFP(dat,tt,timeRange=None,trigtimes=None, triglines=False, electrodes=['
 
     # Morlet wavelet transform method
     if transformMethod == 'morlet':       # transformMethod is 'morlet' by default
-      from testMorlet import MorletSpec, index2ms
+      from netpyne.support.morlet import MorletSpec, index2ms
 
       spec = []
       freqList = None
@@ -1316,11 +1320,11 @@ def moveDataFiles(pathToData,option):  ## deletes or moves irrelevant .mat files
 
   for left in leftoverFiles:
     fullLeft = pathToData + left             # full path to leftover .mat file 
-    if option is None or option is 'delete':  # DEFAULT IS TO DELETE THE OTHER UNSORTED FILES
+    if option is None or option == 'delete':  # DEFAULT IS TO DELETE THE OTHER UNSORTED FILES
       if os.path.isfile(fullLeft):
         print('Deleting ' + left)             # INSTEAD OF DELETING SHOULD I JUST MOVE THE FILE? 
         os.remove(fullLeft)
-    elif option is 'move': # MOVE TO 'other' DIRECTORY
+    elif option == 'move': # MOVE TO 'other' DIRECTORY
       otherDir = pathToData + 'other/'
       otherFilePath = otherDir + left
       if os.path.isdir(otherDir):
@@ -1419,7 +1423,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing .mat files
-  origDataDir = '../data/NHPdata/spont'   # LOCAL DIR 
+  origDataDir = '../data/NHPdata/spont/'   # LOCAL DIR 
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1443,11 +1447,15 @@ if __name__ == '__main__':
       if '.mat' in file:
         dataFiles.append(file)
 
+  # setup netpyne
+  samprate = 11*1e3  # in Hz
+  sim.initialize()
+  sim.cfg.recordStep = 1000./samprate # in ms
 
   for dataFile in dataFiles: 
-    fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
+    fullPath = origDataDir + dataFile # + recordingArea + dataFile      # Path to data file 
 
-    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=samprate, spacing_um=100)
             # sampr is the sampling rate after downsampling 
             # tt is time array (in seconds)
             # trigtimes is array of stim trigger indices
@@ -1474,8 +1482,22 @@ if __name__ == '__main__':
 
 
     ##### LFP #####
-    # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
-
+    dur = int(LFP_data.shape[1]/(samprate/1000.))  # ms
+    step = 10000
+    tranges = [[t, t+step] for t in range(0, dur-step, step)]
+    for timeRange in tranges:
+        #plotLFP(dat=LFP_data, tt=tt, timeRange=[7500,8500], plots=['spectrogram'], electrodes=[2,8,13,18], maxFreq=80, saveFig=True, fn=fullPath, dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+        out = sim.analysis.plotLFP(**{
+                'inputLFP': LFP_data.T,
+                'plots': ['PSD'], 
+                'electrodes': ['avg', list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))], 
+                'timeRange': timeRange, 
+                'maxFreq': 50, 
+                'figSize': (8,24), 
+                'saveData': False, 
+                'saveFig': '../data/NHPdata/spont/spont_LFP_PSD/%s_lfp_psd_%d_%d.png' % (dataFile[:-4], timeRange[0], timeRange[1]),
+                'showFig': False})
+        
 
     ##### CSD #####
 
@@ -1494,22 +1516,22 @@ if __name__ == '__main__':
     stim = False
     if stim:
         if trigtimes is not None:
-        firstTrigger = tt[trigtimes[0]]*1e3
-        secondTrigger = tt[trigtimes[1]]*1e3
-        print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
-        print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-        startTime = firstTrigger-500.0
-        endTime = secondTrigger-100
+            firstTrigger = tt[trigtimes[0]]*1e3
+            secondTrigger = tt[trigtimes[1]]*1e3
+            print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
+            print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
+            startTime = firstTrigger-500.0
+            endTime = secondTrigger-100
         else: 
-        startTime = 4236.0 # in ms, for gcp 
-        print('trigger times not given --> startTime: 4236, endTime: 5290')
-        endTime = 5920.0 # in ms, for gcp 
+            startTime = 4236.0 # in ms, for gcp 
+            print('trigger times not given --> startTime: 4236, endTime: 5290')
+            endTime = 5920.0 # in ms, for gcp 
 
-        trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-        for idx in trigtimes:
-        trigtimesMS.append(tt[idx]*1e3)
+            trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+            for idx in trigtimes:
+                trigtimesMS.append(tt[idx]*1e3)
 
-        print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+            print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
