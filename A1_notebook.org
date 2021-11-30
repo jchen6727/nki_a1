@@ -50798,3 +50798,12 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 ***** ^ Ran! but forgot to change ylspec to be (30,95)
 ****** running again!
 ***** DID IT 
+*** NEED TO FIND BETTER GAMMA MATCH 
+**** INFRAGRANULAR --> 2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_chan_14_gamma_2466 
+* <2021-11-30 Tue -- wavelet matches>
+** Is there a way to save a pandas dataframe to a file that I can load so I can stop re-generating these every time I want to plot some? 
+*** df.to_csv('fileName.csv') -- https://towardsdatascience.com/how-to-export-pandas-dataframe-to-csv-2038e43d9c03
+*** Reading it from csv (.read_csv) -- https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+*** Add line(s) to load.py 
+*** ^^ okay the lines I added did generate .csv files that appear to have all the info as dfs!! 
+
