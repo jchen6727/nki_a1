@@ -50803,7 +50803,9 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 * <2021-11-30 Tue -- wavelet matches>
 ** Is there a way to save a pandas dataframe to a file that I can load so I can stop re-generating these every time I want to plot some? 
 *** df.to_csv('fileName.csv') -- https://towardsdatascience.com/how-to-export-pandas-dataframe-to-csv-2038e43d9c03
-*** Reading it from csv (.read_csv) -- https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
 *** Add line(s) to load.py 
 *** ^^ okay the lines I added did generate .csv files that appear to have all the info as dfs!! 
-
+** Okay now try to load and plot using the .csv files:
+*** Reading pandas dataframe from csv (.read_csv) -- https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
+** Trying load.py again to see if dlms and df save properly so I can use evv! 
+*** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
