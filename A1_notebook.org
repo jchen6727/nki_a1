@@ -50809,3 +50809,12 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 *** Reading pandas dataframe from csv (.read_csv) -- https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
 ** Trying load.py again to see if dlms and df save properly so I can use evv! 
 *** python -i load.py /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+** Have all of the data loaded but having an issue with how df is being saved:
+*** error in evv.draw() because of --> fsig = np.array(dframe.at[evidx,'filtsig'])
+*** This is basically np.array(df.at[0, 'filtsig']) <-- seems that df.at[0, 'filtsig'] is a string with '...' saved and \n (new line characters) etc. 
+*** ^^ >>> df.at[0, 's filtsig']
+'[-0.07524796 -0.07530071 -0.07535343 ... -0.00104424 -0.00104292\n
+-0.00104161]'
+*** How to fix this? hm. look at how it's being saved. 
+*** Try to_pickle instead (https://www.kite.com/python/answers/how-to-save-a-pandas-dataframe-in-python)
+*** Try running load.py again to generate dfs and df .pkl files (vs. csv) 
