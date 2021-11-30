@@ -50818,3 +50818,102 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 *** How to fix this? hm. look at how it's being saved. 
 *** Try to_pickle instead (https://www.kite.com/python/answers/how-to-save-a-pandas-dataframe-in-python)
 *** Try running load.py again to generate dfs and df .pkl files (vs. csv) 
+** OKAY! now it appears that plotWavelets.py will work and that I can actually import / use the data appropriately!! 
+** I moved all of the wavelets into directories called oldWavelets (subdir of the figs/wavelets/____/ directories) -- going to now do full-length for each at load.py maxFrequency of 120. 
+** Run for all of these!! Should I do this on gcp? --> would be faster
+** GCP:
+*** vm instances -> g9-n2-pre-controller (gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444")
+*** git pull origin erica --> for a1dat
+*** git pull origin repro --> for A1
+*** cleaned up A1/data and added data/figs/wavelets 
+*** Need to transfer files over gcp 
+*** Took these lines out of load.py (among many others)
+        ### IF WANT TO DRAW A SINGLE EVENT, UNCOMMENT THE LINES BELOW:
+        # clf()
+        # idx=0 #0
+        # evv = eventviewer(df,dat,None,tt,sampr,winsz,dlms) # event viewer to examine the output
+        # evv.specrange = (0,30)
+        # evv.draw(dfs.index[idx],clr='red',drawfilt=True,filtclr='b',ylspec=(1,50)) 
+        # # ADD SAVE FIG LINE
+        # if donetpyne:
+        #   figname = fn.split('/')[-1][:-4] + '_SIM_gcp_wavelet_' + oscBand #+ '_t' + str(timeRange[0])
+        # else:
+        #   figname = fn.split('/')[-1][:-4] + '_MACAQUE_gcp_wavelet_' + oscBand #+ '_t' + str(timeRange[0])
+        # savefig(figname + '.png') 
+** [DONE] Transfer over sim data files and .csv layer file to GCP:
+*** on local machine --> cd ~/Desktop/NEUROSIM/A1/data/simDataFiles/
+*** [DONE] DATA FILES: gcloud compute scp --recurse spont/A1_v34_batch27_*.pkl ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+*** [DONE] CSV: gcloud compute scp spont/*.csv ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/
+** Transfer over NHP data files and .csv layer file to GCP:
+*** on local machine --> cd ~/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/
+*** DATA FILES: 
+gcloud compute scp --recurse A1/*.mat ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
+*** OR TRANSFER INDIVIDUAL DATA FILES: 
+**** gcloud compute scp A1/2-bu027028013@os_eye06_20.mat ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
+**** [DONE] 2-bu027028013@os_eye06_20.mat* (1-19) 
+**** [DONE] 2-gt044045014@os_eye06_30.mat* (2-21) 
+**** [DONE] 2-ma031032023@os_eye06_20.mat (1-21) 
+**** [DONE] 2-rb031032016@os_eye06_20.mat (1-21) 
+**** [DONE] 2-rb045046026@os_eye06_20.mat (1-21) 
+**** 1-bu005006019@os_eye06_20.mat* (1-15) 
+*** [DONE] CSV: gcloud compute scp A1/*.csv ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/
+** okay while the rest of the .mat files transfer over --> run load.py on the netpyne files. 
+** Load.py on the netpyne files (total): 
+*** Do this for the FULL time range, for ALL files
+*** donetpyne = 1, machineType = 'gcp'
+*** on gcp --> navigate to ~/a1dat
+*** python3 -i load.py ~/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+*** no module named hdf5storage --> sudo pip3 install hdf5storage [FIXED] 
+*** ^^ now running! 
+*** Exited with memory error below:
+  File "load.py", line 2624, in <module>
+    savefig(subPathToSave + figname + '.png')
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/pyplot.py", line 859, in savefig
+    res = fig.savefig(*args, **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/figure.py", line 2311, in savefig
+    self.canvas.print_figure(fname, **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/backend_bases.py", line 2217, in print_figure
+    **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/backend_bases.py", line 1639, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/backends/backend_agg.py", line 509, in print_png
+    FigureCanvasAgg.draw(self)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/backends/backend_agg.py", line 407, in draw
+    self.figure.draw(self.renderer)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/artist.py", line 41, in draw_wrapper
+    return draw(artist, renderer, *args, **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/figure.py", line 1864, in draw
+    renderer, self, artists, self.suppressComposite)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/image.py", line 131, in _draw_list_compositing_images
+    a.draw(renderer)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/artist.py", line 41, in draw_wrapper
+    return draw(artist, renderer, *args, **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/cbook/deprecation.py", line 411, in wrapper
+    return func(*inner_args, **inner_kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/axes/_base.py", line 2747, in draw
+    mimage._draw_list_compositing_images(renderer, self, artists)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/image.py", line 131, in _draw_list_compositing_images
+    a.draw(renderer)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/artist.py", line 41, in draw_wrapper
+    return draw(artist, renderer, *args, **kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/image.py", line 642, in draw
+    renderer, renderer.get_image_magnification())
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/image.py", line 927, in make_image
+    magnification, unsampled=unsampled)
+  File "/usr/local/lib64/python3.6/site-packages/matplotlib/image.py", line 439, in _make_image
+    A_scaled = np.array(A, dtype=scaled_dtype)
+MemoryError: Unable to allocate 368. MiB for an array with shape (483, 100000) and data type float64
+
+** Trying load.py again w/ the changes to wavelet drawing:
+*** Trying to see if only drawing them locally will resolve the memory error...? 
+*** It might not, because it seems the problem comes with the 'savefig' situation, but let's see. --> although, this is now in the if machineType is 'local' block, so perhaps! 
+*** --> okay, it ran!!
+** Transfer over 0_0 sim file(s) to local machine:
+*** on local machine: 
+*** gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/
+** TO RUN ON GCP: 
+*** SIM:
+**** (1) [on gcp] cd ~/a1dat
+**** (2) [on gcp] python3 -i load.py ~/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+**** (3) scp results to local machine (run this command locally) -->  
+gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/
