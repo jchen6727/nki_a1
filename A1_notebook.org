@@ -50911,9 +50911,86 @@ MemoryError: Unable to allocate 368. MiB for an array with shape (483, 100000) a
 ** Transfer over 0_0 sim file(s) to local machine:
 *** on local machine: 
 *** gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/
-** TO RUN ON GCP: 
+** TO GET WAVELETS ON GCP: 
+*** Run on the full-length data (at least sim, so far)!! 
 *** SIM:
 **** (1) [on gcp] cd ~/a1dat
 **** (2) [on gcp] python3 -i load.py ~/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
 **** (3) scp results to local machine (run this command locally) -->  
 gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/
+**** 0_0 --> running; ran; transferring; transferred 
+***** --> couple of the waveletInfo.txt files have doubles because of when I needed to re-run without the drawing lines !! 
+**** 0_1 --> running; ran; transferring; transferred
+**** 0_2 --> running; ran; transferring; transferred
+**** 0_3 --> running; ran; transferring; transferred
+**** 0_4 --> running; ran; transferring; transferred
+**** 1_0 --> running; ran; transferring; transferred
+**** 1_1 --> running; ran; transferring; transferred; 
+**** 1_2 --> running; ran; transferring; transferred
+**** 1_3 --> running; ran; 
+**** 1_4 --> running; ran;
+**** 2_0 --> running; ran;
+**** 2_1 --> running; ran;
+**** 2_2 --> running; ran;
+**** 2_3 --> running; ran;
+**** 2_4 --> running; ran;
+**** 3_0 --> running; ran;
+**** 3_1 --> running; ran;
+**** 3_2 --> running; ran;
+**** 3_3 --> running; ran;
+**** 3_4 --> running; ran;
+**** 4_0 --> running; ran;
+**** 4_1 --> running; ABORTED no space left on device 
+**** 4_1 --> runnin again; 
+**** 4_2 --> 
+**** 4_3 --> 
+**** 4_4 --> 
+* <2021-12-01 Wed -- wavelets>
+** See above; continue filling in here: 
+** TO GET WAVELETS ON GCP: 
+*** SIM:
+**** (1) [on gcp] cd ~/a1dat
+**** (2) [on gcp] python3 -i load.py ~/A1/data/simDataFiles/spont/A1_v34_batch27_v34_batch27_0_0.pkl
+**** (3) scp results to local machine (run this command locally) -->  
+gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/
+**** 0_0 --> running; ran; transferring; transferred 
+***** --> couple of the waveletInfo.txt files have doubles because of when I needed to re-run without the drawing lines !! 
+**** 0_1 --> running; ran; transferring; transferred
+**** 0_2 --> running; ran; transferring; transferred
+**** 0_3 --> running; ran; transferring; transferred
+**** 0_4 --> running; ran; transferring; transferred
+**** 1_0 --> running; ran; transferring; transferred
+**** 1_1 --> running; ran; transferring; transferred; 
+**** 1_2 --> running; ran; transferring; transferred 
+**** 1_3 --> running; ran; zipped; transferring; 
+**** 1_4 --> running; ran; 
+**** 2_0 --> running; ran;
+**** 2_1 --> running; ran;
+**** 2_2 --> running; ran;
+**** 2_3 --> running; ran;
+**** 2_4 --> running; ran;
+**** 3_0 --> running; ran;
+**** 3_1 --> running; ran;
+**** 3_2 --> running; ran;
+**** 3_3 --> running; ran;
+**** 3_4 --> running; ran;
+**** 4_0 --> running; ran;
+**** 4_1 --> running; ABORTED no space left on device 
+**** 4_1 --> running again; 
+**** 4_2 --> 
+**** 4_3 --> 
+**** 4_4 -->
+
+** Really have to zip these files to transfer them faster --> 
+*** zip / unzip
+*** To ZIP --> on command line --> zip -r example_folder.zip example_folder
+*** To UNZIP --> on command line --> unzip example_folder.zip 
+*** Even zipping these god damn dlms.pkl files is taking forever!!!!! 
+*** no room left on device for zipping --> 
+*** transfer these to gsutil then delete? or nah... I have them so... 
+*** I deleted 0_0 let's see if it will work now? 
+*** ^^ Trying again --> in ~/A1/figs/wavelets/ on gcp (g9-n2-pre-controller) --> zip -r A1_v34_batch27_v34_batch27_1_3.zip A1_v34_batch27_v34_batch27_1_3
+*** 
+
+** plotWavelets.py to plot all the .pkl files in all the channel subdirectories:
+*** 
