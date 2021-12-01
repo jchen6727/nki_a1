@@ -50804,7 +50804,7 @@ gcloud compute scp ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_e
 ** Is there a way to save a pandas dataframe to a file that I can load so I can stop re-generating these every time I want to plot some? 
 *** df.to_csv('fileName.csv') -- https://towardsdatascience.com/how-to-export-pandas-dataframe-to-csv-2038e43d9c03
 *** Add line(s) to load.py 
-*** ^^ okay the lines I added did generate .csv files that appear to have all the info as dfs!! 
+*** ^^ okay the lines I added did generate .csv files that appear to have all the info as dfs!!
 ** Okay now try to load and plot using the .csv files:
 *** Reading pandas dataframe from csv (.read_csv) -- https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html
 ** Trying load.py again to see if dlms and df save properly so I can use evv! 
@@ -50955,33 +50955,32 @@ gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/
 gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/
 **** 0_0 --> running; ran; transferring; transferred 
 ***** --> couple of the waveletInfo.txt files have doubles because of when I needed to re-run without the drawing lines !! 
-**** 0_1 --> running; ran; transferring; transferred
-**** 0_2 --> running; ran; transferring; transferred
-**** 0_3 --> running; ran; transferring; transferred
-**** 0_4 --> running; ran; transferring; transferred
-**** 1_0 --> running; ran; transferring; transferred
-**** 1_1 --> running; ran; transferring; transferred; 
-**** 1_2 --> running; ran; transferring; transferred 
-**** 1_3 --> running; ran; zipped; transferring; 
-**** 1_4 --> running; ran; 
-**** 2_0 --> running; ran;
-**** 2_1 --> running; ran;
-**** 2_2 --> running; ran;
-**** 2_3 --> running; ran;
-**** 2_4 --> running; ran;
-**** 3_0 --> running; ran;
-**** 3_1 --> running; ran;
-**** 3_2 --> running; ran;
-**** 3_3 --> running; ran;
-**** 3_4 --> running; ran;
-**** 4_0 --> running; ran;
-**** 4_1 --> running; ABORTED no space left on device 
-**** 4_1 --> running again; 
-**** 4_2 --> 
-**** 4_3 --> 
-**** 4_4 -->
+**** 0_1 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp) 
+**** 0_2 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp) 
+**** 0_3 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp) 
+**** 0_4 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp) 
+**** 1_0 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp)
+**** 1_1 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp)
+**** 1_2 --> running; ran; transferring; transferred; in bucket (dlms deleted from gcp)
+**** 1_3 --> running; ran; zipped; transferring; transferred; NOT unzipped 
+**** 1_4 --> running; ran; NOT transferred; in bucket (dlms deleted from gcp)
+**** 2_0 --> running; ran; NOT transferred; in bucket (dlms deleted from gcp)
+**** 2_1 --> running; ran; NOT transferred; in bucket (dlms deleted from gcp)
+**** 2_2 --> running; ran; NOT transferred; in bucket (dlms deleted from gcp)
+**** 2_3 --> running; ran; NOT transferred; in bucket (dlms deleted from gcp)
+**** 2_4 --> running; ran; NOT transferred; in bucket (dlms deleted from gcp)
+**** 3_0 --> running; ran; NOT transferred; in bucket
+**** 3_1 --> running; ran; NOT transferred; in bucket
+**** 3_2 --> running; ran; NOT transferred; in bucket
+**** 3_3 --> running; ran; NOT transferred; in bucket 
+**** 3_4 --> running; ran; NOT transferred; in bucket
+**** 4_0 --> running; ran; NOT transferred; in bucket
+**** 4_1 --> running; ran; NOT transferred; in bucket
+**** 4_2 --> running; ran; NOT transferred; in bucket
+**** 4_3 --> running; ran; NOT transferred; in bucket 
+**** 4_4 --> running; ran; NOT transferred; in bucket
 
-** Really have to zip these files to transfer them faster --> 
+** Really have to zip these files to transfer them faster --> NOPE; still takes too long  
 *** zip / unzip
 *** To ZIP --> on command line --> zip -r example_folder.zip example_folder
 *** To UNZIP --> on command line --> unzip example_folder.zip 
@@ -50990,7 +50989,87 @@ gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/
 *** transfer these to gsutil then delete? or nah... I have them so... 
 *** I deleted 0_0 let's see if it will work now? 
 *** ^^ Trying again --> in ~/A1/figs/wavelets/ on gcp (g9-n2-pre-controller) --> zip -r A1_v34_batch27_v34_batch27_1_3.zip A1_v34_batch27_v34_batch27_1_3
-*** 
 
-** plotWavelets.py to plot all the .pkl files in all the channel subdirectories:
-*** 
+** Put some of these dlms.pkl (and other) files in gcp bucket and then delete from machine:
+*** gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+*** bucket_path --> eyg_data/wavelets/
+*** gsutil -m cp -r ~/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_1/ gs://eyg_data/wavelets/
+*** ^^ let's see how long this takes :(  maybe not too long??? NOT LONG!!
+*** gsutil -m cp -r ~/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_2/ gs://eyg_data/wavelets/
+*** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_0_0/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_0/A1_v34_batch27_v34_batch27_0_0_dlms.pkl
+*** see above for updates on the rest. 
+** plotWavelets.py to plot all the .pkl files in all the channel subdirectories
+**** NOTE: LEAVING OUT HGAMMA AFTER 0_0 and 0_1
+**** 0_0 --> done 
+**** 0_1 --> done
+**** 0_2 --> done
+**** 0_3 --> done
+**** 0_4 --> done
+**** 1_0 --> done
+**** 1_1 --> done 
+**** 1_2 --> done
+**** 1_3 --> plotWavelets completed on GCP; (4) dlms deleted from cluster;  NEED TO TRANSFER LOCALLY 
+**** 1_4 --> (1) dlms transferred from bucket to cluster; (2) plotWavelets.py running pt1; (3) plotWavelets.py running pt2; (4) dlms deleted from cluster; 
+**** 2_0 --> (1) dlms taking a LOT longer to transfer than the other two I just tried!!! I wonder why -- maybe someone else using this vm instance for something right now? hm! dlms transfer complete. (2) plotWavelets.py running pt1; (3) plotWavelets.py running pt2; (4) dlms deleted from cluster
+**** 2_1 --> (1) dlms transferred from bucket to cluster; (2) plotWavelets.py running pt1; (3) plotWavelets.py running pt2; (4) dlms deleted from cluster; 
+**** 2_2 --> (1) dlms transferred from bucket to cluster; (2) plotWavelets.py running pt1; (3) 
+**** 2_3 --> 
+**** 2_4 --> 
+**** 3_0 -->
+**** 3_1 --> 
+**** 3_2 -->
+**** 3_3 --> 
+**** 3_4 --> 
+**** 4_0 --> 
+**** 4_1 --> 
+**** 4_2 --> 
+**** 4_3 --> 
+**** 4_4 -->
+**** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch27_v34_batch27_2_2_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_2
+**** STEPS:
+***** (1) dlms transferred from bucket to cluster
+***** (2) plotWavelets.py running pt1
+***** (3) plotWavelets.py running pt2
+***** (4) dlms deleted from cluster
+***** (5) figs transferred locally --> 
+****** What does this look like okay
+****** gcloud compute scp --recurse 
+
+** More plotting strategies:
+*** Instead of plotting all of them, focus instead on the subset I have in here, maybe I can re-find the one I was trying to find before! 
+*** No --> see below. 
+** Let me regroup here --> ideally, what's left to do:
+*** Make all wavelet figs:
+**** SIM:
+***** okay so what I have been doing is running (1) load.py on gcp, without drawing, just saving the data. Then (2) I transfer the saved data over to my local machine, and run plotWavelets.py in order to generate all the sim figures. (3) I also transfer the saved data over to gcp bucket subdirs (gs://eyg_data/wavelets). I have deleted some of the dlms.pkl files on gcp to avoid them taking up space there. 
+***** So in terms of (i) storage of saved data + figures, (ii) generating figures -- where am I at?
+***** I've generated all the saved data for 0_0 to 4_4, and these are all in gcp bucket. 
+***** ^^ I need to finish making figures for 1_3 to 4_4. 
+***** I need to decide where to keep the dlms.pkl files that will cause me the least headache, in terms of generating the figures, and reformatting them. 
+***** Problems with dlms storage:
+****** they fit fine on gcp bucket, but obviously can't use them there. 
+****** I can't seem to put all of them in gcp, bc they're too large
+****** zipping them takes forever.
+****** I can't keep them all locally, bc they're too large. 
+****** so then --> easiest to store on gcp bucket, but easiest to use locally (or suppose probably on gcp too? maybe not?) --> *TEST MAKING THE FIGURES ON GCP* --> TEST TRANSFERRING THE dlms.pkl FILE FROM BUCKET TO CLUSTER 
+***** TESTING THE TWO THINGS MENTIONED ABOVE for dlms.pkl file:
+****** (1) test transferring dlms.pkl file from bucket to cluster:
+******* on gcp --> cd /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_0_2
+******* gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_1_4/A1_v34_batch27_v34_batch27_1_4_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4
+******* looks like it's working, and it's not going to take THAT long!! (~2 minutes or so)!
+****** (2) Test making the figures on gcp 
+******* [DONE] delete dlms.pkl file for 0_2 
+******* [Was already there!] <-- transfer over dlms.pkl for 1_3
+******* [DONE] edit plotWavelets.py for use on 1_3 on gcp 
+******* [DONE] add, commit, push, pull, etc. 
+******* RUNNING <-- try plotWavelets.py on gcp --> okay Killed on channel 16 
+******* Trying again --> range(16,20) --> this worked great!!!
+**** NHP
+***** Take out hgamma and lower the maxFreq in load.py --> or keep the same maxfreq but take out hgamma when doing the NHP data?
+*** Have all saved data and wavelet figs in a central location 
+*** Practice reformatting 
+*** Make final matches
+*** Format the final matches
+*** Share!!! 
+
+
