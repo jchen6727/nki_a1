@@ -51008,39 +51008,126 @@ gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/
 **** 1_0 --> done
 **** 1_1 --> done 
 **** 1_2 --> done
-**** 1_3 --> plotWavelets completed on GCP; (4) dlms deleted from cluster;  NEED TO TRANSFER LOCALLY 
-**** 1_4 --> (1) dlms transferred from bucket to cluster; (2) plotWavelets.py running pt1; (3) plotWavelets.py running pt2; (4) dlms deleted from cluster; 
-**** 2_0 --> (1) dlms taking a LOT longer to transfer than the other two I just tried!!! I wonder why -- maybe someone else using this vm instance for something right now? hm! dlms transfer complete. (2) plotWavelets.py running pt1; (3) plotWavelets.py running pt2; (4) dlms deleted from cluster
-**** 2_1 --> (1) dlms transferred from bucket to cluster; (2) plotWavelets.py running pt1; (3) plotWavelets.py running pt2; (4) dlms deleted from cluster; 
-**** 2_2 --> (1) dlms transferred from bucket to cluster; (2) plotWavelets.py running pt1; (3) 
-**** 2_3 --> 
-**** 2_4 --> 
-**** 3_0 -->
-**** 3_1 --> 
-**** 3_2 -->
-**** 3_3 --> 
-**** 3_4 --> 
-**** 4_0 --> 
-**** 4_1 --> 
-**** 4_2 --> 
-**** 4_3 --> 
-**** 4_4 -->
-**** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch27_v34_batch27_2_2_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_2
+**** 1_3 --> done
+(1) dlms already present
+(2) & (3) plotWavelets completed on GCP
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 1_4 --> done 
+(1) dlms transferred from bucket to cluster
+(2) plotWavelets.py running pt1
+(3) plotWavelets.py running pt2
+(4) dlms deleted from cluster 
+(5) files transferred locally
+**** 2_0 --> done 
+(1) dlms taking a LOT longer to transfer than the other two I just
+tried!!! I wonder why -- maybe someone else using this vm instance for
+something right now? hm! dlms transfer complete. 
+(2) plotWavelets.py running pt1
+(3) plotWavelets.py running pt2
+(4) dlms deleted from cluster
+(5) files transferred locally
+**** 2_1 --> done 
+(1) dlms transferred from bucket to cluster
+(2) plotWavelets.py running pt1
+(3) plotWavelets.py running pt2
+(4) dlms deleted from cluster
+(5) files transferred locally
+**** 2_2 --> done 
+(1) dlms transferred from bucket to cluster
+(2) plotWavelets.py running pt1
+(3) plotWavelets.py running pt2
+(4) dlms deleted from cluster
+(5) files transferred locally
+**** 2_3 --> done
+(1) dlms transferred from bucket to cluster 
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2 
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 2_4 --> done
+(1) dlms transferring from bucket to cluster 
+(2) plotWavelets.py running pt 1 
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 3_0 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 3_1 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 3_2 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally
+**** 3_3 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 3_4 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1 
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 4_0 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) figs transferred locally
+**** 4_1 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
+**** 4_2 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally
+**** 4_3 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1 
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster 
+(5) figs transferred locally
+**** 4_4 --> done
+(1) dlms already there
+(2) plotWavelets.py running pt 1
+(3) plotWavelets.py running pt 2
+(4) dlms deleted from cluster
+(5) files transferred locally 
 **** STEPS:
 ***** (1) dlms transferred from bucket to cluster
+****** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_4/A1_v34_batch27_v34_batch27_2_4_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4
 ***** (2) plotWavelets.py running pt1
 ***** (3) plotWavelets.py running pt2
-***** (4) dlms deleted from cluster
-***** (5) figs transferred locally --> 
-****** What does this look like okay
-****** gcloud compute scp --recurse 
+***** (4) dlms deleted from cluster 
+***** (5) figs transferred locally 
+****** on local machine --> 
+****** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+
 
 ** More plotting strategies:
 *** Instead of plotting all of them, focus instead on the subset I have in here, maybe I can re-find the one I was trying to find before! 
 *** No --> see below. 
 ** Let me regroup here --> ideally, what's left to do:
 *** Make all wavelet figs:
-**** SIM:
+**** [DONE] SIM:
 ***** okay so what I have been doing is running (1) load.py on gcp, without drawing, just saving the data. Then (2) I transfer the saved data over to my local machine, and run plotWavelets.py in order to generate all the sim figures. (3) I also transfer the saved data over to gcp bucket subdirs (gs://eyg_data/wavelets). I have deleted some of the dlms.pkl files on gcp to avoid them taking up space there. 
 ***** So in terms of (i) storage of saved data + figures, (ii) generating figures -- where am I at?
 ***** I've generated all the saved data for 0_0 to 4_4, and these are all in gcp bucket. 
@@ -51066,10 +51153,80 @@ gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/
 ******* Trying again --> range(16,20) --> this worked great!!!
 **** NHP
 ***** Take out hgamma and lower the maxFreq in load.py --> or keep the same maxfreq but take out hgamma when doing the NHP data?
+***** okay so I transferred the files over to gcp (the .mat files and the .csv file, that is)
+***** I have to edit load.py to do gcp on a .mat file
+****** donetpyne = 0
+****** leave timeRange as None? Or will that make things just way too large? --> Try it in halves first 
+****** ^^ timeRange = [0, 100] 
+****** machineType = 'gcp'
+****** Putting freqmax = 110 (vs. 120 for sim -- too many hgamma that don't end up getting used) 
+****** taking 'hgamma' out of oscBands since didn't get used for sim. 
+***** 2-bu027028013@os_eye06_20.mat  
+****** RECALL this is for timeRange = [0, 100] --> if this runs without getting killed, then do timeRange = [100,200] next and name the directories accordingly!! --> come up w/ strategy for this. 
+****** ^^ KILLED --> try timeRange = [0,50]
+****** Trying again. 
+****** python3 -i load.py ~/A1/data/NHPdata/2-bu027028013@os_eye06_20.mat 
+****** MEMORY ERROR:
+Saving figures in: /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013@os_eye06_20/
+Traceback (most recent call last):
+  File "load.py", line 2553, in <module>
+    pickle.dump(dlms,f)
+MemoryError
+
+****** 
+
 *** Have all saved data and wavelet figs in a central location 
 *** Practice reformatting 
 *** Make final matches
 *** Format the final matches
 *** Share!!! 
 
+** REFORMAT GAMMA:
+*** okay found a new match for gamma! 
+*** SIM: A1_v34_batch27_v34_batch27_4_4_SIM_wavelet_chan_12_gamma_2946
+*** NHP: 2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_chan_14_gamma_2466 
+*** Reformat them so their y-axes are more similar
+*** [DONE] Transfer 4_4_dlms.pkl over to local machine 
+**** --> installed/ compiled crcmod so hopefully it will be faster?
+**** (1) Try downloading directly from bucket --> DIDN'T SEEM FASTER? 
+***** Doesn't appear right away to have sped things up for downloading from bucket 
+**** (2) Try gsutil:
+***** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_4_4/A1_v34_batch27_v34_batch27_4_4_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/
+***** okay maybe a little faster? Saying it'll take ~20 min to download. hm. 
+**** (3) Try gcloud compute scp w/ bucket --> DID NOT WORK
+***** gcloud compute scp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_4_4/A1_v34_batch27_v34_batch27_4_4_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/
+**** (4) Try gcloud compute scp w/ gcp directory 
+***** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/A1_v34_batch27_v34_batch27_4_4_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/
+***** ^^ oh, but, would have to transfer dlms.pkl back to 4_4 directory on gcp; so try the other one first! 
+*** oh duh --> another thing is that I could just transfer the 4_4_dlms.pkl file from the bucket back to the gcp directory, and then run plotWavelets.py from there. would be faster !!! 
+*** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_4/A1_v34_batch27_v34_batch27_3_4_dlms.pkl ~/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4
 
+** REFORMAT DELTA:
+*** Transfer 3_4_dlms.pkl from bucket to gcp
+*** Made changes to plotWavelets.py (ylspec, band, waveletPath, etc.)
+*** renamed old delta.png file on gcp & locally 
+*** Transfer .png back over locally
+**** on local machine --> 
+**** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4/chan_14/A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4/chan_14
+*** Done! 
+* <2021-12-02 Thu -- wavelets>
+** okay so, for now --> gamma and delta look good (approved). 
+** [TO DO] Sam suggested two things:
+*** (1) Taking out some of the less necessary text on the top and bottom of the panels:
+**** top --> can get rid of event number and Foct
+**** bottom --> can get rid of num cycles 
+*** (2) Reducing the time on the x-axis so it's a little tighter around the wavelet. 
+** Beta, Alpha, Theta still need some work  
+** Beta:
+*** The current choices are ~~okay~~ but I bet I can find better. 
+*** Need to get entirety of NHP wavelets first though. 
+** NHP (continued):
+*** okay so as of yesterday night I was encountering memory issues and the process getting killed. How to fix this? 
+*** maybe --> make sure that all of the dlms.pkl files are moved to gcp bucket and are out of the wavelet subdirs. 
+*** ^^ done; there was only 1 in there anyway. 
+*** Check the partial NHP run --> was a dlms.pkl file in there from the last attempted run and the one before that. got rid of both of those directories. 
+*** worth trying again or no? hmm. 
+*** Should probably change the 'pathToSave' via the 'figSubDir' variable no? hm. 
+*** ^^ okay did that; could use a slight adjustment in case timeRange is None for gcp, but get back to that later. --> okay think I did a quick fix for that.  
+*** Changed timeRange to [0,40] from [0,50]
+*** 
