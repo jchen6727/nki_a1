@@ -826,7 +826,64 @@ def fig_optuna_fitness():
                 plt.savefig('%s/%s/%s_scatter_%s_%s.png' % (dataFolder, batchSim, batchSim, 'fitness', param.replace('tune', '')), dpi=300)
 
 
+def fig_LFP_PSD_matrix():
+    import seaborn as sns
+    from sklearn.decomposition import PCA
+
+    dataFiles = ['../data/NHPdata/spont/spont_LFP_PSD/1-bu031032017@os_eye06_20_10sec_allData.pkl', 
+                '../data/NHPdata/spont/spont_LFP_PSD/2-ma031032023@os_eye06_20_10sec_allData.pkl', 
+                '../data/NHPdata/spont/spont_LFP_PSD/2-rb031032016@os_eye06_20_10sec_allData.pkl', 
+                '../data/NHPdata/spont/spont_LFP_PSD/2-rb045046026@os_eye06_20_10sec_allData.pkl',
+                '../data/v34_batch27/v34_batch27_7sec_allData.pkl']
+
+    psd = []
+    clusters = []
+    elec = 0
+
+    for dataFile in dataFiles:            
+        NHP = dataFile[:-4]
+    
+        with open(dataFile, 'rb') as f:
+            loadedData = pickle.load(f)
+            allData = loadedData['allData']
+            freqs = loadedData['allFreqs'][0]
+
+        for itime in range(len(allData)):
+            psd.append(allData[itime][elec])
+
+        start = len(clusters)
+        clusters.append(range(start, start+len(allData)))
+
+    labels = ['NHP 1', 'NHP 2', 'NHP 3', 'NHP 4', 'Model']
+    df = pd.DataFrame(psd)
+    dfT = df.T
+
+    corrMatrix = dfT.corr()
+    
+    plt.figure()
+    sns.heatmap(corrMatrix, cmap='viridis')
+    plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_corr_matrix.png')
+
+    # PCA
+
+    dfnorm = df.div(df.max(axis=1), axis=0)    
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(dfnorm)
+
+    print('Explained variance ratio: ', pca.explained_variance_ratio_)
+
+    #fig = plt.figure(figsize=(6, 5))
+    for cluster, label, c in zip(clusters, labels, 'rgbcmykw'):
+        plt.scatter(X_pca[cluster, 0], X_pca[cluster, 1], c=c, label=label)
+    plt.legend()
+    plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_norm_PCA.png')
+
+    ipy.embed()
+
+
+# --------------------------
 # Main
+# --------------------------
 if __name__ == '__main__':
     # fig_conn()
     # compare_conn()
@@ -837,7 +894,7 @@ if __name__ == '__main__':
     #fig_traces('v34_batch27', 'v34_batch27_0_0', timeRange=[500,1500])  
     #fig_stats('v34_batch27', 'v34_batch27_0_0', timeRange=[500,1500])
     
-    fig_raster('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
+    #fig_raster('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
     # fig_traces('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
     # fig_stats('v34_batch27', 'v34_batch27_1_2', timeRange=[1000,6000])
 
@@ -849,3 +906,5 @@ if __name__ == '__main__':
     #         fig_raster(simLabel)
 
     #fig_optuna_fitness()
+    
+    fig_LFP_PSD_matrix()

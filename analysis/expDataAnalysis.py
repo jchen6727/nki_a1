@@ -27,6 +27,7 @@ import matplotlib                         # for plotCSD()
 from matplotlib import pyplot as plt      # for plotCSD() 
 # trying to get sort()
 from pylab import *
+import pickle as pkl
 from netpyne import sim
 
 ## PRE-PROCESSING FUNCTIONS ## 
@@ -1414,6 +1415,75 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
     
 
 
+def plot_LFP_PSD(dataFile, LFP_data, electrodes):
+
+    dur_samples = LFP_data.shape[1]
+    dur_ms = int(dur_samples/(samprate/1000.))  # ms (eg 348sec = 348,000 ms)
+    step = 10000
+    tranges = [[t, t+step] for t in range(0, (dur_ms-step), step)]
+
+    allData = []
+
+    for timeRange in tranges:
+        #plotLFP(dat=LFP_data, tt=tt, timeRange=[7500,8500], plots=['spectrogram'], electrodes=[2,8,13,18], maxFreq=80, saveFig=True, fn=fullPath, dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+        out = sim.analysis.plotLFP(**{
+                'inputLFP': LFP_data.T,
+                'plots': ['PSD'], 
+                'electrodes': electrodes, 
+                'timeRange': timeRange,
+                'maxFreq': 50, 
+                'figSize': (8,12), 
+                'saveData': False, 
+                'saveFig': '../data/NHPdata/spont/spont_LFP_PSD/%s_lfp_psd_%d_%d.png' % (dataFile[:-4], timeRange[0], timeRange[1]),
+                'showFig': False})
+        allData.append(out[1]['allSignal'])
+        
+    with open('../data/NHPdata/spont/spont_LFP_PSD/%s_10sec_allData.pkl' % (dataFile[:-4]), 'wb') as f:
+        pkl.dump({'allData': allData, 'allFreqs': out[1]['allFreqs']}, f)    
+
+
+
+
+def plot_LFP_PSD_combined(dataFile, norm=False):
+    NHP = dataFile[:-4]
+    
+    with open('../data/NHPdata/spont/spont_LFP_PSD/%s_10sec_allData.pkl' % (NHP), 'rb') as f:
+        loadedData = pkl.load(f)
+        allData = loadedData['allData']
+        freqs = loadedData['allFreqs'][0]
+
+    plt.figure(figsize=(8,12))
+    fontSize = 12
+    lw = 1
+
+    elecLabels = ['All layers', 'Supragranular', 'Granular', 'Infragranular']
+
+    for i in range(len(elecLabels)):
+        plt.subplot(4, 1, i+1)
+        for itime in range(len(allData)):
+            signal = allData[itime][i]
+            if norm:
+                signal = signal / max(signal)
+            plt.plot(freqs, signal, linewidth=lw) #, color=color)
+        
+        plt.title(elecLabels[i])
+        plt.xlim([0, 50])
+        if norm:
+            plt.ylabel('Normalized Power', fontsize=fontSize)
+        else:
+            plt.ylabel('Power (mV^2/Hz)', fontsize=fontSize)
+        plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+    
+    # format plot 
+    plt.tight_layout()
+    plt.suptitle('LFP PSD - %s' % (NHP), fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+    plt.subplots_adjust(bottom=0.08, top=0.92)
+
+    if norm:
+        plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/%s_10sec_PSD_combined_norm.png' % (NHP))
+    else:
+        plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/%s_10sec_PSD_combined.png' % (NHP))
+
 
 
 ###########################
@@ -1422,145 +1492,66 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 
 if __name__ == '__main__':
 
-  # Parent data directory containing .mat files
-  origDataDir = '../data/NHPdata/spont/'   # LOCAL DIR 
-  
-  ## Sort these files by recording region 
-  # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
+    # Parent data directory containing .mat files
+    origDataDir = '../data/NHPdata/spont/'   # LOCAL DIR 
 
-  ## Delete or move unwanted / unworted .mat data files 
-  # moveDataFiles(origDataDir,'move')
+    ## Sort these files by recording region 
+    # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
 
-  ############### 
-  recordingArea = 'A1/' # 'MGB/' 
-  
-  test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
-  testFiles =  ['1-bu031032017@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
-  
-  if test:
-    dataFiles = testFiles
-  else:
-    dataPath = origDataDir + recordingArea
-    dataFilesList = os.listdir(dataPath) 
-    dataFiles = []
-    for file in dataFilesList:
-      if '.mat' in file:
-        dataFiles.append(file)
+    ## Delete or move unwanted / unworted .mat data files 
+    # moveDataFiles(origDataDir,'move')
 
-  # setup netpyne
-  samprate = 11*1e3  # in Hz
-  sim.initialize()
-  sim.cfg.recordStep = 1000./samprate # in ms
+    ############### 
+    recordingArea = 'A1/' # 'MGB/' 
 
-  for dataFile in dataFiles: 
-    fullPath = origDataDir + dataFile # + recordingArea + dataFile      # Path to data file 
+    test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
+    testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
 
-    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=samprate, spacing_um=100)
-            # sampr is the sampling rate after downsampling 
-            # tt is time array (in seconds)
-            # trigtimes is array of stim trigger indices
-            # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+    if test:
+        dataFiles = testFiles
+    else:
+        dataPath = origDataDir + recordingArea
+        dataFilesList = os.listdir(dataPath) 
+        dataFiles = []
+        for file in dataFilesList:
+            if '.mat' in file:
+                dataFiles.append(file)
 
-    ##### SET PATH TO .csv LAYER FILE ##### 
-    dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
-    # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
-    # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
-    # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
-    
-    ##### GET LAYERS FOR OVERLAY #####
-    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
-    lchan = {}
-    lchan['S'] = s2high
-    lchan['G'] = ghigh
-    lchan['I'] = CSD_data.shape[0]-1 #i2high
-    print('s2high: ' + str(s2high))
-    # lchan['S1'] = s1high
-    # lchan['S2'] = s2high
-    # lchan['G'] = ghigh
-    # lchan['I1'] = i1high
-    # lchan['I2'] = CSD_data.shape[0]-1 
+    # setup netpyne
+    samprate = 11*1e3  # in Hz
+    sim.initialize()
+    sim.cfg.recordStep = 1000./samprate # in ms
 
+    for dataFile in dataFiles: 
+        '''
+        fullPath = origDataDir + dataFile # + recordingArea + dataFile      # Path to data file 
 
-    ##### LFP #####
-    dur = int(LFP_data.shape[1]/(samprate/1000.))  # ms
-    step = 10000
-    tranges = [[t, t+step] for t in range(0, dur-step, step)]
-    for timeRange in tranges:
-        #plotLFP(dat=LFP_data, tt=tt, timeRange=[7500,8500], plots=['spectrogram'], electrodes=[2,8,13,18], maxFreq=80, saveFig=True, fn=fullPath, dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
-        out = sim.analysis.plotLFP(**{
-                'inputLFP': LFP_data.T,
-                'plots': ['PSD'], 
-                'electrodes': ['avg', list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))], 
-                'timeRange': timeRange, 
-                'maxFreq': 50, 
-                'figSize': (8,24), 
-                'saveData': False, 
-                'saveFig': '../data/NHPdata/spont/spont_LFP_PSD/%s_lfp_psd_%d_%d.png' % (dataFile[:-4], timeRange[0], timeRange[1]),
-                'showFig': False})
+        [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=samprate, spacing_um=100)
+                # sampr is the sampling rate after downsampling 
+                # tt is time array (in seconds)
+                # trigtimes is array of stim trigger indices
+                # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
+        ##### SET PATH TO .csv LAYER FILE ##### 
+        dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
         
+        ##### GET LAYERS FOR OVERLAY #####
+        s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+        lchan = {}
+        lchan['S'] = s2high
+        lchan['G'] = ghigh
+        lchan['I'] = CSD_data.shape[0]-1 #i2high
+        print('s2high: ' + str(s2high))
 
-    ##### CSD #####
+        '''
 
-    ### Plot batches of CSDs:
-    ## Set up time ranges for loop
-    # tranges = [[x, x+200] for x in range(200, 55000, 200)] # bring it down to 175-250 if possible
-    # for t in tranges:
-    #   plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
-    #         trigtimes=None,timeRange=[t[0], t[1]],
-    #         showFig=False, figSize=(6,9), 
-    #         layerLines=True, layerBounds=lchan, 
-    #         overlay='LFP', LFP_data=LFP_data, smooth=33,
-    #         saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
-
-    ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
-    stim = False
-    if stim:
-        if trigtimes is not None:
-            firstTrigger = tt[trigtimes[0]]*1e3
-            secondTrigger = tt[trigtimes[1]]*1e3
-            print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
-            print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-            startTime = firstTrigger-500.0
-            endTime = secondTrigger-100
-        else: 
-            startTime = 4236.0 # in ms, for gcp 
-            print('trigger times not given --> startTime: 4236, endTime: 5290')
-            endTime = 5920.0 # in ms, for gcp 
-
-            trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-            for idx in trigtimes:
-                trigtimesMS.append(tt[idx]*1e3)
-
-            print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
-
-
-
-        ### LOOK AT AVG CSD ### 
-        ## (1) Remove bad epochs 
-        ## (a) set epoch params
-        swindowms = 0     # start time relative to stimulus 
-        ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+        # -----------------------
+        # LFPs
         
-        ## (b) set sigma thresh
-        sigmathresh=4 
-
-        ## (c) 
-        trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
-
-        ## calculate average CSD ERP ###
-    #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
-    
-        #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
-
-        ## Individual CSD ERP ##
-        ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
-        plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
-
-    ###################
-
-        # # MOVE .PNG FILES IF NECESSARY 
-        # pngFiles = [f for f in os.listdir() if os.path.isfile(f)]
-        # pngFiles = [f for f in pngFiles if '.png' in f]
-        # dataPrefixes = []
-
-
+        #electrodes = ['avg', list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))]
+        
+        #plot LFP PSDs
+        #plot_LFP_PSD(dataFile, LFP_data, electrodes)
+        
+        #plot LFP PSD combined    
+        plot_LFP_PSD_combined(dataFile, norm=True)
