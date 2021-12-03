@@ -829,6 +829,9 @@ def fig_optuna_fitness():
 def fig_LFP_PSD_matrix():
     import seaborn as sns
     from sklearn.decomposition import PCA
+    from sklearn.cluster import KMeans
+    from sklearn.preprocessing import StandardScaler as Sc
+    import random
 
     dataFiles = ['../data/NHPdata/spont/spont_LFP_PSD/1-bu031032017@os_eye06_20_10sec_allData.pkl', 
                 '../data/NHPdata/spont/spont_LFP_PSD/2-ma031032023@os_eye06_20_10sec_allData.pkl', 
@@ -838,6 +841,7 @@ def fig_LFP_PSD_matrix():
 
     psd = []
     clusters = []
+    start = 0
     elec = 0
 
     for dataFile in dataFiles:            
@@ -851,32 +855,69 @@ def fig_LFP_PSD_matrix():
         for itime in range(len(allData)):
             psd.append(allData[itime][elec])
 
-        start = len(clusters)
         clusters.append(range(start, start+len(allData)))
+        start = start + len(allData)
 
-    labels = ['NHP 1', 'NHP 2', 'NHP 3', 'NHP 4', 'Model']
+
+    labels = ['NHP 1', 'NHP 2', 'NHP 3', 'NHP 4', 'Model', 'Model shuffled']
     df = pd.DataFrame(psd)
-    dfT = df.T
-
-    corrMatrix = dfT.corr()
     
-    plt.figure()
-    sns.heatmap(corrMatrix, cmap='viridis')
-    plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_corr_matrix.png')
+    # add model shuffled
+    model_shuffled = []
+    for row in df.iloc[-25:].iterrows():
+        rowshuff = list(row[1]) 
+        random.shuffle(rowshuff)
+        model_shuffled.append(rowshuff)
+    clusters.append(range(start, start+len(model_shuffled)))
+    
+    model_shuffled = pd.DataFrame(model_shuffled)
+    df=pd.concat([df, model_shuffled])#.reset_index()
+    
+    # corr matrix
+    # dfT = df.T
+    # corrMatrix = dfT.corr()
+    # plt.figure()
+    # sns.heatmap(corrMatrix, cmap='viridis')
+    # plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_corr_matrix.png')
 
     # PCA
-
-    dfnorm = df.div(df.max(axis=1), axis=0)    
+    dfnorm = df.div(df.max(axis=1), axis=0)   
+    #dfnorm = Sc().fit_transform(df) 
+    
     pca = PCA(n_components=2)
     X_pca = pca.fit_transform(dfnorm)
 
     print('Explained variance ratio: ', pca.explained_variance_ratio_)
 
-    #fig = plt.figure(figsize=(6, 5))
-    for cluster, label, c in zip(clusters, labels, 'rgbcmykw'):
+    fig = plt.figure(figsize=(7, 5))
+    colors = ['navy',  'blue', 'purple', 'indigo',  'red', 'limegreen']
+    #colors = ['blue', 'blue',  'blue', 'blue', 'limegreen', 'red']
+    #colors = ['navy', 'darkblue',  'mediumblue', 'blue', 'limegreen', 'red']
+
+    colors = 'bcmygr' 
+    colors = ['blue', 'r', 'm', 'y',  'limegreen', 'k']
+
+    for cluster, label, c in zip(clusters, labels, colors): # 'rgbcmykw'):
         plt.scatter(X_pca[cluster, 0], X_pca[cluster, 1], c=c, label=label)
-    plt.legend()
+    plt.xlabel('PC 1')
+    plt.ylabel('PC 2')
+    #plt.xlim(-5,5)
+    #plt.ylim(-5,5)
+    plt.subplots_adjust(left=0.1,right=0.7, top=0.9, bottom=0.1)
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_norm_PCA.png')
+
+    #fig = plt.figure()
+    kmeans = KMeans(n_clusters=6).fit(dfnorm)
+    pca_data = pd.DataFrame(X_pca, columns=['PC1','PC2']) 
+    pca_data['cluster'] = pd.Categorical(kmeans.labels_)
+    sns.scatterplot(x="PC1", y="PC2", hue="cluster", data=pca_data, sizes=2, marker='o')#, legend=False)
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_norm_PCA_kmeans.png')
+
+    # QUANTIFY SEPARATION OF CLUSTERS: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4523310/
+    
 
     ipy.embed()
 
