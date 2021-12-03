@@ -1419,7 +1419,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing .mat files
-  origDataDir = '../data/NHPdata/speech/contproc/'   # LOCAL DIR 
+  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1431,7 +1431,7 @@ if __name__ == '__main__':
   recordingArea = 'A1/' # 'MGB/' 
   
   test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
-  testFiles =  ['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  testFiles =  ['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
   
   if test:
     dataFiles = testFiles
@@ -1454,8 +1454,8 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
     ##### SET PATH TO .csv LAYER FILE ##### 
-    dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
-    # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
+    # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
@@ -1481,56 +1481,56 @@ if __name__ == '__main__':
 
     ### Plot batches of CSDs:
     ## Set up time ranges for loop
-    # tranges = [[x, x+200] for x in range(200, 55000, 200)] # bring it down to 175-250 if possible
-    # for t in tranges:
-    #   plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
-    #         trigtimes=None,timeRange=[t[0], t[1]],
-    #         showFig=False, figSize=(6,9), 
-    #         layerLines=True, layerBounds=lchan, 
-    #         overlay='LFP', LFP_data=LFP_data, smooth=33,
-    #         saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+    tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
+    for t in tranges:
+      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+            trigtimes=None,timeRange=[t[0], t[1]],
+            showFig=False, figSize=(6,9), 
+            layerLines=True, layerBounds=lchan, 
+            overlay='LFP', LFP_data=LFP_data, smooth=33,
+            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
 
-    ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
-    if trigtimes is not None:
-      firstTrigger = tt[trigtimes[0]]*1e3
-      secondTrigger = tt[trigtimes[1]]*1e3
-      print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
-      print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
-      startTime = firstTrigger-500.0
-      endTime = secondTrigger-100
-    else: 
-      startTime = 4236.0 # in ms, for gcp 
-      print('trigger times not given --> startTime: 4236, endTime: 5290')
-      endTime = 5920.0 # in ms, for gcp 
+   #  ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
+   #  if trigtimes is not None:
+   #    firstTrigger = tt[trigtimes[0]]*1e3
+   #    secondTrigger = tt[trigtimes[1]]*1e3
+   #    print('First stim onset occurs at: ' + str(firstTrigger)+ ' ms')
+   #    print('Next stim onset occurs at: ' + str(secondTrigger) + ' ms')
+   #    startTime = firstTrigger-500.0
+   #    endTime = secondTrigger-100
+   #  else: 
+   #    startTime = 4236.0 # in ms, for gcp 
+   #    print('trigger times not given --> startTime: 4236, endTime: 5290')
+   #    endTime = 5920.0 # in ms, for gcp 
 
-    trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
-    for idx in trigtimes:
-      trigtimesMS.append(tt[idx]*1e3)
+   #  trigtimesMS = []                # GET TRIGGER TIMES IN MS -- convert trigtimes to trigtimesMS (# NOTE: SHOULD MAKE THIS A FUNCTION)
+   #  for idx in trigtimes:
+   #    trigtimesMS.append(tt[idx]*1e3)
 
-    print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
+   #  print('PERIOD OF TIME BETWEEN CLICK STIMULI in MS: ' + str(trigtimesMS[1] - trigtimesMS[0]))
 
 
 
-    ### LOOK AT AVG CSD ### 
-    ## (1) Remove bad epochs 
-    ## (a) set epoch params
-    swindowms = 0     # start time relative to stimulus 
-    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+   #  ### LOOK AT AVG CSD ### 
+   #  ## (1) Remove bad epochs 
+   #  ## (a) set epoch params
+   #  swindowms = 0     # start time relative to stimulus 
+   #  ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
     
-    ## (b) set sigma thresh
-    sigmathresh=4 
+   #  ## (b) set sigma thresh
+   #  sigmathresh=4 
 
-    ## (c) 
-    trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
+   #  ## (c) 
+   #  trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-    ## calculate average CSD ERP ###
-   #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
+   #  ## calculate average CSD ERP ###
+   # #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
   
-    #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+   #  #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
-    ## Individual CSD ERP ##
-    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
-    plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
+   #  ## Individual CSD ERP ##
+   #  ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
+   #  plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
 
   ###################
 

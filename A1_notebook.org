@@ -51306,7 +51306,7 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 ***** timeRange_160_200
 **** --> DO THIS LATER TOO (7) Put the subdirs in a larger parent folder in gcp bucket 
 
-*** 2-gt044045014@os_eye06_30.mat 
+*** [DONE] 2-gt044045014@os_eye06_30.mat 
 **** [DONE] (1) Run load.py for all timeRanges
 ***** length of spontaneous run: ~ 373 s
 ***** python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat 
@@ -51322,7 +51322,7 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 ***** [DONE] timeRange_80_120
 ***** [DONE] timeRange_120_160
 ***** [DONE] timeRange_160_200
-**** (3) Run plotWavelets.py on all timeRanges
+**** [DONE] (3) Run plotWavelets.py on all timeRanges
 ***** [DONE] timeRange_0_40
 ****** [DONE] 3, 8
 ****** [DONE] 11, 14, 18
@@ -51332,31 +51332,31 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 ***** [DONE] timeRange_80_120
 ****** [DONE] 3, 8
 ****** [DONE] 11, 14, 18
-***** timeRange_120_160
+***** [DONE] timeRange_120_160
 ****** [DONE] 3, 8
-****** [] 11, 14, 18
-***** timeRange_160_200
-****** 3, 8
-****** 11, 14, 18
-**** (4) Delete dlms from gcp 
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_160_200
+****** [DONE] 3, 8
+****** [DONE] 11, 14, 18
+**** [DONE] (4) Delete dlms from gcp 
 ***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
 ***** [DONE] timeRange_0_40
 ***** [DONE] timeRange_40_80
 ***** [DONE] timeRange_80_120
-***** timeRange_120_160
-***** timeRange_160_200
-**** (5) Transfer files locally 
-***** locally --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_80_120 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (5) Transfer files locally 
+***** locally --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_160_200 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
 ***** [DONE] timeRange_0_40
 ***** [DONE] timeRange_40_80
 ***** [DONE] timeRange_80_120
-***** timeRange_120_160
-***** timeRange_160_200
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
 *** 2-ma031032023@os_eye06_20.mat 
 **** (1) Run load.py for all timeRanges
-***** length of spontaneous run: 
+***** length of spontaneous run: ~292 s
 ***** python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-ma031032023@os_eye06_20.mat 
-***** timeRange_0_40
+***** [] timeRange_0_40
 ***** timeRange_40_80 
 ***** timeRange_80_120
 ***** timeRange_120_160
@@ -51469,3 +51469,245 @@ I think the steps are --> run load.py (dlms, etc.) --> transfer to gcp
 files locally 
 
 ** AT SOME POINT --> TRANSFER ALL THE IMAGE FILES FROM BOTH NHP AND SIM OVER TO GCP BUCKETS YES?? 
+* <2021-12-03 Fri -- wavelets>
+** Continue with yesterday (copy-paste here below)
+** [DONE] Spont NHP files:
+*** [DONE] 2-bu027028013@os_eye06_20.mat  --> correct the gcp images transfer!! 
+**** [DONE] (1) Run load.py for all timeRanges
+***** length of spontaneous run: ~367 seconds [Get ~200 seconds worth of wavelet data] 
+***** python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-bu027028013@os_eye06_20.mat 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80 -- running 
+***** [DONE] timeRange_80_120 -- running
+***** [DONE] timeRange_120_160 -- running
+***** [DONE] timeRange_160_200 -- running 
+**** [DONE] (2) Transfer all the timeRange runs to gcp bucket 
+***** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_160_200/ gs://eyg_data/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE]  timeRange_160_200
+**** [DONE] (3) Run plotWavelets.py on all timeRanges
+***** [DONE] timeRange_0_40 
+****** -- running --> OK I think this worked, but in the future, do this a couple channels at a time, because I did run into a memory error!! 
+***** [DONE] timeRange_40_80 
+****** [DONE] chan 2, 7 --> running 
+****** [DONE] chan 11, 14, 17 --> running 
+***** [DONE] timeRange_80_120
+****** [DONE] chan 2, 7 --> running 
+****** [DONE] chan 11, 14, 17 --> running 
+***** [DONE] timeRange_120_160
+****** [DONE] chan 2, 7 --> running 
+****** [DONE] chan 11, 14, 17 --> running 
+***** [DONE] timeRange_160_200
+****** [DONE] chan 2, 7 --> running 
+****** [DONE] chan 11, 14, 17 --> running 
+**** [DONE] (4) Delete dlms from gcp 
+***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (5) Transfer files locally 
+***** on local machine --> 
+***** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_160_200 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** --> MESSED THIS UP A LITTLE; CORRECT IT LATER !! (6) Transfer wavelet image files to gcp buckets:
+***** chan_2, chan_7, chan_11, chan_14, chan_17
+***** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_17/*.png gs://eyg_data/wavelets/2-bu027028013_timeRange_0_40/chan_17/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** timeRange_120_160
+***** timeRange_160_200
+**** --> DO THIS LATER TOO (7) Put the subdirs in a larger parent folder in gcp bucket 
+
+*** [DONE] 2-gt044045014@os_eye06_30.mat 
+**** [DONE] (1) Run load.py for all timeRanges
+***** length of spontaneous run: ~ 373 s
+***** python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-gt044045014@os_eye06_30.mat 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80 
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200 
+**** [DONE] (2) Transfer all the timeRange runs to gcp bucket 
+***** on gcp --> gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_160_200/ gs://eyg_data/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (3) Run plotWavelets.py on all timeRanges
+***** [DONE] timeRange_0_40
+****** [DONE] 3, 8
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_40_80
+****** [DONE] 3, 8
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_80_120
+****** [DONE] 3, 8
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_120_160
+****** [DONE] 3, 8
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_160_200
+****** [DONE] 3, 8
+****** [DONE] 11, 14, 18
+**** [DONE] (4) Delete dlms from gcp 
+***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (5) Transfer files locally 
+***** locally --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_160_200 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+*** [DONE] 2-ma031032023@os_eye06_20.mat 
+**** [DONE] (1) Run load.py for all timeRanges {up to 180s}
+***** length of spontaneous run: ~292 s
+***** on gcp --> python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-ma031032023@os_eye06_20.mat 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80 
+***** +[X] timeRange_80_120 --> GOT KILLED!!!! CHECK --> yeah; didn't save everything. --> REMOVED+ 
+***** [DONE] timeRange_80_110 
+***** [DONE] timeRange_110_150
+***** [DONE] timeRange_150_180 
+**** [DONE] (2) Transfer all the timeRange runs to gcp bucket 
+***** on gcp --> gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-ma031032023_timeRange_150_180/ gs://eyg_data/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_110
+***** [DONE] timeRange_110_150
+***** [DONE] timeRange_150_180
+**** [DONE] (3) Run plotWavelets.py on all timeRanges
+***** [DONE] timeRange_0_40
+****** [DONE] 1, 6 --> GOT KILLED!!!! I THINK!!! CHECK!! Still has the .pngs in there, so leave it be for now. 
+****** [DONE] 10, 14, 18
+***** [DONE] timeRange_40_80
+****** [DONE] 1, 6
+****** [DONE] 10, 14, 18
+***** [DONE] timeRange_80_110
+****** [DONE] 1, 6
+****** [DONE] 10, 14, 18
+***** [DONE] timeRange_110_150
+****** [DONE] 1, 6
+****** [DONE] 10, 14, 18
+***** [DONE] timeRange_150_180
+****** [DONE] 1, 6
+****** [DONE] 10, 14, 18
+**** [DONE] (4) Delete dlms from gcp 
+***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_110
+***** [DONE] timeRange_110_150
+***** [DONE] timeRange_150_180
+**** [DONE] (5) Transfer files locally 
+***** locally --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-ma031032023_timeRange_150_180 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_110
+***** [DONE] timeRange_110_150
+***** [DONE] timeRange_150_180
+*** [DONE] 2-rb031032016@os_eye06_20.mat
+**** [DONE] (1) Run load.py for all timeRanges
+***** length of spontaneous run: ~386s
+***** on gcp --> python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80 
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200 
+**** [DONE] (2) Transfer all the timeRange runs to gcp bucket 
+***** on gcp --> gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_120_160/ gs://eyg_data/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (3) Run plotWavelets.py on all timeRanges
+***** [DONE] timeRange_0_40
+****** [DONE] 1, 6
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_40_80
+****** [DONE] 1, 6
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_80_120
+****** [DONE] 1, 6
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_120_160
+****** [DONE] 1, 6
+****** [DONE] 11, 14, 18
+***** [DONE] timeRange_160_200
+****** [DONE] 1, 6
+****** [DONE] 11, 14, 18
+**** [DONE] (4) Delete dlms from gcp 
+***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (5) Transfer files locally 
+***** locally --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+*** [DONE] 2-rb045046026@os_eye06_20.mat
+**** [DONE] (1) Run load.py for all timeRanges
+***** length of spontaneous run: ~221 seconds
+***** on gcp --> python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-rb045046026@os_eye06_20.mat 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80 
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200 
+**** [DONE] (2) Transfer all the timeRange runs to gcp bucket 
+***** on gcp --> gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb045046026_timeRange_160_200/ gs://eyg_data/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (3) Run plotWavelets.py on all timeRanges
+***** NOTE: Going to do this for all channels (2, 8, 13, 15, 18) considering the relatively low number of wavelets for this monkey! 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (4) Delete dlms from gcp 
+***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+**** [DONE] (5) Transfer files locally 
+***** locally --> gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb045046026_timeRange_160_200 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/
+***** [DONE] timeRange_0_40
+***** [DONE] timeRange_40_80
+***** [DONE] timeRange_80_120
+***** [DONE] timeRange_120_160
+***** [DONE] timeRange_160_200
+** STEPS:
+I think the steps are --> run load.py (dlms, etc.) --> transfer to gcp
+--> run plotWavelets.py --> delete dlms from cluster --> transfer
+files locally 
+** AT SOME POINT -->
+*** TRANSFER ALL THE IMAGE FILES FROM BOTH NHP AND SIM OVER TO GCP BUCKETS YES?? 
+*** PUT THE timeRange PIECES INTO LARGER PARENT DIRECTORY 
