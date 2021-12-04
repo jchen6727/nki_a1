@@ -6,20 +6,21 @@ Paper figures
 Contributors: salvadordura@gmail.com
 """
 
-import utils
-import json
+#import json
 import numpy as np
-import scipy
+#import scipy
 from matplotlib import pyplot as plt
-import pandas as pd
-import seaborn as sb
+#import pandas as pd
+#import seaborn as sb
 import os
 import pickle
-import batchAnalysis as ba
+#import batchAnalysis as ba
 from netpyne.support.scalebar import add_scalebar
-from netpyne import analysis
-from matplotlib import cm
-from bicolormap import bicolormap 
+#from netpyne import analysis
+#from matplotlib import cm
+#from bicolormap import bicolormap 
+from netpyne.analysis.utils import colorList
+
 
 import IPython as ipy
 
@@ -28,7 +29,6 @@ import IPython as ipy
 # ---------------------------------------------------------------------------------------------------------------
 # Population params
 allpops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM', 'IC']
-colorList = analysis.utils.colorList
 popColor = {}
 for i,pop in enumerate(allpops):
     popColor[pop] = colorList[i]
@@ -917,9 +917,94 @@ def fig_LFP_PSD_matrix():
     plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_norm_PCA_kmeans.png')
 
     # QUANTIFY SEPARATION OF CLUSTERS: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4523310/
-    
 
     ipy.embed()
+
+
+
+def fig_CSD_comparison():
+
+    from netpyne import sim
+
+    from expDataAnalysis import getflayers, loadfile
+
+    # experiment
+    datafile = '../data/NHPdata/spont/2-rb031032016@os_eye06_20.mat'   # LOCAL DIR 
+    trange = [2925, 2925+200]
+    trange = [51100, 51200]
+    
+    vaknin = 1
+    
+    #testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+
+    # setup netpyne
+    samprate = 11*1e3  # in Hz
+    sim.initialize()
+    sim.cfg.recordStep = 1000./samprate # in ms
+
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=datafile, samprds=samprate, spacing_um=100, vaknin=vaknin)
+    dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
+        
+    ##### GET LAYERS FOR OVERLAY #####
+    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(datafile,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+    lchan = {}
+    lchan['S'] = s2high
+    lchan['G'] = ghigh
+    lchan['I'] = CSD_data.shape[0]-1 #i2high
+    print('s2high: ' + str(s2high))
+
+    depth = 2300
+    #layer_bounds= {'S': glow/20*(depth-100), 'G': i1low/20*(depth-100), 'I': i2high/20*(depth-100)}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
+
+    layer_bounds= {'S': glow*100, 'G': i1low*100, 'I': i2high*100}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
+
+    # plot CSD
+    sim.analysis.plotCSD(**{
+        'CSD_data': CSD_data,
+        'LFP_input_data': LFP_data.T,
+        'spacing_um': 100, 
+        'dt': sim.cfg.recordStep,
+        'ymax': depth,
+        'layer_lines': 1, 
+        'layer_bounds': layer_bounds, 
+        'overlay': 'LFP',
+        'timeRange': [trange[0], trange[1]], 
+        'smooth': 10,
+        'vaknin': vaknin,
+        'saveFig': datafile[:-4]+'_CSD_LFP_smooth10_%d-%d_vaknin-%d' % (trange[0], trange[1], vaknin), 
+        'figSize': (4.1,8.2), 
+        'dpi': 300, 
+        'showFig': 0})
+
+        
+    # model
+    #layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+    layer_bounds= {'S': 1250, 'G': 1334, 'I': 2000} 
+    
+    filename = '../data/v34_batch27/v34_batch27_0_0.pkl'
+    trange = [1025, 1025+200] #[900,1100]
+    trange = [2700, 2700+200] #[900,1100]
+
+    vaknin = 1
+
+    sim.load(filename, instantiate=False)
+
+    sim.analysis.plotCSD(**{
+        'spacing_um': 100, 
+        'layer_lines': 1, 
+        'layer_bounds': layer_bounds, 
+        'overlay': 'LFP',
+        'timeRange': [trange[0], trange[1]], 
+        'smooth': 10,
+        'vaknin': vaknin, 
+        'saveFig': filename[:-4]+'_CSD_CSD_smooth10_%d-%d_vaknin-%d' % (trange[0], trange[1], vaknin), 
+        'figSize': (4.1,8.2), 
+        'dpi': 300,
+        'showFig': 0})
+
+    ipy.embed()
+
+
 
 
 # --------------------------
@@ -948,4 +1033,6 @@ if __name__ == '__main__':
 
     #fig_optuna_fitness()
     
-    fig_LFP_PSD_matrix()
+    #fig_LFP_PSD_matrix()
+
+    fig_CSD_comparison()

@@ -171,7 +171,7 @@ def getTriggerTimesNEW (fn):
   return val  
 
 #
-def loadfile (fn,samprds,spacing_um=100):
+def loadfile (fn,samprds,spacing_um=100,vaknin=False):
   # load a .mat data file (fn) using sampling rate samprds (should be integer factor of original sampling rate (44000)),
   # returns: sampr is sampling rate after downsampling
   #          LFP is laminar local field potential data
@@ -181,7 +181,7 @@ def loadfile (fn,samprds,spacing_um=100):
   #          trigtimes is array of stimulus trigger indices (indices into arrays)
   sampr,LFP,dt,tt=rdmat(fn,samprds=samprds) # # samprds = 11000.0 # downsampling to this frequency
   sampr,dt,tt[0],tt[-1] # (2000.0, 0.001, 0.0, 1789.1610000000001)
-  CSD = getCSD(LFP,sampr,spacing_um)
+  CSD = getCSD(LFP,sampr,spacing_um, vaknin=vaknin)
   divby = 44e3 / samprds
   trigtimes = None
   try: # not all files have stimuli
@@ -342,6 +342,8 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
   # (ii) Set up figure
   fig = plt.figure(figsize=figSize) # plt.figure(figsize = figSize) <-- would have to add figSize as an argument above 
+  ax = plt.gca()
+  ax.grid(False)
 
   # (iii) Create plots w/ common axis labels and tick marks
   axs = []
@@ -429,6 +431,9 @@ def plotCSD(dat,tt,fn=None,saveFolder=None,overlay=None,LFP_data=None,timeRange=
 
 
   # SAVE FIGURE
+  ax = plt.gca()
+  ax.grid(False)
+
   if saveFig:
     if isinstance(saveFig, basestring):
       filename = saveFig
@@ -1486,6 +1491,7 @@ def plot_LFP_PSD_combined(dataFile, norm=False):
 
 
 
+
 ###########################
 ######## MAIN CODE ########
 ###########################
@@ -1506,6 +1512,7 @@ if __name__ == '__main__':
 
     test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
     testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+    testFiles = ['2-rb031032016@os_eye06_20.mat']
 
     if test:
         dataFiles = testFiles
@@ -1522,8 +1529,9 @@ if __name__ == '__main__':
     sim.initialize()
     sim.cfg.recordStep = 1000./samprate # in ms
 
+
     for dataFile in dataFiles: 
-        '''
+        
         fullPath = origDataDir + dataFile # + recordingArea + dataFile      # Path to data file 
 
         [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=samprate, spacing_um=100)
@@ -1543,7 +1551,20 @@ if __name__ == '__main__':
         lchan['I'] = CSD_data.shape[0]-1 #i2high
         print('s2high: ' + str(s2high))
 
-        '''
+        
+
+
+        ### Plot batches of CSDs:
+        ## Set up time ranges for loop
+        tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
+        tranges = [[2800, 3000]]
+        for t in tranges:
+            plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+                    trigtimes=None,timeRange=[t[0], t[1]],
+                    showFig=False, figSize=(6,9), 
+                    layerLines=True, layerBounds=lchan, 
+                    overlay='LFP', LFP_data=LFP_data, smooth=33,
+                    saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
 
         # -----------------------
         # LFPs
@@ -1554,4 +1575,4 @@ if __name__ == '__main__':
         #plot_LFP_PSD(dataFile, LFP_data, electrodes)
         
         #plot LFP PSD combined    
-        plot_LFP_PSD_combined(dataFile, norm=True)
+        #plot_LFP_PSD_combined(dataFile, norm=True)

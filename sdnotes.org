@@ -754,26 +754,26 @@ and show contributions from each population: raw LFP and potentially spectrogram
 other easy/fast potential model predictions:
 - lesion different popuations and/or core vs thal matrix and show effects on dynamics (raster, LFP/CSD)
 * 19Nov20201 Exp data
-*** noelle response
+** noelle response
 I also just got part of a response from noelle (have a couple follow-up questions and need to look closer at some figs she sent), 
 but basically she thinks the two weird monkeys I showed you yesterday are actually "real" (the very "regular" one, and the one with the blips in the lower layers). 
 she thinks the lower-layer blips aren't an artifact and that they might have pierced a white matter tract right there by accident 
 (and still reading her response about the regularity of the that other one). but at least we can know that she also sees 
 / saw the same things with those monkeys too! the figs she sent had diff timescales than mine so going to plot them myself w/ her timescales and just make sure they look the same.
-*** 2-rb04 
+** 2-rb04 
 very regular CSD data across all 50 secs -- gamma (50-70 Hz) across most channels; occasional beta ~10 Hz
-*** 2-rb03
+** 2-rb03
 - longer osc events - ~75-175ms (~7-15 Hz) 
 - most in L1/2 (top electrodes) - top-down cortical feedback?? artifact? what if remove top 2 electrodes?
 - some coupled osc? gamma over beta?
 - similar to model??
-*** 1-bu3
+** 1-bu3
 - shows more differences across layers than 2-rb03 and 2-rb04
 - infragranular - stroner and faster (gamma); supragran+gran - longer events (50ms to >200ms)
 - some similar to model - long (~200-1000 ms) of strong activation of same channe/layer, including L4
-*** 2-ma03
+** 2-ma03
 - weird blips at infragran electrode (white matter tract??)
-*** model
+** model
 - most peaks happen at L4/L5A and L1; variable durations
 
 ** Exp data analysis code
@@ -793,6 +793,81 @@ the .csv file is used by the getflayers() function
 I import functions from two other files, both of which are also in A1/analysis (downsample.py and filter.py -- for downsampling and bandpass filtering respectively)
 
 let me know if anything isn't working / doesn't make sense and of course if you have any suggestions! I aspire to code with your efficiency and organizational skills!! lol
+** code to plot CSD
+if __name__ == '__main__':
+
+  # Parent data directory containing .mat files
+  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
+  
+  ## Sort these files by recording region 
+  # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
+
+  ## Delete or move unwanted / unworted .mat data files 
+  # moveDataFiles(origDataDir,'move')
+
+  ############### 
+  recordingArea = 'A1/' # 'MGB/' 
+  
+  test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
+  testFiles =  ['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  
+  if test:
+    dataFiles = testFiles
+  else:
+    dataPath = origDataDir + recordingArea
+    dataFilesList = os.listdir(dataPath) 
+    dataFiles = []
+    for file in dataFilesList:
+      if '.mat' in file:
+        dataFiles.append(file)
+
+
+  for dataFile in dataFiles: 
+    fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
+
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+            # sampr is the sampling rate after downsampling 
+            # tt is time array (in seconds)
+            # trigtimes is array of stim trigger indices
+            # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
+    ##### SET PATH TO .csv LAYER FILE ##### 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
+
+    ##### GET LAYERS FOR OVERLAY #####
+    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+    lchan = {}
+    lchan['S'] = s2high
+    lchan['G'] = ghigh
+    lchan['I'] = CSD_data.shape[0]-1 #i2high
+    print('s2high: ' + str(s2high))
+
+
+    ##### LFP #####
+    # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+
+
+    ##### CSD #####
+
+    ### Plot batches of CSDs:
+    ## Set up time ranges for loop
+    tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
+    for t in tranges:
+      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+            trigtimes=None,timeRange=[t[0], t[1]],
+            showFig=False, figSize=(6,9), 
+            layerLines=True, layerBounds=lchan, 
+            overlay='LFP', LFP_data=LFP_data, smooth=33,
+            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+
+** LFP electrode depths
+It would be 2200microns from ch1 (uppermost contact) to ch23 (deepest contact), but yes you are correct. 
+For presentation purposes we exclude ch1 and ch23 of the MUA and LFP so that it aligns nicely with the 21chs of the CSD. 
+You are probably aware of this but in some experiments (but not usually) we may use an electrode that has an inter-contact distance of 150microns instead of 100microns.
+Hope this was helpful,
+Noelle.
+ 
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
