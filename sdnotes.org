@@ -764,7 +764,8 @@ she thinks the lower-layer blips aren't an artifact and that they might have pie
 very regular CSD data across all 50 secs -- gamma (50-70 Hz) across most channels; occasional beta ~10 Hz
 ** 2-rb03
 - longer osc events - ~75-175ms (~7-15 Hz) 
-- most in L1/2 (top electrodes) - top-down cortical feedback?? artifact? what if remove top 2 electrodes?
+- Most common: only red/blue in L1/2 (top electrodes) - top-down cortical feedback?? artifact? what if remove top 2 electrodes?
+- 2nd most common: top layer + some red/blue bands above granular; and/or below granular
 - some coupled osc? gamma over beta?
 - similar to model??
 ** 1-bu3
