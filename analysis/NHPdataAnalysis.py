@@ -1431,7 +1431,7 @@ if __name__ == '__main__':
   recordingArea = 'A1/' # 'MGB/' 
   
   test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
-  testFiles =  ['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  testFiles =  ['2-rb031032016@os_eye06_20.mat']  #['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
   
   if test:
     dataFiles = testFiles

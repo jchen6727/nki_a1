@@ -51704,10 +51704,82 @@ files locally
 ***** [DONE] timeRange_80_120
 ***** [DONE] timeRange_120_160
 ***** [DONE] timeRange_160_200
-** STEPS:
-I think the steps are --> run load.py (dlms, etc.) --> transfer to gcp
---> run plotWavelets.py --> delete dlms from cluster --> transfer
-files locally 
-** AT SOME POINT -->
+** STILL TO DO AT SOME POINT (not urgent) -->
 *** TRANSFER ALL THE IMAGE FILES FROM BOTH NHP AND SIM OVER TO GCP BUCKETS YES?? 
 *** PUT THE timeRange PIECES INTO LARGER PARENT DIRECTORY 
+** okay so what comes next --> back to wavelet matching improvements:
+*** alpha, beta, theta 
+*** ALPHA:
+**** found several, several nice-looking examples for NHP data
+**** SIM:
+***** none in 0_0, 0_1, 0_2
+***** okay --> made a list in my best wavelet matches gdoc of all the semi-decent to good alpha wavelets from the sims: https://docs.google.com/document/d/19EP4gK9gO0w6qBpslXJ7fKBeQMMrDJqz87asqE4o0Ug/edit
+***** ^^ Divided these up into supra/gran/infra and now going to go through and try to find best match (if any) for each! 
+
+* <2021-12-04 Sat -- wavelets>
+** Continue with wavelets --> 
+** Alpha --> 
+*** A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217
+*** ^^ This one could be good, but need to plot a tighter x-range in order to really see how good it is -- there are a few "spikes" in the CSD prior to the wavelet that "compress" the wavelet because it distorts the height of the bottom panel. 
+*** okay so that's my next mission!!! 
+** Changes to plotWavelets.py:
+*** Added an option to plot an individual wavelet in plotWavelets 
+*** Added an option for gcp or local 
+** Alpha wavelet reformatting:
+*** A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217
+*** NOTE: need to get dlms for this! or transfer (push, pull etc) plotWavelets.py to gcp and gsutil the dlms over to the correct subject directory then run on there 
+*** Getting onto g9-n2-pre-controller
+*** cd /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5
+*** Transfer dlms: --> done 
+gsutil -m cp
+gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_4/A1_v34_batch27_v34_batch27_2_4_dlms.pkl
+/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4
+*** in load.py, I have the draw() function now print minT and maxT to get a sense of how to tighten the x-axis here 
+*** in ~/a1dat --> python3 -i plotWavelets.py 
+*** ^^ had to change the index argument name (idx --> eventIdx) bc I got an error that plotWavelets() got multiple values for argument 'idx' --> okay still happening, hm. 
+*** ah, positional vs. keyword argument (https://stackoverflow.com/questions/21764770/typeerror-got-multiple-values-for-argument) --> trying again!
+*** --> IndexError: index 1217 is out of bounds for axis 0 with size 1
+*** --> changing the eventIdx condition to use eventIdx instead of dfs.index[eventIdx] --> trying again! 
+*** okay! worked!!! --> and got minimum and maximum T
+minT: 8051.080510805108
+maxT: 8304.38304383044
+*** okay how to change this now --> I mean, I know I COULD try to change this manually but how do I change this in an automated way so it's not the worst pain in the ass in the world? or would it more of a pain in the ass to figure out some way to do it automatically? --> okay, at least figure out how it determines how far outside the wavelet to plot and then tighten that for everyone. 
+*** ^ okay, yes, hasbefore: 1, hasafter: 1, so have to contend with whatever that implies! 
+*** draw box commands / code:
+**** def drbox (x0,x1,y0,y1,clr,w,ax=None):
+  # draw a box
+  drline(x0,x0,y0,y1,clr,w,ax)
+  drline(x1,x1,y0,y1,clr,w,ax)
+  drline(x0,x1,y0,y0,clr,w,ax)
+  drline(x0,x1,y1,y1,clr,w,ax)
+**** in def draw(): -->  drbox(minT+alignoffset,maxT+alignoffset,minF,maxF,'r',lwbox,ax)  # 
+**** x0 = minT + alignoffset --> should print alignoffset !!! 
+**** x1 = maxT + alignoffset
+**** y0 = minF
+**** y1 = maxF
+**** clr = 'r'
+**** w = lwbox  --> what is this? 
+**** ax = ax 
+*** more values from print lines:
+hasbefore: 1
+hasafter: 1
+minT: 8051.080510805108
+maxT: 8304.38304383044
+chan: 5
+alignoffset: -8177.4
+MS type: <class 'morlet.MorletSpec'>
+windowidx: 0
+channel:5, event:1217, power:7.3
+alpha: minF:9.25 Hz, maxF:15.0 Hz, peakF:12.5 Hz, Foct:0.48
+These values are in Plot Before! --> 
+beforeT: 126.65126651266566
+idx1: 
+-252.97075570755715 -126.3194891948915
+duration:253.3 ms, 3 peaks, 3.2 cycles, filtsigcor:0.63
+afterT: 126.65126651266566
+126.98304383043978 253.63431034310634
+***  ^^ okay so I see from this that beforeT and afterT are the same, and that seems to determine how far the plotting goes
+*** plotWavelets.py --> produced new A1_v34...batch_2_4...chan_5... alpha... event 1217 --> TRANSFER LOCALLY AND SEE 
+**** locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/
+
+*** hmm... okay so it did 'expand' the wavelet if you will, so that it takes up more of the space in the box, but it seemed to just squish the rest on the before/after side rather than cutting off any of the data. so I'm guessing that beforeT and afterT just determines how much space that part of the data will take up, rather than what data actually gets plotted? hm. interesting. 
