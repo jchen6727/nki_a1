@@ -926,82 +926,96 @@ def fig_CSD_comparison():
 
     from netpyne import sim
 
-    from expDataAnalysis import getflayers, loadfile
+    exp = 1
+    model = 0
 
-    # experiment
-    datafile = '../data/NHPdata/spont/2-rb031032016@os_eye06_20.mat'   # LOCAL DIR 
-    trange = [2925, 2925+200]
-    trange = [51100, 51200]
-    
-    vaknin = 1
-    
-    #testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+    if exp:
+        #-------------------------
+        # Experiment
+        from expDataAnalysis import getflayers, loadfile
 
-    # setup netpyne
-    samprate = 11*1e3  # in Hz
-    sim.initialize()
-    sim.cfg.recordStep = 1000./samprate # in ms
+        testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
 
-    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=datafile, samprds=samprate, spacing_um=100, vaknin=vaknin)
-    dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
+        datafile = '../data/NHPdata/spont/1-bu031032017@os_eye06_20.mat'   # LOCAL DIR 
         
-    ##### GET LAYERS FOR OVERLAY #####
-    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(datafile,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
-    lchan = {}
-    lchan['S'] = s2high
-    lchan['G'] = ghigh
-    lchan['I'] = CSD_data.shape[0]-1 #i2high
-    print('s2high: ' + str(s2high))
+        vaknin = 0    
+        smooth = 30
+        tranges = [[x, x+200] for x in range(33600, 60000, 200)] #int(CSD_data.shape[1]/samprate*1000)
 
-    depth = 2300
-    #layer_bounds= {'S': glow/20*(depth-100), 'G': i1low/20*(depth-100), 'I': i2high/20*(depth-100)}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
+        # setup netpyne
+        samprate = 11*1e3  # in Hz
+        spacing = 100
+        sim.initialize()
+        sim.cfg.recordStep = 1000./samprate # in ms
 
-    layer_bounds= {'S': glow*100, 'G': i1low*100, 'I': i2high*100}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
+        [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=datafile, samprds=samprate, spacing_um=100, vaknin=vaknin)
+        dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
+            
+        ##### GET LAYERS FOR OVERLAY #####
+        s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(datafile,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+        lchan = {}
+        lchan['S'] = s2high
+        lchan['G'] = ghigh
+        lchan['I'] = CSD_data.shape[0]-1 #i2high
+        print('s2high: ' + str(s2high))
 
-    # plot CSD
-    sim.analysis.plotCSD(**{
-        'CSD_data': CSD_data,
-        'LFP_input_data': LFP_data.T,
-        'spacing_um': 100, 
-        'dt': sim.cfg.recordStep,
-        'ymax': depth,
-        'layer_lines': 1, 
-        'layer_bounds': layer_bounds, 
-        'overlay': 'LFP',
-        'timeRange': [trange[0], trange[1]], 
-        'smooth': 10,
-        'vaknin': vaknin,
-        'saveFig': datafile[:-4]+'_CSD_LFP_smooth10_%d-%d_vaknin-%d' % (trange[0], trange[1], vaknin), 
-        'figSize': (4.1,8.2), 
-        'dpi': 300, 
-        'showFig': 0})
+        depth = LFP_data.shape[0]*100 
+        #layer_bounds= {'S': glow/20*(depth-100), 'G': i1low/20*(depth-100), 'I': i2high/20*(depth-100)}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
+        layer_bounds= {'S': (glow*spacing)+spacing, 'G': (i1low*spacing)+spacing, 'I': depth-spacing} #(i2high*spacing)+spacing}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
 
+        # plot CSD
+        #ipy.embed()
+
+        for trange in tranges:# (2100, 2200,100):    
+            sim.analysis.plotCSD(**{
+                'CSD_data': CSD_data,
+                'LFP_input_data': LFP_data.T,
+                'spacing_um': 100, 
+                'dt': sim.cfg.recordStep,
+                'ymax': depth,
+                'layer_lines': 1, 
+                'layer_bounds': layer_bounds, 
+                'overlay': 'LFP',
+                'timeRange': [trange[0], trange[1]], 
+                'smooth': 10,
+                'vaknin': vaknin,
+                'saveFig': datafile[:-4]+'_CSD_LFP_smooth-%d_%d-%d_vaknin-%d' % (smooth, trange[0], trange[1], vaknin), 
+                'figSize': (4.1,8.2), 
+                'dpi': 300, 
+                'showFig': 0})
+
+
+    if model:
+        # ------------------------------------
+        # Model
         
-    # model
-    #layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
-    layer_bounds= {'S': 1250, 'G': 1334, 'I': 2000} 
+        #layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+        layer_bounds= {'S': 950, 'G': 1250, 'I': 1900}#, 'L6': 2000}
+        
+        #filename = '../data/v34_batch27/v34_batch27_0_0.pkl'
+        filename = '../data/v34_batch56/v34_batch56_0_0_data.pkl'
+        
+        vaknin = 0
+        smooth = 0
+
+        sim.load(filename, instantiate=False)
+
+        tranges = [[x, x+200] for x in range(0, 11500, 200)]
+        #tranges = [[500,11500]]
+        for trange in tranges:# (2100, 2200,100):    
+            sim.analysis.plotCSD(**{
+                'spacing_um': 100, 
+                'layer_lines': 1, 
+                'layer_bounds': layer_bounds, 
+                'overlay': 'LFP',
+                'timeRange': [trange[0], trange[1]], 
+                'smooth': smooth,
+                'vaknin': vaknin, 
+                'saveFig': filename[:-4]+'_CSD_CSD_smooth-%d_%d-%d_vaknin-%d' % (smooth,trange[0], trange[1], vaknin), 
+                'figSize': (4.1,8.2), 
+                'dpi': 300, 
+                'showFig': 0})
     
-    filename = '../data/v34_batch27/v34_batch27_0_0.pkl'
-    trange = [1025, 1025+200] #[900,1100]
-    trange = [2700, 2700+200] #[900,1100]
-
-    vaknin = 1
-
-    sim.load(filename, instantiate=False)
-
-    sim.analysis.plotCSD(**{
-        'spacing_um': 100, 
-        'layer_lines': 1, 
-        'layer_bounds': layer_bounds, 
-        'overlay': 'LFP',
-        'timeRange': [trange[0], trange[1]], 
-        'smooth': 10,
-        'vaknin': vaknin, 
-        'saveFig': filename[:-4]+'_CSD_CSD_smooth10_%d-%d_vaknin-%d' % (trange[0], trange[1], vaknin), 
-        'figSize': (4.1,8.2), 
-        'dpi': 300,
-        'showFig': 0})
-
     ipy.embed()
 
 
