@@ -1525,8 +1525,9 @@ if __name__ == '__main__':
     # plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
 
     ## Individual CSD ERP ##
-    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
-    plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
+    ERPindex = 6
+    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, ERPindex)
+    plotIndividualERP(individualERP,ttERP,fn=testFiles[0], ERPindex=ERPindex, saveFig=True,showFig=False)
 
   ###################
 

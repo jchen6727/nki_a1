@@ -51978,7 +51978,6 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 *** 50ms 
 *** transfer over:
 **** run locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_individualERP.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_individualCSD_speech
-
-
+**** run locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_individualERP.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_individualCSD_speech
 
 ** Then need to finish matching beta wavelet 
