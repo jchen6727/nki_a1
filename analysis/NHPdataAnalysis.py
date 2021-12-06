@@ -609,7 +609,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
     #plt.close()
 
 
-def plotIndividualERP(dat,tt,saveFig=False,showFig=True): # trigtimes,
+def plotIndividualERP(dat,tt,fn=None,saveFig=False,showFig=True): # trigtimes,
   # trigtines unnecessary argument? 
   # Add fn as argument? 
 
@@ -695,8 +695,16 @@ def plotIndividualERP(dat,tt,saveFig=False,showFig=True): # trigtimes,
   # #plt.show()
 
   if saveFig:
-    figname = 'NHP_individualERP.png'
-    plt.savefig(figname) #dpi
+    if fn is None:
+      figname = 'NHP_individualERP.png'
+    else:
+      filename = fn.split("@")[0] # filename without the .mat suffix 
+      figname = 'NHP_%s_individualERP.png' % filename
+
+    try:
+      plt.savefig(figname) #dpi
+    except:
+      plt.savefig('NHP_individualERP.png')
     # if fn is None: 
     #   if overlay:
     #     figname = 'NHP_avgCSD_csdOverlay.png'
