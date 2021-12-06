@@ -1419,7 +1419,7 @@ def plotExpData(pathToData,expCondition,saveFolder,regions):
 if __name__ == '__main__':
 
   # Parent data directory containing .mat files
-  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
+  origDataDir = '../data/NHPdata/speech/contproc/'   # LOCAL DIR 
   
   ## Sort these files by recording region 
   # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
@@ -1431,7 +1431,7 @@ if __name__ == '__main__':
   recordingArea = 'A1/' # 'MGB/' 
   
   test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
-  testFiles =  ['2-rb031032016@os_eye06_20.mat']  #['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  testFiles =  ['2-bu037038046@os.mat'] #['2-rb031032016@os_eye06_20.mat']  #['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
   
   if test:
     dataFiles = testFiles
@@ -1454,8 +1454,8 @@ if __name__ == '__main__':
             # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
 
     ##### SET PATH TO .csv LAYER FILE ##### 
-    # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
-    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
+    dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/speech/contproc/A1/A1_speech_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
+    # dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
     # dbpath = '/home/ext_ericaygriffith_gmail_com/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv'  # GCP 
     # dbpath = '/home/erica/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' # DESKTOP LOCAL MACHINE
     
@@ -1466,6 +1466,7 @@ if __name__ == '__main__':
     lchan['G'] = ghigh
     lchan['I'] = CSD_data.shape[0]-1 #i2high
     print('s2high: ' + str(s2high))
+    
     # lchan['S1'] = s1high
     # lchan['S2'] = s2high
     # lchan['G'] = ghigh
@@ -1480,15 +1481,15 @@ if __name__ == '__main__':
     ##### CSD #####
 
     ### Plot batches of CSDs:
-    ## Set up time ranges for loop
-    tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
-    for t in tranges:
-      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
-            trigtimes=None,timeRange=[t[0], t[1]],
-            showFig=False, figSize=(6,9), 
-            layerLines=True, layerBounds=lchan, 
-            overlay='LFP', LFP_data=LFP_data, smooth=33,
-            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+    # ## Set up time ranges for loop
+    # tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
+    # for t in tranges:
+    #   plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+    #         trigtimes=None,timeRange=[t[0], t[1]],
+    #         showFig=False, figSize=(6,9), 
+    #         layerLines=True, layerBounds=lchan, 
+    #         overlay='LFP', LFP_data=LFP_data, smooth=33,
+    #         saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
 
    #  ##### LINES BELOW ONLY RELEVANT FOR FILES w/ STIMULI #####
    #  if trigtimes is not None:
@@ -1511,26 +1512,26 @@ if __name__ == '__main__':
 
 
 
-   #  ### LOOK AT AVG CSD ### 
-   #  ## (1) Remove bad epochs 
-   #  ## (a) set epoch params
-   #  swindowms = 0     # start time relative to stimulus 
-   #  ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+    ### LOOK AT AVG CSD ### 
+    ## (1) Remove bad epochs 
+    ## (a) set epoch params
+    swindowms = 0     # start time relative to stimulus 
+    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
     
-   #  ## (b) set sigma thresh
-   #  sigmathresh=4 
+    # ## (b) set sigma thresh
+    # sigmathresh=4 
 
-   #  ## (c) 
-   #  trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
+    # ## (c) 
+    # trigtimesGood = removeBadEpochs(LFP_data, sampr, trigtimes, swindowms, ewindowms, sigmathresh)
 
-   #  ## calculate average CSD ERP ###
-   # #ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
-  
-   #  #plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+    # ## calculate average CSD ERP ###
+    # ttavg,avgCSD = getAvgERP(CSD_data, sampr, trigtimesGood, swindowms, ewindowms)
 
-   #  ## Individual CSD ERP ##
-   #  ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
-   #  plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
+    # plotAvgCSD(fn=fullPath,dat=avgCSD,tt=ttavg,overlay=None,saveFig=True,showFig=True)     # trigtimes=relativeTrigTimesMS
+
+    ## Individual CSD ERP ##
+    ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, 5)
+    plotIndividualERP(individualERP,ttERP,saveFig=True,showFig=False)
 
   ###################
 
