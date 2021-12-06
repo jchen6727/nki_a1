@@ -142,7 +142,7 @@ def getCSD (lfps,sampr,spacing_um,minf=0.05,maxf=300, vaknin=False, norm=True):
   # and positive values (hyperpolarizing intracellular current) drawn in blue
   CSD = -np.diff(datband,n=2,axis=ax)/spacing_mm**2 # now each column (or row) is an electrode -- CSD along electrodes
 
-  return CSD
+  return CSD, datband
 
 
 #
@@ -181,7 +181,7 @@ def loadfile (fn,samprds,spacing_um=100,vaknin=False):
   #          trigtimes is array of stimulus trigger indices (indices into arrays)
   sampr,LFP,dt,tt=rdmat(fn,samprds=samprds) # # samprds = 11000.0 # downsampling to this frequency
   sampr,dt,tt[0],tt[-1] # (2000.0, 0.001, 0.0, 1789.1610000000001)
-  CSD = getCSD(LFP,sampr,spacing_um, vaknin=vaknin)
+  CSD, LFP_filtered = getCSD(LFP,sampr,spacing_um, vaknin=vaknin)
   divby = 44e3 / samprds
   trigtimes = None
   try: # not all files have stimuli
@@ -190,7 +190,7 @@ def loadfile (fn,samprds,spacing_um=100,vaknin=False):
     pass
   #trigIDs = getTriggerIDs(fn)
   LFP = LFP.T # make sure each row is a channel
-  return sampr,LFP,dt,tt,CSD,trigtimes
+  return sampr,LFP_filtered,dt,tt,CSD,trigtimes
 
 
 ### AVERAGING FUNCTIONS ###

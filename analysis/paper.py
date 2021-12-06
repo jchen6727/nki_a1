@@ -929,18 +929,17 @@ def fig_CSD_comparison():
     exp = 1
     model = 0
 
+    #-------------------------
+    # Experiment
     if exp:
-        #-------------------------
-        # Experiment
+
         from expDataAnalysis import getflayers, loadfile
 
         testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
 
-        datafile = '../data/NHPdata/spont/1-bu031032017@os_eye06_20.mat'   # LOCAL DIR 
-        
+        #datafile = '../data/NHPdata/spont/2-rb031032016@os_eye06_20.mat'   # LOCAL DIR 
+        datafile = '../data/NHPdata/spont/1-bu031032017@os_eye06_20.mat'
         vaknin = 0    
-        smooth = 30
-        tranges = [[x, x+200] for x in range(33600, 60000, 200)] #int(CSD_data.shape[1]/samprate*1000)
 
         # setup netpyne
         samprate = 11*1e3  # in Hz
@@ -964,9 +963,10 @@ def fig_CSD_comparison():
         layer_bounds= {'S': (glow*spacing)+spacing, 'G': (i1low*spacing)+spacing, 'I': depth-spacing} #(i2high*spacing)+spacing}  #list(range(s1low, glow)), list(range(glow, i1low)), list(range(i1low, i2high))
 
         # plot CSD
-        #ipy.embed()
+        smooth = 30
+        tranges = [[x, x+200] for x in range(38300, 50000, 200)] #int(CSD_data.shape[1]/samprate*1000)
 
-        for trange in tranges:# (2100, 2200,100):    
+        for trange in tranges:# 
             sim.analysis.plotCSD(**{
                 'CSD_data': CSD_data,
                 'LFP_input_data': LFP_data.T,
@@ -977,17 +977,16 @@ def fig_CSD_comparison():
                 'layer_bounds': layer_bounds, 
                 'overlay': 'LFP',
                 'timeRange': [trange[0], trange[1]], 
-                'smooth': 10,
+                'smooth': smooth,
                 'vaknin': vaknin,
                 'saveFig': datafile[:-4]+'_CSD_LFP_smooth-%d_%d-%d_vaknin-%d' % (smooth, trange[0], trange[1], vaknin), 
                 'figSize': (4.1,8.2), 
                 'dpi': 300, 
                 'showFig': 0})
 
-
+    # ------------------------------------
+    # Model
     if model:
-        # ------------------------------------
-        # Model
         
         #layer_bounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
         layer_bounds= {'S': 950, 'G': 1250, 'I': 1900}#, 'L6': 2000}
@@ -995,14 +994,13 @@ def fig_CSD_comparison():
         #filename = '../data/v34_batch27/v34_batch27_0_0.pkl'
         filename = '../data/v34_batch56/v34_batch56_0_0_data.pkl'
         
-        vaknin = 0
-        smooth = 0
-
         sim.load(filename, instantiate=False)
 
-        tranges = [[x, x+200] for x in range(0, 11500, 200)]
+        tranges = [[x, x+200] for x in range(6300, 11500, 200)]
         #tranges = [[500,11500]]
-        for trange in tranges:# (2100, 2200,100):    
+        vaknin = 0
+        smooth = 60
+        for trange in tranges:
             sim.analysis.plotCSD(**{
                 'spacing_um': 100, 
                 'layer_lines': 1, 
@@ -1011,7 +1009,7 @@ def fig_CSD_comparison():
                 'timeRange': [trange[0], trange[1]], 
                 'smooth': smooth,
                 'vaknin': vaknin, 
-                'saveFig': filename[:-4]+'_CSD_CSD_smooth-%d_%d-%d_vaknin-%d' % (smooth,trange[0], trange[1], vaknin), 
+                'saveFig': filename[:-4]+'_CSD_LFP_smooth-%d_%d-%d_vaknin-%d' % (smooth,trange[0], trange[1], vaknin), 
                 'figSize': (4.1,8.2), 
                 'dpi': 300, 
                 'showFig': 0})

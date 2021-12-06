@@ -10337,6 +10337,8 @@ at 0.1 ms recordStep crashed when gathering
 
 
 ** v34_batch56 - 1 long sim; v34_batch25 (trial_2142); with LFP recordStep=0.05 to see if avoid artifact
+** v34_batch57 - 25 sims; spont, same as 56
+** v34_batch58 - 25 sims; with speech
 ** blank
 
 

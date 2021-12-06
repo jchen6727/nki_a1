@@ -811,11 +811,11 @@ def custom_speech(filename):
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
-    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probE')] = [0.26] #[0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'weightE')] = [0.25, 0.5]
     params[('ICThalInput', 'weightI')] = [0.25, 0.5]
-    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [1.0, 1.25, 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
@@ -831,7 +831,7 @@ def custom_speech(filename):
     initCfg['duration'] = 4500
     initCfg['printPopAvgRates'] = [1500, 4500] 
     initCfg['scaleDensity'] = 1.0
-    initCfg['recordStep'] = 1
+    initCfg['recordStep'] = 0.05
 
     initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
                              'startTime': 2000, 
@@ -2941,7 +2941,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch57' 
+    b.batchLabel = 'v34_batch58' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
