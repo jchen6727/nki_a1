@@ -51783,3 +51783,194 @@ afterT: 126.65126651266566
 **** locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/
 
 *** hmm... okay so it did 'expand' the wavelet if you will, so that it takes up more of the space in the box, but it seemed to just squish the rest on the before/after side rather than cutting off any of the data. so I'm guessing that beforeT and afterT just determines how much space that part of the data will take up, rather than what data actually gets plotted? hm. interesting. 
+*** okay --> added a couple more print lines to hasbefore section --> I think what's happening is that it picks out the CSD part before I modified the beforeT time --> verifying this then will try some stuff:
+minT: 8051.080510805108
+maxT: 8304.38304383044
+chan: 5
+alignoffset: -8177.4
+MS type: <class 'morlet.MorletSpec'>
+windowidx: 0
+channel:5, event:1217, power:7.3
+alpha: minF:9.25 Hz, maxF:15.0 Hz, peakF:12.5 Hz, Foct:0.48
+idx0: 79243
+w2: 1267
+idx1: 80510
+These values are in Plot Before! --> 
+beforeT: 126.65126651266566
+new beforeT: 63.32563325633283
+-189.64512245122478 -126.3194891948915
+duration:253.3 ms, 3 peaks, 3.2 cycles, filtsigcor:0.63
+afterT: 126.65126651266566
+new afterT: 63.32563325633283
+126.98304383043978 190.30867708677215
+*** Added more lines to find out left and right:
+minT: 8051.080510805108
+maxT: 8304.38304383044
+chan: 5
+alignoffset: -8177.4
+right: 83043
+left: 80510
+idx0: 79243
+w2: 1267
+idx1: 80510
+
+These values are in Plot Before! --> 
+beforeT: 126.65126651266566
+new beforeT: 63.32563325633283
+-189.64512245122478 -126.3194891948915
+duration:253.3 ms, 3 peaks, 3.2 cycles, filtsigcor:0.63
+afterT: 126.65126651266566
+new afterT: 63.32563325633283
+126.98304383043978 190.30867708677215
+
+*** hasbefore:
+**** sig = CSD[chan, idx0:idx1] <-- CSD[5, 79342:80510]
+**** ^^^ idx0 = max(0, left - w2) <-- idx0 = max(0, 80510 - 1267)
+***** idx0 should be larger (--> NOTE: by a symmetric amount re: idx1 in hasafter) 
+**** ^^^ idx1 = left <--  80510
+***** idx1 should stay the same! 
+**** tt = linspace(minT-beforeT,minT,len(sig)) + alignoffset
+**** ^^ beforeT = (maxT-minT) * (idx1 - idx0) / (right - left + 1)
+
+*** during:
+**** sig = CSD[chan, left:right]
+**** ^^ left <-- 80510
+**** ^^ right <-- 83043
+**** tt = linspace(minT,maxT,len(sig)) + alignoffset
+**** ^^ minT: 8051.080510805108
+**** ^^ maxT: 8304.38304383044
+
+*** hasafter:
+**** idx0 = int(right)
+**** ^^ right <-- 83043
+***** idx0 should stay the same! 
+**** idx1 = min(idx0 + w2,max(CSD.shape[0],CSD.shape[1]))
+***** idx1 should be smaller (--> NOTE: by the same amount that idx0 in hasbefore is larger!) 
+**** ^^ w2 <-- 1267
+**** idx0 + w2 <-- 84310
+**** sig = CSD[chan,idx0:idx1]
+**** tt = linspace(maxT,maxT+afterT,len(sig)) + alignoffset
+**** ^^ afterT = (maxT-minT) * (idx1 - idx0) / (right - left + 1)
+
+*** so I want to keep 'during' the same <-- so can leave this code block alone. 
+*** for before and after, I want to keep these symmetric, but just reduce the number of data points. 
+**** ^^ what did it do when I set afterT = afterT * 0.5 and similarly for beforeT? 
+**** it kept the same CSD but just shortened the x axis. 
+**** so what does this imply? 
+**** that makes sense, if I look at tt (in hasafter, for examples). the len(sig) is still being used to determine the amount of data points, so it's still going to have the same number of CSD points regardless. I need to also make a similar change to the CSD[] sig array - but how? 
+**** okay so keeping the linspace as it is will I think make sure that tt and sig have the same number of data points (from the len(sig) usage)
+**** so keep that like it is. 
+
+
+*** Relatively simple trial solution would be to make w2 smaller --> try w2 = w2*0.5 and see what happens! 
+**** restore beforeT and afterT also before doing this 
+**** running python3 -i plotWavelets.py
+**** ERROR:
+***** Traceback (most recent call last):
+  File "plotWavelets.py", line 142, in <module>
+    plotWavelets(dfs, df, dat, tt, sampr, dlms, subjectName, donetpyne, chanNumber, frequencyBand, eventIdx, waveletPath, specrange=specrange, ylspec=ylspec, saveFig=1)
+  File "plotWavelets.py", line 102, in plotWavelets
+    evv.draw(eventIdx,clr='red',drawfilt=True,filtclr='b',ylspec=ylspec)
+  File "/home/ext_ericaygriffith_gmail_com/a1dat/load.py", line 1911, in draw
+    sig = CSD[chan,idx0:idx1]
+TypeError: slice indices must be integers or None or have an __index__
+    method
+***** ^^ I can see that w2 = 633.5, so makes sense that idx0 and idx1 are no longer integers 
+**** Trying w2 = int(w2*0.5) 
+**** running plotWavelets.py again on gcp! (g9-n2-pre-controller) 
+**** RAN! printed out these values --> 
+minT: 8051.080510805108
+maxT: 8304.38304383044
+chan: 5
+alignoffset: -8177.4
+right: 83043
+left: 80510
+MS type: <class 'morlet.MorletSpec'>
+windowidx: 0
+channel:5, event:1217, power:7.3
+alpha: minF:9.25 Hz, maxF:15.0 Hz, peakF:12.5 Hz
+idx0: 79877
+w2: 633
+idx1: 80510
+These values are in Plot Before! --> 
+beforeT: 63.275652488174714
+-189.59514168306578 -126.3194891948915
+duration:253.3 ms, 3 peaks, 3.2 cycles, filtsigcor:0.63
+afterT: 63.275652488174714
+126.98304383043978 190.25869631861497
+**** after this runs on gcp, transfer .png locally --> 
+gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/
+
+**** YES --> WORKED!!!!!
+
+*** okay now redo a corresponding fig --> 
+**** 2-bu027028013_timeRange_40_80_SIM_wavelet_chan_7_alpha_816
+**** Transfer over dlms:
+***** gsutil -m cp gs://eyg_data/wavelets/2-bu027028013_timeRange_40_80/2-bu027028013_timeRange_40_80_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80
+***** ^^ run on gcp terminal 
+**** Run plotWavelets.py in a1dat on gcp 
+**** After runs --> transfer over to local machine!!
+***** run this locally --> 
+***** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_7/2-bu027028013_timeRange_40_80_MACAQUE_waveletchan_7_alpha_816.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_7
+
+* <2021-12-05 Sun -- wavelets>
+** okay --> gamma, alpha, delta are looking good
+** potential things left to do for the above:
+*** alpha --> maybe mess with specrange to change coloring?
+*** gamma --> maybe tighten the x-axis? 
+*** delta --> maybe tighten the x-axis
+*** For all --> Get rid of Foct, etc. 
+** Beta & theta are left to improve
+** Steps:
+*** Follow same as for the others:
+*** Go thru sim and find best theta that you can, then organize by layer
+*** Go thru NHP and find best matches
+*** Re-format your favorite(s) 
+** Theta:
+*** Which ones to re-format:
+**** STEPS: 
+***** change plotWavelets.py accordingly
+***** transfer over dlms 
+****** gsutil -m cp gs://eyg_data/wavelets/2-bu027028013_timeRange_40_80/2-bu027028013_timeRange_40_80_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80
+****** ^^ run this on gcp 
+***** run plotWavelets.py (python3 -i plotWavelets.py)
+***** rename old wavelet .png file
+***** transfer it over
+****** run this locally! 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_7/2-bu027028013_timeRange_40_80_MACAQUE_waveletchan_7_alpha_816.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_7
+**** [DONE] A1_v34_batch27_v34_batch27_2_2_SIM_wavelet_chan_6_theta_1406
+***** different specrange & tighten ylspec
+***** tranfer dlms:
+gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch27_v34_batch27_2_2_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_2
+***** plotWavelets.py edits:
+****** (i) specrange = (0,30) & ylspec = (1,40)  --> RUNNING --> okay; no difference to specrange it would seem, but ylspec different and tighter x-axis
+****** (ii) specrange = (0,10)  --> okay brighter!!!  
+***** transfer: 
+****** run this locally !!  ---->  gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_2/chan_6/A1_v34_batch27_v34_batch27_2_2_SIM_wavelet_chan_6_theta_1406.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_2/chan_6
+**** [DONE] A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_6_theta_1508
+***** (i)  different specrange (0,15) & tighten ylspec  (1,40) 
+***** (ii) maybe tone down specrange a little to (0,15) --> from (0,10) 
+***** dlms:
+****** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_2/A1_v34_batch27_v34_batch27_3_2_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2
+***** transfer over:
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_6/A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_6_theta_1508.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_6
+**** [DONE] A1_v34_batch27_v34_batch27_4_0_SIM_wavelet_chan_3_theta_745
+***** (i) tighten x-range and ylspec & do different specrange
+***** dlms:
+****** gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_4_0/A1_v34_batch27_v34_batch27_4_0_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_0
+***** transfer over:
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_0/chan_3/A1_v34_batch27_v34_batch27_4_0_SIM_wavelet_chan_3_theta_745.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_0/chan_3
+**** This pair:
+***** A1_v34_batch27_v34_batch27_1_4_SIM_wavelet_chan_11_theta_2594
+****** (i) specrange (0,15) ylspec (1,40) 
+****** dlms: gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_1_4/A1_v34_batch27_v34_batch27_1_4_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4
+****** transfer over (locally): gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_11/A1_v34_batch27_v34_batch27_1_4_SIM_wavelet_chan_11_theta_2594.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_11
+
+***** 2-bu027028013_timeRange_40_80_SIM_wavelet_chan_11_theta_1490
+****** specrange (0,15) ylspec (1,40) 
+****** dlms --> already in there or no? yes. 
+****** transfer over (locally): gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11/2-bu027028013_timeRange_40_80_MACAQUE_wavelet_chan_11_theta_1490.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11
+***** ^^ tighten ylspec for both 
+**** A1_v34_batch27_v34_batch27_3_1_SIM_wavelet_chan_12_theta_2731
+***** different specrange 
+
