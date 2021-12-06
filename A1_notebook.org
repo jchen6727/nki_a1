@@ -51979,6 +51979,62 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 *** transfer over:
 **** run locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_individualERP.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_individualCSD_speech
 **** run locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/analysis/NHP_2-bu037038046_ERPindex_6_individualERP.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/NHP_individualCSD_speech
-*** 
+*** ran a batch of 200ms individual ERPs:
+**** transfer over; run locally
+**** gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/individualERP_NHP/ /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/
 
-** Then need to finish matching beta wavelet 
+
+** Then need to finish matching beta & theta wavelets 
+** THETA:
+*** Have it narrowed down to top 3 matches
+*** Reformat now!
+*** [DONE] A1_v34_batch27_v34_batch27_3_0_SIM_wavelet_chan_10_theta_2443
+**** ^^ tighten x-range
+**** ylspec = (1,30) 
+**** specrange --> (0,30) keep it as is? 
+**** transfer over dlms: gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_0/A1_v34_batch27_v34_batch27_3_0_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_0
+**** transfer .png over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_0/chan_10/A1_v34_batch27_v34_batch27_3_0_SIM_wavelet_chan_10_theta_2443.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_0/chan_10
+
+*** [DONE] 2-ma031032023_timeRange_110_150_SIM_wavelet_chan_10_theta_1507
+**** ^^ use same params as the one above
+**** dlms: gsutil -m cp gs://eyg_data/wavelets/2-ma031032023_timeRange_110_150/2-ma031032023_timeRange_110_150_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-ma031032023_timeRange_110_150
+**** transfer .png over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-ma031032023_timeRange_110_150/chan_10/2-ma031032023_timeRange_110_150_MACAQUE_wavelet_chan_10_theta_1507.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-ma031032023_timeRange_110_150/chan_10
+
+*** [DONE] A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_6_theta_1508
+**** dlms: gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_2/A1_v34_batch27_v34_batch27_3_2_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2
+
+**** transfer .png over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_6/A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_6_theta_1508.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_6
+*** [DONE] 2-rb031032016_timeRange_40_80_SIM_wavelet_chan_6_theta_747
+**** dlms: gsutil -m cp gs://eyg_data/wavelets/2-rb031032016_timeRange_40_80/2-rb031032016_timeRange_40_80_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80
+**** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6
+*** So --> have 3 more choices!! 
+
+** BETA:
+*** Reformatting beta wavelts
+*** [DONE] A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_14_beta_3467
+**** ylspec = (10,50) 
+**** keep specrange = (0,30) --> assuming that's what it is? 
+**** dlms ALREADY THERE: gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_2/A1_v34_batch27_v34_batch27_3_2_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2
+**** trasnfer over --> run locally : gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_14/A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_14_beta_3467.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_14
+
+*** [DONE] 2-rb031032016_timeRange_40_80_SIM_wavelet_chan_14_beta_2342
+**** dlms should already be there I think
+**** transfer over locally: --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14
+**** 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342 <-- specrange (0,25) 
+
+** ALAPH Reformat / find new alpha wavelets:
+*** [DONE] 2-bu027028013_timeRange_0_40_SIM_wavelet_chan_2_alpha_55
+**** dlms: gsutil -m cp gs://eyg_data/wavelets/2-bu027028013_timeRange_0_40/2-bu027028013_timeRange_0_40_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40
+
+**** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2
+*** [DONE] A1_v34_batch27_v34_batch27_3_1_SIM_wavelet_chan_6_alpha_1398
+**** dlms : gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_1/A1_v34_batch27_v34_batch27_3_1_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_1
+**** transfer over: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_1/chan_6/A1_v34_batch27_v34_batch27_3_1_SIM_wavelet_chan_6_alpha_1398.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_1/chan_6
+**** specrange (0,30)
+**** ylspec (1, 40) 
+
+*** [DONE] 2-bu027028013_timeRange_0_40_SIM_wavelet_chan_7_alpha_778
+**** dlms: <-- should already be there
+**** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_7/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_7_alpha_778.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_7
+**** specrange (0,30)
+**** ylspec (1, 40) 
