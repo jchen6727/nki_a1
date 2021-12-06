@@ -10,7 +10,7 @@ Contributors: salvadordura@gmail.com
 import numpy as np
 #import scipy
 from matplotlib import pyplot as plt
-#import pandas as pd
+import pandas as pd
 #import seaborn as sb
 import os
 import pickle
@@ -837,7 +837,8 @@ def fig_LFP_PSD_matrix():
                 '../data/NHPdata/spont/spont_LFP_PSD/2-ma031032023@os_eye06_20_10sec_allData.pkl', 
                 '../data/NHPdata/spont/spont_LFP_PSD/2-rb031032016@os_eye06_20_10sec_allData.pkl', 
                 '../data/NHPdata/spont/spont_LFP_PSD/2-rb045046026@os_eye06_20_10sec_allData.pkl',
-                '../data/v34_batch27/v34_batch27_7sec_allData.pkl']
+                '../data/v34_batch57/v34_batch57_10sec_allData.pkl']
+                #'../data/v34_batch27/v34_batch27_7sec_allData.pkl']
 
     psd = []
     clusters = []
@@ -937,8 +938,9 @@ def fig_CSD_comparison():
 
         testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
 
-        #datafile = '../data/NHPdata/spont/2-rb031032016@os_eye06_20.mat'   # LOCAL DIR 
-        datafile = '../data/NHPdata/spont/1-bu031032017@os_eye06_20.mat'
+        datafile = '../data/NHPdata/spont/2-rb031032016@os_eye06_20.mat'   # LOCAL DIR 
+        #datafile = '../data/NHPdata/spont/1-bu031032017@os_eye06_20.mat'
+
         vaknin = 0    
 
         # setup netpyne
@@ -964,7 +966,7 @@ def fig_CSD_comparison():
 
         # plot CSD
         smooth = 30
-        tranges = [[x, x+200] for x in range(38300, 50000, 200)] #int(CSD_data.shape[1]/samprate*1000)
+        tranges = [[x, x+200] for x in range(100000, 130000, 100)] #int(CSD_data.shape[1]/samprate*1000)
 
         for trange in tranges:# 
             sim.analysis.plotCSD(**{
@@ -996,10 +998,10 @@ def fig_CSD_comparison():
         
         sim.load(filename, instantiate=False)
 
-        tranges = [[x, x+200] for x in range(6300, 11500, 200)]
+        tranges = [[x, x+200] for x in range(1000, 2400, 50)]
         #tranges = [[500,11500]]
         vaknin = 0
-        smooth = 60
+        smooth = 45
         for trange in tranges:
             sim.analysis.plotCSD(**{
                 'spacing_um': 100, 
@@ -1035,7 +1037,6 @@ if __name__ == '__main__':
     #fig_raster('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
     # fig_traces('v34_batch27', 'v34_batch27_1_2', timeRange=[3500,4500])
     # fig_stats('v34_batch27', 'v34_batch27_1_2', timeRange=[1000,6000])
-
 
 
     # for iseed in range(5):
