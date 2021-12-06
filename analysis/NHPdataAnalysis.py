@@ -609,7 +609,7 @@ def plotAvgCSD(dat,tt,trigtimes=None,fn=None,saveFolder=None,overlay=True,saveFi
     #plt.close()
 
 
-def plotIndividualERP(dat,tt,fn=None,saveFig=False,showFig=True): # trigtimes,
+def plotIndividualERP(dat,tt,fn=None,ERPindex=None,saveFig=False,showFig=True): # trigtimes,
   # trigtines unnecessary argument? 
   # Add fn as argument? 
 
@@ -699,28 +699,15 @@ def plotIndividualERP(dat,tt,fn=None,saveFig=False,showFig=True): # trigtimes,
       figname = 'NHP_individualERP.png'
     else:
       filename = fn.split("@")[0] # filename without the .mat suffix 
-      figname = 'NHP_%s_individualERP.png' % filename
+      if ERPindex is None:
+        figname = 'NHP_%s_individualERP.png' % filename
+      else:
+        figname = 'NHP_%s_ERPindex_' + str(ERPindex) + '_individualERP.png' % filename
 
     try:
       plt.savefig(figname) #dpi
     except:
       plt.savefig('NHP_individualERP.png')
-    # if fn is None: 
-    #   if overlay:
-    #     figname = 'NHP_avgCSD_csdOverlay.png'
-    #   else:
-    #     figname = 'NHP_avgCSD.png'
-    # else: 
-    #   filename = fn.split("/")[6][:-4] # filename without any of the path info or the .mat suffix 
-    #   print(filename)
-    #   if overlay:  
-    #     figname = 'NHP_avgCSD_csdOverlay_%s.png' % filename
-    #   else:
-    #     figname = 'NHP_avgCSD_%s.png' % filename
-    # try:
-    #   plt.savefig(figname) #dpi
-    # except:
-    #   plt.savefig('NHP_avgCSD.png')
 
 
   # DISPLAY FINAL FIGURE
@@ -1524,7 +1511,7 @@ if __name__ == '__main__':
     ## (1) Remove bad epochs 
     ## (a) set epoch params
     swindowms = 0     # start time relative to stimulus 
-    ewindowms = 50 #200   # end time of epoch relative to stimulus onset 
+    ewindowms = 200 #200   # end time of epoch relative to stimulus onset 
     
     # ## (b) set sigma thresh
     # sigmathresh=4 
