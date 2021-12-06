@@ -1532,6 +1532,7 @@ if __name__ == '__main__':
 
     ## Plot batch of individual CSD ERPs ##
     for i in range(50): 
+      ERPindex = i
       ttERP,individualERP = getIndividualERP(CSD_data,sampr,trigtimes,swindowms, ewindowms, ERPindex)
       plotIndividualERP(individualERP,ttERP,fn=testFiles[0], ERPindex=ERPindex, saveFig=True,showFig=False)
 
