@@ -702,7 +702,8 @@ def plotIndividualERP(dat,tt,fn=None,ERPindex=None,saveFig=False,showFig=True): 
       if ERPindex is None:
         figname = 'NHP_%s_individualERP.png' % filename
       else:
-        figname = 'NHP_%s_ERPindex_' + str(ERPindex) + '_individualERP.png' % filename
+        figname0 = 'NHP_%s_ERPindex_' % filename 
+        figname = figname0 + str(ERPindex) + '_individualERP.png' 
 
     try:
       plt.savefig(figname) #dpi
