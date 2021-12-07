@@ -10336,9 +10336,9 @@ at 0.1 ms recordStep crashed when gathering
                             'seed': 1}  
 
 
-** v34_batch56 - BUG (gather LFP from only 1 node); 1 long sim; v34_batch25 (trial_2142); with LFP recordStep=0.05 to see if avoid artifact
-** v34_batch57 - BUG (gather LFP from only 1 node); 25 sims; spont, same as 56
-** v34_batch58 - 25 sims; with speech
+** v34_batch56 - 1 long sim; v34_batch25 (trial_2142); with LFP recordStep=0.05 to see if avoid artifact
+** v34_batch57 - 5x5 seeds; v34_batch56
+** v34_batch58 - 25 sims (not seeds, different stim/conn params); v34_batch56 with speech
 ** blank
 
 

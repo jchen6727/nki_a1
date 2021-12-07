@@ -875,11 +875,11 @@ def fig_LFP_PSD_matrix():
     df=pd.concat([df, model_shuffled])#.reset_index()
     
     # corr matrix
-    # dfT = df.T
-    # corrMatrix = dfT.corr()
-    # plt.figure()
-    # sns.heatmap(corrMatrix, cmap='viridis')
-    # plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_corr_matrix.png')
+    dfT = df.T
+    corrMatrix = dfT.corr()
+    plt.figure()
+    sns.heatmap(corrMatrix, cmap='viridis')
+    plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_corr_matrix.png')
 
     # PCA
     dfnorm = df.div(df.max(axis=1), axis=0)   
@@ -927,8 +927,8 @@ def fig_CSD_comparison():
 
     from netpyne import sim
 
-    exp = 1
-    model = 0
+    exp = 0
+    model = 1
 
     #-------------------------
     # Experiment
