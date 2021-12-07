@@ -52161,4 +52161,68 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 * <2021-12-07 Tue -- wavelets>
 ** Ah -- sam meant something different by xlim --> 
 *** He didn't mean just restrict to the wavelet, he meant to make sure that the CSD waveform on the bottom panel touches the edge of the box 
-*** 
+*** okay how to do this? will have to modify draw() in load.py 
+** Load.py modifications:
+*** I'm guessing easiest / best approach to this will be to modify hasbefore and hasafter sections of draw() in load.py
+*** Get rid of these commented out lines:
+    ### GETTING RID OF BEFORE AND AFTER: TEST ####
+    #hasbefore=0
+    #hasafter=0
+*** Guessing the drbox line draws the actual box(es)? 
+**** drbox(minT+alignoffset,maxT+alignoffset,minF,maxF,'r',lwbox,ax)  
+**** def drbox (x0,x1,y0,y1,clr,w,ax=None):
+  # draw a box
+  drline(x0,x0,y0,y1,clr,w,ax)
+  drline(x1,x1,y0,y1,clr,w,ax)
+  drline(x0,x1,y0,y0,clr,w,ax)
+  drline(x0,x1,y1,y1,clr,w,ax)
+*** Plotting in hasbefore:
+**** sig = CSD[chan,idx0:idx1]
+**** beforeT = (maxT-minT) * (idx1 - idx0) / (right - left + 1)
+**** tt = linspace(minT-beforeT,minT,len(sig)) + alignoffset
+**** ax.plot(tt,sig,'k',linewidth=lw)
+*** printing out minT, alignoffset, etc. values to see how boundaries of box correspond with csd:
+**** minT: 3732.1248374985225
+**** maxT: 3998.9454449585905
+**** alignoffset: -3878.0
+**** idx0: 40319
+**** w2: 734
+**** idx1: 41053
+**** beforeT: 66.705151865017
+-212.58031436649435 -145.87516250147746
+**** afterT: 66.705151865017
+120.94544495859054 187.65059682360743
+*** Resetting xlim for top and bottom panels at the end of draw() in load.py works!! 
+*** Maybe make w2 0.75 original value, rather than 0.5? for aesthetics? 
+
+** Taking out the following print lines / commented-out lines from load.py:
+*** beforeT:
+#beforeT = beforeT * 0.5 ## Adding these lines to strategize about tightening x axis 
+#print('new beforeT: ' + str(beforeT)) 
+
+*** print statement in beforeT:
+# print('These values are in Plot Before! --> ')
+
+
+*** afterT:
+#afterT = afterT * 0.5
+#print('new afterT: ' + str(afterT)) ## Adding these lines to strategize about tightening x axis 
+
+*** resetting xl:
+#xl = (tt[0], tt[-1])
+
+*** xlim / xl:
+    # print(str(xl)) ### Adding these lines to strategize about tightening x axis 
+    #### reset xlim 
+
+*** MS and windowidx print lines:
+# print('MS type: ' + str(type(MS))) ## Adding these lines to strategize about tightening x axis 
+# print('MS: ' + str(MS)) ## Adding these lines to strategize about tightening x axis 
+# print('windowidx: ' + str(windowidx)) ## Adding these lines to strategize about tightening x axis 
+
+
+** Trial run for this xlimits stuff:
+*** NHP: 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55
+**** dlms: already in there probably? 
+**** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55.png /Users/ericagriffith/Desktop/
+
