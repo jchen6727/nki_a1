@@ -51391,7 +51391,7 @@ gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail
 *** 2-rb031032016@os_eye06_20.mat
 **** (1) Run load.py for all timeRanges
 ***** length of spontaneous run: 
-***** python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat 
+***** python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat
 ***** timeRange_0_40
 ***** timeRange_40_80 
 ***** timeRange_80_120
@@ -52022,7 +52022,8 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** transfer over locally: --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14
 **** 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342 <-- specrange (0,25) 
 
-** ALAPH Reformat / find new alpha wavelets:
+** ALPHA: 
+*** Reformat / find new alpha wavelets w/ closer peakF 
 *** [DONE] 2-bu027028013_timeRange_0_40_SIM_wavelet_chan_2_alpha_55
 **** dlms: gsutil -m cp gs://eyg_data/wavelets/2-bu027028013_timeRange_0_40/2-bu027028013_timeRange_0_40_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40
 
@@ -52038,3 +52039,126 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_7/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_7_alpha_778.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_7
 **** specrange (0,30)
 **** ylspec (1, 40) 
+** okay should really ask for guidance on alpha, but set that aside for now
+** Final reformatting changes to draw() in load.py:
+*** Get rid of unnecessary text in upper panel:
+**** Foct
+**** event number
+**** power
+**** channel
+**** ^^ commented out --> #axtstr = 'channel:' + str(chan) +', event:' + str(evidx) + ', power:'+ str(round(avgpowevent,1)) +'\n'
+**** basically --> keep frequency band, minF, maxF, and peakF 
+*** Get rid of unnecessary text in lower panel:
+**** get rid of filtsigcor
+**** keep duration, num peaks, and num cycles:
+**** ^^ commented out -> #axtstr += 'filtsigcor:'+str(round(filtsigcor,2))
+
+*** tighten x-axis 
+**** Try hasbefore=0 and hasafter=0 to see if this works! 
+
+** Finalize DELTA: 
+*** [DONE] SIM: A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440
+**** dlms --> gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_3_4/A1_v34_batch27_v34_batch27_3_4_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4/chan_14/A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4/chan_14
+
+*** [DONE] NHP: 2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020
+**** old name: 2-rb031032016@os_eye06_20_MACAQUE_wavelet_chan_18_delta_2650
+**** dlms --> gsutil -m cp gs://eyg_data/wavelets/2-rb031032016_timeRange_160_200/2-rb031032016_timeRange_160_200_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200
+***** ^^ hold up, wasn't transferred initially!! what!!
+***** but it is in ~/A1/data/figs/wavelets on gcp --> so transfer over now
+***** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/ gs://eyg_data/wavelets/
+***** oh MAN that means I have to generate dlms for this.... --> how to do this, look back
+***** (1) ^^ re-running load.py (python3 -i load.py ~/A1/data/NHPdata/spont/contproc/A1/2-rb031032016@os_eye06_20.mat) <-- made sure donetpyne = 0, machineType was 'gcp' and that timeRange was [160,200]
+***** (2) gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/ gs://eyg_data/wavelets/
+***** (3) Don't re-run plotWavelets.py on all --> just run it for delta 3020 in chan_18! 
+
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/chan_18/2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/chan_18
+**** specrange = (0,30)
+**** ylspec = (1,10) 
+
+*** [DONE] (1) Tighten the x-axis on these to:
+**** [DONE] halve the ends 
+***** SIM [DONE] 
+***** NHP [DONE]
+**** [DONE] just the wavelet
+***** SIM [DONE]
+***** NHP [DONE]
+*** [DONE] (2) Get rid of unnecessary text 
+**** SIM [DONE] 
+**** NHP [DONE]
+*** CONCERN --> is the duration too different? 
+
+*** ylspec = (1,10) 
+*** specrange = (0,30) 
+*** So right now in gdoc I have one that is half-length on the ends, and one that is just the wavelet 
+** Finalize THETA: 
+*** SIM: A1_v34_batch27_v34_batch27_1_4_SIM_wavelet_chan_11_theta_2594
+**** ylspec = (1,20) 
+**** specrange = (0,20) 
+**** dlms already there in gcp
+**** transfer locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_11/A1_v34_batch27_v34_batch27_1_4_SIM_wavelet_chan_11_theta_2594.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_11
+*** NHP: 2-bu027028013_timeRange_40_80_MACAQUE_wavelet_chan_11_theta_1490
+**** dlms --> already in there I believe 
+**** transfer locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11/2-bu027028013_timeRange_40_80_MACAQUE_wavelet_chan_11_theta_1490.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11
+**** ylspec = (1,20)
+**** specrange = (0,15) [also tried (0,20)]
+
+*** (1) Get one with halved ends, but tighter ylspec
+*** (2) Tighten the x-axis to just around the wavelet
+**** [DONE] sim
+***** ylspec = (1,20)
+***** specrange = (0,20)
+**** [DONE] NHP
+***** ylspec = (1,20) 
+***** specrange = (0,15)  
+*** So in gdoc right now I have --> 
+**** all unnecessary text deleted 
+**** 1 --> just the wavelet, specrange (0,20)
+**** 2 --> just the wavelet, specrange (0,15)
+**** 3 --> half-lengths on the end, specrange (0,15) 
+** Finalize GAMMA:
+*** [DONE] SIM: A1_v34_batch27_v34_batch27_4_4_SIM_wavelet_chan_12_gamma_2946
+**** dlms --> gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_4_4/A1_v34_batch27_v34_batch27_4_4_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_12/A1_v34_batch27_v34_batch27_4_4_SIM_wavelet_chan_12_gamma_2946.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_12
+
+**** ylspec = (30,95)
+**** specrange = (0,30) 
+
+**** did one with no ends (hasbefore = 0, hasafter = 0)
+**** did one with halved ends
+
+*** [DONE] NHP: 2-bu027028013_timeRange_0_40_SIM_wavelet_chan_14_gamma_2658
+**** old name: 2-bu027028013@os_eye06_20_MACAQUE_gcp_wavelet_chan_14_gamma_2466 
+**** dlms <-- already there 
+**** transfer over locally <-- gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_14/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_14_gamma_2658.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_14
+*** specrange = (0,30)
+*** ylspec = (30,95)
+*** In gdoc right now, I have one pair (same data) that is w/ half-length ends surrounding the wavelet, and 1 that is just the wavelet. Both have the unnecessary text deleted! 
+** Finalize BETA:
+*** SIM: A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_14_beta_3467
+**** dlms <-- should probably already be there
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_14/A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_14_beta_3467.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_14
+
+*** NHP: 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342
+**** dlms <-- should probably be there already
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14
+*** 1--> half-length ends w/out unnecessary text 
+*** [DONE] 2--> just wavelet w/out unnecessary text 
+*** ylspec = (10,50)
+*** specrange = (0,30) for sim; specrange = (0,25) for NHP 
+** Finalize ALPHA:
+*** SIM: A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217
+**** dlms: already in there! 
+**** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5
+
+*** NHP: 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55
+**** dlms: already in there probably? 
+**** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2
+**** 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55_HASBEFORE_HASAFTER_1 
+*** specrange = (0,25)
+*** ylspec = (1,40) <--> also trying ylspec = (1,30) 
+*** Have two options -- without the 'ends', it looks better with ylspec (1,30), but with the ends, it looks better with ylspec = (1,40) 
+* <2021-12-07 Tue -- wavelets>
+** Ah -- sam meant something different by xlim --> 
+*** He didn't mean just restrict to the wavelet, he meant to make sure that the CSD waveform on the bottom panel touches the edge of the box 
+*** 
