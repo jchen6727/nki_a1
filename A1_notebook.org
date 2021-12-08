@@ -52277,4 +52277,40 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** frequency range maybe? maxF - minF ?
 *** Inter-event intervals? 
 *** number of wavelets in a given frequency band over a given time period in given cortical region(s) -- Figure 6 in taxonomy of oscillations paper! 
+** Wavelet aspects:
+*** in draw() in load.py, this info is extracted by the following line -->    
+ dur,chan,hasbefore,hasafter,windowidx,offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT,w2,left,right,band,alignoffset,filtsigcor,Foct,cycnpeak,ERPscore,OSCscore
+ = self.getallprop(evidx,align)  
+*** ^^ getallprop --> geteventprop()
+*** ^^ align = 'bywaveletpeak'
+*** ^^ evidx = dfs.index[idx]
+*** duration --> dur (see first subpoint here)
+** Possible scripts in OEvent package (a1dat) that could be useful --> 
+*** batch.py
+*** cfc.py --> cross-frequency coupling?  
+*** evstats.py  
+*** geteventprop(dframe, evidx, align) in load.py 
+**** ^^ now the question is --> which dframe..? df or dfs...? either one? hm. 
+**** I think .... df? evv = eventviewer(df, dat, ...) 
+**** but then uses dfs.index[idx] for evidx arg in draw() 
+**** so indexes by dfs.index[idx] into df I think
+**** how to test? 
+** Additions / modifications to plotWavelets.py --> 
+*** test the geteventprop() function
+*** okay so for dur --> 
+**** dur = plotStats(df = df, evidx = eventIdx, align='bywaveletpeak') ## Trying df 
+***** dur --> 923.5092350923508
+**** dur0 = plotStats(df = dfs, evidx = eventIdx, align='bywaveletpeak')
+***** dur & dur0 gave the same result!!
+>>> dur
+923.5092350923508
+>>> dur0
+923.5092350923508
+** okay so I think I can get these stats based on the preliminary code I've written so far in plotWavelets.py --> but do need to work on the organization of the data and the plotting. --> would like to do ... histograms perhaps. and box plots. 
+** Checked in with salva:
+*** salva, from slack --> I added placeholders of the figs in the gdoc and restructured sections accordingly . right now Im working on fig 5B (laminar csd comparison for speech) and then was planning to move to fig 8 (prediction of lfp/mua sources of osc event — I need to choose 1 or 2 events) … and plan on adding some of the corresponding text after that
+** Figure 8:
+*** lfp / mua sources of osc events
+*** So --> need to pick 1 or 2 events.
+*** I should have some of that code written already from sfn? What script was that in --> A1/analysis/simDataAnalysis.py 
 *** 
