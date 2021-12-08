@@ -52102,7 +52102,6 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** transfer locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11/2-bu027028013_timeRange_40_80_MACAQUE_wavelet_chan_11_theta_1490.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11
 **** ylspec = (1,20)
 **** specrange = (0,15) [also tried (0,20)]
-
 *** (1) Get one with halved ends, but tighter ylspec
 *** (2) Tighten the x-axis to just around the wavelet
 **** [DONE] sim
@@ -52220,9 +52219,62 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 # print('MS: ' + str(MS)) ## Adding these lines to strategize about tightening x axis 
 # print('windowidx: ' + str(windowidx)) ## Adding these lines to strategize about tightening x axis 
 
-
 ** Trial run for this xlimits stuff:
 *** NHP: 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55
 **** dlms: already in there probably? 
 **** transfer over locally: gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55.png /Users/ericagriffith/Desktop/
 
+** Okay, now have xlimits improved! Go through all existing 'best' wavelets and reformat w/ new x-axis!
+*** Reformatting on g9-n2-pre-controller on gcp 
+** GAMMA:
+*** [DONE] SIM: A1_v34_batch27_v34_batch27_4_4_SIM_wavelet_chan_12_gamma_2946
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_12/A1_v34_batch27_v34_batch27_4_4_SIM_wavelet_chan_12_gamma_2946.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_4_4/chan_12
+*** [DONE] NHP: 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_14_gamma_2658
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_14/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_14_gamma_2658.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_14
+*** ylspec = (30,95)
+*** specrange = (0,30) 
+** BETA:
+*** [DONE] SIM: A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_14_beta_3467
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_14/A1_v34_batch27_v34_batch27_3_2_SIM_wavelet_chan_14_beta_3467.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_2/chan_14
+*** [DONE] NHP: 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_14
+*** ylspec = (10,50) 
+*** sim --> specrange = (0,30)
+*** nhp --> specrange = (0,25) 
+** ALPHA:
+*** [DONE] SIM: A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5/A1_v34_batch27_v34_batch27_2_4_SIM_wavelet_chan_5_alpha_1217.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_2_4/chan_5
+*** [DONE] NHP: 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2/2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_2_alpha_55.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/chan_2
+*** ylspec = (1,40) 
+*** specrange = (0,25) 
+** THETA:
+*** [DONE] SIM: A1_v34_batch27_v34_batch27_1_4_SIM_wavelet_chan_11_theta_2594
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_11/A1_v34_batch27_v34_batch27_1_4_SIM_wavelet_chan_11_theta_2594.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_1_4/chan_11 
+**** specrange = (0,20) & ylspec = (1,10) 
+*** [DONE] NHP: 2-bu027028013_timeRange_40_80_MACAQUE_wavelet_chan_11_theta_1490
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11/2-bu027028013_timeRange_40_80_MACAQUE_wavelet_chan_11_theta_1490.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_40_80/chan_11
+**** ylspec = (1,10) 
+**** specrange = (0,20) for first try! 
+**** specrange = (0,15) for second try! 
+*** ylspec = (1,10) 
+*** for nhp --> specrange = (0,15) 
+*** for sim --> specrange = (0,20) 
+** DELTA: 
+*** SIM: A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4/chan_14/A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/A1_v34_batch27_v34_batch27_3_4/chan_14
+*** [DONE] NHP: 2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020
+**** transfer over locally --> gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/chan_18/2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020.png /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/chan_18
+*** ylspec = (1,10)
+*** specrange = (0,30) 
+* <2021-12-08 Wed -- wavelet quantification>
+** Think about what measures I can look at re: quantifying the wavelets in sim vs. nhp
+*** Aspects of the wavelets themselves:
+**** avg. duration of wavelet in each frequency band
+**** num cycles
+**** num peaks
+**** peakF 
+**** frequency range maybe? maxF - minF ?
+*** Inter-event intervals? 
+*** number of wavelets in a given frequency band over a given time period in given cortical region(s) -- Figure 6 in taxonomy of oscillations paper! 
+*** 
