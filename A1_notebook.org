@@ -52313,4 +52313,11 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 *** lfp / mua sources of osc events
 *** So --> need to pick 1 or 2 events.
 *** I should have some of that code written already from sfn? What script was that in --> A1/analysis/simDataAnalysis.py 
-*** 
+* <2021-12-09 Thu -- Figure 8 & wavelet stats>
+** Working on figure 8 --> 
+*** "Fig 8. Layer and cell type-specific contributions to the generation of LFP/CSD oscillation events and its relation to MUA"
+*** Pick an ~arbitrary sim wavelet event -- do from the best matches for now. 
+**** DELTA 
+***** SIM: A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440
+***** NHP: 2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020
+*** Go thru simDataAnalysis.py (in A1/analysis) to see again what I can dow ith it / how I can adapt this. 
