@@ -72,7 +72,7 @@ colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.
 ### set path to data files
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/shortRuns/'
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -105,12 +105,12 @@ else:
 ########################
 
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 0
+LFP = 1
 LFPcellContrib = 0
-LFPPopContrib = ['ITP4', 'ITS4']#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
-filtFreq = [13,30]
+LFPPopContrib = 0 #['ITP4', 'ITS4']#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+filtFreq = 0 #[13,30]
 CSD = 1
-MUA = 0#ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
+MUA = ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
 waveletNum = 1
 electrodes = [3, 4, 5, 6]		# list of electrodes 
@@ -152,12 +152,20 @@ if MUA:
 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
 
 	#### PLOTTING ####
-	for pop in MUA:
-		color=colorList[MUA.index(pop)%len(colorList)]
-		val = MUA.index(pop)
-		spikeActivity = np.array(spikes[pop])
-		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-		plt.text(timeRange[0]-20, val*2, pop, color=color)
+	if type(MUA) == list:
+		for pop in MUA:
+			color=colorList[MUA.index(pop)%len(colorList)]
+			val = MUA.index(pop)
+			spikeActivity = np.array(spikes[pop])
+			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+			plt.text(timeRange[0]-20, val*2, pop, color=color)
+	else:
+		for pop in pops:
+			color=colorList[MUA.index(pop)%len(colorList)] ## FIX THIS SO CAN USE BOOL AND DO ALL POPS 
+			val = MUA.index(pop)  ## FIX THIS 
+			spikeActivity = np.array(spikes[pop])
+			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+			plt.text(timeRange[0]-20, val*2, pop, color=color)
 
 	#plt.legend() # unnecessary w/ 
 	ax = plt.gca()
@@ -289,7 +297,7 @@ if LFP or CSD or traces:
 
 	if LFP and not LFPPopContrib:
 		sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-	elif LFP and LFPPopContrib:
+	elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
 		LFPPops = list(allLFPData['LFPPops'].keys())
 		for pop in LFPPops:
 			sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']

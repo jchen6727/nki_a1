@@ -52320,4 +52320,39 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** DELTA 
 ***** SIM: A1_v34_batch27_v34_batch27_3_4_SIM_wavelet_chan_14_delta_3440
 ***** NHP: 2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020
-*** Go thru simDataAnalysis.py (in A1/analysis) to see again what I can dow ith it / how I can adapt this. 
+*** Go thru simDataAnalysis.py (in A1/analysis) to see again what I can do with it / how I can adapt this. 
+*** Looking thru the placeholder for figure 8 --> I can see that it's kind of divided into 2-3 sections. There's the wavelet, then there's the LFP/CSD portion on top, and the Spiking / MUA portion on the bottom. 
+**** It looks like for the top panels, salva envisioned the individual pop contributions fto LFP signal, from various populations, with time series on the bottom and spectrogram on the top. 
+**** Then for the bottom panels, looks like similar for spiking activity. Spiking activity histogram on the bottom, with spectrogram on the top. 
+**** so work on this then! even with the limited data that I have. 
+**** Goal for LFP: 
+***** (1) be able to take a wavelet and get the timeRange where that wavelet occurred in the sim
+***** (2) use that timeRange to plot a figure with: 
+****** (i) the timeSeries of a given population's LFP contribution on the bottom
+****** (ii) and a spectrogram of the LFP signal on the top 
+**** Goal for MUA: 
+***** (1) be able to take a wavelet and get the timeRange where that wavelet occurred in the sim
+***** (2) use that timeRange to plot a figure with: 
+****** (i) histogram of a given population's spiking activity on the bottom 
+****** (ii) and a spectrogram of the spiking activity signal on the top
+
+** LFP for figure 8:
+*** Goal for LFP: 
+**** (1) be able to take a wavelet and get the timeRange where that wavelet occurred in the sim
+**** (2) use that timeRange to plot a figure with: 
+***** (i) the timeSeries of a given population's LFP contribution on the bottom
+***** (ii) and a spectrogram of the LFP signal on the top 
+*** (1) Take a wavelet and get the timeRange where that wavelet occurred in the sim. 
+**** THOUGHTS:
+*****  ^^ This can be done with a1dat/plotWavelets.py function readSubjectFiles() -- this loads and reads the allData.pkl file that is generated when I run load.py (with the right settings) on a given .pkl file from a sim run. 
+***** ^^ timeRange = allData['timeRange']
+***** Nope not quite -- this only gives the timeRange of recording, not of the wavelet. Need to use df or dfs as arg in getStats in order to get the timing info! 
+**** So steps would be:
+***** (i) Get a .pkl file from a simulation run
+***** (ii) Run load.py with the correct settings on this file (saving _allData.pkl, _df.pkl files, etc.)
+***** (iii) Use the functions in a1dat/plotWavelets.py (readSubjectFiles and getStats) to get the time range of the wavelet. 
+*** (2) Use that time range to plot a figure with:
+**** (i) time series of a given population's LFP contribution (on bottom panel)
+***** ^^ what about the electrode situation? 
+**** (ii) spectrogram of LFP signal (on top panel)
+
