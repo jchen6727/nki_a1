@@ -52355,4 +52355,80 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** (i) time series of a given population's LFP contribution (on bottom panel)
 ***** ^^ what about the electrode situation? 
 **** (ii) spectrogram of LFP signal (on top panel)
+* <2021-12-10 Fri -- running sims on gcp>
+** Salva mentioned that we won't have gcp access after the 31st -- run necessary sims until then!!
+** load.py on the full-length LFP pop runs: 
+*** https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch57;tab=objects?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false
+*** Might as well run load.py on all of these and get the dlms, wavelets, etc. 
+*** (1) Get on gcp (g9-n2-pre-controller):
+**** gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller" --tunnel-through-iap --project "ecas2-nsf1904444"
+*** (2) Migrate all the .pkl run files into my A1/data/simDataFiles/spont dir on gcp
+**** gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
+**** gsutil -m cp -r gs://salvadord_data2/A1/v34_batch57/*.pkl /home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont
+*** (3) Process new files:
+**** v34_batch57_0_0 
+***** killed the first time --> it made df and dlms, but killed on saving. I deleted all the dlms.pkl files from previous runs that I know are on gcp bucket already; hopefully that helps! we'll see. 
+***** another memory error :[ 
+***** killed again - ugh!!! 
+***** guess I should do this in two timeRanges? 
+***** timeRange_0_6
+***** (1) Run load.py:
+****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_0_0_data.pkl
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** (2) Edit & run plotWavelets.py 
+****** [DONE] timeRange_0_6
+****** timeRange_6_11
+***** (3) Transfer the run to gcp bucket 
+****** [] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_0_0_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_0_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** NOTE: still not sure about my fix in draw() regarding the error I listed in a point below, about the xl --> maybe reset this line back to get_xlim() and fix individually if need be! 
 
+**** v34_batch57_0_1
+**** v34_batch57_0_2
+**** v34_batch57_0_3
+**** v34_batch57_0_4
+
+**** v34_batch57_1_0
+**** v34_batch57_1_1
+**** v34_batch57_1_2
+**** v34_batch57_1_3
+**** v34_batch57_1_4
+
+**** v34_batch57_2_0
+**** v34_batch57_2_1
+**** v34_batch57_2_2
+**** v34_batch57_2_2
+**** v34_batch57_2_4
+
+**** v34_batch57_3_0
+**** v34_batch57_3_1
+**** v34_batch57_3_2
+**** v34_batch57_3_3
+**** v34_batch57_3_4
+
+**** v34_batch57_4_0
+**** v34_batch57_4_1
+**** v34_batch57_4_2
+**** v34_batch57_4_3
+**** v34_batch57_4_4
+
+*** STEPS: 
+**** (1) Run load.py 
+***** length of spontaneous run: 11.49995
+***** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_0_0_data.pkl
+***** NOTE: Error with --> 
+****** xl = (minT-beforeT + alignoffset, maxT+afterT + alignoffset)  <-- in draw() 
+****** trying an if: statement that makes ^^ this contingent on there before a hasbefore and hasafter (and thus a beforeT afterT) 
+**** (2) Edit & run plotWavelets.py 
+**** (3) Transfer the run to gcp bucket 
+***** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_/ gs://eyg_data/wavelets/
+**** (4) Delete dlms from gcp 
+***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
+**** (5) Transfer wavelet image files to gcp bucket
+
+
+** TO DO BEFORE LOSING GCP ACCESS:
+*** Run load.py & plotWavelets.py on newer 0.5 recordStep, LFP pop contrib, etc. runs that salva did 
+*** Run load.py & plotWavelets.py on NHP speech -- get all wavelets and data
+*** Finish transferring wavelet images from prevous runs to gcp bucket  
