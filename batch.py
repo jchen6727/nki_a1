@@ -833,7 +833,7 @@ def custom_speech(filename):
     # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
     # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
     
-    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'IT4'), ('wmat', 'HTC', 'ITS4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
