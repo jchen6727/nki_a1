@@ -811,18 +811,29 @@ def custom_speech(filename):
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
+    '''
     params[('ICThalInput', 'probE')] = [0.26] #[0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
     params[('ICThalInput', 'weightE')] = [0.25, 0.5]
     params[('ICThalInput', 'weightI')] = [0.25, 0.5]
-    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [1.0, 1.25, 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.9, 0.95, 1.0, 1.1, 1.2]]# , 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    '''
+
+    params[('wmat', 'TC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'TC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+
+    params[('wmat', 'TC', 'PV4')] = [0.25, 0.5]
+    params[('wmat', 'HTC', 'PV4')] = [0.25, 0.5]
+
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
     # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
     
-    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'IT4'), ('wmat', 'HTC', 'ITS4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
@@ -833,14 +844,6 @@ def custom_speech(filename):
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-                             'startTime': 2000, 
-                             'weightE': 1.0, 
-                             'weightI': 1.0, 
-                             'probE': 0.12, 
-                             'probI': 0.26, 
-                             'seed': 1}  
-
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
@@ -850,10 +853,10 @@ def custom_speech(filename):
 
     initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
                             'startTime': 2500, 
-                            'weightE': 1.0, 
-                            'weightI': 1.0, 
+                            'weightE': 0.25,#1.0, 
+                            'weightI': 0.25,#1.0, 
                             'probE': 0.12, 
-                            'probI': 0.26, 
+                            'probI': 0.12, #0.25 
                             'seed': 1}  
 
 
@@ -2941,7 +2944,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch58' 
+    b.batchLabel = 'v34_batch59' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

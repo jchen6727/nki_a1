@@ -10338,7 +10338,50 @@ at 0.1 ms recordStep crashed when gathering
 
 ** v34_batch56 - 1 long sim; v34_batch25 (trial_2142); with LFP recordStep=0.05 to see if avoid artifact
 ** v34_batch57 - 5x5 seeds; v34_batch56
-** v34_batch58 - 25 sims (not seeds, different stim/conn params); v34_batch56 with speech
+** v34_batch58 - explore IC->Thal params with speech; 25 sims (not seeds, different stim/conn params); v34_batch56 with speech
+** v34_batch59 - explore TC->IT/PV params with speech
+*** code
+    params[('wmat', 'TC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'TC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+
+    params[('wmat', 'TC', 'PV4')] = [0.25, 0.5]
+    params[('wmat', 'HTC', 'PV4')] = [0.25, 0.5]
+
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'IT4'), ('wmat', 'HTC', 'ITS4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 0.25,#1.0, 
+                            'weightI': 0.25,#1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.12, #0.25 
+                            'seed': 1}  
+
+
 ** blank
 
 

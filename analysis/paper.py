@@ -927,19 +927,28 @@ def fig_CSD_comparison():
 
     from netpyne import sim
 
-    exp = 0
-    model = 1
+    exp = 1
+    model = 0
 
     #-------------------------
     # Experiment
     if exp:
 
-        from expDataAnalysis import getflayers, loadfile
+        from expDataAnalysis import getflayers, loadfile, getbandpass
 
+        # spont
         testFiles = ['1-bu031032017@os_eye06_20.mat', '2-ma031032023@os_eye06_20.mat', '2-rb031032016@os_eye06_20.mat', '2-rb045046026@os_eye06_20.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
 
+        # speech
+        testFiles = [sim]
+
+        # spont
         datafile = '../data/NHPdata/spont/2-rb031032016@os_eye06_20.mat'   # LOCAL DIR 
-        #datafile = '../data/NHPdata/spont/1-bu031032017@os_eye06_20.mat'
+        
+        # speech
+        datafile = '../data/NHPdata/speech/2-bu037038046@os.mat'  #2-ma033034023@os.mat'# 2-bu037038046@os.mat'  
+        #datafile_pkl = '../data/NHPdata/speech/2-ma033034023@os_small.pkl' #2-ma033034023@os
+        datafile_pkl = '../data/NHPdata/speech/2-bu037038046@os_small.pkl'
 
         vaknin = 0    
 
@@ -949,8 +958,31 @@ def fig_CSD_comparison():
         sim.initialize()
         sim.cfg.recordStep = 1000./samprate # in ms
 
+        # load and reduce size by 4
+        '''
         [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=datafile, samprds=samprate, spacing_um=100, vaknin=vaknin)
-        dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN 
+        reduced_size = int(len(tt) / 4.)
+        LFP_data_small=LFP_data[:,1:reduced_size]
+        CSD_data_small=CSD_data[:,1:reduced_size]
+        tt_small=tt[1:reduced_size]
+        trigtimes=[x for x in trigtimes if x<4977959]
+        dataSave = {'data_small': [sampr,LFP_data_small,dt,tt_small,CSD_data_small,trigtimes]}
+        
+        with open ('../data/NHPdata/speech/2-ma033034023@os_small.pkl', 'wb') as f:
+            pickle.dump(dataSave,f)
+        '''
+
+        # load reduced file size
+        with open(datafile_pkl, 'rb') as f:
+            dataLoad = pickle.load(f)
+
+        [sampr, LFP_data, dt, tt, CSD_data, trigtimes] = dataLoad['data_small']
+
+        if datafile_pkl == '../data/NHPdata/speech/2-bu037038046@os_small.pkl':
+            LFP_data = getbandpass(LFP_data.T, sampr=samprate, minf=0.5, maxf=300)
+        
+        dbpath = '../data/NHPdata/spont/21feb02_A1_spont_layers.csv'  # GCP # CHANGE ACCORDING TO MACHINE USED TO RUN
+        dbpath = '../data/NHPdata//speech/A1_speech_layers.csv'   
             
         ##### GET LAYERS FOR OVERLAY #####
         s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(datafile,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
@@ -966,9 +998,13 @@ def fig_CSD_comparison():
 
         # plot CSD
         smooth = 30
-        tranges = [[x, x+200] for x in range(100000, 130000, 100)] #int(CSD_data.shape[1]/samprate*1000)
+        #tranges = [[x, x+200] for x in range(100000, 130000, 100)] #int(CSD_data.shape[1]/samprate*1000)
 
-        for trange in tranges:# 
+        trigtimes_ms = [tt[idx]*1000 for idx in trigtimes if idx < len(tt)]
+        tranges_speech = [[x+0, x+200] for x in trigtimes_ms] #int(CSD_data.shape[1]/samprate*1000)
+
+        for i,trange in enumerate(tranges_speech[30:]):# 
+            print(i)
             sim.analysis.plotCSD(**{
                 'CSD_data': CSD_data,
                 'LFP_input_data': LFP_data.T,
@@ -998,10 +1034,10 @@ def fig_CSD_comparison():
         
         sim.load(filename, instantiate=False)
 
-        tranges = [[x, x+200] for x in range(1000, 2400, 50)]
+        tranges = [[x, x+200] for x in range(2400, 35000, 100)]
         #tranges = [[500,11500]]
         vaknin = 0
-        smooth = 45
+        smooth = 30
         for trange in tranges:
             sim.analysis.plotCSD(**{
                 'spacing_um': 100, 
