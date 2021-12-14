@@ -52852,7 +52852,7 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 ***** [DONE] (4) Delete dlms from gcp
 ****** [DONE] timeRange_0_6
 ****** [DONE] timeRange_6_11
-**** v34_batch57_2_0
+**** [DONE] v34_batch57_2_0
 ***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_2_0_data.pkl
 ****** [DONE] timeRange_0_6
@@ -52860,168 +52860,166 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 ***** [DONE] (2) Edit & run plotWavelets.py
 ****** [DONE] timeRange_0_6
 ****** [DONE] timeRange_6_11
-***** (3) Transfer the run to gcp bucket
+***** [DONE] (3) Transfer the run to gcp bucket
 ****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_0_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** [] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_2_1
-***** (1) Run load.py
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_2_1
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_2_1_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_1_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_1_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_2_2
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_1_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_1_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_2_2
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_2_2_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_2_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_2_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_2_3
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_2_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_2_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_2_3
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_2_3_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_3_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_3_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_2_4
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_3_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_3_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_2_4
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_2_4_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_4_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_4_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-
-**** v34_batch57_3_0
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_4_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_2_4_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_3_0
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_3_0_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_0_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_3_1
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_0_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_3_1
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_3_1_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_1_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_1_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_3_2
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_1_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_1_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_3_2
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_3_2_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_3_3
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_3_3
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_3_3_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_3_4
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_3_4
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_3_4_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-
-**** v34_batch57_4_0
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_4_0
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_4_0_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_0_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
-**** v34_batch57_4_1
-***** (1) Run load.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_0_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_0_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+**** [DONE] v34_batch57_4_1
+***** [DONE] (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_4_1_data.pkl
-****** timeRange_0_6
-****** timeRange_6_11
-***** (2) Edit & run plotWavelets.py
-****** timeRange_0_6
-****** timeRange_6_11
-***** (3) Transfer the run to gcp bucket
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_1_data_timeRange_0_6/ gs://eyg_data/wavelets/
-****** gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_1_data_timeRange_6_11/ gs://eyg_data/wavelets/
-***** (4) Delete dlms from gcp
-****** timeRange_0_6
-****** timeRange_6_11
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (2) Edit & run plotWavelets.py
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
+***** [DONE] (3) Transfer the run to gcp bucket
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_1_data_timeRange_0_6/ gs://eyg_data/wavelets/
+****** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_1_data_timeRange_6_11/ gs://eyg_data/wavelets/
+***** [DONE] (4) Delete dlms from gcp
+****** [DONE] timeRange_0_6
+****** [DONE] timeRange_6_11
 **** v34_batch57_4_2
 ***** (1) Run load.py
 ****** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_4_2_data.pkl
@@ -53077,4 +53075,52 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** (4) Delete dlms from gcp 
 ***** dlms should be the largest file, and should already transferred to gcp bucket. deleting this from the local gcp directory allows for faster transfer to local machine!! 
 **** (5) Transfer wavelet image files to gcp bucket if not done in (3) 
- 
+* <2021-12-14 Tue -- gcp runs>
+** Complete more gcp runs:
+*** v34_batch57_4_2 --> 4_4 
+*** NOTE: these are spontaneous, w/ LFP pop recordings done 
+*** [DONE] v34_batch57_4_2
+**** [DONE] (1) Run load.py
+***** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_4_2_data.pkl
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+**** [DONE] (2) Edit & run plotWavelets.py
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+**** [DONE] (3) Transfer the run to gcp bucket
+***** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_0_6/ gs://eyg_data/wavelets/
+***** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_6_11/ gs://eyg_data/wavelets/
+**** [DONE] (4) Delete dlms from gcp
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+*** [DONE] v34_batch57_4_3
+**** [DONE] (1) Run load.py
+***** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_4_3_data.pkl
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+**** [DONE] (2) Edit & run plotWavelets.py
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+**** [DONE] (3) Transfer the run to gcp bucket
+***** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_3_data_timeRange_0_6/ gs://eyg_data/wavelets/
+***** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_3_data_timeRange_6_11/ gs://eyg_data/wavelets/
+**** [DONE] (4) Delete dlms from gcp
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+*** [DONE] v34_batch57_4_4
+**** [DONE] (1) Run load.py
+***** python3 -i load.py ~/A1/data/simDataFiles/spont/v34_batch57_4_4_data.pkl
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+**** [DONE] (2) Edit & run plotWavelets.py
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+**** [DONE] (3) Transfer the run to gcp bucket
+***** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_0_6/ gs://eyg_data/wavelets/
+***** [DONE] gsutil -m cp -r /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_6_11/ gs://eyg_data/wavelets/
+**** [DONE] (4) Delete dlms from gcp
+***** [DONE] timeRange_0_6
+***** [DONE] timeRange_6_11
+** ^^ Completed 0-11seconds processing of wavelets for v34_batch57 on gcp!! 
+*** g9-n2-pre-controller
+
