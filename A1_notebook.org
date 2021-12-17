@@ -53123,4 +53123,11 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 ***** [DONE] timeRange_6_11
 ** ^^ Completed 0-11seconds processing of wavelets for v34_batch57 on gcp!! 
 *** g9-n2-pre-controller
-
+* <2021-12-15 Wed -- Figure 8 for A1 paper>
+** okay now have wavelets etc processed for all of v34_batch57, which has all the LFP pop contributions recorded. 
+** should do gcp runs on speech data, etc. --> work on this
+* <2021-12-16 Thu -- gcp runs>	
+** More gcp runs --> 
+** Got covid tested today (start of omicron wave in NYC) 				
+* <2021-12-17 Fri -- Figure 8>
+** 
