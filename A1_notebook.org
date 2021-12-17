@@ -52335,7 +52335,7 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 ***** (2) use that timeRange to plot a figure with: 
 ****** (i) histogram of a given population's spiking activity on the bottom 
 ****** (ii) and a spectrogram of the spiking activity signal on the top
-
+       
 ** LFP for figure 8:
 *** Goal for LFP: 
 **** (1) be able to take a wavelet and get the timeRange where that wavelet occurred in the sim
@@ -53129,5 +53129,110 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 * <2021-12-16 Thu -- gcp runs>	
 ** More gcp runs --> 
 ** Got covid tested today (start of omicron wave in NYC) 				
-* <2021-12-17 Fri -- Figure 8>
-** 
+* <2021-12-17 Fri -- Figure 8 & wavelet stats>
+** Goals:
+*** (1) Wavelet stats for NHP vs sim
+*** (2) Figure 8 for A1 paper
+**** Have to get more specific here!!
+**** See prev chats w/ salva about formatting
+**** A1/analysis/simDataAnalysis.py --> this is the script where I was looking at spiking activity, LFP, etc. all together. 
+*** (3) Run wavelet protocol on NHP & corresponding spont data for NHP
+** (1) Wavelet stats for NHP vs. sim
+*** Was looking through OEvent package (a1dat repo) to see what would be potentially useful for this -- see entry from 12/08/21
+*** a1dat/plotWavelets.py --> script with the relevant code
+*** Come up with a focused goal for this --> 
+*** (i) Average duration of wavelets in each of the frequency bands, NHP vs. sim
+**** END GOAL: Display this info in a bar graph
+**** Thoughts / Notes: 
+***** I want to calculate average duration of wavelets in each of the frequency bands for sim data:
+****** So first get a list of the duration of each wavelet in the appropriate frequency band for each of the sim subjects --> e.g. durDict = {'sim0':{'alpha':[244.3, 244.5, 1003], 'beta': [20, 300, 410, 15]}, 'sim1':{}}
+***** Layers:
+****** 0-9 SUPRA
+****** 10 & 11 GRAN
+****** 12+ INFRA
+**** Lines that have been deleted! : 
+***** Taking out these test lines:
+# dfsPkl = pd.read_pickle(waveletPath + sim + '/chan_' + str(chan) + '/' + pklFiles[0])
+# dfsPkl1 = pd.read_pickle(waveletPath + sim + '/chan_' + str(chan) + '/' + pklFiles[1])
+# for idx in range(len(dfsPkl.index)):
+	#print(idx)
+
+
+
+***** Taking out these other test lines: 
+# ### TRYING TO READ IN dfs .pkl FILE; TRIAL LINES:
+# dfsTrialPath = waveletPath + 'A1_v34_batch27_v34_batch27_0_0/chan_0/A1_v34_batch27_v34_batch27_0_0_chan0_gamma.pkl' #+ '.pkl'##### waveletPath + subjectName + '/' + subjectName + '_df.pkl'
+# dfsTrial = pd.read_pickle(dfsTrialPath)
+
+
+
+
+
+***** Taking out these lines from previous iteration of this script (now better):
+#for sim in simSubjects:
+	#df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, sim, dlms=False)
+	#dfs = df[(df.Foct<1.5)&(df.ncycle>3)&(df.filtsigcor>0.6)] ## filter only the wavelets that 
+	## ^^ but shoudn't dfs already be in the _alpha.pkl type files that are already in each channel subdir? 
+
+# 	dataDict[sim] = {}
+# 	# dataDict[sim][dur] = {}
+# 	# dataDict[sim][peakF] = {}
+# 	# dataDict[sim][ncycle] = {}
+
+# 	# durDict[sim] = {} # []
+# 	# peakFDict[sim] = {} # []
+# 	# ncycleDict[sim] = {} # []
+
+# 	for idx in range(len(dfs.index)):    # dfs.index[idx]
+# 		dur, peakF, ncycle, band = getStats(df = dfs, evidx = dfs.index[idx], align='bywaveletpeak')
+
+# 		# if band not in dataDict[sim]
+
+# 		# if band not in durDict[sim].keys():
+# 		# 	durDict[sim][band] = []
+# 		# durDict[sim][band].append(dur)
+
+# 		# if band not in peakFDict[sim].keys():
+# 		# 	peakFDict[sim][band] = []
+# 		# peakFDict[sim][band].append(peakF)
+
+# 		# if band not in ncycleDict[sim].keys():
+# 		# 	ncycleDict[sim][band] = []
+# 		# ncycleDict[sim][band].append(ncycle)
+
+# 		# durDict[sim].append(dur)
+# 		# peakFDict[sim].append(peakF)
+# 		# ncycleDict[sim].append(ncycle)
+
+
+
+***** Also taking out these lines from previous iteration of this script regarding NHP:
+# ## NHP stats 
+# for nhp in nhpSubjects.keys():
+# 	print(nhp)
+# 	for nhpTimeRange in nhpSubjects[nhp]:
+# 		print(nhpTimeRange)
+# 		#df, dlms, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, nhpTimeRange)
+
+
+
+
+***** Taking out these preliminary stats lines as well, from previous iteration (was testing df vs. dfs, but not using the individual channel .pkl files instead):
+# ### PLOT STATS 
+# dur, peakF, ncycle = getStats(df = df, evidx = eventIdx, align='bywaveletpeak') ## Trying df 
+
+# dur0, peakF0, ncycle0 = getStats(df = dfs, evidx = eventIdx, align='bywaveletpeak') ## Trying dfs 
+
+
+***** # dataDictSim = {}  ## <--- can this one .... be deleted? probably. catch-all
+**** (A) FIRST SUBGOAL: Make a dict (or some other data structure) with list(s) of all the wavelet data, organized by sim number, layer region, and frequency band. First do this for the SIMULATION DATA. 
+***** OKAY --> now I have first subgoal completed!! -- gather all the duration data for the wavelets. 
+***** Now have a dict (durDictSim) which goes durDictSim[sim][layerKey][band] -- e.g. durDictSim['A1_v34_batch27_v34_batch27_0_1']['supra']['beta'] --> and this will be a list of all the wavelet durations!! 
+**** (B) SECOND SUBGOAL: Do the same as above, but for the NHP data. 
+***** Challenge: the layers. They aren't hard-coded / the same, like they are for the sims. 
+***** 
+
+*** (ii) Distribution of wavelet duration in each of the frequency bands, NHP vs. sim
+
+
+
