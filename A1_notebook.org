@@ -53269,8 +53269,11 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 
 **** (D) FOURTH SUBGOAL: Display the differences in a boxplot / bar graph or something
 ***** I think I'm gonna go with boxplots 
-***** link with some python stats info: https://realpython.com/python-statistics/#box-plots
-***** more boxplot customization info --> https://www.geeksforgeeks.org/box-plot-in-python-using-matplotlib/
+***** Link with some python stats info: https://realpython.com/python-statistics/#box-plots
+***** More boxplot customization info --> https://www.geeksforgeeks.org/box-plot-in-python-using-matplotlib/
+***** Plotting lines deleted:
+****** (1) #plt.boxplot(durSimLists['delta']['supra'])#, durNHPLists['delta']['supra'])
+#plt.boxplot(durNHPLists['delta']['supra'])
 ** Lines that are coming out of plotWavelets.py:
 *** sim testing lines for dur dict --> now replaced by function!
 #### TESTING LINES --> NOW REPLACED BY ABOVE FUNCTION !!!! #######
