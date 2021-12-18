@@ -53156,18 +53156,10 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 # dfsPkl1 = pd.read_pickle(waveletPath + sim + '/chan_' + str(chan) + '/' + pklFiles[1])
 # for idx in range(len(dfsPkl.index)):
 	#print(idx)
-
-
-
 ***** Taking out these other test lines: 
 # ### TRYING TO READ IN dfs .pkl FILE; TRIAL LINES:
 # dfsTrialPath = waveletPath + 'A1_v34_batch27_v34_batch27_0_0/chan_0/A1_v34_batch27_v34_batch27_0_0_chan0_gamma.pkl' #+ '.pkl'##### waveletPath + subjectName + '/' + subjectName + '_df.pkl'
 # dfsTrial = pd.read_pickle(dfsTrialPath)
-
-
-
-
-
 ***** Taking out these lines from previous iteration of this script (now better):
 #for sim in simSubjects:
 	#df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, sim, dlms=False)
@@ -53203,9 +53195,6 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 # 		# durDict[sim].append(dur)
 # 		# peakFDict[sim].append(peakF)
 # 		# ncycleDict[sim].append(ncycle)
-
-
-
 ***** Also taking out these lines from previous iteration of this script regarding NHP:
 # ## NHP stats 
 # for nhp in nhpSubjects.keys():
@@ -53213,26 +53202,192 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 # 	for nhpTimeRange in nhpSubjects[nhp]:
 # 		print(nhpTimeRange)
 # 		#df, dlms, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, nhpTimeRange)
-
-
-
-
 ***** Taking out these preliminary stats lines as well, from previous iteration (was testing df vs. dfs, but not using the individual channel .pkl files instead):
 # ### PLOT STATS 
 # dur, peakF, ncycle = getStats(df = df, evidx = eventIdx, align='bywaveletpeak') ## Trying df 
 
 # dur0, peakF0, ncycle0 = getStats(df = dfs, evidx = eventIdx, align='bywaveletpeak') ## Trying dfs 
-
-
 ***** # dataDictSim = {}  ## <--- can this one .... be deleted? probably. catch-all
-**** (A) FIRST SUBGOAL: Make a dict (or some other data structure) with list(s) of all the wavelet data, organized by sim number, layer region, and frequency band. First do this for the SIMULATION DATA. 
+***** # dataDictNHP = {}
+***** Channel sorting / layer dict for NHPs -- now have this without the loopNum: 
+	# loopNum = 0		# for layer designation -- so only does this once (vs. all timeRanges)
+	# for timeRange in nhpSubjects[nhp]:
+	# 	print(timeRange)	# ---> print line for testing
+	# 	if loopNum == 0:
+	# 		allTimeRangeFiles = os.listdir(waveletPath + timeRange)
+	# 		channelsFull = []
+	# 		for file in allTimeRangeFiles:
+	# 			if 'chan_' in file:
+	# 				channelsFull.append(file)
+	# 		channels = []
+	# 		for chan in channelsFull:
+	# 			channels.append(int(chan.split('_')[-1]))
+	# 		channels.sort()   # now channels should be listed in ascending order!! e.g. [2, 8, 13, 15, 18]
+
+	# 		for layerKey in layers:
+	# 			if layerKey == 'supra':
+	# 				layers[layerKey].append(channels[0])
+	# 				layers[layerKey].append(channels[1])
+	# 			if layerKey == 'gran':
+	# 				layers[layerKey].append(channels[2])
+	# 			elif layerKey == 'infra':
+	# 				layers[layerKey].append(channels[-2])
+	# 				layers[layerKey].append(channels[-1])
+
+	# 		loopNum += 1 	# this is so it doesn't keep doing this for each timeRange
+**** [DONE] (A) FIRST SUBGOAL: Make a dict (or some other data structure) with list(s) of all the wavelet data, organized by sim number, layer region, and frequency band. First do this for the SIMULATION DATA. 
 ***** OKAY --> now I have first subgoal completed!! -- gather all the duration data for the wavelets. 
 ***** Now have a dict (durDictSim) which goes durDictSim[sim][layerKey][band] -- e.g. durDictSim['A1_v34_batch27_v34_batch27_0_1']['supra']['beta'] --> and this will be a list of all the wavelet durations!! 
-**** (B) SECOND SUBGOAL: Do the same as above, but for the NHP data. 
-***** Challenge: the layers. They aren't hard-coded / the same, like they are for the sims. 
-***** 
+**** [DONE] (B) SECOND SUBGOAL: Do the same as above, but for the NHP data. 
+***** Challenge 0: naming changes --> have to go thru the dict of nhpSubjects (vs. list, like simSubjects)
+***** Challenge 1: the layers. They aren't hard-coded / the same, like they are for the sims.
 
+
+**** (C) THIRD SUBGOAL: Get the averages for each of the wavelet durations, for each frequency band in each layer region, for each subject. 
+***** C1: Sims -- 
+***** C2: NHPs -- 
 *** (ii) Distribution of wavelet duration in each of the frequency bands, NHP vs. sim
+* <2021-12-18 Sat -- stats and fig 8>
+** Wavelet stats (cont):
+*** a1dat/plotWavelets.py --> script with the relevant code
+*** (i) Average duration of wavelets in each of the frequency bands, NHP vs. sim
+**** END GOAL: Display this info in a bar graph
+**** [DONE] (A) FIRST SUBGOAL: Make a dict (or some other data structure) with list(s) of all the wavelet data, organized by sim number, layer region, and frequency band. First do this for the SIMULATION DATA. 
+***** OKAY --> now I have first subgoal completed!! -- gather all the duration data for the wavelets. 
+***** Now have a dict (durDictSim) which goes durDictSim[sim][layerKey][band] -- e.g. durDictSim['A1_v34_batch27_v34_batch27_0_1']['supra']['beta'] --> and this will be a list of all the wavelet durations!! 
+**** [DONE] (B) SECOND SUBGOAL: Do the same as above, but for the NHP data. 
+***** Challenge 0: naming changes --> have to go thru the dict of nhpSubjects (vs. list, like simSubjects)
+***** Challenge 1: the layers. They aren't hard-coded / the same, like they are for the sims.
+**** (C) THIRD SUBGOAL: Get the averages for each of the wavelet durations, for each frequency band in each layer region, for each subject. 
+***** C1: Sims --> 
+****** Look at the durDictSim again --> 
+****** structure is like this: >>> durDictSim['A1_v34_batch27_v34_batch27_0_0']['supra']['beta']
+****** ^^ so, for supra, beta, for this subject you would do the average of this list. 
+****** so, to make it extend beyond just this subject, maybe make a separate list for each of supra / gran / infra x alpha / beta / theta / delta / gamma 
+***** C2: NHPs -- 
+****** 
+** Lines that are coming out of plotWavelets.py:
+*** sim testing lines for dur dict --> now replaced by function!
+#### TESTING LINES --> NOW REPLACED BY ABOVE FUNCTION !!!! #######
+# durDictSim = {}
+# layers = {'supra':[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'gran':[10, 11], 'infra':[12, 13, 14, 15, 16, 17, 18, 19]} ## NETPYNE SIMS
+
+# ### TESTING SINGLE SUBJECT HERE -- COMMENT OUT THIS 'simSubjects' line when doing all sims!!!!
+# #simSubjects = ['A1_v34_batch27_v34_batch27_0_0']
+
+# for sim in simSubjects:
+# 	durDictSim[sim] = {}
+
+# 	for layerKey in layers:
+# 		durDictSim[sim][layerKey] = {}
+
+# 		for band in frequencyBands:
+# 			durDictSim[sim][layerKey][band] = []
+
+# 		for chan in layers[layerKey]:
+# 			allChanFiles = os.listdir(waveletPath + sim + '/chan_' + str(chan))
+# 			pklFiles = []
+# 			for file in allChanFiles:
+# 				if '.pkl' in file:
+# 					pklFiles.append(file)   ## now pklFiles is a list of all the .pkl files in a particular chan subdir 
+# 			print(pklFiles)
+
+# 			for pklFile in pklFiles:
+# 				#print(pklFile)  # ---> print line for testing
+# 				pklBand = pklFile.split('_')[-1][:-4]
+# 				for band in frequencyBands:
+# 					if band == pklBand:  	# this prevents gamma / hgamma double-counting (excluding hgamma for now!)
+# 						dfsPkl = pd.read_pickle(waveletPath + sim + '/chan_' + str(chan) + '/' + pklFile)
+# 						#print('band = ' + str(band)) # ---> print line for testing
+# 						#print('chan = ' + str(chan)) # ---> print line for testing
+# 						for idx in dfsPkl.index:
+# 							dur, peakF, ncycle, band = getStats(df = dfsPkl, evidx = idx, align='bywaveletpeak') 
+# 							durDictSim[sim][layerKey][band].append(dur)
+#### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### 
+
+*** NHP dur dict testing lines:
+######
+#durDictNHP2 = getDurDicts(nhpSubjects, nhpLayers, frequencyBands, waveletPath, sim=0, timeRange=1)
+# for nhp in nhpSubjects:     ### RECALL that nhpSubjects is a dict!! nhpSubjects[nhp] = list of timeRanges
+# 	nhpLayers = getNHPLayers()
+*** more NHP dur dict testing lines:
+#####
+durDictNHP = {}
+# peakFDictNHP = {}
+# ncycleDictNHP = {}
+
+### TESTING SINGLE SUBJECT HERE -- COMMENT OUT THIS 'nhpSubjects' line when doing all NHPs!!!!
+#nhpSubjects = {} #{'2-rb045046026': ['2-rb045046026_timeRange_0_40', '2-rb045046026_timeRange_120_160', '2-rb045046026_timeRange_160_200', '2-rb045046026_timeRange_40_80', '2-rb045046026_timeRange_80_120']}
+
+for nhp in nhpSubjects:     ### RECALL that nhpSubjects is a dict!! nhpSubjects[nhp] = list of timeRanges
+	durDictNHP[nhp] = {}
+
+	## FILL IN LAYERS DICT!! --> AKA GET CHANNEL TO LAYER CORRESPONDENCE ## 
+	layers = {'supra': [], 'gran': [], 'infra': []}		# have to reset this for each NHP subject 
+	allSubFiles = os.listdir(waveletPath + nhpSubjects[nhp][0]) # e.g . ['chan_15', 'chan_13', 'chan_2', '2-rb045046026_timeRange_0_40_allData.pkl', '2-rb045046026_timeRange_0_40_df.pkl', 'chan_18', 'chan_8']
+	channels = []
+	for n in allSubFiles:
+		if 'chan_' in n:
+			channels.append(int(n.split('_')[-1]))
+	channels.sort()		# now channels should be listed in ascending order !! e.g. [2, 8, 13, 15, 18]
+
+	for layerKey in layers:
+		## First add layerKey (e.g. 'supra') into durDictNHP dict 
+		durDictNHP[nhp][layerKey] = {}
+		## Next add band (e.g. 'alpha') into durDictNHP dict 
+		for band in frequencyBands:
+			durDictNHP[nhp][layerKey][band] = []
+		## Now get the channel numbers for each layerKey for each NHP subject 
+		if layerKey == 'supra':
+			layers[layerKey].append(channels[0])
+			layers[layerKey].append(channels[1])
+		elif layerKey == 'gran':
+			layers[layerKey].append(channels[2])
+		elif layerKey == 'infra':
+			layers[layerKey].append(channels[-2])
+			layers[layerKey].append(channels[-1])
+
+		## Now get pklFiles from each channel 
+		for chan in layers[layerKey]:
+			print('chan = ' + str(chan))
+			for timeRange in nhpSubjects[nhp]:
+				# print(timeRange)  # <-- print line for testing 
+				allChanFiles = os.listdir(waveletPath + timeRange + '/chan_' + str(chan))
+				pklFiles = []
+				for file in allChanFiles:
+					if '.pkl' in file:
+						pklFiles.append(file)   ## now pklFiles is a list of all the .pkl files in a particular chan subdir 
+				print(pklFiles)		# <-- print line for testing 
+
+				for pklFile in pklFiles:
+					pklBand = pklFile.split('_')[-1][:-4]
+					for band in frequencyBands:
+						if band == pklBand:  	# this prevents gamma / hgamma double-counting (excluding hgamma for now!)
+							dfsPkl = pd.read_pickle(waveletPath + timeRange + '/chan_' + str(chan) + '/' + pklFile)
+							#print('band = ' + str(band)) # ---> print line for testing
+							#print('chan = ' + str(chan)) # ---> print line for testing
+							for idx in dfsPkl.index:
+								dur, peakF, ncycle, band = getStats(df = dfsPkl, evidx = idx, align='bywaveletpeak') 
+								durDictNHP[nhp][layerKey][band].append(dur)
+*** can take out the layer <--> channel correspondence lines I think now:
+### Channel-to-layer designations ###
+# simLayers = getSimLayers()
+# nhpLayers = {} # <--- hmm....
+# if donetpyne:
+# 	layers = {'supra':[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'gran':[10, 11], 'infra':[12, 13, 14, 15, 16, 17, 18, 19]} ## NETPYNE SIMS
+# else:
+# 	layers = {} #getNHPLayers(waveletPath, nhpSubjects, 1)     #{} 	# {'supra': [], 'gran': [], 'infra': []} 	## <-- how to determine this for NHP in a way that works for all subjects!! 
+# simLayers = {'supra':[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'gran':[10, 11], 'infra':[12, 13, 14, 15, 16, 17, 18, 19]} ## NETPYNE SIMS
+# nhpLayers = {'supra': [], 'gran': [], 'infra': []}
 
 
 
+*** Taking out the donetpyne bool at the beginning of the stats section -- only used for plotting sections, later in the script:
+# donetpyne = 1 # are we looking at sim (1) or NHP (0) data? # <-- DOES THIS DO ANYTHING FOR THIS CODE BLOCK? 
+
+
+** Made several more functions in plotWavelets.py:
+*** getNHPLayers()
+*** getSimLayers() 
+*** getDurDicts() <-- for sim or NHP
+*** ^^ functionality of getDurDicts() tested with the code I used yesterday; made sure results produced are equal! (for both sim and NHP)
