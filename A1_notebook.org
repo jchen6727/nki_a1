@@ -53258,14 +53258,19 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 **** [DONE] (B) SECOND SUBGOAL: Do the same as above, but for the NHP data. 
 ***** Challenge 0: naming changes --> have to go thru the dict of nhpSubjects (vs. list, like simSubjects)
 ***** Challenge 1: the layers. They aren't hard-coded / the same, like they are for the sims.
-**** (C) THIRD SUBGOAL: Get the averages for each of the wavelet durations, for each frequency band in each layer region, for each subject. 
-***** C1: Sims --> 
+**** [DONE] (C) THIRD SUBGOAL: Get the averages for each of the wavelet durations, for each frequency band in each layer region, for each subject. 
+***** [DONE] C1: Sims --> 
 ****** Look at the durDictSim again --> 
 ****** structure is like this: >>> durDictSim['A1_v34_batch27_v34_batch27_0_0']['supra']['beta']
 ****** ^^ so, for supra, beta, for this subject you would do the average of this list. 
 ****** so, to make it extend beyond just this subject, maybe make a separate list for each of supra / gran / infra x alpha / beta / theta / delta / gamma 
-***** C2: NHPs -- 
-****** 
+***** [DONE] C2: NHPs 
+***** ^^ Made a function that can take any dict (sim or nhp) and calculate the average duration of the wavelengths for region x band
+
+**** (D) FOURTH SUBGOAL: Display the differences in a boxplot / bar graph or something
+***** I think I'm gonna go with boxplots 
+***** link with some python stats info: https://realpython.com/python-statistics/#box-plots
+***** more boxplot customization info --> https://www.geeksforgeeks.org/box-plot-in-python-using-matplotlib/
 ** Lines that are coming out of plotWavelets.py:
 *** sim testing lines for dur dict --> now replaced by function!
 #### TESTING LINES --> NOW REPLACED BY ABOVE FUNCTION !!!! #######
@@ -53384,7 +53389,6 @@ for nhp in nhpSubjects:     ### RECALL that nhpSubjects is a dict!! nhpSubjects[
 
 *** Taking out the donetpyne bool at the beginning of the stats section -- only used for plotting sections, later in the script:
 # donetpyne = 1 # are we looking at sim (1) or NHP (0) data? # <-- DOES THIS DO ANYTHING FOR THIS CODE BLOCK? 
-
 
 ** Made several more functions in plotWavelets.py:
 *** getNHPLayers()
