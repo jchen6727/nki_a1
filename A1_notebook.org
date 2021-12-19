@@ -53250,7 +53250,7 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 * <2021-12-18 Sat -- stats and fig 8>
 ** Wavelet stats (cont):
 *** a1dat/plotWavelets.py --> script with the relevant code
-*** (i) Average duration of wavelets in each of the frequency bands, NHP vs. sim
+*** [DONE] (i) Stats on duration of wavelets in each of the frequency bands, NHP vs. sim
 **** END GOAL: Display this info in a bar graph
 **** [DONE] (A) FIRST SUBGOAL: Make a dict (or some other data structure) with list(s) of all the wavelet data, organized by sim number, layer region, and frequency band. First do this for the SIMULATION DATA. 
 ***** OKAY --> now I have first subgoal completed!! -- gather all the duration data for the wavelets. 
@@ -53267,13 +53267,202 @@ gsutil -m cp gs://eyg_data/wavelets/A1_v34_batch27_v34_batch27_2_2/A1_v34_batch2
 ***** [DONE] C2: NHPs 
 ***** ^^ Made a function that can take any dict (sim or nhp) and calculate the average duration of the wavelengths for region x band
 
-**** (D) FOURTH SUBGOAL: Display the differences in a boxplot / bar graph or something
+**** [DONE] (D) FOURTH SUBGOAL: Display the differences in a boxplot / bar graph or something
 ***** I think I'm gonna go with boxplots 
 ***** Link with some python stats info: https://realpython.com/python-statistics/#box-plots
 ***** More boxplot customization info --> https://www.geeksforgeeks.org/box-plot-in-python-using-matplotlib/
 ***** Plotting lines deleted:
 ****** (1) #plt.boxplot(durSimLists['delta']['supra'])#, durNHPLists['delta']['supra'])
 #plt.boxplot(durNHPLists['delta']['supra'])
+****** (2) ##### TESTING LINES 
+# fig = plt.figure(figsize = (10,7))
+
+# nrows = len(regions)
+# ncols = len(frequencyBands)
+# maxIndex = nrows * ncols 
+
+
+# for i in range(1,maxIndex+1):
+# 	for region in regions:
+# 		for band in frequencyBands:
+# 			ax = fig.add_subplot(nrows, ncols, i)
+# 			simDataPlot = durSimLists[band][region]
+# 			nhpDataPlot = durNHPLists[band][region]
+# 			ax.boxplot((simDataPlot,nhpDataPlot),patch_artist=True)
+
+# plt.show()
+
+****** #### TESTING LINES 
+#ax = fig.add_subplot(351) 		# nrows = 3 (supra, gran, infra) 			# ncols = 5 (delta, theta, alpha, beta, gamma) 
+#ax = fig.add_subplot(451) 		# nrows = 4 (supra, gran, infra, all) 		# ncols = 5 (delta, theta, alpha, beta, gamma) 
+
+
+## Try specific subset of data 
+# dataForPlot = [durSimLists['delta']['supra'], durNHPLists['delta']['supra']]
+# plt.boxplot(dataForPlot, patch_artist=True)
+# plt.show()
+
+****** #fig, axs = plt.subplots(maxIndex)
+# for i in range(1,maxIndex+1):
+# 	for region in regions:
+# 		for band in frequencyBands:
+# 			#axs[i-1] = fig.add_subplot(nrows, ncols, i)
+# 			simDataPlot = durSimLists[band][region]
+# 			nhpDataPlot = durNHPLists[band][region]
+# 			#axs[i-1].boxplot((simDataPlot,nhpDataPlot),patch_artist=True)
+# 			axs[].boxplot((simDataPlot,nhpDataPlot),patch_artist=True)
+
+# plt.show()
+****** # #####  plt.subplots
+# nrows = len(regions)
+# ncols = len(frequencyBands)
+
+# fig, axs = plt.subplots(nrows,ncols,figsize=(10,7))
+
+# for region in range(nrows):   # regions
+# 	for band in range(ncols):  	# frequency bands
+# 		simDataPlot = durSimLists[frequencyBands[band]][regions[region]]			#[band][region]
+# 		nhpDataPlot = durNHPLists[frequencyBands[band]][regions[region]]			#[band][region]
+# 		axs[region,band].boxplot((simDataPlot,nhpDataPlot),patch_artist=True)
+
+# fig.tight_layout()
+# plt.show()
+***** [DONE] D1: Get these in a reasonable plotting shape boxplot-wise
+***** [DONE] D2: Label the rows (region) & label the columns (frequency bands)
+***** [DONE] D3: Different colors for NHP and sim
+****** testing lines that are out now:
+# #
+# data_1 = np.random.normal(100, 10, 200)
+# data_2 = np.random.normal(90, 20, 200)
+# data_3 = np.random.normal(80, 30, 200)
+# data_4 = np.random.normal(70, 40, 200)
+# data = [data_1, data_2, data_3, data_4]
+ 
+# fig = plt.figure(figsize =(10, 7))
+# ax = fig.add_subplot(111)
+ 
+# # Creating axes instance
+# bp = ax.boxplot(data, patch_artist = True,
+#                 notch ='True', vert = 0)
+ 
+# colors = ['#0000FF', '#00FF00',
+#           '#FFFF00', '#FF00FF']
+ 
+# for patch, color in zip(bp['boxes'], colors):
+#     patch.set_facecolor(color)
+
+
+
+
+
+# # fill with colors
+# colors = ['pink', 'lightblue', 'lightgreen']
+# for bplot in (bplot1, bplot2):
+#     for patch, color in zip(bplot['boxes'], colors):
+#         patch.set_facecolor(color)
+*** [DONE] (ii) Stats on peakF and ncycles of wavelets in each of the frequency bands, NHP vs. sim
+**** Got rid of duration only lines for Sim:
+# ###### DURATION ONLY LINES BELOW 
+# durDictSim = getDurDicts(simSubjects, frequencyBands, waveletPath, sim=1, timeRange=0)
+
+# avgDurSim = {}
+# durSimLists = {}
+# for band in frequencyBands:
+# 	avgDurSim[band] = {}
+# 	durSimLists[band] = {}
+# 	for region in regions:
+# 		avgDurSim[band][region] = getDurStats(durDictSim, region, band, 1)
+# 		durSimLists[band][region] = getDurStats(durDictSim, region, band, 0)
+
+**** Tested new functions getPropDicts() and getPropStats() that do the same as getDurDicts() but also handle peakF and ncycles -- test ran well for SIM -- now change NHP. 
+**** Now getting rid of duration-only lines for NHP (tested using the others and it works!):;
+# ###### DURATION ONLY LINES BELOW 
+# durDictNHP = getDurDicts(nhpSubjects, frequencyBands, waveletPath, sim=0, timeRange=1)
+
+# avgDurNHP = {}
+# durNHPLists = {}
+# for band in frequencyBands:
+# 	avgDurNHP[band] = {}
+# 	durNHPLists[band] = {}
+# 	for region in regions:
+# 		avgDurNHP[band][region] = getDurStats(durDictNHP, region, band, 1)
+# 		durNHPLists[band][region] = getDurStats(durDictNHP,
+# region, band, 0)
+**** Made a statsBoxplot function which plots any arbitrary stats dict (tested with dur and works!!)
+**** Now test ^^ with peakF and ncycles -- BOTH WORK !
+*** [DONE] (iii) Represent the distribution somehow? Is the boxplot situation enough or ...? Nah, do distribution too then give it a rest for tonight. 
+**** Lines removed from distribution function:
+######
+	# i=1
+	# for region in regions:
+	# 	r=1
+	# 	for band in frequencyBands:
+	# 		ax = fig.add_subplot(nrows, ncols, i)
+	# 		simDataPlot = simLists[band][region] 			# durSimLists[band][region]
+	# 		nhpDataPlot = nhpLists[band][region]				# durNHPLists[band][region]
+	# 		bp = ax.boxplot((simDataPlot,nhpDataPlot),patch_artist=True)#,showfliers=False)
+	# 		## colors of boxes ##
+	# 		for patch, color in zip(bp['boxes'], colors):
+	# 			patch.set_facecolor(color)
+	# 		## style of fliers ##
+	# 		for flier in bp['fliers']:
+	# 			flier.set(marker='o', markersize=3)
+	# 		## axes and titles ##
+	# 		ax.set_xticklabels(['SIM', 'NHP'], fontsize=9)		# ax.xaxis.set_visible(False)
+	# 		ax.tick_params(axis='y', labelsize=6)
+	# 		if r:
+	# 			ax.set_ylabel(region,labelpad=30,rotation=0,fontsize=10,fontweight='bold')
+	# 		if region == regions[0]: #'supra':
+	# 			ax.set_title(band, fontsize=10, fontweight='bold')
+	# 		i+=1
+	# 		r=0
+	# 		## 
+
+	# plt.subplots_adjust(top=0.85, bottom=0.05, wspace=0.3, hspace=0.3)
+	# fig.suptitle(title, fontsize=14, fontweight='bold', horizontalalignment='center', y=0.95)
+	# #fig.tight_layout()
+	# plt.show()
+**** Lines removed from distribution testing:
+# ## Try this manually at first and then make into a function 
+# figsize = (11,7)
+# fig = plt.figure(figsize=figsize)
+
+
+# colors = ['purple', 'green']
+
+# nrows = len(regions)
+# ncols = len(frequencyBands)
+# i=1
+# for region in regions:
+# 	r=1
+# 	for band in frequencyBands:
+# 		ax = fig.add_subplot(nrows, ncols, i)
+# 		simDataPlot = durSimLists[band][region] 			# durSimLists[band][region]
+# 		nhpDataPlot = durNHPLists[band][region]				# durNHPLists[band][region]
+
+# 		## Draw histogram ## 
+# 		ax.hist(simDataPlot, label='SIM', color = 'yellow', alpha=0.6, density=True)
+# 		ax.hist(nhpDataPlot, label='NHP', color = 'lightblue', alpha=0.6, density=True)
+
+# 		## Axes and Title ## 
+# 		ax.xaxis.set_visible(False)
+# 		ax.tick_params(axis='y', labelsize=6)
+# 		if r:
+# 			ax.set_ylabel(region,labelpad=30,rotation=0,fontsize=10,fontweight='bold')
+# 		if region == regions[0]:
+# 			ax.set_title(band, fontsize=10, fontweight='bold')
+# 		i+=1
+# 		r=0
+
+
+# plt.subplots_adjust(top=0.85, bottom=0.05, wspace=0.3, hspace=0.3)
+# fig.suptitle('DISTRIBUTION OF WAVELET DURATIONS', fontsize=14, fontweight='bold', horizontalalignment='center', y=0.95)
+# #fig.tight_layout()
+# plt.show()
+**** Now what to do about the x-axis, and about density / normalization? 
+**** Have to think about what exactly is being represented on x-axis
+**** ^^ okay, on x-axis I put labels with the units, because that's what's being represented here
+**** I'm keeping density=True on all of these, bc otherwise the differing counts in NHP vs. sim throw off the comparison (sometimes drastically bc NHP goes for so much longer!!) 
 ** Lines that are coming out of plotWavelets.py:
 *** sim testing lines for dur dict --> now replaced by function!
 #### TESTING LINES --> NOW REPLACED BY ABOVE FUNCTION !!!! #######
@@ -53389,7 +53578,6 @@ for nhp in nhpSubjects:     ### RECALL that nhpSubjects is a dict!! nhpSubjects[
 # nhpLayers = {'supra': [], 'gran': [], 'infra': []}
 
 
-
 *** Taking out the donetpyne bool at the beginning of the stats section -- only used for plotting sections, later in the script:
 # donetpyne = 1 # are we looking at sim (1) or NHP (0) data? # <-- DOES THIS DO ANYTHING FOR THIS CODE BLOCK? 
 
@@ -53398,3 +53586,44 @@ for nhp in nhpSubjects:     ### RECALL that nhpSubjects is a dict!! nhpSubjects[
 *** getSimLayers() 
 *** getDurDicts() <-- for sim or NHP
 *** ^^ functionality of getDurDicts() tested with the code I used yesterday; made sure results produced are equal! (for both sim and NHP)
+** Boxplot function now works for duration (vs. lines below which got deleted):
+######################  TESTING EQUIVALENT ABOVE 
+# regions = ['supra', 'gran', 'infra']	#, 'all']
+
+
+# nrows = len(regions)
+# ncols = len(frequencyBands)
+# #maxIndex = nrows * ncols 
+
+# fig = plt.figure(figsize=(11,7))
+
+# i=1
+# for region in regions:
+# 	r=1
+# 	for band in frequencyBands:
+# 		ax = fig.add_subplot(nrows, ncols, i)
+# 		simDataPlot = durSimLists[band][region]
+# 		nhpDataPlot = durNHPLists[band][region]
+# 		bp = ax.boxplot((simDataPlot,nhpDataPlot),patch_artist=True)#,showfliers=False)
+# 		## colors of boxes ##
+# 		colors = ['purple', 'green']
+# 		for patch, color in zip(bp['boxes'], colors):
+# 			patch.set_facecolor(color)
+# 		## style of fliers ##
+# 		for flier in bp['fliers']:
+# 			flier.set(marker='o', markersize=3)
+# 		## axes and titles ##
+# 		ax.set_xticklabels(['SIM', 'NHP'], fontsize=9)		# ax.xaxis.set_visible(False)
+# 		ax.tick_params(axis='y', labelsize=6)
+# 		if r:
+# 			ax.set_ylabel(region,labelpad=30,rotation=0,fontsize=10,fontweight='bold')
+# 		if region == regions[0]: #'supra':
+# 			ax.set_title(band, fontsize=10, fontweight='bold')
+# 		i+=1
+# 		r=0
+# 		## 
+
+# plt.subplots_adjust(top=0.85, bottom=0.05, wspace=0.3, hspace=0.3)
+# fig.suptitle('WAVELET DURATION', fontsize=14, fontweight='bold', horizontalalignment='center', y=0.95)
+# #fig.tight_layout()
+# plt.show()
