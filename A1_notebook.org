@@ -53627,3 +53627,20 @@ for nhp in nhpSubjects:     ### RECALL that nhpSubjects is a dict!! nhpSubjects[
 # fig.suptitle('WAVELET DURATION', fontsize=14, fontweight='bold', horizontalalignment='center', y=0.95)
 # #fig.tight_layout()
 # plt.show()
+** Incredibly useful boxplot examples:
+https://www.geeksforgeeks.org/box-plot-in-python-using-matplotlib/
+** Coherence? -- maybe useful in quantifying what I'm representing above...? 
+https://matplotlib.org/stable/gallery/lines_bars_and_markers/cohere.html
+** TO DO:
+*** probability density function
+*** change colors around a little
+*** frequency of occurrence of wavelets per second; event density or something 
+* <2021-12-19 Sun -- stats and fig 8>
+** TO DO:
+*** [DONE] probability density function
+**** ^^ okay, I read about this and while I would still have to keep thinking / reviewing a bit longer, I am satisfied that the y-axis values can be greater than 1, so it's fine for now. watch a video or 2 later. 
+*** Change colors around a little
+**** Changed the default colors for statsHist and statsBoxplot to be the same (yellow & lightblue). 
+**** also changed the main code block for stats plotting such that the colors are the same for hist and boxplot for each of the three things I look at (ncycles, wavelet dur, and peakF)
+*** frequency of occurrence of wavelets per second; event density or something 
+** 
