@@ -53698,3 +53698,36 @@ for subject in simSubjects:
 ** [DONE] totalCounts for NHP:
 *** Got this working for NHP -- had to adjust the code to fit the dict condition 
 *** re-arranged the order of the keys in the dict (so total counts comes last) 
+** [DONE] recordingLengths code:
+*** easy enough -- when I load this --> df, allData, CSD, dt, tt, sampr, dat, timeRangeX = readSubjectFiles(waveletPath, subject, dlms=False) 
+*** ^^ from there, I can just look at tt[0] and tt[-1] to see what the beginning and end timepoints are (in seconds). 
+*** for sim -- testing lines now made into function (tested and works!), so can delete:
+recordingLengthsSim0 = {}
+
+for subject in simSubjects:
+	df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, subject, dlms=False)
+	recordingLength = tt[-1] - tt[0]  # NOTE: THIS IS IN SECONDS
+	recordingLengthsSim0[subject] = recordingLength
+*** for NHP --> testing lines:
+recordingLengthsNHP0 = {}
+
+for subject in nhpSubjects:
+	recordingLengthsNHP0[subject] = {}
+	for tRange in nhpSubjects[subject]:
+		df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, tRange, dlms=False)
+		recordingLength = tt[-1] - tt[0] ## in seconds!
+		recordingLengthsNHP0[subject][tRange] = recordingLength
+*** for NHP --> wrote lines as function and tested; works!! 
+** Event Rates code:
+*** [DONE] Sim, by region
+**** testing lines: WORKS
+**** fx: WORKS
+*** [DONE] NHP, by region
+**** testing lines: --> didn't do this bc actually doesn't matter what form subjects is in, since waveletCounts and recordingLengths are for total, not for timeRanges 
+**** fx: --> tested and works!! 
+*** total, Sim
+**** testing lines: 
+**** fx: 
+*** total, NHP
+**** testing lines: 
+**** fx: 
