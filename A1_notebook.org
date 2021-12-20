@@ -53680,7 +53680,6 @@ for subject in simSubjects:
 			waveletCounts[subject][region][band] = bandCount
 
 *** Okay --> wavelet count code is in and appears to be working!!
-
 ** TO DO:
 *** (1) Re-test sim getWaveletCounts with new arguments (no more 'layers' as arg)
 *** (2) Test totalCount = 1 for both sim and NHP
@@ -53688,3 +53687,14 @@ for subject in simSubjects:
 *** (4) Write recordingLengths code 
 *** (5) Combine wavelet counts + recording lengths to get event rates
 *** (6) Display this (^^) graphically 
+* <2021-12-20 Mon -- stats and fig 8>
+** TO DO:
+*** [DONE] (1) Re-test sim getWaveletCounts with new arguments (no more 'layers' as arg)
+*** [DONE] (2) Test totalCount = 1 for both [DONE] sim and [DONE] NHP
+*** (3) Change timeRange arg in getPropDicts --> try type(subjects) is list / dict instead 
+*** (4) Write recordingLengths code 
+*** (5) Combine wavelet counts + recording lengths to get event rates
+*** (6) Display this (^^) graphically  
+** [DONE] totalCounts for NHP:
+*** Got this working for NHP -- had to adjust the code to fit the dict condition 
+*** re-arranged the order of the keys in the dict (so total counts comes last) 
