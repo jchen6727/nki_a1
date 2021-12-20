@@ -53639,8 +53639,52 @@ https://matplotlib.org/stable/gallery/lines_bars_and_markers/cohere.html
 ** TO DO:
 *** [DONE] probability density function
 **** ^^ okay, I read about this and while I would still have to keep thinking / reviewing a bit longer, I am satisfied that the y-axis values can be greater than 1, so it's fine for now. watch a video or 2 later. 
-*** Change colors around a little
+*** [DONE] Change colors around a little
 **** Changed the default colors for statsHist and statsBoxplot to be the same (yellow & lightblue). 
 **** also changed the main code block for stats plotting such that the colors are the same for hist and boxplot for each of the three things I look at (ncycles, wavelet dur, and peakF)
-*** frequency of occurrence of wavelets per second; event density or something 
-** 
+*** Frequency of occurrence of wavelets per second; event density or something 
+** Other statistics to look at:
+*** I want to look at frequency of the occurrence of wavelets in each frequency band, maybe per second or something. Saw this in osc taxonomy paper. 
+*** Potential scripts:
+**** evstats.py (a1dat) 
+** Event frequency:
+*** dfs index testing lines:
+	# idxTest0 = []  	### TESTING LINE
+	# idxTest1 = [] 	### TESTING LINE 
+	# for idx in range(len(dfs.index)):## iterate through dfs indices 
+	# 	#idxTest0.append(dfs.index[idx])
+	# 	#print('index = ' + str(dfs.index[idx]))    ### dfs.chan[dfs.index[idx]]
+
+	# for idx in dfs.index:
+	# 	idxTest1.append(idx)
+	# 	### dfs.chan[index]
+*** load df and allData from .pkl files for each subject
+*** use allData to get recording time info
+*** use df to sort through wavelet counts 
+*** Can take out these testing lines --> now in function:
+for subject in simSubjects:
+	waveletCounts[subject] = {}
+	## load pkl file to get df and allData 
+	df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, subject, dlms=False)   # need df and allData
+	dfs = df[(df.Foct<1.5)&(df.ncycle>3)&(df.filtsigcor>0.6)] ## get desirable wavelets (same criteria as used in load.py)
+	for region in regions:
+		waveletCounts[subject][region] = {}
+		for band in frequencyBands:
+			bandCount = 0
+			#waveletCounts[subject][region][band]
+			for chan in simLayers[region]:
+				for idx in dfs.index:
+					if dfs.chan[idx]==chan and dfs.band[idx]==band:
+						bandCount+=1
+			print('number of ' + band + ' wavelets for subject ' + subject + ' in ' + region + ': ' + str(bandCount))
+			waveletCounts[subject][region][band] = bandCount
+
+*** Okay --> wavelet count code is in and appears to be working!!
+
+** TO DO:
+*** (1) Re-test sim getWaveletCounts with new arguments (no more 'layers' as arg)
+*** (2) Test totalCount = 1 for both sim and NHP
+*** (3) Change timeRange arg in getPropDicts --> try type(subjects) is list / dict instead 
+*** (4) Write recordingLengths code 
+*** (5) Combine wavelet counts + recording lengths to get event rates
+*** (6) Display this (^^) graphically 
