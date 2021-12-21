@@ -54548,14 +54548,132 @@ def getWaveletCountsOLD(regions, frequencyBands, subjects, waveletPath, sim=1, t
 ***** [worked] testing w/ function (1 subject)
 ***** [worked] Next: test w/ full nhpSubjects
 **** (c) Extend & test function for when regions include 'total' not just supra / gran / infra 
-***** getWaveletCounts <-- doesn't work when regions has key 'all'
+***** getWaveletCounts <-- doesn't work when regions has key 'all' --> FIXED (see below) 
+***** Taking out some testing lines from sim --> 
+# --> I want eventRatesSimList[band]['total'] = LIST of rates from that band 
+## --> I also want eventRatesSimList[band][region]
 
-** Testing ability of all functions to handle 'all' in regions list:
+# eventRatesSimList = {}  
+# for band in frequencyBands:
+# 	eventRatesSimList[band] = {}
+# 	rateListBand = []
+# 	for region in regions:
+# 		eventRatesSimList[band][region] = {}
+# 		for subject in simSubjects:
+# 			rateListBand.append(eventRatesSim[subject][region][band])
+# 		eventRatesSimList[band][region] = rateListBand
+
+# eventRatesSimList1 = {}
+# for band in frequencyBands:
+# 	eventRatesSimList1[band] = {}
+# 	for region in regions:
+# 		eventRatesSimList1[band][region] = {}
+# 		rateListBand = []
+# 		for subject in simSubjects:
+# 			rateListBand.append(eventRatesSim[subject][region][band])
+# 		eventRatesSimList1[band][region] = rateListBand
+**** Taking out lines from eventRatesList function --> 
+# def getEventRatesList(eventRatesDict, subjects, frequencyBands, regions):
+# 	### eventRatesDict: dict --> from getWaveletEventRates() 
+# 	### subjects: list or dict 
+# 	### frequencyBands: list --> e.g. ['alpha', 'beta']
+# 	### regions: list --> e.g. ['supra', 'gran', 'infra', 'all']
+
+# 	eventRatesList = {}
+
+# 	# for band in frequencyBands:
+# 	# 	eventRatesList[band] = {}
+# 	# 	for region in regions:
+# 	# 		eventRatesList[band][region] = {}
+# 	# 		rateList = []
+# 	# 		for subject in subjects:
+# 	# 			rateList.append(eventRatesDict[subject][region][band])
+# 	# 		eventRatesList[band][region] = rateList 
+
+# 	for band in frequencyBands:
+# 		eventRatesList[band] = {}
+# 		for region in regions:
+# 			if region is 'all':
+# 				if 'all' not in eventRatesDict[subject].keys():
+# 					print('eventRatesDict has no all key --> inferring from other regions')
+# 					eventRatesList[band]['total'] = {}  # or 'all' ? 
+# 					rateListAll = []
+# 					for subject in subjects:
+# 						for subRegion in regions:
+# 							rateListAll.append(eventRatesDict[subject][subRegion][band])
+# 						eventRatesList[band]['total'] = rateListAll
+# 				else:
+# 					eventRatesList[band]['total'] = {}  # or 'all' ??
+# 					rateList = []
+# 					for subject in subjects:
+# 						rateList.append(eventRatesDict[subject][region][band])
+# 					eventRatesList[band]['total'] = rateList 
+# 			else:
+# 				eventRatesList[band][region] = {}
+# 				rateList = []
+# 				for subject in subjects:
+# 					rateList.append(eventRatesDict[subject][region][band])
+# 				eventRatesList[band][region] = rateList 
+
+
+# # ####
+
+# 	# for band in frequencyBands:
+# 	# 	eventRatesList[band] = {}
+# 	# 	for region in regions:
+# 	# 		if region is 'all':
+# 	# 			if 'all' not in eventRatesDict[subject].keys():
+# 	# 				print('eventRatesDict has no all key --> inferring from other regions')
+# 	# 				eventRatesList[band][region] = {}
+# 	# 				rateListAll = []
+# 	# 				for subject in subjects:
+# 	# 					for subRegion in regions:
+# 	# 						rateListAll.append(eventRates[subject][subRegion][band])
+# 	# 					eventRatesList[band][region] = rateListAll
+# 	# 			else:
+# 	# 				eventRatesList[band][region] = {}
+# 	# 				rateList = []
+# 	# 				for subject in subjects:
+# 	# 					rateList.append(eventRatesDict[subject][region][band])
+# 	# 				eventRatesList[band][region] = rateList 
+
+# ######
+# # 	for band in frequencyBands:
+# # 		eventRatesList[band] = {}
+# # 		if 'all' in regions:
+# # 			rateListAll = []
+# # 			for region in regions:
+# # 				eventRatesList[band]['total'] = {}   # or should be 'all' ??
+# # 				for subject in subjects:
+# # 					rateListAll.append(eventRatesDict[subject][region][band])
+# # 				eventRatesList[band]['total'] = rateListAll 
+
+
+# # 			if region is 'all':
+# # 				if 'all' not in eventRatesDict[subject].keys():
+# # 					print('eventRatesDict has no all key --> inferring from other regions')
+# # 					eventRatesList[band][region] = {}
+# # 					rateListAll = []
+# # 					for subject in subjects:
+# # 						for subRegion in regions:
+# # 							rateListAll.append(eventRates[subject][subRegion][band])
+# # 						eventRatesList[band][region] = rateListAll
+# # 				else:
+# # 					eventRatesList[band][region] = {}
+# # 					rateList = []
+# # 					for subject in subjects:
+# # 						rateList.append(eventRatesDict[subject][region][band])
+# # 					eventRatesList[band][region] = rateList 
+
+# 	return eventRatesList
+**** more lines being deleted:
+# eventRatesSimListNoALL = getEventRatesListNoALL(eventRatesSim, simSubjects, frequencyBands, regionsTest)
+** [DONE] Testing ability of all extant functions to handle 'all' in regions list:
 *** getPropDicts --> YES
 *** getPropLists --> YES
 *** statsBoxPlot --> YES
 *** statsHist --> YES
-*** getWaveletCounts --> X --> FIXED (YES)
+*** getWaveletCounts --> X --> FIXED! (YES)
 **** line 513
 **** so what does waveletCountsSim usually look like here? --> waveletCounts[subject][region][band]
 **** okay -- 'all' in regions now works for sim --> NOTE: if 'totalCount=0' but regions contains 'all', I change totalCount to 1 
@@ -54591,7 +54709,7 @@ def getWaveletCountsOLD(regions, frequencyBands, subjects, waveletPath, sim=1, t
 **** Can take out this old timeRange argument as well:
 	### timeRange: bool --> governs whether subjects is a dict (w/ timeRanges for each subject) or a list 
 *** getRecordingLengths --> YES
-*** getWaveletEventRates --> X 
+*** getWaveletEventRates --> X --> FIXED! (YES)
 **** Error:
   File "plotWavelets.py", line 892, in <module>
     eventRatesSim = getWaveletEventRates(simSubjects, regions, frequencyBands, waveletCountsSim, recordingLengthsSim, totalCount=1)
@@ -54613,3 +54731,5 @@ KeyError: 'all'
 		# 		for band in frequencyBands:
 		# 			totalEventRateBand = waveletCounts[subject]['total'][band] / recordingLengths[subject]
 		# 			eventRates[subject]['total'][band] = totalEventRateBand
+*** --> only one remaining is getEventRatesList but that is in progress!! 
+** NOTE: something about sum vs. list in this getEventRates situation... hm. think about this more tomorrow. 
