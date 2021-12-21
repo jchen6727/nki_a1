@@ -53696,9 +53696,10 @@ for subject in simSubjects:
 *** [DONE] (5) Change getNHPLayers to iterate over all subjects, rather than be dependent on subject -- and change the related code dependeng on this function as well!
 *** [DONE] (6) Write recordingLengths code 
 *** [DONE] (7) Combine wavelet counts + recording lengths to get event rates, by region
-*** (8) Combine wavelet counts + recording lengths to get event rates, by total count (not region)
+*** [DONE] (8) Combine wavelet counts + recording lengths to get event rates, by total count (not region)
 *** (9) Display this (^^) graphically  
 *** (10) Add saving for figs in different plotting functions! 
+*** (11) Re-run all of this type of analysis for v34_batch57!! 
 ** [DONE] totalCounts for NHP:
 *** Got this working for NHP -- had to adjust the code to fit the dict condition 
 *** re-arranged the order of the keys in the dict (so total counts comes last) 
@@ -54333,6 +54334,65 @@ def getPropDicts(subjects, frequencyBands, waveletPath, propType='all', sim=1):
 		# 					for idx in dfs.index:
 		# 						if dfs.band[idx]==band:
 		# 							bandCountTotal+=1
-		# 					waveletCounts[subject]['total'][band] += bandCountTotal
+		# 					waveletCounts[subject]['total'][band]
+		# += bandCountTotal
+** [DONE] Combine wavelet counts to get total event rates (not by region):
+*** Easy enough -- added 'totalCount' argument to def getWaveletEventRates() 
+*** ^^ added key 'total' to eventRates dict (--> eventRates[subject]['total'][band])
+*** Test for sim --> WORKED
+*** Test for NHP --> WORKED
+** Made another function getPropLists so don't have to iterate in the main code block
+*** Taking out testing lines (sim):
+# durSimLists = {}
+# peakFSimLists = {}
+# ncycleSimLists = {}
+
+# for band in frequencyBands:
+# 	durSimLists[band] = {}
+# 	peakFSimLists[band] = {}
+# 	ncycleSimLists[band] = {}
+# 	for region in regions:
+# 		durSimLists[band][region] = getPropStats(durDictSim, region, band, 0)
+# 		peakFSimLists[band][region] = getPropStats(peakFDictSim, region, band, 0)
+# 		ncycleSimLists[band][region] =
+# getPropStats(ncycleDictSim, region, band, 0)
+*** Taking out testing lines (nhp):
+# durNHPLists = {}
+# peakFNHPLists = {}
+# ncycleNHPLists = {}
+
+# for band in frequencyBands:
+# 	durNHPLists[band] = {}
+# 	peakFNHPLists[band] = {}
+# 	ncycleNHPLists[band] = {}
+# 	for region in regions:
+# 		durNHPLists[band][region] = getPropStats(durDictNHP, region, band, 0)
+# 		peakFNHPLists[band][region] = getPropStats(peakFDictNHP, region, band, 0)
+# 		ncycleNHPLists[band][region] = getPropStats(ncycleDictNHP, region, band, 0)
+** Also taking out print statements in getPropStats (only in there for testing):
+*** 		# if region is 'supra':
+		# 	fullRegionName = 'supragranular'
+		# elif region is 'gran':
+		# 	fullRegionName = 'granular'
+		# elif region is 'infra':
+		# 	fullRegionName = 'infragranular'
+		# print('Calculating average duration / peakF /
+		# ncycles of ' + fullRegionName + ' ' +
+		# frequencyBand + ' wavelets')
+*** 		#print('Calculating average duration of ' + frequencyBand + ' wavelets')
 ** Plot event rates: 
-*** 
+* <2021-12-21 Tue -- event rates & fig 8>
+** TO DO:
+*** Event rate plotting
+*** Add saving for figs in different plotting functions!
+*** Re-run this analysis for v34_batch57!!
+*** Run gcp load.py --> speech NHP data & corresponding spontaneous data
+*** Figure 8 -- work on this dude
+** Event rate plotting:
+*** So I noticed in the taxonomy of osc paper that it's done continuously on the x axis (with frequency of wavelet on x), and frequency of occurrence on the y-axis. I also think that it was done with the entire 'df' (not just the ones with ncycle>3 etc -- the criteria we use for visualizing the wavelets)
+*** ^^ I would like to achieve this!
+*** So, to do this -- need to think about how to represent this continuously, and also should put in a condition in the event rate code (for getting and plotting) regarding whether or not to filter the df dataframe down to the ones with certain cutoff of ncycle Foct etc, or to use all of them. 
+*** (1) Create condition in the event rate code that either cuts off certain wavelets from df --> dfs or uses the whole thing. 
+**** a1dat repo --> erica branch --> plotWavelets.py
+**** def getWaveletCounts()
+**** ^^ 
