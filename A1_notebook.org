@@ -54392,7 +54392,224 @@ def getPropDicts(subjects, frequencyBands, waveletPath, propType='all', sim=1):
 *** So I noticed in the taxonomy of osc paper that it's done continuously on the x axis (with frequency of wavelet on x), and frequency of occurrence on the y-axis. I also think that it was done with the entire 'df' (not just the ones with ncycle>3 etc -- the criteria we use for visualizing the wavelets)
 *** ^^ I would like to achieve this!
 *** So, to do this -- need to think about how to represent this continuously, and also should put in a condition in the event rate code (for getting and plotting) regarding whether or not to filter the df dataframe down to the ones with certain cutoff of ncycle Foct etc, or to use all of them. 
-*** (1) Create condition in the event rate code that either cuts off certain wavelets from df --> dfs or uses the whole thing. 
+*** [DONE] (1) Create condition in the event rate code that either cuts off certain wavelets from df --> dfs or uses the whole thing. 
 **** a1dat repo --> erica branch --> plotWavelets.py
 **** def getWaveletCounts()
-**** ^^ 
+**** ^^ added cutoffs as argument (bool)
+**** [DONE] TEST THIS: 
+***** sim -- WORKS
+***** nhp -- WORKS
+**** old getWaveletCounts() fx: 
+def getWaveletCountsOLD(regions, frequencyBands, subjects, waveletPath, sim=1, totalCount=1): 
+	### regions: list -->  e.g. regions = ['supra', 'gran', 'infra']
+	### frequencyBands: list --> e.g. ['alpha', 'beta']
+	### subjects: list or dict
+	### timeRange: bool --> governs whether subjects is a dict (w/ timeRanges for each subject) or a list 
+	### sim: bool --> governs whether subject is sim or NHP  ### EITHER DO THIS OR HAVE LAYERS BE AN ARGUMENT 
+	### totalCount: bool --> governs whether or not to calculate waveletCounts over all regions 
+	### cutoffs: bool --> determines whether or not to use all of df dataframe, or to cut out certain wavelets. 
+
+
+	if sim:
+		layers = getSimLayers()
+
+		waveletCounts = {}
+
+		if type(subjects) is list:
+			for subject in subjects:
+				waveletCounts[subject] = {}
+				## load pkl file to get df and allData 
+				df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, subject, dlms=False)   # need df and allData
+				dfs = df[(df.Foct<1.5)&(df.ncycle>3)&(df.filtsigcor>0.6)] ## get desirable wavelets (same criteria as used in load.py)
+				for region in regions:
+					waveletCounts[subject][region] = {}
+					for band in frequencyBands:
+						bandCount = 0
+						for chan in layers[region]:
+							for idx in dfs.index:
+								if dfs.chan[idx]==chan and dfs.band[idx]==band:
+									bandCount+=1
+						waveletCounts[subject][region][band] = bandCount
+
+
+				if totalCount:   ### get count of all 
+					waveletCounts[subject]['total'] = {}
+					for band in frequencyBands:
+						bandCountTotal = 0
+						for idx in dfs.index:
+							if dfs.band[idx]==band:
+								bandCountTotal+=1
+						waveletCounts[subject]['total'][band] = bandCountTotal
+
+		elif type(subjects) is dict:
+			print('HAVE NOT COMPLETED THIS CONDITION YET!! ')
+
+
+	else:   # sim=0 --> NHP
+		if type(subjects) is list:
+			print('HAVE NOT COMPLETED THIS CONDITION YET !!')
+
+		elif type(subjects) is dict:
+			waveletCounts = {}
+			layers = getNHPLayers(waveletPath, subjects)
+
+			for subject in subjects:
+				waveletCounts[subject] = {}
+
+				for region in regions:
+					waveletCounts[subject][region] = {}
+					for band in frequencyBands:
+						waveletCounts[subject][region][band] = 0
+
+				if totalCount:
+					waveletCounts[subject]['total'] = {}
+					for band in frequencyBands:
+						waveletCounts[subject]['total'][band] = 0
+
+				for tRange in subjects[subject]:
+					df, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, tRange, dlms=False)
+					dfs = df[(df.Foct<1.5)&(df.ncycle>3)&(df.filtsigcor>0.6)]
+					for region in regions:
+						for band in frequencyBands:
+							bandCount = 0
+							for chan in layers[subject][region]:
+								for idx in dfs.index:
+									if dfs.chan[idx]==chan and dfs.band[idx]==band:
+										bandCount+=1
+							waveletCounts[subject][region][band] += bandCount
+
+					if totalCount:   ### get count of all 
+						for band in frequencyBands:
+							bandCountTotal = 0
+							for idx in dfs.index:
+								if dfs.band[idx]==band:
+									bandCountTotal+=1
+							waveletCounts[subject]['total'][band] += bandCountTotal
+
+
+	return waveletCounts
+
+*** (2) Creating the lists of eventRates that doesn't include the subjects:
+**** Figuring something out re: placement of an empty list relative to a for loop:
+***** >>> eventRatesSimList['delta']['supra']
+[5.043522117583631, 3.9130775050217825, 4.260906616579274,
+4.173949338689901, 3.739162949243037, 3.9130775050217825,
+4.608735728136766, 4.347863894468648, 4.000034782911156,
+3.6522056713536637, 4.086992060800529, 4.000034782911156,
+3.478291115574918, 3.739162949243037, 4.000034782911156,
+4.608735728136766, 3.6522056713536637, 3.739162949243037,
+4.086992060800529, 5.043522117583631, 3.478291115574918,
+4.347863894468648, 3.8261202271324097, 4.000034782911156,
+5.3043939512517495, 0.5217436673362377, 0.43478638944686476,
+0.5217436673362377, 0.8695727788937295, 0.9565300567831024,
+0.9565300567831024, 0.9565300567831024, 0.7826155010043565,
+0.7826155010043565, 0.9565300567831024, 1.1304446125618484,
+0.8695727788937295, 0.6956582231149836, 0.7826155010043565,
+0.7826155010043565, 1.1304446125618484, 0.8695727788937295,
+0.7826155010043565, 0.6087009452256107, 1.3913164462299672,
+1.0434873346724753, 0.5217436673362377, 0.7826155010043565,
+0.7826155010043565, 1.0434873346724753, 2.6087183366811884,
+2.0869746693449507, 2.3478465030130695, 2.4348037809024428,
+2.6087183366811884, 3.304376559796172, 4.260906616579274,
+3.2174192819067993, 2.9565474482386804, 2.5217610587918156,
+2.7826328924599344, 3.0435047261280532, 2.869590170349307,
+2.9565474482386804, 2.0869746693449507, 2.2608892251236967,
+2.000017391455578, 2.173931947234324, 3.2174192819067993,
+3.391333837685545, 3.0435047261280532, 3.130462004017426,
+2.6087183366811884, 2.173931947234324, 3.0435047261280532]
+***** ^^ [5.043522117583631, 3.9130775050217825, 4.260906616579274, 4.173949338689901, 3.739162949243037, 3.9130775050217825, 4.608735728136766, 4.347863894468648, 4.000034782911156, 3.6522056713536637, 4.086992060800529, 4.000034782911156, 3.478291115574918, 3.739162949243037, 4.000034782911156, 4.608735728136766, 3.6522056713536637, 3.739162949243037, 4.086992060800529, 5.043522117583631, 3.478291115574918, 4.347863894468648, 3.8261202271324097, 4.000034782911156, 5.3043939512517495,
+***** leftover after above -->  ^^ 0.5217436673362377, 0.43478638944686476, 0.5217436673362377, 0.8695727788937295, 0.9565300567831024, 0.9565300567831024, 0.9565300567831024, 0.7826155010043565, 0.7826155010043565, 0.9565300567831024, 1.1304446125618484, 0.8695727788937295, 0.6956582231149836, 0.7826155010043565, 0.7826155010043565, 1.1304446125618484, 0.8695727788937295, 0.7826155010043565, 0.6087009452256107, 1.3913164462299672, 1.0434873346724753, 0.5217436673362377, 0.7826155010043565, 0.7826155010043565, 1.0434873346724753, 2.6087183366811884, 2.0869746693449507, 2.3478465030130695, 2.4348037809024428, 2.6087183366811884, 3.304376559796172, 4.260906616579274, 3.2174192819067993, 2.9565474482386804, 2.5217610587918156, 2.7826328924599344, 3.0435047261280532, 2.869590170349307, 2.9565474482386804, 2.0869746693449507, 2.2608892251236967, 2.000017391455578, 2.173931947234324, 3.2174192819067993, 3.391333837685545, 3.0435047261280532, 3.130462004017426, 2.6087183366811884, 2.173931947234324, 3.0435047261280532]
+***** eventRatesSimList1['delta']['gran']
+[0.5217436673362377, 0.43478638944686476, 0.5217436673362377,
+0.8695727788937295, 0.9565300567831024, 0.9565300567831024,
+0.9565300567831024, 0.7826155010043565, 0.7826155010043565,
+0.9565300567831024, 1.1304446125618484, 0.8695727788937295,
+0.6956582231149836, 0.7826155010043565, 0.7826155010043565,
+1.1304446125618484, 0.8695727788937295, 0.7826155010043565,
+0.6087009452256107, 1.3913164462299672, 1.0434873346724753,
+0.5217436673362377, 0.7826155010043565, 0.7826155010043565,
+1.0434873346724753]
+***** ^^ 
+0.5217436673362377, 0.43478638944686476, 0.5217436673362377,
+0.8695727788937295, 0.9565300567831024, 0.9565300567831024,
+0.9565300567831024, 0.7826155010043565, 0.7826155010043565,
+0.9565300567831024, 1.1304446125618484, 0.8695727788937295,
+0.6956582231149836, 0.7826155010043565, 0.7826155010043565,
+1.1304446125618484, 0.8695727788937295, 0.7826155010043565,
+0.6087009452256107, 1.3913164462299672, 1.0434873346724753,
+0.5217436673362377, 0.7826155010043565, 0.7826155010043565,
+1.0434873346724753,
+***** leftover:
+2.6087183366811884, 2.0869746693449507, 2.3478465030130695, 2.4348037809024428, 2.6087183366811884, 3.304376559796172, 4.260906616579274, 3.2174192819067993, 2.9565474482386804, 2.5217610587918156, 2.7826328924599344, 3.0435047261280532, 2.869590170349307, 2.9565474482386804, 2.0869746693449507, 2.2608892251236967, 2.000017391455578, 2.173931947234324, 3.2174192819067993, 3.391333837685545, 3.0435047261280532, 3.130462004017426, 2.6087183366811884, 2.173931947234324, 3.0435047261280532
+**** (a) Wrote function getEventsRateList() for when subjects is a list (and regions don't include 'total')  --> WORKS
+**** (b) Extend & test function for when subjects is a dict (has timeRanges) --> WORKS; no changes needed actually except to get rid of if type(subjects) is list --> works either way bc of previous functions flattening out the timeRanges aspect of the subjects. 
+***** actually may not be necessary, depending on how I set up eventRates -- look and also test 
+***** [worked] tested w/ non-function; worked for 1 subject 
+***** [worked] testing w/ function (1 subject)
+***** [worked] Next: test w/ full nhpSubjects
+**** (c) Extend & test function for when regions include 'total' not just supra / gran / infra 
+***** getWaveletCounts <-- doesn't work when regions has key 'all'
+
+** Testing ability of all functions to handle 'all' in regions list:
+*** getPropDicts --> YES
+*** getPropLists --> YES
+*** statsBoxPlot --> YES
+*** statsHist --> YES
+*** getWaveletCounts --> X --> FIXED (YES)
+**** line 513
+**** so what does waveletCountsSim usually look like here? --> waveletCounts[subject][region][band]
+**** okay -- 'all' in regions now works for sim --> NOTE: if 'totalCount=0' but regions contains 'all', I change totalCount to 1 
+**** Lines that I can now take out of sim portion:
+						#totalCount = 1 
+
+				# if totalCount:   ### get count of all 
+				# 	waveletCounts[subject]['total'] = {}  # 'all' or 'total' ??
+				# 	for band in frequencyBands:
+				# 		bandCountTotal = 0
+				# 		for idx in dfs.index:
+				# 			if dfs.band[idx]==band:
+				# 				bandCountTotal+=1
+				# 		waveletCounts[subject]['total'][band] = bandCountTotal
+**** NHP --> predictably, breaks (at line 566) 
+**** okay ^^ fixed and tested!
+**** Lines that I can now take out of NHP portion:
+***** 				# if totalCount:
+				# 	waveletCounts[subject]['total'] = {}
+				# 	for band in frequencyBands:
+				# 		waveletCounts[subject]['total'][band] = 0
+
+***** 					# if totalCount:   ### get count of all 
+					# 	for band in frequencyBands:
+					# 		bandCountTotal = 0
+					# 		for idx in dfs.index:
+					# 			if dfs.band[idx]==band:
+					# 				bandCountTotal+=1
+					# 		waveletCounts[subject]['total'][band] += bandCountTotal
+**** Can take out this line for totalCount arg:
+	### MIGHT TAKE THIS OUT --> redundant with 'all' in regions --> totalCount: bool --> governs whether or not to calculate waveletCounts over all regions 
+
+**** Can take out this old timeRange argument as well:
+	### timeRange: bool --> governs whether subjects is a dict (w/ timeRanges for each subject) or a list 
+*** getRecordingLengths --> YES
+*** getWaveletEventRates --> X 
+**** Error:
+  File "plotWavelets.py", line 892, in <module>
+    eventRatesSim = getWaveletEventRates(simSubjects, regions, frequencyBands, waveletCountsSim, recordingLengthsSim, totalCount=1)
+  File "plotWavelets.py", line 617, in getWaveletEventRates
+    eventRateBand = waveletCounts[subject][region][band] / recordingLengths[subject]
+KeyError: 'all'
+**** Taking out totalCount as arg, similar to getWaveletCounts
+**** Tested new setup with sim and works!!
+**** Testing with NHP --> works! 
+**** Lines I can take out now from this function:
+***** (arg) --> #, totalCount=1): 
+***** 	### totalCount: bool --> PROBABLY TAKE THS OUT; redundant with 'all' in regions!!! 
+***** #### MAKE SURE WORKS FOR 'all' TOO -- or rather, totalRates???
+***** 		# if totalCount:
+		# 	if 'total' not in waveletCounts[subject].keys():
+		# 		print('Need total wavelet counts -- use totalCount=1 with getWaveletCounts()')
+		# 	elif 'total' in waveletCounts[subject].keys():
+		# 		eventRates[subject]['total'] = {}
+		# 		for band in frequencyBands:
+		# 			totalEventRateBand = waveletCounts[subject]['total'][band] / recordingLengths[subject]
+		# 			eventRates[subject]['total'][band] = totalEventRateBand
