@@ -54733,3 +54733,318 @@ KeyError: 'all'
 		# 			eventRates[subject]['total'][band] = totalEventRateBand
 *** --> only one remaining is getEventRatesList but that is in progress!! 
 ** NOTE: something about sum vs. list in this getEventRates situation... hm. think about this more tomorrow. 
+* <2021-12-22 Wed -- fig 8 and event stats>
+** TO DO:
+*** [DONE] Event rate plotting
+**** NOTE: for v34_batch27
+*** Add saving for figs in different plotting functions!
+*** Re-run this analysis for v34_batch57!!
+*** Run gcp load.py --> speech NHP data & corresponding spontaneous data
+*** Figure 8 -- work on this 
+** Continue w/ event rate plotting from yesterday: 
+*** okay the list thing works -- I was thinking maybe it had to be a list with all of the different supra / gran / infra elements combined, but no -- that was the other stuff, I don't want that, I want a combined measure for each subject. 
+*** Deleting NHP testing code:
+# #### plot totals --> 
+# ## (1) first get lists (nhp) --> 
+# # eventRatesNHPList = {}
+# # for band in frequencyBands:
+# # 	eventRatesNHPList[band] = {}
+# # 	for region in regions:
+# # 		eventRatesNHPList[band][region] = {}
+# # 		rateList = []
+# # 		for subject in nhpSubjects:
+# # 			rateList.append(eventRatesNHP[subject][region][band])
+# # 		eventRatesNHPList[band][region] = rateList
+*** Okay --> now what do I want this plot to look like lol 
+*** ^^ I could sort the lists (total) so that they're in ascending order
+*** Then I could try to do the type of plot I mentioned before in my nb -- like a scatterplot with confidence bars
+*** ^^ draw this out by hand just to get a sense of what I need to do next 
+*** Actually, for sake of ease --> just maybe use similar approach re: what I had for the other stat (dur, etc.)
+*** Do statsBoxPlot and statsHist work for this data? --> yes
+*** statsHist too
+*** okay --> can conclude that the event rates are VERY different for v34_batch27 vs. NHP spontaneous data. Move on then for now/ 
+** Okay --> now move onto Figure 8 for now:
+* <2021-12-23 Thu -- fig 8>
+** Figure 8 plotting
+* <2021-12-26 Sun -- fig 8>
+** Conversation with salvadord:
+*** ericaygriffith Dec 9th at 11:23 AM
+also -- for this, do you ideally envision the lfp and mua being
+represented like they are in the placeholder fig? i.e. with time
+series / histogram on the bottom panels and spectrogram on top?
+*** salvadord:
+histograms would be equivalent MUA representation of the LFP/CSD waveform … so instead of histo could also plot as line
+*** ericaygriffith:
+...I think spectrogram on top and some kind of time series
+representation on the bottom is reasonable as a first goal to work
+towards??
+*** salvadord:
+yes, perfect so can just use netpyne to plot the firing spectrogram and the spike histogram (both funcs in sim.analysis)
+** Plan for fig based on above convo + placeholder fig:
+*** Find a wavelet from v34_batch57 that is good (NHP matching or deal with this later?)
+*** Then have this ^^ kind of off to the left
+*** Then have LFP panels on top, and MUA panels on bottom
+*** ^^ there should be the same number of panels for each, and should correspond to the same populations
+*** Plot (for LFP & MUA) spectrogram on top and time series (lfp) or histogram (mua) on bottom
+*** QUESTIONS:
+**** (1) What does 'whole' LFP look like at the timepoint of these waavelets and does that matter for now? --> saying NO for now. 
+**** (2) What options do I have when plotting individual LFP pops --> look at this (i.e. for whole LFP I can do timeSeries, spectrogram, and/or PSD)
+**** (3) Do I need to update / merge NetPyNE version right now? 
+** NetPyNE update:
+*** right now (local machine) --> i'm on 'csd' branch of my fork of netpyne
+*** git remote -v 
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push) 
+*** Merge development branch into csd (and then do pull request)
+**** (0) Commit / push all changes on csd branch 
+**** (1) on local machine, in ~/Desktop/NEUROSIM/netpyne --> git checkout development 
+**** (2) git pull upstream development 
+remote: Enumerating objects: 331, done.
+remote: Counting objects: 100% (318/318), done.
+remote: Compressing objects: 100% (150/150), done.
+remote: Total 331 (delta 235), reused 235 (delta 168), pack-reused 13
+Receiving objects: 100% (331/331), 562.17 KiB | 11.47 MiB/s, done.
+Resolving deltas: 100% (236/236), completed with 53 local objects.
+From https://github.com/Neurosim-lab/netpyne
+ * branch              development -> FETCH_HEAD
+   ad4ddf2a..d5745015  development -> upstream/development
+Updating ad4ddf2a..d5745015
+Fast-forward
+ CHANGES.md                                         |    15 +
+ doc/source/about.rst                               |     8 +-
+ examples/CA3model_3pops/cfg.py                     |    20 +
+ examples/CA3model_3pops/init.py                    |    11 +
+ examples/CA3model_3pops/mod/CA1ih.mod              |    64 +
+ examples/CA3model_3pops/mod/CA1ika.mod             |    85 +
+ examples/CA3model_3pops/mod/CA1ikdr.mod            |    60 +
+ examples/CA3model_3pops/mod/CA1ina.mod             |    89 +
+ examples/CA3model_3pops/mod/MyExp2SynBB.mod        |    67 +
+ examples/CA3model_3pops/mod/MyExp2SynNMDABB.mod    |   108 +
+ examples/CA3model_3pops/mod/aux_fun.inc            |    43 +
+ examples/CA3model_3pops/mod/caolmw.mod             |    47 +
+ examples/CA3model_3pops/mod/icaolmw.mod            |    51 +
+ examples/CA3model_3pops/mod/iholmw.mod             |    60 +
+ examples/CA3model_3pops/mod/kcaolmw.mod            |    52 +
+ examples/CA3model_3pops/mod/kdrbwb.mod             |    76 +
+ examples/CA3model_3pops/mod/nafbwb.mod             |    81 +
+ examples/CA3model_3pops/netParams.py               |   319 +
+ examples/HHTut/HHTut.py                            |     1 +
+ .../M1detailed/cells/CT6_reduced_cellParams.pkl    |   Bin 45507 -> 27633 bytes
+ .../M1detailed/cells/IT2_reduced_cellParams.pkl    |   Bin 45499 -> 27633 bytes
+ .../M1detailed/cells/IT4_reduced_cellParams.pkl    |   Bin 45531 -> 27633 bytes
+ examples/M1detailed/cells/IT5A_full_cellParams.pkl |   Bin 1889221 -> 880954 bytes
+ .../M1detailed/cells/IT5A_reduced_cellParams.pkl   |   Bin 45704 -> 27687 bytes
+ .../M1detailed/cells/IT5B_reduced_cellParams.pkl   |   Bin 45477 -> 27633 bytes
+ .../M1detailed/cells/IT6_reduced_cellParams.pkl    |   Bin 45491 -> 27633 bytes
+ examples/M1detailed/cells/PT5B_full_cellParams.pkl |   Bin 1420948 -> 1421014 bytes
+ .../M1detailed/cells/PT5B_reduced_cellParams.pkl   |   Bin 43551 -> 27299 bytes
+ examples/M1detailed/cells/PV_simple_cellParams.pkl |   Bin 10311 -> 6447 bytes
+ .../M1detailed/cells/SOM_simple_cellParams.pkl     |   Bin 10163 -> 6262 bytes
+ examples/M1detailed/cfg.py                         |     3 +
+ examples/M1detailed/mod/catcb.mod                  |     2 +-
+ examples/M1detailed/mod/gabab.mod                  |    11 +-
+ examples/M1detailed/mod/h_migliore.mod             |     2 +-
+ examples/M1detailed/mod/kapcb.mod                  |     3 +-
+ examples/M1detailed/mod/kapin.mod                  |     3 +-
+ examples/M1detailed/mod/vecstim.mod                |   138 +-
+ examples/M1detailed/netParams.py                   |     4 +-
+ examples/batchCell/batch.py                        |     2 +-
+ examples/batchCell/mod/parameters.multi            |    72 -
+ examples/batchCell/netParams.py                    |     2 +-
+ examples/batchCellMapping/README.md                |    57 +
+ examples/batchCellMapping/analysis.py              |    99 +
+ examples/batchCellMapping/batch.py                 |    73 +
+ examples/batchCellMapping/cells/SPI6.py            |   208 +
+ examples/batchCellMapping/cfg.py                   |    76 +
+ examples/batchCellMapping/init.py                  |    13 +
+ examples/batchCellMapping/mod/HCN1.mod             |    67 +
+ examples/batchCellMapping/mod/IC.mod               |    88 +
+ examples/batchCellMapping/mod/MyExp2SynBB.mod      |    67 +
+ examples/batchCellMapping/mod/MyExp2SynNMDABB.mod  |    92 +
+ examples/batchCellMapping/mod/Nca.mod              |   124 +
+ examples/batchCellMapping/mod/ar_traub.mod         |    47 +
+ examples/batchCellMapping/mod/cadad.mod            |    74 +
+ examples/batchCellMapping/mod/cagk.mod             |    87 +
+ examples/batchCellMapping/mod/cal_mh.mod           |   139 +
+ examples/batchCellMapping/mod/cal_mig.mod          |   131 +
+ examples/batchCellMapping/mod/can_mig.mod          |   144 +
+ examples/batchCellMapping/mod/cat_mig.mod          |   136 +
+ examples/batchCellMapping/mod/cat_traub.mod        |    67 +
+ examples/batchCellMapping/mod/gabab.mod            |   210 +
+ examples/batchCellMapping/mod/ghk.inc              |    40 +
+ examples/batchCellMapping/mod/h_BS.mod             |    88 +
+ examples/batchCellMapping/mod/h_harnett.mod        |    69 +
+ examples/batchCellMapping/mod/h_kole.mod           |    76 +
+ examples/batchCellMapping/mod/hsyn.mod             |   130 +
+ examples/batchCellMapping/mod/ican_sidi.mod        |   110 +
+ .../mod/infot.unused}                              |     0
+ examples/batchCellMapping/mod/izhi2007a.mod        |   248 +
+ examples/batchCellMapping/mod/izhi2007b.mod        |   172 +
+ examples/batchCellMapping/mod/kBK.mod              |   108 +
+ examples/batchCellMapping/mod/kap_BS.mod           |   124 +
+ examples/batchCellMapping/mod/kca.mod              |   100 +
+ examples/batchCellMapping/mod/kdmc_BS.mod          |    93 +
+ examples/batchCellMapping/mod/kdr_BS.mod           |    89 +
+ examples/batchCellMapping/mod/km.mod               |    97 +
+ examples/batchCellMapping/mod/kv.mod               |   102 +
+ .../misc.mod => batchCellMapping/mod/misc.unused}  |     0
+ examples/batchCellMapping/mod/na2_mh.mod           |   132 +
+ examples/batchCellMapping/mod/nap_sidi.mod         |   109 +
+ examples/batchCellMapping/mod/nax_BS.mod           |   115 +
+ examples/batchCellMapping/mod/naz.mod              |   134 +
+ examples/batchCellMapping/mod/nstim.mod            |    91 +
+ .../mod/samnutils.unused}                          |     0
+ examples/batchCellMapping/mod/savedist.mod         |    14 +
+ .../mod/stats.unused}                              |     0
+ .../mod/vecst.unused}                              |     0
+ examples/batchCellMapping/netParams.py             |    86 +
+ examples/batchCellMapping/runbatch                 |     9 +
+ examples/batchCellMapping/utils.py                 |   119 +
+ examples/saving/cfg.py                             |     1 +
+ examples/saving/output_data.json                   | 16364 +++++++++++++++++++
+ netpyne/analysis/__init__.py                       |     4 +-
+ netpyne/analysis/csd.py                            |     2 +-
+ netpyne/analysis/lfp.py                            |   805 +-
+ netpyne/analysis/lfp_orig.py                       |   557 +
+ netpyne/analysis/spikes.py                         |     5 +-
+ netpyne/analysis/tools.py                          |     2 +-
+ netpyne/batch/batch.py                             |    22 +-
+ netpyne/batch/grid.py                              |   131 +-
+ netpyne/cell/compartCell.py                        |     5 +-
+ netpyne/plotting/__init__.py                       |     5 +-
+ netpyne/plotting/plotLFP.py                        |   444 +
+ netpyne/plotting/plotRaster.py                     |    11 +-
+ netpyne/plotting/plotSpikeHist.py                  |     3 +-
+ netpyne/plotting/plotter.py                        |   466 +-
+ netpyne/sim/gather.py                              |    19 +-
+ netpyne/sim/run.py                                 |    32 +-
+ netpyne/sim/save.py                                |    68 +-
+ netpyne/sim/setup.py                               |     3 +
+ netpyne/specs/netParams.py                         |    30 +-
+ netpyne/specs/simConfig.py                         |     3 +
+ 112 files changed, 24129 insertions(+), 806 deletions(-)
+ create mode 100644 examples/CA3model_3pops/cfg.py
+ create mode 100644 examples/CA3model_3pops/init.py
+ create mode 100644 examples/CA3model_3pops/mod/CA1ih.mod
+ create mode 100644 examples/CA3model_3pops/mod/CA1ika.mod
+ create mode 100644 examples/CA3model_3pops/mod/CA1ikdr.mod
+ create mode 100644 examples/CA3model_3pops/mod/CA1ina.mod
+ create mode 100644 examples/CA3model_3pops/mod/MyExp2SynBB.mod
+ create mode 100644 examples/CA3model_3pops/mod/MyExp2SynNMDABB.mod
+ create mode 100644 examples/CA3model_3pops/mod/aux_fun.inc
+ create mode 100644 examples/CA3model_3pops/mod/caolmw.mod
+ create mode 100644 examples/CA3model_3pops/mod/icaolmw.mod
+ create mode 100644 examples/CA3model_3pops/mod/iholmw.mod
+ create mode 100644 examples/CA3model_3pops/mod/kcaolmw.mod
+ create mode 100644 examples/CA3model_3pops/mod/kdrbwb.mod
+ create mode 100644 examples/CA3model_3pops/mod/nafbwb.mod
+ create mode 100644 examples/CA3model_3pops/netParams.py
+ delete mode 100644 examples/batchCell/mod/parameters.multi
+ create mode 100644 examples/batchCellMapping/README.md
+ create mode 100644 examples/batchCellMapping/analysis.py
+ create mode 100644 examples/batchCellMapping/batch.py
+ create mode 100644 examples/batchCellMapping/cells/SPI6.py
+ create mode 100644 examples/batchCellMapping/cfg.py
+ create mode 100644 examples/batchCellMapping/init.py
+ create mode 100644 examples/batchCellMapping/mod/HCN1.mod
+ create mode 100644 examples/batchCellMapping/mod/IC.mod
+ create mode 100644 examples/batchCellMapping/mod/MyExp2SynBB.mod
+ create mode 100755 examples/batchCellMapping/mod/MyExp2SynNMDABB.mod
+ create mode 100644 examples/batchCellMapping/mod/Nca.mod
+ create mode 100644 examples/batchCellMapping/mod/ar_traub.mod
+ create mode 100644 examples/batchCellMapping/mod/cadad.mod
+ create mode 100644 examples/batchCellMapping/mod/cagk.mod
+ create mode 100644 examples/batchCellMapping/mod/cal_mh.mod
+ create mode 100644 examples/batchCellMapping/mod/cal_mig.mod
+ create mode 100644 examples/batchCellMapping/mod/can_mig.mod
+ create mode 100644 examples/batchCellMapping/mod/cat_mig.mod
+ create mode 100644 examples/batchCellMapping/mod/cat_traub.mod
+ create mode 100644 examples/batchCellMapping/mod/gabab.mod
+ create mode 100644 examples/batchCellMapping/mod/ghk.inc
+ create mode 100644 examples/batchCellMapping/mod/h_BS.mod
+ create mode 100644 examples/batchCellMapping/mod/h_harnett.mod
+ create mode 100644 examples/batchCellMapping/mod/h_kole.mod
+ create mode 100644 examples/batchCellMapping/mod/hsyn.mod
+ create mode 100644 examples/batchCellMapping/mod/ican_sidi.mod
+ rename examples/{batchCell/mod/infot.mod => batchCellMapping/mod/infot.unused} (100%)
+ create mode 100644 examples/batchCellMapping/mod/izhi2007a.mod
+ create mode 100644 examples/batchCellMapping/mod/izhi2007b.mod
+ create mode 100644 examples/batchCellMapping/mod/kBK.mod
+ create mode 100644 examples/batchCellMapping/mod/kap_BS.mod
+ create mode 100644 examples/batchCellMapping/mod/kca.mod
+ create mode 100644 examples/batchCellMapping/mod/kdmc_BS.mod
+ create mode 100644 examples/batchCellMapping/mod/kdr_BS.mod
+ create mode 100644 examples/batchCellMapping/mod/km.mod
+ create mode 100644 examples/batchCellMapping/mod/kv.mod
+ rename examples/{batchCell/mod/misc.mod => batchCellMapping/mod/misc.unused} (100%)
+ create mode 100644 examples/batchCellMapping/mod/na2_mh.mod
+ create mode 100644 examples/batchCellMapping/mod/nap_sidi.mod
+ create mode 100644 examples/batchCellMapping/mod/nax_BS.mod
+ create mode 100644 examples/batchCellMapping/mod/naz.mod
+ create mode 100644 examples/batchCellMapping/mod/nstim.mod
+ rename examples/{batchCell/mod/samnutils.mod => batchCellMapping/mod/samnutils.unused} (100%)
+ create mode 100644 examples/batchCellMapping/mod/savedist.mod
+ rename examples/{batchCell/mod/stats.mod => batchCellMapping/mod/stats.unused} (100%)
+ rename examples/{batchCell/mod/vecst.mod => batchCellMapping/mod/vecst.unused} (100%)
+ create mode 100644 examples/batchCellMapping/netParams.py
+ create mode 100755 examples/batchCellMapping/runbatch
+ create mode 100644 examples/batchCellMapping/utils.py
+ create mode 100644 examples/saving/output_data.json
+ create mode 100644 netpyne/analysis/lfp_orig.py
+ create mode 100644 netpyne/plotting/plotLFP.py
+**** (3) git push origin development
+**** (4) git checkout csd
+**** (5) git merge development
+Auto-merging netpyne/analysis/spikes.py
+CONFLICT (content): Merge conflict in netpyne/analysis/spikes.py
+Auto-merging netpyne/analysis/csd.py
+CONFLICT (content): Merge conflict in netpyne/analysis/csd.py
+Removing examples/batchCell/mod/parameters.multi
+Automatic merge failed; fix conflicts and then commit the result.
+**** (6) Fix merge conflicts
+***** [FIXED] (1) netpyne/analysis/spikes.py
+****** <<<<<<< HEAD
+from ..specs import Dict # ADDED TO CSD BRANCH TO TRY TO RESOLVE popAvgRates() Dict() ERROR! 
+=======
+from ..specs import Dict
+****** Fixed by just deleting the lines with the comment (same line as I had in there, but without the comment)
+***** [FIXED] (2) netpyne/analysis.csd.py 
+****** <<<<<<< HEAD
+            for i in layerBounds.keys():
+                axs[0].hlines(layerBounds[i], xmin, xmax, colors='black', linewidth=1, linestyles='dotted') 
+                layerKeys.append(i) # makes a list with names of each layer, as specified in layerBounds dict argument 
+=======
+        for i in layer_bounds.keys():
+            axs[0].hlines(layer_bounds[i], xmin, xmax, colors='black', linewidth=1, linestyles='dotted') 
+            layerKeys.append(i)
+>>>>>>> development
+****** ^^ This is actually wrong in the development branch; discussed with salvador that that for loop should be inside the if/else statement, not outside. 
+****** Deleted:
+=======
+        for i in layer_bounds.keys():
+            axs[0].hlines(layer_bounds[i], xmin, xmax, colors='black', linewidth=1, linestyles='dotted') 
+            layerKeys.append(i)
+>>>>>>> development
+**** (7) on csd branch, git add ___ (<-- the files that were fixed above in merge conflicts)
+**** (8) git commit -m 'commit_message'
+[csd 5b87e723] merging development branch with csd branch on my fork of netpyne
+**** (9) git push origin csd 
+*** TALK TO SALVA ABOUT THIS: Pull request --> 
+**** (1) In your browser, go to https://github.com/Neurosim-lab/netpyne 
+**** (2) Navigate to "New pull request" button (Pull requests -->) 
+**** (3) This ^^ will bring you to the "Compare changes" page where you should click on "compare across forks". 
+***** Ensure the "base repository" is Neurosim-lab/netpyne 
+***** and the "base" is development. 
+***** Set the head repository to ericaygriffith/netpyne 
+***** and the "compare" to csd (name-of-your-new-branch)
+***** Type a title and description for your pull request (if your modifications were in response to an issue, include the issue number --> (e.g. ISSUE 304, https://github.com/Neurosim-lab/netpyne/issues/304, TITLE: "adding csd.py to netpyne/analysis -- Issue #304")
+***** Finally, click on "Create Pull Request"
+** Helpful scripts in netpyne/netpyne/analysis:
+*** spikes_orig.py --> 
+**** plotSpikeHist() 
+**** plotRateSpectrogram() 
+*** interactive.py --> 
+**** iplotSpikeHist()  
+

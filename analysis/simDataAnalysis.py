@@ -72,7 +72,7 @@ colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.
 ### set path to data files
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -301,7 +301,6 @@ if LFP or CSD or traces:
 		LFPPops = list(allLFPData['LFPPops'].keys())
 		for pop in LFPPops:
 			sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-
 
 	if CSD:
 		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
