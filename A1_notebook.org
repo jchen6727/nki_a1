@@ -55047,4 +55047,30 @@ from ..specs import Dict
 **** plotRateSpectrogram() 
 *** interactive.py --> 
 **** iplotSpikeHist()  
+** GCP Bucket with v34_batch57 data:
+https://console.cloud.google.com/storage/browser/eyg_data/wavelets?project=ecas2-nsf1904444&pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false
 
+* <2021-12-27 Mon -- fig 8>
+** Updated salva 
+*** Also asked about (a) netpyne csd indent fix? and (b) gcp nhp speech runs (a1dat)
+** Figure 8 steps:
+*** (1) Pick a wavelet from v34_batch57 as the wavelet to base the rest of the plotting around
+**** [DONE] (a) To do this --> Need to transfer the files on gcp bucket to my local machine
+***** ^^ gsutil or gcloud scp? 
+***** TRY, on local command line --> gcloud compute scp 
+***** ^^ Should get on gcp (command line), check that these files are still in gcp cluster, then gcloud compute scp 
+***** [DONE] (i) Log in to g9-n2-pre-controller:
+gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
+--tunnel-through-iap --project "ecas2-nsf1904444"
+***** [DONE] (ii) Check if those wavelet files exist still on gcp or if I moved them all to gcp bucket then deleted. 
+****** okay they are all there but I deleted dlms.pkl which is all good I think! 
+***** [DONE] (iii) Transfer over the files:
+****** Start with v34_batch57_0_0_timeRange_0_6
+****** ^^ on local machine --->  gcloud compute scp --recurse g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_6_11 /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets
+**** [DONE] (b) Now pick wavelet(s) from these v34_batch57 runs
+***** gdoc with v34_batch57 wavelets: https://docs.google.com/document/d/1x7HUyWAUApf8IuFSRSJmPAsv21VkhS94Y-t5u6touIU/edit
+**** Top wavelets (below) --> 
+***** v34_batch57_0_4_data_timeRange_0_6_SIM_wavelet_chan_6_alpha_678
+***** v34_batch57_0_2_data_timeRange_6_11_SIM_wavelet_chan_3_beta_283
+***** v34_batch57_0_2_data_timeRange_0_6_SIM_wavelet_chan_4_gamma_492
+*** (2) 
