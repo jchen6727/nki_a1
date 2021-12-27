@@ -70,7 +70,7 @@ colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.
 
 
 ### set path to data files
-#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
@@ -81,7 +81,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = [] #['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl']#['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
+testFiles = ['v34_batch57_0_0_data.pkl'] #['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl']#['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
 
 
 ###### Set timeRange ######
@@ -105,14 +105,14 @@ else:
 ########################
 
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 1
+LFP = 0
 LFPcellContrib = 0
-LFPPopContrib = 0 #['ITP4', 'ITS4']#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+LFPPopContrib = ['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
-CSD = 1
+CSD = 0
 MUA = ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
-waveletNum = 1
+waveletNum = 0 #1
 electrodes = [3, 4, 5, 6]		# list of electrodes 
 waveletImg = 0
 

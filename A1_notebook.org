@@ -55054,7 +55054,11 @@ https://console.cloud.google.com/storage/browser/eyg_data/wavelets?project=ecas2
 ** Updated salva 
 *** Also asked about (a) netpyne csd indent fix? and (b) gcp nhp speech runs (a1dat)
 ** Figure 8 steps:
-*** (1) Pick a wavelet from v34_batch57 as the wavelet to base the rest of the plotting around
+*** TOP WAVELETS:
+**** v34_batch57_0_4_data_timeRange_0_6_SIM_wavelet_chan_6_alpha_678
+**** v34_batch57_0_2_data_timeRange_6_11_SIM_wavelet_chan_3_beta_283
+**** v34_batch57_0_2_data_timeRange_0_6_SIM_wavelet_chan_4_gamma_492
+*** [DONE] (1) Pick a wavelet from v34_batch57 as the wavelet to base the rest of the plotting around
 **** [DONE] (a) To do this --> Need to transfer the files on gcp bucket to my local machine
 ***** ^^ gsutil or gcloud scp? 
 ***** TRY, on local command line --> gcloud compute scp 
@@ -55073,4 +55077,9 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 ***** v34_batch57_0_4_data_timeRange_0_6_SIM_wavelet_chan_6_alpha_678
 ***** v34_batch57_0_2_data_timeRange_6_11_SIM_wavelet_chan_3_beta_283
 ***** v34_batch57_0_2_data_timeRange_0_6_SIM_wavelet_chan_4_gamma_492
-*** (2) 
+*** [DONE] (2) Transfer over .pkl files from v34_batch57 to local machine
+**** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/simDataFiles/spont/v34_batch57\*_data.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/
+**** ^^ NOTE: make sure to do \ before regular expression character like *
+*** Take a look at individual LFP pops from v34_batch57 runs
+**** ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
+**** 
