@@ -71,12 +71,10 @@ if __name__ == '__main__':
     #filenames = [targetFolder+f for f in os.listdir(targetFolder) if f.endswith('.pkl')]
 
     elif dataType == 'speech':
-        filenames = ['data/v34_batch58/v34_batch58_%d_%d_%d_%d_%d_data.pkl' % (i1, i2, i3, i4, i5) 
-                                                                        for i1 in [0] \
-                                                                        for i2 in [0,1] \
-                                                                        for i3 in [0,1] \
-                                                                        for i4 in [0,1] \
-                                                                        for i5 in [0, 1, 2, 3, 4]]
+        filenames = ['data/v34_batch59/v34_batch59_%d_%d_%d_%d_%d_%d_data.pkl' % (i1, i1, i1, i1, i2, i3) 
+                                                                        for i1 in [0, 1, 2, 3] \
+                                                                        for i2 in [0, 1] \
+                                                                        for i3 in [0, 1] ]
 
         # good_rasters = [
         # '0_0_0_0_1',
