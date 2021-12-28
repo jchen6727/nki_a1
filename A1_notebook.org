@@ -55086,3 +55086,56 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 **** ^^ similarly, no 'LFPPops' key in sim.allSimData
 * <2021-12-28 Tue -- fig 8 & speech NHP>
 ** Salva is going to run the v34_batch57 sims with the lfp population contribution recording turned on. 
+** ^ Actually, just going to run certain seeds (0_2 and 0_4) -- see convo on slack
+** ^^ He's also going to run some backup batch27 runs too in case difficult to find matches 
+** Gdoc for matches for batch57:
+*** https://docs.google.com/document/d/1x7HUyWAUApf8IuFSRSJmPAsv21VkhS94Y-t5u6touIU/edit
+** Theta matches (batch57) 
+**** candidates:
+***** NHP LEFT (2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26)
+SIM RIGHT (v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_3_theta_373)
+***** NHP LEFT: 2-bu027028013_timeRange_80_120_SIM_wavelet_chan_11_theta_1498
+SIM RIGHT: v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073
+***** NHP LEFT  (2-rb031032016_timeRange_40_80_SIM_wavelet_chan_6_theta_747_BEFORE_EDITS)
+SIM RIGHT (v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973)
+***** NHP LEFT: 2-rb031032016_timeRange_160_200_SIM_wavelet_chan_11_theta_1548
+SIM RIGHT: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_11_theta_1351
+**** NHP FIGS TO REFORMAT:
+***** 2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26
+***** 2-bu027028013_timeRange_80_120_SIM_wavelet_chan_11_theta_1498
+***** 2-rb031032016_timeRange_40_80_SIM_wavelet_chan_6_theta_747_BEFORE_EDITS
+***** 2-rb031032016_timeRange_160_200_SIM_wavelet_chan_11_theta_1548
+**** ^^ To reformat, use plotWavelets.py in a1dat 
+***** Commented out #### EVENT STATS #### section at the end 
+***** Commented out ### Frequency bands ### above ^^
+***** Commented out ### Get list of sim subjects and NHP subject names ### 
+***** Commented out ############### PLOTTING STATS ######################## section 
+***** UNCOMMENTED THIS SECTION:  ################### INDIVIDUAL TRIAL #######################
+**** Reformat 2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26
+***** [DONE] Make changes in plotWavelets.py "INDIVIDUAL TRIAL" section -->  
+****** donetpyne = 0
+****** gcp = 1
+****** subjectName = '2-gt044045014_timeRange_40_80'
+****** frequencyBand = 'theta'
+****** chanNumber = 3 	# Change to relevant channel number 
+****** eventIdx = 26
+****** specrange = (0,30) 
+****** ylspec = (1,20)  
+***** [DONE] Check directory for df, dlms, and allData
+****** Need to login to gcp (g9-n2-pre-controller) to check if the above files are in the directory already or if I need to copy them in from eyg_data bucket w/ gsutil cp 
+******* To login, rum from local command line --->  gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+******* ^^ hanging for quite a long time, hm. okay asked for passphrase after quite some time, but asked. entered and now waiting. okay logged in. 
+****** Check for files:
+*******  cd ~/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80 
+******* ^^ df.pkl & allData.pkl are in there, but not 
+***** [] Transfer dlms.pkl from eyg_data bucket:
+****** gsutil -m cp -r gs://eyg_data/wavelets/2-gt044045014_timeRange_40_80/2-gt044045014_timeRange_40_80_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80
+****** ^^ run this from gcp command line 
+****** Stupidly used the wrong subject name; re-try!!
+***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp 
+***** [] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally :
+****** 2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26_BEFORE_EDITS
+***** [] Copy new file over locally:
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80/chan_3/2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80/chan_3/
+
