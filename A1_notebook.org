@@ -55082,4 +55082,7 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 **** ^^ NOTE: make sure to do \ before regular expression character like *
 *** Take a look at individual LFP pops from v34_batch57 runs
 **** ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont
-**** 
+**** ah --> sim.cfg.saveLFPPops = False --> AGH!!!
+**** ^^ similarly, no 'LFPPops' key in sim.allSimData
+* <2021-12-28 Tue -- fig 8 & speech NHP>
+** Salva is going to run the v34_batch57 sims with the lfp population contribution recording turned on. 
