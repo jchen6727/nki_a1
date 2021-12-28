@@ -819,14 +819,16 @@ def custom_speech(filename):
     params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.9, 0.95, 1.0, 1.1, 1.2]]# , 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
     '''
 
-    params[('wmat', 'TC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
-    params[('wmat', 'TC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
-    params[('wmat', 'HTC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
-    params[('wmat', 'HTC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
 
-    params[('wmat', 'TC', 'PV4')] = [0.25, 0.5]
-    params[('wmat', 'HTC', 'PV4')] = [0.25, 0.5]
+    params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
+    #params[('wmat', 'HTC', 'PV4')] = [0.3, 0.4, 0.5]
 
+
+    params[('ICThalInput', 'startTime')] = [2500, 2550, 2600, 2650]
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
@@ -2931,7 +2933,7 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
@@ -2944,7 +2946,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch61' 
+    b.batchLabel = 'v34_batch62' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

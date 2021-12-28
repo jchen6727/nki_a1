@@ -10382,13 +10382,25 @@ at 0.1 ms recordStep crashed when gathering
                             'seed': 1}  
 
 
-** v34_batch60 - 1 long sim with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
+** v34_batch60 - 1 long sim (10sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
 *** code
 cfg.py:
 cfg.allCorticalPops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
 cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]
 cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", "ITP4", "ITS4", "IT5A", "CT5A", "IT5B", "PT5B", "CT5B", "IT6", "CT6"]
+** v34_batch61 - 1 very long sim (30 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
+** v34_batch62 - explore params with speech; 36 sims (TC->L4, start time); v34_batch56 with speech
+    params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
 
+    params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
+ 
+    params[('ICThalInput', 'startTime')] = [2500, 2550, 2600, 2650]
+
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] 
+    
 ** XXX - seed 0_2; long sim with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
 
 ** blank
