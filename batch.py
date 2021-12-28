@@ -742,8 +742,8 @@ def custom_spont(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500
-    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['duration'] = 31500
+    initCfg['printPopAvgRates'] = [1500, 31500] 
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
@@ -2944,7 +2944,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch60' 
+    b.batchLabel = 'v34_batch61' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
