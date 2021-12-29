@@ -10391,7 +10391,7 @@ cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", 
 ** v34_batch61 - 1 very long sim (30 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
 *** notes
 
-** v34_batch62 - explore params with speech; 36 sims (TC->L4, start time); v34_batch56 with speech
+** v34_batch62 - explore params with speech; 36 sims (TC->L4, start time); v34_batch56 with speech - TO ANALYZE
     params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
     params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
     params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
@@ -10402,7 +10402,11 @@ cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", 
     params[('ICThalInput', 'startTime')] = [2500, 2550, 2600, 2650]
 
     groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] 
-    
+
+** v34_batch63 - 1 very long sim (20 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
+** v34_batch64 - 1 very long sim (30 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+
+
 ** XXX - seed 0_2; long sim with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
 
 ** blank
