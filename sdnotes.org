@@ -10404,8 +10404,22 @@ cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", 
     groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] 
 
 ** v34_batch63 - 1 very long sim (20 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
-** v34_batch64 - 1 very long sim (30 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+** v34_batch64 - 1 very long sim (20 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+** v34_batch64 - 1 long sim (10 sec) with LFPpops; v34_batch57 seed 3_4 (for wavelets)
+*** code
+   params[('seeds', 'conn')] = [3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [4] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
 
 ** XXX - seed 0_2; long sim with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
 
