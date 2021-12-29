@@ -55285,4 +55285,7 @@ gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/da
 **** Reformat 2-ma031032023_timeRange_40_80_SIM_wavelet_chan_14_delta_2234
 **** Reformat 2-bu027028013_timeRange_40_80_SIM_wavelet_chan_14_delta_2165
 * <2021-12-29 Wed -- Figure 8 / batch57 matching>
-** 
+** Work on alpha matching:
+*** [DONE] Find supragranular match candidates
+*** [DONE] Find granular match candidates
+*** Find infragranular match candidates
