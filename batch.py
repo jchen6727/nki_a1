@@ -742,8 +742,8 @@ def custom_spont(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 31500
-    initCfg['printPopAvgRates'] = [1500, 31500] 
+    initCfg['duration'] = 21500
+    initCfg['printPopAvgRates'] = [1500, 21500] 
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
@@ -2933,7 +2933,7 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
     #b = optunaRates()
@@ -2946,7 +2946,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v34_batch62' 
+    b.batchLabel = 'v34_batch63' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
