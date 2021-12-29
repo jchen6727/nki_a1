@@ -55090,7 +55090,9 @@ gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"
 ** ^^ He's also going to run some backup batch27 runs too in case difficult to find matches 
 ** Gdoc for matches for batch57:
 *** https://docs.google.com/document/d/1x7HUyWAUApf8IuFSRSJmPAsv21VkhS94Y-t5u6touIU/edit
-** Theta matches (batch57) 
+** Changes to load.py were made because there was an asymmetry in before/after -- address this later but fix works for now (using beforeT to determine length of time that gets plotted after maxT) 
+** Wavelet Matching:
+*** THETA: 
 **** candidates:
 ***** NHP LEFT (2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26)
 SIM RIGHT (v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_3_theta_373)
@@ -55111,7 +55113,7 @@ SIM RIGHT: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_11_theta_1351
 ***** Commented out ### Get list of sim subjects and NHP subject names ### 
 ***** Commented out ############### PLOTTING STATS ######################## section 
 ***** UNCOMMENTED THIS SECTION:  ################### INDIVIDUAL TRIAL #######################
-**** Reformat 2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26
+**** [DONE] Reformat 2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26
 ***** [DONE] Make changes in plotWavelets.py "INDIVIDUAL TRIAL" section -->  
 ****** donetpyne = 0
 ****** gcp = 1
@@ -55128,14 +55130,159 @@ SIM RIGHT: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_11_theta_1351
 ****** Check for files:
 *******  cd ~/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80 
 ******* ^^ df.pkl & allData.pkl are in there, but not 
-***** [] Transfer dlms.pkl from eyg_data bucket:
+***** [DONE] Transfer dlms.pkl from eyg_data bucket:
 ****** gsutil -m cp -r gs://eyg_data/wavelets/2-gt044045014_timeRange_40_80/2-gt044045014_timeRange_40_80_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80
 ****** ^^ run this from gcp command line 
 ****** Stupidly used the wrong subject name; re-try!!
 ***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp 
-***** [] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
 ***** [DONE] Rename old file locally :
 ****** 2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26_BEFORE_EDITS
-***** [] Copy new file over locally:
-****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80/chan_3/2-gt044045014_timeRange_40_80_SIM_wavelet_chan_3_theta_26.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80/chan_3/
-
+***** [DONE] Copy new file over locally:
+****** run this from local command line -->  gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80/chan_3/2-gt044045014_timeRange_40_80_MACAQUE_wavelet_chan_3_theta_26.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-gt044045014_timeRange_40_80/chan_3/
+****** ^^ Had to change this to MACAQUE from SIM
+***** [DONE] Put in gdoc 
+**** [DONE] Reformat corresponding sim: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_3_theta_373
+***** [DONE] Changes to plotWavelets.py --> 
+****** donetpyne = 1 
+****** subjectName = 'v34_batch57_3_4_data_timeRange_0_6'
+****** chanNumber = 3
+****** eventIdx = 373
+****** specrange = (0,30) 
+****** ylspec = (1,20)	
+****** ^^ added, committed, pushed, pulled
+***** [DONE] Check for df, dlms and allData pkl files 
+****** df and allData are there
+****** copy over dlms (run on gcp command line)  
+gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_3_4_data_timeRange_0_6/v34_batch57_3_4_data_timeRange_0_6_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6
+***** [DONE] Run plotWavelets.py on gcp
+****** cd ~/a1dat
+****** python3 -i plotWavelets.py 
+***** [DONE] Rename old file locally
+v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_3_theta_373_BEFORE_EDITS.png
+***** [DONE] Copy new file over locally 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/chan_3/v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_3_theta_373.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/chan_3/
+**** [DONE] Reformat 2-bu027028013_timeRange_80_120_SIM_wavelet_chan_11_theta_1498
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp
+***** [DONE] Check directory for df, dlms, and allData
+***** [DONE] Transfer dlms.pkl from eyg_data bucket
+****** gsutil -m cp -r gs://eyg_data/wavelets/2-bu027028013_timeRange_80_120/2-bu027028013_timeRange_80_120_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally 
+***** [DONE] Copy new file over locally
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_11/2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_11_theta_1498.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_11/
+***** [DONE] Put in gdoc 
+***** ^^ could use different ylspec 
+**** [DONE] Reformat corresponding sim: v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp
+***** [DONE] Check directory for df, dlms, and allData
+***** [DONE] Transfer dlms.pkl from eyg_data bucket
+****** gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_4_2_data_timeRange_6_11/v34_batch57_4_2_data_timeRange_6_11_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_6_11
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally 
+v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073_BEFORE_EDITS
+***** [DONE] Copy new file over locally
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_6_11/chan_11/v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_6_11/chan_11/
+***** [DONE] Put in gdoc 
+**** [DONE] Reformat 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747_BEFORE_EDITS
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp
+***** [DONE] Check directory for df, dlms, and allData
+***** [DONE] Transfer dlms.pkl from eyg_data bucket
+****** gsutil -m cp -r gs://eyg_data/wavelets/2-rb031032016_timeRange_40_80/2-rb031032016_timeRange_40_80_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally 
+2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747_BEFORE_EDITS
+***** [DONE] Copy new file over locally
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/
+***** [DONE] Put in gdoc 
+**** [DONE] Reformat corresponding sim: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp
+***** [DONE] Check directory for df, dlms, and allData
+***** [DONE] Transfer dlms.pkl from eyg_data bucket
+****** gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_3_3_data_timeRange_0_6/v34_batch57_3_3_data_timeRange_0_6_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally 
+v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973_BEFORE_EDITS
+***** [DONE] Copy new file over locally
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/chan_8/v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/chan_8/
+***** [DONE] Put in gdoc 
+**** NO DLMS SAVED --> Reformat 2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_11_theta_1548
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push plotWavelets.py changes + pull on gcp
+***** [DONE] Check directory for df, dlms, and allData
+***** [] Transfer dlms.pkl from eyg_data bucket --> NO DLMS SAVED 
+****** gsutil -m cp -r gs://eyg_data/wavelets/2-rb031032016_timeRange_160_200/2-rb031032016_timeRange_160_200_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200
+***** [] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [] Rename old file locally 
+***** [] Copy new file over locally
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/chan_11/2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_11_theta_1548.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/chan_11/
+***** [] Put in gdoc 
+**** New top candidates:
+***** NHP LEFT: 2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_11_theta_1498
+SIM RIGHT: v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073
+***** NHP LEFT: 2-gt044045014_timeRange_40_80_MACAQUE_wavelet_chan_3_theta_26
+SIM RIGHT: v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073
+***** NHP LEFT: 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747
+SIM RIGHT: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+**** Fine-tune reformatting ---> 
+**** [DONE] 2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_11_theta_1498
+***** change specrange --> from (0,30) to (0,15) 
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push changes + pull on gcp
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] rename old file locally:
+2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_11_theta_1498_specRange_0_30
+***** [DONE] Copy new file over locally: 
+gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_11/2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_11_theta_1498.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_11/
+***** [DONE] Put in gdoc 
+**** [DONE] v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073
+***** NOTE: made version with specrange 0,20 and 0,15 (labeled as such in .png locally) 
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push changes + pull on gcp
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally:
+****** v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073_specRange_0_30.png
+****** v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073_specRange_0_15.png
+***** [DONE] Copy new file over locally: 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_6_11/chan_11/v34_batch57_4_2_data_timeRange_6_11_SIM_wavelet_chan_11_theta_1073.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_4_2_data_timeRange_6_11/chan_11/
+***** [DONE] Put in gdoc 
+**** [DONE] 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747
+***** specrange = (0,20) 
+***** [DONE] Make changes to plotWavelets.py
+***** [DONE] Add/commit/push changes + pull on gcp
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally:
+****** 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747_specrange_0_30
+***** [DONE] Copy new file over locally: 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/
+***** [DONE] Put in gdoc 
+**** [NO LONGER RELEVANT I BELIEVE?] v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+***** [] Make changes to plotWavelets.py
+***** [] Add/commit/push changes + pull on gcp
+***** [] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [] Rename old file locally:
+***** [] Copy new file over locally: 
+***** [] Put in gdoc 
+*** DELTA: 
+**** SIM: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
+**** [DONE] Reformat v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666:
+***** [DONE] Make changes to plotWavelets.py
+****** donetpyne = 1
+****** ylspec = (1,10)
+****** specrange = (0,30) 
+***** [DONE] Add/commit/push changes + pull on gcp
+***** [DONE] Check for dlms, df, and allData pkl files 
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally:
+****** v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666_BEFORE_EDITS
+***** [DONE] Copy new file over locally: 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/chan_14/v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/chan_14/
+***** [DONE] Put in gdoc 
+**** Reformat 2-ma031032023_timeRange_40_80_SIM_wavelet_chan_14_delta_2234
+**** Reformat 2-bu027028013_timeRange_40_80_SIM_wavelet_chan_14_delta_2165
+* <2021-12-29 Wed -- Figure 8 / batch57 matching>
+** 
