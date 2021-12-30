@@ -60,9 +60,9 @@ if __name__ == '__main__':
 
     if dataType == 'spont':
         filenames = ['data/v34_batch57/v34_batch57_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1,2,3,4] for cseed in [0,1,2,3,4]]
-        #filenames = ['data/v34_batch56/v34_batch56_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0] for cseed in [0]]
+        filenames = ['data/v34_batch27/v34_batch27_%d_%d.pkl' % (iseed, cseed) for iseed in [0] for cseed in [0]]
 
-        timeRange = [1500, 11500]
+        timeRange = [1500, 8000]
 
         #filenames = ['data/v34_batch56/v34_batch56_0_0_data.pkl']
         #timeRange = [2000, 2200]
@@ -71,10 +71,10 @@ if __name__ == '__main__':
     #filenames = [targetFolder+f for f in os.listdir(targetFolder) if f.endswith('.pkl')]
 
     elif dataType == 'speech':
-        filenames = ['data/v34_batch59/v34_batch59_%d_%d_%d_%d_%d_%d_data.pkl' % (i1, i1, i1, i1, i2, i3) 
-                                                                        for i1 in [0, 1, 2, 3] \
-                                                                        for i2 in [0, 1] \
-                                                                        for i3 in [0, 1] ]
+        filenames = ['data/v34_batch62/v34_batch62_%d_%d_%d_%d_%d_%d_data.pkl' % (i1, i1, i1, i1, i2, i3) 
+                                                                        for i1 in [1] \
+                                                                        for i2 in [1, 2, 3] \
+                                                                        for i3 in [0, 1, 2, 3] ]
 
         # good_rasters = [
         # '0_0_0_0_1',
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         sim.load(filename, instantiate=False)
 
         # standardd plots
-        #sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': [1500,5500], 'figSize': (7,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
+        sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': [1500,4500], 'figSize': (7,12), 'lw': 0.3, 'markerSize': 4, 'marker': '.', 'dpi': 300})
         #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 11500], dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_10sec')
         #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 6500], dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_5sec')
         #sim.analysis.plotLFP(**{'plots': ['spectrogram'], 'electrodes': ['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 'timeRange': timeRange, 'maxFreq': 50, 'figSize': (8,24), 'saveData': False, 'saveFig': filename[:-4]+'_LFP_spec_7s_all_elecs', 'showFig': False})
@@ -125,12 +125,13 @@ if __name__ == '__main__':
         # out = sim.analysis.plotLFP(**{'plots': ['spectrogram'], 
         #         'electrodes': 
         #         #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-        #         ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
+        #         #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
+        #         [11],
         #         'timeRange': timeRange, 
         #         'maxFreq': 50, 
         #         'figSize': (16,12), 
         #         'saveData': False, 
-        #         'saveFig': filename[:-4]+'_LFP_spect_11s_3layers', 'showFig': False})
+        #         'saveFig': filename[:-4]+'_LFP_spect_8s_elec11', 'showFig': False})
 
         # out = sim.analysis.plotLFP(**{'plots': ['PSD'], 
         #         'electrodes': 
@@ -165,22 +166,22 @@ if __name__ == '__main__':
         #     #         [2030, 2150],
         #     #         [2100, 2200]] 
     
-        tranges = [[x, x+200] for x in range(2400, 3500, 100)]
-        smooth = 30
-        #tranges = [[500,11500]]
-        for t in tranges:# (2100, 2200,100):    
-            sim.analysis.plotCSD(**{
-                'spacing_um': 100, 
-                'layer_lines': 1, 
-                'layer_bounds': layer_bounds, 
-                'overlay': 'LFP',
-                'timeRange': [t[0], t[1]], 
-                'smooth': smooth,
-                'saveFig': filename[:-4]+'_CSD_LFP_smooth%d_%d-%d' % (smooth, t[0], t[1]), 
-                'vaknin': False,
-                'figSize': (4.1,8.2), 
-                'dpi': 300, 
-                'showFig': 0})
+        # tranges = [[x, x+200] for x in range(2400, 3500, 100)]
+        # smooth = 30
+        # #tranges = [[500,11500]]
+        # for t in tranges:# (2100, 2200,100):    
+        #     sim.analysis.plotCSD(**{
+        #         'spacing_um': 100, 
+        #         'layer_lines': 1, 
+        #         'layer_bounds': layer_bounds, 
+        #         'overlay': 'LFP',
+        #         'timeRange': [t[0], t[1]], 
+        #         'smooth': smooth,
+        #         'saveFig': filename[:-4]+'_CSD_LFP_smooth%d_%d-%d' % (smooth, t[0], t[1]), 
+        #         'vaknin': False,
+        #         'figSize': (4.1,8.2), 
+        #         'dpi': 300, 
+        #         'showFig': 0})
         
 
 
