@@ -55288,4 +55288,177 @@ gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/da
 ** Work on alpha matching:
 *** [DONE] Find supragranular match candidates
 *** [DONE] Find granular match candidates
-*** Find infragranular match candidates
+*** [DONE] Find infragranular match candidates
+*** Next, get this down to top 5 (out of 10 final candidates)
+*** Okay I got it down to 8 and 1 is already reformatted. 
+*** Reformat the following:
+**** [DONE] 2-bu027028013_timeRange_80_120_SIM_wavelet_chan_7_alpha_784
+***** [DONE] Make changes to plotWavelets.py
+****** all the necessary donetpyne changes etc
+****** ylspec = (1,30) 
+****** specrange = (0,30)  <-- made this (0,20) on second iteration
+***** [DONE] Add/commit/push changes + pull on gcp
+***** [DONE] Check for dlms, df, and allData pkl files 
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally:
+****** 2-bu027028013_timeRange_80_120_SIM_wavelet_chan_7_alpha_784_BEFORE_EDITS.png
+***** [DONE] Copy new file over locally: 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_7/2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_7_alpha_784.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/chan_7/
+***** [DONE] Put in gdoc 
+**** [DONE] v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863
+***** [DONE] Make changes to plotWavelets.py
+****** donetpyne = 1
+****** ylspec = (1,30)
+****** specrange = (0,20) 
+***** [DONE] Add/commit/push changes + pull on gcp
+***** [DONE] Check for dlms, df, and allData pkl files 
+***** [DONE] Transfer over dlms from gcp bucket:
+****** gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_3_2_data_timeRange_6_11/v34_batch57_3_2_data_timeRange_6_11_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_6_11
+***** [DONE] Run python3 -i plotWavelets.py in a1dat (on gcp) 
+***** [DONE] Rename old file locally:
+****** v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863_BEFORE_EDITS.png
+***** [DONE] Copy new file over locally: 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_6_11/chan_9/v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_6_11/chan_9/
+***** [DONE] Put in gdoc 
+**** 2-bu027028013_timeRange_160_200_SIM_wavelet_chan_11_alpha_1589
+
+
+
+** Best sims to re-run:
+*** batch27: Best wavelet match sims from batch27:
+**** 4_4 (gamma), 3_2 (beta), 2_4 (alpha), 1_4 (theta), 3_4 (delta) 
+*** batch 57:
+**** 3_4 (delta), 3_3 (maybe? theta?), 3_2 (alpha probably) 
+** Work on beta matching:
+*** Found supragranular, granular, and infragranular candidates 
+** Realized that some of the wavelets from batch27 and batch57 overlap, but not all -- using the same wavelet for gamma, beta, and delta
+** REformat anyway because slight differences in intensity / peakF etc. 
+* <2021-12-30 Thu -- Figure 8 / batch57 matching>
+** REFORMATTING:
+*** login to gcp --> 
+gcloud beta compute ssh --zone "us-central1-f" "g9-n2-pre-controller"  --tunnel-through-iap --project "ecas2-nsf1904444"
+*** [DONE] GAMMA
+**** v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423
+**** ^^ SIM
+**** [DONE] Make changes to plotWavelets.py: 
+***** donetpyne = 1
+***** subjectName = 'v34_batch57_4_4_data_timeRange_0_6' 	
+***** frequencyBand = 'gamma' # 'delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma'
+***** chanNumber = 12 		# Change to relevant channel number 
+***** eventIdx = 1423		# Event number 
+***** ylspec = (30,100) 
+***** specrange = (0,30) 
+**** [DONE] Added / committed / pushed, then pulled on gcp 
+**** [DONE] Check for dlms --> NOT THERE
+**** [DONE] Transfer dlms from gcp bucket
+***** gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_4_4_data_timeRange_0_6/v34_batch57_4_4_data_timeRange_0_6_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_0_6
+***** ^^ run this on gcp local command 
+**** [DONE] python3 -i plotWavelets.py --> run on gcp
+**** [DONE] Rename file locally
+***** v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423_BEFORE_EDITS.png
+**** [DONE] Transfer file over to local machine 
+***** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_0_6/chan_12/v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_0_6/chan_12/
+***** ^^ run this locally 
+**** Iterate -->
+**** Changing ylspec to (30,95) 
+**** Re-running plotWavelets.py & re-transferring 
+**** DONE!!! worked. 
+*** [DONE] BETA
+**** v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710
+**** [DONE] Make changes to plotWavelets.py 
+***** subjectName = 'v34_batch57_3_2_data_timeRange_0_6'
+***** frequencyBand = 'beta' # 'delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma'
+***** chanNumber = 14 		# Change to relevant channel number 
+***** eventIdx = 1710		# Event number 
+***** ylspec = (10,50)
+***** specrange --> (0,30) for now !!
+**** [DONE] Added / committed / pushed & pulled on gcp
+**** [DONE] Check for dlms --> NOT THERE
+**** [DONE] Transfer from gcp bucket:
+***** gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_3_2_data_timeRange_0_6/v34_batch57_3_2_data_timeRange_0_6_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_0_6
+**** [DONE] Run python3 -i plotWavelets.py (a1dat, on gcp)
+**** [DONE] Rename file locally
+***** v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710_BEFORE_EDITS.png
+**** [DONE] Transfer file over to local machine
+***** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_0_6/chan_14/v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_0_6/chan_14/
+**** Iterate if necessary --> Not necessary I don't think!! 
+*** [DONE] ALPHA
+**** already done
+*** THETA
+**** Reformat both sim and nhp!!
+**** [] SIM:
+***** v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+***** [DONE] Make changes to plotWavelets.py
+****** subjectName = 'v34_batch57_3_3_data_timeRange_0_6' 
+****** frequencyBand = 'theta' # 'delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma'
+****** chanNumber = 8 		# Change to relevant channel number 
+****** eventIdx = 973		# Event number 
+****** specrange = (0,30)
+****** ylspec = (1,10) 
+***** [DONE] Added / committed / pushed & pulled on gcp
+***** [DONE] Check for dlms --> THERE
+***** [DONE] Transfer from gcp bucket --> NO NEED! :
+****** gsutil -m cp -r gs://eyg_data/wavelets/v34_batch57_3_3_data_timeRange_0_6/v34_batch57_3_3_data_timeRange_0_6_dlms.pkl /home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6
+***** [DONE] Run python3 -i plotWavelets.py (a1dat, on gcp)
+***** [DONE] Rename file locally
+****** v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973_ITERATION_1.png 
+***** [DONE] Transfer file to local machine 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/chan_8/v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/chan_8/
+***** Iterate if necessary -->
+****** now make specrange (0,20) and ylspec (2,10) 
+****** Rename file locally:
+******* v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973_specrange_0_20_ylspec_2_10 
+****** DONE!! 
+***** Iterating again --> 
+****** specrange = (0,20) and ylspec = (1,12) 
+**** [DONE] NHP:
+***** 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747_specrange_0_20
+***** [DONE] Make changes to plotWavelets.py
+****** subjectName = '2-rb031032016_timeRange_40_80' 
+****** frequencyBand = 'theta' # 'delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma'
+****** chanNumber = 6 		# Change to relevant channel number 
+****** eventIdx = 747
+***** [DONE] Added / committed / pushed & pulled on gcp
+***** [DONE] Check for dlms --> THERE ! 
+***** [DONE] Run python3 -i plotWavelets.py (a1dat, on gcp)
+***** [DONE] Rename file locally --> already renamed w/ specrange specifications
+***** [DONE] Transfer file to local machine: 
+****** gcloud compute scp g9-n2-pre-controller:/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747.png ~/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/chan_6/
+***** Iterate if necessary --> 
+****** specrange = (0,15) 
+****** ylspec = (0,8)
+****** Rename file locally:
+2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747_specrange_0_15_ylspec_2_10.png
+****** re-running plotWavelets.py
+****** re-transfer file 
+***** Iterate again --> 
+****** ylspec = (1,8) 
+****** specrange = (0,15) 
+****** ^^ 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747_ylspec_1_8.png
+***** Iterate again --> 
+****** specrange = (0,15) 
+****** ylspec = (1,10)
+***** Iterating again --> 
+****** specrange = (0,15)
+****** ylspec = (1,12) 
+*** [DONE] DELTA 
+**** already done!
+* <2021-12-31 Fri -- Figure 8>
+** Okay -- now have the wavelets we'll use + they are reformatted and all of the relevant data is in my gcp bucket. 
+** Now need the .pkl files from the runs w/ LFP recorded - 
+*** Have to make sure that the lfp output is the same for v34_batch65 as it is with batch57 -- batch65 is 10 seconds long!! (vs. 11.5 for batch57) 
+*** v34_batch65 gcp bucket link --> 
+https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch65?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false
+*** 0_0, 1_1, 2_2 (batch65) 
+*** 3_4, 3_2, 3_3 (batch57) 
+*** ^^ Is that how these line up? 
+*** A1_v34_batch65_v34_batch65_0_0_data.pkl, A1_v34_batch65_v34_batch65_1_1_data.pkl, A1_v34_batch65_v34_batch65_2_2_data.pkl  
+*** ^^ Downloaded these from salvador's bucket and placed them in ~/Desktop/NEUROSIM/A1/data/simDataFiles/spont/
+** Now, check to make sure that the LFP signals line up here!!! 
+*** STEPS:
+**** To do this, load the .pkl files
+**** Then, get the LFP data from sim.allSimData['LFP']
+**** Then, cut the lfp data from batch27 to the equivalent of 10 seconds
+**** see if they are equal! 
+*** Started a file called sandbox.py in A1/analysis 
+*** 
