@@ -122,8 +122,8 @@ waveletImg = 0
 if MUA:
 	fileNameFull = based + dataFiles[0]
 
-	sim.load(fileNameFull, instantiate=True) 	# Load sim data from first .pkl file 
-	#sim.load(fileNameFull, instantiate=False)
+	#sim.load(fileNameFull, instantiate=True) 	# Load sim data from first .pkl file 
+	sim.load(fileNameFull, instantiate=False)
 	print('done loading .pkl file')
 	
 	#pops = list(sim.net.pops.keys())  # Will be empty if instantiate is False 
@@ -146,7 +146,8 @@ if MUA:
 
 	if type(MUA) == list:
 		for pop in MUA:	#pops:
-			spikeGids[pop] = sim.net.pops[pop].cellGids			# sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
+			#spikeGids[pop] = sim.net.pops[pop].cellGids			# sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
+			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
 			spikes[pop] = []
 			for i in range(len(spkidTimeRange)):
 				if spkidTimeRange[i] in spikeGids[pop]:

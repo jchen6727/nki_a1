@@ -55500,3 +55500,13 @@ I think you might be able to do instantiate=False and then access via sim.net.al
 ***** spikeGids[pop] = sim.net.pops[pop].cellGids
 ***** ^^ OUTPUT: spikes in pop ITS4: 98
 **** ^^ interesting; so, the graphical output looks the same, but it looks like the number of spikes it counts & prints out is different --> why is that? 
+**** ^^ To look at this further, I indented the print line to be included in the first for loop, so that way all population spike counts will be printed. 
+***** FROM OLD METHOD OF LOOPING: (instantiate=True)
+spikes in pop ITP4: 106
+spikes in pop ITS4: 98
+***** WITH NEW METHOD OF LOOPING: (instantiate=False)
+spikes in pop ITP4: 106
+spikes in pop ITS4: 98
+**** ^^ also I think I just copy-pasted the wrong count before, so it probably did say-->  spikes in pop ITS4: 98 (but not sure)
+**** ^^ Either way, equal when tested more deliberately, so I think it's alright! 
+ 
