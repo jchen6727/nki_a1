@@ -35,6 +35,7 @@ for file in batch65Files:
 	batch65_LFP[fileKey] = sim.allSimData['LFP']
 
 
-#### NOW COMPARE #### 
+
+#### NOW COMPARE LFP #### 
 
 

@@ -81,7 +81,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['v34_batch57_0_0_data.pkl'] #['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl']#['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
+testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl'] #['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl']#['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
 
 
 ###### Set timeRange ######
@@ -107,10 +107,10 @@ else:
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
 LFP = 0
 LFPcellContrib = 0
-LFPPopContrib = ['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+LFPPopContrib = 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
 CSD = 0
-MUA = 0 #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
+MUA = ['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
 waveletNum = 0 #1
 electrodes = [3, 4, 5, 6]		# list of electrodes 
@@ -122,9 +122,11 @@ waveletImg = 0
 if MUA:
 	fileNameFull = based + dataFiles[0]
 
-	sim.load(fileNameFull, instantiate=True) 	# Load sim data from first .pkl file 
-
-	pops = list(sim.net.pops.keys())  # Will be empty if instantiate is False 
+	#sim.load(fileNameFull, instantiate=True) 	# Load sim data from first .pkl file 
+	sim.load(fileNameFull, instantiate=False)
+	print('done loading .pkl file')
+	
+	#pops = list(sim.net.pops.keys())  # Will be empty if instantiate is False 
 
 
 	spkt = sim.allSimData['spkt'] 
@@ -142,12 +144,13 @@ if MUA:
 	spikeGids = {}
 	spikes = {}
 
-	for pop in pops:
-		spikeGids[pop] = sim.net.pops[pop].cellGids
-		spikes[pop] = []
-		for i in range(len(spkidTimeRange)):
-			if spkidTimeRange[i] in spikeGids[pop]:
-				spikes[pop].append(spktTimeRange[i])
+	if type(MUA) == list:
+		for pop in MUA:	#pops:
+			spikeGids[pop] = sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
+			spikes[pop] = []
+			for i in range(len(spkidTimeRange)):
+				if spkidTimeRange[i] in spikeGids[pop]:
+					spikes[pop].append(spktTimeRange[i])
 
 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
 

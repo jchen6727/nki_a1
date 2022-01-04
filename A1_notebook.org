@@ -55461,4 +55461,28 @@ https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v34_batch65?
 **** Then, cut the lfp data from batch27 to the equivalent of 10 seconds
 **** see if they are equal! 
 *** Started a file called sandbox.py in A1/analysis 
+*** ah interesting!! --> so salvador said that the length of batch65 runs was 10 seconds, but the length of the LFP lists are the same. hm! Check the times after finishing comparison of LFP values. 
+*** >>> batch65_LFP['0_0'] == batch57_LFP['3_4']
+True
+*** >>> batch65_LFP['1_1'] == batch57_LFP['3_2']
+True
+*** >>> batch65_LFP['2_2'] == batch57_LFP['3_3']
+True
+*** ^^ great!! now I have the matches!! 
+*** okay well 't' is empty, but 'spkt' is not -- and the equate 
+* <2022-01-03 Mon - figure 8>
+** now have checked that the LFP signals are equal (see above!)
+** For meeting --> 
+*** Since 12/20, haven't done AS MUCH as I wanted, but -- 
+*** Did event rate plotting (didn't look great, like the other stats, but I figured it could be because I had to cut out the section with the artifact (post ~8 seconds), meanwhile the NHP runs were quite long (like over 200 seconds), so yeah - that code works, but not going to use it for figure for now, but we have it if we want to re-look at it. 
+*** salva ran the v34_batch57 runs with the lfp pop recording turned on
+*** I ran the load.py wavelet analysis on it -- mostly the same wavelets detected, especially for the period where there weren't artifacts, but some slight differences - show google doc
+*** Then, for figure 8 -- I've extended some of the code in A1/analysis/simDataAnalysis.py 
+*** Noticing that it's taking a very very long time to load
+* <2022-01-04 Tue -- fig 8>
+** Fixing loading time:
+*** Salvador: 
+I think you might be able to do instantiate=False and then access via sim.net.allPops (not 100% sure)
+
+*** ^^ Tried this, and I see that -->  sim.net.allPops['IT2']['cellGids'] --> gives me the cellGids -- is this enough? can I use this somehow? 
 *** 
