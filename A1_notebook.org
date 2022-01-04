@@ -55485,4 +55485,18 @@ True
 I think you might be able to do instantiate=False and then access via sim.net.allPops (not 100% sure)
 
 *** ^^ Tried this, and I see that -->  sim.net.allPops['IT2']['cellGids'] --> gives me the cellGids -- is this enough? can I use this somehow? 
-*** 
+*** Changed in simDataAnalysis.py:
+**** ORIG: spikeGids[pop] = sim.net.pops[pop].cellGids 
+**** NEW: spikeGids[pop] = sim.net.allPops[pop]['cellGids']	
+*** ^^ Try this with an old .pkl file (small) w/ instantiate = True and False and with the above line changed to see if these two approached produce equivalent results!! 
+**** Changed based to based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/' (from '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/')
+**** Changed testFiles to --> testFiles = ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl'] (from ['A1_v34_batch65_v34_batch65_0_0_data.pkl'])
+**** Ran simDataAnalysis.py as is --> screenshotted the result 
+***** sim.load(fileNameFull, instantiate=False)
+***** spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+***** ^^ OUTPUT: spikes in pop ITS4: 24
+**** Changing simDataAnalysis.py to test --> 
+***** sim.load(fileNameFull, instantiate=True)
+***** spikeGids[pop] = sim.net.pops[pop].cellGids
+***** ^^ OUTPUT: spikes in pop ITS4: 98
+**** ^^ interesting; so, the graphical output looks the same, but it looks like the number of spikes it counts & prints out is different --> why is that? 
