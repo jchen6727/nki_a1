@@ -70,9 +70,9 @@ colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.
 
 
 ### set path to data files
-#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 ### get .pkl data filenames 
 allFiles = os.listdir(based)
@@ -81,7 +81,7 @@ for file in allFiles:
 	if '.pkl' in file:
 		allDataFiles.append(file)
 
-testFiles = ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl'] #['A1_v34_batch65_v34_batch65_0_0_data.pkl'] #['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
+testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']		# ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl'] #['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
 
 
 ###### Set timeRange ######
@@ -127,7 +127,7 @@ if MUA:
 	print('done loading .pkl file')
 	
 	#pops = list(sim.net.pops.keys())  # Will be empty if instantiate is False 
-
+	pops = list(sim.net.allPops.keys())
 
 	spkt = sim.allSimData['spkt'] 
 	spkid = sim.allSimData['spkid']
@@ -152,7 +152,14 @@ if MUA:
 			for i in range(len(spkidTimeRange)):
 				if spkidTimeRange[i] in spikeGids[pop]:
 					spikes[pop].append(spktTimeRange[i])
-
+			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+	else:
+		for pop in pops:
+			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+			spikes[pop] = []
+			for i in range(len(spkidTimeRange)):
+				if spkidTimeRange[i] in spikeGids[pop]:
+					spikes[pop].append(spktTimeRange[i])
 			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
 
 	#### PLOTTING ####

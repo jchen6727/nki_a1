@@ -55509,4 +55509,4 @@ spikes in pop ITP4: 106
 spikes in pop ITS4: 98
 **** ^^ also I think I just copy-pasted the wrong count before, so it probably did say-->  spikes in pop ITS4: 98 (but not sure)
 **** ^^ Either way, equal when tested more deliberately, so I think it's alright! 
- 
+** 
