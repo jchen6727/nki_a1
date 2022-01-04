@@ -55509,4 +55509,6 @@ spikes in pop ITP4: 106
 spikes in pop ITS4: 98
 **** ^^ also I think I just copy-pasted the wrong count before, so it probably did say-->  spikes in pop ITS4: 98 (but not sure)
 **** ^^ Either way, equal when tested more deliberately, so I think it's alright! 
-** 
+** Added a way to have MUA = 1 and have that iterate through all pops 
+*** Also fixed the color list indexing for the 'for pop in pops' condition in plotting 
+**** MUA.index(pop) --> pops.index(pop)  [did this 2x in this loop] 

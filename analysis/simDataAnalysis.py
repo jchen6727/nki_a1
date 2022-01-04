@@ -110,7 +110,7 @@ LFPcellContrib = 0
 LFPPopContrib = 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
 CSD = 0
-MUA = ['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
+MUA = 1 #['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
 waveletNum = 0 #1
 electrodes = [3, 4, 5, 6]		# list of electrodes 
@@ -172,8 +172,8 @@ if MUA:
 			plt.text(timeRange[0]-20, val*2, pop, color=color)
 	else:
 		for pop in pops:
-			color=colorList[MUA.index(pop)%len(colorList)] ## FIX THIS SO CAN USE BOOL AND DO ALL POPS 
-			val = MUA.index(pop)  ## FIX THIS 
+			color=colorList[pops.index(pop)%len(colorList)] 
+			val = pops.index(pop) 
 			spikeActivity = np.array(spikes[pop])
 			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
 			plt.text(timeRange[0]-20, val*2, pop, color=color)
