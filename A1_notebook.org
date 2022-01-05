@@ -55516,6 +55516,8 @@ spikes in pop ITS4: 98
 ** Grad student meeting in the morning
 ** Wavelets fig:
 *** .xcf gimp file saved in ~/Desktop/NEUROSIM/A1/data/figs/wavelets/wavelets.xcf
+*** Added in all the wavelets and labels
+*** Reformat the labels! 
 ** Conversation with salvadord:
 *** ericaygriffith Dec 9th at 11:23 AM
 also -- for this, do you ideally envision the lfp and mua being
