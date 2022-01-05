@@ -55512,3 +55512,27 @@ spikes in pop ITS4: 98
 ** Added a way to have MUA = 1 and have that iterate through all pops 
 *** Also fixed the color list indexing for the 'for pop in pops' condition in plotting 
 **** MUA.index(pop) --> pops.index(pop)  [did this 2x in this loop] 
+* <2022-01-05 Wed -- figure 8 & wavelets fig>
+** Grad student meeting in the morning
+** Wavelets fig:
+*** .xcf gimp file saved in ~/Desktop/NEUROSIM/A1/data/figs/wavelets/wavelets.xcf
+** Conversation with salvadord:
+*** ericaygriffith Dec 9th at 11:23 AM
+also -- for this, do you ideally envision the lfp and mua being
+represented like they are in the placeholder fig? i.e. with time
+series / histogram on the bottom panels and spectrogram on top?
+*** salvadord:
+histograms would be equivalent MUA representation of the LFP/CSD waveform … so instead of histo could also plot as line
+*** ericaygriffith:
+...I think spectrogram on top and some kind of time series
+representation on the bottom is reasonable as a first goal to work
+towards??
+*** salvadord:
+yes, perfect so can just use netpyne to plot the firing spectrogram and the spike histogram (both funcs in sim.analysis)
+** Plan for fig based on above convo + placeholder fig:
+*** [DONE] Find a wavelet from v34_batch57 that is good, w/ NHP matching 
+**** https://docs.google.com/document/d/19EP4gK9gO0w6qBpslXJ7fKBeQMMrDJqz87asqE4o0Ug/edit
+**** Have this ^^ kind of off to the left
+*** Then have LFP panels on top, and MUA panels on bottom
+*** ^^ there should be the same number of panels for each, and should correspond to the same populations
+*** Plot (for LFP & MUA) spectrogram on top and time series (lfp) or histogram (mua) on bottom
