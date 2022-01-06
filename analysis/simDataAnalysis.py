@@ -113,7 +113,7 @@ CSD = 0
 MUA = 0 #['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
 waveletNum = 0 #1
-electrodes = 'avg' #[3, 4, 5, 6]		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
+electrodes = ['avg']	#[3, 4, 5, 6]	#'avg' #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
 waveletImg = 0
 
 
@@ -312,8 +312,8 @@ if LFP or CSD or traces:
 
 
 	if LFP and not LFPPopContrib:
-		#sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-		sim.plotting.plotSpectrogram()
+		sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+		#sim.plotting.plotSpectrogram()
 	elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
 		LFPPops = list(allLFPData['LFPPops'].keys())
 		for pop in LFPPops:

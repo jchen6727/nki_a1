@@ -55696,4 +55696,11 @@ ValueError: range() arg 3 must not be zero
 dfitpack.error: (mx>kx) failed for hidden mx: regrid_smth:mx=2
 
 *** Safe to say that plotCSD is broken in old_analysis, but plotLFP works :(
-
+** Back to simDataAnalysis.py:
+*** Okay now that I have netpyne old_analysis branch -- try plotting LFP now
+*** when I have electrodes = 'avg' --> 
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    local variable 'lfpPlot' referenced before assignment 
+    (<class 'UnboundLocalError'>, UnboundLocalError("local variable 'lfpPlot' referenced before assignment"), <traceback object at 0x7fd157d115c8>)
+*** ^^ try electrodes = ['avg'] <-- okay this works but is in a list!! 
