@@ -300,7 +300,8 @@ if LFPPopContrib:
 
 		filename = based + 'try_this.png'
 		plt.savefig(filename,bbox_inches='tight')
-	elif electrodes is 'avg': # works as == 'avg' or is 'avg'
+
+	elif electrodes is 'avg': # works as == 'avg' or is 'avg'  ### NEED TO CHANGE HOW THIS DISTINGUISHES BTWN AVG AND NUMBERED ELECTRODES!!
 		print('avg electrode plotting') ## PRINT TEST LINE 
 
 
@@ -312,7 +313,7 @@ if LFP or CSD or traces:
 
 
 	if LFP and not LFPPopContrib:
-		sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+		sim.analysis.plotLFP(plots=['spectrogram'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 		#sim.plotting.plotSpectrogram()
 	elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
 		LFPPops = list(allLFPData['LFPPops'].keys())
