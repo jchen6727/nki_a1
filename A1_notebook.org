@@ -55549,3 +55549,151 @@ yes, perfect so can just use netpyne to plot the firing spectrogram and the spik
 *** Focus on 1 population for LFP first  --> 'IT2'
 **** LFPPopContrib = ['IT2']
 **** Making sure 'all' and 'avg' work for lfp pop contrib plots 
+**** plotLFP spectrogram or timeseries option --> I know for timeSeries option that it will either plot timeSeries for all, avg, or specified electrodes. Is this the same with spectrogram? 
+**** ^^ Getting an error in netpyne/examples/LFPrecording/net_lfp.py saying "Unable to run plotLFP from sim.plotting and sim.analysis" ?? 
+*** ^^ Merged development branch and everything -- hm. still not working. try in simDataAnalysis.py --> see if I can figure out what's going on. 
+*** okay, in simDataAnalysis.py --> AttributeError: module 'netpyne.analysis' has no attribute 'plotLFP'
+**** 		sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+**** ^^ worked previously, for sure! 
+** Asked Salva about netpyne issue I'm having with plotLFP --> 
+*** ericaygriffith  12:28 PM
+hey salva -- I'm having some issues with plotLFP (e.g. AttributeError: module 'netpyne.analysis' has no attribute 'plotLFP'  when calling sim.analysis.plotLFP --> I tried to figure it out by going to the LFPrecording examples, but even there I get -->  "Unable to run plotLFP from sim.plotting and sim.analysis"). I did update my fork of netpyne by merging in the latest development branch changes, BUT I didn't change my upstream branch from Neurosim-lab/netpyne to the new suny-downstate-medical-center/netpyne. do you think this could be the issue? I saw on the netpyne channel that you said the old links should still work, but wasn't sure how this might affect forks. I'm going to break for lunch so I can get a little more glucose in my brain before I keep trying to figure this out, then will try changing the upstream location to see if that fixes it (just wanted to check in and see if you knew off-hand if this could be the problem or if it's something else!)
+*** salvadord  12:31 PM
+**** the latest netpyne version has some restructuring for analysis and plotting — it’s now eg. sim.plotting.plotLFPSpectrogram()
+**** it’s only for a bunch of functions — the ones joe had time to improve
+**** the easiest for me is to go back to a prev version of netpyne for plotting — I use the branch old_analysis
+**** (we are also working on mapping the old function calls to the new functions, so they still work)
+**** upstream shouldn't matter
+**** should still work same, but it’s recommended that you update to the new name (downstate…)
+** Netpyne changes:
+*** TO DO: 
+*** [DONE] Update upstream on local machine
+**** Currently:
+upstream	https://github.com/Neurosim-lab/netpyne (fetch)
+upstream	https://github.com/Neurosim-lab/netpyne (push)
+**** git remote set-url upstream https://github.com/suny-downstate-medical-center/netpyne.git
+**** ^^ now when I do git remote -v :
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/suny-downstate-medical-center/netpyne.git (fetch)
+upstream	https://github.com/suny-downstate-medical-center/netpyne.git (push)
+*** [DONE] Try sim.plotting.plotSpectrogram():
+**** okay didn't really work --> but at least put up windows for figures
+**** Got errors about the arguments and whatnot 
+**** I think maybe easiest to try to switch back to older version of netpyne and see how that does 
+*** As I see it, my options are:
+**** somehow to delete this fork off my local machine (not delete the repo entirely) -->
+**** or if I wanted to keep it how would I do this? have some way to switch to the old_analysis branch that salva uses for plotting for now? 
+**** ^^ yeah i wonder if there's a way for me to just switch to old_analysis on my fork of netpyne. I don't see it as a branch listed in https://github.com/ericaygriffith/netpyne, but .. hm? 
+*** Going to attempt to set up to access the old_analysis branch of netpyne: 
+**** Info:
+***** https://github.com/suny-downstate-medical-center/netpyne <-- go to branches pulldown menu and see that old_analysis is a branch
+***** Going to use this advice:
+https://stackoverflow.com/questions/4410091/github-import-upstream-branch-into-fork
+**** on local machine, cd ~/Desktop/NEUROSIM/netpyne
+**** git branch (*csd [and below that --> development]) 
+**** git remote -v
+***** now confirm (as stated above), that it shows the new suny-downstate-medical-center url address as upstream 
+***** CONFIRMED! 
+**** git fetch upstream
+[Ericas-Air-3:~/Desktop/NEUROSIM/netpyne] ericagriffith% git fetch upstream
+remote: Enumerating objects: 385, done.
+remote: Counting objects: 100% (379/379), done.
+remote: Compressing objects: 100% (194/194), done.
+remote: Total 385 (delta 282), reused 271 (delta 185), pack-reused 6
+Receiving objects: 100% (385/385), 120.90 KiB | 4.65 MiB/s, done.
+Resolving deltas: 100% (282/282), completed with 55 local objects.
+From https://github.com/suny-downstate-medical-center/netpyne
+ * [new branch]        blackened                            -> upstream/blackened
+ * [new branch]        clear_rxd                            -> upstream/clear_rxd
+ * [new branch]        integrate-validation                 -> upstream/integrate-validation
+ * [new branch]        lfpykit                              -> upstream/lfpykit
+ * [new branch]        magkanar/M1_debugging                -> upstream/magkanar/M1_debugging
+ * [new branch]        magkanar/coreneuron-compatibility-m1 -> upstream/magkanar/coreneuron-compatibility-m1
+ * [new branch]        magkanar/fix_spikes_Dict             -> upstream/magkanar/fix_spikes_Dict
+ * [new branch]        magkanar/neuron-frontiers-2021       -> upstream/magkanar/neuron-frontiers-2021
+   e410acae..492bc716  mapping                              -> upstream/mapping
+ * [new branch]        mpibb                                -> upstream/mpibb
+   fcb0900b..72f501f8  neuroml_updates                      -> upstream/neuroml_updates
+ * [new branch]        old_analysis                         -> upstream/old_analysis
+ * [new branch]        osbv2                                -> upstream/osbv2
+ * [new branch]        osbv2_test                           -> upstream/osbv2_test
+ * [new branch]        pramodk/coreneuron-compatibility-m1  -> upstream/pramodk/coreneuron-compatibility-m1
+ * [new branch]        refactorig_of_runSimWithIntervalFunc -> upstream/refactorig_of_runSimWithIntervalFunc
+ * [new branch]        saveLFPcells                         -> upstream/saveLFPcells
+ * [new branch]        sobol                                -> upstream/sobol
+ * [new branch]        subCellConn                          -> upstream/subCellConn
+ * [new tag]           CNS21                                -> CNS21
+**** git checkout -b old_analysis upstream/old_analysis
+Branch 'old_analysis' set up to track remote branch 'old_analysis' from 'upstream'.
+Switched to a new branch 'old_analysis'
+**** git push -u origin old_analysis
+Total 0 (delta 0), reused 0 (delta 0)
+remote: 
+remote: Create a pull request for 'old_analysis' on GitHub by visiting:
+remote:      https://github.com/ericaygriffith/netpyne/pull/new/old_analysis
+remote: 
+To https://github.com/ericaygriffith/netpyne.git
+ * [new branch]        old_analysis -> old_analysis
+Branch 'old_analysis' set up to track remote branch 'old_analysis' from 'origin'.
+*** WORKED!
+** Okay now testing lfp plotting on old_analysis branch:
+*** Tried net_lfp.py --> 
+**** okay so spectrogram, etc. everything plotted, however still got this error:
+Traceback (most recent call last):
+  File "net_lfp.py", line 65, in <module>
+    sim.createSimulateAnalyze(netParams = netParams, simConfig = simConfig)    
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/wrappers.py", line 204, in createSimulateAnalyze
+    sim.analyze()
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/wrappers.py", line 132, in analyze
+    sim.analysis.plotData()  # gather spiking data and cell info from each node
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/analysis/wrapper.py", line 41, in plotData
+    out = func(**kwargs)  # call function with user arguments
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/analysis/csd.py", line 471, in plotCSD
+    CSD_spline=scipy.interpolate.RectBivariateSpline(Y, X, CSD_data)
+  File "/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/scipy/interpolate/fitpack2.py", line 1176, in __init__
+    ye, kx, ky, s)
+dfitpack.error: (mx>kx) failed for hidden mx: regrid_smth:mx=2
+**** ^^ if I'm not wrong this is for plotCSD now? lol. of course. let me try to comment out this plotCSD line and see if it works without error. 
+**** okay still get an error in plotShape() --> not sure where this is being called though:
+Plotting 3D cell shape ...
+  There was an exception in plotShape(): 
+    'Axes3DSubplot' object has no attribute 'set_box_aspect' 
+    (<class 'AttributeError'>, AttributeError("'Axes3DSubplot' object has no attribute 'set_box_aspect'"), <traceback object at 0x7fad9658ba88>)
+  Failed to plot LFP locations...
+  Done; plotting time = 3.50 s
+**** Trying cell_lfp.py:
+Traceback (most recent call last):
+  File "cell_lfp.py", line 45, in <module>
+    sim.createSimulateAnalyze(netParams = netParams, simConfig = simConfig)    
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/wrappers.py", line 204, in createSimulateAnalyze
+    sim.analyze()
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/sim/wrappers.py", line 132, in analyze
+    sim.analysis.plotData()  # gather spiking data and cell info from each node
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/analysis/wrapper.py", line 41, in plotData
+    out = func(**kwargs)  # call function with user arguments
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/analysis/csd.py", line 510, in plotCSD
+    axs[0].set_yticks(range(ymin+int(spacing_um), ymax, int(spacing_um*2)))
+ValueError: range() arg 3 must not be zero
+**** Commenting out plotCSD in cell_lfp.py:
+***** okay still get plotShape() error though
+***** okay just take out 'locations' in 'plots' argument for plotLFP and it works
+**** Trying net_lfp.py again 
+***** works! just have to make sure plotLFP has appropriate arguments 
+***** try plotCSD 
+***** simConfig.analysis['plotCSD'] = True <-- this no longer works (does in 'development' branch)
+***** Trying this instead:
+****** simConfig.analysis['getCSD'] = {'spacing_um': 200, 'timeRange': [100,3000], 'vaknin': True}
+****** sim.analysis.plotCSD(timeRange=[100,3000])
+****** ^^ ERROR <-- says that getCSD() got an unexpected keywork argument 'timeRange' 
+****** ^^ now trying to comment out getCSD line and only leave in sim.analysis.plotCSD() line at the end 
+****** ERROR:
+    sim.analysis.plotCSD(timeRange=[100,3000])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/analysis/csd.py", line 471, in plotCSD
+    CSD_spline=scipy.interpolate.RectBivariateSpline(Y, X, CSD_data)
+  File "/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/scipy/interpolate/fitpack2.py", line 1176, in __init__
+    ye, kx, ky, s)
+dfitpack.error: (mx>kx) failed for hidden mx: regrid_smth:mx=2
+
+*** Safe to say that plotCSD is broken in old_analysis, but plotLFP works :(
+

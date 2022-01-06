@@ -105,15 +105,15 @@ else:
 ########################
 
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 0
+LFP = 1
 LFPcellContrib = 0
-LFPPopContrib = ['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
 CSD = 0
 MUA = 0 #['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
 waveletNum = 0 #1
-electrodes = [3, 4, 5, 6]		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
+electrodes = 'avg' #[3, 4, 5, 6]		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
 waveletImg = 0
 
 
@@ -298,8 +298,10 @@ if LFPPopContrib:
 		plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
 
 
-	filename = based + 'try_this.png'
-	plt.savefig(filename,bbox_inches='tight')
+		filename = based + 'try_this.png'
+		plt.savefig(filename,bbox_inches='tight')
+	elif electrodes is 'avg': # works as == 'avg' or is 'avg'
+		print('avg electrode plotting') ## PRINT TEST LINE 
 
 
 
@@ -310,7 +312,8 @@ if LFP or CSD or traces:
 
 
 	if LFP and not LFPPopContrib:
-		sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+		#sim.analysis.plotLFP(plots=['timeSeries'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+		sim.plotting.plotSpectrogram()
 	elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
 		LFPPops = list(allLFPData['LFPPops'].keys())
 		for pop in LFPPops:
@@ -320,7 +323,7 @@ if LFP or CSD or traces:
 		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 
 	if traces:
-		sim.analysis.plotTraces(include=[(pop, 0) for pop in L4pops], timeRange = timeRange, oneFigPer='trace', overlay=True, saveFig=False, showFig=True)#, figSize=(6,8))#figSize=(12,8))
+		sim.analysis.plotTraces(timeRange = timeRange, oneFigPer='cell', overlay=True, saveFig=False, showFig=True)# include=[(pop, 0) for pop in L4pops],  #, figSize=(6,8))#figSize=(12,8))
 
 
 
