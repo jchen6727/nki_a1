@@ -107,13 +107,13 @@ else:
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
 LFP = 0
 LFPcellContrib = 0
-LFPPopContrib = 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+LFPPopContrib = ['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
 CSD = 0
-MUA = 1 #['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
+MUA = 0 #['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
 waveletNum = 0 #1
-electrodes = [3, 4, 5, 6]		# list of electrodes 
+electrodes = [3, 4, 5, 6]		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
 waveletImg = 0
 
 
@@ -229,71 +229,74 @@ if LFPPopContrib:
 	else:
 		LFPPops = list(allLFPData['LFPPops'].keys())
 
+	print('LFP pops included --> ' + str(LFPPops))
 
-	for pop in LFPPops:
-		popColorNum = LFPPops.index(pop)
-		color = colorList[popColorNum%len(colorList)]
-		#print('pop: ' + str(pop) + ' color: ' + str(color))
+	if type(electrodes) is list:
+		for pop in LFPPops:
+			popColorNum = LFPPops.index(pop)
+			color = colorList[popColorNum%len(colorList)]
+			#print('pop: ' + str(pop) + ' color: ' + str(color))
 
-		lfp = np.array(allLFPData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-
-
-		data = {'lfp': lfp}  # returned data
-		ydisp = 0.01 #0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
-		offset = 1.0*ydisp
+			lfp = np.array(allLFPData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
 
-		if filtFreq:
-			from scipy import signal
-			fs = 1000.0/sim.cfg.recordStep
-			nyquist = fs/2.0
-			filtOrder = 3
-			if isinstance(filtFreq, list): # bandpass
-				Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-				b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-			elif isinstance(filtFreq, Number): # lowpass
-				Wn = filtFreq/nyquist
-				b, a = signal.butter(filtOrder, Wn)
-			for i in range(lfp.shape[1]):
-				lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+			data = {'lfp': lfp}  # returned data
+			ydisp = 0.01 #0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
+			offset = 1.0*ydisp
+
+
+			if filtFreq:
+				from scipy import signal
+				fs = 1000.0/sim.cfg.recordStep
+				nyquist = fs/2.0
+				filtOrder = 3
+				if isinstance(filtFreq, list): # bandpass
+					Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+					b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+				elif isinstance(filtFreq, Number): # lowpass
+					Wn = filtFreq/nyquist
+					b, a = signal.butter(filtOrder, Wn)
+				for i in range(lfp.shape[1]):
+					lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
 
 
 
-		first = True ## for labeling purposes!! 
-		for i,elec in enumerate(electrodes):
-			if isinstance(elec, Number): 
-				lfpPlot = lfp[:, elec]
-				lw = 1.0
+			first = True ## for labeling purposes!! 
+			for i,elec in enumerate(electrodes):
+				if isinstance(elec, Number): 
+					lfpPlot = lfp[:, elec]
+					lw = 1.0
 
-			if first:
-				first = False
-				plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, label=pop, color = color) #-lfpPlot+(i*ydisp) #color=color,
-			else:
-				plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, color = color)
+				if first:
+					first = False
+					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, label=pop, color = color) #-lfpPlot+(i*ydisp) #color=color,
+				else:
+					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, color = color)
 
-			if len(electrodes) > 1:
-				plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, ha='center', va='top', fontweight='bold') # fontsize=fontSize, color=color,
+				if len(electrodes) > 1:
+					plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, ha='center', va='top', fontweight='bold') # fontsize=fontSize, color=color,
 
-		ax = plt.gca()
+			ax = plt.gca()
 
-		data['lfpPlot'] = lfpPlot
-		data['ydisp'] =  ydisp
-		data['t'] = t
+			data['lfpPlot'] = lfpPlot
+			data['ydisp'] =  ydisp
+			data['t'] = t
 
-	if len(electrodes) > 1:
-		plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', rotation=90) # fontSize=fontSize, 
-		plt.ylim(-offset, (len(electrodes))*ydisp)
-	else:
-		plt.suptitle('LFP Signal', fontweight='bold') #fontSize=fontSize, 
+		if len(electrodes) > 1:
+			plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', rotation=90) # fontSize=fontSize, 
+			plt.ylim(-offset, (len(electrodes))*ydisp)
+		else:
+			plt.suptitle('LFP Signal', fontweight='bold') #fontSize=fontSize, 
 
-	ax.invert_yaxis()
-	plt.xlabel('time (ms)') # fontsize=fontSize
-	plt.legend()
-	ax.spines['top'].set_visible(False)
-	ax.spines['right'].set_visible(False)
-	ax.spines['left'].set_visible(False)
-	ax.get_yaxis().set_visible(False)
-	plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
+		ax.invert_yaxis()
+		plt.xlabel('time (ms)') # fontsize=fontSize
+		plt.legend()
+		ax.spines['top'].set_visible(False)
+		ax.spines['right'].set_visible(False)
+		ax.spines['left'].set_visible(False)
+		ax.get_yaxis().set_visible(False)
+		plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
+
 
 	filename = based + 'try_this.png'
 	plt.savefig(filename,bbox_inches='tight')

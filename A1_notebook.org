@@ -55539,6 +55539,13 @@ yes, perfect so can just use netpyne to plot the firing spectrogram and the spik
 *** ^^ there should be the same number of panels for each, and should correspond to the same populations
 *** Plot (for LFP & MUA) spectrogram on top and time series (lfp) or histogram (mua) on bottom
 * <2022-01-06 Thu -- wavelet fig & lfp fig>
-** Put wavelets.png into A1 paper draft google doc -- right now they are oriented vertically (sim on left, nhp on right, with gamma --> delta going top to bottom). 
-** Back to figure 8 --> 
-*** 
+** Put wavelets.png into A1 paper draft google doc -->
+*** Right now they are oriented vertically (sim on left, nhp on right, with gamma --> delta going top to bottom). 
+*** Made this in gimp
+*** On local machine --> ~/Desktop/NEUROSIM/A1/data/figs/wavelets/wavelets.xcf (or .png) 
+** Need to back up local machine! 
+** LFP / MUA / CSD figure --> 
+*** Focus on LFP
+*** Focus on 1 population for LFP first  --> 'IT2'
+**** LFPPopContrib = ['IT2']
+**** Making sure 'all' and 'avg' work for lfp pop contrib plots 
