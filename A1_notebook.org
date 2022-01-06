@@ -55538,3 +55538,7 @@ yes, perfect so can just use netpyne to plot the firing spectrogram and the spik
 *** Then have LFP panels on top, and MUA panels on bottom
 *** ^^ there should be the same number of panels for each, and should correspond to the same populations
 *** Plot (for LFP & MUA) spectrogram on top and time series (lfp) or histogram (mua) on bottom
+* <2022-01-06 Thu -- wavelet fig & lfp fig>
+** Put wavelets.png into A1 paper draft google doc -- right now they are oriented vertically (sim on left, nhp on right, with gamma --> delta going top to bottom). 
+** Back to figure 8 --> 
+*** 
