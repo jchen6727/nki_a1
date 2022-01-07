@@ -55705,4 +55705,14 @@ Plotting LFP ...
     (<class 'UnboundLocalError'>, UnboundLocalError("local variable 'lfpPlot' referenced before assignment"), <traceback object at 0x7fd157d115c8>)
 *** ^^ try electrodes = ['avg'] <-- okay this works but is in a list!! 
 * <2022-01-07 Fri - fixing netpyne problems & lfp plotting issues>
-** Okay still having netpyne issues 
+** Still having netpyne issues -- as it is right now I have to choose btwn lfp or csd working. 
+** Well, just ignore this for now and keep going I guess? 
+** Focus on lfp:
+*** Seeing if old_analysis branch will allow me to save and plot individual pop lfp data --> 
+**** simConfig.saveLFPPops = ['I2', 'E4']
+**** simConfig.analysis['plotLFP'] = {'pop': 'I2', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True} 
+**** ^^ Added these lines to net_lfp.py (copy-pasted from the same file on the netpyne github repository) 
+**** Looks like it didn't work --> 
+    plotLFP() got an unexpected keyword argument 'pop' 
+    (<class 'TypeError'>, TypeError("plotLFP() got an unexpected keyword argument 'pop'"), <traceback object at 0x7fdb967c2088>)
+*** 
