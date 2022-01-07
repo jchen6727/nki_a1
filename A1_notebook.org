@@ -55715,4 +55715,126 @@ Plotting LFP ...
 **** Looks like it didn't work --> 
     plotLFP() got an unexpected keyword argument 'pop' 
     (<class 'TypeError'>, TypeError("plotLFP() got an unexpected keyword argument 'pop'"), <traceback object at 0x7fdb967c2088>)
-*** 
+*** Switching over to development branch of my fork and seeing if this works -->
+**** in net_lfp.py --> have saveLFPPops and plotLFP lines (with 'I2' for value in pop argument). 
+**** ^^ no errors but ... no plot? 
+**** Trying w/ this line added at the end --> sim.plotting.plotLFPTimeSeries() 
+***** ^^ I do get a graph here!!
+***** I also get an error --> 
+  File "net_lfp.py", line 69, in <module>
+    sim.plotting.plotLFPTimeSeries()
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotLFP.py", line 159, in plotLFPTimeSeries
+    LFPTimeSeriesPlot = linesPlotter.plot(**axisArgs, **kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 417, in plot
+    self.finishAxis(**kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 273, in finishAxis
+    self.addLegend(**kwargs['legend'])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 253, in addLegend
+    self.axis.legend(handles, labels, **legendKwargs)
+  File "/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py", line 557, in legend
+    self.legend_ = mlegend.Legend(self, handles, labels, **kwargs)
+TypeError: __init__() got an unexpected keyword argument 'title_fontsize'
+**** Now trying with this line --> sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes='avg', pop='I2')
+***** No plot this time:
+  File "net_lfp.py", line 69, in <module>
+    sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes='avg', pop='I2')
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotLFP.py", line 51, in plotLFPTimeSeries
+    **kwargs
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/analysis/lfp.py", line 129, in prepareLFP
+    if len(t) < len(lfpSignal):
+UnboundLocalError: local variable 'lfpSignal' referenced before assignment
+**** Now trying with this line (change -- made 'avg' --> ['avg']) --> sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes=['avg'], pop='I2')
+***** I do get a plot! 
+***** I also get an error --> 
+  File "net_lfp.py", line 69, in <module>
+    sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes=['avg'], pop='I2')
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotLFP.py", line 159, in plotLFPTimeSeries
+    LFPTimeSeriesPlot = linesPlotter.plot(**axisArgs, **kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 417, in plot
+    self.finishAxis(**kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 273, in finishAxis
+    self.addLegend(**kwargs['legend'])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 253, in addLegend
+    self.axis.legend(handles, labels, **legendKwargs)
+  File "/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py", line 557, in legend
+    self.legend_ = mlegend.Legend(self, handles, labels, **kwargs)
+TypeError: __init__() got an unexpected keyword argument 'title_fontsize'
+***** The timeRange is correct
+**** Now want to see if I can do more than one pop at a time? --> sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes=['avg'], pop=['I2', 'E4'])
+***** Got the same plot as above, and got the same error as above as well
+ File "net_lfp.py", line 69, in <module>
+    sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes=['avg'], pop=['I2', 'E4'])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotLFP.py", line 159, in plotLFPTimeSeries
+    LFPTimeSeriesPlot = linesPlotter.plot(**axisArgs, **kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 417, in plot
+    self.finishAxis(**kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 273, in finishAxis
+    self.addLegend(**kwargs['legend'])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 253, in addLegend
+    self.axis.legend(handles, labels, **legendKwargs)
+  File "/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py", line 557, in legend
+    self.legend_ = mlegend.Legend(self, handles, labels, **kwargs)
+TypeError: __init__() got an unexpected keyword argument 'title_fontsize'
+**** Now trying to see what happens when I made pop a list, but with a single entry --> sim.plotting.plotLFPTimeSeries(timeRange=[100,900], electrodes=['avg'], pop=['E4'])
+**** Even when I try it with no pop, I get the same result -- so doesn't actually seem like it's plotting it based on the lfp pop contribution 
+*** Now trying plotPSD
+**** Same --> same error as above with the time series plotting:
+  File "net_lfp.py", line 70, in <module>
+    sim.plotting.plotPSD(timeRange=[100,900], electrodes=['avg'])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotLFP.py", line 330, in plotPSD
+    PSDPlot = linesPlotter.plot(**axisArgs, **kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 417, in plot
+    self.finishAxis(**kwargs)
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 273, in finishAxis
+    self.addLegend(**kwargs['legend'])
+  File "/Users/ericagriffith/Desktop/NEUROSIM/netpyne/netpyne/plotting/plotter.py", line 253, in addLegend
+    self.axis.legend(handles, labels, **legendKwargs)
+  File "/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/matplotlib/axes/_axes.py", line 557, in legend
+    self.legend_ = mlegend.Legend(self, handles, labels, **kwargs)
+TypeError: __init__() got an unexpected keyword argument 'title_fontsize'
+**** I also suspect that this is not plotting by population. 
+** Asked salva about the lfp 'pop' argument situation --> 
+*** Response:
+ah ok, I remember now… I added the ‘pop’ argument to the dipole+EEG analysis functions, not LFP
+
+ok, so yeah would need to add that … I think should be pretty straightforward adding it at the top of the function, and just setting lfp = simData[‘LFPPops’][pop] or something like that
+
+let me know if you wanna give it a go, or I can try later tonite
+*** Made new branch old_lfp on my fork of netpyne:
+**** Did this to try out the above suggestion from salva
+**** I switched on local machine to branch old_analysis
+**** Then did: git checkout -b old_lfp 
+*** Try changing lfp input for plotting functions, to accommodate pops:
+**** In branch old_lfp on my fork of netpyne (on local machine) --> go to netpyne/analysis/lfp.py
+**** Ah -- but the issue is that in old_analysis (and old_lfp), saving for individual LFP pop contributions isn't enabled yet. 
+**** What makes it so that lfp.py is imported such that sim.analysis.plotLFP is available?? 
+***** ^^ in __init__.py of netpyne/analysis/__init__.py, I added: 
+***** # TEST LINE -- IMPORT OLD LFP PLOTTING FUNCTIONS AS WELL 
+from .lfp_orig import plotLFP
+
+** More netpyne lfp changes:
+*** deleted old_lfp branch on my fork --> 
+**** git branch -D old_lfp
+*** made new branch (lfp) from development branch --> 
+**** git checkout development
+**** git checkout -b lfp
+*** on lfp branch on my fork, changed analysis/__init__.py to import .lfp_orig
+**** # TEST LINE -- IMPORT OLD LFP PLOTTING FUNCTIONS AS WELL 
+from .lfp_orig import plotLFP
+*** ^^ tested this in net_lfp.py (in examples/LFPrecording) --> works! still get that error with plotShape but only if 'locations' is in plots argument
+*** To lfp_orig.py:
+**** in plotLFP():
+    # populations
+    if pop is None:
+        if inputLFP is not None:
+            lfp = inputLFP[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+        else:
+            lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+    elif pop is not None:
+        lfp = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+**** added pop as argument (for now accepts a string!)
+**** Test this in net_lfp.py:
+***** [DONE] (1) First try pop=None and make sure it plots the same things that it did before! 
+****** works for pop=None and for plots w/ spectrogram, PSD, and timeSeries
+***** (2) Next try pop='I2'
