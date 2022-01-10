@@ -55834,7 +55834,33 @@ from .lfp_orig import plotLFP
         lfp = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
 **** added pop as argument (for now accepts a string!)
-**** Test this in net_lfp.py:
+**** [DONE] Test this in net_lfp.py:
 ***** [DONE] (1) First try pop=None and make sure it plots the same things that it did before! 
 ****** works for pop=None and for plots w/ spectrogram, PSD, and timeSeries
-***** (2) Next try pop='I2'
+***** [DONE] (2) Next try pop='I2'
+****** works!!!
+***** [DONE] (3) Next try pop='E4'
+****** works!!! 
+* <2022-01-10 Mon -- netpyne & lfp plotting for A1 fig>
+** Tested netpyne again to make sure -- appears to be working okay!
+*** on local machine, i'm on branch lfp 
+*** ^^ This is the development branch, but with changes to plotLFP in lfp.py and to __init__.py in analysis (imports lfp_orig.py as well as lfp) 
+** Now apply these netpyne changes to simDataAnalysis.py:
+*** This is in A1/analysis 
+*** Taking out this line for based (already commented out):
+#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
+
+*** Tested out new function def getDataFiles:
+**** allFiles = os.listdir(based)
+allDataFiles2 = []
+for file in allFiles:
+	if '.pkl' in file:
+		allDataFiles2.append(file)
+
+**** WORKS! 
+*** Changes testFiles lines and took these lines out --> 
+## 
+if len(testFiles) > 0:
+	dataFiles = testFiles
+else:
+	dataFiles = allDataFiles 

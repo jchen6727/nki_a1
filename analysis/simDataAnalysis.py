@@ -5,6 +5,8 @@ Wavelet and CSD/LFP plotting for oscillation events in A1 model, using NetPyNE
 
 Contributors: ericaygriffith@gmail.com 
 """
+
+### IMPORTS ### 
 from netpyne import sim
 import os
 import utils
@@ -17,10 +19,27 @@ import netpyne
 from numbers import Number
 
 
-### set layer bounds:
+
+### FUNCTIONS ####
+
+def getDataFiles(based):
+	### based: str ("base directory")
+	### returns list of .pkl files --> allDataFiles
+
+	allFiles = os.listdir(based)
+	allDataFiles = []
+	for file in allFiles:
+		if '.pkl' in file:
+			allDataFiles.append(file)
+	return allDataFiles 
+
+
+
+### USEFUL VARIABLES ### 
+## set layer bounds:
 layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
 
-### Cell populations: 
+## Cell populations: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']#, 'IC']
@@ -47,9 +66,7 @@ matrixPops = ['TCM', 'TIM', 'IREM']
 corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
-
-
-##### electrodes <--> layer
+## electrodes <--> layer
 L1electrodes = [0]
 L2electrodes = [1]
 L3electrodes = [2,3,4,5,6,7,8,9]
@@ -62,40 +79,33 @@ supra = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 gran = [9, 10, 11, 12]
 infra = [12, 13, 14, 15, 16, 17, 18, 19]
 
-### for COLORS in LFP PLOTTING !! 
+## for COLORS in LFP PLOTTING !! 
 colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.00],
             [0.34,0.67,0.67], [0.90,0.59,0.00], [0.42,0.82,0.83], [1.00,0.85,0.00],
             [0.33,0.67,0.47], [1.00,0.38,0.60], [0.57,0.67,0.33], [0.5,0.2,0.0],
             [0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
 
 
-### set path to data files
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
-#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
-#based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
+#### VARIABLES TO SET #####
+local = 1   		# if using local machine (1) 	# if using neurosim or other (0)
+test = 1			# if using testFiles (1) 		# if using allDataFiles (0)
 
-### get .pkl data filenames 
-allFiles = os.listdir(based)
-allDataFiles = []
-for file in allFiles:
-	if '.pkl' in file:
-		allDataFiles.append(file)
-
-testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']		# ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl'] #['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
+## Path to data files
+if local:
+	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 
-###### Set timeRange ######
+## Data files to use 
+testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']		### Set testFiles if using these files instead of allDataFiles 	# ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl'] #['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
 
-timeRange = [175, 350] 			## !! 0_3 SHORT RUN 
-
-
-
-###### LOADING SIM DATA and GETTING LFP CONTRIBUTION DATA ####
-if len(testFiles) > 0:
+if test:
 	dataFiles = testFiles
 else:
-	dataFiles = allDataFiles 
+	dataFiles = getDataFiles(based)		## get all .pkl data filenames
 
+
+## Set timeRange
+timeRange = [175, 350] 			## !! 0_3 SHORT RUN  ## AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
 
 
 
@@ -105,7 +115,7 @@ else:
 ########################
 
 ### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
-LFP = 1
+LFP = 0
 LFPcellContrib = 0
 LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
@@ -318,7 +328,7 @@ if LFP or CSD or traces:
 	elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
 		LFPPops = list(allLFPData['LFPPops'].keys())
 		for pop in LFPPops:
-			sim.analysis.plotLFP(plots=['timeSeries'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+			sim.analysis.plotLFP(plots=['spectrogram'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 
 	if CSD:
 		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
