@@ -34,65 +34,68 @@ def getDataFiles(based):
 	return allDataFiles 
 
 
-
-def plotMUAorig(based, dataFiles, timeRange, colorList, pops=None):
-	### based: str ("base directory"); path to data files
-	### dataFiles: list of data files 
+#### THIS FUNCTION STILL NOT WORKING THE BEST FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
+def plotMUAorig(dataFile, timeRange, colorList, pops=None):
+	### DEPRECATED -- based: str ("base directory"); path to data files
+	### DEPRECATED -- dataFiles: list of data files 
+	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
 	### timeRange: list --> e.g. [start, stop]
 	### pops: list --> e.g. ['IT2', 'NGF3']
 			# ``None`` is default --> plots spiking data from all populations
 
-	for dataFile in dataFiles:
-		fileNameFull = based + dataFile
 
-		## Load sim data from .pkl file 
-		sim.load(fileNameFull, instantiate=False)
+	## Load sim data from .pkl file 
+	sim.load(dataFile, instantiate=False)
 
-		## Get spiking data (timing and cell ID)
-		spkt = sim.allSimData['spkt'] 
-		spkid = sim.allSimData['spkid']
+	## timeRange
+	if timeRange is None:
+		timeRange = [0,sim.cfg.duration]
 
-		spktTimeRange = []
-		spkidTimeRange = []
+	## Get spiking data (timing and cell ID)
+	spkt = sim.allSimData['spkt'] 
+	spkid = sim.allSimData['spkid']
 
-		for t in spkt:
-			if t >= timeRange[0] and t <= timeRange[1]:
-				spktTimeRange.append(t)
-				spkidTimeRange.append(spkid[spkt.index(t)])
+	spktTimeRange = []
+	spkidTimeRange = []
 
-		spikeGids = {}
-		spikes = {}
+	for t in spkt:
+		if t >= timeRange[0] and t <= timeRange[1]:
+			spktTimeRange.append(t)
+			spkidTimeRange.append(spkid[spkt.index(t)])
 
-		## Get list of populations to plot spiking data for 
-		if pops is None:
-			pops = list(sim.net.allPops.keys())			# all populations! 
+	spikeGids = {}
+	spikes = {}
 
-		## Separate overall spiking data into spiking data for each cell population 
-		for pop in pops:
-			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
-			spikes[pop] = []
-			for i in range(len(spkidTimeRange)):
-				if spkidTimeRange[i] in spikeGids[pop]:
-					spikes[pop].append(spktTimeRange[i])
-			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+	## Get list of populations to plot spiking data for 
+	if pops is None:
+		pops = list(sim.net.allPops.keys())			# all populations! 
 
-
-		for pop in pops:
-			color=colorList[pops.index(pop)%len(colorList)] 
-			val = pops.index(pop) 
-			spikeActivity = np.array(spikes[pop])
-			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-			plt.text(timeRange[0]-20, val*2, pop, color=color)
+	## Separate overall spiking data into spiking data for each cell population 
+	for pop in pops:
+		spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+		spikes[pop] = []
+		for i in range(len(spkidTimeRange)):
+			if spkidTimeRange[i] in spikeGids[pop]:
+				spikes[pop].append(spktTimeRange[i])
+		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
 
 
-		## PLOT ALL POPULATIONS ON THE SAME PLOTTING WINDOW ! 
-		ax = plt.gca()
-		ax.invert_yaxis()
-		ax.spines['top'].set_visible(False)
-		ax.spines['right'].set_visible(False)
-		ax.spines['left'].set_visible(False)
-		ax.get_yaxis().set_visible(False)
+	for pop in pops:
+		print('Plotting spiking data for ' + pop)
+		color=colorList[pops.index(pop)%len(colorList)] 
+		val = pops.index(pop) 
+		spikeActivity = np.array(spikes[pop])
+		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+		plt.text(timeRange[0]-20, val*2, pop, color=color)
 
+
+	## PLOT ALL POPULATIONS ON THE SAME PLOTTING WINDOW ! 
+	ax = plt.gca()
+	ax.invert_yaxis()
+	ax.spines['top'].set_visible(False)
+	ax.spines['right'].set_visible(False)
+	ax.spines['left'].set_visible(False)
+	ax.get_yaxis().set_visible(False)
 
 
 
@@ -172,7 +175,7 @@ else:
 
 
 ######### SET TIME RANGE 	!!
-timeRange = [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
+timeRange = [300,500] #[175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
 
 
 
@@ -181,89 +184,32 @@ timeRange = [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS TH
 ####### PLOTTING #######
 ########################
 
-### LFP, CSD, SPIKING, TRACES ### ## CHANGE THESE TO ARGUMENTS ## 
+### WHAT TO PLOT: LFP, CSD, SPIKING, TRACES ### 
+MUA = 1			## bool (0 or 1) 
+MUApops = 0		## list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
+
+
 LFP = 0
 LFPcellContrib = 0
 LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
 CSD = 0
-MUA = 0 #['ITP4', 'ITS4'] #ECortPops.copy()  						## Can be 0  -- or -- list of pops (see above)
 traces = 0
-waveletNum = 0 #1
+#waveletNum = 0 #1
 electrodes = ['avg']	#[3, 4, 5, 6]	#'avg' #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
-waveletImg = 0
-
-## COMPARING MUA TEST
-plotMUAorig(based, dataFiles, timeRange, colorList, pops=None)
+#waveletImg = 0
 
 
-### SPIKING DATA 
-if MUA:
-	fileNameFull = based + dataFiles[0]
+## SPIKING MUA 
+if MUA: 
+	for dataFile in dataFiles:
+		dataFileFull = based + dataFile
 
-	#sim.load(fileNameFull, instantiate=True) 	# Load sim data from first .pkl file 
-	sim.load(fileNameFull, instantiate=False)
-	print('done loading .pkl file')
-	
-	#pops = list(sim.net.pops.keys())  # Will be empty if instantiate is False 
-	pops = list(sim.net.allPops.keys())
+		if MUApops:
+			plotMUAorig(dataFileFull, timeRange, colorList, pops=MUApops)
+		else:
+			plotMUAorig(dataFileFull, timeRange, colorList, pops=None)
 
-	spkt = sim.allSimData['spkt'] 
-	spkid = sim.allSimData['spkid']
-
-	spktTimeRange = []
-	spkidTimeRange = []
-
-	for t in spkt:
-		if t >= timeRange[0] and t <= timeRange[1]:
-			spktTimeRange.append(t)
-			spkidTimeRange.append(spkid[spkt.index(t)])
-
-
-	spikeGids = {}
-	spikes = {}
-
-	if type(MUA) == list:
-		for pop in MUA:	#pops:
-			#spikeGids[pop] = sim.net.pops[pop].cellGids			# sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
-			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
-			spikes[pop] = []
-			for i in range(len(spkidTimeRange)):
-				if spkidTimeRange[i] in spikeGids[pop]:
-					spikes[pop].append(spktTimeRange[i])
-			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
-	else:
-		for pop in pops:
-			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
-			spikes[pop] = []
-			for i in range(len(spkidTimeRange)):
-				if spkidTimeRange[i] in spikeGids[pop]:
-					spikes[pop].append(spktTimeRange[i])
-			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
-
-	#### PLOTTING ####
-	if type(MUA) == list:
-		for pop in MUA:
-			color=colorList[MUA.index(pop)%len(colorList)]
-			val = MUA.index(pop)
-			spikeActivity = np.array(spikes[pop])
-			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-			plt.text(timeRange[0]-20, val*2, pop, color=color)
-	else:
-		for pop in pops:
-			color=colorList[pops.index(pop)%len(colorList)] 
-			val = pops.index(pop) 
-			spikeActivity = np.array(spikes[pop])
-			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-			plt.text(timeRange[0]-20, val*2, pop, color=color)
-
-	#plt.legend() # unnecessary w/ 
-	ax = plt.gca()
-	ax.invert_yaxis()
-	ax.spines['top'].set_visible(False)
-	ax.spines['right'].set_visible(False)
-	ax.spines['left'].set_visible(False)
-	ax.get_yaxis().set_visible(False)
 
 
 

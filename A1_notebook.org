@@ -55873,4 +55873,75 @@ elif type(pops) is list:
 **** ^^ instead of this --> 
 **** if pops is None:
        pops = list(sim.net.allPops.keys())			# all populations! 
-*** 
+*** Old MUA lines:
+
+# ### SPIKING DATA 
+# if MUA:
+# 	fileNameFull = based + dataFiles[0]
+
+# 	#sim.load(fileNameFull, instantiate=True) 	# Load sim data from first .pkl file 
+# 	sim.load(fileNameFull, instantiate=False)
+# 	print('done loading .pkl file')
+	
+# 	#pops = list(sim.net.pops.keys())  # Will be empty if instantiate is False 
+# 	pops = list(sim.net.allPops.keys())
+
+# 	spkt = sim.allSimData['spkt'] 
+# 	spkid = sim.allSimData['spkid']
+
+# 	spktTimeRange = []
+# 	spkidTimeRange = []
+
+# 	for t in spkt:
+# 		if t >= timeRange[0] and t <= timeRange[1]:
+# 			spktTimeRange.append(t)
+# 			spkidTimeRange.append(spkid[spkt.index(t)])
+
+
+# 	spikeGids = {}
+# 	spikes = {}
+
+# 	if type(MUA) == list:
+# 		for pop in MUA:	#pops:
+# 			#spikeGids[pop] = sim.net.pops[pop].cellGids			# sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
+# 			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+# 			spikes[pop] = []
+# 			for i in range(len(spkidTimeRange)):
+# 				if spkidTimeRange[i] in spikeGids[pop]:
+# 					spikes[pop].append(spktTimeRange[i])
+# 			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+# 	else:
+# 		for pop in pops:
+# 			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+# 			spikes[pop] = []
+# 			for i in range(len(spkidTimeRange)):
+# 				if spkidTimeRange[i] in spikeGids[pop]:
+# 					spikes[pop].append(spktTimeRange[i])
+# 			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+
+# 	#### PLOTTING ####
+# 	if type(MUA) == list:
+# 		for pop in MUA:
+# 			color=colorList[MUA.index(pop)%len(colorList)]
+# 			val = MUA.index(pop)
+# 			spikeActivity = np.array(spikes[pop])
+# 			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+# 			plt.text(timeRange[0]-20, val*2, pop, color=color)
+# 	else:
+# 		for pop in pops:
+# 			color=colorList[pops.index(pop)%len(colorList)] 
+# 			val = pops.index(pop) 
+# 			spikeActivity = np.array(spikes[pop])
+# 			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+# 			plt.text(timeRange[0]-20, val*2, pop, color=color)
+
+# 	#plt.legend() # unnecessary w/ 
+# 	ax = plt.gca()
+# 	ax.invert_yaxis()
+# 	ax.spines['top'].set_visible(False)
+# 	ax.spines['right'].set_visible(False)
+# 	ax.spines['left'].set_visible(False)
+# 	ax.get_yaxis().set_visible(False)
+
+*** Fixed timeRange lines so that if timeRange is none, it uses whole sim duration
+*** STILL NEED TO --> make sure that this lower timeRange[0] plotting works better!!! 
