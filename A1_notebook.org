@@ -55945,3 +55945,7 @@ elif type(pops) is list:
 
 *** Fixed timeRange lines so that if timeRange is none, it uses whole sim duration
 *** STILL NEED TO --> make sure that this lower timeRange[0] plotting works better!!! 
+** LFP Plotting lines in simDataAnalysis.py:
+*** Taking out this bool --> #LFPcellContrib = 0
+**** Currently isn't used
+

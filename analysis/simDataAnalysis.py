@@ -35,7 +35,7 @@ def getDataFiles(based):
 
 
 #### THIS FUNCTION STILL NOT WORKING THE BEST FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
-def plotMUAorig(dataFile, timeRange, colorList, pops=None):
+def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	### DEPRECATED -- based: str ("base directory"); path to data files
 	### DEPRECATED -- dataFiles: list of data files 
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
@@ -184,15 +184,19 @@ timeRange = [300,500] #[175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT 
 ####### PLOTTING #######
 ########################
 
-### WHAT TO PLOT: LFP, CSD, SPIKING, TRACES ### 
+### WHAT TO PLOT --> LFP, CSD, SPIKING, TRACES ### 
 MUA = 1			## bool (0 or 1) 
 MUApops = 0		## list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
 
 
-LFP = 0
-LFPcellContrib = 0
-LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+LFP = 0			## bool (0 or 1)
+LFPpops = 0  	## list of pops --> e.g. ['IT2']
+
+
+#LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
+
+
 CSD = 0
 traces = 0
 #waveletNum = 0 #1
@@ -206,17 +210,22 @@ if MUA:
 		dataFileFull = based + dataFile
 
 		if MUApops:
-			plotMUAorig(dataFileFull, timeRange, colorList, pops=MUApops)
+			plotMUA(dataFileFull, colorList, timeRange, pops=MUApops)
 		else:
-			plotMUAorig(dataFileFull, timeRange, colorList, pops=None)
+			plotMUA(dataFileFull, colorList, timeRange, pops=None)
 
+
+## LFP DATA
+if LFP:
+	for dataFile in dataFiles:
+		dataFileFull = based + dataFile
 
 
 
 #### Plot LFP Pops contribution: 
 ### NOTE: right now in this code block I specify LFPPops for ease of example generating 
 ### NOTE: I also specify fileName for fig 
-if LFPPopContrib:
+if LFPPopContrib:  ## <-- this basically plots the timeSeries for individual LFP pops if this data is recorded 
 	allLFPData = {}
 	allLFPData['LFPPops'] = {}
 
