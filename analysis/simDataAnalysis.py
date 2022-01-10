@@ -98,6 +98,7 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.get_yaxis().set_visible(False)
 
 
+#def plotLFPwindow():
 
 
 
@@ -185,15 +186,15 @@ timeRange = [300,500] #[175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT 
 ########################
 
 ### WHAT TO PLOT --> LFP, CSD, SPIKING, TRACES ### 
-MUA = 1			## bool (0 or 1) 
-MUApops = 0		## list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
+MUA = 0			## bool (0 or 1) 
+MUApops = 0		## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
 
 
-LFP = 0			## bool (0 or 1)
-LFPpops = 0  	## list of pops --> e.g. ['IT2']
+LFP = 1				## bool (0 or 1)
+LFPpops = ['IT2', 'IT3']	#0  	## bool OR list of pops --> e.g. ['IT2']
 
 
-#LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
 filtFreq = 0 #[13,30]
 
 
@@ -217,8 +218,21 @@ if MUA:
 
 ## LFP DATA
 if LFP:
+
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
+
+		sim.load(dataFileFull, instantiate=False)
+
+
+		if LFPpops:
+			if type(LFPpops) is list:
+				pops = LFPpops
+			else:
+				pops = list(sim.net.allPops.keys())
+
+		for pop in pops:
+			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
 
 
 
