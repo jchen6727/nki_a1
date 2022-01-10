@@ -55845,7 +55845,8 @@ from .lfp_orig import plotLFP
 ** Tested netpyne again to make sure -- appears to be working okay!
 *** on local machine, i'm on branch lfp 
 *** ^^ This is the development branch, but with changes to plotLFP in lfp.py and to __init__.py in analysis (imports lfp_orig.py as well as lfp) 
-** Now apply these netpyne changes to simDataAnalysis.py:
+** Now apply these netpyne changes to simDataAnalysis.py ,and go through code as is now, and clean up functions, comments, etc.!!
+** Changes to MUA code in simDataAnalysis.py: 
 *** This is in A1/analysis 
 *** Taking out this line for based (already commented out):
 #based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT/'	#v34_batch27_0_3_IT2_PT5B_SHORT/'
@@ -55872,3 +55873,4 @@ elif type(pops) is list:
 **** ^^ instead of this --> 
 **** if pops is None:
        pops = list(sim.net.allPops.keys())			# all populations! 
+*** 

@@ -35,7 +35,7 @@ def getDataFiles(based):
 
 
 
-def plotMUAorig(based, dataFiles, timeRange, pops=None):
+def plotMUAorig(based, dataFiles, timeRange, colorList, pops=None):
 	### based: str ("base directory"); path to data files
 	### dataFiles: list of data files 
 	### timeRange: list --> e.g. [start, stop]
@@ -77,18 +77,6 @@ def plotMUAorig(based, dataFiles, timeRange, pops=None):
 			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
 
 
-
-
-
-
-	if type(MUA) == list:
-		for pop in MUA:
-			color=colorList[MUA.index(pop)%len(colorList)]
-			val = MUA.index(pop)
-			spikeActivity = np.array(spikes[pop])
-			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-			plt.text(timeRange[0]-20, val*2, pop, color=color)
-	else:
 		for pop in pops:
 			color=colorList[pops.index(pop)%len(colorList)] 
 			val = pops.index(pop) 
@@ -97,51 +85,15 @@ def plotMUAorig(based, dataFiles, timeRange, pops=None):
 			plt.text(timeRange[0]-20, val*2, pop, color=color)
 
 
+		## PLOT ALL POPULATIONS ON THE SAME PLOTTING WINDOW ! 
+		ax = plt.gca()
+		ax.invert_yaxis()
+		ax.spines['top'].set_visible(False)
+		ax.spines['right'].set_visible(False)
+		ax.spines['left'].set_visible(False)
+		ax.get_yaxis().set_visible(False)
 
-	# spikeGids = {}
-	# spikes = {}
 
-	# if type(MUA) == list:
-	# 	for pop in MUA:	#pops:
-	# 		#spikeGids[pop] = sim.net.pops[pop].cellGids			# sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
-	# 		spikeGids[pop] = sim.net.allPops[pop]['cellGids']
-	# 		spikes[pop] = []
-	# 		for i in range(len(spkidTimeRange)):
-	# 			if spkidTimeRange[i] in spikeGids[pop]:
-	# 				spikes[pop].append(spktTimeRange[i])
-	# 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
-	# else:
-	# 	for pop in pops:
-	# 		spikeGids[pop] = sim.net.allPops[pop]['cellGids']
-	# 		spikes[pop] = []
-	# 		for i in range(len(spkidTimeRange)):
-	# 			if spkidTimeRange[i] in spikeGids[pop]:
-	# 				spikes[pop].append(spktTimeRange[i])
-	# 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
-
-	# #### PLOTTING ####
-	# if type(MUA) == list:
-	# 	for pop in MUA:
-	# 		color=colorList[MUA.index(pop)%len(colorList)]
-	# 		val = MUA.index(pop)
-	# 		spikeActivity = np.array(spikes[pop])
-	# 		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-	# 		plt.text(timeRange[0]-20, val*2, pop, color=color)
-	# else:
-	# 	for pop in pops:
-	# 		color=colorList[pops.index(pop)%len(colorList)] 
-	# 		val = pops.index(pop) 
-	# 		spikeActivity = np.array(spikes[pop])
-	# 		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
-	# 		plt.text(timeRange[0]-20, val*2, pop, color=color)
-
-	#plt.legend() # unnecessary w/ 
-	ax = plt.gca()
-	ax.invert_yaxis()
-	ax.spines['top'].set_visible(False)
-	ax.spines['right'].set_visible(False)
-	ax.spines['left'].set_visible(False)
-	ax.get_yaxis().set_visible(False)
 
 
 
@@ -241,6 +193,8 @@ waveletNum = 0 #1
 electrodes = ['avg']	#[3, 4, 5, 6]	#'avg' #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
 waveletImg = 0
 
+## COMPARING MUA TEST
+plotMUAorig(based, dataFiles, timeRange, colorList, pops=None)
 
 
 ### SPIKING DATA 
