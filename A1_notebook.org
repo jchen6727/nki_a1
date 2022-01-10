@@ -55864,3 +55864,11 @@ if len(testFiles) > 0:
 	dataFiles = testFiles
 else:
 	dataFiles = allDataFiles 
+*** Changing lines to get list of populations to plot spiking data for:
+**** if pops is None:
+	popList = list(sim.net.allPops.keys())
+elif type(pops) is list:
+	popList = pops
+**** ^^ instead of this --> 
+**** if pops is None:
+       pops = list(sim.net.allPops.keys())			# all populations! 

@@ -35,6 +35,117 @@ def getDataFiles(based):
 
 
 
+def plotMUAorig(based, dataFiles, timeRange, pops=None):
+	### based: str ("base directory"); path to data files
+	### dataFiles: list of data files 
+	### timeRange: list --> e.g. [start, stop]
+	### pops: list --> e.g. ['IT2', 'NGF3']
+			# ``None`` is default --> plots spiking data from all populations
+
+	for dataFile in dataFiles:
+		fileNameFull = based + dataFile
+
+		## Load sim data from .pkl file 
+		sim.load(fileNameFull, instantiate=False)
+
+		## Get spiking data (timing and cell ID)
+		spkt = sim.allSimData['spkt'] 
+		spkid = sim.allSimData['spkid']
+
+		spktTimeRange = []
+		spkidTimeRange = []
+
+		for t in spkt:
+			if t >= timeRange[0] and t <= timeRange[1]:
+				spktTimeRange.append(t)
+				spkidTimeRange.append(spkid[spkt.index(t)])
+
+		spikeGids = {}
+		spikes = {}
+
+		## Get list of populations to plot spiking data for 
+		if pops is None:
+			pops = list(sim.net.allPops.keys())			# all populations! 
+
+		## Separate overall spiking data into spiking data for each cell population 
+		for pop in pops:
+			spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+			spikes[pop] = []
+			for i in range(len(spkidTimeRange)):
+				if spkidTimeRange[i] in spikeGids[pop]:
+					spikes[pop].append(spktTimeRange[i])
+			print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+
+
+
+
+
+
+	if type(MUA) == list:
+		for pop in MUA:
+			color=colorList[MUA.index(pop)%len(colorList)]
+			val = MUA.index(pop)
+			spikeActivity = np.array(spikes[pop])
+			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+			plt.text(timeRange[0]-20, val*2, pop, color=color)
+	else:
+		for pop in pops:
+			color=colorList[pops.index(pop)%len(colorList)] 
+			val = pops.index(pop) 
+			spikeActivity = np.array(spikes[pop])
+			plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+			plt.text(timeRange[0]-20, val*2, pop, color=color)
+
+
+
+	# spikeGids = {}
+	# spikes = {}
+
+	# if type(MUA) == list:
+	# 	for pop in MUA:	#pops:
+	# 		#spikeGids[pop] = sim.net.pops[pop].cellGids			# sim.net.allPops[pop]['cellGids']	# sim.net.pops[pop].cellGids
+	# 		spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+	# 		spikes[pop] = []
+	# 		for i in range(len(spkidTimeRange)):
+	# 			if spkidTimeRange[i] in spikeGids[pop]:
+	# 				spikes[pop].append(spktTimeRange[i])
+	# 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+	# else:
+	# 	for pop in pops:
+	# 		spikeGids[pop] = sim.net.allPops[pop]['cellGids']
+	# 		spikes[pop] = []
+	# 		for i in range(len(spkidTimeRange)):
+	# 			if spkidTimeRange[i] in spikeGids[pop]:
+	# 				spikes[pop].append(spktTimeRange[i])
+	# 		print('spikes in pop ' + str(pop) + ': ' + str(len(spikes[pop])))
+
+	# #### PLOTTING ####
+	# if type(MUA) == list:
+	# 	for pop in MUA:
+	# 		color=colorList[MUA.index(pop)%len(colorList)]
+	# 		val = MUA.index(pop)
+	# 		spikeActivity = np.array(spikes[pop])
+	# 		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+	# 		plt.text(timeRange[0]-20, val*2, pop, color=color)
+	# else:
+	# 	for pop in pops:
+	# 		color=colorList[pops.index(pop)%len(colorList)] 
+	# 		val = pops.index(pop) 
+	# 		spikeActivity = np.array(spikes[pop])
+	# 		plt.plot(spikeActivity, np.zeros_like(spikeActivity) + (val*2), '|', label=pop, color=color)
+	# 		plt.text(timeRange[0]-20, val*2, pop, color=color)
+
+	#plt.legend() # unnecessary w/ 
+	ax = plt.gca()
+	ax.invert_yaxis()
+	ax.spines['top'].set_visible(False)
+	ax.spines['right'].set_visible(False)
+	ax.spines['left'].set_visible(False)
+	ax.get_yaxis().set_visible(False)
+
+
+
+
 ### USEFUL VARIABLES ### 
 ## set layer bounds:
 layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
@@ -86,26 +197,30 @@ colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.
             [0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
 
 
-#### VARIABLES TO SET #####
-local = 1   		# if using local machine (1) 	# if using neurosim or other (0)
-test = 1			# if using testFiles (1) 		# if using allDataFiles (0)
+#####################
+#### DATA FILES #####
+#####################
 
+######### SET LOCAL BOOL	!!
+local = 1								# if using local machine (1) 	# if using neurosim or other (0)
 ## Path to data files
 if local:
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 
+######### SET TEST BOOL		!!
+test = 1								# if using testFiles (1) 		# if using all data files (0)
 ## Data files to use 
-testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']		### Set testFiles if using these files instead of allDataFiles 	# ['v34_batch27_0_3_NGF1_IT5A_CT5A_SHORT_data.pkl'] #['v34_batch27_0_3_IT2_PT5B_SHORT_data.pkl'] #['A1_v34_batch27_v34_batch27_0_3.pkl']
+testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']
 
 if test:
 	dataFiles = testFiles
 else:
-	dataFiles = getDataFiles(based)		## get all .pkl data filenames
+	dataFiles = getDataFiles(based)		# get all .pkl data filenames
 
 
-## Set timeRange
-timeRange = [175, 350] 			## !! 0_3 SHORT RUN  ## AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
+######### SET TIME RANGE 	!!
+timeRange = [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
 
 
 
