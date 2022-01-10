@@ -98,8 +98,28 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.get_yaxis().set_visible(False)
 
 
-#def plotLFPwindow():
+def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None):
+	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
+	### plots: list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+	### electrodes: list ---> e.g. ['avg'] <-- can this be combined / used with numbered electrodes??
+	### timeRange: list --> e.g. [start, stop]
+	### pops: list of populations to plot data for 
 
+	## Load sim data
+	sim.load(dataFile, instantiate=False)
+
+	## Get cell populations:
+	if pops is None:
+		pops = list(sim.net.allPops.keys())			# all populations! 
+
+	## timeRange
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+
+	## PLOTTING:
+	for pop in pops:
+		for plot in plots:
+			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes) ### fix / clean up 'avg' situation!
 
 
 ### USEFUL VARIABLES ### 
@@ -217,22 +237,40 @@ if MUA:
 
 
 ## LFP DATA
-if LFP:
 
+if LFP:
+	plots = ['spectrogram', 'timeSeries']
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
+		plotLFPPopsData(dataFileFull, plots, electrodes=['avg'], timeRange=timeRange, pops=LFPpops)
 
-		sim.load(dataFileFull, instantiate=False)
+
+	#sim.load(dataFileFull, instantiate=False)
+	# if LFPpops:
+	# 	if type(LFPpops) is list:
+	# 		pops = LFPpops
+	# 	else:
+	# 		pops = list(sim.net.allPops.keys())
+
+	# for pop in pops:
+	# 	sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
+
+###
+
+	# for dataFile in dataFiles:
+	# 	dataFileFull = based + dataFile
+
+	# 	sim.load(dataFileFull, instantiate=False)
 
 
-		if LFPpops:
-			if type(LFPpops) is list:
-				pops = LFPpops
-			else:
-				pops = list(sim.net.allPops.keys())
+	# 	if LFPpops:
+	# 		if type(LFPpops) is list:
+	# 			pops = LFPpops
+	# 		else:
+	# 			pops = list(sim.net.allPops.keys())
 
-		for pop in pops:
-			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
+	# 	for pop in pops:
+	# 		sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
 
 
 

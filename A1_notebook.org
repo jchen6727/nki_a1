@@ -55948,4 +55948,4 @@ elif type(pops) is list:
 ** LFP Plotting lines in simDataAnalysis.py:
 *** Taking out this bool --> #LFPcellContrib = 0
 **** Currently isn't used
-
+*** 
