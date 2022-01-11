@@ -56164,4 +56164,39 @@ Plotting LFP ...
     'TI' 
     (<class 'KeyError'>, KeyError('TI'), <traceback object at 0x7f8ce4167f08>)
 >>> 
-*** 
+*** Why isn't it printing 'TI' as part of pops? 
+*** When I add pops.remove(pop) for some reason the number of redundant pops it can find goes down:
+**** lines:
+for pop in pops:
+	if any(elem == pop for elem in thalPops):
+		print('redundant pop: ' + pop)
+		#pops.remove(pop)
+**** output:
+[Ericas-Air-3:NEUROSIM/A1/analysis] ericagriffith% python -i sandbox.py
+redundant pop: TC
+redundant pop: TCM
+redundant pop: HTC
+redundant pop: IRE
+redundant pop: IREM
+redundant pop: TI
+redundant pop: TIM
+>>> 
+[Ericas-Air-3:NEUROSIM/A1/analysis] ericagriffith% python -i sandbox.py
+redundant pop: TC
+redundant pop: HTC
+redundant pop: IREM
+redundant pop: TIM
+*** However, this works:
+**** pops_new = [pop for pop in pops if pop not in thalPops]
+**** https://stackoverflow.com/questions/11434599/remove-list-from-list-in-python
+*** With the above test, cam now take out these lines (commented out):
+	# for pop in pops:
+	# 	for thalPop in thalPops:
+	# 		if pop == thalPop:
+	# 			pops.remove(pop)
+	# 			print('new pops list: ' + str(pops))
+	# 			print('Removing thalamic population ' + str(pop))
+
+		# if any(pop in pops for thalPop in thalPops):
+		# 	pops.remove(pop)
+		# 	print('Removing thalamic population ' + str(pop))

@@ -109,21 +109,12 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	sim.load(dataFile, instantiate=False)
 
 	## Get cell populations:
-	if pops is None or pops is 0:
-		pops = list(sim.net.allPops.keys())			# all populations! 
-		print('pops included, orig: ' + str(pops))		## PRINT TESTING LINE
 	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] 		## THESE MUST BE EXCLUDED! 
-	for pop in pops:
-		for thalPop in thalPops:
-			if pop == thalPop:
-				pops.remove(pop)
-				print('Removing thalamic population ' + str(pop))
-
-		# if any(pop in pops for thalPop in thalPops):
-		# 	pops.remove(pop)
-		# 	print('Removing thalamic population ' + str(pop))
-
-
+	if pops is None or pops is 0:
+		allPops = list(sim.net.allPops.keys())				# all populations! 
+		#print('pops included, orig: ' + str(allPops))		## PRINT TESTING LINE
+		pops = [pop for pop in allPops if pop not in thalPops]
+		#print('new pops list: ' + str(pops))				## PRINT TESTING LINE
 
 	## timeRange
 	if timeRange is None:
@@ -353,14 +344,14 @@ if MUA:
 
 #### LFP PLOTTING ####
 lfpPopPlot = 1								## bool (0 or 1)
-lfpPops = 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['spectrogram'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
-LFPelectrodes = [3, 4, 5, 6]
+lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 
 if lfpPopPlot:
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
-		plotLFPPopsData(dataFileFull, plots, electrodes=['avg'], timeRange=timeRange, pops=lfpPops)
+		plotLFPPopsData(dataFileFull, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
 
 
 #### LFP CUSTOM TIME SERIES PLOTTING ####
