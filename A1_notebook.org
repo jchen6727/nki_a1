@@ -56116,4 +56116,33 @@ if LFPPopContrib:  ## <-- this basically plots the timeSeries for individual LFP
 ** MUA: all set for now
 ** LFP:
 *** Have to figure out exactly what I want to be bools, etc. hm. and how to structure what I call and when. hm. 
+*** No lfp pop recording for thalamic pops, makes sense:
+ There was an exception in plotLFP(): 
+    'TC' 
+    (<class 'KeyError'>, KeyError('TC'), <traceback object at 0x7fcc8312f048>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'TCM' 
+    (<class 'KeyError'>, KeyError('TCM'), <traceback object at 0x7fcc82ff0b08>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'HTC' 
+    (<class 'KeyError'>, KeyError('HTC'), <traceback object at 0x7fcc8312f048>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'IRE' 
+    (<class 'KeyError'>, KeyError('IRE'), <traceback object at 0x7fcc82ff0b08>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'IREM' 
+    (<class 'KeyError'>, KeyError('IREM'), <traceback object at 0x7fcc8312f048>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'TI' 
+    (<class 'KeyError'>, KeyError('TI'), <traceback object at 0x7fcc82ff0b08>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'TIM' 
+    (<class 'KeyError'>, KeyError('TIM'), <traceback object at 0x7fcc8312f048>)
+>>> 
 *** 

@@ -109,8 +109,12 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	sim.load(dataFile, instantiate=False)
 
 	## Get cell populations:
-	if pops is None:
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] 		## THESE MUST BE EXCLUDED! 
+	if pops is None or pops is 0:
 		pops = list(sim.net.allPops.keys())			# all populations! 
+		print('pops included, orig: ' + str(pops))		## PRINT TESTING LINE
+		
+
 
 	## timeRange
 	if timeRange is None:
@@ -248,7 +252,7 @@ L4pops = ['ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4']
 L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
 L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
 L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']
+thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
 ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']
 ICortPops = ['NGF1', 
 			'PV2', 'SOM2', 'VIP2', 'NGF2', 
