@@ -320,14 +320,6 @@ timeRange = [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS TH
 ####### PLOTTING #######
 ########################
 
-### WHAT TO PLOT --> LFP, CSD, SPIKING, TRACES ### 
-CSD = 0
-traces = 0
-#waveletNum = 0 #1
-#electrodes = [3, 4, 5, 6]	#['avg'] #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
-#waveletImg = 0
-
-
 #### MUA PLOTTING ####
 MUA = 0				## bool (0 or 1) 
 MUApops = 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
@@ -342,8 +334,8 @@ if MUA:
 			plotMUA(dataFileFull, colorList, timeRange, pops=None)
 
 
-#### LFP PLOTTING ####
-lfpPopPlot = 1								## bool (0 or 1)
+#### LFP POP PLOTTING ####
+lfpPopPlot = 0								## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['spectrogram'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
@@ -367,25 +359,26 @@ if customLFPtimeSeries:
 
 
 
-#### Plot LFP or CSD or TRACES ##### 
-if CSD or traces:  # if LFP or 
-	fileNameFull = based + dataFiles[0]
-	sim.load(fileNameFull, instantiate=False) ## Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
+### WHAT TO PLOT --> LFP, CSD, SPIKING, TRACES ### 
+CSD = 0
+#traces = 1
+#waveletNum = 0 #1
+#electrodes = [3, 4, 5, 6]	#['avg'] #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
+#waveletImg = 0
 
 
-	# if LFP and not LFPPopContrib:
-	# 	sim.analysis.plotLFP(plots=['spectrogram'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-	# 	#sim.plotting.plotSpectrogram()
-	# elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
-	# 	LFPPops = list(allLFPData['LFPPops'].keys())
-	# 	for pop in LFPPops:
-	# 		sim.analysis.plotLFP(plots=['spectrogram'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+#### PLOT CSD or TRACES ##### 
+if CSD or traces:
+	for dataFile in dataFiles:
+		dataFileFull = based + dataFile
 
-	if CSD:
-		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+		sim.load(dataFileFull, instantiate=False) ## Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
 
-	if traces:
-		sim.analysis.plotTraces(timeRange = timeRange, oneFigPer='cell', overlay=True, saveFig=False, showFig=True)# include=[(pop, 0) for pop in L4pops],  #, figSize=(6,8))#figSize=(12,8))
+		if CSD:
+			sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+
+		# if traces:
+		# 	sim.analysis.plotTraces(timeRange = timeRange, overlay=True, saveFig=False, showFig=True, include=[(pop, 0) for pop in L4pops],  figSize=(6,8)) # oneFigPer='cell' #figSize=(12,8))
 
 
 
