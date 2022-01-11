@@ -56145,4 +56145,23 @@ Plotting LFP ...
     'TIM' 
     (<class 'KeyError'>, KeyError('TIM'), <traceback object at 0x7fcc8312f048>)
 >>> 
+*** Tried these lines for pop thalPop redundance:
+**** 	for pop in pops:
+		for thalPop in thalPops:
+			if pop == thalPop:
+				pops.remove(pop)
+				print('Removing thalamic population ' + str(pop))
+**** ERROR:
+ There was an exception in plotLFP(): 
+    'TCM' 
+    (<class 'KeyError'>, KeyError('TCM'), <traceback object at 0x7f8ce4167f08>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'IRE' 
+    (<class 'KeyError'>, KeyError('IRE'), <traceback object at 0x7f8ce4090a48>)
+Plotting LFP ...
+  There was an exception in plotLFP(): 
+    'TI' 
+    (<class 'KeyError'>, KeyError('TI'), <traceback object at 0x7f8ce4167f08>)
+>>> 
 *** 

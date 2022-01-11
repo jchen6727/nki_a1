@@ -109,11 +109,20 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	sim.load(dataFile, instantiate=False)
 
 	## Get cell populations:
-	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] 		## THESE MUST BE EXCLUDED! 
 	if pops is None or pops is 0:
 		pops = list(sim.net.allPops.keys())			# all populations! 
 		print('pops included, orig: ' + str(pops))		## PRINT TESTING LINE
-		
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] 		## THESE MUST BE EXCLUDED! 
+	for pop in pops:
+		for thalPop in thalPops:
+			if pop == thalPop:
+				pops.remove(pop)
+				print('Removing thalamic population ' + str(pop))
+
+		# if any(pop in pops for thalPop in thalPops):
+		# 	pops.remove(pop)
+		# 	print('Removing thalamic population ' + str(pop))
+
 
 
 	## timeRange
