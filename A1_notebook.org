@@ -55841,7 +55841,7 @@ from .lfp_orig import plotLFP
 ****** works!!!
 ***** [DONE] (3) Next try pop='E4'
 ****** works!!! 
-* <2022-01-10 Mon -- netpyne & lfp plotting for A1 fig>
+* <2022-01-10 Mon -- netpyne & lfp & mua plotting for A1 fig>
 ** Tested netpyne again to make sure -- appears to be working okay!
 *** on local machine, i'm on branch lfp 
 *** ^^ This is the development branch, but with changes to plotLFP in lfp.py and to __init__.py in analysis (imports lfp_orig.py as well as lfp) 
@@ -55948,4 +55948,172 @@ elif type(pops) is list:
 ** LFP Plotting lines in simDataAnalysis.py:
 *** Taking out this bool --> #LFPcellContrib = 0
 **** Currently isn't used
+*** Old testing lines (now commented out) --> 
+
+	#sim.load(dataFileFull, instantiate=False)
+	# if LFPpops:
+	# 	if type(LFPpops) is list:
+	# 		pops = LFPpops
+	# 	else:
+	# 		pops = list(sim.net.allPops.keys())
+
+	# for pop in pops:
+	# 	sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
+
+*** Made new function plotLFPPopsData()
+*** LFP testing lines --> now taken out:
+###
+
+	# for dataFile in dataFiles:
+	# 	dataFileFull = based + dataFile
+
+	# 	sim.load(dataFileFull, instantiate=False)
+
+
+	# 	if LFPpops:
+	# 		if type(LFPpops) is list:
+	# 			pops = LFPpops
+	# 		else:
+	# 			pops = list(sim.net.allPops.keys())
+
+	# 	for pop in pops:
+	# 		sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
+
+** LFP custom time series plotting:
+*** Turned this code into a function
+*** Removing these comments:
+#### Plot LFP Pops contribution: 
+### NOTE: right now in this code block I specify LFPPops for ease of example generating 
+### NOTE: I also specify fileName for fig 
+*** Removing old lines (pre-function) for custom LFP time series plotting:
+LFPPopContrib = customLFPPops
+electrodes = LFPelectrodes
+if LFPPopContrib:  ## <-- this basically plots the timeSeries for individual LFP pops if this data is recorded 
+	allLFPData = {}
+	allLFPData['LFPPops'] = {}
+
+	for fn in dataFiles:
+		fullPath = based + fn
+
+		sim.load(fullPath, instantiate=False)
+
+		# Create time lists 
+		fullTimeRange = [0, sim.cfg.duration]
+		t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
+		t_full = list(t_full)  # turn into a list so .index function can be used 
+
+		# NOTE: timeRange is declared earlier
+		t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+		t = list(t)
+
+		# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
+		beginIndex = t_full.index(timeRange[0])
+		endIndex = t_full.index(timeRange[-1])
+
+
+		## LFP contributions knitted together:
+		singleSimData = sim.allSimData
+		LFPPops = list(singleSimData['LFPPops'].keys())
+		for pop in LFPPops:
+			allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]
+
+
+
+	plt.figure(figsize=(6,8))
+
+	if type(LFPPopContrib) == list:
+		LFPPops = LFPPopContrib.copy()
+	else:
+		LFPPops = list(allLFPData['LFPPops'].keys())
+
+	print('LFP pops included --> ' + str(LFPPops))
+
+	if type(electrodes) is list:
+		for pop in LFPPops:
+			popColorNum = LFPPops.index(pop)
+			color = colorList[popColorNum%len(colorList)]
+			#print('pop: ' + str(pop) + ' color: ' + str(color))
+
+			lfp = np.array(allLFPData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+
+			data = {'lfp': lfp}  # returned data
+			ydisp = 0.01 #0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
+			offset = 1.0*ydisp
+
+
+			if filtFreq:
+				from scipy import signal
+				fs = 1000.0/sim.cfg.recordStep
+				nyquist = fs/2.0
+				filtOrder = 3
+				if isinstance(filtFreq, list): # bandpass
+					Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+					b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+				elif isinstance(filtFreq, Number): # lowpass
+					Wn = filtFreq/nyquist
+					b, a = signal.butter(filtOrder, Wn)
+				for i in range(lfp.shape[1]):
+					lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+
+
+			first = True ## for labeling purposes!! 
+			for i,elec in enumerate(electrodes):
+				if isinstance(elec, Number): 
+					lfpPlot = lfp[:, elec]
+					lw = 1.0
+
+				if first:
+					first = False
+					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, label=pop, color = color) #-lfpPlot+(i*ydisp) #color=color,
+				else:
+					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, color = color)
+
+				if len(electrodes) > 1:
+					plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, ha='center', va='top', fontweight='bold') # fontsize=fontSize, color=color,
+
+			ax = plt.gca()
+
+			data['lfpPlot'] = lfpPlot
+			data['ydisp'] =  ydisp
+			data['t'] = t
+
+		if len(electrodes) > 1:
+			plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', rotation=90) # fontSize=fontSize, 
+			plt.ylim(-offset, (len(electrodes))*ydisp)
+		else:
+			plt.suptitle('LFP Signal', fontweight='bold') #fontSize=fontSize, 
+
+		ax.invert_yaxis()
+		plt.xlabel('time (ms)') # fontsize=fontSize
+		plt.legend()
+		ax.spines['top'].set_visible(False)
+		ax.spines['right'].set_visible(False)
+		ax.spines['left'].set_visible(False)
+		ax.get_yaxis().set_visible(False)
+		plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
+
+
+		filename = based + 'try_this.png'
+		plt.savefig(filename,bbox_inches='tight')
+
+	elif electrodes is 'avg': # works as == 'avg' or is 'avg'  ### NEED TO CHANGE HOW THIS DISTINGUISHES BTWN AVG AND NUMBERED ELECTRODES!!
+		print('avg electrode plotting') ## PRINT TEST LINE 
+
+** Removing these old comments from top of the plotting section:
+# MUA = 0			## bool (0 or 1) 
+# MUApops = 0		## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
+
+# LFP = 0				## bool (0 or 1)
+# LFPpops = 0 #['IT2', 'IT3']	#0  	## bool OR list of pops --> e.g. ['IT2']
+
+# customLFP = 1	#['IT2']
+# LFPPopContrib = ['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
+# filtFreq = [13,30]
+# electrodes = [3, 4, 5, 6]
+* <2022-01-11 Tue -- plotting continued>
+** Continue cleaning up & expanding A1/analysis/simDataAnalysis.py
+** MUA: all set for now
+** LFP:
+*** Have to figure out exactly what I want to be bools, etc. hm. and how to structure what I call and when. hm. 
 *** 

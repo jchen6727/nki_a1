@@ -103,7 +103,7 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	### plots: list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 	### electrodes: list ---> e.g. ['avg'] <-- can this be combined / used with numbered electrodes??
 	### timeRange: list --> e.g. [start, stop]
-	### pops: list of populations to plot data for 
+	### pops: list of populations to plot data for  <-- if None, then plots for all populations recorded 
 
 	## Load sim data
 	sim.load(dataFile, instantiate=False)
@@ -120,6 +120,117 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	for pop in pops:
 		for plot in plots:
 			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes) ### fix / clean up 'avg' situation!
+
+
+def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], showFig=1, saveFig=0, figsize=None, timeRange=None, pops=None):
+	### dataFile: str
+	### colorList: list
+	### filtFreq: list 
+	### electrodes: list 
+	### showFig: bool
+	### saveFig: bool
+	### figsize: e.g. (6,8)
+	### timeRange: list --> e.g. [start, stop]
+	### pops: list 
+
+
+	## Load sim data
+	sim.load(dataFile, instantiate=False)
+
+	## Timepoints 
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
+	t = list(t)
+
+	## LFP populations to include!
+	if pops is None:
+		pops = list(sim.allSimData['LFPPops'].keys())	# all pops with LFP data recorded! 
+	print('LFP pops included --> ' + str(pops))
+
+	## figure size 
+	if figsize is None:
+		figsize = (6,8)
+
+	plt.figure(figsize=figsize)
+
+	if electrodes == ['avg']:
+		print('averaged electrodes -- STILL HAVE TO DEVELOP THIS CODE; OR USE OTHER LFP PLOTTING FUNCTION')
+	else:  ## THIS IS IF ELECTRODES IS A LIST OF INTS 
+		for pop in pops:
+			popColorNum = pops.index(pop)
+			color = colorList[popColorNum%len(colorList)]
+			#print('pop: ' + str(pop) + ' color: ' + str(color))
+
+			lfp = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+			data = {'lfp': lfp}  # returned data
+			ydisp = 0.01 #0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
+			offset = 1.0*ydisp
+
+
+			if filtFreq:
+				from scipy import signal
+				fs = 1000.0/sim.cfg.recordStep
+				nyquist = fs/2.0
+				filtOrder = 3
+				if isinstance(filtFreq, list): # bandpass
+					Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+					b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+				elif isinstance(filtFreq, Number): # lowpass
+					Wn = filtFreq/nyquist
+					b, a = signal.butter(filtOrder, Wn)
+				for i in range(lfp.shape[1]):
+					lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+
+
+			first = True ## for labeling purposes!! 
+			for i,elec in enumerate(electrodes):
+				if isinstance(elec, Number): 
+					lfpPlot = lfp[:, elec]
+					lw = 1.0
+
+				if first:
+					first = False
+					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, label=pop, color = color) #-lfpPlot+(i*ydisp) #color=color,
+				else:
+					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, color = color)
+
+				if len(electrodes) > 1:
+					plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, ha='center', va='top', fontweight='bold') # fontsize=fontSize, color=color,
+
+			ax = plt.gca()
+
+			data['lfpPlot'] = lfpPlot
+			data['ydisp'] =  ydisp
+			data['t'] = t
+
+		if len(electrodes) > 1:
+			plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', rotation=90) # fontSize=fontSize, 
+			plt.ylim(-offset, (len(electrodes))*ydisp)
+		else:
+			plt.suptitle('LFP Signal', fontweight='bold') #fontSize=fontSize, 
+
+		ax.invert_yaxis()
+		plt.xlabel('time (ms)') # fontsize=fontSize
+		plt.legend()
+		ax.spines['top'].set_visible(False)
+		ax.spines['right'].set_visible(False)
+		ax.spines['left'].set_visible(False)
+		ax.get_yaxis().set_visible(False)
+		plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
+
+
+		filename = 'try_this.png'
+		if showFig:
+			plt.show()
+		if saveFig:
+			plt.savefig(filename,bbox_inches='tight')
+
+
+
+
+
 
 
 ### USEFUL VARIABLES ### 
@@ -196,7 +307,7 @@ else:
 
 
 ######### SET TIME RANGE 	!!
-timeRange = [300,500] #[175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
+timeRange = [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
 
 
 
@@ -206,26 +317,17 @@ timeRange = [300,500] #[175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT 
 ########################
 
 ### WHAT TO PLOT --> LFP, CSD, SPIKING, TRACES ### 
-MUA = 0			## bool (0 or 1) 
-MUApops = 0		## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
-
-
-LFP = 1				## bool (0 or 1)
-LFPpops = ['IT2', 'IT3']	#0  	## bool OR list of pops --> e.g. ['IT2']
-
-
-LFPPopContrib = 0 #['IT2']	# 0 #['ITP4', 'ITS4']	#ECortPops.copy() #['ITP4', 'ITS4']	#1			## Can be '1', '0', OR list of pops! 
-filtFreq = 0 #[13,30]
-
-
 CSD = 0
 traces = 0
 #waveletNum = 0 #1
-electrodes = ['avg']	#[3, 4, 5, 6]	#'avg' #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
+#electrodes = [3, 4, 5, 6]	#['avg'] #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
 #waveletImg = 0
 
 
-## SPIKING MUA 
+#### MUA PLOTTING ####
+MUA = 0				## bool (0 or 1) 
+MUApops = 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
+
 if MUA: 
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
@@ -236,175 +338,44 @@ if MUA:
 			plotMUA(dataFileFull, colorList, timeRange, pops=None)
 
 
-## LFP DATA
+#### LFP PLOTTING ####
+lfpPopPlot = 1								## bool (0 or 1)
+lfpPops = 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+plots = ['spectrogram'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+LFPelectrodes = [3, 4, 5, 6]
 
-if LFP:
-	plots = ['spectrogram', 'timeSeries']
+if lfpPopPlot:
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
-		plotLFPPopsData(dataFileFull, plots, electrodes=['avg'], timeRange=timeRange, pops=LFPpops)
+		plotLFPPopsData(dataFileFull, plots, electrodes=['avg'], timeRange=timeRange, pops=lfpPops)
 
 
-	#sim.load(dataFileFull, instantiate=False)
-	# if LFPpops:
-	# 	if type(LFPpops) is list:
-	# 		pops = LFPpops
-	# 	else:
-	# 		pops = list(sim.net.allPops.keys())
+#### LFP CUSTOM TIME SERIES PLOTTING ####
+customLFPtimeSeries = 0						## bool (0 or 1)
+customLFPPops = ['ITP4', 'ITS4']	## list or bool (0)
+filtFreq = [13,30]
+customLFPelectrodes = [3, 4, 5, 6]
 
-	# for pop in pops:
-	# 	sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
-
-###
-
-	# for dataFile in dataFiles:
-	# 	dataFileFull = based + dataFile
-
-	# 	sim.load(dataFileFull, instantiate=False)
-
-
-	# 	if LFPpops:
-	# 		if type(LFPpops) is list:
-	# 			pops = LFPpops
-	# 		else:
-	# 			pops = list(sim.net.allPops.keys())
-
-	# 	for pop in pops:
-	# 		sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=['spectrogram'], electrodes=['avg'])
-
-
-
-#### Plot LFP Pops contribution: 
-### NOTE: right now in this code block I specify LFPPops for ease of example generating 
-### NOTE: I also specify fileName for fig 
-if LFPPopContrib:  ## <-- this basically plots the timeSeries for individual LFP pops if this data is recorded 
-	allLFPData = {}
-	allLFPData['LFPPops'] = {}
-
-	for fn in dataFiles:
-		fullPath = based + fn
-
-		sim.load(fullPath, instantiate=False)
-
-		# Create time lists 
-		fullTimeRange = [0, sim.cfg.duration]
-		t_full = np.arange(fullTimeRange[0], fullTimeRange[1], sim.cfg.recordStep)
-		t_full = list(t_full)  # turn into a list so .index function can be used 
-
-		# NOTE: timeRange is declared earlier
-		t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)  ## make an array w/ these time points
-		t = list(t)
-
-		# Find the indices of the timeRange within the full range, to correspond to the desired segment of LFP data
-		beginIndex = t_full.index(timeRange[0])
-		endIndex = t_full.index(timeRange[-1])
-
-
-		## LFP contributions knitted together:
-		singleSimData = sim.allSimData
-		LFPPops = list(singleSimData['LFPPops'].keys())
-		for pop in LFPPops:
-			allLFPData['LFPPops'][pop] = singleSimData['LFPPops'][pop]
-
-
-
-	plt.figure(figsize=(6,8))
-
-	if type(LFPPopContrib) == list:
-		LFPPops = LFPPopContrib.copy()
-	else:
-		LFPPops = list(allLFPData['LFPPops'].keys())
-
-	print('LFP pops included --> ' + str(LFPPops))
-
-	if type(electrodes) is list:
-		for pop in LFPPops:
-			popColorNum = LFPPops.index(pop)
-			color = colorList[popColorNum%len(colorList)]
-			#print('pop: ' + str(pop) + ' color: ' + str(color))
-
-			lfp = np.array(allLFPData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-
-
-			data = {'lfp': lfp}  # returned data
-			ydisp = 0.01 #0.02 #0.0025 #np.absolute(lfp).max() * 1.0 ## (1.0 --> separation)
-			offset = 1.0*ydisp
-
-
-			if filtFreq:
-				from scipy import signal
-				fs = 1000.0/sim.cfg.recordStep
-				nyquist = fs/2.0
-				filtOrder = 3
-				if isinstance(filtFreq, list): # bandpass
-					Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-					b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-				elif isinstance(filtFreq, Number): # lowpass
-					Wn = filtFreq/nyquist
-					b, a = signal.butter(filtOrder, Wn)
-				for i in range(lfp.shape[1]):
-					lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
-
-
-
-			first = True ## for labeling purposes!! 
-			for i,elec in enumerate(electrodes):
-				if isinstance(elec, Number): 
-					lfpPlot = lfp[:, elec]
-					lw = 1.0
-
-				if first:
-					first = False
-					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, label=pop, color = color) #-lfpPlot+(i*ydisp) #color=color,
-				else:
-					plt.plot(t, -lfpPlot+(i*ydisp),  linewidth=lw, color = color)
-
-				if len(electrodes) > 1:
-					plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, ha='center', va='top', fontweight='bold') # fontsize=fontSize, color=color,
-
-			ax = plt.gca()
-
-			data['lfpPlot'] = lfpPlot
-			data['ydisp'] =  ydisp
-			data['t'] = t
-
-		if len(electrodes) > 1:
-			plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', rotation=90) # fontSize=fontSize, 
-			plt.ylim(-offset, (len(electrodes))*ydisp)
-		else:
-			plt.suptitle('LFP Signal', fontweight='bold') #fontSize=fontSize, 
-
-		ax.invert_yaxis()
-		plt.xlabel('time (ms)') # fontsize=fontSize
-		plt.legend()
-		ax.spines['top'].set_visible(False)
-		ax.spines['right'].set_visible(False)
-		ax.spines['left'].set_visible(False)
-		ax.get_yaxis().set_visible(False)
-		plt.subplots_adjust(hspace=0.2)#bottom=0.1, top=1.0, right=1.0) # top = 1.0
-
-
-		filename = based + 'try_this.png'
-		plt.savefig(filename,bbox_inches='tight')
-
-	elif electrodes is 'avg': # works as == 'avg' or is 'avg'  ### NEED TO CHANGE HOW THIS DISTINGUISHES BTWN AVG AND NUMBERED ELECTRODES!!
-		print('avg electrode plotting') ## PRINT TEST LINE 
+if customLFPtimeSeries:
+	for dataFile in dataFiles:
+		dataFileFull = based + dataFile
+		plotCustomLFPTimeSeries(dataFileFull, colorList, filtFreq=filtFreq, electrodes=customLFPelectrodes, timeRange=timeRange, pops=customLFPPops) # showFig=1, saveFig=0, figsize=None 
 
 
 
 #### Plot LFP or CSD or TRACES ##### 
-if LFP or CSD or traces:
+if CSD or traces:  # if LFP or 
 	fileNameFull = based + dataFiles[0]
 	sim.load(fileNameFull, instantiate=False) ## Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
 
 
-	if LFP and not LFPPopContrib:
-		sim.analysis.plotLFP(plots=['spectrogram'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
-		#sim.plotting.plotSpectrogram()
-	elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
-		LFPPops = list(allLFPData['LFPPops'].keys())
-		for pop in LFPPops:
-			sim.analysis.plotLFP(plots=['spectrogram'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	# if LFP and not LFPPopContrib:
+	# 	sim.analysis.plotLFP(plots=['spectrogram'],filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange) #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
+	# 	#sim.plotting.plotSpectrogram()
+	# elif LFP and LFPPopContrib:  ## maybe change this? sorta strange; at least needs labels for which pop I'm looking at. 
+	# 	LFPPops = list(allLFPData['LFPPops'].keys())
+	# 	for pop in LFPPops:
+	# 		sim.analysis.plotLFP(plots=['spectrogram'],pop=pop,filtFreq = filtFreq,normSignal=True,electrodes=electrodes,showFig=True, timeRange=timeRange), #figSize=(5,5)) # electrodes=[2,6,11,13] # saveFig=figname, saveFig=True, plots=['PSD', 'spectrogram']
 
 	if CSD:
 		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layerLines=1, layerBounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
