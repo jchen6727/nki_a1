@@ -359,12 +359,9 @@ if customLFPtimeSeries:
 
 
 
-### WHAT TO PLOT --> LFP, CSD, SPIKING, TRACES ### 
-CSD = 0
-#traces = 1
-#waveletNum = 0 #1
-#electrodes = [3, 4, 5, 6]	#['avg'] #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
-#waveletImg = 0
+### CSD, TRACES ### 
+CSD = 0  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
+#traces = 1 	### <-- NOT WORKING RIGHT NOW !!
 
 
 #### PLOT CSD or TRACES ##### 
@@ -372,7 +369,7 @@ if CSD or traces:
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
 
-		sim.load(dataFileFull, instantiate=False) ## Doesn't matter which file was last to load for sim in this case --> should all be the same except for subsets of LFP cell contrib saved 
+		sim.load(dataFileFull, instantiate=False) 
 
 		if CSD:
 			sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
