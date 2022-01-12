@@ -335,6 +335,17 @@ elif gamma:
 ####### PLOTTING #######
 ########################
 
+
+#### LFP POP PLOTTING ####
+lfpPopPlot = 1									## bool (0 or 1)
+lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+
+if lfpPopPlot:
+	plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
+
+
 #### MUA PLOTTING ####
 MUA = 0				## bool (0 or 1) 
 MUApops = 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
@@ -347,19 +358,8 @@ if MUA:
 
 
 
-#### LFP POP PLOTTING ####
-lfpPopPlot = 0									## bool (0 or 1)
-lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
-lfpElectrodes = ['avg'] # [3, 4, 5, 6]
-
-if lfpPopPlot:
-	plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
-
-
-
 #### LFP CUSTOM TIME SERIES PLOTTING ####
-customLFPtimeSeries = 1						## bool (0 or 1)
+customLFPtimeSeries = 0						## bool (0 or 1)
 customLFPPops = ['ITP4', 'ITS4']	## list or bool (0)
 filtFreq = [13,30]
 customLFPelectrodes = [3, 4, 5, 6]

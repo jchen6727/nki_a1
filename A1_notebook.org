@@ -56407,3 +56407,6 @@ elif gamma:
 	# 		plotMUA(dataFileFull, colorList, timeRange, pops=MUApops)
 	# 	else:
 	# 		plotMUA(dataFileFull, colorList, timeRange, pops=None)
+** LFP orig changes --> 
+*** Need to make title that includes the population !!
+*** Need to change figure size 
