@@ -299,6 +299,10 @@ if local:
 test = 1								# if using testFiles (1) 		# if using all data files (0)
 
 testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']					# Data file(s) to use 
+## batch57_3_4 --> batch65 0_0 --> DELTA
+## batch57_3_2 --> batch65 1_1 --> BETA, ALPHA
+## batch57_3_3 --> batch65 2_2 --> THETA 
+
 
 if test:
 	dataFiles = testFiles
@@ -307,8 +311,8 @@ else:
 
 
 ######### SET TIME RANGE 	!!
-timeRange = [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
-
+timeRange = [1480, 2520] # [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
+## DELTA: 1484.9 - 2512.2 ms 
 
 
 
@@ -333,7 +337,7 @@ if MUA:
 
 
 #### LFP POP PLOTTING ####
-lfpPopPlot = 1								## bool (0 or 1)
+lfpPopPlot = 1									## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]

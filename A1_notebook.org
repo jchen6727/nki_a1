@@ -56247,4 +56247,30 @@ redundant pop: TIM
 	#### plotMUA FUNCTION STILL NOT WORKING WELL FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
 	
 * <2022-01-12 Wed -- lfp plotting>
-** so now I can get lfp spectrogram to plot 
+** so now I can get lfp spectrogram and timeSeries to plot correctly --
+** Pick a wavelet! 
+*** sims:
+**** gamma sim: v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423
+**** beta sim: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710
+**** alpha sim: v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863
+**** theta sim: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+**** delta sim: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
+*** batch57 to batch65 matches:
+**** ^^ batch57_3_4 --> batch65 0_0 --> [DELTA]
+**** ^^ batch57_3_2 --> batch65 1_1 --> [BETA, ALPHA]
+**** ^^ batch57_3_3 --> batch65 2_2 --> [THETA]
+**** no batch57_4_4 equivalent I don't think? Check with salva later just in case. 
+*** sims in order of preference:
+**** (1) delta sim: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
+**** (2) gamma sim: v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423
+**** (3) beta sim: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710
+**** (4) alpha sim: v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863
+**** (5) theta sim: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+*** So --> start with delta wavelet! 
+**** delta sim: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
+****  Wavelet info for index 1666: 
+   absminT: 1484.9123743729062
+   absmaxT: 2512.2209353489225
+   absPeakT: 2024.8168736145603
+   absWaveletPeakT: 1926.1
+
