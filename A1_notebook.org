@@ -56262,10 +56262,30 @@ redundant pop: TIM
 **** no batch57_4_4 equivalent I don't think? Check with salva later just in case. 
 *** sims in order of preference:
 **** (1) delta sim: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
+Wavelet info for index 1666: 
+   absminT: 1484.9123743729062
+   absmaxT: 2512.2209353489225
+   absPeakT: 2024.8168736145603
+   absWaveletPeakT: 1926.1
 **** (2) gamma sim: v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423
 **** (3) beta sim: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710
+ Wavelet info for index 1710: 
+   absminT: 455.80379839663993
+   absmaxT: 571.4047617460291
+   absPeakT: 513.2542771546192
+   absWaveletPeakT: 505.3
 **** (4) alpha sim: v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863
+ Wavelet info for index 863: 
+   absminT: 3111.0311106222125
+   absmaxT: 3324.733247664953
+   absPeakT: 3213.582136142723
+   absWaveletPeakT: 3206.25
 **** (5) theta sim: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+ Wavelet info for index 973: 
+   absminT: 2785.22321038684
+   absmaxT: 3347.9278996316607
+   absPeakT: 3097.1758100135003
+   absWaveletPeakT: 3086.95
 *** So --> start with delta wavelet! 
 **** delta sim: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
 ****  Wavelet info for index 1666: 

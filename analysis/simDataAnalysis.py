@@ -313,6 +313,9 @@ else:
 ######### SET TIME RANGE 	!!
 timeRange = [1480, 2520] # [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
 ## DELTA: 1484.9 - 2512.2 ms 
+## BETA: 455.8 - 571.4 ms
+## ALPHA: 3111.0 - 3324.7 ms 
+## THETA: 2785.2 - 3347.9 ms 
 
 
 
