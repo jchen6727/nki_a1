@@ -22,6 +22,20 @@ from numbers import Number
 
 ### FUNCTIONS ####
 
+def getWaveletInfo(freqBand): 
+	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
+
+	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
+	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
+	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
+	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+
+	timeRange = waveletInfo[freqBand]['timeRange']
+	dataFile = waveletInfo[freqBand]['dataFile']
+
+	return timeRange, dataFile
+
+
 def getDataFiles(based):
 	### based: str ("base directory")
 	### returns list of .pkl files --> allDataFiles
@@ -284,9 +298,9 @@ colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.
             [0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
 
 
-#####################
-#### DATA FILES #####
-#####################
+#############################################
+#### DATA FILES -- SET BOOLEANS HERE !! #####
+#############################################
 
 ######### SET LOCAL BOOL	!!
 local = 1								# if using local machine (1) 	# if using neurosim or other (0)
@@ -295,27 +309,23 @@ if local:
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 
-######### SET TEST BOOL		!!
-test = 1								# if using testFiles (1) 		# if using all data files (0)
+######### SET WAVELET TO LOOK AT		!!
+delta = 1
+beta = 	0
+alpha = 0
+theta = 0
+gamma = 0 
 
-testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']					# Data file(s) to use 
-## batch57_3_4 --> batch65 0_0 --> DELTA
-## batch57_3_2 --> batch65 1_1 --> BETA, ALPHA
-## batch57_3_3 --> batch65 2_2 --> THETA 
-
-
-if test:
-	dataFiles = testFiles
-else:
-	dataFiles = getDataFiles(based)		# get all .pkl data filenames
-
-
-######### SET TIME RANGE 	!!
-timeRange = [1480, 2520] # [175, 350]					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET??
-## DELTA: 1484.9 - 2512.2 ms 
-## BETA: 455.8 - 571.4 ms
-## ALPHA: 3111.0 - 3324.7 ms 
-## THETA: 2785.2 - 3347.9 ms 
+if delta:
+	timeRange, dataFile = getWaveletInfo('delta')
+elif beta:
+	timeRange, dataFile = getWaveletInfo('beta')
+elif alpha:
+	timeRange, dataFile = getWaveletInfo('alpha')
+elif theta:
+	timeRange, dataFile = getWaveletInfo('theta')
+elif gamma:
+	print('Cannot analyze gamma wavelet at this time')
 
 
 
@@ -335,7 +345,6 @@ if MUA:
 			plotMUA(dataFileFull, colorList, timeRange, pops=MUApops)
 		else:
 			plotMUA(dataFileFull, colorList, timeRange, pops=None)
-
 
 
 

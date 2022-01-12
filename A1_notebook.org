@@ -56275,11 +56275,12 @@ Wavelet info for index 1666:
    absPeakT: 513.2542771546192
    absWaveletPeakT: 505.3
 **** (4) alpha sim: v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863
- Wavelet info for index 863: 
+*****  Wavelet info for index 863: 
    absminT: 3111.0311106222125
    absmaxT: 3324.733247664953
    absPeakT: 3213.582136142723
    absWaveletPeakT: 3206.25
+***** ^^ NOTE FOR ABOVE: this is in timeRange 6_11 so this might be the ms added to 6000ms, keep this in mind!! 
 **** (5) theta sim: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
  Wavelet info for index 973: 
    absminT: 2785.22321038684
@@ -56293,4 +56294,73 @@ Wavelet info for index 1666:
    absmaxT: 2512.2209353489225
    absPeakT: 2024.8168736145603
    absWaveletPeakT: 1926.1
+
+** Changing up wavelet timerange and file code in simDataAnalysis.py:
+*** Taking out these test lines in favor of wavelet-specific info:
+# test = 1								# if using testFiles (1) 		# if using all data files (0)
+
+# testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']					# Data file(s) to use 
+
+# if test:
+# 	dataFiles = testFiles
+# else:
+# 	dataFiles = getDataFiles(based)		# get all .pkl data filenames
+*** Taking out these trial timeRange lines:
+# if delta:
+# 	timeRange = [1480, 2520] 					# AT SOME POINT MAKE THIS A FUNCTION THAT EXTRACTS THIS FROM THE WAVELET TXT FILE??
+# elif beta:
+# 	timeRange = [456, 572]
+# elif alpha:
+# 	timeRange = [3111, 3325] 	# may need to add 6000 ms to these values! 
+# elif theta:
+# 	timeRange = [2785, 3350]
+*** Taking out this section subheader bc it no longer is separate from file loading:
+######### SET TIME RANGE 	!!
+*** Made new waveletInfo dict:
+waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]}, /
+'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, /
+'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, /
+'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+*** Made a function getWaveletInfo, which renders these lines unnecessary now!: 
+deltaFile = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']
+betaFile = 	['A1_v34_batch65_v34_batch65_1_1_data.pkl']
+alphaFile = ['A1_v34_batch65_v34_batch65_1_1_data.pkl']
+thetaFile = ['A1_v34_batch65_v34_batch65_2_2_data.pkl']
+## batch57_3_4 --> batch65 0_0 --> DELTA
+## batch57_3_2 --> batch65 1_1 --> BETA, ALPHA
+## batch57_3_3 --> batch65 2_2 --> THETA 
+
+deltaTimeRange = [1480, 2520]
+betaTimeRange = [456, 572]
+alphaTimeRange = [3111, 3325]		# may need to add 6000 ms to these values! 
+thetaTimeRange = [2785, 3350]
+## DELTA: 1484.9 - 2512.2 ms 
+## BETA: 455.8 - 571.4 ms
+## ALPHA: 3111.0 - 3324.7 ms  ** [may need to add 6000 ms to these values!!]
+## THETA: 2785.2 - 3347.9 ms 
+
+
+# waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]}, /
+# 'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, /
+# 'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, /
+# 'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+*** New getWaveletInfo function:
+*** New lines for setting up wavelet to look at:
+######### SET WAVELET TO LOOK AT		!!
+delta = 1
+beta = 	0
+alpha = 0
+theta = 0
+gamma = 0 
+
+if delta:
+	timeRange, dataFile = getWaveletInfo('delta')
+elif beta:
+	timeRange, dataFile = getWaveletInfo('beta')
+elif alpha:
+	timeRange, dataFile = getWaveletInfo('alpha')
+elif theta:
+	timeRange, dataFile = getWaveletInfo('theta')
+elif gamma:
+	print('Cannot analyze gamma wavelet at this time')
 
