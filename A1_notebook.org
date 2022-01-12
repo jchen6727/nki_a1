@@ -56239,3 +56239,12 @@ redundant pop: TIM
 #waveletNum = 0 # 1
 #electrodes = [3, 4, 5, 6]	#['avg'] #		# list of electrodes, or 'all', or 'avg' <-- NOTE: make sure 'all' and 'avg' both work as expected!!! 
 #waveletImg = 0
+** MUA:
+*** Took out these comments re: args inside def plotMUA():
+### DEPRECATED -- based: str ("base directory"); path to data files
+### DEPRECATED -- dataFiles: list of data files 
+*** Added this comment to inside of def plotMUA instead of above:
+	#### plotMUA FUNCTION STILL NOT WORKING WELL FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
+	
+* <2022-01-12 Wed -- lfp plotting>
+** so now I can get lfp spectrogram to plot 

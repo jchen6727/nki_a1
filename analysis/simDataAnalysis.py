@@ -34,10 +34,8 @@ def getDataFiles(based):
 	return allDataFiles 
 
 
-#### THIS FUNCTION STILL NOT WORKING THE BEST FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
 def plotMUA(dataFile, colorList, timeRange=None, pops=None):
-	### DEPRECATED -- based: str ("base directory"); path to data files
-	### DEPRECATED -- dataFiles: list of data files 
+	#### plotMUA FUNCTION STILL NOT WORKING WELL FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
 	### timeRange: list --> e.g. [start, stop]
 	### pops: list --> e.g. ['IT2', 'NGF3']
@@ -235,8 +233,6 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 
 
 
-
-
 ### USEFUL VARIABLES ### 
 ## set layer bounds:
 layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
@@ -301,8 +297,8 @@ if local:
 
 ######### SET TEST BOOL		!!
 test = 1								# if using testFiles (1) 		# if using all data files (0)
-## Data files to use 
-testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']
+
+testFiles = ['A1_v34_batch65_v34_batch65_0_0_data.pkl']					# Data file(s) to use 
 
 if test:
 	dataFiles = testFiles
@@ -334,16 +330,20 @@ if MUA:
 			plotMUA(dataFileFull, colorList, timeRange, pops=None)
 
 
+
+
 #### LFP POP PLOTTING ####
-lfpPopPlot = 0								## bool (0 or 1)
+lfpPopPlot = 1								## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['spectrogram'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 
 if lfpPopPlot:
 	for dataFile in dataFiles:
 		dataFileFull = based + dataFile
 		plotLFPPopsData(dataFileFull, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
+
+
 
 
 #### LFP CUSTOM TIME SERIES PLOTTING ####
@@ -361,7 +361,7 @@ if customLFPtimeSeries:
 
 ### CSD, TRACES ### 
 CSD = 0  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
-#traces = 1 	### <-- NOT WORKING RIGHT NOW !!
+traces = 0 	### <-- NOT WORKING RIGHT NOW !!
 
 
 #### PLOT CSD or TRACES ##### 
@@ -376,7 +376,6 @@ if CSD or traces:
 
 		# if traces:
 		# 	sim.analysis.plotTraces(timeRange = timeRange, overlay=True, saveFig=False, showFig=True, include=[(pop, 0) for pop in L4pops],  figSize=(6,8)) # oneFigPer='cell' #figSize=(12,8))
-
 
 
 
