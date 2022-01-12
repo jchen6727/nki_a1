@@ -22,8 +22,9 @@ from numbers import Number
 
 ### FUNCTIONS ####
 
-def getWaveletInfo(freqBand): 
+def getWaveletInfo(freqBand, based): 
 	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
+	## based: str --> path to directory with the .pkl data files 
 
 	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
 	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
@@ -31,7 +32,8 @@ def getWaveletInfo(freqBand):
 	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
 
 	timeRange = waveletInfo[freqBand]['timeRange']
-	dataFile = waveletInfo[freqBand]['dataFile']
+	dataFileNoPath = waveletInfo[freqBand]['dataFile']
+	dataFile = based + dataFileNoPath
 
 	return timeRange, dataFile
 
@@ -317,13 +319,13 @@ theta = 0
 gamma = 0 
 
 if delta:
-	timeRange, dataFile = getWaveletInfo('delta')
+	timeRange, dataFile = getWaveletInfo('delta', based)
 elif beta:
-	timeRange, dataFile = getWaveletInfo('beta')
+	timeRange, dataFile = getWaveletInfo('beta', based)
 elif alpha:
-	timeRange, dataFile = getWaveletInfo('alpha')
+	timeRange, dataFile = getWaveletInfo('alpha', based)
 elif theta:
-	timeRange, dataFile = getWaveletInfo('theta')
+	timeRange, dataFile = getWaveletInfo('theta', based)
 elif gamma:
 	print('Cannot analyze gamma wavelet at this time')
 
@@ -349,7 +351,7 @@ if MUA:
 
 
 #### LFP POP PLOTTING ####
-lfpPopPlot = 1									## bool (0 or 1)
+lfpPopPlot = 0									## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
