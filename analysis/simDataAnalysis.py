@@ -340,13 +340,10 @@ MUA = 0				## bool (0 or 1)
 MUApops = 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
 
 if MUA: 
-	for dataFile in dataFiles:
-		dataFileFull = based + dataFile
-
-		if MUApops:
-			plotMUA(dataFileFull, colorList, timeRange, pops=MUApops)
-		else:
-			plotMUA(dataFileFull, colorList, timeRange, pops=None)
+	if MUApops:
+		plotMUA(dataFile, colorList, timeRange, pops=MUApops)
+	else:
+		plotMUA(dataFile, colorList, timeRange, pops=None)
 
 
 
@@ -357,44 +354,30 @@ plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 
 if lfpPopPlot:
-	for dataFile in dataFiles:
-		dataFileFull = based + dataFile
-		plotLFPPopsData(dataFileFull, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
-
+	plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
 
 
 
 #### LFP CUSTOM TIME SERIES PLOTTING ####
-customLFPtimeSeries = 0						## bool (0 or 1)
+customLFPtimeSeries = 1						## bool (0 or 1)
 customLFPPops = ['ITP4', 'ITS4']	## list or bool (0)
 filtFreq = [13,30]
 customLFPelectrodes = [3, 4, 5, 6]
 
 if customLFPtimeSeries:
-	for dataFile in dataFiles:
-		dataFileFull = based + dataFile
-		plotCustomLFPTimeSeries(dataFileFull, colorList, filtFreq=filtFreq, electrodes=customLFPelectrodes, timeRange=timeRange, pops=customLFPPops) # showFig=1, saveFig=0, figsize=None 
+	plotCustomLFPTimeSeries(dataFile, colorList, filtFreq=filtFreq, electrodes=customLFPelectrodes, timeRange=timeRange, pops=customLFPPops) # showFig=1, saveFig=0, figsize=None 
 
 
 
 ### CSD, TRACES ### 
-CSD = 0  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
-traces = 0 	### <-- NOT WORKING RIGHT NOW !!
+CSD = 1  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
+# traces = 0 	### <-- NOT WORKING RIGHT NOW !!
 
 
 #### PLOT CSD or TRACES ##### 
-if CSD or traces:
-	for dataFile in dataFiles:
-		dataFileFull = based + dataFile
-
-		sim.load(dataFileFull, instantiate=False) 
-
-		if CSD:
-			sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
-
-		# if traces:
-		# 	sim.analysis.plotTraces(timeRange = timeRange, overlay=True, saveFig=False, showFig=True, include=[(pop, 0) for pop in L4pops],  figSize=(6,8)) # oneFigPer='cell' #figSize=(12,8))
-
+if CSD:  
+	sim.load(dataFile, instantiate=False) 
+	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds=layerBounds, saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 
 
 # ----------------------------------------------------------------------------------------------

@@ -56345,6 +56345,21 @@ thetaTimeRange = [2785, 3350]
 # 'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, /
 # 'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
 *** New getWaveletInfo function:
+def getWaveletInfo(freqBand, based): 
+	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
+	## based: str --> path to directory with the .pkl data files 
+
+	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
+	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
+	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
+	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+
+	timeRange = waveletInfo[freqBand]['timeRange']
+	dataFileNoPath = waveletInfo[freqBand]['dataFile']
+	dataFile = based + dataFileNoPath
+
+	return timeRange, dataFile
+
 *** New lines for setting up wavelet to look at:
 ######### SET WAVELET TO LOOK AT		!!
 delta = 1
@@ -56364,3 +56379,31 @@ elif theta:
 elif gamma:
 	print('Cannot analyze gamma wavelet at this time')
 
+*** Now changed plotting lines to reflect this new function & wavelet info:
+**** Taking out these lines from CSD section:
+	# for dataFile in dataFiles:
+	# 	dataFileFull = based + dataFile
+
+	# 	sim.load(dataFileFull, instantiate=False) 
+
+	# 	if CSD:
+	# 		sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds = layerBounds,saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+
+		# if traces:
+		# 	sim.analysis.plotTraces(timeRange = timeRange, overlay=True, saveFig=False, showFig=True, include=[(pop, 0) for pop in L4pops],  figSize=(6,8)) # oneFigPer='cell' #figSize=(12,8))
+**** Taking out these lines from custom LFP timeSeries section:
+	# for dataFile in dataFiles:
+	# 	dataFileFull = based + dataFile
+	# 	plotCustomLFPTimeSeries(dataFileFull, colorList, filtFreq=filtFreq, electrodes=customLFPelectrodes, timeRange=timeRange, pops=customLFPPops) # showFig=1, saveFig=0, figsize=None 
+**** Taking out these lines from lfp pop plotting section:
+	# for dataFile in dataFiles:
+	# 	dataFileFull = based + dataFile
+	# 	plotLFPPopsData(dataFileFull, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
+**** Taking out these lines from MUA plotting:
+	# for dataFile in dataFiles:
+	# 	dataFileFull = based + dataFile
+
+	# 	if MUApops:
+	# 		plotMUA(dataFileFull, colorList, timeRange, pops=MUApops)
+	# 	else:
+	# 		plotMUA(dataFileFull, colorList, timeRange, pops=None)
