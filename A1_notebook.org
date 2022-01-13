@@ -56579,3 +56579,4 @@ sim.analysis.plotSpikeHist(histData=histData)
 **** plotSpikeHistORIG --> 
 ***** trying include=['eachPop'] --> not sure what ['eachPop', 'allCells'] the 'allCells' portion of this argument does? look in code. ah. okay maybe try --> 
 ***** ^^ trying --> include=[spikePops, 'allCells'] 
+** Might want to reconfigure this script such that it goes through the pops first, and not the plotting types, hm. --> maybe not; only would really work for some of the plots. 

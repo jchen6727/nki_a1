@@ -312,8 +312,8 @@ if local:
 
 
 ######### SET WAVELET TO LOOK AT		!!
-delta = 1
-beta = 	0
+delta = 0
+beta = 	1
 alpha = 0
 theta = 0
 gamma = 0 
@@ -323,7 +323,7 @@ if delta:
 elif beta:
 	timeRange, dataFile = getWaveletInfo('beta', based)
 elif alpha:
-	timeRange, dataFile = getWaveletInfo('alpha', based)
+	timeRange, dataFile = getWaveletInfo('alpha', based) ## recall timeRange issue (see nb)
 elif theta:
 	timeRange, dataFile = getWaveletInfo('theta', based)
 elif gamma:
@@ -335,10 +335,11 @@ elif gamma:
 ####### PLOTTING #######
 ########################
 
+## Turn the population lists into a supra-list that gets set above all these plotting options
 
 #### SPIKE DATA PLOTTING #### 
-spikePlotHist = 1						## bool (0 or 1)
-spikePlotSpect = 0						## bool (0 or 1)
+spikePlotHist = 0						## bool (0 or 1)
+spikePlotSpect = 1						## bool (0 or 1)
 spikePlotPops = ['IT2', 'IT3']	# 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 
 if not spikePlotPops:
@@ -357,8 +358,8 @@ if spikePlotSpect:
 
 
 #### LFP POP PLOTTING ####
-lfpPopPlot = 0									## bool (0 or 1)
-lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+lfpPopPlot = 1									## bool (0 or 1)
+lfpPops = ['IT2', 'IT3'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 
