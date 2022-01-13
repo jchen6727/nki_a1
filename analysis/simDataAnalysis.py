@@ -336,8 +336,21 @@ elif gamma:
 ########################
 
 
+#### SPIKE DATA PLOTTING #### 
+spikePlot = 1						## bool (0 or 1)
+spikePlotPops = 0 					## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+
+if spikePlot:
+	print('print testing line - placeholder')
+	sim.load(dataFile, instantiate=False)
+	sim.analysis.plotSpikeHist(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False,
+smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None,
+figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
+
+
+
 #### LFP POP PLOTTING ####
-lfpPopPlot = 1									## bool (0 or 1)
+lfpPopPlot = 0									## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
@@ -370,7 +383,7 @@ if customLFPtimeSeries:
 
 
 ### CSD, TRACES ### 
-CSD = 1  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
+CSD = 0  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
 # traces = 0 	### <-- NOT WORKING RIGHT NOW !!
 
 

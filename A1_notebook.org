@@ -56428,3 +56428,76 @@ towards??
 **** salvadord:
 yes, perfect so can just use netpyne to plot the firing spectrogram and the spike histogram (both funcs in sim.analysis)
 *** Check out spikes.py and spikes_orig.py 
+*** spikes_orig.py (in netpyne) 
+**** again this is in lfp branch of my fork of netpyne
+**** Functions:
+***** calculateRate
+***** plotRates 
+****** wonder what this looks like? 
+***** plotSyncs 
+***** plotRaster
+***** --> plotSpikeHist 
+def plotSpikeHist(include=['eachPop', 'allCells'], timeRange=None, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True, **kwargs):
+***** plotSpikeStats
+***** plotRatePSD
+***** --> plotRateSpectrogram
+def plotRateSpectrogram(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, overlay=True, ylim = None, transformMethod = 'morlet', norm=False, popColors = {}, lineWidth = 1.5, fontSize=12, figSize=(10,8), saveData=None, saveFig=None, showFig=True):
+***** plotAvgRates 
+***** calculateFI
+***** plotFI
+**** Most relevant functions from spikes_orig are most likely plotSpikeHist and plotRateSpectrogram
+***** plotSpikeHist 
+def plotSpikeHist(include=['eachPop', 'allCells'], timeRange=None,
+binSize=5, overlay=True, graphType='line', measure='rate', norm=False,
+smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None,
+figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True,
+**kwargs):
+***** plotRateSpectrogram
+def plotRateSpectrogram(include=['allCells', 'eachPop'],
+timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1,
+NFFT=256, noverlap=128, smooth=0, overlay=True, ylim = None,
+transformMethod = 'morlet', norm=False, popColors = {}, lineWidth =
+1.5, fontSize=12, figSize=(10,8), saveData=None, saveFig=None,
+showFig=True)
+** sandbox.py (in A1/analysis):
+*** Removing these thal pop debugging lines:
+# for pop in pops:
+# 	print(pop)
+# 	if pop in pops and pop in thalPops:
+# 		print('removing pop: ' + pop)
+# 		pops.remove(pop)
+
+# for pop in pops:
+# 	if pop in thalPops:
+# 		print(pop)
+# 		pops.remove(pop)
+# 		print('removing pop: ' + str(pop))
+
+
+# for pop in pops:
+# 	print(pop)
+	# for thalPop in thalPops:
+	# 	print(thalPop)
+	# 	if pop == thalPop:
+	# 		pops.remove(pop)
+	# 		print('removed from pops list: ' + str(pop))
+
+** spike plotting lines -- changes in simDataAnalysis.py:
+*** adding spikePlot lines to plotting section:
+**** #### SPIKE DATA PLOTTING #### 
+spikePlot = 1						## bool (0 or 1)
+spikePlotPops = 0 					## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+
+if spikePlot:
+	print('print testing line - placeholder')
+	sim.load(dataFile, instantiate=False)
+	sim.analysis.plotSpikeHist(include=['eachPop', 'allCells'], timeRange=timeRange)
+*** First try sim.analysis.plotSpikeHist and do all the default args except for timeRange 
+*** ^^ Just printed blank figure --> got the following error:
+  There was an exception in plotSpikeHist(): 
+    not enough values to unpack (expected 2, got 0) 
+    (<class 'ValueError'>, ValueError('not enough values to unpack (expected 2, got 0)'), <traceback object at 0x7fa835620a88>)
+*** Now trying w/ this whole line instead:
+sim.analysis.plotSpikeHist(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False,
+smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None,
+figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)

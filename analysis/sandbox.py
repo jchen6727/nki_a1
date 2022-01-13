@@ -49,25 +49,4 @@ for pop in pops:
 		print('redundant pop: ' + pop)
 		#pops.remove(pop)
 
-# for pop in pops:
-# 	print(pop)
-# 	if pop in pops and pop in thalPops:
-# 		print('removing pop: ' + pop)
-# 		pops.remove(pop)
-
-# for pop in pops:
-# 	if pop in thalPops:
-# 		print(pop)
-# 		pops.remove(pop)
-# 		print('removing pop: ' + str(pop))
-
-
-# for pop in pops:
-# 	print(pop)
-	# for thalPop in thalPops:
-	# 	print(thalPop)
-	# 	if pop == thalPop:
-	# 		pops.remove(pop)
-	# 		print('removed from pops list: ' + str(pop))
-
 
