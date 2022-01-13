@@ -56574,3 +56574,8 @@ sim.analysis.plotSpikeHist(histData=histData)
 *** testing in A1/analysis/simDataAnalysis.py:
 **** sim.analysis.plotRateSpectrogram(timeRange=timeRange)
 **** ^^ keep all other args as default for now 
+*** Now testing w/ individual pops:
+**** plotRateSpectrogram --> okay works if I do --> include=['IT2']
+**** plotSpikeHistORIG --> 
+***** trying include=['eachPop'] --> not sure what ['eachPop', 'allCells'] the 'allCells' portion of this argument does? look in code. ah. okay maybe try --> 
+***** ^^ trying --> include=[spikePops, 'allCells'] 

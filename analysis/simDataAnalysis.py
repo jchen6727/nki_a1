@@ -337,18 +337,22 @@ elif gamma:
 
 
 #### SPIKE DATA PLOTTING #### 
-spikePlotHist = 0						## bool (0 or 1)
-spiktPlotSpect = 1						## bool (0 or 1)
-spikePlotPops = 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+spikePlotHist = 1						## bool (0 or 1)
+spikePlotSpect = 0						## bool (0 or 1)
+spikePlotPops = ['IT2', 'IT3']	# 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+
+if not spikePlotPops:
+	spikePlotPops = ['eachPop']
 
 if spikePlotHist:
 	print('Plotting spiking histogram')
 	sim.load(dataFile, instantiate=False)
-	sim.analysis.plotSpikeHistORIG(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
+	sim.analysis.plotSpikeHistORIG(include=spikePlotPops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
 
 if spikePlotSpect:
 	print('Plotting firing rate spectrogram')
-	sim.analysis.plotRateSpectrogram(timeRange=timeRange)
+	sim.load(dataFile, instantiate=False)
+	sim.analysis.plotRateSpectrogram(include=spikePlotPops, timeRange=timeRange)
 
 
 
@@ -364,7 +368,7 @@ if lfpPopPlot:
 
 #### MUA PLOTTING ####
 MUA = 0				## bool (0 or 1) 
-MUApops = 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
+MUApops = ['IT2', 'IT3'] # 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
 
 if MUA: 
 	if MUApops:
