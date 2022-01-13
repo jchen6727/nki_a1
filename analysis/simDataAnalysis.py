@@ -337,16 +337,18 @@ elif gamma:
 
 
 #### SPIKE DATA PLOTTING #### 
-spikePlot = 1						## bool (0 or 1)
-spikePlotPops = 0 					## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+spikePlotHist = 0						## bool (0 or 1)
+spiktPlotSpect = 1						## bool (0 or 1)
+spikePlotPops = 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 
-if spikePlot:
-	print('print testing line - placeholder')
+if spikePlotHist:
+	print('Plotting spiking histogram')
 	sim.load(dataFile, instantiate=False)
 	sim.analysis.plotSpikeHistORIG(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
 
-	# histData = sim.analysis.prepareSpikeHist(include=['eachPop', 'allCells'], sim=sim, timeRange=timeRange)
-	# sim.analysis.plotSpikeHist(histData=histData)
+if spikePlotSpect:
+	print('Plotting firing rate spectrogram')
+	sim.analysis.plotRateSpectrogram(timeRange=timeRange)
 
 
 

@@ -56564,5 +56564,13 @@ sim.analysis.plotSpikeHist(histData=histData)
 **** ^^ Testing these changes in simDataAnalysis.py with --> 
 ***** 	sim.analysis.plotSpikeHistORIG(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
 **** worked!! 
+**** Taking out these lines then (from plotting trial):
+# histData = sim.analysis.prepareSpikeHist(include=['eachPop', 'allCells'], sim=sim, timeRange=timeRange)
+	# sim.analysis.plotSpikeHist(histData=histData)
 ** Add in original version of plotRateSpectrogram
-
+*** Added import to netpyne/analysis/__init__.py
+*** args for this function:
+**** def plotRateSpectrogram(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, overlay=True, ylim = None, transformMethod = 'morlet', norm=False, popColors = {}, lineWidth = 1.5, fontSize=12, figSize=(10,8), saveData=None, saveFig=None, showFig=True):
+*** testing in A1/analysis/simDataAnalysis.py:
+**** sim.analysis.plotRateSpectrogram(timeRange=timeRange)
+**** ^^ keep all other args as default for now 
