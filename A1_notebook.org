@@ -56564,4 +56564,5 @@ sim.analysis.plotSpikeHist(histData=histData)
 **** ^^ Testing these changes in simDataAnalysis.py with --> 
 ***** 	sim.analysis.plotSpikeHistORIG(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
 **** worked!! 
+** Add in original version of plotRateSpectrogram
 
