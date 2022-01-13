@@ -343,9 +343,7 @@ spikePlotPops = 0 					## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 if spikePlot:
 	print('print testing line - placeholder')
 	sim.load(dataFile, instantiate=False)
-	sim.analysis.plotSpikeHist(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False,
-smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None,
-figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
+	sim.analysis.plotSpikeHist(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
 
 
 

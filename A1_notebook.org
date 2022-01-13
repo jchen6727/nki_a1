@@ -56501,3 +56501,14 @@ if spikePlot:
 sim.analysis.plotSpikeHist(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False,
 smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None,
 figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
+*** ^^ ERROR from above:
+Plotting spike histogram...
+  There was an exception in plotSpikeHist(): 
+    'bool' object has no attribute 'figure' 
+    (<class 'AttributeError'>, AttributeError("'bool' object has no
+  attribute 'figure'"), <traceback object at 0x7fb3a87d6ec8>)
+*** Adding print lines to spikes_orig.py plotSpikeHist() to see where the error is being thrown!
+**** Didn't even get to timeRange line --> error occurring before this! 
+**** Didn't even make it to eachPop line! 
+**** Ah --> "Preparing spike data' print line comes from spikes.py (not spikes_orig.py) <-- not sure what's up here; maybe I need to change __init__.py in netpyne/netpyne/analysis again? look in this file to see. 
+**** ^^ Ah, it's importing plotSpikeHist from ..plotting --> Take a look at this script instead 
