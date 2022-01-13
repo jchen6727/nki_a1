@@ -56512,3 +56512,56 @@ Plotting spike histogram...
 **** Didn't even make it to eachPop line! 
 **** Ah --> "Preparing spike data' print line comes from spikes.py (not spikes_orig.py) <-- not sure what's up here; maybe I need to change __init__.py in netpyne/netpyne/analysis again? look in this file to see. 
 **** ^^ Ah, it's importing plotSpikeHist from ..plotting --> Take a look at this script instead 
+** plotSpikeHist() function versions:
+*** from netpyne/plotting/plotSpikeHist:
+plotSpikeHist(
+    histData=None, 
+    popNumCells=None, 
+    popLabels=None, 
+    popColors=None, 
+    axis=None, 
+    legend=True, 
+    colorList=None, 
+    returnPlotter=False,
+    histType='step',
+    binSize=50, 
+    stacked=False,
+    cumulative=False,
+    log=False,
+    density=False,
+*** from spikes_orig.py:
+def plotSpikeHist(include=['eachPop', 'allCells'], timeRange=None, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True, **kwargs):
+** Experiment with each of the above versions:
+*** in A1/analysis/simDataAnalysis.py
+*** from plotting:
+**** plotSpikeHist(
+    histData=None, 
+    popNumCells=None, 
+    popLabels=None, 
+    popColors=None, 
+    axis=None, 
+    legend=True, 
+    colorList=None, 
+    returnPlotter=False,
+    histType='step',
+    binSize=50, 
+    stacked=False,
+    cumulative=False,
+    log=False,
+    density=False,
+**** ^^ I don't see a way to include timeRange? this is an arg in spikes.py prepareSpikeHist() but I don't know how to get it in here -- maybe return the output of that function and then? 
+**** For plotting version, here are trial lines in simDataAnalysis.py:
+histData = sim.analysis.prepareSpikeHist(include=['eachPop', 'allCells'], sim=sim, timeRange=timeRange)
+sim.analysis.plotSpikeHist(histData=histData)
+
+
+**** okay -->   There was an exception in plotSpikeHist(): 
+    not enough values to unpack (expected 2, got 0) 
+    (<class 'ValueError'>, ValueError('not enough values to unpack (expected 2, got 0)'), <traceback object at 0x7fddb8dec808>)
+*** Try orig version --> 
+**** in spikes_orig.py --> I renamed plotSpikeHist to plotSpikeHistORIG to distinguish it from the function in netpyne/plotting
+**** in netpyne/analysis/__init__.py I added a line --> from .spikes_orig import plotSpikeHistORIG --> this will import that original function. 
+**** ^^ Testing these changes in simDataAnalysis.py with --> 
+***** 	sim.analysis.plotSpikeHistORIG(include=['eachPop', 'allCells'], timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
+**** worked!! 
+
