@@ -56410,3 +56410,21 @@ elif gamma:
 ** LFP orig changes --> 
 *** Need to make title that includes the population !!
 *** Need to change figure size 
+* <2022-01-13 Thu -- MUA histogram>
+** Now that lfp only has minor changes needed -- (title and figsize), move on for now to MUA, then make all those formatting changes later. 
+** MUA: 
+*** so right now I have the MUA essentially plotted as a raster, but salva and I discussed how to do that differently. 
+*** Conversation with salvadord:
+**** ericaygriffith Dec 9th at 11:23 AM
+also -- for this, do you ideally envision the lfp and mua being
+represented like they are in the placeholder fig? i.e. with time
+series / histogram on the bottom panels and spectrogram on top?
+**** salvadord:
+histograms would be equivalent MUA representation of the LFP/CSD waveform … so instead of histo could also plot as line
+**** ericaygriffith:
+...I think spectrogram on top and some kind of time series
+representation on the bottom is reasonable as a first goal to work
+towards??
+**** salvadord:
+yes, perfect so can just use netpyne to plot the firing spectrogram and the spike histogram (both funcs in sim.analysis)
+*** Check out spikes.py and spikes_orig.py 
