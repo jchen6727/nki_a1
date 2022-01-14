@@ -370,8 +370,9 @@ elif gamma:
 
 
 #### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 0						## bool (0 or 1)						## bool (0 or 1)
+spikePlotHist = 1										## bool (0 or 1)						## bool (0 or 1)
 histPops = ['IT2', 'IT3']	# 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+	## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
 
 
@@ -381,14 +382,16 @@ if not histPops:
 if spikePlotHist:
 	print('Plotting spiking histogram')
 	sim.load(dataFile, instantiate=False)
-	sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=True)
+	sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='line', \
+		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, \
+		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=True)
 
-
+### Perhaps make a for loop with pop list? 
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
-spectPops = ['IT2']				## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS 
+spikePlotSpect = 0
+spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS 
 figSize = (10,7)
 
 if not spectPops:

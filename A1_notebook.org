@@ -56619,6 +56619,8 @@ if pop is None:
 ****** (8,8) by default
 ***** Added figSize argument to plotLFPPopsData 
 ***** ^^ Can now specify figSize in the plotting section of simDataAnalysis.py 
+** Formatting Spike Data plots:
+*** Panel sizing: 
 **** Spike data plots:
 ***** There was an exception in plotSpikeHistORIG(): 
     [Errno 2] No such file or directory: 'data/v34_batch65/v34_batch65_1_1_plot_spikeHist.png' 
@@ -56640,6 +56642,7 @@ if pop is None:
 # 	plotType = 'spect'
 # 	plotSpikeData(dataFile, plotType=plotType, colorList=colorList, saveFig=1, figSize=None, pops=spikePlotPops, timeRange=timeRange)
 
-
 ***** figSize works with plotSpikeHistORIG
 ***** figSize works with plotRateSpectrogram <-- NOTE that if you give this function a list of pops that it will not do separate figures, but instead plot them together on the same figure. can I change this? 
+*** Titles:
+**** 
