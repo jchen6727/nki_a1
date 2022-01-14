@@ -56580,3 +56580,16 @@ sim.analysis.plotSpikeHist(histData=histData)
 ***** trying include=['eachPop'] --> not sure what ['eachPop', 'allCells'] the 'allCells' portion of this argument does? look in code. ah. okay maybe try --> 
 ***** ^^ trying --> include=[spikePops, 'allCells'] 
 ** Might want to reconfigure this script such that it goes through the pops first, and not the plotting types, hm. --> maybe not; only would really work for some of the plots. 
+** Which pops to pick ? Spoke to Salva about this.
+* <2022-01-14 Fri -- picking populations & formatting>
+** Formatting LFP plots:
+*** lfp_orig.py <-- in netpyne, 'lfp' branch of my fork of netpyne
+*** Add pop labels to title:
+**** TIME SERIES TITLE --> plt.suptitle('LFP Signal') 
+**** PSD --> 
+***** plt.title('Electrode...') <-- for if len(electrodes) > 1
+***** plt.suptitle('LFP Power Spectral Density') <-- for whole plot
+**** SPECTROGRAM --> 
+***** plt.title('Electrode...') <-- if len(electrodes) > 1
+***** plt.suptitle('LFP spectrogram') <-- for whole plot 
+***** ^^ does this happen? check 
