@@ -56612,8 +56612,34 @@ if pop is None:
             PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
             plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
 **** ^^ All changes tested -- works 
-*** Sizing: 
-**** figSize is an arg in plotLFP -- can set this here; try it
-**** spectrogram:
-***** (8,8) by default
-***** 
+*** Panel Sizing: 
+**** LFP: 
+***** figSize is an arg in plotLFP -- can set this here; try it
+***** spectrogram:
+****** (8,8) by default
+***** Added figSize argument to plotLFPPopsData 
+***** ^^ Can now specify figSize in the plotting section of simDataAnalysis.py 
+**** Spike data plots:
+***** There was an exception in plotSpikeHistORIG(): 
+    [Errno 2] No such file or directory: 'data/v34_batch65/v34_batch65_1_1_plot_spikeHist.png' 
+    (<class 'FileNotFoundError'>, FileNotFoundError(2, 'No such file or directory'), <traceback object at 0x7ff6f5383148>)
+***** ^^ This happens with the function test bc I have saveFig = 1, just don't use these lines for now. 
+***** lines --> now commented out and taken out: 
+#### SPIKE FUNCTION TESTING ####
+# spikePlotHist = 0  			## NOTE THAT BOTH OF THESE BOOLS 
+# spikePlotSpect = 0
+# spikePlotPops = ['IT2', 'IT3']
+# figSize = None
+
+# if spikePlotHist:
+# 	plotType = 'hist'
+# 	plotSpikeData(dataFile, plotType=plotType, colorList=colorList, saveFig=1, figSize=None, pops=spikePlotPops, timeRange=timeRange)
+
+
+# if spikePlotSpect:
+# 	plotType = 'spect'
+# 	plotSpikeData(dataFile, plotType=plotType, colorList=colorList, saveFig=1, figSize=None, pops=spikePlotPops, timeRange=timeRange)
+
+
+***** figSize works with plotSpikeHistORIG
+***** figSize works with plotRateSpectrogram <-- NOTE that if you give this function a list of pops that it will not do separate figures, but instead plot them together on the same figure. can I change this? 

@@ -250,6 +250,32 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.savefig(filename,bbox_inches='tight')
 
 
+def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=None, timeRange=None):
+	### dataFile: str --> full path to .pkl data file
+	### plotType: str --> 'hist' or 'spect'; spiking histogram and/or rate spectrogram respectively
+	### colorList: for plotting colors !!
+	### saveFig: bool --> default true 
+	### figSize: tuple --> specify panel size 
+	### pops: list of cell populations 
+	### timeRange: list --> e.g. [start, stop]
+
+	sim.load(dataFile, instantiate=False)
+
+	if pops is None:
+		pops = ['eachPop']
+
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+
+	if figSize is None:
+		figSize = (8,8) 	# (10,8) is default in the function as written, hm. 
+
+	if plotType is 'hist':
+		sim.analysis.plotSpikeHistORIG(include=pops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=saveFig, showFig=True)
+	elif plotType is 'spect':
+		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
+
+
 
 
 
@@ -341,30 +367,44 @@ elif gamma:
 
 ## Turn the population lists into a supra-list that gets set above all these plotting options
 
-#### SPIKE DATA PLOTTING #### 
-spikePlotHist = 0						## bool (0 or 1)
-spikePlotSpect = 0						## bool (0 or 1)
-spikePlotPops = ['IT2', 'IT3']	# 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 
-if not spikePlotPops:
-	spikePlotPops = ['eachPop']
+
+#### SPIKE HISTOGRAM PLOTTING #### 
+spikePlotHist = 0						## bool (0 or 1)						## bool (0 or 1)
+histPops = ['IT2', 'IT3']	# 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+figSize = (10,7) # (10,8) <-- DEFAULT 
+
+
+if not histPops:
+	histPops = ['eachPop']
 
 if spikePlotHist:
 	print('Plotting spiking histogram')
 	sim.load(dataFile, instantiate=False)
-	sim.analysis.plotSpikeHistORIG(include=spikePlotPops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=None, figSize=(10,8), dpi=100, saveData=None, saveFig=None, showFig=True)
+	sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=True)
+
+
+
+
+#### SPIKE RATE SPECTROGRAM PLOTTING #### 
+spikePlotSpect = 1
+spectPops = ['IT2']				## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS 
+figSize = (10,7)
+
+if not spectPops:
+	spectPops = ['eachPop']
 
 if spikePlotSpect:
 	print('Plotting firing rate spectrogram')
 	sim.load(dataFile, instantiate=False)
-	sim.analysis.plotRateSpectrogram(include=spikePlotPops, timeRange=timeRange)
+	sim.analysis.plotRateSpectrogram(include=spectPops, timeRange=timeRange, figSize=figSize)
 
 
 
 #### LFP POP PLOTTING ####
-lfpPopPlot = 1											## bool (0 or 1)
+lfpPopPlot = 0											## bool (0 or 1)
 lfpPops = ['IT2', 'IT3'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 figSize = (10,7)										## tuple with desired figure size 
 
