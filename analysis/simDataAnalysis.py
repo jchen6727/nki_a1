@@ -371,23 +371,33 @@ elif gamma:
 
 evalPops = 1
 # thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  # <-- already defined above 
-
+evalElecs = [] #[2, 3, 4, 5, 6]  ## should have list of all electrodes!!! or can this be extracted...? 
+ 
 if evalPops:
 	sim.load(dataFile, instantiate=False)
 	allPops = list(sim.net.allPops.keys())
 	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
 
+	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+
 	lfpPopData = {}
 
 	for pop in pops:
 		lfpPopData[pop] = {}
+
 		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-		lfpPopData[pop]['lfp'] = popLFPdata
-		lfpPopData[pop]['avg'] = np.average(popLFPdata)
-		lfpPopData[pop]['peak'] = np.amax(popLFPdata)
+
+		lfpPopData[pop]['totalLFP'] = popLFPdata
+		lfpPopData[pop]['totalAvg'] = np.average(popLFPdata)
+		lfpPopData[pop]['totalPeak'] = np.amax(popLFPdata)
 
 
-
+		for elec in evalElecs:
+			elecKey = 'elec' + str(elec)
+			lfpPopData[pop][elecKey] = {}
+			lfpPopData[pop][elecKey]['LFP'] = popLFPdata[:, elec]
+			lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec])
+			lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
 
 
 
