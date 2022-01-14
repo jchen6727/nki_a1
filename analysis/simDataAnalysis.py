@@ -112,7 +112,7 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.get_yaxis().set_visible(False)
 
 
-def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None):
+def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None, figSize=None):
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
 	### plots: list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 	### electrodes: list ---> e.g. ['avg'] <-- can this be combined / used with numbered electrodes??
@@ -134,10 +134,14 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	if timeRange is None:
 		timeRange = [0, sim.cfg.duration]
 
+	## FORMATTING ARGS
+	if figSize is None:
+		figSize = (8,8)
+
 	## PLOTTING:
 	for pop in pops:
 		for plot in plots:
-			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes) ### fix / clean up 'avg' situation!
+			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize) ### fix / clean up 'avg' situation!
 
 
 def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], showFig=1, saveFig=0, figsize=None, timeRange=None, pops=None):
@@ -358,13 +362,14 @@ if spikePlotSpect:
 
 
 #### LFP POP PLOTTING ####
-lfpPopPlot = 1									## bool (0 or 1)
+lfpPopPlot = 1											## bool (0 or 1)
 lfpPops = ['IT2', 'IT3'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+figSize = (10,7)										## tuple with desired figure size 
 
 if lfpPopPlot:
-	plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops)
+	plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize)
 
 
 #### MUA PLOTTING ####

@@ -56600,4 +56600,20 @@ sim.analysis.plotSpikeHist(histData=histData)
             spectTitle = 'LFP spectrogram of ' + pop + ' population'
             plt.suptitle(spectTitle, size=fontSize, fontweight='bold')
 **** timeSeries CHANGE:
-
+if pop is None:
+                plt.suptitle('LFP Signal', fontSize=fontSize, fontweight='bold')
+            elif pop is not None:
+                timeSeriesTitle = 'LFP Signal of ' + pop + ' population'
+                plt.suptitle(timeSeriesTitle, fontSize=fontSize, fontweight='bold')
+**** No change right now to PSD I think. or should I just do it? easy enough fix: 
+***** if pop is None:
+            plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+        elif pop is not None:
+            PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
+            plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
+**** ^^ All changes tested -- works 
+*** Sizing: 
+**** figSize is an arg in plotLFP -- can set this here; try it
+**** spectrogram:
+***** (8,8) by default
+***** 
