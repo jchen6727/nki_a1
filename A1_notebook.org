@@ -56646,3 +56646,20 @@ if pop is None:
 ***** figSize works with plotRateSpectrogram <-- NOTE that if you give this function a list of pops that it will not do separate figures, but instead plot them together on the same figure. can I change this? 
 *** Titles:
 **** Each subplot already comes with title which is just the Pop name -- probably good for lfp to do this as well? 
+** Picking populations:
+*** Convo with salvadord:
+**** how to choose — good question … so the wavelet is recorded from a specific LFP channel (or 2-3 channels since CSD) right? so for the LFP/CSD contributions I was thinking just showing the X populations with the strongest contributions, ie. can check the peak of mean amplitudes of each LFP pop for those electrodes and during that specific period of time
+**** for the MUA/firing rates it’s more tricky … but could either the same pops as LFP for comparison; or maybe also check the spike histograms and include those with highest firing rate peaks
+*** LFP/CSD contributions:
+**** Check the peak of mean amplitudes of each LFP pop for those electrodes [where the wavelet was recorded] -- or should I do for all electrodes -- , during that specific period of time
+**** Info I need:
+***** Electrodes where wavelet was recorded -- can get this
+***** timeRange -- can of course get this
+***** Peak of mean amplitudes of each LFP pop for given set of electrodes
+****** (1) LFP data for each population for a given set of electrodes [have this]
+****** But then what else does this mean? 
+****** Mean of peak amplitudes, or peak of mean amplitudes? 
+***** The plot that salva shared with me on slack from that grant shows a color-intensity plot, with rows being the populations, and the columns being peak LFP amplitudes at different locations. 
+***** ^^ Develop a plot to show this!! 
+**** Plot as described above:
+***** 

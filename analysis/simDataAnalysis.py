@@ -276,6 +276,8 @@ def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=N
 		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
 
 
+def plotPeakLFP(dataFile):
+	print('plotting peak lfp -- placeholder line')
 
 
 
@@ -365,7 +367,29 @@ elif gamma:
 ####### PLOTTING #######
 ########################
 
-## Turn the population lists into a supra-list that gets set above all these plotting options
+#### EVALUATING POPULATIONS TO CHOOSE ####
+
+evalPops = 1
+# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  # <-- already defined above 
+
+if evalPops:
+	sim.load(dataFile, instantiate=False)
+	allPops = list(sim.net.allPops.keys())
+	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+
+	lfpPopData = {}
+
+	for pop in pops:
+		lfpPopData[pop] = {}
+		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+		lfpPopData[pop]['lfp'] = popLFPdata
+		lfpPopData[pop]['avg'] = np.average(popLFPdata)
+		lfpPopData[pop]['peak'] = np.amax(popLFPdata)
+
+
+
+
+
 
 
 
@@ -390,7 +414,7 @@ if spikePlotHist:
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
+spikePlotSpect = 0
 spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS 
 figSize = (10,7)
 
