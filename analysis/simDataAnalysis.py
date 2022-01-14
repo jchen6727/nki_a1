@@ -360,7 +360,7 @@ if spikePlotSpect:
 #### LFP POP PLOTTING ####
 lfpPopPlot = 1									## bool (0 or 1)
 lfpPops = ['IT2', 'IT3'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['spectrogram'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+plots = ['timeSeries'] 			## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 
 if lfpPopPlot:

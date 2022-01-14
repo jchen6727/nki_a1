@@ -56585,11 +56585,19 @@ sim.analysis.plotSpikeHist(histData=histData)
 ** Formatting LFP plots:
 *** lfp_orig.py <-- in netpyne, 'lfp' branch of my fork of netpyne
 *** Add pop labels to title:
-**** TIME SERIES TITLE --> plt.suptitle('LFP Signal') 
-**** PSD --> 
-***** plt.title('Electrode...') <-- for if len(electrodes) > 1
-***** plt.suptitle('LFP Power Spectral Density') <-- for whole plot
-**** SPECTROGRAM --> 
-***** plt.title('Electrode...') <-- if len(electrodes) > 1
-***** plt.suptitle('LFP spectrogram') <-- for whole plot 
-***** ^^ does this happen? check 
+**** ORIG: 
+***** TIME SERIES TITLE --> plt.suptitle('LFP Signal') 
+***** PSD --> 
+****** plt.title('Electrode...') <-- for if len(electrodes) > 1
+****** plt.suptitle('LFP Power Spectral Density') <-- for whole plot
+***** SPECTROGRAM --> 
+****** plt.title('Electrode...') <-- if len(electrodes) > 1
+****** plt.suptitle('LFP spectrogram') <-- for whole plot 
+**** SPECTROGRAM CHANGE:
+***** if pop is None:
+            plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
+        elif pop is not None:
+            spectTitle = 'LFP spectrogram of ' + pop + ' population'
+            plt.suptitle(spectTitle, size=fontSize, fontweight='bold')
+**** timeSeries CHANGE:
+
