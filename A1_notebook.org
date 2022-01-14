@@ -56645,4 +56645,4 @@ if pop is None:
 ***** figSize works with plotSpikeHistORIG
 ***** figSize works with plotRateSpectrogram <-- NOTE that if you give this function a list of pops that it will not do separate figures, but instead plot them together on the same figure. can I change this? 
 *** Titles:
-**** 
+**** Each subplot already comes with title which is just the Pop name -- probably good for lfp to do this as well? 
