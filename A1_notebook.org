@@ -56662,4 +56662,109 @@ if pop is None:
 ***** The plot that salva shared with me on slack from that grant shows a color-intensity plot, with rows being the populations, and the columns being peak LFP amplitudes at different locations. 
 ***** ^^ Develop a plot to show this!! 
 **** Plot as described above:
-***** 
+***** First I wrote a bunch of code that creates a dict with all the lfp data for each pop for each electrode, and calculates the avg and peak of those data
+***** So what do I want to plot, from this dict? 
+***** Now re-arranging this to plot heatmap 
+****** Getting rid of these lines:
+****** 		# i=0
+		# for elec in evalElecs:
+		# 	elecKey = 'elec' + str(elec)
+		# 	peakValues['peakLFP'][i].append(lfpPopData[pop][elecKey]['peak'])
+		# 	i+=1
+
+		#peakValues['peakLFP'].append(lfpPopData[pop])
+
+
+## data = {'pops': pops, ''}
+****** 	# for pop in pops:
+	# 	peakValues[pop] = []
+	# 	avgValues[pop] = []
+	# 	for elec in evalElecs:
+	# 		elecKey = 'elec' + str(elec)
+	# 		peakValues[pop].append(lfpPopData[pop][elecKey]['peak'])
+	# 		avgValues[pop].append(lfpPopData[pop][elecKey]['avg'])
+
+***** Old df panda data frame lines:
+****** #dfPeak = pd.DataFrame(peakValues)
+	#peakTupleList = list(zip(peakValues['pops'], peakValues['peakLFP']))
+	#dfPeak = pd.DataFrame(peakTupleList, columns=['Populations', 'peak LFP values'])
+****** #dfPeak.rename(columns={0:'elec0'})
+****** #dfAvg = pd.DataFrame(avgValues)
+	#avgTupleList = list(zip(avgValues['pops'], avgValues['avgLFP']))
+***** Old testing lines!!!:
+	# sim.load(dataFile, instantiate=False)
+	# allPops = list(sim.net.allPops.keys())
+	# pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+	# # print('number of pops: ' + str(len(pops))) # --> 36! 
+
+	# evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+
+	# lfpPopData = {}
+
+	# for pop in pops:
+	# 	lfpPopData[pop] = {}
+
+	# 	popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+	# 	lfpPopData[pop]['totalLFP'] = popLFPdata
+	# 	lfpPopData[pop]['totalAvg'] = np.average(popLFPdata)
+	# 	lfpPopData[pop]['totalPeak'] = np.amax(popLFPdata)
+
+
+	# 	for elec in evalElecs:
+	# 		elecKey = 'elec' + str(elec)
+	# 		lfpPopData[pop][elecKey] = {}
+	# 		lfpPopData[pop][elecKey]['LFP'] = popLFPdata[:, elec]
+	# 		lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec])
+	# 		lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
+
+
+	# peakValues = {}
+	# avgValues = {}
+
+	# peakValues['pops'] = []
+	# peakValues['peakLFP'] = [[] for i in range(len(pops))]  # should be 36! 
+	# p=0
+	# for pop in pops:
+	# 	peakValues['pops'].append(pop)
+	# 	for i in range(len(evalElecs)):
+	# 		elecKey = 'elec' + str(i)
+	# 		peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
+	# 	p+=1
+
+	# elecKeys = []
+	# for elec in evalElecs:
+	# 	elecKey = 'elec' + str(elec)
+	# 	elecKeys.append(elecKey)
+	# dfPeak = pd.DataFrame(peakValues['peakLFP'], index=pops)
+
+
+
+	# avgValues['pops'] = []
+	# avgValues['avgLFP'] = [[] for i in range(len(pops))] 
+	# q=0
+	# for pop in pops:
+	# 	avgValues['pops'].append(pop)
+	# 	for i in range(len(evalElecs)):
+	# 		elecKey = 'elec' + str(i)
+	# 		avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
+	# 	q+=1 
+	# dfAvg = pd.DataFrame(avgValues['avgLFP'], index=pops)
+
+
+
+## dataframe testing lines --> 
+#dfPeak1, dfAvg1 = getDataFrame(dataFile)
+***** Old plotting testing lines:
+	### plot PEAK LFP heatmap
+	# ax2 = sns.heatmap(dfPeak, linewidth=0.5, cbar_kws={'label': 'Peak LFP Amplitudes (uV)'}) #, annot=True)
+	# plt.title('Peak LFP Amplitudes (uV)')
+	# plt.xlabel('Electrodes')
+	# plt.ylabel('Cell populations')
+	# plt.show(ax2)
+
+	# ### plot AVG LFP heatmap
+	# ax3 = sns.heatmap(dfAvg, linewidth=0.5, cbar_kws={'label': 'Avg LFP Amplitudes (uV)'})
+	# plt.title('Average LFP Amplitudes (uV)')
+	# plt.xlabel('Electrodes')
+	# plt.show(ax3)

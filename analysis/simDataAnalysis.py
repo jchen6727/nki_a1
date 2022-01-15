@@ -17,6 +17,8 @@ from PIL import Image
 import numpy as np
 import netpyne
 from numbers import Number
+import seaborn as sns 
+import pandas as pd 
 
 
 
@@ -276,9 +278,98 @@ def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=N
 		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
 
 
-def plotPeakLFP(dataFile):
-	print('plotting peak lfp -- placeholder line')
+def getDataFrames(dataFile):
+	### This function will return data frames of peak and average lfp amplitudes for picking cell pops
+	### dataFile: str --> .pkl file to load
 
+	## Load data file
+	sim.load(dataFile, instantiate=False)
+
+	## Get all cell pops (cortical)
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	allPops = list(sim.net.allPops.keys())
+	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+
+	## Get all electrodes 
+	evalElecs = []
+	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+
+
+	## Create dict with lfp population data, and calculate average and peak amplitudes for each pop at each electrode!
+	lfpPopData = {}
+
+	for pop in pops:
+		lfpPopData[pop] = {}
+
+		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+		lfpPopData[pop]['totalLFP'] = popLFPdata
+		lfpPopData[pop]['totalAvg'] = np.average(popLFPdata)
+		lfpPopData[pop]['totalPeak'] = np.amax(popLFPdata)
+
+
+		for elec in evalElecs:
+			elecKey = 'elec' + str(elec)
+			lfpPopData[pop][elecKey] = {}
+			lfpPopData[pop][elecKey]['LFP'] = popLFPdata[:, elec]
+			lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec])
+			lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
+
+
+	## Rearrange data structure and turn into a pandas data frame
+	#### PEAK LFP AMPLITUDES 
+	peakValues = {}
+
+	peakValues['pops'] = []
+	peakValues['peakLFP'] = [[] for i in range(len(pops))]  # should be 36! 
+	p=0
+	for pop in pops:
+		peakValues['pops'].append(pop)
+		for i in range(len(evalElecs)):
+			elecKey = 'elec' + str(i)
+			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
+		p+=1
+
+	elecKeys = []
+	for elec in evalElecs:
+		elecKey = 'elec' + str(elec)
+		elecKeys.append(elecKey)
+	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=pops)
+
+	#### AVERAGE LFP AMPLITUDES 
+	avgValues = {}
+
+	avgValues['pops'] = []
+	avgValues['avgLFP'] = [[] for i in range(len(pops))] 
+	q=0
+	for pop in pops:
+		avgValues['pops'].append(pop)
+		for i in range(len(evalElecs)):
+			elecKey = 'elec' + str(i)
+			avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
+		q+=1 
+	dfAvg = pd.DataFrame(avgValues['avgLFP'], index=pops)
+
+
+	return dfPeak, dfAvg
+
+
+def plotDataFrames(dataFrame, cbarLabel=None, title=None):
+	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
+	### cbarLabel: str, label for color bar, optional
+	### title: str, also optional 
+
+	if cbarLabel is None:
+		cbarLabel = 'LFP amplitudes (uV)'
+
+	ax = sns.heatmap(dataFrame, linewidth=0.4, cbar_kws={'label': cbarLabel})
+	
+	if title is not None:
+		plt.title(title)
+
+	plt.xlabel('Electrodes')
+
+	return ax 
 
 
 ### USEFUL VARIABLES ### 
@@ -368,38 +459,16 @@ elif gamma:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE ####
-
 evalPops = 1
-# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']  # <-- already defined above 
-evalElecs = [] #[2, 3, 4, 5, 6]  ## should have list of all electrodes!!! or can this be extracted...? 
- 
+
 if evalPops:
-	sim.load(dataFile, instantiate=False)
-	allPops = list(sim.net.allPops.keys())
-	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+	dfPeak, dfAvg = getDataFrames(dataFile)
 
-	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+	peakPlot = plotDataFrames(dfPeak, cbarLabel=None, title='Peak LFP Amplitudes')
+	plt.show(peakPlot)
 
-	lfpPopData = {}
-
-	for pop in pops:
-		lfpPopData[pop] = {}
-
-		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-
-		lfpPopData[pop]['totalLFP'] = popLFPdata
-		lfpPopData[pop]['totalAvg'] = np.average(popLFPdata)
-		lfpPopData[pop]['totalPeak'] = np.amax(popLFPdata)
-
-
-		for elec in evalElecs:
-			elecKey = 'elec' + str(elec)
-			lfpPopData[pop][elecKey] = {}
-			lfpPopData[pop][elecKey]['LFP'] = popLFPdata[:, elec]
-			lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec])
-			lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
-
-
+	avgPlot = plotDataFrames(dfAvg, cbarLabel=None, title='Avg LFP Amplitudes')
+	plt.show(avgPlot)
 
 
 
