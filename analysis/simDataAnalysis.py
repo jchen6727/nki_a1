@@ -278,7 +278,7 @@ def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=N
 		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
 
 
-def getDataFrames(dataFile):
+def getDataFrames(dataFile, timeRange):
 	### This function will return data frames of peak and average lfp amplitudes for picking cell pops
 	### dataFile: str --> .pkl file to load
 
@@ -436,9 +436,9 @@ if local:
 
 ######### SET WAVELET TO LOOK AT		!!
 delta = 0
-beta = 	1
+beta = 	0
 alpha = 0
-theta = 0
+theta = 1
 gamma = 0 
 
 if delta:
@@ -462,7 +462,7 @@ elif gamma:
 evalPops = 1
 
 if evalPops:
-	dfPeak, dfAvg = getDataFrames(dataFile)
+	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
 
 	peakPlot = plotDataFrames(dfPeak, cbarLabel=None, title='Peak LFP Amplitudes')
 	plt.show(peakPlot)
@@ -473,9 +473,8 @@ if evalPops:
 
 
 #### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 0										## bool (0 or 1)						## bool (0 or 1)
-histPops = ['IT2', 'IT3']	# 0 						## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-	## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
+spikePlotHist = 0										## bool (0 or 1)
+histPops = ['IT2', 'IT3']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
 
 
