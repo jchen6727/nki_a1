@@ -56768,3 +56768,15 @@ if pop is None:
 	# plt.title('Average LFP Amplitudes (uV)')
 	# plt.xlabel('Electrodes')
 	# plt.show(ax3)
+* <2022-01-17 Mon -- heat plots & formatting> 
+** Two main issues right now: 
+*** Picking the populations to highlight for each wavelet
+*** Formatting
+**** LFP : get spectrogram and timeSeries to be on top of each other in a nice way
+**** MUA : make the histograms look less odd + get spectrogram & histogram on top of each other 
+** Checking LFP timeRange issue --> 
+*** Got to get back into what I was doing on friday -- okay
+*** What are the default units on LFP ? --> uV 
+*** Salva's suggestions:
+**** also the amplitudes appear to be quite low overall, order of 0.005 uV — eg if you compare with the plot that I showed above, for the electrode at the center of the column they were around 1 uV
+
