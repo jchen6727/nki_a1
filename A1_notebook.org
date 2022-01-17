@@ -56779,4 +56779,10 @@ if pop is None:
 *** What are the default units on LFP ? --> uV 
 *** Salva's suggestions:
 **** also the amplitudes appear to be quite low overall, order of 0.005 uV — eg if you compare with the plot that I showed above, for the electrode at the center of the column they were around 1 uV
-
+** Debugging heat plots:
+*** So the two componenets are calculating and plotting
+*** Calculating:
+**** def getDataFrames --> 
+***** problematic that it didn't really change with timeRange arg addition --> 
+***** Use sandbox.py to see if what's going on here
+***** It does seem like it's using the correct method of segmenting the LFP data, hm. 
