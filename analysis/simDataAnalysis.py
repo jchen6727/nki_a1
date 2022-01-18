@@ -256,30 +256,30 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.savefig(filename,bbox_inches='tight')
 
 
-def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=None, timeRange=None):
-	### dataFile: str --> full path to .pkl data file
-	### plotType: str --> 'hist' or 'spect'; spiking histogram and/or rate spectrogram respectively
-	### colorList: for plotting colors !!
-	### saveFig: bool --> default true 
-	### figSize: tuple --> specify panel size 
-	### pops: list of cell populations 
-	### timeRange: list --> e.g. [start, stop]
+# def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=None, timeRange=None):
+# 	### dataFile: str --> full path to .pkl data file
+# 	### plotType: str --> 'hist' or 'spect'; spiking histogram and/or rate spectrogram respectively
+# 	### colorList: for plotting colors !!
+# 	### saveFig: bool --> default true 
+# 	### figSize: tuple --> specify panel size 
+# 	### pops: list of cell populations 
+# 	### timeRange: list --> e.g. [start, stop]
 
-	sim.load(dataFile, instantiate=False)
+# 	sim.load(dataFile, instantiate=False)
 
-	if pops is None:
-		pops = ['eachPop']
+# 	if pops is None:
+# 		pops = ['eachPop']
 
-	if timeRange is None:
-		timeRange = [0, sim.cfg.duration]
+# 	if timeRange is None:
+# 		timeRange = [0, sim.cfg.duration]
 
-	if figSize is None:
-		figSize = (8,8) 	# (10,8) is default in the function as written, hm. 
+# 	if figSize is None:
+# 		figSize = (8,8) 	# (10,8) is default in the function as written, hm. 
 
-	if plotType is 'hist':
-		sim.analysis.plotSpikeHistORIG(include=pops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=saveFig, showFig=True)
-	elif plotType is 'spect':
-		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
+# 	if plotType is 'hist':
+# 		sim.analysis.plotSpikeHistORIG(include=pops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=saveFig, showFig=True)
+# 	elif plotType is 'spect':
+# 		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
 
 
 def getDataFrames(dataFile, timeRange):
@@ -408,6 +408,8 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	### figSize: tuple
 	### fontSize: int 
 
+		#### NOTE: should I add more default arg inputs, e.g. timeRange=None ?? 
+
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -420,14 +422,14 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 
 	# Set font size
 	fontsiz = fontSize
-	plt.rcParams.updat({'font.size': fontsiz})
+	plt.rcParams.update({'font.size': fontsiz})
 
 	### SPECTROGRAM -- for top panel!!
 	allSignal = spectDict['allSignal']
 	allFreqs = spectDict['allFreqs']
 
 	plt.subplot(2, 1, 1)
-	plt.title('TESTING SPECT')
+	plt.title('TESTING SPECT PLOT FUNCTION')
 	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
 		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
 	plt.colorbar(label='Power')
@@ -440,37 +442,18 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	histoCount = histDict['histoData']
 
 	plt.subplot(2, 1, 2)
-	plt.title('TESTING HIST')
+	plt.title('TESTING HIST PLOT FUNCTION')
 	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
 	plt.xlabel('Time (ms)', fontsize=fontsiz)
-	plt.ylabel('Spike Count', fontsize=fontsiz) # add yaxis in opposite side
+	plt.ylabel('Rate (Hz) ', fontsize=fontsiz) # CLARIFY Y AXIS  # add yaxis in opposite side
 	plt.xlim(timeRange)
 
 
 	plt.tight_layout()
+	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
+	### TO DO: ADD POPULATION TO TTTLE OF THESE PLOTS IN SOME MANNER !! 
 
 
-
-	# REMINDER --> # spikeSpectDict = {'allSignal': allSignal, 'allFreqs':allFreqs}
-	# REMINDER --> # plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs))
-	# REMINDER --> # T = timeRange
-
-	# allSignal = spikeSpectDict['allSignal']
-	# allFreqs = spikeSpectDict['allFreqs']
-
-	# plt.title('IT2 TEST')
-	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])))
-	# plt.colorbar(label='Power')
-	# plt.xlabel('Time (ms)')
-	# plt.ylabel('Hz')
-	# plt.tight_layout()
-
-######
-	# REMINDER --> # histDict = {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
-
-	# histoT = histDict['histoT']
-	# histoCount = histDict['histoData']
-	# plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
 
 
 ### USEFUL VARIABLES ### 
@@ -528,6 +511,7 @@ for p in range(len(allpops)):
 	colorDict[allpops[p]] = colorList[p]
 
 
+
 #############################################
 #### DATA FILES -- SET BOOLEANS HERE !! #####
 #############################################
@@ -563,7 +547,9 @@ elif gamma:
 ####### PLOTTING #######
 ########################
 
-#### EVALUATING POPULATIONS TO CHOOSE ####
+#### EVALUATING POPULATIONS TO CHOOSE #### 
+## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
+
 evalPops = 0
 
 if evalPops:
@@ -575,78 +561,26 @@ if evalPops:
 	avgPlot = plotDataFrames(dfAvg, cbarLabel=None, title='Avg LFP Amplitudes')
 	plt.show(avgPlot)
 
-### TO DO: 
-### Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
-### Filter the timeRanged lfp data to the wavelet frequency band
-### Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
-### smooth or mess with bin size to smooth out spectrogram for spiking data 
 
 includePops = ['IT2']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 
 
-#### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
-spectPops = includePops #['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
-
-
-if spikePlotSpect:
-	spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=spectPops, timeRange=timeRange) # , colorDict=colorDict, figSize=(10,7))
-
-
-
-#### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 1										## bool (0 or 1)
-histPops = includePops	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
-
-if spikePlotHist:
-	histDict = getSpikeData(dataFile, graphType = 'hist', pop=histPops, timeRange=timeRange)
-
-
-
-
 ###### COMBINED SPIKE DATA PLOTTING ######
-spikePlotsCombined = 1
+plotSpikeData = 1
 
-if spikePlotsCombined:
+if plotSpikeData:
+	for pop in includePops:
+		print('Plotting spike data for ' + pop)
 
-	# Create figure
-	figSize = (10,7)
-	fig,ax1 = plt.subplots(figsize=figSize)    
-
-	# Set font size
-	fontsiz = 12 # fontSize
-	plt.rcParams.update({'font.size': fontsiz})
-
-	### SPECTROGRAM ### ON TOP !! 
-	allSignal = spikeSpectDict['allSignal']
-	allFreqs = spikeSpectDict['allFreqs']
+		## Get dictionaries with spiking data for spectrogram and histogram plotting 
+		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)  # pop=includePops
+		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)		# pop=includePops
 
 
-	plt.subplot(2, 1, 1)
-	plt.title('TESTING SPECT')
-	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
-	plt.colorbar(label='Power')
-	plt.xlabel('Time (ms)')
-	plt.ylabel('Hz')
-
-
-	### HISTOGRAM ###  ON BOTTOM !!! 
-	histoT = histDict['histoT']
-	histoCount = histDict['histoData']
-
-	plt.subplot(2, 1, 2)
-	plt.title('TESTING HIST')
-	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)
-	plt.xlabel('Time (ms)', fontsize=fontsiz)
-	plt.ylabel('Spike Count', fontsize=fontsiz) # add yaxis in opposite side
-	plt.xlim(timeRange)
-
-
-
-	plt.tight_layout()
-	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
+		## Then call plotting function 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, pop=pop, figSize=(10,7), fontSize=12)  # pop=includePops, 
 
 
 
@@ -656,6 +590,10 @@ if spikePlotsCombined:
 
 
 
+#### LFP PLOTTING #### 
+## TO DO: 
+## Filter the timeRanged lfp data to the wavelet frequency band
+## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
 #### LFP POP PLOTTING -- TIME SERIES ####
 lfpPop_timeSeries = 0											## bool (0 or 1)
@@ -677,6 +615,8 @@ if lfpPop_timeSeries:
 
 
 #### LFP POP PLOTTING -- SPECTROGRAM ####
+## TO DO: smooth or mess with bin size to smooth out spectrogram for spiking data
+
 lfpPop_spect = 0											## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']

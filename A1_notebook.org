@@ -56872,6 +56872,11 @@ elif graphType == 'bar':
 *** Look at the LFP signatures (peak, avg, etc.) for the average of all wavelet events in a given frequency band 
 *** Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 *** Mess with bin size or smooth data for spiking spectrogram? 
+** ^^  ### TO DO: 
+*** ### Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
+*** ### Filter the timeRanged lfp data to the wavelet frequency band
+*** ### Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
+*** ### smooth or mess with bin size to smooth out spectrogram for spiking data 
 ** Make figure plotting code nicer:
 *** Made getSpikeData a function:
 **** replacing these lines:
@@ -57002,6 +57007,32 @@ if spikePlotHist:
 		# histDict = sim.analysis.getSpikeHistData(include=histPops, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
 
 **** 		#spikeFigure, spikeDict = sim.analysis.plotRateSpectrogram(include=popList, timeRange=timeRange, figSize=figSize, showFig=False) 
+** Plotting combined spike data (spectrogram & histogram):
+*** Getting rid of plotSpikeData function in simDataAnalysis.py
+**** This isn't used in the rest of the script, and it also is outdated given the changes I've made to the spikes_orig.py script (in netpyne/netpyne/analysis, in 'lfp' branch of ericaygriffith fork of netpyne)
+*** Instead use plotCombinedSpike()
+**** tested!!
+**** taking out these comments:
+	# REMINDER --> # spikeSpectDict = {'allSignal': allSignal, 'allFreqs':allFreqs}
+	# REMINDER --> # plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs))
+	# REMINDER --> # T = timeRange
+
+	# allSignal = spikeSpectDict['allSignal']
+	# allFreqs = spikeSpectDict['allFreqs']
+
+	# plt.title('IT2 TEST')
+	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])))
+	# plt.colorbar(label='Power')
+	# plt.xlabel('Time (ms)')
+	# plt.ylabel('Hz')
+	# plt.tight_layout()
+
+######
+	# REMINDER --> # histDict = {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
+
+	# histoT = histDict['histoT']
+	# histoCount = histDict['histoData']
+	# plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
 
 
 
@@ -57016,10 +57047,57 @@ if spikePlotHist:
 
 
 
+**** ^^ These helped me figure out how the spikes_orig.py functions were originally plotting these. 
+*** Now getting rid of these lines which previously calculated the hist and spect dictionaries before plotting:
+**** # #### SPIKE RATE SPECTROGRAM PLOTTING #### 
+# spikePlotSpect = 1
+# spectPops = includePops #['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
+
+
+# if spikePlotSpect:
+# 	spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=spectPops, timeRange=timeRange) # , colorDict=colorDict, figSize=(10,7))
+**** # #### SPIKE HISTOGRAM PLOTTING #### 
+# spikePlotHist = 1										## bool (0 or 1)
+# histPops = includePops	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
+
+# if spikePlotHist:
+# 	histDict = getSpikeData(dataFile, graphType='hist', pop=histPops, timeRange=timeRange)
 
 
 
+*** Getting rid of these testing lines for combined plotting, which is now taken care of by plotCombinedSpike() function:
+	# # Create figure
+	# figSize = (10,7)
+	# fig,ax1 = plt.subplots(figsize=figSize)    
+
+	# # Set font size
+	# fontsiz = 12 # fontSize
+	# plt.rcParams.update({'font.size': fontsiz})
+
+	# ### SPECTROGRAM ### ON TOP !! 
+	# allSignal = spikeSpectDict['allSignal']
+	# allFreqs = spikeSpectDict['allFreqs']
 
 
+	# plt.subplot(2, 1, 1)
+	# plt.title('TESTING SPECT')
+	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	# plt.colorbar(label='Power')
+	# plt.xlabel('Time (ms)')
+	# plt.ylabel('Hz')
 
 
+	# ### HISTOGRAM ###  ON BOTTOM !!! 
+	# histoT = histDict['histoT']
+	# histoCount = histDict['histoData']
+
+	# plt.subplot(2, 1, 2)
+	# plt.title('TESTING HIST')
+	# plt.bar(histoT, histoCount[0], width = 5, color=colorDict[includePops[0]], fill=True) #color=colorDict[histPops[0]], fill=True)
+	# plt.xlabel('Time (ms)', fontsize=fontsiz)
+	# plt.ylabel('Rate (Hz) ', fontsize=fontsiz) # CLARIFY Y AXIS  # add yaxis in opposite side
+	# plt.xlim(timeRange)
+
+
+	# plt.tight_layout()
+	# ### TO DO: ADJUST POSITION OF COLOR BAR !!! 
