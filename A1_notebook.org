@@ -56786,3 +56786,9 @@ if pop is None:
 ***** problematic that it didn't really change with timeRange arg addition --> 
 ***** Use sandbox.py to see if what's going on here
 ***** It does seem like it's using the correct method of segmenting the LFP data, hm. 
+**** for lfpTotal --> length of sim.allSimData['LFP'] is 230000 (so, 1 entry for each timepoint), and len(sim.allSimData['LFP'][0]) is 20 --> meaning, for each timepoint, value is there for each electrode. 
+**** ^^ so, for sum(sim.allSimData['LFP'][0]) <-- this represents the total lfp amplitude across all electrodes at timepoint 0. 
+**** ^^ to get to the equivalent of this with pops, I have to do --> 
+***** sim.allSimData['LFP']['NGF1'] <-- length of this is 230000, meaning one element for each timepoint
+***** len(sim.allSimData['LFPPops']['NGF1'][0]) --> 20   <-- so this means each element is a list, with each nested element being the lfp amplitude at that electrode 
+***** 

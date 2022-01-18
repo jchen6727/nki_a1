@@ -32,14 +32,18 @@ pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops
 # ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
 
 ### play with lfp data 
-pop = 'NGF1'
+## lfp totals
+lfpTotal = sim.allSimData['LFP']
 
-popLFPdata_TOTAL = sim.allSimData['LFPPops'][pop]
-print('dims of popLFPdata: ' + str(popLFPdata_TOTAL.shape)) 			 # (230000, 20)
+## pop-specific 
+testPop = 'NGF1'
+
+popLFPdata_TOTAL = sim.allSimData['LFPPops'][testPop]
+print('dims of popLFPdata_TOTAL: ' + str(popLFPdata_TOTAL.shape)) 			 # (230000, 20)
 
 
-popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-print('dims of new popLFPdata: ' + str(popLFPdata.shape))
+popLFPdata = np.array(sim.allSimData['LFPPops'][testPop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+print('dims of popLFPdata: ' + str(popLFPdata.shape))
 # dims of new popLFPdata: (20800, 20)
 
 totalAvg = np.average(popLFPdata)
@@ -47,6 +51,18 @@ print('totalAvg: ' + str(totalAvg))
 totalPeak = np.amax(popLFPdata)
 print('totalPeak: ' + str(totalPeak))
 
+
+## Checking pop to total comparison
+### timepoints should be a for loop I suppose
+
+totalLFPSum = 0
+for pop in pops:
+	lfpSum = np.sum(sim.allSimData['LFPPops'][pop][0,0]) 	# np.sum(sim.allSimData['LFPPops'][pop][0,:])
+	print('total of lfp amplitude for ' + pop + ': ' + str(lfpSum))
+	totalLFPSum+=lfpSum
+
+#lfpTotal[0] == totalLFPSum
+#lfpTotal[0] = sum(sim.allSimData['LFPPops'][pop][0,:])
 
 
 ### calculate avg and peak 
