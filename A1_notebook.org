@@ -56797,4 +56797,27 @@ if pop is None:
 **** okay so sim.allSimData['LFP'][timePoint] <-- this is a list of 20 (lfp amplitudes at each electrode 
 **** sum across pops: sim.allSimData['LFPPops'][pop][timePoint] <-- this is a list of 20 (lfp amplitudes at each electrode, specific to this population) 
 * <2022-01-18 Tue - heat map debugging & formatting>
-** 
+** Made colorDict in simDataAnalysis.py -- for use in spikes_orig.py (netpyne):
+*** removed these commented-out lines from spikes_orig.py:
+            # if type(popColors) is Dict:
+            #     print('popColors is Dict')
+            # print(color)
+            # if type(popColors) is Dict and subset in popColors.keys():
+            #     color = popColors[subset]
+            # else:
+            #     color='blue'
+*** these also:
+            # if type(popColors) is Dict and subset in popColors.keys():
+            #     color = popColors[subset]
+            # else:
+            #     color = 'blue'
+*** and these:
+            # if popColors is None:
+            #     color='blue'
+            # elif popColors is not None and len(include)==1 and type(popColors) is Dict:
+            #     color=popColors[include[0]]
+            ## color = 'blue'
+** More formatting:
+*** How to get these to "combine" into one figure? 
+*** ^^ WHY does this showFig even when I set showFig = 0 and showFig = False ??? 
+*** ^^ Even when I comment out the line if showFig in this function, it does still show me the figure, so it's not entirely being controlled by this line. maybe it's the return fig part ? 
