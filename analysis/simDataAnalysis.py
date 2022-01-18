@@ -550,29 +550,31 @@ if spikePlotsCombined:
 	plt.rcParams.update({'font.size': fontsiz})
 
 
-	### HISTOGRAM ### 
+
+	### SPECTROGRAM ### ON TOP !! 
+	allSignal = spikeSpectDict['allSignal']
+	allFreqs = spikeSpectDict['allFreqs']
+
+
+	plt.subplot(2, 1, 1)
+	plt.title('TESTING SPECT')
+	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	plt.colorbar(label='Power')
+	plt.xlabel('Time (ms)')
+	plt.ylabel('Hz')
+
+
+	### HISTOGRAM ###  ON BOTTOM !!! 
 	histoT = histDict['histoT']
 	histoCount = histDict['histoData']
 
-	plt.subplot(2, 1, 1)
+	plt.subplot(2, 1, 2)
 	plt.title('TESTING HIST')
 	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)
 	plt.xlabel('Time (ms)', fontsize=fontsiz)
 	plt.ylabel('Spike Count', fontsize=fontsiz) # add yaxis in opposite side
 	plt.xlim(timeRange)
 
-
-	### SPECTROGRAM ###
-	allSignal = spikeSpectDict['allSignal']
-	allFreqs = spikeSpectDict['allFreqs']
-
-
-	plt.subplot(2, 1, 2)
-	plt.title('TESTING SPECT')
-	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
-	plt.colorbar(label='Power')
-	plt.xlabel('Time (ms)')
-	plt.ylabel('Hz')
 
 
 	plt.tight_layout()
@@ -602,6 +604,10 @@ if lfpPop_timeSeries:
 # LFPtimeSeriesOutput.keys()
 # dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
 
+
+
+
+
 #### LFP POP PLOTTING -- SPECTROGRAM ####
 lfpPop_spect = 1											## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
@@ -618,6 +624,74 @@ if lfpPop_spect:
 # dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
 
 
+
+###### COMBINED LFP PLOTTING ######
+
+plotCombinedLFP = 1
+
+if plotCombinedLFP:
+	## Create figure 
+	fig,ax1 = plt.subplots(figsize=figSize)
+
+	## Set font size 
+	fontsiz = 12
+	plt.rcParams.update({'font.size': fontsiz})
+
+
+
+	##### SPECTROGRAM  ## ON TOP !! 
+	# REMINDER --> LFPSpectOutput.keys()
+	# REMINDER --> dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+
+	plt.subplot(2, 1, 1)
+	plt.title('Spectrogram LFP test')
+
+	lfp = LFPSpectOutput['LFP']
+	spec = LFPSpectOutput['spec']
+
+	i=0 # trying this out 
+	S = spec[i].TFR
+	F = spec[i].f   # i = 0 ? 
+	T = timeRange
+
+	vmin = np.array([s.TFR for s in spec]).min()
+	vmax = np.array([s.TFR for s in spec]).max()
+	vc = [vmin, vmax]
+
+	#plt.colorbar(label='Power')
+	plt.ylabel('Hz')
+	plt.xlabel('Time (ms)')
+	plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+
+
+	# lfpPlot = np.mean(lfp, axis=1)
+
+
+	##### TIME SERIES  ## ON BOTTOM !! 
+	# REMINDER --> LFPtimeSeriesOutput.keys()
+	# REMINDER --> dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
+
+	plt.subplot(2, 1, 2)
+	plt.title('timeSeries LFP test')
+
+	#t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+	t = LFPtimeSeriesOutput['t']
+	lfp = LFPtimeSeriesOutput['LFP']
+
+	separation = 1 
+	ydisp = np.absolute(lfp).max() * separation
+	offset = 1.0*ydisp
+
+	lfpPlot = np.mean(lfp, axis=1)
+
+	lw = 1.0
+	plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[lfpPops[0]], linewidth=lw)   # -lfpPlot+(i*ydisp)
+	plt.xlabel('Time (ms)')
+	# plt.ylabel('LFP Amplitudes')
+	### NEED Y AXIS LABEL 
+
+	plt.tight_layout()
+	plt.show()
 
 
 #############################################################
