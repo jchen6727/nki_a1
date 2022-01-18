@@ -22,37 +22,9 @@ import pandas as pd
 
 
 
-### FUNCTIONS ####
 
-def getWaveletInfo(freqBand, based): 
-	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
-	## based: str --> path to directory with the .pkl data files 
-
-	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
-	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
-	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
-	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
-
-	timeRange = waveletInfo[freqBand]['timeRange']
-	dataFileNoPath = waveletInfo[freqBand]['dataFile']
-	dataFile = based + dataFileNoPath
-
-	return timeRange, dataFile
-
-
-def getDataFiles(based):
-	### based: str ("base directory")
-	### returns list of .pkl files --> allDataFiles
-
-	allFiles = os.listdir(based)
-	allDataFiles = []
-	for file in allFiles:
-		if '.pkl' in file:
-			allDataFiles.append(file)
-	return allDataFiles 
-
-
-### plotMUA IS NOT USED !!! 
+######################################################################
+##### plotMUA and plotCustomLFPTimeSeries are NOT BEING USED !!! #####
 def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	#### plotMUA FUNCTION STILL NOT WORKING WELL FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
@@ -113,9 +85,6 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.spines['right'].set_visible(False)
 	ax.spines['left'].set_visible(False)
 	ax.get_yaxis().set_visible(False)
-
-
-### plotCustomLFPTimeSeries() IS NOT USED !!! 
 def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], showFig=1, saveFig=0, figsize=None, timeRange=None, pops=None):
 	### dataFile: str
 	### colorList: list
@@ -220,6 +189,37 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.show()
 		if saveFig:
 			plt.savefig(filename,bbox_inches='tight')
+######################################################################
+
+
+
+### FUNCTIONS ####
+def getWaveletInfo(freqBand, based): 
+	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
+	## based: str --> path to directory with the .pkl data files 
+
+	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
+	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
+	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
+	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+
+	timeRange = waveletInfo[freqBand]['timeRange']
+	dataFileNoPath = waveletInfo[freqBand]['dataFile']
+	dataFile = based + dataFileNoPath
+
+	return timeRange, dataFile
+
+
+def getDataFiles(based):
+	### based: str ("base directory")
+	### returns list of .pkl files --> allDataFiles
+
+	allFiles = os.listdir(based)
+	allDataFiles = []
+	for file in allFiles:
+		if '.pkl' in file:
+			allDataFiles.append(file)
+	return allDataFiles 
 
 
 def getDataFrames(dataFile, timeRange):
@@ -431,8 +431,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	### figSize: tuple --> default is (10,7)
 	### fontSize: int --> default is 12 
 
-	print('starting plotCombinedLFP function!')
-
 	# Get relevant pop
 	if type(pop) is str:
 		popToPlot = pop
@@ -633,8 +631,6 @@ if plotSpikeData:
 
 
 
-
-
 ###### COMBINED LFP PLOTTING ######
 ## TO DO: 
 ## Filter the timeRanged lfp data to the wavelet frequency band
@@ -651,66 +647,8 @@ if plotLFPCombinedData:
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=['avg']) 
 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrodes=['avg']) 
 
-
-		## Create figure 
-		figSize = (10,7)
-		fig,ax1 = plt.subplots(figsize=figSize)
-
-		## Set font size 
-		fontsiz = 12
-		plt.rcParams.update({'font.size': fontsiz})
-
-
-
-		##### SPECTROGRAM  ## ON TOP PANEL !! 
-		plt.subplot(2, 1, 1)
-		plt.title('Spectrogram LFP test')
-
-		lfp = LFPSpectOutput['LFP']
-		spec = LFPSpectOutput['spec']
-
-		i=0 # trying this out 
-		S = spec[i].TFR
-		F = spec[i].f   
-		T = timeRange
-
-		vmin = np.array([s.TFR for s in spec]).min()
-		vmax = np.array([s.TFR for s in spec]).max()
-		vc = [vmin, vmax]
-
-		#plt.colorbar(label='Power')
-		plt.ylabel('Hz')
-		plt.xlabel('Time (ms)')
-		plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-
-
-
-		##### TIME SERIES  ## ON BOTTOM PANEL !! 
-		plt.subplot(2, 1, 2)
-		plt.title('timeSeries LFP test')
-
-		t = LFPtimeSeriesOutput['t']
-		lfp = LFPtimeSeriesOutput['LFP']
-
-		separation = 1 
-		ydisp = np.absolute(lfp).max() * separation
-		offset = 1.0*ydisp
-
-		lfpPlot = np.mean(lfp, axis=1)
-
-		lw = 1.0
-		plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[includePops[0]], linewidth=lw)   # -lfpPlot+(i*ydisp)
-		plt.xlabel('Time (ms)')
-		# plt.ylabel('LFP Amplitudes')
-		### NEED Y AXIS LABEL 
-		### Add legend or title with pop name!!! 
-
-		plt.tight_layout()
-		plt.show()
-
-
-		### TEST FUNCTION 
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, figSize=figSize, fontSize=12)
+		### Call plotting function 
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, figSize=(10,7), fontSize=12)
 
 
 
