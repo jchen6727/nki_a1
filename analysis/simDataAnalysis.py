@@ -379,7 +379,7 @@ layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1
 ## Cell populations: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
-'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI']#, 'IC']
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']#, 'IC']
 L1pops = ['NGF1']
 L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
 L3pops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3']
@@ -416,11 +416,15 @@ supra = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 gran = [9, 10, 11, 12]
 infra = [12, 13, 14, 15, 16, 17, 18, 19]
 
-## for COLORS in LFP PLOTTING !! 
+## for COLORS in DATA PLOTTING!! 
 colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.00],
             [0.34,0.67,0.67], [0.90,0.59,0.00], [0.42,0.82,0.83], [1.00,0.85,0.00],
             [0.33,0.67,0.47], [1.00,0.38,0.60], [0.57,0.67,0.33], [0.5,0.2,0.0],
             [0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
+
+colorDict = {}
+for p in range(len(allpops)):
+	colorDict[allpops[p]] = colorList[p]
 
 
 #############################################
@@ -475,7 +479,7 @@ if evalPops:
 
 #### SPIKE HISTOGRAM PLOTTING #### 
 spikePlotHist = 1										## bool (0 or 1)
-histPops = ['IT2']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
+histPops = ['IT2', 'IT3']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
 
 
@@ -486,14 +490,14 @@ if spikePlotHist:
 	print('Plotting spiking histogram')
 	sim.load(dataFile, instantiate=False)
 	sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
-		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, \
+		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
 		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=True)
 
 ### Perhaps make a for loop with pop list? 
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
+spikePlotSpect = 0
 spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
 figSize = (10,7)
 
