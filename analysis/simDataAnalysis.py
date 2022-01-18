@@ -376,13 +376,11 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 	return ax 
 
 
-def getSpikeData(dataFile, graphType, pop, timeRange): #, colorDict=None, figSize=(10,7)):
+def getSpikeData(dataFile, graphType, pop, timeRange): 
 	### dataFile: path to .pkl data file to load 
 	### graphType: str --> either 'hist' or 'spect'
 	### pop: list or str --> which pop to include 
 	### timeRange: list --> e.g. [start, stop]
-	### ---> SHOULDN'T BE HERE : colorDict: dict --> corresponds pop to colors 
-	### ---> SHOULDN'T BE HERE :figSize: tuple 
 
 	sim.load(dataFile, instantiate=False)
 
@@ -393,17 +391,10 @@ def getSpikeData(dataFile, graphType, pop, timeRange): #, colorDict=None, figSiz
 
 
 	if graphType is 'spect':
-		#spikeFigure, spikeDict = sim.analysis.plotRateSpectrogram(include=popList, timeRange=timeRange, figSize=figSize, showFig=False) 
 		spikeDict = sim.analysis.getRateSpectrogramData(include=popList, timeRange=timeRange)
 
 	elif graphType is 'hist':
 		spikeDict = sim.analysis.getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
-		# spikeFigure, spikeDict = sim.analysis.plotSpikeHistORIG(include=popList, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
-		# 	measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
-		# 	figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False)
-	
-		# histDict = sim.analysis.getSpikeHistData(include=histPops, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
-
 
 	return spikeDict 
 
@@ -596,9 +587,8 @@ includePops = ['IT2']		# placeholder for now <-- will ideally come out of the fu
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 0
+spikePlotSpect = 1
 spectPops = includePops #['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
-# figSize = (10,7)
 
 
 if spikePlotSpect:
@@ -609,7 +599,6 @@ if spikePlotSpect:
 #### SPIKE HISTOGRAM PLOTTING #### 
 spikePlotHist = 1										## bool (0 or 1)
 histPops = includePops	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
-# figSize = (10,7) # (10,8) <-- DEFAULT 
 
 if spikePlotHist:
 	histDict = getSpikeData(dataFile, graphType = 'hist', pop=histPops, timeRange=timeRange)
@@ -618,12 +607,13 @@ if spikePlotHist:
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
-spikePlotsCombined = 0
+spikePlotsCombined = 1
 
 if spikePlotsCombined:
 
 	# Create figure
-	fig,ax1 = plt.subplots(figsize=figSize)    # figSize = (10,7)
+	figSize = (10,7)
+	fig,ax1 = plt.subplots(figsize=figSize)    
 
 	# Set font size
 	fontsiz = 12 # fontSize

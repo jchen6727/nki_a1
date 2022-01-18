@@ -56867,6 +56867,11 @@ elif graphType == 'bar':
 **** Look at the LFP signatures (peak, avg, etc.) for the average of all wavelet events in a given frequency band 
 **** Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 **** Mess with bin size or smooth data for spiking spectrogram? 
+** Meeting suggestions:
+*** freq filter  -- filter the timeRanged LFP data to the frequency of the wavelet! 
+*** Look at the LFP signatures (peak, avg, etc.) for the average of all wavelet events in a given frequency band 
+*** Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
+*** Mess with bin size or smooth data for spiking spectrogram? 
 ** Make figure plotting code nicer:
 *** Made getSpikeData a function:
 **** replacing these lines:
@@ -56986,4 +56991,35 @@ if spikePlotHist:
 # 	print('Plotting spiking histogram -- FUNCTION TEST')
 # 	histFigure, histDict = getSpikeData(dataFile, graphType='hist', pop=histPops, timeRange=timeRange, colorDict=colorDict, figSize=(10,7))
 ***** ### FIGS ARE NOT EQUAL, BUT DICTS APPEAR TO BE!!!
-***** 
+** Cleaning up getSpikeData() function:
+*** This is in in simDataAnalysis.py (in A1/analysis, in 'repro' branch)
+*** took out 2 args that were already commented out that had to do with figure plotting not data
+*** Getting rid of these lines from getSpikeData() function:
+**** 		# spikeFigure, spikeDict = sim.analysis.plotSpikeHistORIG(include=popList, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
+		# 	measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
+		# 	figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False)
+	
+		# histDict = sim.analysis.getSpikeHistData(include=histPops, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
+
+**** 		#spikeFigure, spikeDict = sim.analysis.plotRateSpectrogram(include=popList, timeRange=timeRange, figSize=figSize, showFig=False) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
