@@ -56768,7 +56768,7 @@ if pop is None:
 	# plt.title('Average LFP Amplitudes (uV)')
 	# plt.xlabel('Electrodes')
 	# plt.show(ax3)
-* <2022-01-17 Mon -- heat plots & formatting> 
+* <2022-01-17 Mon -- heat plots> 
 ** Two main issues right now: 
 *** Picking the populations to highlight for each wavelet
 *** Formatting
@@ -56791,4 +56791,10 @@ if pop is None:
 **** ^^ to get to the equivalent of this with pops, I have to do --> 
 ***** sim.allSimData['LFP']['NGF1'] <-- length of this is 230000, meaning one element for each timepoint
 ***** len(sim.allSimData['LFPPops']['NGF1'][0]) --> 20   <-- so this means each element is a list, with each nested element being the lfp amplitude at that electrode 
-***** 
+***** np.sum(sim.allSimData['LFPPops']['NGF1'][0]) <-- this is the value of the lfp amplitude at timepoint 0, across all electrodes, for population NGF1
+**** Trying many different things and hm. 
+*** Ask salva:
+**** okay so sim.allSimData['LFP'][timePoint] <-- this is a list of 20 (lfp amplitudes at each electrode 
+**** sum across pops: sim.allSimData['LFPPops'][pop][timePoint] <-- this is a list of 20 (lfp amplitudes at each electrode, specific to this population) 
+* <2022-01-18 Tue - heat map debugging & formatting>
+** 

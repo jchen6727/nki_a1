@@ -459,7 +459,7 @@ elif gamma:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE ####
-evalPops = 1
+evalPops = 0
 
 if evalPops:
 	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
@@ -470,11 +470,12 @@ if evalPops:
 	avgPlot = plotDataFrames(dfAvg, cbarLabel=None, title='Avg LFP Amplitudes')
 	plt.show(avgPlot)
 
+### get pops from here ideally 
 
 
 #### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 0										## bool (0 or 1)
-histPops = ['IT2', 'IT3']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
+spikePlotHist = 1										## bool (0 or 1)
+histPops = ['IT2']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
 
 
@@ -484,7 +485,7 @@ if not histPops:
 if spikePlotHist:
 	print('Plotting spiking histogram')
 	sim.load(dataFile, instantiate=False)
-	sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='line', \
+	sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
 		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, \
 		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=True)
 
@@ -492,8 +493,8 @@ if spikePlotHist:
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 0
-spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS 
+spikePlotSpect = 1
+spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
 figSize = (10,7)
 
 if not spectPops:

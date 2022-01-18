@@ -32,37 +32,54 @@ pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops
 # ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
 
 ### play with lfp data 
-## lfp totals
-lfpTotal = sim.allSimData['LFP']
+timePoint = 20			# pick a timepoint for convenience 
 
-## pop-specific 
-testPop = 'NGF1'
+lfpTotal = sim.allSimData['LFP'][timePoint]   # <-- list of 20 (total lfp amplitudes at each electrode for this timepoint)
 
-popLFPdata_TOTAL = sim.allSimData['LFPPops'][testPop]
-print('dims of popLFPdata_TOTAL: ' + str(popLFPdata_TOTAL.shape)) 			 # (230000, 20)
+popLFPLists = []  # <-- list of 36 lists (1 for each pop); each list is length 20 (lfp amplitudes at each electrode for this timepoint)
+for pop in pops:
+	lfpSublist = sim.allSimData['LFPPops'][pop][timePoint] 
+	popLFPLists.append(lfpSublist)
+lfpPopTotal = sum(popLFPLists)
 
 
-popLFPdata = np.array(sim.allSimData['LFPPops'][testPop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-print('dims of popLFPdata: ' + str(popLFPdata.shape))
-# dims of new popLFPdata: (20800, 20)
+### NOW CHECK --> lfpPopTotal == lfpTotal
 
-totalAvg = np.average(popLFPdata)
-print('totalAvg: ' + str(totalAvg))
-totalPeak = np.amax(popLFPdata)
-print('totalPeak: ' + str(totalPeak))
+
+
+#### pop-specific 
+# testPop = 'NGF1'
+
+# popLFPdata_TOTAL = sim.allSimData['LFPPops'][testPop]
+# print('dims of popLFPdata_TOTAL: ' + str(popLFPdata_TOTAL.shape)) 			 # (230000, 20)
+
+
+# popLFPdata = np.array(sim.allSimData['LFPPops'][testPop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+# print('dims of popLFPdata: ' + str(popLFPdata.shape))
+# # dims of new popLFPdata: (20800, 20)
+
+# totalAvg = np.average(popLFPdata)
+# print('totalAvg: ' + str(totalAvg))
+# totalPeak = np.amax(popLFPdata)
+# print('totalPeak: ' + str(totalPeak))
 
 
 ## Checking pop to total comparison
 ### timepoints should be a for loop I suppose
+### lfp totals
 
-totalLFPSum = 0
-for pop in pops:
-	lfpSum = np.sum(sim.allSimData['LFPPops'][pop][0,0]) 	# np.sum(sim.allSimData['LFPPops'][pop][0,:])
-	print('total of lfp amplitude for ' + pop + ': ' + str(lfpSum))
-	totalLFPSum+=lfpSum
+
+#popLFPSum = 0
+#for pop in pops:
+	#lfpSum = sim.allSimData['LFPPops'][pop][timePoint] #sum(sim.allSimData['LFPPops'][pop][0]) 	# np.sum(sim.allSimData['LFPPops'][pop][0,:])
+	#print('lfp amplitude over all electrodes for ' + pop + ' at timepoint ' + str(0) + ': ' + str(lfpSum))
+	#popLFPSum+=lfpSum
+
+# print(str(sum(lfpTotal[0])))  #[0])))
+# print(str(totalLFPSum))
 
 #lfpTotal[0] == totalLFPSum
-#lfpTotal[0] = sum(sim.allSimData['LFPPops'][pop][0,:])
+
 
 
 ### calculate avg and peak 
