@@ -481,7 +481,7 @@ if evalPops:
 spikePlotHist = 1										## bool (0 or 1)
 histPops = ['IT2']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
-
+### Perhaps make a for loop with pop list? 
 
 if not histPops:
 	histPops = ['eachPop']
@@ -493,11 +493,14 @@ if spikePlotHist:
 		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
 		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False) # showFig=True
 
-histoT = histDict['histoT']
-histoCount = histDict['histoData']
-plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
 
-### Perhaps make a for loop with pop list? 
+	# histDict = {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
+
+	histoT = histDict['histoT']
+	histoCount = histDict['histoData']
+	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
+
+
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
@@ -514,6 +517,19 @@ if spikePlotSpect:
 	spikeSpectFig, spikeSpectDict = sim.analysis.plotRateSpectrogram(include=spectPops, timeRange=timeRange, figSize=figSize, showFig=False) # showFig = True
 
 
+	# spikeSpectDict = {'allSignal': allSignal, 'allFreqs':allFreqs}
+	# plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs))
+	# T = timeRange
+
+	allSignal = spikeSpectDict['allSignal']
+	allFreqs = spikeSpectDict['allFreqs']
+
+	plt.title('IT2 TEST')
+	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])))
+	plt.colorbar(label='Power')
+	plt.xlabel('Time (ms)')
+	plt.ylabel('Hz')
+	plt.tight_layout()
 
 #### LFP POP PLOTTING ####
 lfpPopPlot = 0											## bool (0 or 1)

@@ -56824,3 +56824,22 @@ if pop is None:
 **** ^^ Even when I comment out the line if showFig in this function, it does still show me the figure, so it's not entirely being controlled by this line. maybe it's the return fig part ? 
 **** ^^ okay!! I am now returning the dictionaries from each of plotSpikeHistORIG and plotRateSpectrogram. 
 *** Can plot spike spectrogram using data from plotSpikeHistORIG
+*** Can plot spectrogram as well --> 
+*** HOWEVER --> maybe I should comment out the parts of these scripts that plot the actual data and just have it return the data?? 
+**** Did this for histogram: 
+elif graphType == 'bar':
+            print('NOT GOING TO PLOT BAR -- TESTING LINE -- UNCOMMENT plt.bar LINE TO REINSTATE THIS! ')
+            # plt.bar(histoT, histoCount, width = binSize, color = color, fill=True)  #fill=False
+            ### plt.plot (histoT, histoCount, linewidth=1.0, color = color, ls='steps')  
+**** Did this for spectrogram:
+    for iplot,(subset, freqs, signal) in enumerate(zip(include, allFreqs, allSignal)):
+        print('testing testing')
+        # plt.subplot(len(include),1,iplot+1)  # if subplot, create new subplot
+        # plt.title(str(subset), fontsize=fontsiz)
+
+        # plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs)), origin='lower', interpolation='None', aspect='auto',cmap=plt.get_cmap('viridis'))
+        # plt.colorbar(label='Power')
+        # plt.xlabel('Time (ms)')
+        # plt.ylabel('Hz')
+        # plt.tight_layout()
+
