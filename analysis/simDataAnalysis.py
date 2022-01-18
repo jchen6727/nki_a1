@@ -482,7 +482,7 @@ if evalPops:
 
 
 #### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 0										## bool (0 or 1)
+spikePlotHist = 1										## bool (0 or 1)
 histPops = ['IT2']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
 ### Perhaps make a for loop with pop list? 
@@ -508,7 +508,7 @@ if spikePlotHist:
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 0
+spikePlotSpect = 1
 spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
 figSize = (10,7)
 
@@ -538,7 +538,7 @@ if spikePlotSpect:
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 
-spikePlotsCombined = 0
+spikePlotsCombined = 1
 
 if spikePlotsCombined:
 
@@ -590,7 +590,7 @@ if spikePlotsCombined:
 
 
 #### LFP POP PLOTTING -- TIME SERIES ####
-lfpPop_timeSeries = 1											## bool (0 or 1)
+lfpPop_timeSeries = 0											## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
@@ -609,7 +609,7 @@ if lfpPop_timeSeries:
 
 
 #### LFP POP PLOTTING -- SPECTROGRAM ####
-lfpPop_spect = 1											## bool (0 or 1)
+lfpPop_spect = 0											## bool (0 or 1)
 lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
@@ -627,7 +627,7 @@ if lfpPop_spect:
 
 ###### COMBINED LFP PLOTTING ######
 
-plotCombinedLFP = 1
+plotCombinedLFP = 0
 
 if plotCombinedLFP:
 	## Create figure 

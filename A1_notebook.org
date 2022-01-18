@@ -56849,3 +56849,20 @@ elif graphType == 'bar':
 		for plot in plots:
 			lfpFig, lfpOutputData = sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize) ### fix / clean up 'avg' situation!
 ***** return lfpFig, lfpOutputData
+** MEETING:
+*** google doc
+*** Basically -- okay so I started writing some functions that would let me pick which pops to use for each wavelet -- talked to salva and got some helpful suggestions. 
+*** Decided to look at average and peak lfp amplitudes for each of the populations and pick the ones with the strongest contribution at the time of the wavelet. 
+*** However -- when using the average lfp amplitudes to pick, I noticed I was getting the same pops outputted, so I plotted it just to be able to look at this visually (used heatmap similar to something salva showed me from a grant figure), and noticed that I was getting very similar looking patterns for each.
+*** Worked on debugging -- talk about that
+*** My intention is to, once this is debugged, have this output a list of populations to look at, and use that as input into my lfp and spike data plotting functions. 
+
+*** With my current branch of netpyne that I'm using, it's pretty sequestered from everything else in the netpyne ecosystem, so I've been taking the liberty of modifying the plotLFP and spike plotting functions as needed. 
+*** We want figures that will be, e.g. timeSeries on bottom and spectrogram on top, for LFP for exa,ple -- last week I worked on automatically generating a fig with both of those in the same plot (since netpyne shows them individually). I am now working with the formatting as you can see -- need to adjust x-axis and position of color bar, etc etc. 
+
+*** Also did some thal int work too. 
+
+*** SUGGESTIONS:
+**** freq filter  -- filter the timeRanged LFP data to the frequency of the wavelet! 
+**** Look at the LFP signatures (peak, avg, etc.) for the average of all wavelet events in a given frequency band 
+**** Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
