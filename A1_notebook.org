@@ -57655,3 +57655,15 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 *** Deleted these lines as they are now inside a for loop (for pop in includePops) and they use pop = pop for arg input:
 		# LFPSpectOutput = getLFPDataDict(dataFile, pop=includePops, timeRange=timeRange, plotType=['spectrogram'], electrodes=['avg']) 
 		# LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=includePops, timeRange=timeRange, plotType=['timeSeries'], electrodes=['avg'])
+*** Made first draft of plotCombinedLFP() function -- 
+**** testing
+**** 		plotCombinedLFP(LFPSpectOutput, LFPtimeSeriesOutput, timeRange, pop, colorDict=colorDict, figSize=(10,7), fontSize=12)
+**** ERROR:
+***** Traceback (most recent call last):
+  File "simDataAnalysis.py", line 712, in <module>
+    plotCombinedLFP(LFPSpectOutput, LFPtimeSeriesOutput, timeRange, pop, colorDict=colorDict, figSize=(10,7), fontSize=12)
+TypeError: 'int' object is not callable
+
+**** Trying this now: 
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, figSize=(10,7), fontSize=12)
+**** ^^ Ah, error was because I was using the same name for bool and function! Fixed now. 

@@ -359,7 +359,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		popToPlot = pop[0]
 
 	# Create figure 
-	fig, ax1 = plt.subplots(figsize = figSize)
+	fig, ax1 = plt.subplots(figsize=figSize)
 
 	# Set font size
 	fontsiz = fontSize
@@ -422,8 +422,84 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
 	return lfpOutput
 
 
-def plotCombinedLFP():
-	print('PLACEHOLDER FUNCTION FOR PLOTTING COMBINED SPECTROGRAM + TIMESERIES LFP DATA')
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), fontSize=12):
+	### spectDict: dict with spectrogram data
+	### timeSeriesDict: dict with timeSeries data
+	### timeRange: list, e.g. [start, stop]
+	### colorDict: dict --> corresponds pop to color 
+	### pop: list or str --> relevant population to plot data for 
+	### figSize: tuple --> default is (10,7)
+	### fontSize: int --> default is 12 
+
+	print('starting plotCombinedLFP function!')
+
+	# Get relevant pop
+	if type(pop) is str:
+		popToPlot = pop
+	elif type(pop) is list:
+		popToPlot = pop[0]
+
+
+	## Create figure 
+	figSize = (10,7)
+	fig,ax1 = plt.subplots(figsize=figSize)
+
+	## Set font size 
+	fontsiz = fontSize
+	plt.rcParams.update({'font.size': fontsiz})
+
+
+
+	##### SPECTROGRAM  --> TOP PANEL !! 
+	plt.subplot(2, 1, 1)
+	plt.title('Spectrogram LFP -- FUNCTION TEST')   # INCLUDE POP IN TITLE ? 
+
+	lfp = spectDict['LFP']
+	spec = spectDict['spec']
+
+	#i=0 # trying this out 
+	S = spec[0].TFR
+	F = spec[0].f   
+	T = timeRange
+
+	vmin = np.array([s.TFR for s in spec]).min()
+	vmax = np.array([s.TFR for s in spec]).max()
+	vc = [vmin, vmax]
+
+	#plt.colorbar(label='Power')
+	plt.ylabel('Hz')
+	plt.xlabel('Time (ms)')
+	plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+
+
+
+	##### TIME SERIES  ## ON BOTTOM PANEL !! 
+	plt.subplot(2, 1, 2)
+	plt.title('timeSeries LFP -- FUNCTION TEST')
+
+	t = timeSeriesDict['t']
+	lfp = timeSeriesDict['LFP']
+
+	separation = 1 
+	ydisp = np.absolute(lfp).max() * separation
+	offset = 1.0*ydisp
+
+	lfpPlot = np.mean(lfp, axis=1)
+
+	lw = 1.0
+	plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
+	plt.xlabel('Time (ms)')
+	# plt.ylabel('LFP Amplitudes')
+	### NEED Y AXIS LABEL 
+	### Add legend or title with pop name!!! 
+
+	plt.tight_layout()
+	plt.show()
+
+
+
+
+
 
 
 
@@ -565,9 +641,9 @@ if plotSpikeData:
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotCombinedLFP = 1
+plotLFPCombinedData = 1
 
-if plotCombinedLFP:
+if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
@@ -632,6 +708,9 @@ if plotCombinedLFP:
 		plt.tight_layout()
 		plt.show()
 
+
+		### TEST FUNCTION 
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, figSize=figSize, fontSize=12)
 
 
 
