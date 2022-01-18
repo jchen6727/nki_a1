@@ -376,6 +376,112 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 	return ax 
 
 
+def getSpikeData(dataFile, graphType, pop, timeRange): #, colorDict=None, figSize=(10,7)):
+	### dataFile: path to .pkl data file to load 
+	### graphType: str --> either 'hist' or 'spect'
+	### pop: list or str --> which pop to include 
+	### timeRange: list --> e.g. [start, stop]
+	### ---> SHOULDN'T BE HERE : colorDict: dict --> corresponds pop to colors 
+	### ---> SHOULDN'T BE HERE :figSize: tuple 
+
+	sim.load(dataFile, instantiate=False)
+
+	if type(pop) is str:
+		popList = [pop]
+	elif type(pop) is list:
+		popList = pop
+
+
+	if graphType is 'spect':
+		#spikeFigure, spikeDict = sim.analysis.plotRateSpectrogram(include=popList, timeRange=timeRange, figSize=figSize, showFig=False) 
+		spikeDict = sim.analysis.getRateSpectrogramData(include=popList, timeRange=timeRange)
+
+	elif graphType is 'hist':
+		spikeDict = sim.analysis.getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
+		# spikeFigure, spikeDict = sim.analysis.plotSpikeHistORIG(include=popList, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
+		# 	measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
+		# 	figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False)
+	
+		# histDict = sim.analysis.getSpikeHistData(include=histPops, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
+
+
+	return spikeDict 
+
+
+def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12):
+	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
+	### histDict: dict --> can be gotten with getSpikeData(graphType='hist')
+	### colorDict: dict 
+	### pop: str or list of length 1 --> population to include 
+	### timeRange: tuple 
+	### figSize: tuple
+	### fontSize: int 
+
+
+	# Get relevant pop
+	if type(pop) is str:
+		popToPlot = pop
+	elif type(pop) is list:
+		popToPlot = pop[0]
+
+	# Create figure 
+	fig, ax1 = plt.subplots(figsize = figSize)
+
+	# Set font size
+	fontsiz = fontSize
+	plt.rcParams.updat({'font.size': fontsiz})
+
+	### SPECTROGRAM -- for top panel!!
+	allSignal = spectDict['allSignal']
+	allFreqs = spectDict['allFreqs']
+
+	plt.subplot(2, 1, 1)
+	plt.title('TESTING SPECT')
+	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	plt.colorbar(label='Power')
+	plt.xlabel('Time (ms)')
+	plt.ylabel('Hz')
+
+
+	### HISTOGRAM -- for bottom panel!! 
+	histoT = histDict['histoT']
+	histoCount = histDict['histoData']
+
+	plt.subplot(2, 1, 2)
+	plt.title('TESTING HIST')
+	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+	plt.xlabel('Time (ms)', fontsize=fontsiz)
+	plt.ylabel('Spike Count', fontsize=fontsiz) # add yaxis in opposite side
+	plt.xlim(timeRange)
+
+
+	plt.tight_layout()
+
+
+
+	# REMINDER --> # spikeSpectDict = {'allSignal': allSignal, 'allFreqs':allFreqs}
+	# REMINDER --> # plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs))
+	# REMINDER --> # T = timeRange
+
+	# allSignal = spikeSpectDict['allSignal']
+	# allFreqs = spikeSpectDict['allFreqs']
+
+	# plt.title('IT2 TEST')
+	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])))
+	# plt.colorbar(label='Power')
+	# plt.xlabel('Time (ms)')
+	# plt.ylabel('Hz')
+	# plt.tight_layout()
+
+######
+	# REMINDER --> # histDict = {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
+
+	# histoT = histDict['histoT']
+	# histoCount = histDict['histoData']
+	# plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
+
+
 ### USEFUL VARIABLES ### 
 ## set layer bounds:
 layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
@@ -478,67 +584,41 @@ if evalPops:
 	avgPlot = plotDataFrames(dfAvg, cbarLabel=None, title='Avg LFP Amplitudes')
 	plt.show(avgPlot)
 
-### get pops from here ideally 
+### TO DO: 
+### Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
+### Filter the timeRanged lfp data to the wavelet frequency band
+### Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
+### smooth or mess with bin size to smooth out spectrogram for spiking data 
 
-
-#### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 1										## bool (0 or 1)
-histPops = ['IT2']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
-figSize = (10,7) # (10,8) <-- DEFAULT 
-### Perhaps make a for loop with pop list? 
-
-if not histPops:
-	histPops = ['eachPop']
-
-if spikePlotHist:
-	print('Plotting spiking histogram')
-	sim.load(dataFile, instantiate=False)
-	histFigure, histDict = sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
-		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
-		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False) # showFig=True
-
-
-	# REMINDER --> # histDict = {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
-
-	# histoT = histDict['histoT']
-	# histoCount = histDict['histoData']
-	# plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
+includePops = ['IT2']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
-spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
-figSize = (10,7)
+spikePlotSpect = 0
+spectPops = includePops #['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
+# figSize = (10,7)
 
-if not spectPops:
-	spectPops = ['eachPop']
 
 if spikePlotSpect:
-	print('Plotting firing rate spectrogram')
-	sim.load(dataFile, instantiate=False)
-	spikeSpectFig, spikeSpectDict = sim.analysis.plotRateSpectrogram(include=spectPops, timeRange=timeRange, figSize=figSize, showFig=False) # showFig = True
+	spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=spectPops, timeRange=timeRange) # , colorDict=colorDict, figSize=(10,7))
 
 
-	# REMINDER --> # spikeSpectDict = {'allSignal': allSignal, 'allFreqs':allFreqs}
-	# REMINDER --> # plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs))
-	# REMINDER --> # T = timeRange
 
-	# allSignal = spikeSpectDict['allSignal']
-	# allFreqs = spikeSpectDict['allFreqs']
+#### SPIKE HISTOGRAM PLOTTING #### 
+spikePlotHist = 1										## bool (0 or 1)
+histPops = includePops	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
+# figSize = (10,7) # (10,8) <-- DEFAULT 
 
-	# plt.title('IT2 TEST')
-	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])))
-	# plt.colorbar(label='Power')
-	# plt.xlabel('Time (ms)')
-	# plt.ylabel('Hz')
-	# plt.tight_layout()
+if spikePlotHist:
+	histDict = getSpikeData(dataFile, graphType = 'hist', pop=histPops, timeRange=timeRange)
+
+
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
-
-spikePlotsCombined = 1
+spikePlotsCombined = 0
 
 if spikePlotsCombined:
 
@@ -548,8 +628,6 @@ if spikePlotsCombined:
 	# Set font size
 	fontsiz = 12 # fontSize
 	plt.rcParams.update({'font.size': fontsiz})
-
-
 
 	### SPECTROGRAM ### ON TOP !! 
 	allSignal = spikeSpectDict['allSignal']
@@ -694,42 +772,46 @@ if plotCombinedLFP:
 	plt.show()
 
 
-#############################################################
-############ NOT REALLY BEING USED AT THE MOMENT ############
-#############################################################
-
-#### MUA PLOTTING ####
-MUA = 0				## bool (0 or 1) 
-MUApops = ['IT2', 'IT3'] # 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
-
-if MUA: 
-	if MUApops:
-		plotMUA(dataFile, colorList, timeRange, pops=MUApops)
-	else:
-		plotMUA(dataFile, colorList, timeRange, pops=None)
 
 
 
-#### LFP CUSTOM TIME SERIES PLOTTING ####
-customLFPtimeSeries = 0						## bool (0 or 1)
-customLFPPops = ['ITP4', 'ITS4']	## list or bool (0)
-filtFreq = [13,30]
-customLFPelectrodes = [3, 4, 5, 6]
 
-if customLFPtimeSeries:
-	plotCustomLFPTimeSeries(dataFile, colorList, filtFreq=filtFreq, electrodes=customLFPelectrodes, timeRange=timeRange, pops=customLFPPops) # showFig=1, saveFig=0, figsize=None 
+######################################################
+############ NOT BEING USED AT THE MOMENT ############
+######################################################
+
+# #### MUA PLOTTING ####
+# MUA = 0				## bool (0 or 1) 
+# MUApops = ['IT2', 'IT3'] # 0			## bool OR list of pops --> e.g. ['ITP4', 'ITS4'] # ECortPops.copy()
+
+# if MUA: 
+# 	if MUApops:
+# 		plotMUA(dataFile, colorList, timeRange, pops=MUApops)
+# 	else:
+# 		plotMUA(dataFile, colorList, timeRange, pops=None)
 
 
 
-### CSD, TRACES ### 
-CSD = 0  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
-# traces = 0 	### <-- NOT WORKING RIGHT NOW !!
+# #### LFP CUSTOM TIME SERIES PLOTTING ####
+# customLFPtimeSeries = 0						## bool (0 or 1)
+# customLFPPops = ['ITP4', 'ITS4']	## list or bool (0)
+# filtFreq = [13,30]
+# customLFPelectrodes = [3, 4, 5, 6]
+
+# if customLFPtimeSeries:
+# 	plotCustomLFPTimeSeries(dataFile, colorList, filtFreq=filtFreq, electrodes=customLFPelectrodes, timeRange=timeRange, pops=customLFPPops) # showFig=1, saveFig=0, figsize=None 
 
 
-#### PLOT CSD or TRACES ##### 
-if CSD:  
-	sim.load(dataFile, instantiate=False) 
-	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds=layerBounds, saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
+
+# ### CSD, TRACES ### 
+# CSD = 0  		### <-- Make this work like LFP plotting (for individual pops!) and make sure time error is not in this version of csd code! 
+# # traces = 0 	### <-- NOT WORKING RIGHT NOW !!
+
+
+# #### PLOT CSD or TRACES ##### 
+# if CSD:  
+# 	sim.load(dataFile, instantiate=False) 
+# 	sim.analysis.plotCSD(spacing_um=100, timeRange=timeRange, overlay='CSD', hlines=0, layer_lines=1, layer_bounds=layerBounds, saveFig=0, figSize=(5,5), showFig=1) # LFP_overlay=True
 
 
 # ----------------------------------------------------------------------------------------------

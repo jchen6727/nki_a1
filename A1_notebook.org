@@ -56866,3 +56866,124 @@ elif graphType == 'bar':
 **** freq filter  -- filter the timeRanged LFP data to the frequency of the wavelet! 
 **** Look at the LFP signatures (peak, avg, etc.) for the average of all wavelet events in a given frequency band 
 **** Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
+**** Mess with bin size or smooth data for spiking spectrogram? 
+** Make figure plotting code nicer:
+*** Made getSpikeData a function:
+**** replacing these lines:
+# if spikePlotHist:
+# 	print('Plotting spiking histogram')
+# 	sim.load(dataFile, instantiate=False)
+# 	histFigure, histDict = sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
+# 		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
+# 		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False) # showFig=True
+
+**** ^^ with these:
+if spikePlotHist:
+	print('Plotting spiking histogram -- FUNCTION TEST')
+	histFigure, histDict = getSpikeData(dataFile, graphType='hist', pop=histPops, timeRange=timeRange, colorDict=colorDict, figSize=(10,7))
+*** Cleaning up spike spectrogram code:
+**** getting rid of these commented-out lines:
+***** # if not spectPops:
+# 	spectPops = ['eachPop']
+***** # print('Plotting firing rate spectrogram')
+***** # spikeSpectFig, spikeSpectDict = sim.analysis.plotRateSpectrogram(include=spectPops, timeRange=timeRange, figSize=figSize, showFig=False) # showFig = True
+***** ### FIGS ARE NOT EQUAL, BUT DICTS APPEAR TO BE!!!
+***** # REMINDER --> # spikeSpectDict = {'allSignal': allSignal, 'allFreqs':allFreqs}
+	# REMINDER --> # plt.imshow(signal, extent=(np.amin(T), np.amax(T), np.amin(freqs), np.amax(freqs))
+	# REMINDER --> # T = timeRange
+
+	# allSignal = spikeSpectDict['allSignal']
+	# allFreqs = spikeSpectDict['allFreqs']
+
+	# plt.title('IT2 TEST')
+	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])))
+	# plt.colorbar(label='Power')
+	# plt.xlabel('Time (ms)')
+	# plt.ylabel('Hz')
+	# plt.tight_layout()
+***** # if spikePlotSpect:
+# 	sim.load(dataFile, instantiate=False)
+# 	spikeSpectDict = sim.analysis.getRateSpectrogramData(include=spectPops, timeRange=timeRange)
+*** New function in spikes_orig.py:
+**** getRateSpectrogramData
+**** getSpikeHistData:
+***** copy-paste plotSpikeHistORIG, but do without any of the plotting stuff
+***** Getting rid of these arguments:
+****** overlay
+****** popColors
+****** figSize
+****** dpi
+****** saveFig
+****** showFig
+***** args I will re-evaluate:
+****** axis
+****** graphType
+***** getting rid of / commenting out these lines:
+******     # # create fig
+    # fig, ax1 = plt.subplots(figsize=figSize)
+    # fontsiz = 12
+******         # if not isinstance(subset, list):
+        #     color = colorList[iplot%len(colorList)]
+        # else:
+        #     color = popColors[subset] if subset in popColors else colorList[iplot%len(colorList)]
+******         # if not overlay:
+        #     plt.subplot(len(include), 1, iplot+1)  # if subplot, create new subplot
+        #     plt.title(str(subset), fontsize=fontsiz)
+        #     # color='blue'
+******         if graphType == 'line':
+            plt.plot (histoT, histoCount, linewidth=1.0, color = color)
+        elif graphType == 'bar':
+            print('NOT GOING TO PLOT BAR -- TESTING LINE -- UNCOMMENT plt.bar LINE TO REINSTATE THIS! ')
+******         if iplot == 0:
+            plt.xlabel('Time (ms)', fontsize=fontsiz)
+            plt.ylabel(yaxisLabel, fontsize=fontsiz) # add yaxis in opposite side
+        plt.xlim(timeRange)
+******     if len(include) < 5:  # if apply tight_layout with many subplots it inverts the y-axis
+        try:
+            plt.tight_layout()
+        except:
+            pass
+******     if overlay:
+        for i,subset in enumerate(include):
+            if not isinstance(subset, list):
+                color = colorList[i%len(colorList)]
+            else:
+                color = popColors[subset] if subset in popColors else colorList[i%len(colorList)]
+            plt.plot(0,0,color=color,label=str(subset))
+        plt.legend(fontsize=fontsiz, bbox_to_anchor=(1.04, 1), loc=2, borderaxespad=0.)
+        maxLabelLen = min(10,max([len(str(l)) for l in include]))
+        plt.subplots_adjust(right=(0.9-0.012*maxLabelLen))
+******     # # Set axis or scaleber
+    # if not axis:
+    #     ax = plt.gca()
+    #     scalebarLoc = kwargs.get('scalebarLoc', 7)
+    #     round_to_n = lambda x, n, m: int(np.round(round(x, -int(np.floor(np.log10(abs(x)))) + (n - 1)) / m)) * m
+    #     sizex = round_to_n((timeRange[1]-timeRange[0])/10.0, 1, 50)
+    #     add_scalebar(ax, hidex=False, hidey=True, matchx=False, matchy=True, sizex=sizex, sizey=None, unitsx='ms', unitsy='Hz', scalex=1, scaley=1, loc=scalebarLoc, pad=2, borderpad=0.5, sep=4, prop=None, barcolor="black", barwidth=3)
+    #     plt.axis(axis)
+******     # # save figure
+    # if saveFig:
+    #     if isinstance(saveFig, basestring):
+    #         filename = saveFig
+    #     else:
+    #         filename = sim.cfg.filename+'_plot_spikeHist.png'
+    #     plt.savefig(filename, dpi=dpi)
+******     # # show fig
+    # if showFig: _showFigure()
+**** Getting rid of these lines in simDataAnalysis.py:
+***** ### Perhaps make a for loop with pop list? 
+
+# if not histPops:
+# 	histPops = ['eachPop']
+
+***** 	# print('Plotting spiking histogram')
+***** 	# histFigure, histDict = sim.analysis.plotSpikeHistORIG(include=histPops, timeRange=timeRange, binSize=5, overlay=False, graphType='bar', \
+	# 	measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
+	# 	figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False) # showFig=True
+
+	# histDict = sim.analysis.getSpikeHistData(include=histPops, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
+***** # if spikePlotHist:
+# 	print('Plotting spiking histogram -- FUNCTION TEST')
+# 	histFigure, histDict = getSpikeData(dataFile, graphType='hist', pop=histPops, timeRange=timeRange, colorDict=colorDict, figSize=(10,7))
+***** ### FIGS ARE NOT EQUAL, BUT DICTS APPEAR TO BE!!!
+***** 
