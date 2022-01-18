@@ -57101,3 +57101,512 @@ if spikePlotHist:
 
 	# plt.tight_layout()
 	# ### TO DO: ADJUST POSITION OF COLOR BAR !!! 
+** Taking out plotSpikeData function: 
+*** in A1/analysis/simDataAnalysis.py
+*** no longer in use!!
+*** old function:
+# def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=None, timeRange=None):
+# 	### dataFile: str --> full path to .pkl data file
+# 	### plotType: str --> 'hist' or 'spect'; spiking histogram and/or rate spectrogram respectively
+# 	### colorList: for plotting colors !!
+# 	### saveFig: bool --> default true 
+# 	### figSize: tuple --> specify panel size 
+# 	### pops: list of cell populations 
+# 	### timeRange: list --> e.g. [start, stop]
+
+# 	sim.load(dataFile, instantiate=False)
+
+# 	if pops is None:
+# 		pops = ['eachPop']
+
+# 	if timeRange is None:
+# 		timeRange = [0, sim.cfg.duration]
+
+# 	if figSize is None:
+# 		figSize = (8,8) 	# (10,8) is default in the function as written, hm. 
+
+# 	if plotType is 'hist':
+# 		sim.analysis.plotSpikeHistORIG(include=pops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=saveFig, showFig=True)
+# 	elif plotType is 'spect':
+# 		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
+** Now keep working on this for combined lfp data plotting:
+*** Made 2 new functions (placeholders for now) -- def getLFPdata() and def plotCombinedLFP()
+*** Get the lines where I'm getting the data to not show the actual figure 
+**** As with spiking data, showFig=False seems to have no effect!!
+**** In lfp_orig.py, in netpyne/netpyne/analysis (in 'lfp' branch of my fork of netpyne), I'm making a new function --> getLFPData()
+***** This is copy pasta of plotLFP, with modifications to not plot. 
+***** Arguments I am removing:
+****** from plots argument --> Taking out 'locations' and 'PSD'
+******* Commented out 'locations' and 'PSD' code accordingly 
+****** includeAxon --> only applies to location plot 
+****** normPSD=False --> only applies to PSD plot 
+****** maxPlots=8
+****** overlay=False
+****** colors=None
+****** figSize=(8, 8)
+****** fontSize=14
+****** lineWidth=1.5
+****** dpi=200
+****** saveFig=None
+****** showFig=True
+***** Lines I am removing or commenting out from getLFPData() timeSeries section:
+****** Removed: # from ..support.scalebar import add_scalebar
+****** Removed: # if not colors: colors = colorList
+****** Removed:     # set font size
+    plt.rcParams.update({'font.size': fontSize})
+****** Removed:    # plotting
+    # figs = []
+    #maxPlots = 8.0
+****** Commented out: 
+        #     plt.plot(t[0:len(lfpPlot)], -lfpPlot+(i*ydisp), color=color, linewidth=lw)
+        #     if len(electrodes) > 1:
+        #         plt.text(timeRange[0]-0.07*(timeRange[1]-timeRange[0]), (i*ydisp), elec, color=color, ha='center', va='top', fontsize=fontSize, fontweight='bold')
+
+        # ax = plt.gca()
+****** Commented out: 
+        # # format plot
+        # if len(electrodes) > 1:
+        #     plt.text(timeRange[0]-0.14*(timeRange[1]-timeRange[0]), (len(electrodes)*ydisp)/2.0, 'LFP electrode', color='k', ha='left', va='bottom', fontSize=fontSize, rotation=90)
+        #     plt.ylim(-offset, (len(electrodes))*ydisp)
+        # else:
+        #     if pop is None:
+        #         plt.suptitle('LFP Signal', fontSize=fontSize, fontweight='bold')
+        #     elif pop is not None:
+        #         timeSeriesTitle = 'LFP Signal of ' + pop + ' population'
+        #         plt.suptitle(timeSeriesTitle, fontSize=fontSize, fontweight='bold')
+        # ax.invert_yaxis()
+        # plt.xlabel('time (ms)', fontsize=fontSize)
+        # ax.spines['top'].set_visible(False)
+        # ax.spines['right'].set_visible(False)
+        # ax.spines['left'].set_visible(False)
+        # plt.subplots_adjust(bottom=0.1, top=1.0, right=1.0)
+****** Commented out:
+        # if len(electrodes) > 1:
+        #     add_scalebar(ax,hidey=True, matchy=False, hidex=False, matchx=False, sizex=0, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+        # else:
+        #     add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, unitsx='ms', loc=3, pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+        # # save figure
+        # if saveFig:
+        #     if isinstance(saveFig, basestring):
+        #         filename = saveFig
+        #     else:
+        #         filename = sim.cfg.filename + '_LFP_timeseries.png'
+        #     plt.savefig(filename, dpi=dpi)
+****** Removed: (PSD) 
+    # # PSD ----------------------------------
+    # if 'PSD' in plots:
+    #     if overlay:
+    #         figs.append(plt.figure(figsize=figSize))
+    #     else:
+    #         numCols = 1 # np.round(len(electrodes) / maxPlots) + 1
+    #         figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+    #         #import seaborn as sb
+
+    #     allFreqs = []
+    #     allSignal = []
+    #     data['allFreqs'] = allFreqs
+    #     data['allSignal'] = allSignal
+
+    #     for i,elec in enumerate(electrodes):
+    #         if elec == 'avg':
+    #             lfpPlot = np.mean(lfp, axis=1)
+    #         elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+    #             lfpPlot = lfp[:, elec]
+
+    #         # Morlet wavelet transform method
+    #         if transformMethod == 'morlet':
+    #             from ..support.morlet import MorletSpec, index2ms
+
+    #             Fs = int(1000.0/sim.cfg.recordStep)
+
+    #             #t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+    #             morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+    #             freqs = F = morletSpec.f
+    #             spec = morletSpec.TFR
+    #             signal = np.mean(spec, 1)
+    #             ylabel = 'Power'
+
+    #         # FFT transform method
+    #         elif transformMethod == 'fft':
+    #             Fs = int(1000.0/sim.cfg.recordStep)
+    #             power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+
+    #             if smooth:
+    #                 signal = _smooth1d(10*np.log10(power[0]), smooth)
+    #             else:
+    #                 signal = 10*np.log10(power[0])
+    #             freqs = power[1]
+    #             ylabel = 'Power (dB/Hz)'
+
+    #         allFreqs.append(freqs)
+    #         allSignal.append(signal)
+
+        ## ALTERNATIVE PSD CALCULATION USING WELCH
+        ## from http://joelyancey.com/lfp-python-practice/
+        ## from scipy import signal as spsig
+        ## Fs = int(1000.0/sim.cfg.recordStep)
+        ## maxFreq=100
+        ## f, psd = spsig.welch(lfpPlot, Fs, nperseg=100)
+        ## plt.semilogy(f,psd,'k')
+        ## sb.despine()
+        ## plt.xlim((0,maxFreq))
+        ## plt.yticks(size=fontsiz)
+        ## plt.xticks(size=fontsiz)
+        ## plt.ylabel('$uV^{2}/Hz$',size=fontsiz)
+
+        # if normPSD:
+        #     vmax = np.max(allSignal)
+        #     for i, s in enumerate(allSignal):
+        #         allSignal[i] = allSignal[i]/vmax
+
+        # for i,elec in enumerate(electrodes):
+        #     if not overlay:
+        #         plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+        #     if elec == 'avg':
+        #         color = 'k'
+        #     elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+        #         color = colors[i % len(colors)]
+        #     freqs = allFreqs[i]
+        #     signal = allSignal[i]
+        #     plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
+        #     plt.xlim([0, maxFreq])
+        #     if len(electrodes) > 1 and not overlay:
+        #         plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
+        #     plt.ylabel(ylabel, fontsize=fontSize)
+
+        # # format plot
+        # plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+        # if overlay:
+        #     plt.legend(fontsize=fontSize)
+        # plt.tight_layout()
+        # if pop is None:
+        #     plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+        # elif pop is not None:
+        #     PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
+        #     plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
+        # plt.subplots_adjust(bottom=0.08, top=0.92)
+
+        # if logx:
+        #     pass
+        # #from IPython import embed; embed()
+
+        # # save figure
+        # if saveFig:
+        #     if isinstance(saveFig, basestring):
+        #         filename = saveFig
+        #     else:
+        #         filename = sim.cfg.filename + '_LFP_psd.png'
+        #     plt.savefig(filename, dpi=dpi)
+***** Lines I'm removing or commenting out from 'spectrogram' section:
+******  Commented out:       #figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+****** Commented out:
+                #plt.subplot(np.ceil(len(electrodes) / numCols),
+                numCols, i + 1)
+****** Commented out:
+                # plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+                # if normSpec:
+                #     plt.colorbar(label='Normalized power')
+                # else:
+                #     plt.colorbar(label='Power')
+                # plt.ylabel('Hz')
+                # plt.tight_layout()
+                # if len(electrodes) > 1:
+                #     plt.title('Electrode %s' % (str(elec)),
+                # fontsize=fontSize - 2)
+****** Commented out:
+            # for i,elec in enumerate(electrodes):
+            #     plt.subplot(np.ceil(len(electrodes)/numCols), numCols, i+1)
+            #     plt.pcolormesh(x_mesh, y_mesh, spec[i], cmap=cm.viridis, vmin=vmin, vmax=vmax)
+            #     plt.colorbar(label='dB/Hz', ticks=[np.ceil(vmin), np.floor(vmax)])
+            #     if logy:
+            #         plt.yscale('log')
+            #         plt.ylabel('Log-frequency (Hz)')
+            #         if isinstance(logy, list):
+            #             yticks = tuple(logy)
+            #             plt.yticks(yticks, yticks)
+            #     else:
+            #         plt.ylabel('(Hz)')
+            #     if len(electrodes) > 1:
+            #         plt.title('Electrode %s'%(str(elec)),
+            # fontsize=fontSize-2)
+****** xlabel, title etc (commented out for now):
+        # plt.xlabel('time (ms)', fontsize=fontSize)
+        # plt.tight_layout()
+        # if pop is None:
+        #     plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
+        # elif pop is not None:
+        #     spectTitle = 'LFP spectrogram of ' + pop + ' population'
+        #     plt.suptitle(spectTitle, size=fontSize, fontweight='bold')
+
+        # plt.subplots_adjust(bottom=0.08, top=0.90)
+****** saveFig lines:
+        # # save figure
+        # if saveFig:
+        #     if isinstance(saveFig, basestring):
+        #         filename = saveFig
+        #     else:
+        #         filename = sim.cfg.filename + '_LFP_timefreq.png'
+        #     plt.savefig(filename, dpi=dpi)
+***** Removing locations lines:
+    # # locations ------------------------------
+    # if 'locations' in plots:
+    #     try:
+    #         cvals = [] # used to store total transfer resistance
+
+    #         for cell in sim.net.compartCells:
+    #             trSegs = list(np.sum(sim.net.recXElectrode.getTransferResistance(cell.gid)*1e3, axis=0)) # convert from Mohm to kilohm
+    #             if not includeAxon:
+    #                 i = 0
+    #                 for secName, sec in cell.secs.items():
+    #                     nseg = sec['hObj'].nseg #.geom.nseg
+    #                     if 'axon' in secName:
+    #                         for j in range(i,i+nseg): del trSegs[j]
+    #                     i+=nseg
+    #             cvals.extend(trSegs)
+
+    #         includePost = [c.gid for c in sim.net.compartCells]
+    #         fig = sim.analysis.plotShape(includePost=includePost, showElectrodes=electrodes, cvals=cvals, includeAxon=includeAxon, dpi=dpi,
+    #         fontSize=fontSize, saveFig=saveFig, showFig=showFig, figSize=figSize)[0]
+    #         figs.append(fig)
+    #     except:
+    #         print('  Failed to plot LFP locations...')
+**** Deleted this line at the end about PSD:
+    # if 'PSD' in plots:
+    #     outputData.update({'allFreqs': allFreqs, 'allSignal':
+    # allSignal})
+**** Deleted showFig lines:
+    # # show fig
+    # if showFig: _showFigure()
+**** Deleted 'figs' from return rigs, outputData
+*** ^^ Now try the new function getLFPData() in netpyne 
+**** Test if output dicts are equal for spectrogram:
+lfpSpectFig, LFPSpectOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+
+LFPSpectOutput2 = sim.analysis.getLFPData(pop=lfpPops[0], timeRange=timeRange, electrodes=lfpElectrodes, plots=['spectrogram'])
+**** Error:
+>>> type(LFPSpectOutput)
+<class 'dict'>
+>>> type(LFPSpectOutput2)
+<class 'int'>
+**** Edited outputData dict that gets returned in getLFPData():
+outputData = {'LFP': lfp, 'electrodes': electrodes, 'timeRange': timeRange, 'saveData': saveData} #, 'saveFig': saveFig, 'showFig': showFig}
+**** That error is now resolved
+**** Dict comparison:
+***** >>> LFPSpectOutput.keys()
+dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+***** >>> LFPSpectOutput2.keys()
+dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'spec', 't',
+'freqs'])
+***** 'LFP', 'electrodes', 'timeRange', 'saveData', 't', and 'freqs' are all equal, but NOT 'specs' (morlet object?)
+**** Comparing for timeSeries now:
+***** Got an error about figSize, so found and commented out these lines in timeSeries lines of getLFPData():
+        # if figSize:
+        #     figs.append(plt.figure(figsize=figSize))
+***** Once resolved that -- looks all good! 
+>>> LFPtimeSeriesOutput.keys()
+dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
+
+>>> LFPtimeSeriesOutput2.keys()
+dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 't'])
+
+>>> LFPtimeSeriesOutput['LFP'] == LFPtimeSeriesOutput2['LFP']
+array([[ True,  True,  True, ...,  True,  True,  True],
+       [ True,  True,  True, ...,  True,  True,  True],
+       [ True,  True,  True, ...,  True,  True,  True],
+       ...,
+       [ True,  True,  True, ...,  True,  True,  True],
+       [ True,  True,  True, ...,  True,  True,  True],
+       [ True,  True,  True, ...,  True,  True,  True]])
+
+>>> LFPtimeSeriesOutput['electrodes'] == LFPtimeSeriesOutput2['electrodes']
+True
+
+>>> LFPtimeSeriesOutput['timeRange'] == LFPtimeSeriesOutput2['timeRange']
+True
+
+>>> LFPtimeSeriesOutput['saveData'] == LFPtimeSeriesOutput2['saveData']
+True
+
+>>> LFPtimeSeriesOutput['t'] == LFPtimeSeriesOutput2['t']
+array([ True,  True,  True, ...,  True,  True,  True]) 
+**** NOTE: for spectrogram -- looks like 'spec' key is not equal, but could be because of something benign, I think. When I check all of the things like spec[0].TFR, spec[0].f, etc. then these are all equal! 
+*** Now try the new function getLFPDataDict() in A1/analysis/simDataAnalysis.py 
+**** Dict comparison: 
+	lfpSpectFig, LFPSpectOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+
+	LFPSpectOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+
+	LFPSpectOutput3 = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+**** 	LFPSpectOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+
+	LFPSpectOutput3 = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+
+
+	print('LFPSpectOutput2 keys: ' + str(LFPSpectOutput2.keys()))
+	print('LFPSpectOutput3 keys: ' + str(LFPSpectOutput3.keys()))
+	if LFPSpectOutput2.keys() == LFPSpectOutput3.keys():
+		print('keys are the same for 2 and 3')
+
+	# if LFPSpectOutput2['LFP'] == LFPSpectOutput3['LFP']:
+	# 	print('LFP values equal for 2 and 3')
+
+	if LFPSpectOutput2['electrodes'] == LFPSpectOutput3['electrodes']:
+		print('electrode values equal')
+
+	if LFPSpectOutput2['timeRange'] == LFPSpectOutput3['timeRange']:
+		print('timeRange vaule equal')
+
+	if LFPSpectOutput2['saveData'] == LFPSpectOutput3['saveData']:
+		print('saveData value equal')
+
+	# if LFPSpectOutput2['t'] == LFPSpectOutput3['t']:
+	# 	print('t value equal')
+
+	spec2 = LFPSpectOutput2['spec']
+	spec3 = LFPSpectOutput3['spec']
+
+	i=0 # trying this out 
+	S2 = spec2[i].TFR
+	F2 = spec2[i].f 
+
+	S3 = spec3[i].TFR
+	F3 = spec3[i].f 
+
+	if S2 == S3:
+		print('S2 and S3 equal')
+	if F2 == F3:
+		print('Fs are equal')
+**** ^^ all looks good!!! 
+**** Deleting test lines for comparison of spectrogram data dicts:
+	print('LFPSpectOutput2 keys: ' + str(LFPSpectOutput2.keys()))
+	print('LFPSpectOutput3 keys: ' + str(LFPSpectOutput3.keys()))
+	if LFPSpectOutput2.keys() == LFPSpectOutput3.keys():
+		print('keys are the same for 2 and 3')
+
+	# if LFPSpectOutput2['LFP'] == LFPSpectOutput3['LFP']:
+	# 	print('LFP values equal for 2 and 3')
+
+	if LFPSpectOutput2['electrodes'] == LFPSpectOutput3['electrodes']:
+		print('electrode values equal')
+
+	if LFPSpectOutput2['timeRange'] == LFPSpectOutput3['timeRange']:
+		print('timeRange vaule equal')
+
+	if LFPSpectOutput2['saveData'] == LFPSpectOutput3['saveData']:
+		print('saveData value equal')
+
+	# if LFPSpectOutput2['t'] == LFPSpectOutput3['t']:
+	# 	print('t value equal')
+
+	spec2 = LFPSpectOutput2['spec']
+	spec3 = LFPSpectOutput3['spec']
+
+	i=0 # trying this out 
+	S2 = spec2[i].TFR
+	F2 = spec2[i].f 
+
+	S3 = spec3[i].TFR
+	F3 = spec3[i].f 
+
+	if S2 == S3:
+		print('S2 and S3 equal')
+	if F2 == F3:
+		print('Fs are equal')
+**** Now doing comparison of dicts for timeSeries:
+***** 	LFPtimeSeriesOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+	LFPtimeSeriesOutput3 = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+
+***** Looks good! :
+****** >>> np.all(LFPtimeSeriesOutput2['LFP'] == LFPtimeSeriesOutput3['LFP'])
+True
+>>> LFPtimeSeriesOutput2['electrodes'] == LFPtimeSeriesOutput2 3['electrodes']
+True
+>>> LFPtimeSeriesOutput2['timeRange'] == LFPtimeSeriesOutput3['timeRange']
+True
+***** >>> np.all(LFPtimeSeriesOutput2['t'] == LFPtimeSeriesOutput3['t'])
+True
+*** Clean up lfp getData lines in simDataAnalysis.py:
+**** Deleted from spectrogram section:
+	# lfpSpectFig, LFPSpectOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+	# LFPSpectOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+
+
+# (pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'spectrogram'], inputLFP=None, NFFT=256, noverlap=128, nperseg=256, 
+#     minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, logx=False, logy=False, normSignal=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, 
+#     transformMethod='morlet', saveData=None):
+
+## 
+# LFPSpectOutput.keys()
+# dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+**** Deleted from timeSeries section:
+	# lfpTimeSeriesFig, LFPtimeSeriesOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+	# sim.load(dataFile, instantiate=False)
+	# LFPtimeSeriesOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+	# LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+
+
+## 
+# LFPtimeSeriesOutput.keys()
+# dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
+*** Clean up getLFPDataDict() function from comments:
+# lfpPop_spect = 0											## bool (0 or 1)
+# lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+# plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+# lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+# # figSize = (10,7)										## tuple with desired figure size 
+
+# if lfpPop_spect:
+# 	lfpSpectFig, LFPSpectOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+
+# 	LFPSpectOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+
+
+
+
+# lfpPop_timeSeries = 1											## bool (0 or 1)
+# lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+# plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+# lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+# figSize = (10,7)										## tuple with desired figure size 
+
+# if lfpPop_timeSeries:
+# 	lfpTimeSeriesFig, LFPtimeSeriesOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+# 	sim.load(dataFile, instantiate=False)
+# 	LFPtimeSeriesOutput2 = sim.analysis.getLFPData(pop=lfpPops, timeRange=timeRange, electrodes=lfpElectrodes, plots=plots) # pop=lfpPops[0]
+** Note that plotLFPPopsData() function (in simDataAnalysis.py) is no longer used!!!
+*** old lines:
+def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None, figSize=None, showFig=False):
+	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
+	### plots: list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+	### electrodes: list ---> e.g. ['avg'] <-- can this be combined / used with numbered electrodes??
+	### timeRange: list --> e.g. [start, stop]
+	### pops: list of populations to plot data for  <-- if None, then plots for all populations recorded 
+	### showFig: attempt to pass this to plotLFP <-- doesn't work so well; just still shows fig, similar to when plotting spiking data 
+
+
+	## Load sim data
+	sim.load(dataFile, instantiate=False)
+
+	## Get cell populations:
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] 		## THESE MUST BE EXCLUDED! 
+	if pops is None or pops is 0:
+		allPops = list(sim.net.allPops.keys())				# all populations! 
+		#print('pops included, orig: ' + str(allPops))		## PRINT TESTING LINE
+		pops = [pop for pop in allPops if pop not in thalPops]
+		#print('new pops list: ' + str(pops))				## PRINT TESTING LINE
+
+	## timeRange
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+
+	## FORMATTING ARGS
+	if figSize is None:
+		figSize = (8,8)
+
+	## PLOTTING:
+	for pop in pops:
+		for plot in plots:
+			lfpFig, lfpOutputData = sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize, showFig=showFig) ### fix / clean up 'avg' situation!
+
+	return lfpFig, lfpOutputData
+*** Deleted! 

@@ -114,42 +114,6 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.get_yaxis().set_visible(False)
 
 
-def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None, figSize=None, showFig=False):
-	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
-	### plots: list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
-	### electrodes: list ---> e.g. ['avg'] <-- can this be combined / used with numbered electrodes??
-	### timeRange: list --> e.g. [start, stop]
-	### pops: list of populations to plot data for  <-- if None, then plots for all populations recorded 
-	### showFig: attempt to pass this to plotLFP <-- doesn't work so well; just still shows fig, similar to when plotting spiking data 
-
-
-	## Load sim data
-	sim.load(dataFile, instantiate=False)
-
-	## Get cell populations:
-	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'] 		## THESE MUST BE EXCLUDED! 
-	if pops is None or pops is 0:
-		allPops = list(sim.net.allPops.keys())				# all populations! 
-		#print('pops included, orig: ' + str(allPops))		## PRINT TESTING LINE
-		pops = [pop for pop in allPops if pop not in thalPops]
-		#print('new pops list: ' + str(pops))				## PRINT TESTING LINE
-
-	## timeRange
-	if timeRange is None:
-		timeRange = [0, sim.cfg.duration]
-
-	## FORMATTING ARGS
-	if figSize is None:
-		figSize = (8,8)
-
-	## PLOTTING:
-	for pop in pops:
-		for plot in plots:
-			lfpFig, lfpOutputData = sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize, showFig=showFig) ### fix / clean up 'avg' situation!
-
-	return lfpFig, lfpOutputData
-
-
 def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], showFig=1, saveFig=0, figsize=None, timeRange=None, pops=None):
 	### dataFile: str
 	### colorList: list
@@ -256,32 +220,6 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.savefig(filename,bbox_inches='tight')
 
 
-# def plotSpikeData(dataFile, plotType, colorList, saveFig=1, figSize=None, pops=None, timeRange=None):
-# 	### dataFile: str --> full path to .pkl data file
-# 	### plotType: str --> 'hist' or 'spect'; spiking histogram and/or rate spectrogram respectively
-# 	### colorList: for plotting colors !!
-# 	### saveFig: bool --> default true 
-# 	### figSize: tuple --> specify panel size 
-# 	### pops: list of cell populations 
-# 	### timeRange: list --> e.g. [start, stop]
-
-# 	sim.load(dataFile, instantiate=False)
-
-# 	if pops is None:
-# 		pops = ['eachPop']
-
-# 	if timeRange is None:
-# 		timeRange = [0, sim.cfg.duration]
-
-# 	if figSize is None:
-# 		figSize = (8,8) 	# (10,8) is default in the function as written, hm. 
-
-# 	if plotType is 'hist':
-# 		sim.analysis.plotSpikeHistORIG(include=pops, timeRange=timeRange, binSize=5, overlay=True, graphType='line', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorList, figSize=figSize, dpi=100, saveData=None, saveFig=saveFig, showFig=True)
-# 	elif plotType is 'spect':
-# 		sim.analysis.plotRateSpectrogram(include=pops, timeRange=timeRange, figSize=figSize)
-
-
 def getDataFrames(dataFile, timeRange):
 	### This function will return data frames of peak and average lfp amplitudes for picking cell pops
 	### dataFile: str --> .pkl file to load
@@ -376,7 +314,7 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 	return ax 
 
 
-def getSpikeData(dataFile, graphType, pop, timeRange): 
+def getSpikeData(dataFile, graphType, pop, timeRange=None): 
 	### dataFile: path to .pkl data file to load 
 	### graphType: str --> either 'hist' or 'spect'
 	### pop: list or str --> which pop to include 
@@ -389,10 +327,11 @@ def getSpikeData(dataFile, graphType, pop, timeRange):
 	elif type(pop) is list:
 		popList = pop
 
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
 
 	if graphType is 'spect':
 		spikeDict = sim.analysis.getRateSpectrogramData(include=popList, timeRange=timeRange)
-
 	elif graphType is 'hist':
 		spikeDict = sim.analysis.getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
 
@@ -453,6 +392,36 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
 	### TO DO: ADD POPULATION TO TTTLE OF THESE PLOTS IN SOME MANNER !! 
 
+
+def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
+	### dataFile: str --> path to .pkl data file to load for analysis 
+	### pop: str or list  
+	### timeRange: list, e.g. [start, stop]
+	### plotType: str or list --> 'spectrogram' or 'timeSeries'
+	### electrodes: list --> default: ['avg']
+
+	# Load data file 
+	sim.load(dataFile, instantiate=False)
+
+	# Pops
+	if type(pop) is str:
+		popList = [pop]
+	elif type(pop) is list:
+		popList = pop
+
+	# Set up which kind of data -- i.e. timeSeries or spectrogram 
+	if type(plotType) is str:
+		plots = [plotType]
+	elif type(plotType) is list:
+		plots = plotType
+
+	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots)
+
+	return lfpOutput
+
+
+def plotCombinedLFP():
+	print('PLACEHOLDER FUNCTION FOR PLOTTING COMBINED SPECTROGRAM + TIMESERIES LFP DATA')
 
 
 
@@ -568,7 +537,7 @@ includePops = ['IT2']		# placeholder for now <-- will ideally come out of the fu
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
-plotSpikeData = 1
+plotSpikeData = 0
 
 if plotSpikeData:
 	for pop in includePops:
@@ -589,56 +558,46 @@ if plotSpikeData:
 
 
 
-
 #### LFP PLOTTING #### 
 ## TO DO: 
 ## Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-#### LFP POP PLOTTING -- TIME SERIES ####
-lfpPop_timeSeries = 0											## bool (0 or 1)
-lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
-lfpElectrodes = ['avg'] # [3, 4, 5, 6]
-figSize = (10,7)										## tuple with desired figure size 
-
-if lfpPop_timeSeries:
-	lfpTimeSeriesFig, LFPtimeSeriesOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
-
-
-## 
-# LFPtimeSeriesOutput.keys()
-# dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
-
-
-
-
 
 #### LFP POP PLOTTING -- SPECTROGRAM ####
 ## TO DO: smooth or mess with bin size to smooth out spectrogram for spiking data
 
-lfpPop_spect = 0											## bool (0 or 1)
-lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+lfpPop_spect = 1											## bool (0 or 1)
+lfpPops = includePops #['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
-figSize = (10,7)										## tuple with desired figure size 
+# figSize = (10,7)										## tuple with desired figure size 
 
 if lfpPop_spect:
-	lfpSpectFig, LFPSpectOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+	LFPSpectOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
 
 
-## 
-# LFPSpectOutput.keys()
-# dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+#### LFP POP PLOTTING -- TIME SERIES ####
+lfpPop_timeSeries = 1											## bool (0 or 1)
+lfpPops = includePops	# ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+# figSize = (10,7)										## tuple with desired figure size 
+
+if lfpPop_timeSeries:
+	LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+
+
 
 
 
 ###### COMBINED LFP PLOTTING ######
 
-plotCombinedLFP = 0
+plotCombinedLFP = 1
 
 if plotCombinedLFP:
 	## Create figure 
+	figSize = (10,7)
 	fig,ax1 = plt.subplots(figsize=figSize)
 
 	## Set font size 
@@ -663,7 +622,9 @@ if plotCombinedLFP:
 	T = timeRange
 
 	vmin = np.array([s.TFR for s in spec]).min()
+	# vmin2 = np.array([s.TFR for s in spec2]).min()
 	vmax = np.array([s.TFR for s in spec]).max()
+	# vmax2 = np.array([s.TFR for s in spec2]).max()
 	vc = [vmin, vmax]
 
 	#plt.colorbar(label='Power')
