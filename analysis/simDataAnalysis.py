@@ -114,12 +114,14 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.get_yaxis().set_visible(False)
 
 
-def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None, figSize=None):
+def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=None, figSize=None, showFig=False):
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
 	### plots: list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 	### electrodes: list ---> e.g. ['avg'] <-- can this be combined / used with numbered electrodes??
 	### timeRange: list --> e.g. [start, stop]
 	### pops: list of populations to plot data for  <-- if None, then plots for all populations recorded 
+	### showFig: attempt to pass this to plotLFP <-- doesn't work so well; just still shows fig, similar to when plotting spiking data 
+
 
 	## Load sim data
 	sim.load(dataFile, instantiate=False)
@@ -143,7 +145,9 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 	## PLOTTING:
 	for pop in pops:
 		for plot in plots:
-			sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize) ### fix / clean up 'avg' situation!
+			lfpFig, lfpOutputData = sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize, showFig=showFig) ### fix / clean up 'avg' situation!
+
+	return lfpFig, lfpOutputData
 
 
 def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], showFig=1, saveFig=0, figsize=None, timeRange=None, pops=None):
@@ -478,7 +482,7 @@ if evalPops:
 
 
 #### SPIKE HISTOGRAM PLOTTING #### 
-spikePlotHist = 1										## bool (0 or 1)
+spikePlotHist = 0										## bool (0 or 1)
 histPops = ['IT2']	# 0 						## bool OR list of ONE pop --> e.g. ['IT2'] --> ## ^^ note that with list of pops, with overlay=False you will also get a panel with multiple sub-panels
 figSize = (10,7) # (10,8) <-- DEFAULT 
 ### Perhaps make a for loop with pop list? 
@@ -504,7 +508,7 @@ if spikePlotHist:
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
+spikePlotSpect = 0
 spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
 figSize = (10,7)
 
@@ -534,61 +538,91 @@ if spikePlotSpect:
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 
-# Create figure
-fig,ax1 = plt.subplots(figsize=figSize)    # figSize = (10,7)
+spikePlotsCombined = 0
 
-# Set font size
-fontsiz = 12 # fontSize
-plt.rcParams.update({'font.size': fontsiz})
+if spikePlotsCombined:
 
+	# Create figure
+	fig,ax1 = plt.subplots(figsize=figSize)    # figSize = (10,7)
 
-### HISTOGRAM ### 
-histoT = histDict['histoT']
-histoCount = histDict['histoData']
-
-plt.subplot(2, 1, 1)
-plt.title('TESTING HIST')
-plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)
-plt.xlabel('Time (ms)', fontsize=fontsiz)
-plt.ylabel('Spike Count', fontsize=fontsiz) # add yaxis in opposite side
-plt.xlim(timeRange)
+	# Set font size
+	fontsiz = 12 # fontSize
+	plt.rcParams.update({'font.size': fontsiz})
 
 
-### SPECTROGRAM ###
-allSignal = spikeSpectDict['allSignal']
-allFreqs = spikeSpectDict['allFreqs']
+	### HISTOGRAM ### 
+	histoT = histDict['histoT']
+	histoCount = histDict['histoData']
+
+	plt.subplot(2, 1, 1)
+	plt.title('TESTING HIST')
+	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)
+	plt.xlabel('Time (ms)', fontsize=fontsiz)
+	plt.ylabel('Spike Count', fontsize=fontsiz) # add yaxis in opposite side
+	plt.xlim(timeRange)
 
 
-plt.subplot(2, 1, 2)
-plt.title('TESTING SPECT')
-plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
-plt.colorbar(label='Power')
-plt.xlabel('Time (ms)')
-plt.ylabel('Hz')
+	### SPECTROGRAM ###
+	allSignal = spikeSpectDict['allSignal']
+	allFreqs = spikeSpectDict['allFreqs']
 
 
-plt.tight_layout()
+	plt.subplot(2, 1, 2)
+	plt.title('TESTING SPECT')
+	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	plt.colorbar(label='Power')
+	plt.xlabel('Time (ms)')
+	plt.ylabel('Hz')
 
 
-
-
-
-
-
+	plt.tight_layout()
+	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
 
 
 
 
-#### LFP POP PLOTTING ####
-lfpPopPlot = 0											## bool (0 or 1)
-lfpPops = ['IT2', 'IT3'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+
+
+
+
+
+
+#### LFP POP PLOTTING -- TIME SERIES ####
+lfpPop_timeSeries = 1											## bool (0 or 1)
+lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
 plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
 lfpElectrodes = ['avg'] # [3, 4, 5, 6]
 figSize = (10,7)										## tuple with desired figure size 
 
-if lfpPopPlot:
-	plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize)
+if lfpPop_timeSeries:
+	lfpTimeSeriesFig, LFPtimeSeriesOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
 
+
+## 
+# LFPtimeSeriesOutput.keys()
+# dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
+
+#### LFP POP PLOTTING -- SPECTROGRAM ####
+lfpPop_spect = 1											## bool (0 or 1)
+lfpPops = ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+figSize = (10,7)										## tuple with desired figure size 
+
+if lfpPop_spect:
+	lfpSpectFig, LFPSpectOutput = plotLFPPopsData(dataFile, plots, electrodes=lfpElectrodes, timeRange=timeRange, pops=lfpPops, figSize = figSize, showFig=False)
+
+
+## 
+# LFPSpectOutput.keys()
+# dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+
+
+
+
+#############################################################
+############ NOT REALLY BEING USED AT THE MOMENT ############
+#############################################################
 
 #### MUA PLOTTING ####
 MUA = 0				## bool (0 or 1) 

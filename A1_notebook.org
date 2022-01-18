@@ -56843,3 +56843,9 @@ elif graphType == 'bar':
         # plt.ylabel('Hz')
         # plt.tight_layout()
 
+*** LFP:
+**** Added the return values for plotLFPPopsData -- 
+***** 	for pop in pops:
+		for plot in plots:
+			lfpFig, lfpOutputData = sim.analysis.plotLFP(pop=pop,timeRange=timeRange, plots=[plot], electrodes=electrodes, figSize=figSize) ### fix / clean up 'avg' situation!
+***** return lfpFig, lfpOutputData
