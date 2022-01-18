@@ -56819,5 +56819,8 @@ if pop is None:
             ## color = 'blue'
 ** More formatting:
 *** How to get these to "combine" into one figure? 
-*** ^^ WHY does this showFig even when I set showFig = 0 and showFig = False ??? 
-*** ^^ Even when I comment out the line if showFig in this function, it does still show me the figure, so it's not entirely being controlled by this line. maybe it's the return fig part ? 
+*** Save or output the figure data for spike hist and spike spectrogram:
+**** ^^ WHY does this showFig even when I set showFig = 0 and showFig = False ??? 
+**** ^^ Even when I comment out the line if showFig in this function, it does still show me the figure, so it's not entirely being controlled by this line. maybe it's the return fig part ? 
+**** ^^ okay!! I am now returning the dictionaries from each of plotSpikeHistORIG and plotRateSpectrogram. 
+*** Can plot spike spectrogram using data from plotSpikeHistORIG

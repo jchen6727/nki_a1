@@ -493,11 +493,15 @@ if spikePlotHist:
 		measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, popColors=colorDict, \
 		figSize=figSize, dpi=100, saveData=None, saveFig=None, showFig=False) # showFig=True
 
+histoT = histDict['histoT']
+histoCount = histDict['histoData']
+plt.bar(histoT, histoCount[0], width = 5, color=colorDict[histPops[0]], fill=True)  # color='blue',
+
 ### Perhaps make a for loop with pop list? 
 
 
 #### SPIKE RATE SPECTROGRAM PLOTTING #### 
-spikePlotSpect = 1
+spikePlotSpect = 0
 spectPops = ['IT2']										## NOTE THAT YOU CAN ONLY HAVE ONE AT A TIME, OTHERWISE WILL GET ONE FIG WITH MULTIPLE POPS --- UNLESS overlay='False' !! 
 figSize = (10,7)
 
