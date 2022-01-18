@@ -52,6 +52,7 @@ def getDataFiles(based):
 	return allDataFiles 
 
 
+### plotMUA IS NOT USED !!! 
 def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	#### plotMUA FUNCTION STILL NOT WORKING WELL FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
@@ -114,6 +115,7 @@ def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	ax.get_yaxis().set_visible(False)
 
 
+### plotCustomLFPTimeSeries() IS NOT USED !!! 
 def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], showFig=1, saveFig=0, figsize=None, timeRange=None, pops=None):
 	### dataFile: str
 	### colorList: list
@@ -557,110 +559,78 @@ if plotSpikeData:
 
 
 
-
-#### LFP PLOTTING #### 
+###### COMBINED LFP PLOTTING ######
 ## TO DO: 
 ## Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
-
-
-#### LFP POP PLOTTING -- SPECTROGRAM ####
-## TO DO: smooth or mess with bin size to smooth out spectrogram for spiking data
-
-lfpPop_spect = 1											## bool (0 or 1)
-lfpPops = includePops #['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
-lfpElectrodes = ['avg'] # [3, 4, 5, 6]
-# figSize = (10,7)										## tuple with desired figure size 
-
-if lfpPop_spect:
-	LFPSpectOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
-
-
-#### LFP POP PLOTTING -- TIME SERIES ####
-lfpPop_timeSeries = 1											## bool (0 or 1)
-lfpPops = includePops	# ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
-plots = ['timeSeries'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
-lfpElectrodes = ['avg'] # [3, 4, 5, 6]
-# figSize = (10,7)										## tuple with desired figure size 
-
-if lfpPop_timeSeries:
-	LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
-
-
-
-
-
-###### COMBINED LFP PLOTTING ######
+## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
 plotCombinedLFP = 1
 
 if plotCombinedLFP:
-	## Create figure 
-	figSize = (10,7)
-	fig,ax1 = plt.subplots(figsize=figSize)
+	for pop in includePops:
+		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
-	## Set font size 
-	fontsiz = 12
-	plt.rcParams.update({'font.size': fontsiz})
-
+		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
+		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=['avg']) 
+		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrodes=['avg']) 
 
 
-	##### SPECTROGRAM  ## ON TOP !! 
-	# REMINDER --> LFPSpectOutput.keys()
-	# REMINDER --> dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+		## Create figure 
+		figSize = (10,7)
+		fig,ax1 = plt.subplots(figsize=figSize)
 
-	plt.subplot(2, 1, 1)
-	plt.title('Spectrogram LFP test')
-
-	lfp = LFPSpectOutput['LFP']
-	spec = LFPSpectOutput['spec']
-
-	i=0 # trying this out 
-	S = spec[i].TFR
-	F = spec[i].f   # i = 0 ? 
-	T = timeRange
-
-	vmin = np.array([s.TFR for s in spec]).min()
-	# vmin2 = np.array([s.TFR for s in spec2]).min()
-	vmax = np.array([s.TFR for s in spec]).max()
-	# vmax2 = np.array([s.TFR for s in spec2]).max()
-	vc = [vmin, vmax]
-
-	#plt.colorbar(label='Power')
-	plt.ylabel('Hz')
-	plt.xlabel('Time (ms)')
-	plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+		## Set font size 
+		fontsiz = 12
+		plt.rcParams.update({'font.size': fontsiz})
 
 
-	# lfpPlot = np.mean(lfp, axis=1)
+
+		##### SPECTROGRAM  ## ON TOP PANEL !! 
+		plt.subplot(2, 1, 1)
+		plt.title('Spectrogram LFP test')
+
+		lfp = LFPSpectOutput['LFP']
+		spec = LFPSpectOutput['spec']
+
+		i=0 # trying this out 
+		S = spec[i].TFR
+		F = spec[i].f   
+		T = timeRange
+
+		vmin = np.array([s.TFR for s in spec]).min()
+		vmax = np.array([s.TFR for s in spec]).max()
+		vc = [vmin, vmax]
+
+		#plt.colorbar(label='Power')
+		plt.ylabel('Hz')
+		plt.xlabel('Time (ms)')
+		plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
 
 
-	##### TIME SERIES  ## ON BOTTOM !! 
-	# REMINDER --> LFPtimeSeriesOutput.keys()
-	# REMINDER --> dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
 
-	plt.subplot(2, 1, 2)
-	plt.title('timeSeries LFP test')
+		##### TIME SERIES  ## ON BOTTOM PANEL !! 
+		plt.subplot(2, 1, 2)
+		plt.title('timeSeries LFP test')
 
-	#t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
-	t = LFPtimeSeriesOutput['t']
-	lfp = LFPtimeSeriesOutput['LFP']
+		t = LFPtimeSeriesOutput['t']
+		lfp = LFPtimeSeriesOutput['LFP']
 
-	separation = 1 
-	ydisp = np.absolute(lfp).max() * separation
-	offset = 1.0*ydisp
+		separation = 1 
+		ydisp = np.absolute(lfp).max() * separation
+		offset = 1.0*ydisp
 
-	lfpPlot = np.mean(lfp, axis=1)
+		lfpPlot = np.mean(lfp, axis=1)
 
-	lw = 1.0
-	plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[lfpPops[0]], linewidth=lw)   # -lfpPlot+(i*ydisp)
-	plt.xlabel('Time (ms)')
-	# plt.ylabel('LFP Amplitudes')
-	### NEED Y AXIS LABEL 
+		lw = 1.0
+		plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[includePops[0]], linewidth=lw)   # -lfpPlot+(i*ydisp)
+		plt.xlabel('Time (ms)')
+		# plt.ylabel('LFP Amplitudes')
+		### NEED Y AXIS LABEL 
+		### Add legend or title with pop name!!! 
 
-	plt.tight_layout()
-	plt.show()
+		plt.tight_layout()
+		plt.show()
 
 
 

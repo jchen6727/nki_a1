@@ -57610,3 +57610,48 @@ def plotLFPPopsData(dataFile, plots, electrodes=['avg'], timeRange=None, pops=No
 
 	return lfpFig, lfpOutputData
 *** Deleted! 
+** Now working on plotting combined LFP code:
+*** Deleting timeSeries "reminder" comments:
+	# REMINDER --> LFPtimeSeriesOutput.keys()
+	# REMINDER --> dict_keys(['LFP', 'electrodes', 'timeRange', 'saveData', 'saveFig', 'showFig', 't'])
+*** Deleting spectrogram 'reminder' comments:
+	# REMINDER --> LFPSpectOutput.keys()
+	# REMINDER --> dict_keys(['LFP', 'electrodes', 'timeRange',
+	# 'saveData', 'saveFig', 'showFig', 'spec', 't', 'freqs'])
+*** Deleting vmin and vmax testing comments:
+**** old lines:
+	vmin = np.array([s.TFR for s in spec]).min()
+	# vmin2 = np.array([s.TFR for s in spec2]).min()
+	vmax = np.array([s.TFR for s in spec]).max()
+	# vmax2 = np.array([s.TFR for s in spec2]).max()
+**** deleting vmin2 and vmax2 lines from above 
+*** Deleting prior calculation of 't' --> I now get this from the data dict:
+#t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+*** Deleting commented-out lines where I previously got the data dicts:
+#### LFP PLOTTING #### 
+## TO DO: 
+## Filter the timeRanged lfp data to the wavelet frequency band
+## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
+## Smooth or mess with bin size to smooth out spectrogram for spiking data
+
+# #### LFP POP PLOTTING -- SPECTROGRAM ####
+# lfpPop_spect = 1											## bool (0 or 1)
+# lfpPops = includePops #['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+# plots = ['spectrogram'] 								## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+# lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+
+# if lfpPop_spect:
+# 	LFPSpectOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+
+
+# #### LFP POP PLOTTING -- TIME SERIES ####
+# lfpPop_timeSeries = 1											## bool (0 or 1)
+# lfpPops = includePops	# ['IT2'] # 0							## bool OR list of pops --> e.g. ['IT2', 'NGF3']
+# plots = ['timeSeries'] 											## list --> e.g. ['spectrogram', 'timeSeries', 'PSD']
+# lfpElectrodes = ['avg'] # [3, 4, 5, 6]
+
+# if lfpPop_timeSeries:
+# 	LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=lfpPops, timeRange=timeRange, plotType=plots, electrodes = lfpElectrodes) 
+*** Deleted these lines as they are now inside a for loop (for pop in includePops) and they use pop = pop for arg input:
+		# LFPSpectOutput = getLFPDataDict(dataFile, pop=includePops, timeRange=timeRange, plotType=['spectrogram'], electrodes=['avg']) 
+		# LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=includePops, timeRange=timeRange, plotType=['timeSeries'], electrodes=['avg'])
