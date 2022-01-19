@@ -57723,3 +57723,37 @@ TypeError: 'int' object is not callable
 
 		# plt.tight_layout()
 		# plt.show()
+** Now combined lfp and combined spike plotting code works! 
+** Tested includePops list having more than one element -- works as expected! 
+** Editing titles:
+*** spike data:
+**** in def plotCombinedSpike() --> 
+**** plt.title('Spike Rate Spectrogram for ' + popToPlot)
+**** plt.title('Spike Rate Histogram for ' + popToPlot)
+**** suptitle commented out for now because it didn't fit with the current formatting! 
+*** LFP:
+**** plt.title('LFP Spectrogram for ' + popToPlot)
+**** plt.title('LFP Signal for ' + popToPlot)
+**** suptitle commented out for now!! 
+** Formatting changes that I still need to do:
+*** LFP:
+**** Spectrogram colorbar:
+***** (i) Does this need units??
+***** (ii) How to add this without decreasing subplot size relative to the timeSeries plot??
+**** timeSeries plot needs units on y axis ! -- uV or mv!?? 
+**** [DONE] Spectrogram needs a labeled colorBar -- 
+***** plt.colorbar line added to plotCombinedLFP() function in spectrogram section! 
+**** [DONE] timeSeries signal needs to end at the exact timepoints where the timeRange begins and ends, rather than having this buffer on either end. 
+***** potentially relevant lines:
+****** lfpPlot = np.mean(lfp, axis=1)
+****** separation = 1 
+****** ydisp = np.absolute(lfp).max() * separation
+****** # offset = 1.0*ydisp ## <-- unused!! 
+***** ah, found a good article! --> 
+****** solution: https://stackoverflow.com/questions/42045767/how-can-i-change-the-x-axis-in-matplotlib-so-there-is-no-white-space/42045987#42045987
+****** someone else asking the same question: https://datascience.stackexchange.com/questions/90355/how-can-i-get-rid-of-the-white-space-in-matplotlib
+*** Spike data:
+**** Histogram: clarify that the y-axis units are correct!
+**** Spectrogram: colorbar is there, but does it need units??? 
+**** BOTH: Clarify that the titles are correct
+**** Need to make sure that the top and bottom panels of the actual plots are the same size, even with the colorBar in place!!! I think!! 

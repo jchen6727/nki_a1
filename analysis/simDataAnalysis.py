@@ -370,10 +370,10 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	allFreqs = spectDict['allFreqs']
 
 	plt.subplot(2, 1, 1)
-	plt.title('TESTING SPECT PLOT FUNCTION')
+	plt.title('Spike Rate Spectrogram for ' + popToPlot)
 	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
 		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
-	plt.colorbar(label='Power')
+	# plt.colorbar(label='Power')
 	plt.xlabel('Time (ms)')
 	plt.ylabel('Hz')
 
@@ -383,16 +383,15 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	histoCount = histDict['histoData']
 
 	plt.subplot(2, 1, 2)
-	plt.title('TESTING HIST PLOT FUNCTION')
+	plt.title('Spike Rate Histogram for ' + popToPlot)
 	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
 	plt.xlabel('Time (ms)', fontsize=fontsiz)
 	plt.ylabel('Rate (Hz) ', fontsize=fontsiz) # CLARIFY Y AXIS  # add yaxis in opposite side
 	plt.xlim(timeRange)
 
-
+	# plt.suptitle(popToPlot)
 	plt.tight_layout()
 	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
-	### TO DO: ADD POPULATION TO TTTLE OF THESE PLOTS IN SOME MANNER !! 
 
 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
@@ -450,7 +449,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 
 	##### SPECTROGRAM  --> TOP PANEL !! 
 	plt.subplot(2, 1, 1)
-	plt.title('Spectrogram LFP -- FUNCTION TEST')   # INCLUDE POP IN TITLE ? 
+	plt.title('LFP Spectrogram for ' + popToPlot)
 
 	lfp = spectDict['LFP']
 	spec = spectDict['spec']
@@ -464,33 +463,31 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	vmax = np.array([s.TFR for s in spec]).max()
 	vc = [vmin, vmax]
 
-	#plt.colorbar(label='Power')
 	plt.ylabel('Hz')
 	plt.xlabel('Time (ms)')
 	plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-
+	# plt.colorbar(label='Power') ### UNITS?? ### HOW TO INSERT THIS WITHOUT DECREASING SUBPLOT SIZE?? 
 
 
 	##### TIME SERIES  ## ON BOTTOM PANEL !! 
 	plt.subplot(2, 1, 2)
-	plt.title('timeSeries LFP -- FUNCTION TEST')
+	plt.title('LFP Signal for ' + popToPlot)
 
 	t = timeSeriesDict['t']
 	lfp = timeSeriesDict['LFP']
 
 	separation = 1 
 	ydisp = np.absolute(lfp).max() * separation
-	offset = 1.0*ydisp
 
 	lfpPlot = np.mean(lfp, axis=1)
 
 	lw = 1.0
-	plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
+	plt.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # plt.plot(t[0:len(lfpPlot)], -lfpPlot, color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
 	plt.xlabel('Time (ms)')
-	# plt.ylabel('LFP Amplitudes')
-	### NEED Y AXIS LABEL 
-	### Add legend or title with pop name!!! 
+	plt.margins(x=0)
+	plt.ylabel('LFP Amplitudes, uV') ### UNITS uV or mV?? 
 
+	# plt.suptitle(popToPlot)
 	plt.tight_layout()
 	plt.show()
 
@@ -607,13 +604,13 @@ if evalPops:
 	plt.show(avgPlot)
 
 
-includePops = ['IT2']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
-plotSpikeData = 0
+plotSpikeData = 1
 
 if plotSpikeData:
 	for pop in includePops:
@@ -630,14 +627,13 @@ if plotSpikeData:
 
 
 
-
 ###### COMBINED LFP PLOTTING ######
 ## TO DO: 
 ## Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 if plotLFPCombinedData:
 	for pop in includePops:
