@@ -831,6 +831,7 @@ def fig_LFP_PSD_matrix():
     from sklearn.decomposition import PCA
     from sklearn.cluster import KMeans
     from sklearn.preprocessing import StandardScaler as Sc
+    from scipy.spatial.distance import cdist, pdist
     import random
 
     dataFiles = ['../data/NHPdata/spont/spont_LFP_PSD/1-bu031032017@os_eye06_20_10sec_allData.pkl', 
@@ -881,6 +882,12 @@ def fig_LFP_PSD_matrix():
     sns.heatmap(corrMatrix, cmap='viridis')
     plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_corr_matrix.png')
 
+    # mean correlation
+    meanCorr = {}
+    for cluster, label in zip(clusters, labels):
+        meanCorr[label] = corrMatrix.iloc[cluster, range(clusters[0][0], clusters[3][-1])].mean().mean()
+
+
     # PCA
     dfnorm = df.div(df.max(axis=1), axis=0)   
     #dfnorm = Sc().fit_transform(df) 
@@ -900,6 +907,28 @@ def fig_LFP_PSD_matrix():
 
     for cluster, label, c in zip(clusters, labels, colors): # 'rgbcmykw'):
         plt.scatter(X_pca[cluster, 0], X_pca[cluster, 1], c=c, label=label)
+
+    cluster_points = {}
+    for cluster, label, c in zip(clusters, labels, colors): # 'rgbcmykw'):
+        cluster_points[label] = np.array(list(zip(X_pca[cluster, 0], X_pca[cluster, 1])))
+
+    # distance between NHP 2 and NHP 3 vs NHP2 vs model
+    print(np.mean(cdist(cluster_points['NHP 2'], cluster_points['NHP 3'])))
+    print(np.mean(cdist(cluster_points['NHP 2'], cluster_points['Model'])))
+
+    nhps = ['NHP 1', 'NHP 2', 'NHP 3', 'NHP 4']
+
+    # distnace between macaques and model vs macaques and shuffled
+    distToModel = 0
+    distToModelShuffled = 0
+    
+    for nhp in nhps:
+        distToModel += np.mean(cdist(cluster_points[nhp], cluster_points['Model']))
+        distToModelShuffled += np.mean(cdist(cluster_points[nhp], cluster_points['Model shuffled']))
+
+    distToModel /= 4
+    distToModelShuffled /= 4
+
     plt.xlabel('PC 1')
     plt.ylabel('PC 2')
     #plt.xlim(-5,5)
@@ -907,6 +936,7 @@ def fig_LFP_PSD_matrix():
     plt.subplots_adjust(left=0.1,right=0.7, top=0.9, bottom=0.1)
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.savefig('../data/NHPdata/spont/spont_LFP_PSD/PSD_norm_PCA.png')
+
 
     #fig = plt.figure()
     kmeans = KMeans(n_clusters=6).fit(dfnorm)
@@ -1082,6 +1112,6 @@ if __name__ == '__main__':
 
     #fig_optuna_fitness()
     
-    #fig_LFP_PSD_matrix()
+    fig_LFP_PSD_matrix()
 
-    fig_CSD_comparison()
+    #fig_CSD_comparison()
