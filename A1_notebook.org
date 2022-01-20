@@ -57877,3 +57877,8 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 *** ^^ trying plt.margins(x=0) which is how I solved this problem for the timeSeries of the LFP plot 
 *** Trying set_xlim vs margins(x=0)
 *** ^^ Think I'm gonna go with set_xlim for now?? 
+** Now fix colorbar for LFP spectrogram plotting:
+*** plotCombinedLFP() is the function to modify! 
+**** fig,ax1 = plt.subplots(figsize=figSize) --> CHANGING THIS
+**** ^^ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
+**** 
