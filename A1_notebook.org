@@ -57761,4 +57761,58 @@ TypeError: 'int' object is not callable
 ** Worked on re-fitting thal int for figure 1
 * <2022-01-20 Thu -- plotting formatting for pop fig>
 ** Salva is re-running the data files !! (see slack for gcp details)
-** 
+** Adding colorbar to spike plot spectrogram while trying to maintain equal subplot sizing for spectrogram and histogram:
+*** Trying -- adding constrained_layout=True to plt.subplots --> fig, axs = plt.subplots(figsize=figSize, constrained_layout=True)
+**** ^^ Also uncommented plt.colorbar() for this
+**** ^^ okay! so this kind of worked, now the colorbar is hovering over the spectrogram though. 
+**** Also got a warning / error:
+/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/matplotlib/figure.py:2299: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+  warnings.warn("This figure includes Axes that are not compatible "
+/Users/ericagriffith/anaconda3/lib/python3.7/site-packages/matplotlib/figure.py:2117: UserWarning: This figure was using constrained_layout==True, but that is incompatible with subplots_adjust and or tight_layout: setting constrained_layout==False. 
+  warnings.warn("This figure was using constrained_layout==True, "
+*** Stack overflow suggestion: https://stackoverflow.com/questions/42396927/how-to-adjust-size-of-two-subplots-one-with-colorbar-and-another-without-in-py
+**** ^^ this worked!!! I want to clean it up to include titles and whatnot. 
+**** ^^ Changes I made:
+***** Commented out fig, axs = plt.subplots(figsize = figSize)
+***** Commented out spect lines:
+	# plt.subplot(2, 1, 1)
+	# plt.title('Spike Rate Spectrogram for ' + popToPlot)
+	# plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+	# 	interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	# plt.colorbar(label='Power')
+	# plt.xlabel('Time (ms)')
+	# plt.ylabel('Hz')
+***** Replaced the above with these lines:
+	ax = plt.subplot(211)
+	img = ax.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	divider = make_axes_locatable(ax)
+	cax = divider.append_axes('right', size='3%', pad = 0.2)
+	plt.colorbar(img, cax = cax, orientation='vertical')
+***** Commented out the histogram lines:
+	# plt.subplot(2, 1, 2)
+	# plt.title('Spike Rate Histogram for ' + popToPlot)
+	# plt.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+	# plt.xlabel('Time (ms)', fontsize=fontsiz)
+	# plt.ylabel('Rate (Hz) ', fontsize=fontsiz) # CLARIFY Y AXIS  # add yaxis in opposite side
+	# plt.xlim(timeRange)
+***** Replaced the above with these lines:
+	ax2 = plt.subplot(212)
+	ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+	divider2 = make_axes_locatable(ax2)
+	cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
+	cax2.axis('off')
+	plt.show()
+*** okay now trying to mess around more with title, axes labels, etc. 
+**** Error:
+  File "simDataAnalysis.py", line 380, in plotCombinedSpike2
+    ax1.title('Spike Rate Spectrogram for ' + popToPlot)
+TypeError: 'Text' object is not callable
+**** axes label error:
+  File "simDataAnalysis.py", line 381, in plotCombinedSpike2
+    ax1.xlabel('Time (ms)', fontsize=fontsiz)
+AttributeError: 'AxesSubplot' object has no attribute 'xlabel'
+**** ^^ okay so changed title, xlabel etc to plt.title, plt.xlabel, etc. 
+***** ^^ if this doesn't work, should I try to create fig, then do fig.title...?? 
+***** maybe something like fig1, ax1 = plt.subplot(211)
+**** okay worked but title is way off center!! 
