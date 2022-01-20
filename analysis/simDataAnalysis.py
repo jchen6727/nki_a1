@@ -340,8 +340,7 @@ def getSpikeData(dataFile, graphType, pop, timeRange=None):
 	return spikeDict 
 
 
-def plotCombinedSpike2(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12):
-	##### COLOR BAR EXPERIMENTATION!!! 
+def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12):
 	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
 	### histDict: dict --> can be gotten with getSpikeData(graphType='hist')
 	### colorDict: dict 
@@ -349,9 +348,6 @@ def plotCombinedSpike2(spectDict, histDict, timeRange, colorDict, pop, figSize=(
 	### timeRange: tuple 
 	### figSize: tuple
 	### fontSize: int 
-
-		#### NOTE: should I add more default arg inputs, e.g. timeRange=None ?? 
-
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -370,7 +366,6 @@ def plotCombinedSpike2(spectDict, histDict, timeRange, colorDict, pop, figSize=(
 	allSignal = spectDict['allSignal']
 	allFreqs = spectDict['allFreqs']
 
-	#ax = axs[0]
 	ax1 = plt.subplot(211)
 	img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
 		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
@@ -380,13 +375,14 @@ def plotCombinedSpike2(spectDict, histDict, timeRange, colorDict, pop, figSize=(
 	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot)
 	ax1.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax1.set_ylabel('Hz', fontsize=fontsiz)
+	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+	#ax1.margins(x=0)
 
 
 	### HISTOGRAM -- for bottom panel!! 
 	histoT = histDict['histoT']
 	histoCount = histDict['histoData']
 
-	#ax2 = axs[1]
 	ax2 = plt.subplot(212)
 	ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
 	divider2 = make_axes_locatable(ax2)
@@ -395,67 +391,14 @@ def plotCombinedSpike2(spectDict, histDict, timeRange, colorDict, pop, figSize=(
 	ax2.set_title('Spike Rate Histogram for ' + popToPlot)
 	ax2.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax2.set_ylabel('Rate (Hz)', fontsize=fontsiz) # CLARIFY Y AXIS
-	#ax2.set_xlim(timeRange)
+	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+	#ax2.margins(x=0)
 	plt.show()
 
 
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()
-	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
 
-
-def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12):
-	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
-	### histDict: dict --> can be gotten with getSpikeData(graphType='hist')
-	### colorDict: dict 
-	### pop: str or list of length 1 --> population to include 
-	### timeRange: tuple 
-	### figSize: tuple
-	### fontSize: int 
-
-		#### NOTE: should I add more default arg inputs, e.g. timeRange=None ?? 
-
-
-	# Get relevant pop
-	if type(pop) is str:
-		popToPlot = pop
-	elif type(pop) is list:
-		popToPlot = pop[0]
-
-	# Create figure 
-	fig, axs = plt.subplots(figsize=figSize)#, constrained_layout=True)
-
-	# Set font size
-	fontsiz = fontSize
-	plt.rcParams.update({'font.size': fontsiz})
-
-	### SPECTROGRAM -- for top panel!!
-	allSignal = spectDict['allSignal']
-	allFreqs = spectDict['allFreqs']
-
-	plt.subplot(2, 1, 1)
-	plt.title('Spike Rate Spectrogram for ' + popToPlot)
-	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
-	# plt.colorbar(label='Power')
-	plt.xlabel('Time (ms)')
-	plt.ylabel('Hz')
-
-
-	### HISTOGRAM -- for bottom panel!! 
-	histoT = histDict['histoT']
-	histoCount = histDict['histoData']
-
-	plt.subplot(2, 1, 2)
-	plt.title('Spike Rate Histogram for ' + popToPlot)
-	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
-	plt.xlabel('Time (ms)', fontsize=fontsiz)
-	plt.ylabel('Rate (Hz) ', fontsize=fontsiz) # CLARIFY Y AXIS  # add yaxis in opposite side
-	plt.xlim(timeRange)
-
-	# plt.suptitle(popToPlot)
-	plt.tight_layout()
-	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
 
 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
@@ -669,7 +612,7 @@ if evalPops:
 	plt.show(avgPlot)
 
 
-includePops = ['IT3']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['NGF2']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 
@@ -691,8 +634,7 @@ if plotSpikeData:
 
 
 		## Then call plotting function 
-		plotCombinedSpike2(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, pop=pop, figSize=(10,7), fontSize=12)  # pop=includePops, 
-		### ^^ using plotCombinedSpike2 while experimenting with colorbar formatting 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, pop=pop, figSize=(10,7), fontSize=12)  # pop=includePops, 
 
 
 

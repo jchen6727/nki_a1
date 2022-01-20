@@ -57816,3 +57816,64 @@ AttributeError: 'AxesSubplot' object has no attribute 'xlabel'
 ***** ^^ if this doesn't work, should I try to create fig, then do fig.title...?? 
 ***** maybe something like fig1, ax1 = plt.subplot(211)
 **** okay worked but title is way off center!! 
+*** worked!! titles now centered, figsize is correct, subplots are same size
+** Deleting old plotCombinedSpike and renaming plotCombinedSpike2 --> plotCombinedSpike! 
+*** old lines:
+def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12):
+	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
+	### histDict: dict --> can be gotten with getSpikeData(graphType='hist')
+	### colorDict: dict 
+	### pop: str or list of length 1 --> population to include 
+	### timeRange: tuple 
+	### figSize: tuple
+	### fontSize: int 
+
+		#### NOTE: should I add more default arg inputs, e.g. timeRange=None ?? 
+
+
+	# Get relevant pop
+	if type(pop) is str:
+		popToPlot = pop
+	elif type(pop) is list:
+		popToPlot = pop[0]
+
+	# Create figure 
+	fig, axs = plt.subplots(figsize=figSize)#, constrained_layout=True)
+
+	# Set font size
+	fontsiz = fontSize
+	plt.rcParams.update({'font.size': fontsiz})
+
+	### SPECTROGRAM -- for top panel!!
+	allSignal = spectDict['allSignal']
+	allFreqs = spectDict['allFreqs']
+
+	plt.subplot(2, 1, 1)
+	plt.title('Spike Rate Spectrogram for ' + popToPlot)
+	plt.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+	# plt.colorbar(label='Power')
+	plt.xlabel('Time (ms)')
+	plt.ylabel('Hz')
+
+
+	### HISTOGRAM -- for bottom panel!! 
+	histoT = histDict['histoT']
+	histoCount = histDict['histoData']
+
+	plt.subplot(2, 1, 2)
+	plt.title('Spike Rate Histogram for ' + popToPlot)
+	plt.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+	plt.xlabel('Time (ms)', fontsize=fontsiz)
+	plt.ylabel('Rate (Hz) ', fontsize=fontsiz) # CLARIFY Y AXIS  # add yaxis in opposite side
+	plt.xlim(timeRange)
+
+	# plt.suptitle(popToPlot)
+	plt.tight_layout()
+	### TO DO: ADJUST POSITION OF COLOR BAR !!! 
+** Now getting x axis in spike plot histogram to not have extra whitespace before and after ends of timeRange:
+*** ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+*** ^^ I can't tell if this helped the right end of the x axis or not? It visually looks the same as the spectrogram, but hm. the left is definitely tightened. could just be that the end has 0 spikes for spike rate?
+*** ^^ trying plt.margins(x=0) which is how I solved this problem for the timeSeries of the LFP plot 
+*** Trying set_xlim vs margins(x=0)
+*** ^^ Think I'm gonna go with set_xlim for now?? 
