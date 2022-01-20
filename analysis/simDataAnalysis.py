@@ -359,7 +359,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		popToPlot = pop[0]
 
 	# Create figure 
-	fig, ax1 = plt.subplots(figsize=figSize)
+	fig, axs = plt.subplots(figsize=figSize, constrained_layout=True)
 
 	# Set font size
 	fontsiz = fontSize
@@ -417,6 +417,7 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
 		plots = plotType
 
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots)
+	### BANDPASS FILTER THIS DATA!! 
 
 	return lfpOutput
 
@@ -610,6 +611,10 @@ includePops = ['IT3']		# placeholder for now <-- will ideally come out of the fu
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
+## TO DO: 
+## Smooth or mess with bin size to smooth out spectrogram for spiking data
+## Add colorbar to spectrogram without messing up subplot sizing 
+
 plotSpikeData = 1
 
 if plotSpikeData:
@@ -631,7 +636,6 @@ if plotSpikeData:
 ## TO DO: 
 ## Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
-## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
 plotLFPCombinedData = 0
 

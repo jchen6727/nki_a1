@@ -57757,3 +57757,8 @@ TypeError: 'int' object is not callable
 **** Spectrogram: colorbar is there, but does it need units??? 
 **** BOTH: Clarify that the titles are correct
 **** Need to make sure that the top and bottom panels of the actual plots are the same size, even with the colorBar in place!!! I think!! 
+* <2022-01-19 Wed -- Thal int day>
+** Worked on re-fitting thal int for figure 1
+* <2022-01-20 Thu -- plotting formatting for pop fig>
+** Salva is re-running the data files !! (see slack for gcp details)
+** 
