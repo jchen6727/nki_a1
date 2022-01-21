@@ -57881,4 +57881,15 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 *** plotCombinedLFP() is the function to modify! 
 **** fig,ax1 = plt.subplots(figsize=figSize) --> CHANGING THIS
 **** ^^ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
-**** 
+* <2022-01-21 Fri -- more figure changes>
+** okay -- > now that formatting is mostly worked out, keep tweaking the little things!! (and the filtering, bin sizing, etc.)
+** TO DO:
+*** Decrease white space in wavelet figure
+*** Mess with bin size for spike rate spectrogram
+*** Filter the timeRanged lfp data according to frequency band -- what would this look like
+*** Write function(s) to pick populations:
+**** Maybe compare change in LFP amplitude from "baseline" (e.g. some time window before/after the event) for each population? 
+*** Check on LFP units 
+*** Check on y-axes for all graphs
+*** Check on color bars
+
