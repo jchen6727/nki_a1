@@ -736,7 +736,7 @@ def custom_spont(filename):
     params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
     params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
-    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    groupedParams = [('seeds', 'conn'), ('seeds', 'stim')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
