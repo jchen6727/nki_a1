@@ -58087,3 +58087,37 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 			# electrodeColumns.append(20)
 *** subset successful -- I take the subset according to the electrode columns first, then by population by indexing the pop names in the rows, and then after all that is done I transpose and plot! 
 *** I also separated out the electrode columns and electrode labels since 'avg' is indexed as electrode 20 in the dataFrame, but don't want it labeled that way on the axes! 
+** Taking out this not-transposed version of the heatmap plotting:
+##### plotDataFramesNOTTRANSPOSED -- no longer in use!! default is to use the transposed data!! ##### 
+def plotDataFramesNOTTRANSPOSED(dataFrame, electrodes=None, cbarLabel=None, title=None):
+	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
+	### electrodes: list, if none --> default: use all electrodes + 'avg'
+	### cbarLabel: str, label for color bar, optional
+	### title: str, also optional 
+
+	if cbarLabel is None:
+		cbarLabel = 'LFP amplitudes (uV)'
+
+	if electrodes is None:
+		electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
+		## MAKE THIS WORK FOR ARBITRARY ELECTRODES??? 
+
+	## Create lists for tick marks 
+	x_axis_labels = electrodes 
+	y_axis_labels = list(dataFrame.index) ## Get list of pops directly from the dataFrame
+
+	ax = sns.heatmap(dataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
+
+	if title is not None:
+		plt.title(title)
+
+	plt.xlabel('Electrodes')
+	plt.xticks(rotation=0, fontsize=6)
+	# plt.ylabel('Cell populations')
+	plt.yticks(fontsize=8)
+
+	return ax 
+** Superimposing wavelet info onto heatmap:
+*** Should I add layer info to y-axis (if electrodes is default setting, using all of them??)
+*** Should I also add visual representation of which channel the wavelet was spotted in??
+*** ^^ This would be done in plotDataFrames() function! 

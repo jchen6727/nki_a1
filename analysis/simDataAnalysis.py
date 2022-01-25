@@ -189,59 +189,35 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.show()
 		if saveFig:
 			plt.savefig(filename,bbox_inches='tight')
-##### plotDataFramesNOTTRANSPOSED -- no longer in use!! default is to use the transposed data!! ##### 
-def plotDataFramesNOTTRANSPOSED(dataFrame, electrodes=None, cbarLabel=None, title=None):
-	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
-	### electrodes: list, if none --> default: use all electrodes + 'avg'
-	### cbarLabel: str, label for color bar, optional
-	### title: str, also optional 
-
-	if cbarLabel is None:
-		cbarLabel = 'LFP amplitudes (uV)'
-
-	if electrodes is None:
-		electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
-		## MAKE THIS WORK FOR ARBITRARY ELECTRODES??? 
-
-	## Create lists for tick marks 
-	x_axis_labels = electrodes 
-	y_axis_labels = list(dataFrame.index) ## Get list of pops directly from the dataFrame
-
-	ax = sns.heatmap(dataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
-
-	if title is not None:
-		plt.title(title)
-
-	plt.xlabel('Electrodes')
-	plt.xticks(rotation=0, fontsize=6)
-	# plt.ylabel('Cell populations')
-	plt.yticks(fontsize=8)
-
-	return ax 
 ######################################################################
 
 
 
 ### FUNCTIONS ####
-def getWaveletInfo(freqBand, based): 
+def getWaveletInfo(freqBand, based, verbose=0): 
 	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
 	## based: str --> path to directory with the .pkl data files 
+	## verbose: bool --> if 0, default to only putting out timeRange and dataFile, if 1 --> include channel as well 
 
 	# waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
 	# 'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
 	# 'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
 	# 'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
 
-	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
-	'beta': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [456, 572]}, 
-	'alpha': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [3111, 3325]}, 
-	'theta': {'dataFile': 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'timeRange': [2785, 3350]}}
+	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520], 'channel': 14},
+	'beta': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [456, 572], 'channel': 14}, 
+	'alpha': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [3111, 3325], 'channel': 9}, 
+	'theta': {'dataFile': 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'timeRange': [2785, 3350], 'channel': 8}}
 
 	timeRange = waveletInfo[freqBand]['timeRange']
 	dataFileNoPath = waveletInfo[freqBand]['dataFile']
 	dataFile = based + dataFileNoPath
+	channel = waveletInfo[freqBand]['channel']
 
-	return timeRange, dataFile
+	if verbose:
+		return timeRange, dataFile, channel
+	else:
+		return timeRange, dataFile
 
 
 def getDataFiles(based):
@@ -392,8 +368,8 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 
 	## Create lists of x and y axis labels 
-	x_axis_labels = pops 
-	y_axis_labels = electrodeLabels 
+	x_axis_labels = pops.copy() 
+	y_axis_labels = electrodeLabels.copy() 
 
 
 	## Set size of figure 
@@ -702,11 +678,11 @@ if local:
 
 
 ######### SET WAVELET TO LOOK AT		!!
-delta = 0
+delta = 1
 beta = 	0
 alpha = 0
-theta = 1
-gamma = 0 
+theta = 0
+# gamma = 0 
 
 if delta:
 	timeRange, dataFile = getWaveletInfo('delta', based)
@@ -731,14 +707,13 @@ elif gamma:
 evalPopsBool = 1
 
 if evalPopsBool:
-	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile, timeRange, verbose=1)
 	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
 
 	peakPlot = plotDataFrames(dfPeak, title='Peak LFP Amplitudes')
 	plt.show(peakPlot)
 
-	# avgPlot = plotDataFrames(dfAvg, title='Avg LFP Amplitudes')
-	# plt.show(avgPlot)
+	avgPlot = plotDataFrames(dfAvg, title='Avg LFP Amplitudes')
+	plt.show(avgPlot)
 
 
 includePops = ['IT3']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
