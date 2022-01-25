@@ -57945,3 +57945,5 @@ btw this is in the "high-power-computing" gcp project
 **** I need the total LFP signal (only for plotting though really, or maybe not?)
 **** I need the LFP signal averaged over all electrodes for that time period for each particular population 
 **** OR should I be looking at the LFP signal for those particular electrodes for that time period for each particular population 
+** What modifications do I actually need to make to get the plots / values I want? --> 
+*** So I want to add in not just all of the electrodes as I have them in the plots, but i'd like to have another column at the end that is labeled 'avg' 
