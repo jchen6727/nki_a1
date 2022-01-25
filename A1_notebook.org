@@ -57934,4 +57934,14 @@ btw this is in the "high-power-computing" gcp project
 	'alpha': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [3111, 3325]}, 
 	'theta': {'dataFile': 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'timeRange': [2785, 3350]}}
 ** Now work on evalPops:
-*** 
+*** made def evalPops() which will return a list 'includePops' which will include the populations selected that made the most contribution to the overall LFP signal 
+*** What are some ideas here, re: LFP signal?
+**** relative lfp signal increase (change from 'baseline', before/after wavelet)
+**** absolute lfp signal contribution level --> which ones have the absolute "hightest" value in terms of contribution
+*** ^^ Going to do both an absolute and relative list of pops (abs. and rel. are based on either lfp signal contribution magnitude, or relative change in said magnitude)
+**** return includePopsRel, includePopsAbs
+** Start with evalPops based on absolute LFP contributions:
+*** so for this what do I need --> 
+**** I need the total LFP signal (only for plotting though really, or maybe not?)
+**** I need the LFP signal averaged over all electrodes for that time period for each particular population 
+**** OR should I be looking at the LFP signal for those particular electrodes for that time period for each particular population 
