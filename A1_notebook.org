@@ -58078,3 +58078,12 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 	# peakPlotTransposed = plotDataFramesTRANSPOSED(pivotedDfPeak,
 	# cbarLabel=None, title='Peak LFP Amplitudes')
 **** I also added the old lines from plotDataFrames() --> now called plotDataFramesNOTTRANSPOSED function --> into the section of functions at the top that are no longer being used!!! May remove this at some point completely. 
+** Making it possible to view only a subset of the electrodes or pops in the dataFrames:
+*** Removing these lines:
+**** 			# avgIndex = electrodes.index('avg')
+			# electrodes[avgIndex] = 20
+			electrodeLabels = electrodes 
+**** 			# electrodeColumns = electrodes.remove('avg')
+			# electrodeColumns.append(20)
+*** subset successful -- I take the subset according to the electrode columns first, then by population by indexing the pop names in the rows, and then after all that is done I transpose and plot! 
+*** I also separated out the electrode columns and electrode labels since 'avg' is indexed as electrode 20 in the dataFrame, but don't want it labeled that way on the axes! 
