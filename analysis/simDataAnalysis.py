@@ -320,20 +320,32 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg
 
 
-def plotDataFrames(dataFrame, cbarLabel=None, title=None):
+def plotDataFrames(dataFrame, electrodes=None, cbarLabel=None, title=None):
 	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
+	### electrodes: list, if none --> default: use all electrodes + 'avg'
 	### cbarLabel: str, label for color bar, optional
 	### title: str, also optional 
 
 	if cbarLabel is None:
 		cbarLabel = 'LFP amplitudes (uV)'
 
-	ax = sns.heatmap(dataFrame, linewidth=0.4, cbar_kws={'label': cbarLabel})
-	
+	if electrodes is None:
+		electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
+		## MAKE THIS WORK FOR ARBITRARY ELECTRODES??? 
+
+	## Create lists for tick marks 
+	x_axis_labels = electrodes 
+	y_axis_labels = list(dataFrame.index) ## Get list of pops directly from the dataFrame
+
+	ax = sns.heatmap(dataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
+
 	if title is not None:
 		plt.title(title)
 
 	plt.xlabel('Electrodes')
+	plt.xticks(rotation=0, fontsize=6)
+	# plt.ylabel('Cell populations')
+	plt.yticks(fontsize=8)
 
 	return ax 
 
@@ -343,7 +355,6 @@ def evalPops():
 	includePopsRel = []
 	includePopsAbs = []
 	return includePopsRel, includePopsAbs
-
 
 # def evalPopsRelative():
 	# includePopsRel = []
@@ -647,9 +658,8 @@ elif gamma:
 evalPopsBool = 1
 
 if evalPopsBool:
-	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile, timeRange)
-	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
-
+	dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile, timeRange, verbose=1)
+	# dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
 
 	peakPlot = plotDataFrames(dfPeak, cbarLabel=None, title='Peak LFP Amplitudes')
 	plt.show(peakPlot)

@@ -58035,3 +58035,31 @@ def getDataFramesOLD(dataFile, timeRange):
 # lfpPopData[pop][elecKey]['LFP'] = popLFPdata[:, elec]
 
 *** Added a verbose condition -- if not verbose (default), then only return the dfPeak and dfAvg dataframes, else return lists and dataframes 
+** Testing plotting (with plotDataFrames) w/ new getDataFrames() function:
+*** hm -- labels the last thing as '20' not as 'avg' -- fix this!! 
+*** Also check to just make sure that these values are different from each other -- the averaged ones looked suspiciously the same color! <-- OKAY DID THIS AND IT REALLY DOES APPEAR AS IF THEY ARE NOT THE SAME!!
+*** okay works!!
+*** Making some modifications --> 
+*** Adding xlabels --> electrodes --> manually set this for now, but should at some point make this work for arbitrary electrodes!!
+*** Decreasing the default fontsize for the xlabels with plt.xticks, and also prevented them from rotating 90 degrees --> plt.xticks(rotation=0, fontsize=6)
+*** Adding ylabels --> pops --> getting this directly from the dataFrame (list(dataFrame.index))
+*** Also decreasing the default fontsize for yticks --> plt.yticks(fontsize=8)
+*** Now all of the cell pops are labeled on the y axis!! 
+*** Dummy plotDataFrames function called plotDataFrames2() --> but this is now working and is the primary function!!!
+*** ^^ old plotDataFrames lines:
+def plotDataFrames(dataFrame, cbarLabel=None, title=None):
+	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
+	### cbarLabel: str, label for color bar, optional
+	### title: str, also optional 
+
+	if cbarLabel is None:
+		cbarLabel = 'LFP amplitudes (uV)'
+
+	ax = sns.heatmap(dataFrame, linewidth=0.4, cbar_kws={'label': cbarLabel})
+
+	if title is not None:
+		plt.title(title)
+
+	plt.xlabel('Electrodes')
+
+	return ax 
