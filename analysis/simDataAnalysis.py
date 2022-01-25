@@ -321,6 +321,12 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 	return ax 
 
 
+def evalPops():
+	includePops = []
+	return includePops
+
+
+
 def getSpikeData(dataFile, graphType, pop, timeRange=None): 
 	### dataFile: path to .pkl data file to load 
 	### graphType: str --> either 'hist' or 'spect'
@@ -606,9 +612,9 @@ elif gamma:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPops = 0
+evalPopsBool = 0
 
-if evalPops:
+if evalPopsBool:
 	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
 
 	peakPlot = plotDataFrames(dfPeak, cbarLabel=None, title='Peak LFP Amplitudes')

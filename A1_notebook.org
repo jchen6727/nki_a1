@@ -57933,3 +57933,5 @@ btw this is in the "high-power-computing" gcp project
 	'beta': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [456, 572]}, 
 	'alpha': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [3111, 3325]}, 
 	'theta': {'dataFile': 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'timeRange': [2785, 3350]}}
+** Now work on evalPops:
+*** 
