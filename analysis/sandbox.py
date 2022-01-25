@@ -9,9 +9,10 @@ import numpy as np
 waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
 	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
 	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
-	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}, 
+	'test_file': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data_NEW.pkl', 'timeRange': [1480, 2520]}}
 
-freqBand = 'delta'
+freqBand = 'test_file'
 based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
 
 dataFile = based + waveletInfo[freqBand]['dataFile']
@@ -41,7 +42,6 @@ for pop in pops:
 	lfpSublist = sim.allSimData['LFPPops'][pop][timePoint] 
 	popLFPLists.append(lfpSublist)
 lfpPopTotal = sum(popLFPLists)
-
 
 ### NOW CHECK --> lfpPopTotal == lfpTotal
 

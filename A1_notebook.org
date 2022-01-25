@@ -57892,4 +57892,31 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 *** Check on LFP units 
 *** Check on y-axes for all graphs
 *** Check on color bars
-
+* <2022-01-22 Sat -- check new lfp runs!>
+** Salva finished running the model w/ distributed saving on with lfp values recorded from pops -- check it out!! [slack convo below] 
+*** salvadord
+update: was able to reproduce the sim results (yaaay!!) but crashes when saving all the LFPPosp (booo!) … so I’m deploying yet another cluster with highmem nodes :crossed_fingers:
+*** salvadord  6:02 PM
+oook I think we have something… copied to gs://salvadord_data3/A1/v34_batch65 … it’s just the seed 3_4
+*** salvadord  6:03 PM
+can you try it out and see how the lfp + lfp pops look?
+I can then run the 3_2 and 3_3 if that one looks all good!
+btw this is in the "high-power-computing" gcp project
+** Get files from gcp bucket --> 
+*** salvadord_data3
+*** ^^ I don't see the high-power-computing project when I do 'gcloud projects list' on local machine (terminal) 
+*** okay got permissions for this + for bucket!
+*** A1_v34_batch65_v34_batch65_0_0_data_NEW.pkl --> in ~/Desktop/NEUROSIM/A1/data/simDataFiles 
+*** ^^ This is the 3_4 seed! 
+* <2022-01-24 Mon -- new lfp runs>
+** Thal Int stuff
+** Getting new lfp runs from salvadord_data3 bucket
+** hmm --> some confusion in the seeds...? ask salva on slack:
+*** CONCLUSION --> 
+*** ohh okay, so in salvadord_data3 bucket, v34_batch65_0_0 == 3_4 seed from batch57, while v34_batch67_0_0 == 3_2 seed, and 1_1 to 3_3 seed, okay cool!
+* <2022-01-25 Tue -- new lfp runs>
+** New LFP runs w/ node data saved etc:
+*** in ~/Desktop/NEUROSIM/A1/data/simDataFiles on local machine (laptop)
+*** A1_v34_batch65_v34_batch65_0_0_data.pkl <-- batch57 3_4 seed
+*** A1_v34_batch67_v34_batch67_0_0_data.pkl <-- batch57 3_2 seed
+*** A1_v34_batch67_v34_batch67_1_1_data.pkl <-- batch57 3_3 seed 
