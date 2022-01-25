@@ -58063,3 +58063,18 @@ def plotDataFrames(dataFrame, cbarLabel=None, title=None):
 	plt.xlabel('Electrodes')
 
 	return ax 
+** Now made a new plotDataFrames() function that uses the transposed dataframe! 
+*** ^^ more legible this way, since the y-axis is the electrodes, so can look at it from top to bottom to see how the values change over the depth of the cortex
+*** I have the dataFrame being transposed in the plotting -- not worth changing this in getDataFrames() for now!! 
+*** Removing these testing lines from main code block:
+**** 	# pivotedDfPeak0 = dfPeak.pivot(columns=pops, index=electrodes)
+	# pivotedDfPeak1 = pd.pivot_table(dfPeak)
+**** 	pivotedDfPeak = dfPeak.T
+	# pivotedDfPeak.set_index(pops)
+	# pivotedDfPeak.reset_index()
+**** 	pops = list(dfPeak.index)
+**** 	electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
+**** 	# peakPlot = plotDataFrames(dfPeak, cbarLabel=None, title='Peak LFP Amplitudes')
+	# peakPlotTransposed = plotDataFramesTRANSPOSED(pivotedDfPeak,
+	# cbarLabel=None, title='Peak LFP Amplitudes')
+**** I also added the old lines from plotDataFrames() --> now called plotDataFramesNOTTRANSPOSED function --> into the section of functions at the top that are no longer being used!!! May remove this at some point completely. 

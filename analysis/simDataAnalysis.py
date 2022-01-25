@@ -189,6 +189,35 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.show()
 		if saveFig:
 			plt.savefig(filename,bbox_inches='tight')
+##### plotDataFramesNOTTRANSPOSED -- no longer in use!! default is to use the transposed data!! ##### 
+def plotDataFramesNOTTRANSPOSED(dataFrame, electrodes=None, cbarLabel=None, title=None):
+	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
+	### electrodes: list, if none --> default: use all electrodes + 'avg'
+	### cbarLabel: str, label for color bar, optional
+	### title: str, also optional 
+
+	if cbarLabel is None:
+		cbarLabel = 'LFP amplitudes (uV)'
+
+	if electrodes is None:
+		electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
+		## MAKE THIS WORK FOR ARBITRARY ELECTRODES??? 
+
+	## Create lists for tick marks 
+	x_axis_labels = electrodes 
+	y_axis_labels = list(dataFrame.index) ## Get list of pops directly from the dataFrame
+
+	ax = sns.heatmap(dataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
+
+	if title is not None:
+		plt.title(title)
+
+	plt.xlabel('Electrodes')
+	plt.xticks(rotation=0, fontsize=6)
+	# plt.ylabel('Cell populations')
+	plt.yticks(fontsize=8)
+
+	return ax 
 ######################################################################
 
 
@@ -320,46 +349,21 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg
 
 
-def plotDataFrames(dataFrame, electrodes=None, cbarLabel=None, title=None):
-	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
-	### electrodes: list, if none --> default: use all electrodes + 'avg'
-	### cbarLabel: str, label for color bar, optional
-	### title: str, also optional 
-
-	if cbarLabel is None:
-		cbarLabel = 'LFP amplitudes (uV)'
-
-	if electrodes is None:
-		electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
-		## MAKE THIS WORK FOR ARBITRARY ELECTRODES??? 
-
-	## Create lists for tick marks 
-	x_axis_labels = electrodes 
-	y_axis_labels = list(dataFrame.index) ## Get list of pops directly from the dataFrame
-
-	ax = sns.heatmap(dataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
-
-	if title is not None:
-		plt.title(title)
-
-	plt.xlabel('Electrodes')
-	plt.xticks(rotation=0, fontsize=6)
-	# plt.ylabel('Cell populations')
-	plt.yticks(fontsize=8)
-
-	return ax 
-
-
-def plotDataFramesTransposed(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None):
+def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None):
 	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
 	### electrodes: list, if none --> default: use all electrodes + 'avg'
 	### pops: list, if none --> default: 
 	### cbarLabel: str, label for color bar, optional
 	### title: str, also optional 
 
+	## TRANSPOSE DATA FRAME 
+	pivotedDataFrame = dataFrame.T
+
+	## Set label for color scalebar 
 	if cbarLabel is None:
 		cbarLabel = 'LFP amplitudes (uV)'
 
+	## Create lists for tick marks
 	if electrodes is None:
 		electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
 
@@ -368,17 +372,25 @@ def plotDataFramesTransposed(dataFrame, electrodes=None, pops=None, cbarLabel=No
 		'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 
 		'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
 
+	x_axis_labels = pops 
+	y_axis_labels = electrodes 
 
-	## Create lists for tick marks
-	x_axis_labels = pops # list(dataFrame.index)
-	y_axis_labels = electrodes # pops
 
-	plt.figure(figsize = (12,6))
-	ax = sns.heatmap(dataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
+	## Set size of figure 
+	if figSize is None:
+		figSize = (12,6)
+	plt.figure(figsize = figSize)
 
+
+	## Set title of figure 
 	if title is not None:
 		plt.title(title)
 
+
+	## Create heatmap! 
+	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
+
+	## Set labels on x and y axes 
 	plt.xlabel('Cell populations')
 	plt.xticks(rotation=45, fontsize=7)
 	plt.ylabel('Electrodes')
@@ -702,18 +714,8 @@ if evalPopsBool:
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile, timeRange, verbose=1)
 	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
 
-	pops = list(dfPeak.index)
-	electrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'avg']
-	# pivotedDfPeak0 = dfPeak.pivot(columns=pops, index=electrodes)
-	# pivotedDfPeak1 = pd.pivot_table(dfPeak)
-	pivotedDfPeak = dfPeak.T
-	# pivotedDfPeak.set_index(pops)
-	# pivotedDfPeak.reset_index()
-
-	# peakPlot = plotDataFrames(dfPeak, cbarLabel=None, title='Peak LFP Amplitudes')
-	peakPlotTransposed = plotDataFramesTransposed(pivotedDfPeak, cbarLabel=None, title='Peak LFP Amplitudes')
-	# plt.show(peakPlot)
-	plt.show(peakPlotTransposed)
+	peakPlot = plotDataFrames(dfPeak, title='Peak LFP Amplitudes')
+	plt.show(peakPlot)
 
 	# avgPlot = plotDataFrames(dfAvg, cbarLabel=None, title='Avg LFP Amplitudes')
 	# plt.show(avgPlot)
