@@ -678,7 +678,7 @@ if local:
 
 
 ######### SET WAVELET TO LOOK AT		!!
-delta = 1
+delta = 0
 beta = 	0
 alpha = 0
 theta = 0

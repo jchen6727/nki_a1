@@ -58121,3 +58121,24 @@ def plotDataFramesNOTTRANSPOSED(dataFrame, electrodes=None, cbarLabel=None, titl
 *** Should I add layer info to y-axis (if electrodes is default setting, using all of them??)
 *** Should I also add visual representation of which channel the wavelet was spotted in??
 *** ^^ This would be done in plotDataFrames() function! 
+* <2022-01-26 Wed -- Meetings & Text>
+** NBS WIP & Seminar in the morning into early afternoon! 
+** Editing the figure a little:
+*** ~/Desktop/NEUROSIM/A1/data/figs/wavelets/wavelets.xcf
+*** Add A-E and reduce white space between sim and nhp 
+*** ^^ Did this and replaced it in the gdoc
+** Working on caption text for wavelet figures for results section: 
+*** Taking out these lines because I took out the duration lines:
+(A) Gamma. Simulation (left): peak frequency 64 Hz, duration 61.5ms. NHP (right): peak frequency 62 Hz,  duration 62.5 ms.
+(B) Beta. Simulation (left): peak frequency 27 Hz, duration 115.6 ms. NHP (right): peak frequency 27.75 Hz, duration 121.2 ms. 
+(C) Alpha.  Simulation (left): peak frequency 14.5 Hz, duration 213.7 ms. NHP (right): peak frequency 14.75 Hz, duration 216.9 ms.  
+(D) Theta.  Simulation (left): peak frequency 5.5 Hz, duration 562.7 ms. NHP (right): peak frequency 5.0 Hz, duration 674.7 ms. 
+(E) Delta. Simulation (left): peak frequency 3.5 Hz, duration 1027.3 ms. NHP (right): peak frequency 3.5 Hz, duration 1220.7ms. 
+
+*** Taking out Salva's placeholder caption:
+Comparison of CSD oscillatory events across freq bands (gamma, beta, alpha, theta, delta)	
+*** I like this line but may be redundant / obvious:
+Multi-cycle oscillatory events were detected in both datasets, demonstrating
+*** Ended up putting the peak F for each of the A-E text caption subparts?? tried Hz and duration but was too lengthy. hm. 
+** Work on results text for that wavelets figure:
+*** 
