@@ -58234,4 +58234,6 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 ***** IT5A --> channels 9-11
 **** Notable positives:
 ***** IT3 --> most positive, channel 9 [8-13]
-
+** Putting together delta pop contrib figure:
+*** Gimp file --> ~/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContrib.xcf
+*** 

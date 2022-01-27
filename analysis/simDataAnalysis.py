@@ -443,7 +443,7 @@ def getSpikeData(dataFile, graphType, pop, timeRange=None):
 	return spikeDict 
 
 
-def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12):
+def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12, saveFig=True):
 	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
 	### histDict: dict --> can be gotten with getSpikeData(graphType='hist')
 	### colorDict: dict 
@@ -502,6 +502,12 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()
 
+	if saveFig:
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+		fileName = pop + '_combinedSpike.png'
+		pathToFile = prePath + fileName
+		plt.savefig(pathToFile)
+
 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
 	### dataFile: str --> path to .pkl data file to load for analysis 
@@ -531,7 +537,7 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
 	return lfpOutput
 
 
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12):
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, saveFig=True):
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list, e.g. [start, stop]
@@ -608,7 +614,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	plt.tight_layout()
 	plt.show()
 
-
+	if saveFig:
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+		fileName = pop + '_combinedLFP.png'
+		pathToFile = prePath + fileName
+		plt.savefig(pathToFile)
 
 
 
@@ -737,7 +747,7 @@ if evalPopsBool:
 
 
 
-includePops = ['IT3', 'IT5A']#, 'IT5B', 'CT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3']#, 'IT5A', 'IT5B', 'CT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
