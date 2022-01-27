@@ -58236,4 +58236,8 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 ***** IT3 --> most positive, channel 9 [8-13]
 ** Putting together delta pop contrib figure:
 *** Gimp file --> ~/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContrib.xcf
-*** 
+*** okay I also ran alpha, beta, and theta in the popContribFigs directory
+*** I think I should filter the data ... hm. how to go about this --> look at filtFreq lines in lfp netpyne scripts:
+**** Added filtFreq lines from lfp_orig
+**** Testing now --> (1) Try delta wavelet, with bandpass only on timeSeries
+**** (2) Try delta wavelet, with bandpass on both

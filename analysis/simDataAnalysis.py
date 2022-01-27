@@ -509,11 +509,12 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		plt.savefig(pathToFile)
 
 
-def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
+def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes=['avg']):
 	### dataFile: str --> path to .pkl data file to load for analysis 
 	### pop: str or list  
 	### timeRange: list, e.g. [start, stop]
 	### plotType: str or list --> 'spectrogram' or 'timeSeries'
+	### filtFreq: list --> frequencies to bandpass filter lfp data 
 	### electrodes: list --> default: ['avg']
 
 	# Load data file 
@@ -532,7 +533,22 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
 		plots = plotType
 
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots)
+
 	### BANDPASS FILTER THIS DATA!! 
+	if filtFreq is not None:
+		filtOrder = 3 ## DEFAULT VALUE FROM lfp_orig.py
+		from scipy import signal
+		fs = 1000.0/sim.cfg.recordStep
+		nyquist = fs/2.0
+		if isinstance(filtFreq, list): # bandpass
+			Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+			b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+		elif isinstance(filtFreq, Number): # lowpass
+			Wn = filtFreq/nyquist
+			b, a = signal.butter(filtOrder, Wn)
+		for i in range(lfp.shape[1]):
+			# lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+			lfpOutput[:,i] = signal.filtfilt(b, a, lfpOutput[:,i])
 
 	return lfpOutput
 
@@ -747,7 +763,7 @@ if evalPopsBool:
 
 
 
-includePops = ['IT3']#, 'IT5A', 'IT5B', 'CT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
@@ -775,7 +791,29 @@ if plotSpikeData:
 ## Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
+
+
 plotLFPCombinedData = 1
+
+### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
+# filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
+bandpassLFP = 1
+if bandpassLFP:
+	if delta:
+		filtFreq = [0.5, 4] # Hz
+	elif theta:
+		filtFreq = [4, 9]
+	elif alpha:
+		filtFreq = [9, 15]
+	elif beta:
+		filtFreq = [15, 29]
+	# elif gamma:
+	# 	filtFreq = [30, 85]
+else:
+	filtFreq = None
+
+
+
 
 if plotLFPCombinedData:
 	for pop in includePops:
@@ -783,7 +821,7 @@ if plotLFPCombinedData:
 
 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=['avg']) 
-		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrodes=['avg']) 
+		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], filtFreq=filtFreq, electrodes=['avg']) 
 
 		### Call plotting function 
 		if delta:
