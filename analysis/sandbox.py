@@ -3,50 +3,156 @@ import numpy as np
 #from simDataAnalysis import *
 
 
+###### TESTING NEW LFP .pkl FILES ######
+### batch 57 ### batch 65 ### batch 67
+### 3_2      ### 1_1      ### 0_0
+### 3_3      ### 2_2      ### 1_1 
+### 3_4      ### 0_0      ### <-- worked in batch65 so no need! 
+
+testInfo = {
+'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
+'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
+'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
+
+# dataFile57 = based + testInfo[seed]['batch57']
+# dataFile65 = based + testInfo[seed]['batch65']
+# dataFile67 = based + testInfo[seed]['batch67']
+
+## for seed 3_2 --> batch57 == batch65 =/= batch67
+## for seed 3_3 --> batch57 == batch65 =/= batch67
+## for seed 3_4 --> batch57 =/= batch65 == batch67
+
+
+remixInfo = {
+'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
+'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
+'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
+
+
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
+
+seed = 'seed_3_2'
+
+dataFile57 = based + remixInfo[seed]['batch57']
+dataFile65 = based + remixInfo[seed]['batch65']
+dataFile67 = based + remixInfo[seed]['batch67']
+
+sim.load(dataFile57, instantiate=False)
+batch57_LFP = sim.allSimData['LFP']
+batch57_timestep = sim.cfg.recordStep
+
+sim.load(dataFile65, instantiate=False)
+batch65_LFP = sim.allSimData['LFP']
+batch65_timestep = sim.cfg.recordStep
+
+sim.load(dataFile67, instantiate=False)
+batch67_LFP = sim.allSimData['LFP']
+batch67_timestep = sim.cfg.recordStep
+
+batch57_LFP == batch65_LFP
+batch65_LFP == batch67_LFP
+batch57_LFP == batch67_LFP
+
+### seed 3_4 --> changing batch65 to 1_1 and 2_2 made everything false
+### seed 3_2 --> 
+
+
+
+
+
+# for seed in testInfo.keys():
+# 	dataFile57 = based + testInfo[seed]['batch57']
+# 	dataFile65 = based + testInfo[seed]['batch65']
+# 	dataFile67 = based + testInfo[seed]['batch67']
+
+# 	sim.load(dataFile57, instantiate=False)
+# 	batch57_LFP = sim.allSimData['LFP']
+# 	batch57_timestep = sim.cfg.recordStep
+
+# 	sim.load(dataFile65, instantiate=False)
+# 	batch65_LFP = sim.allSimData['LFP']
+# 	batch65_timestep = sim.cfg.recordStep
+
+# 	sim.load(dataFile67, instantiate=False)
+# 	batch67_LFP = sim.allSimData['LFP']
+# 	batch67_timestep = sim.cfg.recordStep
+
+# 	if batch57_timestep == batch65_timestep == batch67_timestep:
+# 		print('FOR ' + str(seed) + ': all have matching timeStep')
+# 		if batch57_LFP == batch65_LFP == batch67_LFP:
+# 			print('FOR ' + str(seed) + ': all have matching LFP!!!')
+# 		else:
+# 			print('FOR ' + str(seed) + ': all DO NOT have matching LFP!!!')
+# 	else:
+# 		print('FOR ' + str(seed) + ': batches DO NOT have matching timeSteps!!!!')
+
+
+
+# ### LOAD THE DATA #### 
+# batch57_data = {}
+# batch57_LFP = {}
+# for file in batch57Files:
+# 	fullFile = pathToFiles + file + '.pkl'
+# 	sim.load(fullFile, instantiate=False)
+# 	fileKey = file.split('v34_')[1].split('_data')[0].split('batch57_')[1]
+# 	batch57_data[fileKey] = sim.allSimData
+# 	batch57_LFP[fileKey] = sim.allSimData['LFP']
+
+
 
 ######################## DEBUGGING LFP HEAT PLOTS ########################
 
-waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
-	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
-	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
-	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}, 
-	'test_file': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data_NEW.pkl', 'timeRange': [1480, 2520]}}
+### OLD INFO ###
+# waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
+# 	'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
+# 	'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
+# 	'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}, 
+# 	'test_file': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data_NEW.pkl', 'timeRange': [1480, 2520]}}
+################
 
-freqBand = 'test_file'
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
-
-dataFile = based + waveletInfo[freqBand]['dataFile']
-timeRange = waveletInfo[freqBand]['timeRange']
-
-print('timeRange = ' + str(timeRange))
-print('dataFile = ' + str(dataFile))
-
-sim.load(dataFile, instantiate=False)
+# waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520], 'channel': 14},
+# 'beta': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [456, 572], 'channel': 14}, 
+# 'alpha': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [3111, 3325], 'channel': 9}, 
+# 'theta': {'dataFile': 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'timeRange': [2785, 3350], 'channel': 8}}
 
 
+# freqBand = 'theta'
+# based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
 
-### thal pops
-thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
-allPops = list(sim.net.allPops.keys())
-pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
-## output --> >>> pops
-# ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
+# dataFile = based + waveletInfo[freqBand]['dataFile']
+# timeRange = waveletInfo[freqBand]['timeRange']
 
-### play with lfp data 
-timePoint = 20			# pick a timepoint for convenience 
+# print('timeRange = ' + str(timeRange))
+# print('dataFile = ' + str(dataFile))
 
-lfpTotal = sim.allSimData['LFP'][timePoint]   # <-- list of 20 (total lfp amplitudes at each electrode for this timepoint)
+# sim.load(dataFile, instantiate=False)
 
-popLFPLists = []  # <-- list of 36 lists (1 for each pop); each list is length 20 (lfp amplitudes at each electrode for this timepoint)
-for pop in pops:
-	lfpSublist = sim.allSimData['LFPPops'][pop][timePoint] 
-	popLFPLists.append(lfpSublist)
-lfpPopTotal = sum(popLFPLists)
+
+
+# ### thal pops
+# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+# allPops = list(sim.net.allPops.keys())
+# pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+# ## output --> >>> pops
+# # ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
+
+# ### play with lfp data 
+# timePoint = 10000			# pick a timepoint for convenience 
+
+# lfpTotal = sim.allSimData['LFP'][timePoint]   # <-- list of 20 (total lfp amplitudes at each electrode for this timepoint)
+
+# popLFPLists = []  # <-- list of 36 lists (1 for each pop); each list is length 20 (lfp amplitudes at each electrode for this timepoint)
+# for pop in pops:
+# 	lfpSublist = sim.allSimData['LFPPops'][pop][timePoint] 
+# 	popLFPLists.append(lfpSublist)
+# lfpPopTotal = sum(popLFPLists)
+
 
 ### NOW CHECK --> lfpPopTotal == lfpTotal
 
 
 
+########################
 #### pop-specific 
 # testPop = 'NGF1'
 

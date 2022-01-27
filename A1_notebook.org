@@ -58141,4 +58141,97 @@ Comparison of CSD oscillatory events across freq bands (gamma, beta, alpha, thet
 Multi-cycle oscillatory events were detected in both datasets, demonstrating
 *** Ended up putting the peak F for each of the A-E text caption subparts?? tried Hz and duration but was too lengthy. hm. 
 ** Work on results text for that wavelets figure:
-*** 
+*** So just start writing --> what should go in here? 
+*** I could talk about how we found them
+**** Oevent software
+**** ^^ in-house software that detects oscillations in current source density / recording data 
+**** timing and cortical location / electrode where wavelet was detected -- 
+**** can get min-max frequency + peak frequency, duration, number of cycles in the oscillation -- anything else that I want to mention? 
+*** From tax of osc paper:
+Our aim was to examine spontaneous neuronal activity, recorded over
+long time scales (minutes) in awake, resting state conditions in
+humans and non-human primates (NHPs), in order to better understand
+basic features and temporal properties of physiologically-relevant
+oscillations in auditory cortex. We used two invasively-recorded
+electrophysiology datasets: 1) laminar local field potential (LFP)
+recordings from NHP primary auditory cortex (A1), and 2) intracranial
+electroencephalogram (iEEG) recordings from human superior temporal
+gyrus (STG). We extracted moderate to high-power oscillation events
+from wavelet transform spectrograms, and determined their basic
+properties. These included temporal and frequency span, peak
+frequency, peak power, number of cycles, number of local peaks in
+filtered waveforms, correlation between filtered and raw signal
+(Filter-match), and rhythmicity across individual events.
+** Wavelet stats gdoc, for reference: https://docs.google.com/document/d/1DMdYMppsoVwHfcBhSyGxX4AEnK-_d3Qr64X3AWegcFY/edit
+* <2022-01-27 Thu -- working on A1 paper>
+** Added in wavelet stats figure (wavelet duration only) 
+*** Need to write caption!!
+*** Did this at suggestion of salvador. 
+*** Should I go ahead and re-number (+1) the other figures that come after? 
+*** I also edited the other fig a little
+** TO DO [round 1 - first draft]:
+*** [DONE] Re-number the figs after insertion of wavelet stats 
+*** [DONE] Re-number figs in the text [CHECK 1]
+*** Re-number figs in the text [CHECK 2]
+*** [DONE*] Sanity checks for new batch runs:
+**** * Do more extensively after making figure draft 
+**** [DONE] Check that the total lfp approx equals the lfp signal from pops added together
+**** ^^ NOTE: see above for weirdness
+**** [DONE] Check that lfp signal matches seeds across 57, 65, and 67
+**** doesn't exactly equal, but some are and need to do further investigation
+*** Finish creating that last figure
+*** Write a caption for it
+*** Write a paragraph about it in results text
+*** [DONE] Write a caption for the wavelet stats figure
+*** Re-read and proofread everything
+** Checking LFP seeds:
+*** Created testInfo dict in sandbox.py:
+testInfo = {'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
+			'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
+			'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
+
+*** Equivalences between batch 57, batch 65, and batch 67:
+### batch 57 ### batch 65 ### batch 67
+### 3_2      ### 1_1      ### 0_0
+### 3_3      ### 2_2      ### 1_1 
+### 3_4      ### 0_0      ### <-- worked in batch65 so no need! 
+
+
+*** did a bunch of stuff in sandbox.py --> see comments; leaving this be for now
+
+** Wavelet stats caption:
+*** Data from simulations (yellow), compared with data from NHP recordings (blue). Resting state recordings. These are the durations (ms) of all wavelet events 
+*** okay wrote a VERY rough draft for now --> 
+Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (blue) data. Wavelets were detected in resting state recordings, then sorted by frequency band (delta, theta, alpha, beta, gamma) and laminar region (supragranular, granular, infragranular). 
+** Finish the pop contribution figure:
+*** [done for now] should I do my sanity checks on the new batch67 .pkl files? yes --> 
+**** sandbox.py 
+**** ^^ Put in new waveletInfo dict 
+**** checked beta & alpha (0_0) --> WORKS
+**** okay I checked and the pop contribution stuff works, but my only issue is that.... it seems like they're all the same????? this is so confusing. Think about it later. 
+**** ^^ still confusing bc even if that were the case, should changing the timerange make it look way different? hm. 
+*** Start with 'delta' --> 
+**** notable pops on peak LFP:
+***** NGF1, channel 1 (+)
+***** IT3, channel 2 (-)
+***** IT3, channel 9 (++)
+***** ITP4, ITS4 channels 8-9 (-)
+***** IT5A 
+***** IT5B (-) 
+***** PT5B 
+**** notable pops on average LFP:
+***** IT3 (- channel 1)
+***** IT3 (+ channel 9)
+***** ITP4, ITS4
+***** IT5A 
+***** IT5B (-)
+***** PT5B (---) 
+***** CT6 (-)
+**** Notable negatives:
+***** PT5B --> very negative, channels 10-12  [9-13]
+***** IT3 --> very negative, channel 1 [0-5]
+***** ITP4 and ITS4 --> channels 8-9
+***** IT5A --> channels 9-11
+**** Notable positives:
+***** IT3 --> most positive, channel 9 [8-13]
+

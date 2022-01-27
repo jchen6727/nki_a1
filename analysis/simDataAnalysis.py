@@ -678,6 +678,20 @@ if local:
 
 
 ######### SET WAVELET TO LOOK AT		!!
+
+wavelets = ['delta', 'beta', 'alpha', 'theta']
+
+for wavelet in wavelets:
+	timeRange, dataFile = getWaveletInfo(wavelet, based)
+	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
+	plt.show(peakPlot)
+	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
+	plt.show(avgPlot)
+
+#########
 delta = 0
 beta = 	0
 alpha = 0
@@ -704,15 +718,15 @@ elif gamma:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 1
+evalPopsBool = 0
 
 if evalPopsBool:
-	dfPeak, dfAvg = getDataFrames(dataFile, timeRange)
+	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 
-	peakPlot = plotDataFrames(dfPeak, title='Peak LFP Amplitudes')
+	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title='Peak LFP Amplitudes')
 	plt.show(peakPlot)
 
-	avgPlot = plotDataFrames(dfAvg, title='Avg LFP Amplitudes')
+	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title='Avg LFP Amplitudes')
 	plt.show(avgPlot)
 
 
