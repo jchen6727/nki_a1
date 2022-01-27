@@ -22,39 +22,58 @@ testInfo = {
 ## for seed 3_3 --> batch57 == batch65 =/= batch67
 ## for seed 3_4 --> batch57 =/= batch65 == batch67
 
+####
+# remixInfo = {
+# 'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
+# 'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
+# 'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
 
-remixInfo = {
-'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
-'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
-'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
+# based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
 
+# seed = 'seed_3_2'
 
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
+# dataFile57 = based + remixInfo[seed]['batch57']
+# dataFile65 = based + remixInfo[seed]['batch65']
+# dataFile67 = based + remixInfo[seed]['batch67']
 
-seed = 'seed_3_2'
+# sim.load(dataFile57, instantiate=False)
+# batch57_LFP = sim.allSimData['LFP']
+# batch57_timestep = sim.cfg.recordStep
 
-dataFile57 = based + remixInfo[seed]['batch57']
-dataFile65 = based + remixInfo[seed]['batch65']
-dataFile67 = based + remixInfo[seed]['batch67']
+# sim.load(dataFile65, instantiate=False)
+# batch65_LFP = sim.allSimData['LFP']
+# batch65_timestep = sim.cfg.recordStep
 
-sim.load(dataFile57, instantiate=False)
-batch57_LFP = sim.allSimData['LFP']
-batch57_timestep = sim.cfg.recordStep
+# sim.load(dataFile67, instantiate=False)
+# batch67_LFP = sim.allSimData['LFP']
+# batch67_timestep = sim.cfg.recordStep
 
-sim.load(dataFile65, instantiate=False)
-batch65_LFP = sim.allSimData['LFP']
-batch65_timestep = sim.cfg.recordStep
+# batch57_LFP == batch65_LFP
+# batch65_LFP == batch67_LFP
+# batch57_LFP == batch67_LFP
 
-sim.load(dataFile67, instantiate=False)
-batch67_LFP = sim.allSimData['LFP']
-batch67_timestep = sim.cfg.recordStep
-
-batch57_LFP == batch65_LFP
-batch65_LFP == batch67_LFP
-batch57_LFP == batch67_LFP
 
 ### seed 3_4 --> changing batch65 to 1_1 and 2_2 made everything false
 ### seed 3_2 --> 
+
+
+#####
+newFiles = ['A1_v34_batch67_v34_batch67_0_0_data.pkl', 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'A1_v34_batch65_v34_batch65_0_0_data.pkl']
+
+based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
+
+lfpData = {}
+
+for dFile in newFiles:
+	sim.load(based + dFile, instantiate=False)
+	dataName=dFile[19:-9]
+	lfpData[dataName] = sim.allSimData['LFP']
+
+
+
+
+
+
 
 
 
@@ -86,17 +105,6 @@ batch57_LFP == batch67_LFP
 # 	else:
 # 		print('FOR ' + str(seed) + ': batches DO NOT have matching timeSteps!!!!')
 
-
-
-# ### LOAD THE DATA #### 
-# batch57_data = {}
-# batch57_LFP = {}
-# for file in batch57Files:
-# 	fullFile = pathToFiles + file + '.pkl'
-# 	sim.load(fullFile, instantiate=False)
-# 	fileKey = file.split('v34_')[1].split('_data')[0].split('batch57_')[1]
-# 	batch57_data[fileKey] = sim.allSimData
-# 	batch57_LFP[fileKey] = sim.allSimData['LFP']
 
 
 

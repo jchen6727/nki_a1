@@ -531,12 +531,13 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, electrodes=['avg']):
 	return lfpOutput
 
 
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), fontSize=12):
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12):
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list, e.g. [start, stop]
 	### colorDict: dict --> corresponds pop to color 
 	### pop: list or str --> relevant population to plot data for 
+	### ylim: list --> [min, max]
 	### figSize: tuple --> default is (10,7)
 	### fontSize: int --> default is 12 
 
@@ -578,6 +579,9 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	ax1.set_ylabel('Hz')
 	# ax1.set_xlabel('Time (ms)')
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+	if ylim is not None:
+		ax1.set_ylim(ylim[0], ylim[1])
+
 
 
 
@@ -598,7 +602,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	ax2.set_title('LFP Signal for ' + popToPlot)
 	ax2.set_xlabel('Time (ms)')
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
-	ax2.set_ylabel('LFP Amplitudes, uV') ### UNITS uV or mV?? 
+	ax2.set_ylabel('LFP Amplitudes, mV') ### UNITS uV or mV?? 
 
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()
@@ -679,20 +683,20 @@ if local:
 
 ######### SET WAVELET TO LOOK AT		!!
 
-wavelets = ['delta', 'beta', 'alpha', 'theta']
+# wavelets = ['delta', 'beta', 'alpha', 'theta']
 
-for wavelet in wavelets:
-	timeRange, dataFile = getWaveletInfo(wavelet, based)
-	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
-	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
-	plt.show(peakPlot)
-	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
-	plt.show(avgPlot)
+# for wavelet in wavelets:
+# 	timeRange, dataFile = getWaveletInfo(wavelet, based)
+# 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+# 	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+# 	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
+# 	plt.show(peakPlot)
+# 	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+# 	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
+# 	plt.show(avgPlot)
 
 #########
-delta = 0
+delta = 1
 beta = 	0
 alpha = 0
 theta = 0
@@ -706,8 +710,8 @@ elif alpha:
 	timeRange, dataFile = getWaveletInfo('alpha', based) ## recall timeRange issue (see nb)
 elif theta:
 	timeRange, dataFile = getWaveletInfo('theta', based)
-elif gamma:
-	print('Cannot analyze gamma wavelet at this time')
+# elif gamma:
+# 	print('Cannot analyze gamma wavelet at this time')
 
 
 
@@ -730,16 +734,17 @@ if evalPopsBool:
 	plt.show(avgPlot)
 
 
-includePops = ['IT3']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
+
+includePops = ['IT3', 'IT5A']#, 'IT5B', 'CT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 0
+plotSpikeData = 1
 
 if plotSpikeData:
 	for pop in includePops:
@@ -760,7 +765,7 @@ if plotSpikeData:
 ## Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 0
+plotLFPCombinedData = 1
 
 if plotLFPCombinedData:
 	for pop in includePops:
@@ -771,7 +776,11 @@ if plotLFPCombinedData:
 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrodes=['avg']) 
 
 		### Call plotting function 
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, figSize=(10,7), fontSize=12)
+		if delta:
+			ylim = [1, 40]
+		else:
+			ylim=None
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), fontSize=12)
 
 
 
