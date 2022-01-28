@@ -632,7 +632,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 
 	if saveFig:
 		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
-		fileName = pop + '_combinedLFP.png'
+		if titleSubset:
+			elecInFileName = titleSubset[-2:]
+		else:
+			elecInFileName = 'avgElecs'
+		fileName = pop + '_' + elecInFileName + '_combinedLFP.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile)
 
@@ -842,7 +846,7 @@ if plotLFPCombinedData:
 		if electrodes[0] == 'avg':
 			plotTitleSubset= ' (averaged over all electrodes)'
 		elif isinstance(electrodes[0], Number):
-			plotTitleSubset = ' , electrode ' + str(electrodes[0])
+			plotTitleSubset = ', electrode ' + str(electrodes[0])
 		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), fontSize=12, titleSubset=plotTitleSubset)
 
 
