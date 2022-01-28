@@ -325,7 +325,7 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg
 
 
-def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None):
+def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None, saveFig=True):
 	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
 	### electrodes: list, if none --> default: use all electrodes + 'avg'
 	### pops: list, if none --> default: 
@@ -335,7 +335,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 	## Set label for color scalebar 
 	if cbarLabel is None:
-		cbarLabel = 'LFP amplitudes (uV)'
+		cbarLabel = 'LFP amplitudes (mV)'
 
 	## Create lists of electrode (columns and labels)
 	if electrodes is None:
@@ -532,32 +532,33 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes
 	elif type(plotType) is list:
 		plots = plotType
 
-	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots)
+	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, filtFreq=filtFreq, plots=plots)
 
-	### BANDPASS FILTER THIS DATA!! 
-	if filtFreq is not None:
-		filtOrder = 3 ## DEFAULT VALUE FROM lfp_orig.py
-		from scipy import signal
-		fs = 1000.0/sim.cfg.recordStep
-		nyquist = fs/2.0
-		if isinstance(filtFreq, list): # bandpass
-			Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-			b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-		elif isinstance(filtFreq, Number): # lowpass
-			Wn = filtFreq/nyquist
-			b, a = signal.butter(filtOrder, Wn)
-		for i in range(lfp.shape[1]):
-			# lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
-			lfpOutput[:,i] = signal.filtfilt(b, a, lfpOutput[:,i])
+	# ### BANDPASS FILTER THIS DATA!! 
+	# if filtFreq is not None:
+	# 	filtOrder = 3 ## DEFAULT VALUE FROM lfp_orig.py
+	# 	from scipy import signal
+	# 	fs = 1000.0/sim.cfg.recordStep
+	# 	nyquist = fs/2.0
+	# 	if isinstance(filtFreq, list): # bandpass
+	# 		Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+	# 		b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+	# 	elif isinstance(filtFreq, Number): # lowpass
+	# 		Wn = filtFreq/nyquist
+	# 		b, a = signal.butter(filtOrder, Wn)
+	# 	for i in range(lfpOutput.shape[1]):
+	# 		# lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+	# 		lfpOutput[:,i] = signal.filtfilt(b, a, lfpOutput[:,i])
 
 	return lfpOutput
 
 
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, saveFig=True):
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, electrode='avg', ylim=None, figSize=(10,7), fontSize=12, saveFig=True):
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list, e.g. [start, stop]
 	### colorDict: dict --> corresponds pop to color 
+	### electrodes: str or int (LENGTH OF 1 -- FIX THIS LATER?)
 	### pop: list or str --> relevant population to plot data for 
 	### ylim: list --> [min, max]
 	### figSize: tuple --> default is (10,7)
@@ -609,11 +610,14 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 
 	##### TIME SERIES  ## ON BOTTOM PANEL !! 
 	t = timeSeriesDict['t']
-	lfp = timeSeriesDict['LFP']
+	lfp = timeSeriesDict['LFP'] #timeSeriesDict['lfpPlot'] #timeSeriesDict['LFP'] ### ELECTRODE FIX???
 
 	separation = 1 
 	ydisp = np.absolute(lfp).max() * separation
-	lfpPlot = np.mean(lfp, axis=1)
+	if electrode == 'avg' :
+		lfpPlot = np.mean(lfp, axis=1)
+	elif isinstance(electrode, Number):
+		lfpPlot = lfp[:, electrode]  ### NEED THIS SECOND ELEMENT IN LIST TO BE ELECTRODE NUM!!!
 
 	lw = 1.0
 	ax2 = plt.subplot(2, 1, 2)
@@ -707,7 +711,7 @@ if local:
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 
-######### SET WAVELET TO LOOK AT		!!
+######## SET WAVELET TO LOOK AT		!!
 
 # wavelets = ['delta', 'beta', 'alpha', 'theta']
 
@@ -722,20 +726,24 @@ if local:
 # 	plt.show(avgPlot)
 
 #########
-delta = 1
+delta = 0
 beta = 	0
 alpha = 0
-theta = 0
+theta = 1
 # gamma = 0 
 
 if delta:
 	timeRange, dataFile = getWaveletInfo('delta', based)
+	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
 elif beta:
 	timeRange, dataFile = getWaveletInfo('beta', based)
+	wavelet='beta'
 elif alpha:
 	timeRange, dataFile = getWaveletInfo('alpha', based) ## recall timeRange issue (see nb)
+	wavelet='alpha'
 elif theta:
 	timeRange, dataFile = getWaveletInfo('theta', based)
+	wavelet='theta'
 # elif gamma:
 # 	print('Cannot analyze gamma wavelet at this time')
 
@@ -753,24 +761,23 @@ evalPopsBool = 0
 if evalPopsBool:
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 
-	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title='Peak LFP Amplitudes')
+	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
 	plt.show(peakPlot)
 
-	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title='Avg LFP Amplitudes')
+	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
 	plt.show(avgPlot)
 
 
-
-
-
-includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-
+########################
+includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 if plotSpikeData:
 	for pop in includePops:
@@ -788,40 +795,39 @@ if plotSpikeData:
 
 ###### COMBINED LFP PLOTTING ######
 ## TO DO: 
-## Filter the timeRanged lfp data to the wavelet frequency band
+## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
-
-
 
 plotLFPCombinedData = 1
 
-### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
+# ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
 # filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
-bandpassLFP = 1
+bandpassLFP = 0
 if bandpassLFP:
 	if delta:
-		filtFreq = [0.5, 4] # Hz
-	elif theta:
-		filtFreq = [4, 9]
-	elif alpha:
-		filtFreq = [9, 15]
+		filtFreq = 5 #[0.5, 5] # Hz
 	elif beta:
-		filtFreq = [15, 29]
-	# elif gamma:
-	# 	filtFreq = [30, 85]
+		filtFreq = [21, 40] # [15, 29]
+	elif alpha:
+		filtFreq = [11, 17]	#[9, 15]
+	elif theta:
+		filtFreq = 30 #[4, 9] #[5, 7.25] #[4, 9]
 else:
 	filtFreq = None
 
 
-
+includePops = ['IT3']#, 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
+		if pop == 'IT3':
+			electrodes = [9] #[1,9] #['avg']
 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
-		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=['avg']) 
-		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], filtFreq=filtFreq, electrodes=['avg']) 
+		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=electrodes) 
+		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], filtFreq=filtFreq, electrodes=electrodes) 
+
 
 		### Call plotting function 
 		if delta:

@@ -58240,4 +58240,11 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 *** I think I should filter the data ... hm. how to go about this --> look at filtFreq lines in lfp netpyne scripts:
 **** Added filtFreq lines from lfp_orig
 **** Testing now --> (1) Try delta wavelet, with bandpass only on timeSeries
-**** (2) Try delta wavelet, with bandpass on both
+**** [--> still need to try] (2) Try delta wavelet, with bandpass on both
+**** FAILED TESTS ABOVE!! -- bc of problems w/ array vs. dict type stuff -- so instead I added filtFreq as an argument to sim.analysis.getLFPData which is how I get the data dicts!!! -- forgot this could be an argument there. 
+***** ^^ in def getLFPDataDict():
+***** ^^ lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, filtFreq=filtFreq, plots=plots)
+** JUST NOTICED POTENTIAL ORDERING ISSUE WITH POPS IN HEATMAPS? FIX THIS LATER? 
+** Netpyne changes:
+*** commented out a colors line in lfp_orig.py
+*** added 'lfpPlot' to data output dict 
