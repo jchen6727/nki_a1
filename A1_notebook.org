@@ -58263,7 +58263,24 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 *** Make a caption for fig
 *** Write a big in the results section about this
 *** Debug the heat map situation
+**** and maybe also remove the 'avg' from the last row in electrodes. 
 *** Figure out what's going on with the high-frequency component of the spiking spectrogram
+*** ^^ maybe also make the firing rate histogram reflect counts not rate -- or make sure either way?? 
 *** Figure formatting changes:
 **** Increase font size 
 *** Go through my simDataAnalysis.py script and make sure it's all cleaned up in terms of comments, redundancies, turning test lines into functions, etc etc. 
+** Caption text:
+*** STARTING WITH:
+Figure 9. 
+Layer and cell type-specific contributions to the generation of LFP/CSD oscillation events and its relation to MUA. A) B) C) D) E)
+*** Figure 9. 
+*** DRAFTING:
+**** A) Wavelet event in the theta frequency band, detected in the supragranular region of the simulated A1 column. 
+**** B) Heat map depicting the average amplitudes of the LFP signal during the time of the theta wavelet. Each element in the map depicts the average LFP signal  recorded from a specific cell population (specified on the x-axis), with a particular electrode (specified on the y-axis, with electrode 0 occupying the most superficial recording position within the simulated A1 column).
+**** C) TOP: LFP signal in the Layer 3 intratelencephalic cell population (IT3) during the time of the theta wavelet, with a spectrogram of the LFP signal on the upper panel, and a time series plot of the LFP signal on the lower panel. This information was recorded by electrode 1. BOTTOM: Firing rate information for the IT3 population during the time of the theta wavelet, with a spectrogram of the spiking rate on the upper panel and a histogram of this information on the lower panel. 
+**** D) TOP: LFP signal in the Layer 5A intratelencephalic cell population (IT5A) during the time of the theta wavelet, with a spectrogram of the LFP signal on the upper panel, and a time series plot of the LFP signal on the lower panel. This information was recorded by electrode 10. BOTTOM: Firing rate information for the IT5A population during the time of the theta wavelet, with a spectrogram of the spiking rate on the upper panel and a histogram of this information on the lower panel. 
+**** E) TOP: LFP signal in the Layer 5B corticothalamic cell population (CT5B) during the time of the theta wavelet, with a spectrogram of the LFP signal on the upper panel, and a time series plot of the LFP signal on the lower panel. This information was recorded by electrode 11. BOTTOM: Firing rate information for the CT5B population during the time of the theta wavelet, with a spectrogram of the spiking rate on the upper panel and a histogram of this information on the lower panel. 
+*** First draft of A-E: 
+A) Wavelet event in the theta frequency band, detected in the supragranular region of the simulated A1 column. B) Heat map depicting the average amplitudes of the LFP signal during the time of the theta wavelet. Each element in the map depicts the average LFP signal (mV) recorded from a specific cell population with a particular electrode (with electrode 0 occupying the most superficial recording position in the simulated A1 column). C) TOP: LFP signal in the layer 3 intratelencephalic cells (IT3) during the time of the theta wavelet, recorded by electrode 1. A spectrogram of the LFP signal is depicted on the upper panel, and a time series plot of the LFP signal is depicted on the lower panel. BOTTOM: Firing rate information for the IT3 cells during the theta wavelet, with a spectrogram of the firing rate on the upper panel and a histogram of the firing rate on the lower panel. D) TOP: LFP signal in the layer 5A intratelencephalic cells (IT5A) during the theta wavelet, recorded by electrode 10 (spectrogram on upper panel; time series plot on lower panel). BOTTOM: Firing rate information for the IT5A population during the theta wavelet (firing rate spectrogram on upper panel; histogram on lower panel).  E) TOP: LFP signal in the layer 5B corticothalamic cells (CT5B) during the theta wavelet, recorded by electrode 11 (spectrogram on upper panel; time series plot on lower panel). BOTTOM: Firing rate information for the CT5B population during the theta wavelet (firing rate spectrogram on upper panel; histogram the lower panel).
+*** First sentence describing the figure:
+**** 
