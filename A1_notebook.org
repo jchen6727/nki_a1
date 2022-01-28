@@ -58248,3 +58248,4 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 ** Netpyne changes:
 *** commented out a colors line in lfp_orig.py
 *** added 'lfpPlot' to data output dict 
+** Spike histo data & plotting unaffected by electrode chanes 

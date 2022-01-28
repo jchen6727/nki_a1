@@ -355,7 +355,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 	dataFrame = dataFrame[electrodeColumns]
 
 	## Create list of cell populations 
-	if pops is None:
+	if pops is None:  ### POTENTIAL ISSUE WITH ORDERING OR NO???
 		pops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 
 		'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 
 		'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
@@ -515,7 +515,7 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes
 	### timeRange: list, e.g. [start, stop]
 	### plotType: str or list --> 'spectrogram' or 'timeSeries'
 	### filtFreq: list --> frequencies to bandpass filter lfp data 
-	### electrodes: list --> default: ['avg']
+	### electrodes: list --> default: ['avg'] --> # SINGLE ELEMENT LIST; correct this or improve it?!?
 
 	# Load data file 
 	sim.load(dataFile, instantiate=False)
@@ -534,31 +534,16 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes
 
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, filtFreq=filtFreq, plots=plots)
 
-	# ### BANDPASS FILTER THIS DATA!! 
-	# if filtFreq is not None:
-	# 	filtOrder = 3 ## DEFAULT VALUE FROM lfp_orig.py
-	# 	from scipy import signal
-	# 	fs = 1000.0/sim.cfg.recordStep
-	# 	nyquist = fs/2.0
-	# 	if isinstance(filtFreq, list): # bandpass
-	# 		Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-	# 		b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-	# 	elif isinstance(filtFreq, Number): # lowpass
-	# 		Wn = filtFreq/nyquist
-	# 		b, a = signal.butter(filtOrder, Wn)
-	# 	for i in range(lfpOutput.shape[1]):
-	# 		# lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
-	# 		lfpOutput[:,i] = signal.filtfilt(b, a, lfpOutput[:,i])
 
 	return lfpOutput
 
 
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, electrode='avg', ylim=None, figSize=(10,7), fontSize=12, saveFig=True):
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list, e.g. [start, stop]
 	### colorDict: dict --> corresponds pop to color 
-	### electrodes: str or int (LENGTH OF 1 -- FIX THIS LATER?)
+	# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
 	### pop: list or str --> relevant population to plot data for 
 	### ylim: list --> [min, max]
 	### figSize: tuple --> default is (10,7)
@@ -582,8 +567,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, electr
 
 
 	##### SPECTROGRAM  --> TOP PANEL !! 
-	lfp = spectDict['LFP']
-	spec = spectDict['spec']
+	# lfp = spectDict['LFP']  # #<--- UNUSED
+	spec = spectDict['spec']  ### DO I NEED TO CHANGE THIS IF ELECTRODES...??? NO, DOES THAT IN lfp_orig.py I believe!!!
 
 	S = spec[0].TFR
 	F = spec[0].f   
@@ -598,7 +583,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, electr
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power')
-	ax1.set_title('LFP Spectrogram for ' + popToPlot)
+	if titleSubset is not None:
+		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
+	else:
+		spectTitle = 'LFP Spectrogram for ' + popToPlot
+	ax1.set_title(spectTitle)	#('LFP Spectrogram for ' + popToPlot)
 	ax1.set_ylabel('Hz')
 	# ax1.set_xlabel('Time (ms)')
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
@@ -610,14 +599,17 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, electr
 
 	##### TIME SERIES  ## ON BOTTOM PANEL !! 
 	t = timeSeriesDict['t']
-	lfp = timeSeriesDict['LFP'] #timeSeriesDict['lfpPlot'] #timeSeriesDict['LFP'] ### ELECTRODE FIX???
+	lfp = timeSeriesDict['LFP'] # timeSeriesDict['lfpPlot'] #timeSeriesDict['LFP'] ### ELECTRODE FIX???
 
 	separation = 1 
 	ydisp = np.absolute(lfp).max() * separation
-	if electrode == 'avg' :
-		lfpPlot = np.mean(lfp, axis=1)
-	elif isinstance(electrode, Number):
-		lfpPlot = lfp[:, electrode]  ### NEED THIS SECOND ELEMENT IN LIST TO BE ELECTRODE NUM!!!
+	# if electrode == 'avg' :
+	# 	lfpPlot = np.mean(lfp, axis=1)
+	# elif isinstance(electrode, Number):
+	# 	lfpPlot = lfp[:, electrode]  ### NEED THIS SECOND ELEMENT IN LIST TO BE ELECTRODE NUM!!!
+
+	### TEST LINE ### <-- should do same as above electrodes lines?? BUT I DID TAKE OUT ELECTRODE ARGUMENT!!!
+	lfpPlot = timeSeriesDict['lfpPlot']
 
 	lw = 1.0
 	ax2 = plt.subplot(2, 1, 2)
@@ -625,7 +617,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, electr
 	cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 	cax2.axis('off')
 	ax2.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # plt.plot(t[0:len(lfpPlot)], -lfpPlot, color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
-	ax2.set_title('LFP Signal for ' + popToPlot)
+	if titleSubset is not None:
+		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
+	else:
+		timeSeriesTitle = 'LFP Signal for ' + popToPlot
+	ax2.set_title(timeSeriesTitle) 	#('LFP Signal for ' + popToPlot)
 	ax2.set_xlabel('Time (ms)')
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
 	ax2.set_ylabel('LFP Amplitudes, mV') ### UNITS uV or mV?? 
@@ -816,17 +812,26 @@ else:
 	filtFreq = None
 
 
-includePops = ['IT3']#, 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
 		if pop == 'IT3':
-			electrodes = [9] #[1,9] #['avg']
+			electrodes = [1] #[1,9] #['avg']
+		elif pop == 'IT5A':
+			electrodes = [10]
+		elif pop == 'CT5B':
+			electrodes = [11]
+		elif pop == 'PT5B':
+			electrodes = [11]
+		else:
+			electrodes = ['avg']
+
 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=electrodes) 
-		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], filtFreq=filtFreq, electrodes=electrodes) 
+		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrodes=electrodes) #filtFreq=filtFreq, 
 
 
 		### Call plotting function 
@@ -834,7 +839,11 @@ if plotLFPCombinedData:
 			ylim = [1, 40]
 		else:
 			ylim=None
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), fontSize=12)
+		if electrodes[0] == 'avg':
+			plotTitleSubset= ' (averaged over all electrodes)'
+		elif isinstance(electrodes[0], Number):
+			plotTitleSubset = ' , electrode ' + str(electrodes[0])
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), fontSize=12, titleSubset=plotTitleSubset)
 
 
 
