@@ -385,7 +385,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 
 	## Create heatmap! 
-	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
+	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar=True) #cbar_kws={'label': cbarLabel})
 
 	## Set labels on x and y axes 
 	plt.xlabel('Cell populations')
@@ -394,6 +394,8 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 	plt.yticks(rotation=0, fontsize=8)
 
 	return ax
+
+	#return pivotedDataFrame ## <-- pivotedDataFrame FOR TESTING ## UNCOMMENT ABOVE PLOTTING LINES WHEN DONE TESTING !! 
 
 
 
@@ -763,11 +765,13 @@ if evalPopsBool:
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 
 	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
+	#peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
 	plt.show(peakPlot)
 
 	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
+	#avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
+	avgDataFrame = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
 	plt.show(avgPlot)
 
 

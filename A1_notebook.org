@@ -58248,7 +58248,7 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 ** Netpyne changes:
 *** commented out a colors line in lfp_orig.py
 *** added 'lfpPlot' to data output dict 
-** Spike histo data & plotting unaffected by electrode chanes 
+** Spike histo data & plotting unaffected by electrode changes 
 ** Make these for theta:
 *** [DONE] IT3, elec 1
 *** [DONE] IT3, elec 9
@@ -58257,3 +58257,13 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 *** [DONE] CT5B, elec 11
 *** [DONE] PT5B, elec 11 
 ** There is a bug somewhere in the heatmap!! 
+* <2022-01-28 Fri -- results section and fig caption>
+** Told salva last night about the changes I made in the figure and potential different directions to go in (see chat for feedback from him as well)
+** TO DO:
+*** Make a caption for fig
+*** Write a big in the results section about this
+*** Debug the heat map situation
+*** Figure out what's going on with the high-frequency component of the spiking spectrogram
+*** Figure formatting changes:
+**** Increase font size 
+*** Go through my simDataAnalysis.py script and make sure it's all cleaned up in terms of comments, redundancies, turning test lines into functions, etc etc. 
