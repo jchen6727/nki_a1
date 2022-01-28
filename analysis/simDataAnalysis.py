@@ -359,7 +359,8 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 		pops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 
 		'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 
 		'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
-	
+
+
 	## dataFrame subset according to cell populations specified in argument! 
 	dataFrame = dataFrame[dataFrame.index.isin(pops)]
 
@@ -635,7 +636,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		if titleSubset:
 			elecInFileName = titleSubset[-2:]
 		else:
-			elecInFileName = 'avgElecs'
+			elecInFileName = 'avgElecs'   #### BE SURE THROUGHOUT THIS THAT THE DEFAULT IS AVERAGED ELECTRODES -- GO THROUGH THIS LATER TO MAKE SURE!!! 
 		fileName = pop + '_combinedLFP_' + 'elec' + elecInFileName + '.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile)
@@ -816,20 +817,22 @@ else:
 	filtFreq = None
 
 
-includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['ITS4']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
 		if pop == 'IT3':
-			electrodes = [1] #[1,9] #['avg']
+			electrodes = [9] #[1,9] #['avg']
 		elif pop == 'IT5A':
 			electrodes = [10]
+		elif pop == 'IT5B':
+			electrodes = [11]
 		elif pop == 'CT5B':
 			electrodes = [11]
 		elif pop == 'PT5B':
-			electrodes = [11]
+			electrodes = ['avg']	#[11]
 		else:
 			electrodes = ['avg']
 
