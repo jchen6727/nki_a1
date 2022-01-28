@@ -636,7 +636,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 			elecInFileName = titleSubset[-2:]
 		else:
 			elecInFileName = 'avgElecs'
-		fileName = pop + '_' + elecInFileName + '_combinedLFP.png'
+		fileName = pop + '_combinedLFP_' + 'elec' + elecInFileName + '.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile)
 
