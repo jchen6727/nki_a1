@@ -265,18 +265,20 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 			if elec == 'avg':
 				lfpPopData[pop]['avg'] = {}
 
-				avgPopData = np.mean(popLFPdata, axis=1) # list of lfp data (averaged over all electrodes) for each timepoint 
+				avgPopData = np.mean(popLFPdata, axis=1) # lfp data (from 1 pop) at each timepoint, averaged over all electrodes
 
 				avgAvgLFP = np.average(avgPopData)
-				lfpPopData[pop]['avg']['avg'] = avgAvgLFP
+				lfpPopData[pop]['avg']['avg'] = avgAvgLFP # time-average of lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+				### ^^ what's the point of calculating this? <-- ah, okay. gets called later. 
 
 				peakAvgLFP = np.amax(avgPopData)
-				lfpPopData[pop]['avg']['peak'] = peakAvgLFP
+				lfpPopData[pop]['avg']['peak'] = peakAvgLFP ## highest datapoint of all the lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+				### ^^ what's the point of calculating this? 
 
 			elif isinstance(elec, Number):
 				elecKey = 'elec' + str(elec)
 				lfpPopData[pop][elecKey] = {}
-				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ### <-- IS THIS WHAT I WANT? 
+				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ### LFP data (from 1 pop) averaged in time, over 1 electrode 
 				lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
 
 
@@ -324,6 +326,99 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 	else:
 		return dfPeak, dfAvg
 
+def getDataFrames2(dataFile, timeRange, verbose=0):
+	### This function will return data frames of peak and average lfp amplitudes for picking cell pops
+	### dataFile: str --> .pkl file to load
+	### timeRange: list --> e.g. [start, stop]
+	### verbose: bool --> if 0, return only the data frames; if 1 - return all lists and dataframes 
+
+	## Load data file
+	sim.load(dataFile, instantiate=False)
+
+	## Get all cell pops (cortical)
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	allPops = list(sim.net.allPops.keys())
+	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+
+	## Get all electrodes 
+	evalElecs = []
+	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+	### add 'avg' to electrode list 
+	evalElecs.append('avg')
+
+
+	## Create dict with lfp population data, and calculate average and peak amplitudes for each pop at each electrode!
+	lfpPopData = {}
+
+	for pop in pops:
+		lfpPopData[pop] = {}
+
+		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+		for i, elec in enumerate(evalElecs):
+			if elec == 'avg':
+				lfpPopData[pop]['avg'] = {}
+
+				avgPopData = np.mean(popLFPdata, axis=1) # lfp data (from 1 pop) at each timepoint, averaged over all electrodes
+
+				avgAvgLFP = np.average(avgPopData)
+				lfpPopData[pop]['avg']['avg'] = avgAvgLFP # time-average of lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+				### ^^ what's the point of calculating this? <-- ah, okay. gets called later. 
+
+				peakAvgLFP = np.amax(avgPopData)
+				lfpPopData[pop]['avg']['peak'] = peakAvgLFP ## highest datapoint of all the lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+				### ^^ what's the point of calculating this? 
+
+			elif isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+				lfpPopData[pop][elecKey] = {}
+				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ### LFP data (from 1 pop) averaged in time, over 1 electrode 
+				lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
+
+
+	## Rearrange data structure and turn into a pandas data frame
+	#### PEAK LFP AMPLITUDES ####
+	peakValues = {}
+
+	peakValues['pops'] = []
+	peakValues['peakLFP'] = [[] for i in range(len(pops))]  # should be 36! 
+	p=0
+	for pop in pops:
+		peakValues['pops'].append(pop)
+		for i in range(len(evalElecs)):
+			if isinstance(evalElecs[i], Number):
+				elecKey = 'elec' + str(i)
+			elif evalElecs[i] == 'avg':
+				elecKey = 'avg'
+			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
+		p+=1
+
+	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=pops)
+
+
+	#### AVERAGE LFP AMPLITUDES ####
+	avgValues = {}
+
+	avgValues['pops'] = []
+	avgValues['avgLFP'] = [[] for i in range(len(pops))]
+
+	q=0
+	for pop in pops:
+		avgValues['pops'].append(pop)
+		for i in range(len(evalElecs)):
+			if isinstance(evalElecs[i], Number):
+				elecKey = 'elec' + str(i)
+			elif evalElecs[i] == 'avg':
+				elecKey = 'avg'
+			avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
+		q+=1 
+
+	dfAvg = pd.DataFrame(avgValues['avgLFP'], index=pops)
+
+	if verbose:
+		return dfPeak, dfAvg, peakValues, avgValues, lfpPopData 
+	else:
+		return dfPeak, dfAvg
 
 def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None, saveFig=True):
 	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
@@ -653,7 +748,7 @@ layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1
 
 ## Cell populations: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
-'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B',
 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']#, 'IC']
 L1pops = ['NGF1']
 L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
@@ -729,10 +824,10 @@ if local:
 # 	plt.show(avgPlot)
 
 #########
-delta = 0
+delta = 1
 beta = 	0
 alpha = 0
-theta = 1
+theta = 0
 # gamma = 0 
 
 if delta:
@@ -759,20 +854,23 @@ elif theta:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 0
+evalPopsBool = 1
 
 if evalPopsBool:
-	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	print('timeRange: ' + str(timeRange))
+	print('dataFile: ' + str(dataFile))
+	# dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
-	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	#peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
-	peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
-	plt.show(peakPlot)
+	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# #peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	# peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
+	# plt.show(peakPlot)
 
-	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	#avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
-	avgDataFrame = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
-	plt.show(avgPlot)
+	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# #avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
+	# avgDataFrame = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
+	# plt.show(avgPlot)
 
 
 ########################
@@ -803,7 +901,7 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 # ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
 # filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)

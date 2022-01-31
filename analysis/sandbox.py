@@ -3,16 +3,39 @@ import numpy as np
 #from simDataAnalysis import *
 
 
+###### DEBUGGING LFP HEATMAP #######
+
+dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch65_v34_batch65_0_0_data.pkl'
+timeRange = [1480, 2520]
+
+sim.load(dataFile, instantiate=False)
+
+# total LFP 
+totalLFPdata = sim.allSimData['LFP']
+
+# 'IT2' pop data 
+pop = 'IT2'
+popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+## numpy mean vs avg. 
+# mean_axis1 = np.mean(popLFPdata, axis=1, dtype='float64')
+# avg_axis1 = np.average(popLFPdata, axis=1)
+avgPopData = np.mean(popLFPdata, axis=1)
+
+
+## 
+np.average(popLFPdata[:, elec])
+
 ###### TESTING NEW LFP .pkl FILES ######
 ### batch 57 ### batch 65 ### batch 67
 ### 3_2      ### 1_1      ### 0_0
 ### 3_3      ### 2_2      ### 1_1 
 ### 3_4      ### 0_0      ### <-- worked in batch65 so no need! 
 
-testInfo = {
-'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
-'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
-'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
+# testInfo = {
+# 'seed_3_2': {'batch57': 'v34_batch57_3_2_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_1_1_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_0_0_data.pkl'}, 
+# 'seed_3_3': {'batch57': 'v34_batch57_3_3_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_2_2_data.pkl', 'batch67': 'A1_v34_batch67_v34_batch67_1_1_data.pkl'}, 
+# 'seed_3_4': {'batch57': 'v34_batch57_3_4_data.pkl', 'batch65': 'batch65_old/A1_v34_batch65_v34_batch65_0_0_data.pkl', 'batch67': 'A1_v34_batch65_v34_batch65_0_0_data.pkl'}}
 
 # dataFile57 = based + testInfo[seed]['batch57']
 # dataFile65 = based + testInfo[seed]['batch65']
@@ -58,16 +81,16 @@ testInfo = {
 
 
 #####
-newFiles = ['A1_v34_batch67_v34_batch67_0_0_data.pkl', 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'A1_v34_batch65_v34_batch65_0_0_data.pkl']
+# newFiles = ['A1_v34_batch67_v34_batch67_0_0_data.pkl', 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'A1_v34_batch65_v34_batch65_0_0_data.pkl']
 
-based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
+# based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/' 
 
-lfpData = {}
+# lfpData = {}
 
-for dFile in newFiles:
-	sim.load(based + dFile, instantiate=False)
-	dataName=dFile[19:-9]
-	lfpData[dataName] = sim.allSimData['LFP']
+# for dFile in newFiles:
+# 	sim.load(based + dFile, instantiate=False)
+# 	dataName=dFile[19:-9]
+# 	lfpData[dataName] = sim.allSimData['LFP']
 
 
 
