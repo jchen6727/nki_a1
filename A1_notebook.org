@@ -58330,4 +58330,17 @@ The LFP signal from each cell population was examined over all electrodes (Fig. 
 ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
 >>> pops
 ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
-** Add 
+** Add suggestions for text / figure from salva & sam:
+*** salva:
+**** hey erica I think would be good to add a couple lines to results or discuss saying this is first step, specially if can mention what are some of the other steps
+**** and yeah might be good to add analysis of another wavelet to show different pop contributions, but again not vital for this version I think
+*** sam: 
+**** text in this figure is difficult to read (small, a bit blurred). the LFP wavelet spectrograms show peaks in low frequency range (theta), while the spiking activity shows peaks in gamma range - that's consistent with previous ephys/modeling data, but worth highlighting.
+**** I also do see some hints of gamma in the LFP spectrograms, at ~same time as the gamma in the spiking activity spectrograms. if change the color range on top panels, might make it more noticeable. this presence of low/high frequency also fits into the cross frequency coupling story
+**** this is during a single event. would be interesting to see the pattern across all theta events , whether they're similar/different, and the same for all frequency bands.
+*** Figure edits:
+**** Change LFP timeSeries plots -- using the new simDataAnalysis.py code that does not sign-invert the LFP data
+**** Increase the font size on the LFP / spike figure text
+*** Text edits: 
+**** Add in some text about cross-frequency coupling story, as suggested by sam 
+
