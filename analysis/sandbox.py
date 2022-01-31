@@ -23,8 +23,21 @@ popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.r
 avgPopData = np.mean(popLFPdata, axis=1)
 
 
-## 
-np.average(popLFPdata[:, elec])
+# ## 
+elec=1
+elecData = popLFPdata[:, elec]
+absData = np.absolute(elecData).max()
+negData = -elecData
+
+# avgElecData = np.average(popLFPdata[:, elec])
+# avgElecData2 = np.mean(popLFPdata[:, elec])
+# avgElecData3 = np.average(elecData, axis=0)
+# avgElecData4 = np.mean(elecData, axis=0)
+# ^^ all equivalent!! 
+
+########################################################################
+
+
 
 ###### TESTING NEW LFP .pkl FILES ######
 ### batch 57 ### batch 65 ### batch 67

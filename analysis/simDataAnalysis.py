@@ -363,11 +363,9 @@ def getDataFrames2(dataFile, timeRange, verbose=0):
 
 				avgAvgLFP = np.average(avgPopData)
 				lfpPopData[pop]['avg']['avg'] = avgAvgLFP # time-average of lfp data (from 1 pop) that has been averaged in space (over all electrodes)
-				### ^^ what's the point of calculating this? <-- ah, okay. gets called later. 
 
 				peakAvgLFP = np.amax(avgPopData)
 				lfpPopData[pop]['avg']['peak'] = peakAvgLFP ## highest datapoint of all the lfp data (from 1 pop) that has been averaged in space (over all electrodes)
-				### ^^ what's the point of calculating this? 
 
 			elif isinstance(elec, Number):
 				elecKey = 'elec' + str(elec)
@@ -385,15 +383,15 @@ def getDataFrames2(dataFile, timeRange, verbose=0):
 	p=0
 	for pop in pops:
 		peakValues['pops'].append(pop)
-		for i in range(len(evalElecs)):
-			if isinstance(evalElecs[i], Number):
-				elecKey = 'elec' + str(i)
-			elif evalElecs[i] == 'avg':
+		for i, elec in enumerate(evalElecs):
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg':
 				elecKey = 'avg'
 			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
 		p+=1
 
-	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=pops)
+	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=peakValues['pops']) #index=pops)
 
 
 	#### AVERAGE LFP AMPLITUDES ####
@@ -419,6 +417,7 @@ def getDataFrames2(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg, peakValues, avgValues, lfpPopData 
 	else:
 		return dfPeak, dfAvg
+
 
 def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None, saveFig=True):
 	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
@@ -457,10 +456,10 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 
 	## dataFrame subset according to cell populations specified in argument! 
-	dataFrame = dataFrame[dataFrame.index.isin(pops)]
+	dataFramePops = dataFrame[dataFrame.index.isin(pops)]
 
 	## TRANSPOSE DATA FRAME 
-	pivotedDataFrame = dataFrame.T
+	pivotedDataFrame = dataFramePops.T
 
 
 	## Create lists of x and y axis labels 
@@ -714,7 +713,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	divider2 = make_axes_locatable(ax2)
 	cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 	cax2.axis('off')
-	ax2.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # plt.plot(t[0:len(lfpPlot)], -lfpPlot, color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
+	#ax2.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # plt.plot(t[0:len(lfpPlot)], -lfpPlot, color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
+	ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 	if titleSubset is not None:
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
 	else:
@@ -824,10 +824,10 @@ if local:
 # 	plt.show(avgPlot)
 
 #########
-delta = 1
+delta = 0
 beta = 	0
 alpha = 0
-theta = 0
+theta = 1
 # gamma = 0 
 
 if delta:
@@ -854,17 +854,19 @@ elif theta:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 1
+evalPopsBool = 0
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
 	# dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 	dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
+	dfPeak2, dfAvg2, peakValues2, avgValues2, lfpPopData2 = getDataFrames2(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
-	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# #peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
-	# peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
+	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	#peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
+	peakDataFrame2 = plotDataFrames(dfPeak2, pops=ECortPops, title=peakTitle)
 	# plt.show(peakPlot)
 
 	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
@@ -901,7 +903,7 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 0
+plotLFPCombinedData = 1
 
 # ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
 # filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
@@ -919,14 +921,14 @@ else:
 	filtFreq = None
 
 
-includePops = ['ITS4']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
 		if pop == 'IT3':
-			electrodes = [9] #[1,9] #['avg']
+			electrodes = [1] #[9] #[1,9] #['avg']
 		elif pop == 'IT5A':
 			electrodes = [10]
 		elif pop == 'IT5B':
@@ -934,7 +936,7 @@ if plotLFPCombinedData:
 		elif pop == 'CT5B':
 			electrodes = [11]
 		elif pop == 'PT5B':
-			electrodes = ['avg']	#[11]
+			electrodes = [11] #['avg']	#[11]
 		else:
 			electrodes = ['avg']
 
