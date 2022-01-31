@@ -58269,6 +58269,7 @@ Figure X. Comparison of wavelet event durations (ms) in model (yellow) and NHP (
 *** Figure formatting changes:
 **** Increase font size 
 *** Go through my simDataAnalysis.py script and make sure it's all cleaned up in terms of comments, redundancies, turning test lines into functions, etc etc. 
+*** Also --> work on looking at the dynamics of the cell pop contributions for each type of wavelet (e.g. beta looks like this, theta has contributions from these, etc etc -- find patterns). 
 ** Caption text:
 *** STARTING WITH:
 Figure 9. 
@@ -58302,4 +58303,14 @@ LFP/CSD oscillation events and its relation to MUA.---
 **** (A) Population-specific contributions to the generation of oscillation events in the simulated A1 column. The LFP signal from each population was examined over all electrodes to determine which populations exhibited the highest activity during the time of the wavelet event. The corresponding spiking activity was also examined for each of these cell populations. 
 **** (B) Population-specific activity during a theta oscillation event detected in simulated A1 column. The LFP signal from each population was examined over all electrodes to determine which populations exhibited the highest activity during the time of the wavelet event. The corresponding spiking activity was also examined for each of these cell populations. 
 ** Results text:
-*** 
+*** Salvador edited the caption text and then copied original text of the caption to use for main text (see below). 
+**** To edit for main text: 
+**** The model allows us to 
+The LFP signal from each cell population was examined over all electrodes (Fig. 9B). This information was used to determine which populations exhibited the highest activity during the time of the wavelet event; the corresponding spiking activity was also examined for each of these cell populations.
+
+
+ A) Wavelet event in the theta frequency band, detected in the supragranular region of the simulated A1 column. B) Heat map depicting the average amplitudes of the LFP signal during the time of the theta wavelet. Each element in the map depicts the average LFP signal (mV) recorded from a specific cell population, by a particular electrode. C) TOP: LFP signal in the layer 3 intratelencephalic cells (IT3) during the time of the theta wavelet, recorded by electrode 1. A spectrogram of the LFP signal is depicted on the upper panel, and a time series plot of the LFP signal is depicted on the lower panel. BOTTOM: Firing rate information for the IT3 cells during the theta wavelet, with a spectrogram of the firing rate on the upper panel and a histogram of the firing rate on the lower panel. D) TOP: LFP signal in the layer 5A intratelencephalic cells (IT5A) during the theta wavelet, recorded by electrode 10 (spectrogram on upper panel; time series plot on lower panel). BOTTOM: Firing rate information for the IT5A population during the theta wavelet (firing rate spectrogram on upper panel; histogram on lower panel).  E) TOP: LFP signal in the layer 5B corticothalamic cells (CT5B) during the theta wavelet, recorded by electrode 11 (spectrogram on upper panel; time series plot on lower panel). BOTTOM: Firing rate information for the CT5B population during the theta wavelet (firing rate spectrogram on upper panel; histogram the lower panel).
+* <2022-01-31 Mon - debugging LFP heatmap>
+** I should also really send that thal int email 
+** Debug the LFP heatmap situation --> 
+*** in ~/Desktop/NEUROSIM/A1/analysis/simDataAnalysis.py 
