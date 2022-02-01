@@ -325,7 +325,6 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg, peakValues, avgValues, lfpPopData 
 	else:
 		return dfPeak, dfAvg
-
 def getDataFrames2(dataFile, timeRange, verbose=0):
 	### This function will return data frames of peak and average lfp amplitudes for picking cell pops
 	### dataFile: str --> .pkl file to load
@@ -574,7 +573,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power')
 	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot)
 	# ax1.set_xlabel('Time (ms)', fontsize=fontsiz)
-	ax1.set_ylabel('Hz', fontsize=fontsiz)
+	ax1.set_ylabel('Frequency (Hz)', fontsize=fontsiz)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 	# ax1.margins(x=0)
 
@@ -588,7 +587,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	divider2 = make_axes_locatable(ax2)
 	cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
 	cax2.axis('off')
-	ax2.set_title('Spike Rate Histogram for ' + popToPlot)
+	ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=fontsiz)
 	ax2.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax2.set_ylabel('Rate (Hz)', fontsize=fontsiz) # CLARIFY Y AXIS
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
@@ -684,9 +683,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
 	else:
 		spectTitle = 'LFP Spectrogram for ' + popToPlot
-	ax1.set_title(spectTitle)	#('LFP Spectrogram for ' + popToPlot)
-	ax1.set_ylabel('Hz')
-	# ax1.set_xlabel('Time (ms)')
+	ax1.set_title(spectTitle, fontsize=fontSize)	#('LFP Spectrogram for ' + popToPlot)
+	ax1.set_ylabel('Frequency (Hz)', fontsize=fontSize)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 	if ylim is not None:
 		ax1.set_ylim(ylim[0], ylim[1])
@@ -698,8 +696,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	t = timeSeriesDict['t']
 	lfp = timeSeriesDict['LFP'] # timeSeriesDict['lfpPlot'] #timeSeriesDict['LFP'] ### ELECTRODE FIX???
 
-	separation = 1 
-	ydisp = np.absolute(lfp).max() * separation
+	# separation = 1 
+	# ydisp = np.absolute(lfp).max() * separation
 	# if electrode == 'avg' :
 	# 	lfpPlot = np.mean(lfp, axis=1)
 	# elif isinstance(electrode, Number):
@@ -719,10 +717,10 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
 	else:
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot
-	ax2.set_title(timeSeriesTitle) 	#('LFP Signal for ' + popToPlot)
-	ax2.set_xlabel('Time (ms)')
+	ax2.set_title(timeSeriesTitle, fontsize=fontSize) 	#('LFP Signal for ' + popToPlot)
+	ax2.set_xlabel('Time (ms)', fontsize=fontSize)
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
-	ax2.set_ylabel('LFP Amplitudes, mV') ### UNITS uV or mV?? 
+	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=fontSize) ### UNITS uV or mV?? 
 
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()
@@ -859,30 +857,31 @@ evalPopsBool = 0
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
-	# dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
-	dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
-	dfPeak2, dfAvg2, peakValues2, avgValues2, lfpPopData2 = getDataFrames2(dataFile=dataFile, timeRange=timeRange, verbose=1)
+	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
+	# dfPeak2, dfAvg2, peakValues2, avgValues2, lfpPopData2 = getDataFrames2(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
 	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	#peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
-	peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
-	peakDataFrame2 = plotDataFrames(dfPeak2, pops=ECortPops, title=peakTitle)
-	# plt.show(peakPlot)
+	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	# peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
+	# peakDataFrame2 = plotDataFrames(dfPeak2, pops=ECortPops, title=peakTitle)
+	plt.show(peakPlot)
 
-	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# #avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
+	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
 	# avgDataFrame = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
-	# plt.show(avgPlot)
+	plt.show(avgPlot)
 
 
 ########################
-includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+# includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 0
+plotSpikeData = 1
 
 if plotSpikeData:
 	for pop in includePops:
@@ -903,7 +902,7 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 # ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
 # filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
@@ -954,7 +953,8 @@ if plotLFPCombinedData:
 			plotTitleSubset= ' (averaged over all electrodes)'
 		elif isinstance(electrodes[0], Number):
 			plotTitleSubset = ', electrode ' + str(electrodes[0])
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), fontSize=12, titleSubset=plotTitleSubset)
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), 
+			fontSize=12, titleSubset=plotTitleSubset)
 
 
 
