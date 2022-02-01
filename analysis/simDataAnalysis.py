@@ -571,7 +571,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power')
-	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot)
+	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=fontSize)
 	# ax1.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=fontsiz)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
@@ -852,7 +852,7 @@ elif theta:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 0
+evalPopsBool = 1
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -861,15 +861,13 @@ if evalPopsBool:
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 	# dfPeak2, dfAvg2, peakValues2, avgValues2, lfpPopData2 = getDataFrames2(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
-	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
-	# peakDataFrame = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)#title='Peak LFP Amplitudes') # pops=ECortPops,
-	# peakDataFrame2 = plotDataFrames(dfPeak2, pops=ECortPops, title=peakTitle)
-	plt.show(peakPlot)
+	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	# plt.show(peakPlot)
 
-	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	avgTitle = 'Avg LFP Amplitudes of Theta Wavelet' #'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
 	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
-	# avgDataFrame = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)#title='Avg LFP Amplitudes') # pops=ECortPops,
 	plt.show(avgPlot)
 
 
@@ -881,7 +879,7 @@ includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 if plotSpikeData:
 	for pop in includePops:
@@ -893,7 +891,8 @@ if plotSpikeData:
 
 
 		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, pop=pop, figSize=(10,7), fontSize=12)  # pop=includePops, 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
+		pop=pop, figSize=(10,7), fontSize=15)  # pop=includePops, 
 
 
 
@@ -954,7 +953,7 @@ if plotLFPCombinedData:
 		elif isinstance(electrodes[0], Number):
 			plotTitleSubset = ', electrode ' + str(electrodes[0])
 		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), 
-			fontSize=12, titleSubset=plotTitleSubset)
+			fontSize=15, titleSubset=plotTitleSubset)
 
 
 
