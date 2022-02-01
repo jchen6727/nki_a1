@@ -474,17 +474,17 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 	## Set title of figure 
 	if title is not None:
-		plt.title(title)
+		plt.title(title, fontsize=15)
 
 
 	## Create heatmap! 
 	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar=True) #cbar_kws={'label': cbarLabel})
 
 	## Set labels on x and y axes 
-	plt.xlabel('Cell populations')
-	plt.xticks(rotation=45, fontsize=7)
-	plt.ylabel('Electrodes')
-	plt.yticks(rotation=0, fontsize=8)
+	plt.xlabel('Cell populations', fontsize=12)
+	plt.xticks(rotation=45, fontsize=10)#fontsize=7)
+	plt.ylabel('Electrodes', fontsize=12)
+	plt.yticks(rotation=0, fontsize=10) #fontsize=8)
 
 	return ax
 
