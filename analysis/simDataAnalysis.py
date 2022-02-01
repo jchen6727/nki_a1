@@ -12,6 +12,7 @@ import os
 import utils
 from matplotlib import pyplot as plt
 from matplotlib.gridspec import GridSpec
+import matplotlib.ticker  ## for colorbar 
 import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
@@ -190,6 +191,17 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 		if saveFig:
 			plt.savefig(filename,bbox_inches='tight')
 ######################################################################
+
+### FORMATTER FOR COLOR BARS ### 
+# class FormatScalarFormatter(matplotlib.ticker.ScalarFormatter):
+#     def __init__(self, fformat="%1.1f", offset=True, mathText=True):
+#         self.fformat = fformat
+#         matplotlib.ticker.ScalarFormatter.__init__(self,useOffset=offset,
+#                                                         useMathText=mathText)
+#     def _set_format(self, vmin, vmax):
+#         self.format = self.fformat
+#         if self._useMathText:
+#             self.format = '$%s$' % matplotlib.ticker._mathdefault(self.format)
 
 
 
@@ -468,7 +480,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 	## Set size of figure 
 	if figSize is None:
-		figSize = (12,6)
+		figSize = (12,6) #(12,6)
 	plt.figure(figsize = figSize)
 
 
@@ -485,6 +497,14 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 	plt.xticks(rotation=45, fontsize=10)#fontsize=7)
 	plt.ylabel('Electrodes', fontsize=12)
 	plt.yticks(rotation=0, fontsize=10) #fontsize=8)
+
+	if saveFig:
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+		fileName = 'heatmap.png'
+		pathToFile = prePath + fileName
+		plt.savefig(pathToFile, dpi=300)#, dpi=1200)
+
+
 
 	return ax
 
@@ -570,7 +590,10 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
-	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power')
+	## fmt lines are for colorbar scientific notation
+	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)
+	fmt.set_powerlimits((0,0))
+	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
 	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=fontSize)
 	# ax1.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=fontsiz)
@@ -602,7 +625,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 		fileName = pop + '_combinedSpike.png'
 		pathToFile = prePath + fileName
-		plt.savefig(pathToFile)
+		plt.savefig(pathToFile, dpi=300)
 
 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes=['avg']):
@@ -678,7 +701,10 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad=0.2)
-	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power')
+	## fmt lines are for colorbar scientific notation
+	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)
+	fmt.set_powerlimits((0,0))
+	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)#, format=fmt)
 	if titleSubset is not None:
 		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
 	else:
@@ -734,7 +760,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 			elecInFileName = 'avgElecs'   #### BE SURE THROUGHOUT THIS THAT THE DEFAULT IS AVERAGED ELECTRODES -- GO THROUGH THIS LATER TO MAKE SURE!!! 
 		fileName = pop + '_combinedLFP_' + 'elec' + elecInFileName + '.png'
 		pathToFile = prePath + fileName
-		plt.savefig(pathToFile)
+		plt.savefig(pathToFile, dpi=300)
 
 
 
@@ -852,7 +878,7 @@ elif theta:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 1
+evalPopsBool = 0
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -873,7 +899,7 @@ if evalPopsBool:
 
 ########################
 # includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']
+includePops = ['IT5A']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
@@ -901,7 +927,7 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 0
+plotLFPCombinedData = 1
 
 # ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
 # filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
@@ -919,7 +945,7 @@ else:
 	filtFreq = None
 
 
-includePops = ['PT5B']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT5A']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
@@ -952,8 +978,9 @@ if plotLFPCombinedData:
 			plotTitleSubset= ' (averaged over all electrodes)'
 		elif isinstance(electrodes[0], Number):
 			plotTitleSubset = ', electrode ' + str(electrodes[0])
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, figSize=(10,7), 
-			fontSize=15, titleSubset=plotTitleSubset)
+
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
+			figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset)
 
 
 
