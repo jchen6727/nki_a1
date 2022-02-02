@@ -575,7 +575,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 
 	ax1 = plt.subplot(211)
 	img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-		interpolation='None', aspect='auto', cmap=plt.get_cmap('viridis'))
+		interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis'))
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 	## fmt lines are for colorbar scientific notation
@@ -686,7 +686,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	vc = [vmin, vmax]
 
 	ax1 = plt.subplot(2, 1, 1)
-	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap='jet')#cmap=plt.get_cmap('viridis'))
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 	## fmt lines are for colorbar scientific notation
@@ -893,7 +893,7 @@ includePops = ['IT3', 'IT5A', 'PT5B']
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 0
+plotSpikeData = 1
 
 if plotSpikeData:
 	for pop in includePops:
@@ -915,7 +915,7 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 # ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
 # filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
@@ -968,7 +968,7 @@ if plotLFPCombinedData:
 			plotTitleSubset = ', electrode ' + str(electrodes[0])
 
 		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
-			figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset)
+			figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset, saveFig=0)
 
 
 

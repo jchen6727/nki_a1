@@ -58485,7 +58485,7 @@ Ttest_indResult(statistic=-13.977887801531262, pvalue=2.219062049416792e-43)
 **** (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
 * <2022-02-02 Wed -- edits before A1 preprint>
 ** TO DO: 
-*** [DONE FOR NOW] (1) Stats fig tasks:
+*** [DONE-ish] (1) Stats fig tasks:
 **** [DONE] (i) TEXT: Edit caption for alternative stats fig !!
 ***** --> FIRST SENTENCE: 
 Comparison of wavelet properties in model and non-human primate data. 
@@ -58535,6 +58535,7 @@ Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
 ***** (cont) what do we think? I figured we could either do this, or we could stick to the duration figure and I could add in the others (peakF and num cycles) to the supplementary figures. any thoughts? 
 **** [DONE -- BY SAM] (iii) TEXT: If accepted ^^, edit results text paragraph
 **** [DONE] (iv) Change the title !! Don't refer to "wavelets" anymore
+**** (v) Reword wavelet results paragraph -- think sam is on this!! 
 *** (2) Pop contrib tasks :
 **** [DONE] (i) Get final feedback on pop contrib fig formatting
 ***** drawing100_labeled.png + what's in the gdoc!!
@@ -58545,10 +58546,12 @@ Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
 ***** Sam is gonna try some stuff -- he says looks good for now; leave this here for the moment; check back in later. 
 **** (ii) TEXT: draft & add feasibility text
 ***** This was done as a first step towards being able to analyze the 
+**** (iii) Change the spectrograms on the figure!!!
+***** use jet colormap not viridis 
 **** (iii) TEXT: draft & add text re: gamma story
 *** (3) CSD spont / speech fig tasks:
 **** (i) TEXT: Draft a sentence or two that states how the layer determinations were made 
-*** (4) Wavelet match fig: 
+*** [DONE] (4) Wavelet match fig: 
 **** [DONE] (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
 **** [DONE] (ii) Draft up new figure:
 ***** CHOICES: Blank out text + make in inkscape OR re-generate the wavelets w/ the text gone or larger. 
@@ -58806,3 +58809,15 @@ Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
 ******** Photoshop the actual image with the better, larger text since still have the images!! 
 ***** Fix delta NHP: 
 ****** DONE
+** Changing the spectrogram(s) on the pop contrib figure:
+*** Use jet colormap not viridis
+*** ~/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContribFig.svg 
+*** How to make these spectrograms again -- simDataAnalysis.py 
+*** in netpyne lfp_orig.py --> ah, actually the change should happen in simDataAnalysis.py
+**** modification to plotLFP in spectrogram section:
+***** plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap='jet')#cmap=plt.get_cmap('viridis'))
+***** Commented out viridis and trying jet instead. See if this syntax works ^^ 
+*** Modifications to simDataAnalysis.py --> 
+**** in def plotCombinedLFP() --> 
+	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap='jet')#cmap=plt.get_cmap('viridis'))
+**** in def plotCombinedSpike() --> 
