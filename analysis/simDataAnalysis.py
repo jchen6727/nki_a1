@@ -192,18 +192,6 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.savefig(filename,bbox_inches='tight')
 ######################################################################
 
-### FORMATTER FOR COLOR BARS ### 
-# class FormatScalarFormatter(matplotlib.ticker.ScalarFormatter):
-#     def __init__(self, fformat="%1.1f", offset=True, mathText=True):
-#         self.fformat = fformat
-#         matplotlib.ticker.ScalarFormatter.__init__(self,useOffset=offset,
-#                                                         useMathText=mathText)
-#     def _set_format(self, vmin, vmax):
-#         self.format = self.fformat
-#         if self._useMathText:
-#             self.format = '$%s$' % matplotlib.ticker._mathdefault(self.format)
-
-
 
 ### FUNCTIONS ####
 def getWaveletInfo(freqBand, based, verbose=0): 
@@ -486,16 +474,16 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 	## Set title of figure 
 	if title is not None:
-		plt.title(title, fontsize=15)
+		plt.title(title, fontsize=20)#15)
 
 
 	## Create heatmap! 
 	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar=True) #cbar_kws={'label': cbarLabel})
 
 	## Set labels on x and y axes 
-	plt.xlabel('Cell populations', fontsize=12)
+	plt.xlabel('Cell populations', fontsize=15)
 	plt.xticks(rotation=45, fontsize=10)#fontsize=7)
-	plt.ylabel('Electrodes', fontsize=12)
+	plt.ylabel('Electrodes', fontsize=15)
 	plt.yticks(rotation=0, fontsize=10) #fontsize=8)
 
 	if saveFig:
@@ -594,7 +582,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)
 	fmt.set_powerlimits((0,0))
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=fontSize)
+	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=20)
 	# ax1.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=fontsiz)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
@@ -610,7 +598,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	divider2 = make_axes_locatable(ax2)
 	cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
 	cax2.axis('off')
-	ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=fontsiz)
+	ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=20)
 	ax2.set_xlabel('Time (ms)', fontsize=fontsiz)
 	ax2.set_ylabel('Rate (Hz)', fontsize=fontsiz) # CLARIFY Y AXIS
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
@@ -709,8 +697,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
 	else:
 		spectTitle = 'LFP Spectrogram for ' + popToPlot
-	ax1.set_title(spectTitle, fontsize=fontSize)	#('LFP Spectrogram for ' + popToPlot)
-	ax1.set_ylabel('Frequency (Hz)', fontsize=fontSize)
+	ax1.set_title(spectTitle, fontsize=20)	#('LFP Spectrogram for ' + popToPlot)
+	ax1.set_ylabel('Frequency (Hz)', fontsize=15)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 	if ylim is not None:
 		ax1.set_ylim(ylim[0], ylim[1])
@@ -743,10 +731,10 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
 	else:
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot
-	ax2.set_title(timeSeriesTitle, fontsize=fontSize) 	#('LFP Signal for ' + popToPlot)
+	ax2.set_title(timeSeriesTitle, fontsize=20) 	#('LFP Signal for ' + popToPlot)
 	ax2.set_xlabel('Time (ms)', fontsize=fontSize)
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
-	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=fontSize) ### UNITS uV or mV?? 
+	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=15) ### UNITS uV or mV?? 
 
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()
@@ -772,7 +760,7 @@ layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1
 
 ## Cell populations: 
 allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
-'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'PV5B',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']#, 'IC']
 L1pops = ['NGF1']
 L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
@@ -782,7 +770,7 @@ L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
 L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
 L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
-ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6']
+ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
 ICortPops = ['NGF1', 
 			'PV2', 'SOM2', 'VIP2', 'NGF2', 
 			'PV3', 'SOM3', 'VIP3', 'NGF3',
@@ -899,7 +887,7 @@ if evalPopsBool:
 
 ########################
 # includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-includePops = ['IT5A']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']
+includePops = ['IT3', 'IT5A', 'PT5B']
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
@@ -945,7 +933,7 @@ else:
 	filtFreq = None
 
 
-includePops = ['IT5A']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3', 'IT5A']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:

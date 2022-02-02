@@ -58346,11 +58346,12 @@ The LFP signal from each cell population was examined over all electrodes (Fig. 
 * <2022-02-01 Tue -- Incorporating feedback into A1 draft>
 ** SENT THAL INT EMAIL TO JULIUS ZHU
 *** (phew) 
-** TO DO: stats for wavelet stats figs
+** TO DO: stats for wavelet stats figs -- LATER
 ** TO DO: Add in supplementary fig with the others (where?)
 ** TO DO: Add text into results / methods about how layers were defined
 ** TO DO: Add text into results / discussion about how lfp pop contrib is first step / showing feasibility of this kind of analysis 
-** TO DO: wavelet lfp pop contrib fig edits -->  
+** TO DO: improve the resolution (?) of the wavelet match fig OR just eliminate the text? 
+** [DONE FOR NOW] TO DO: wavelet lfp pop contrib fig edits -->  
 *** Edit combined fig & heatmap functions --> figs w/ the following new features:
 **** (1) No sign-inversion on the lfp time series plotting in def plotCombinedLFP() 
 ***** def 
@@ -58395,11 +58396,91 @@ The LFP signal from each cell population was examined over all electrodes (Fig. 
 ***** [DONE] Change y-axis label to read Frequency (Hz) on spectrogram 
 ** Asked sam for high-resolution input and he says to try inkscape instead --> 
 *** Downloaded, moved into applications
-** Work on stats for wavelet stats fig for now --> 
+** TO DO --> Before calling it a night --> 
+*** pop contrib fig --> 
+**** [DONE] (1) Try some new fig edits and keep ppl updated 
+**** (2) Draft & add feasibility text 
+**** (3) Draft & add text re: gamma story 
+*** Stats figs -->
+**** [DONE] (4) account for diffs in simSubjects
+**** [DONE] (5) then generate the figs for batch 57
+**** [DONE -- CALCULATED] (6) Add in stats (at least t-test to look at mean...? ugh) 
+**** (7) Add in supplementary figs somewhere!!! 
+**** [DONE] (BONUS) Make a fig with just the 'all' for all the stats figs 
+*** Layer determination --> 
+**** (8) Draft a sentence or two that states how the layer determinations were made 
+*** [DONE FOR TONIGHT] A1 wavelet match fig --> 
+**** [DONE; ASKED] (9) Ask sam if should jsut get rid of the text or try to improve resolution 
+** [DONE; ATTEMPTS & UPDATES MADE -- CONT TOMORROW] (1) Okay I edited some for the pop contrib fig --> move on for now. 
+** (2) LFP pop contrib text:
+*** FEASIBILITY: This was done as a first step towards being able to analyze the 
+*** GAMMA STORY: --- 
+** (4-8) Work on stats for wavelet stats fig for now --> 
 *** how did I generate these again? --> 
 **** a1dat repo!!!!
 **** ^^ plotWavelets.py 
 *** got this working again --> tried out batch57 real quick; should really change the simSubjects and nhpSubjects to work the same but do that later (easier)
 *** https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html
 *** ah, they said don't do this first!!! but at least got started --> okay cool. 
-** 
+
+
+*** [DONE] (4) diffs in simSubjects
+*** [DONE] (5) Generate figs for batch57 
+*** [DONE] (BONUS) Generate fig that has all but collapsed over regions
+*** [DONE] (6) Add in stats --> 
+**** What am I comparing here? 
+**** for band in frequencyBands: 
+durSimLists[band]['all'] vs. durNHPLists[band]['all']
+peakFSimLists[band]['all'] vs. peakFNHPLists[band]['all']
+ncycleSimLists[band]['all'] vs. ncycleNHPLists[band]['all']
+**** >>> sp.stats.ttest_ind(durNHPLists[band]['all'], durSimLists[band]['all'])
+**** DURATION STATS --> BETA IS THE BEST. 
+>>> tTestResults['dur']['delta']
+Ttest_indResult(statistic=0.7947138515299097, pvalue=0.42967218978281363)
+>>> tTestResults['dur']['theta']
+Ttest_indResult(statistic=-0.13892017144240823, pvalue=0.8896796170858249)
+>>> tTestResults['dur']['alpha']
+Ttest_indResult(statistic=-0.6159823451747004, pvalue=0.5386245184805032)
+>>> tTestResults['dur']['beta']
+Ttest_indResult(statistic=1.8097999662288806, pvalue=0.07091765617579156)
+>>> tTestResults['dur']['gamma']
+Ttest_indResult(statistic=-1.3234424371249152, pvalue=0.18576426574875543)
+**** PEAK F STATS --> THETA & GAMMA ARE THE BEST --> 
+>>> tTestResults['peakF']['delta']
+Ttest_indResult(statistic=-1.4125856654513038, pvalue=0.1625478968805635)
+>>> tTestResults['peakF']['theta']
+Ttest_indResult(statistic=2.051343993191967, pvalue=0.041786032448425735)
+>>> tTestResults['peakF']['alpha']
+Ttest_indResult(statistic=0.12586110417511648, pvalue=0.8999715421712193)
+>>> tTestResults['peakF']['beta']
+Ttest_indResult(statistic=-1.5966509197830967, pvalue=0.1109653833630918)
+>>> tTestResults['peakF']['gamma']
+Ttest_indResult(statistic=-16.722247126178132,
+pvalue=1.0171769622251274e-60)
+**** NUM CYCLES STATS --> GAMMA IS THE BEST 
+>>> tTestResults['nCycle']['delta']
+Ttest_indResult(statistic=-0.14141378632903498, pvalue=0.8879804366228404)
+>>> tTestResults['nCycle']['theta']
+Ttest_indResult(statistic=1.2748722561108876, pvalue=0.20411481113451985)
+>>> tTestResults['nCycle']['alpha']
+Ttest_indResult(statistic=-0.35726836628118963, pvalue=0.7212772620998678)
+>>> tTestResults['nCycle']['beta']
+Ttest_indResult(statistic=0.9064926691924085, pvalue=0.3651049064984243)
+>>> tTestResults['nCycle']['gamma']
+Ttest_indResult(statistic=-13.977887801531262, pvalue=2.219062049416792e-43)
+** [DONE; ASKED] (8) Ask sam if should just get rid of the text or try to improve resolution 
+
+** TOMORROW MORNING:
+*** (1) Stats fig tasks:
+**** (i) TEXT: Edit caption for alternative stats fig !!
+**** (ii) Show on slack for feedback 
+**** (iii) TEXT: If accepted ^^, edit results text paragraph
+**** (iv) Mention that I did the t-tests; show 
+*** (2) Pop contrib tasks :
+**** (i) Get final feedback on pop contrib fig formatting
+**** (ii) TEXT: draft & add feasibility text
+**** (iii) TEXT: draft & add text re: gamma story
+*** (3) CSD spont / speech fig tasks:
+**** (i) Draft a sentence or two that states how the layer determinations were made 
+*** (4) Wavelet match fig: 
+**** (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
