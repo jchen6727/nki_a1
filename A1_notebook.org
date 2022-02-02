@@ -50989,7 +50989,6 @@ gcloud compute scp --recurse ext_ericaygriffith_gmail_com@g9-n2-pre-controller:/
 *** transfer these to gsutil then delete? or nah... I have them so... 
 *** I deleted 0_0 let's see if it will work now? 
 *** ^^ Trying again --> in ~/A1/figs/wavelets/ on gcp (g9-n2-pre-controller) --> zip -r A1_v34_batch27_v34_batch27_1_3.zip A1_v34_batch27_v34_batch27_1_3
-
 ** Put some of these dlms.pkl (and other) files in gcp bucket and then delete from machine:
 *** gsutil -m cp -r [local_path_in_cluster] gs://[bucket_path]
 *** bucket_path --> eyg_data/wavelets/
@@ -58484,3 +58483,326 @@ Ttest_indResult(statistic=-13.977887801531262, pvalue=2.219062049416792e-43)
 **** (i) Draft a sentence or two that states how the layer determinations were made 
 *** (4) Wavelet match fig: 
 **** (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
+* <2022-02-02 Wed -- edits before A1 preprint>
+** TO DO: 
+*** [DONE FOR NOW] (1) Stats fig tasks:
+**** [DONE] (i) TEXT: Edit caption for alternative stats fig !!
+***** --> FIRST SENTENCE: 
+Comparison of wavelet properties in model and non-human primate data. 
+***** --> BODY: Wavelets were detected in resting state recordings, then sorted by frequency band (delta, theta, alpha, beta, gamma). 
+***** --> The top row shows boxplots comparing the duration (ms) of the wavelet events in each frequency band, with model data in yellow, and NHP data in blue. 
+****** duration of the oscillation events in each frequency band was analyzed  
+***** Comparison of the peak frequency (Hz) of the model wavelets (purple) and NHP wavelets (green) is shown in the middle row, while the number of cycles per wavelet is compared in the bottom row, with model data in red and NHP data in blue. 
+***** -- Add in descrip of orange line, black circles, etc. --> For each of the boxplots, the box itself ranges from the first to the third quartile, with the orange line depicting the median of the data set. The whiskers extend to 1.5 times the interquartile range, and outliers are represented with black circles. 
+****** → line is median, box extends from q1 to q3, whiskers extend to 1.5x the interquartile range, and black circles are outliers. 
+****** For each of the boxplots, the box itself ranges from the first to the third quartile, with the orange line depicting the median of the data set. The whiskers extend to 1.5 times the interquartile range, and outliers are represented with black circles. 
+**** [DONE] (ii) (a) Show on slack for feedback + (b) Mention that I did the t-tests 
+***** (a) Hey guys, so I was working on the wavelet stats feedback, and came up with an alternative figure 8 (see below). I also ran the t-tests for the data in this figure (see below):
+****** >>> sp.stats.ttest_ind(durNHPLists[band]['all'], durSimLists[band]['all'])
+****** DURATION STATS --> BETA IS THE BEST. 
+>>> tTestResults['dur']['delta']
+Ttest_indResult(statistic=0.7947138515299097, pvalue=0.42967218978281363)
+>>> tTestResults['dur']['theta']
+Ttest_indResult(statistic=-0.13892017144240823, pvalue=0.8896796170858249)
+>>> tTestResults['dur']['alpha']
+Ttest_indResult(statistic=-0.6159823451747004, pvalue=0.5386245184805032)
+>>> tTestResults['dur']['beta']
+Ttest_indResult(statistic=1.8097999662288806, pvalue=0.07091765617579156)
+>>> tTestResults['dur']['gamma']
+Ttest_indResult(statistic=-1.3234424371249152, pvalue=0.18576426574875543)
+****** PEAK F STATS --> THETA & GAMMA ARE THE BEST --> 
+>>> tTestResults['peakF']['delta']
+Ttest_indResult(statistic=-1.4125856654513038, pvalue=0.1625478968805635)
+>>> tTestResults['peakF']['theta']
+Ttest_indResult(statistic=2.051343993191967, pvalue=0.041786032448425735)
+>>> tTestResults['peakF']['alpha']
+Ttest_indResult(statistic=0.12586110417511648, pvalue=0.8999715421712193)
+>>> tTestResults['peakF']['beta']
+Ttest_indResult(statistic=-1.5966509197830967, pvalue=0.1109653833630918)
+>>> tTestResults['peakF']['gamma']
+Ttest_indResult(statistic=-16.722247126178132, pvalue=1.0171769622251274e-60)
+****** NUM CYCLES STATS --> GAMMA IS THE BEST 
+>>> tTestResults['nCycle']['delta']
+Ttest_indResult(statistic=-0.14141378632903498, pvalue=0.8879804366228404)
+>>> tTestResults['nCycle']['theta']
+Ttest_indResult(statistic=1.2748722561108876, pvalue=0.20411481113451985)
+>>> tTestResults['nCycle']['alpha']
+Ttest_indResult(statistic=-0.35726836628118963, pvalue=0.7212772620998678)
+>>> tTestResults['nCycle']['beta']
+Ttest_indResult(statistic=0.9064926691924085, pvalue=0.3651049064984243)
+>>> tTestResults['nCycle']['gamma']
+Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
+***** (cont) what do we think? I figured we could either do this, or we could stick to the duration figure and I could add in the others (peakF and num cycles) to the supplementary figures. any thoughts? 
+**** [DONE -- BY SAM] (iii) TEXT: If accepted ^^, edit results text paragraph
+**** [DONE] (iv) Change the title !! Don't refer to "wavelets" anymore
+*** (2) Pop contrib tasks :
+**** [DONE] (i) Get final feedback on pop contrib fig formatting
+***** drawing100_labeled.png + what's in the gdoc!!
+***** to send to channel:
+****** hey guys, so update on the pop contrib figure (fig 9) -- I tried a few different things to improve the resolution, etc. Here's an example below (started using inkscape at sam's suggestion - much easier than gimp and better image quality!). 
+****** ATTACH drawing100_labeled.png
+****** I have a diff version in the paper right now. I noticed that putting this fig in the paper, even though looks pretty clear here, just looks more blurry when I stick it into the gdoc. i think the size wasn't helping, so the alternative version that's in the paper right now it's actually two images (the heatmap & wavelet on top, then the lfp / mua plots on the bottom). any thoughts ...? 
+***** Sam is gonna try some stuff -- he says looks good for now; leave this here for the moment; check back in later. 
+**** (ii) TEXT: draft & add feasibility text
+***** This was done as a first step towards being able to analyze the 
+**** (iii) TEXT: draft & add text re: gamma story
+*** (3) CSD spont / speech fig tasks:
+**** (i) TEXT: Draft a sentence or two that states how the layer determinations were made 
+*** (4) Wavelet match fig: 
+**** [DONE] (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
+**** [DONE] (ii) Draft up new figure:
+***** CHOICES: Blank out text + make in inkscape OR re-generate the wavelets w/ the text gone or larger. 
+***** Re-generating the wavelet files locally 
+**** [DONE] (iii) Ask for more feedback !!
+*** (5) TEXT: Go through and take out mention of "wavelets" -- use "oscillations / oscillation events" instead!!
+
+
+
+** Taking out old fig 8:
+*** old caption -- Figure 8. Comparison of wavelet event durations (ms) in model (yellow) and non-human primate (blue) data. Wavelets were detected in resting state recordings, then sorted by frequency band (delta, theta, alpha, beta, gamma) and laminar region (supragranular, granular, infragranular). 
+*** gdoc with the old wavelet stats figs --> https://docs.google.com/document/d/1DMdYMppsoVwHfcBhSyGxX4AEnK-_d3Qr64X3AWegcFY/edit
+** Making new wavelet match figure:
+*** in --> ~/Desktop/NEUROSIM/A1/data/figs/waveletMatchFig/waveletMatch.svg
+*** ^^ In this same subdirectory, I put in the sim and nhp wavelet .pngs 
+*** Wavelets:
+**** GAMMA:
+***** SIM: v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423
+***** NHP: 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_14_gamma_2658
+**** BETA:
+***** SIM: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710
+***** NHP: 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342
+**** ALPHA: 
+***** SIM: v34_batch57_3_2_data_timeRange_6_11_SIM_wavelet_chan_9_alpha_863
+***** NHP: 2-bu027028013_timeRange_80_120_MACAQUE_wavelet_chan_7_alpha_784
+**** THETA:
+***** SIM: v34_batch57_3_3_data_timeRange_0_6_SIM_wavelet_chan_8_theta_973
+***** NHP: 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_6_theta_747
+**** DELTA:
+***** SIM: v34_batch57_3_4_data_timeRange_0_6_SIM_wavelet_chan_14_delta_1666
+***** NHP: 2-rb031032016_timeRange_160_200_MACAQUE_wavelet_chan_18_delta_3020
+*** Choices are to re-generate the wavelet w/ plotWavelets.py (individual trial), or to 
+*** Edits to plotWavelets.py (in a1dat):
+**** Taking out these subject sorting lines bc they applied to batch27:
+#### SORTING FILE(S) WHEN DOING BATCH 27 #### 
+# simSubjects = []
+# nhpFiles = []
+
+# for name in subjectNames:
+# 	if 'v34_batch57_' in name: # if 'A1_v34_batch27_v34_batch27_' in name:
+# 		simSubjects.append(name)
+# 	elif 'timeRange' in name:   # Only valid right now!! 
+# 		nhpFiles.append(name)
+
+# ## sort sim subjects
+# simSubjects.sort()  ## Now have sorted list of sims 
+
+
+# ## sort nhp subjects 
+# nhpFiles.sort()
+# nhpSubjects = {}
+
+# for nhpFile in nhpFiles:
+# 	nhpName = nhpFile.split('_')[0]
+# 	if nhpName not in nhpSubjects.keys():
+# 		nhpSubjects[nhpName] = []
+# 	nhpSubjects[nhpName].append(nhpFile)  # Now have a dict of nhp subjects (helpful bc of multiple timeRanges for each nhp) 
+**** made new def sortSubjectFiles to sort subjects -- tested! 
+**** Taking out these old lines now that they are taken care of in a function:
+os.chdir(waveletPath)
+subjectNames = os.listdir()
+
+# simSubjects = []
+simFiles = []
+nhpFiles = []
+
+for name in subjectNames:
+	if 'v34_batch57_' in name: # if 'A1_v34_batch27_v34_batch27_' in name:
+		simFiles.append(name)
+	elif '2-' in name: #elif 'timeRange' in name:   # Only valid right now!! 
+		nhpFiles.append(name)
+
+## sort sim subjects
+# simSubjects.sort()  ## Now have sorted list of sims 
+simFiles.sort()
+simSubjects = {}
+for simFile in simFiles:
+	simName = simFile.split('_data')[0]
+	if simName not in simSubjects.keys():
+		simSubjects[simName] = []
+	simSubjects[simName].append(simFile)
+
+## sort nhp subjects 
+nhpFiles.sort()
+nhpSubjects = {}
+
+for nhpFile in nhpFiles:
+	nhpName = nhpFile.split('_')[0]
+	if nhpName not in nhpSubjects.keys():
+		nhpSubjects[nhpName] = []
+	nhpSubjects[nhpName].append(nhpFile)  # Now have a dict of nhp subjects (helpful bc of multiple timeRanges for each nhp) 
+**** Making t-test results function:
+***** OLD LINES:
+#### T-TEST RESULTS ####  <--- MAKE THIS INTO A FUNCTION
+# calculatingStats=0
+# if calculatingStats:
+# 	statsType = ['dur', 'peakF', 'nCycle']
+# 	tTestResults = {}
+# 	for statType in statsType:
+# 		tTestResults[statType] = {}
+# 		simLists = simListsDict[statType]
+# 		nhpLists = nhpListsDict[statType]
+# 		for band in frequencyBands:
+# 			tTestResults[statType][band] = calculateStats(band, simLists, nhpLists)
+***** OLD RESULTS FOR COMPARISON: 
+****** DURATION STATS --> BETA IS THE BEST. 
+>>> tTestResults['dur']['delta']
+Ttest_indResult(statistic=0.7947138515299097, pvalue=0.42967218978281363)
+>>> tTestResults['dur']['theta']
+Ttest_indResult(statistic=-0.13892017144240823, pvalue=0.8896796170858249)
+>>> tTestResults['dur']['alpha']
+Ttest_indResult(statistic=-0.6159823451747004, pvalue=0.5386245184805032)
+>>> tTestResults['dur']['beta']
+Ttest_indResult(statistic=1.8097999662288806, pvalue=0.07091765617579156)
+>>> tTestResults['dur']['gamma']
+Ttest_indResult(statistic=-1.3234424371249152, pvalue=0.18576426574875543
+****** PEAK F STATS --> THETA & GAMMA ARE THE BEST --> 
+>>> tTestResults['peakF']['delta']
+Ttest_indResult(statistic=-1.4125856654513038, pvalue=0.1625478968805635)
+>>> tTestResults['peakF']['theta']
+Ttest_indResult(statistic=2.051343993191967, pvalue=0.041786032448425735)
+>>> tTestResults['peakF']['alpha']
+Ttest_indResult(statistic=0.12586110417511648, pvalue=0.8999715421712193)
+>>> tTestResults['peakF']['beta']
+Ttest_indResult(statistic=-1.5966509197830967, pvalue=0.1109653833630918)
+>>> tTestResults['peakF']['gamma']
+Ttest_indResult(statistic=-16.722247126178132, pvalue=1.0171769622251274e-60)
+****** NUM CYCLES STATS --> GAMMA IS THE BEST 
+>>> tTestResults['nCycle']['delta']
+Ttest_indResult(statistic=-0.14141378632903498, pvalue=0.8879804366228404)
+>>> tTestResults['nCycle']['theta']
+Ttest_indResult(statistic=1.2748722561108876, pvalue=0.20411481113451985)
+>>> tTestResults['nCycle']['alpha']
+Ttest_indResult(statistic=-0.35726836628118963, pvalue=0.7212772620998678)
+>>> tTestResults['nCycle']['beta']
+Ttest_indResult(statistic=0.9064926691924085, pvalue=0.3651049064984243)
+>>> tTestResults['nCycle']['gamma']
+Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
+*** Try re-generating some of the wavelets --> 
+**** in plotWavelets.py --> uncomment the 'individual trial' lines 
+**** Okay -- would have to go into load.py (or copy-paste and modify) functions to see where these things get drawn. I've modified it previously, so should be easy enough. 
+*** These lines are what put the text on the upper panel of the fig (in load.py):
+    #axtstr = 'channel:'+str(chan)+', event:'+str(evidx)+', power:'+str(round(avgpowevent,1))+'\n'
+    axtstr = band + ': minF:' + str(round(minF,2)) + ' Hz, maxF:' + str(round(maxF,2)) + ' Hz, '
+    axtstr += 'peakF:' + str(round(peakF,2)) + ' Hz'
+    #axtstr += ', Foct:' + str(round(Foct,2))
+    print(axtstr) # print the info
+    if verbose: ax.set_title(axtstr, fontsize=8) 
+*** These are the lines that put the text on the lower panel of the wavelet fig (in load.py):
+****   axtstr = 'duration:'+str(round(dur,1))+' ms, '
+    if cycnpeak > -1: axtstr += str(int(cycnpeak)) + ' peaks, '
+    axtstr += str(round(ncycle,1))+' cycles, '
+    #axtstr += 'filtsigcor:'+str(round(filtsigcor,2))
+    if ERPscore > -2: axtstr += ', ERPscore:'+str(round(ERPscore,2))
+    if OSCscore > -2: axtstr += ', OSCscore:'+str(round(OSCscore,2))
+    print(axtstr) # print the info
+    if verbose: ax.set_title(axtstr, fontsize=8)
+*** Try modifying the fontsize and then re-generating to see what this does
+**** in load.py, modifications:
+***** LOWER PANEL:
+****** Commenting out :     # if cycnpeak > -1: axtstr += str(int(cycnpeak)) + ' peaks, '
+****** Commented out the ' ,' at the end of this line --> axtstr += str(round(ncycle,1))+' cycles' #, '
+****** Set fontsize to 14 --> (line 1931) if verbose: ax.set_title(axtstr, fontsize=14)
+***** UPPER PANEL:
+****** Commenting out these two lines:
+    axtstr = band + ': minF:' + str(round(minF,2)) + ' Hz, maxF:' + str(round(maxF,2)) + ' Hz, '
+    axtstr += 'peakF:' + str(round(peakF,2)) + ' Hz'
+****** Adding in this one --> axtstr = band + ', peakF: ' + str(round(peakF,2)) + ' Hz'
+****** Increased fontsize to 14 --> line 1899 --> if verbose: ax.set_title(axtstr, fontsize=14) #fontsize=8)
+**** plotWavelets.py:
+***** changed the individual trial lines as necessary
+***** specrange = (0,20) #(0,15) 
+***** ylspec = (30,85)
+***** PATH TO SAVE:
+****** would have gotten saved to: ~/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_0_6/chan12/
+****** HARDCODED A CHANGE IN plotWavelets() --> pathToSave = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/waveletMatchFig/'
+***** Need to download the dlms files --> 
+****** [DONE] GAMMA SIM:
+******* DLMS DOWNLOADED
+******* FIG RE-MADE
+******* DLMS DELETED 
+******* v34_batch57_4_4_data_timeRange_0_6_SIM_wavelet_chan_12_gamma_1423
+******* gsutil -m cp gs://eyg_data/wavelets/v34_batch57_4_4_data_timeRange_0_6/v34_batch57_4_4_data_timeRange_0_6_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_4_4_data_timeRange_0_6/
+******* specrange = (0,30)
+******* ylspec = (30,95)
+****** [DONE] GAMMA NHP: 
+******* DLMS DOWNLOADED
+******* FIG MADE
+******* DLMS DELETED
+******* 2-bu027028013_timeRange_0_40_MACAQUE_wavelet_chan_14_gamma_2658
+******* gsutil -m cp gs://eyg_data/wavelets/2-bu027028013_timeRange_0_40/2-bu027028013_timeRange_0_40_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_0_40/
+******* specrange = (0,30)
+******* ylspec = (30,95)
+****** [DONE] BETA SIM:
+******* DLMS DOWNLOADED
+******* FIG REMADE
+******* DLMS DELETED
+******* SIM: v34_batch57_3_2_data_timeRange_0_6_SIM_wavelet_chan_14_beta_1710
+******* gsutil -m cp gs://eyg_data/wavelets/v34_batch57_3_2_data_timeRange_0_6/v34_batch57_3_2_data_timeRange_0_6_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_0_6/
+******* specrange = (0,30)
+******* ylspec = (10,50) 
+****** [DONE] BETA NHP:
+******* DLMS DOWNLOADED
+******* FIG CREATED 
+******* *NOTE* -- DO NOT DELETE DLMS; DO THETA NHP FIRST!! 
+******* 2-rb031032016_timeRange_40_80_MACAQUE_wavelet_chan_14_beta_2342
+******* gsutil -m cp gs://eyg_data/wavelets/2-rb031032016_timeRange_40_80/2-rb031032016_timeRange_40_80_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/
+******* specrange = (0,25)      # TRIED--> (0,30) --> (0,20)      
+******* ylspec = (10,50) 
+****** [DONE] ALPHA SIM:
+******* DLMS DOWNLOADED
+******* FIG CREATED
+******* DLMS DELETED
+******* gsutil -m cp gs://eyg_data/wavelets/v34_batch57_3_2_data_timeRange_6_11/v34_batch57_3_2_data_timeRange_6_11_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_2_data_timeRange_6_11/
+******* specrange = (0,20)  
+******* ylspec = (1,30)
+****** [DONE] ALPHA NHP:
+******* DLMS DOWNLOADED
+******* FIG CREATED
+******* DLMS DELETED
+******* gsutil -m cp gs://eyg_data/wavelets/2-bu027028013_timeRange_80_120/2-bu027028013_timeRange_80_120_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-bu027028013_timeRange_80_120/
+******* specrange = (0,20)
+******* ylspec = (1,30)
+****** [DONE] THETA SIM:
+******* DLMS DOWNLOADED
+******* FIG CREATED
+******* DLMS DELETED 
+******* gsutil -m cp gs://eyg_data/wavelets/v34_batch57_3_3_data_timeRange_0_6/v34_batch57_3_3_data_timeRange_0_6_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_3_data_timeRange_0_6/
+******* specrange = (0,20)
+******* ylspec = (1,12)
+****** [DONE] THETA NHP: 
+******* ALREADY HAVE DLMS
+******* FIG MADE
+******* DLMS DELETED
+******* ~~ SAME AS BETA ~~ -->  gsutil -m cp gs://eyg_data/wavelets/2-rb031032016_timeRange_40_80/2-rb031032016_timeRange_40_80_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_40_80/
+******* specrange = (0,15) 
+******* ylspec = (1,12)
+****** [DONE] DELTA SIM:
+******* DLMS DOWNLOADED
+******* FIG CREATED
+******* DLMS DELETED
+******* gsutil -m cp gs://eyg_data/wavelets/v34_batch57_3_4_data_timeRange_0_6/v34_batch57_3_4_data_timeRange_0_6_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/
+******* specrange = (0,30) 
+******* ylspec = (1,10)
+****** [DONE] DELTA NHP: 
+******* DLMS DOWNLOADING --> ARGH <-- no dlms in eyg_data/wavelets bucket :[ uh oh. 
+******* FIG ___
+******* DLMS ___
+******* gsutil -m cp gs://eyg_data/wavelets/2-rb031032016_timeRange_160_200/2-rb031032016_timeRange_160_200_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/2-rb031032016_timeRange_160_200/
+******* specrange = (0,30) ## TRY THIS FIRST 
+******* ylspec = (1,10)
+******* DLMS IDEAS:
+******** run getIEIstatsByBand
+******** Try a different, arbitrary dlms
+******** Photoshop the actual image with the better, larger text since still have the images!! 
+***** Fix delta NHP: 
+****** DONE
