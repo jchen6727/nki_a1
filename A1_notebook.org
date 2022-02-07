@@ -59118,8 +59118,8 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 ***** fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize) #, constrained_layout=True)
 **** font size lines:
 ***** commented out --> ### fontsiz = fontSize
-***** plt.rcParams.update({'font.size': fontSize})  #fontsiz})
-***** May even just remove fontSize as an argument bc I end up setting font sizes for labels and title
+***** took out --> plt.rcParams.update({'font.size': fontSize})  #fontsiz})
+***** Removed fontSize as an argument bc I end up setting font sizes for labels and title
 ***** ARGUMENT DELETED FOR NOW:
 ****** fontSize=12,
 ****** 	### fontSize: int 	--> DEFAULT: 12
@@ -59136,3 +59136,35 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 ***** These are already commented out! If I recall correctly I tried these out to see if I could get the data to go right up to the very edges of the plots -- achieved already in other ways (believe with set_xlim)
 ***** 	# ax2.margins(x=0)
 ***** 	# ax1.margins(x=0)
+**** Took out suptitle line -- already commented out: 
+	# plt.suptitle(popToPlot)
+**** Taking out testing lines where I return allSignal and allFreqs:
+	## TESTING LINE
+	# return allSignal, allFreqs
+**** Added saving lines w/ savePath as argument 
+**** Color map lines:
+***** Taking out this comment --> #cmap=plt.get_cmap('viridis'))
+**** Taking out this comment -->
+***** came from testing lines about changing color map contract I believe: # np.amax(allFreqs[0]))
+**** Took out tighter y-axis lines -- generalizing across the 3 diff scenarios now:
+	### (3) Tighter y-axis: 
+	# img = ax1.imshow(allSignal[0][:40], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), 40), origin='lower', 
+	# 	interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap)) 
+	# img = ax1.imshow(allSignal[0][:maxFreq], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+	# 	interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap)) 
+**** ^^ The 3 diff scenarios are (for spectrogram panel) -- no changes to contrast, changes to contrast, and changes to max frequency for spectrogram! 
+**** Took out this line bc this is the imshow line before the generalization mentioned above --> 
+	# img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+	# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+**** Took out the "return allSignal, allFreqs" --> this was in there for testing purposes!!! 
+**** In main code block, took out:
+***** allSignal, allFreqs lines --> 
+		# allSignal, allFreqs = ### allSignal, allFreqs is for TESTING PURPOSES!!
+*****   # pop=includePops (from spikeSpectDict)
+*****   # pop=includePops (from histDict)
+
+
+** TO ADDRESS:
+*** minFreq functionality in plotCombinedSpike()
+*** alpha timeRange issue
+*** cell pop ordering in the lfp plotting / dataframes functions 

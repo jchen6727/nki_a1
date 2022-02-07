@@ -465,7 +465,7 @@ def getSpikeData(dataFile, graphType, pop, timeRange=None):
 		spikeDict = sim.analysis.getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
 
 	return spikeDict 
-def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), colorMap='jet', savePath=None, saveFig=True):
+def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), colorMap='jet', savePath=None, vmaxContrast=None, maxFreq=None, saveFig=True):
 	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
 	### histDict: dict  --> can be gotten with getSpikeData(graphType='hist')
 	### timeRange: list --> e.g. [start, stop]
@@ -474,6 +474,9 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	### figSize: tuple 	--> DEFAULT: (10,7)
 	### colorMap: str 	--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
 	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	### vmaxContrast: float or int --> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
+			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
+	### maxFreq: int --> whole number that determines the maximum frequency plotted on the spectrogram 
 	### saveFig: bool 	--> DEFAULT: True
  
 	# Get relevant pop
@@ -486,27 +489,35 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
 	# Set font sizes
-	## plt.rcParams.update({'font.size': fontSize})
 	titleFontSize = 20
 	labelFontSize = 12
+
 
 	### SPECTROGRAM -- for top panel!!
 	allSignal = spectDict['allSignal']
 	allFreqs = spectDict['allFreqs']
 
-	ax1 = plt.subplot(211)
-	# img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-	# 	interpolation='None', aspect='auto', cmap=colorMap)	#cmap=plt.get_cmap('viridis'))
-	### CHANGE TO COLOR CONTRAST? 
-	vmin = np.amin(allSignal[0])
-	vmax = np.amax(allSignal[0])/3 #3 #1.5
-	img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-		interpolation='None', aspect='auto', cmap=colorMap, vmin=vmin, vmax=vmax)
+	# Set color contrast parameters 
+	if vmaxContrast is None:
+		vmin = None
+		vmax = None
+	else:
+		vmin = np.amin(allSignal[0])
+		vmax = np.amax(allSignal[0]) / vmaxContrast 
 
-	### TESTING LINE for TIGHTER Y-AXIS !!!!! 
-	# img = ax1.imshow(allSignal[0][:40], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), 40), origin='lower', 
-	# 	interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis')) #  np.amax(allFreqs[0]))
-	###
+	# Set frequencies to be plotted 
+	if maxFreq is None:
+		maxFreq = np.amax(allFreqs[0])
+		imshowSignal = allSignal[0]
+	else:
+		if type(maxFreq) is not int:
+			maxFreq = round(maxFreq)
+		imshowSignal = allSignal[0][:maxFreq]
+
+	ax1 = plt.subplot(211)
+
+	img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+			interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
@@ -532,18 +543,16 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 	plt.show()
 
-
-	# plt.suptitle(popToPlot)
 	plt.tight_layout()
 
 	if saveFig:
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 	# popContribFigs_cmapJet/'
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 	# popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
 		fileName = pop + '_combinedSpike.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile, dpi=300)
-
-	## TESTING LINE
-	return allSignal, allFreqs
 
 ## LFP: data and plotting ## 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes=['avg']):
@@ -793,7 +802,7 @@ elif gamma:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 1
+evalPopsBool = 0
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -818,21 +827,20 @@ includePops = ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will i
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 0
+plotSpikeData = 1
 
 if plotSpikeData:
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
 
 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
-		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)  # pop=includePops
-		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)		# pop=includePops
-
+		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
+		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
-		allSignal, allFreqs = plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
-		pop=pop, figSize=(10,7), fontSize=15, saveFig=1)  # pop=includePops, 
-		### allSignal, allFreqs is for TESTING PURPOSES!! 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
+		pop=pop, figSize=(10,7), colorMap='jet', maxFreq=32.5, saveFig=1)
+ 
 
 
 ###### COMBINED LFP PLOTTING ######
