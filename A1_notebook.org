@@ -59081,3 +59081,15 @@ def getDataFrames2(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg
 *** And now delete commented-out references to getDataFrames2():
     # dfPeak2, dfAvg2, peakValues2, avgValues2, lfpPopData2 = getDataFrames2(dataFile=dataFile, timeRange=timeRange, verbose=1)
+*** def plotDataFrames():
+**** Clarified some comments (minor)
+**** What's going on with the ordering problem with the pops...?
+***** --> if pops is None:  ### POTENTIAL ISSUE WITH ORDERING OR NO??? 
+**** Took out color bar comment --> #cbar_kws={'label': cbarLabel})
+**** Took out dpi comment --> 
+#, dpi=1200) 
+**** Made savePath an argument and took out this comment:
+***** # prePath = # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' # popContribFigs_cmapJet/'
+***** 
+**** Took out commented-out testing line:
+#return pivotedDataFrame ## <-- pivotedDataFrame FOR TESTING ## UNCOMMENT ABOVE PLOTTING LINES WHEN DONE TESTING !! 

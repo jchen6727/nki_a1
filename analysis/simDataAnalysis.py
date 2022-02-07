@@ -283,7 +283,7 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 	p=0
 	for pop in pops:
 		peakValues['pops'].append(pop)
-		for i in enumerate(evalElecs): 			# range(len(evalElecs)):
+		for i, elec in enumerate(evalElecs): 			# range(len(evalElecs)):
 			if isinstance(elec, Number):		# isinstance(evalElecs[i], Number):
 				elecKey = 'elec' + str(elec)	# str(i)
 			elif elec == 'avg': 				# evalElecs[i] == 'avg':
@@ -303,7 +303,7 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 	q=0
 	for pop in pops:
 		avgValues['pops'].append(pop)
-		for i in enumerate(evalElecs):
+		for i, elec in enumerate(evalElecs):
 			if isinstance(elec, Number):
 				elecKey = 'elec' + str(elec)
 			elif elec == 'avg':
@@ -320,12 +320,16 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg
 
 
-def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None, saveFig=True):
+def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None, savePath=None, saveFig=True):
+	#### --> This function will plot a heatmap of the peak or average LFP amplitudes across electrodes & cell populations
 	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
 	### electrodes: list, if none --> default: use all electrodes + 'avg'
 	### pops: list, if none --> default: 
 	### cbarLabel: str, label for color bar, optional
 	### title: str, also optional 
+	### figSize: tuple --> default is (12,6)
+	### savePath: str --> path to save figures 
+	### saveFig: bool OR path --> default True 
 
 
 	## Set label for color scalebar 
@@ -340,13 +344,14 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 		if 'avg' in electrodes:
 			electrodeColumns = electrodes.copy()
 			avgIndex = electrodeColumns.index('avg')
-			electrodeColumns[avgIndex] = 20
+			electrodeColumns[avgIndex] = 20  				## <-- This is so later, when going through the data frames, the correct index is used to access the 'avg' data
 		else:
 			electrodeColumns = electrodes.copy() 
 		electrodeLabels = electrodes.copy() 
-		print('electrodeLabels' + str(electrodeLabels))
+		# print('electrodeLabels' + str(electrodeLabels)) 	## <-- TESTING LINE (to make sure electrode labels for the plot are coming out as intended) 
 
-	## dataFrame subset according to electrodes specified in argument! 
+
+	## dataFrame subset, according to the electrodes specified in the 'electrodes' argument! 
 	dataFrame = dataFrame[electrodeColumns]
 
 	## Create list of cell populations 
@@ -362,6 +367,11 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 	## TRANSPOSE DATA FRAME 
 	pivotedDataFrame = dataFramePops.T
 
+	## Set Font Sizes for the Heatmap Plot 
+	titleFontSize = 20
+	labelFontSize = 15
+	tickFontSize = 10
+
 
 	## Create lists of x and y axis labels 
 	x_axis_labels = pops.copy() 
@@ -370,35 +380,34 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 	## Set size of figure 
 	if figSize is None:
-		figSize = (12,6) #(12,6)
+		figSize = (12,6) 
 	plt.figure(figsize = figSize)
 
 
 	## Set title of figure 
 	if title is not None:
-		plt.title(title, fontsize=20)#15)
+		plt.title(title, fontsize=titleFontSize)
 
 
 	## Create heatmap! 
-	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar=True) #cbar_kws={'label': cbarLabel})
+	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar=True) 
 
 	## Set labels on x and y axes 
-	plt.xlabel('Cell populations', fontsize=15)
-	plt.xticks(rotation=45, fontsize=10)#fontsize=7)
-	plt.ylabel('Electrodes', fontsize=15)
-	plt.yticks(rotation=0, fontsize=10) #fontsize=8)
+	plt.xlabel('Cell populations', fontsize=labelFontSize)
+	plt.xticks(rotation=45, fontsize=tickFontSize)
+	plt.ylabel('Electrodes', fontsize=labelFontSize)
+	plt.yticks(rotation=0, fontsize=tickFontSize) 
 
 	if saveFig:
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' # popContribFigs_cmapJet/'
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' # popContribFigs/' # popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
 		fileName = 'heatmap.png'
 		pathToFile = prePath + fileName
-		plt.savefig(pathToFile, dpi=300)#, dpi=1200)
-
-
+		plt.savefig(pathToFile, dpi=300)
 
 	return ax
-
-	#return pivotedDataFrame ## <-- pivotedDataFrame FOR TESTING ## UNCOMMENT ABOVE PLOTTING LINES WHEN DONE TESTING !! 
 
 
 
@@ -782,8 +791,8 @@ elif alpha:
 elif theta:
 	timeRange, dataFile = getWaveletInfo('theta', based)
 	wavelet='theta'
-# elif gamma:
-# 	print('Cannot analyze gamma wavelet at this time')
+elif gamma:
+	print('Cannot analyze gamma wavelet at this time')
 
 
 
@@ -794,7 +803,7 @@ elif theta:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 0
+evalPopsBool = 1
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -802,9 +811,9 @@ if evalPopsBool:
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
-	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
-	# plt.show(peakPlot)
+	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	plt.show(peakPlot)
 
 	avgTitle = 'Avg LFP Amplitudes of Theta Wavelet' #'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
 	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
@@ -819,7 +828,7 @@ includePops = ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will i
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 if plotSpikeData:
 	for pop in includePops:
@@ -897,6 +906,8 @@ if plotLFPCombinedData:
 		# maxSignalIndex = np.where(signal==np.amax(signal))
 		# maxPowerFrequency = freqs[maxSignalIndex]
 		# print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))
+
+
 
 
 ######################################################
