@@ -58920,9 +58920,164 @@ vmax: 4.738658140436272e-06
 *** Go through function-by-function first
 *** def plotMUA() and def plotCustomLFPTimeSeries 
 **** --> just leave these two in their little holding cell for now
-*** def getWaveletInfo:
+*** def getWaveletInfo():
 **** Get rid of the commented-out dict that doesn't contain the channel key:
 	# waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520]},
 	# 'beta': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [456, 572]}, 
 	# 'alpha': {'dataFile': 'A1_v34_batch65_v34_batch65_1_1_data.pkl', 'timeRange': [3111, 3325]}, 
 	# 'theta': {'dataFile': 'A1_v34_batch65_v34_batch65_2_2_data.pkl', 'timeRange': [2785, 3350]}}
+**** Changed the comment describing the freqBand argument from freqband to freqBand 
+*** def getDataFiles():
+**** Clarified the comment describing what this function returns 
+*** def getDataFrames vs. getDataFrames2: --> 
+**** What was the difference here...?? 
+***** Ah -- I believe this was done while debugging the lfp heatmap function, to see if different ways of setting up the pandas data frames resulted in different results, that way could see if I was doing something weird originally. 
+**** And where are the two diff functions used...? 
+***** Now the only function really being used is getDataFrames() 
+**** Go through and pinpoint the differences:
+***** Taking out comments under "lfpPopData[pop]['avg']['avg'] = avgAvgLFP"
+### ^^ what's the point of calculating this? <-- ah, okay. gets called later. 
+***** and "lfpPopData[pop]['avg']['peak'] = peakAvgLFP" --> 
+### ^^ what's the point of calculating this? 
+**** diff in peakValues section --> 
+***** in getDataFrames:
+#### PEAK LFP AMPLITUDES ####
+	peakValues = {}
+
+	peakValues['pops'] = []
+	peakValues['peakLFP'] = [[] for i in range(len(pops))]  # should be 36! 
+	p=0
+	for pop in pops:
+		peakValues['pops'].append(pop)
+		for i in range(len(evalElecs)):
+			if isinstance(evalElecs[i], Number):
+				elecKey = 'elec' + str(i)
+			elif evalElecs[i] == 'avg':
+				elecKey = 'avg'
+			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
+		p+=1
+
+	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=pops)
+
+***** in getDataFrames2():
+		peakValues['pops'].append(pop)
+		for i, elec in enumerate(evalElecs):
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg':
+				elecKey = 'avg'
+			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
+		p+=1
+**** old avgLFP lines in getDataFrames() AND getDataFrames2():
+		####
+		for i in range(len(evalElecs)):
+			if isinstance(evalElecs[i], Number):
+				elecKey = 'elec' + str(i)
+			elif evalElecs[i] == 'avg':
+				elecKey = 'avg'
+			avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
+		q+=1 
+**** ^^ Change to this --> 
+	q=0
+	for pop in pops:
+		avgValues['pops'].append(pop)
+		for i in enumerate(evalElecs):
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg':
+				elecKey = 'avg'
+			avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
+		q+=1 
+*** Now delete getDataFrames2(): --> 
+def getDataFrames2(dataFile, timeRange, verbose=0):
+	### This function will return data frames of peak and average lfp amplitudes for picking cell pops
+	### dataFile: str --> .pkl file to load
+	### timeRange: list --> e.g. [start, stop]
+	### verbose: bool --> if 0, return only the data frames; if 1 - return all lists and dataframes 
+
+	## Load data file
+	sim.load(dataFile, instantiate=False)
+
+	## Get all cell pops (cortical)
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	allPops = list(sim.net.allPops.keys())
+	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+
+	## Get all electrodes 
+	evalElecs = []
+	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+	### add 'avg' to electrode list 
+	evalElecs.append('avg')
+
+
+	## Create dict with lfp population data, and calculate average and peak amplitudes for each pop at each electrode!
+	lfpPopData = {}
+
+	for pop in pops:
+		lfpPopData[pop] = {}
+
+		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+		for i, elec in enumerate(evalElecs):
+			if elec == 'avg':
+				lfpPopData[pop]['avg'] = {}
+
+				avgPopData = np.mean(popLFPdata, axis=1) # lfp data (from 1 pop) at each timepoint, averaged over all electrodes
+
+				avgAvgLFP = np.average(avgPopData)
+				lfpPopData[pop]['avg']['avg'] = avgAvgLFP # time-average of lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+
+				peakAvgLFP = np.amax(avgPopData)
+				lfpPopData[pop]['avg']['peak'] = peakAvgLFP ## highest datapoint of all the lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+
+			elif isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+				lfpPopData[pop][elecKey] = {}
+				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ### LFP data (from 1 pop) averaged in time, over 1 electrode 
+				lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
+
+	## Rearrange data structure and turn into pandas data frames ##
+	#### PEAK LFP AMPLITUDES ####
+	peakValues = {}
+
+	peakValues['pops'] = []
+	peakValues['peakLFP'] = [[] for i in range(len(pops))]  # should be 36! 
+	p=0
+	for pop in pops:
+		peakValues['pops'].append(pop)
+		for i, elec in enumerate(evalElecs):
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg':
+				elecKey = 'avg'
+			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
+		p+=1
+
+	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=peakValues['pops']) #index=pops)
+
+
+	#### AVERAGE LFP AMPLITUDES ####
+	avgValues = {}
+
+	avgValues['pops'] = []
+	avgValues['avgLFP'] = [[] for i in range(len(pops))]
+
+	q=0
+	for pop in pops:
+		avgValues['pops'].append(pop)
+		for i in range(len(evalElecs)):
+			if isinstance(evalElecs[i], Number):
+				elecKey = 'elec' + str(i)
+			elif evalElecs[i] == 'avg':
+				elecKey = 'avg'
+			avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
+		q+=1 
+
+	dfAvg = pd.DataFrame(avgValues['avgLFP'], index=pops)
+
+	if verbose:
+		return dfPeak, dfAvg, peakValues, avgValues, lfpPopData 
+	else:
+		return dfPeak, dfAvg
+*** And now delete commented-out references to getDataFrames2():
+    # dfPeak2, dfAvg2, peakValues2, avgValues2, lfpPopData2 = getDataFrames2(dataFile=dataFile, timeRange=timeRange, verbose=1)
