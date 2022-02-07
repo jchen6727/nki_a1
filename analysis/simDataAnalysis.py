@@ -260,46 +260,42 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 			if elec == 'avg':
 				lfpPopData[pop]['avg'] = {}
 
-				avgPopData = np.mean(popLFPdata, axis=1) # lfp data (from 1 pop) at each timepoint, averaged over all electrodes
+				avgPopData = np.mean(popLFPdata, axis=1) 		## lfp data (from 1 pop) at each timepoint, averaged over all electrodes
 
 				avgAvgLFP = np.average(avgPopData)
-				lfpPopData[pop]['avg']['avg'] = avgAvgLFP # time-average of lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+				lfpPopData[pop]['avg']['avg'] = avgAvgLFP 		## time-average of lfp data (from 1 pop) that has been averaged in space (over all electrodes)
 
 				peakAvgLFP = np.amax(avgPopData)
-				lfpPopData[pop]['avg']['peak'] = peakAvgLFP ## highest datapoint of all the lfp data (from 1 pop) that has been averaged in space (over all electrodes)
+				lfpPopData[pop]['avg']['peak'] = peakAvgLFP 	## highest datapoint of all the lfp data (from 1 pop) that has been averaged in space (over all electrodes)
 
 			elif isinstance(elec, Number):
 				elecKey = 'elec' + str(elec)
 				lfpPopData[pop][elecKey] = {}
-				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ### LFP data (from 1 pop) averaged in time, over 1 electrode 
+				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ## LFP data (from 1 pop) averaged in time, over 1 electrode 
 				lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
 
-	## Rearrange data structure and turn into pandas data frames ##
-	#### PEAK LFP AMPLITUDES ####
-	peakValues = {}
 
+	#### PEAK LFP AMPLITUDES, DATA FRAME ####
+	peakValues = {}
 	peakValues['pops'] = []
 	peakValues['peakLFP'] = [[] for i in range(len(pops))]  # should be 36! 
 	p=0
 	for pop in pops:
 		peakValues['pops'].append(pop)
-		for i, elec in enumerate(evalElecs): 			# range(len(evalElecs)):
-			if isinstance(elec, Number):		# isinstance(evalElecs[i], Number):
-				elecKey = 'elec' + str(elec)	# str(i)
-			elif elec == 'avg': 				# evalElecs[i] == 'avg':
+		for i, elec in enumerate(evalElecs): 
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg': 
 				elecKey = 'avg'
 			peakValues['peakLFP'][p].append(lfpPopData[pop][elecKey]['peak'])
 		p+=1
-
 	dfPeak = pd.DataFrame(peakValues['peakLFP'], index=pops)
 
 
-	#### AVERAGE LFP AMPLITUDES ####
+	#### AVERAGE LFP AMPLITUDES, DATA FRAME ####
 	avgValues = {}
-
 	avgValues['pops'] = []
 	avgValues['avgLFP'] = [[] for i in range(len(pops))]
-
 	q=0
 	for pop in pops:
 		avgValues['pops'].append(pop)
@@ -310,7 +306,6 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 				elecKey = 'avg'
 			avgValues['avgLFP'][q].append(lfpPopData[pop][elecKey]['avg'])
 		q+=1
-
 	dfAvg = pd.DataFrame(avgValues['avgLFP'], index=pops)
 
 
