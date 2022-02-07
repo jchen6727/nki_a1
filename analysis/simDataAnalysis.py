@@ -195,7 +195,7 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 
 ### FUNCTIONS ####
 def getWaveletInfo(freqBand, based, verbose=0): 
-	## freqband: str  --> e.g. 'delta', 'alpha', 'theta'
+	## freqBand: str  --> e.g. 'delta', 'alpha', 'theta'
 	## based: str --> path to directory with the .pkl data files 
 	## verbose: bool --> if 0, default to only putting out timeRange and dataFile, if 1 --> include channel as well 
 
@@ -217,7 +217,7 @@ def getWaveletInfo(freqBand, based, verbose=0):
 
 def getDataFiles(based):
 	### based: str ("base directory")
-	### returns list of .pkl files --> allDataFiles
+	#### ---> This function returns a list of all the .pkl files (allDataFiles) in the 'based' directory
 
 	allFiles = os.listdir(based)
 	allDataFiles = []
