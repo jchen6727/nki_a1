@@ -192,6 +192,28 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.savefig(filename,bbox_inches='tight')
 ######################################################################
 
+######################################################################
+##### evalPops functions are NOT YET WORKING!!! ##### 
+def evalPopsRelative():
+	includePopsRel = []
+	return includePopsRel
+def evalPopsAbsolute():
+	## CONDITIONS: 
+	## (1) lfp signal avg'ed over all electrodes for each pop
+	## (2) lfp signal for particular electrodes for each pop 
+	## ADDRESS (2) LATER!!
+
+	includePopsAbs = []
+	return includePopsAbs
+def evalPops(dataFrame):
+	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
+
+	includePopsRel = []
+	includePopsAbs = []
+	return includePopsRel, includePopsAbs
+######################################################################
+
+
 
 ### FUNCTIONS ####
 def getWaveletInfo(freqBand, based, verbose=0): 
@@ -339,7 +361,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 		if 'avg' in electrodes:
 			electrodeColumns = electrodes.copy()
 			avgIndex = electrodeColumns.index('avg')
-			electrodeColumns[avgIndex] = 20  				## <-- This is so later, when going through the data frames, the correct index is used to access the 'avg' data
+			electrodeColumns[avgIndex] = 20  				## <-- Ensures that the correct index is used to access the 'avg' data
 		else:
 			electrodeColumns = electrodes.copy() 
 		electrodeLabels = electrodes.copy() 
@@ -405,26 +427,6 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	return ax
 
 
-
-def evalPops(dataFrame):
-	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
-
-	includePopsRel = []
-	includePopsAbs = []
-	return includePopsRel, includePopsAbs
-
-# def evalPopsRelative():
-	# includePopsRel = []
-	# return includePopsRel
-
-# def evalPopsAbsolute():
-# 	## CONDITIONS: 
-# 	## (1) lfp signal avg'ed over all electrodes for each pop
-# 	## (2) lfp signal for particular electrodes for each pop 
-# 	## ADDRESS (2) LATER!!
-
-# 	includePopsAbs = []
-# 	return includePopsAbs
 
 def getBandpassRange(band):
 	##### --> NOTE: BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO ?

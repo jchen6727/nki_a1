@@ -59104,3 +59104,5 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 ***** else:	prePath = savePath
 ***** recall that during this big preprint push, I was saving to --> 
 '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' # popContribFigs/' # popContribFigs_cmapJet/'
+*** 'evalPops' functions --> 
+**** Placed the evalPops fx that are not yet written into their own separate section near the top 
