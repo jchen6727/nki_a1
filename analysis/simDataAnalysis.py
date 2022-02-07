@@ -242,7 +242,9 @@ def evalPops(dataFrame):
 
 
 
-### FUNCTIONS ####
+###################
+#### FUNCTIONS ####
+###################
 def getWaveletInfo(freqBand, based, verbose=0): 
 	## freqBand: str  --> e.g. 'delta', 'alpha', 'theta'
 	## based: str --> path to directory with the .pkl data files 
@@ -264,7 +266,7 @@ def getWaveletInfo(freqBand, based, verbose=0):
 	else:
 		return timeRange, dataFile
 
-
+## Heatmaps ## 
 def getDataFrames(dataFile, timeRange, verbose=0):
 	#### -->  This function will return data frames of peak and average lfp amplitudes, for picking cell pops
 	### dataFile: str --> .pkl file to load
@@ -351,8 +353,6 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg, peakValues, avgValues, lfpPopData 
 	else:
 		return dfPeak, dfAvg
-
-
 def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=None, figSize=None, savePath=None, saveFig=True):
 	#### --> This function will plot a heatmap of the peak or average LFP amplitudes across electrodes & cell populations
 	### dataFrame: pandas dataFrame  --> These can be obtained from getDataFrames function above)
@@ -442,8 +442,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 
 	return ax
 
-
-
+## Spike Activity: data and plotting ## 
 def getSpikeData(dataFile, graphType, pop, timeRange=None): 
 	### dataFile: path to .pkl data file to load 
 	### graphType: str --> either 'hist' or 'spect'
@@ -466,17 +465,17 @@ def getSpikeData(dataFile, graphType, pop, timeRange=None):
 		spikeDict = sim.analysis.getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
 
 	return spikeDict 
-
-
-def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), fontSize=12, saveFig=True):
+def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), colorMap='jet', savePath=None, saveFig=True):
 	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
-	### histDict: dict --> can be gotten with getSpikeData(graphType='hist')
-	### colorDict: dict 
+	### histDict: dict  --> can be gotten with getSpikeData(graphType='hist')
+	### timeRange: list --> e.g. [start, stop]
+	### colorDict: dict --> dict that corresponds pops to colors 
 	### pop: str or list of length 1 --> population to include 
-	### timeRange: tuple 
-	### figSize: tuple
-	### fontSize: int 
-
+	### figSize: tuple 	--> DEFAULT: (10,7)
+	### colorMap: str 	--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
+	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	### saveFig: bool 	--> DEFAULT: True
+ 
 	# Get relevant pop
 	if type(pop) is str:
 		popToPlot = pop
@@ -484,11 +483,12 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		popToPlot = pop[0]
 
 	# Create figure 
-	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize) #, constrained_layout=True)
+	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
-	# Set font size
-	fontsiz = fontSize
-	plt.rcParams.update({'font.size': fontsiz})
+	# Set font sizes
+	## plt.rcParams.update({'font.size': fontSize})
+	titleFontSize = 20
+	labelFontSize = 12
 
 	### SPECTROGRAM -- for top panel!!
 	allSignal = spectDict['allSignal']
@@ -496,27 +496,25 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 
 	ax1 = plt.subplot(211)
 	# img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-	# 	interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis'))
+	# 	interpolation='None', aspect='auto', cmap=colorMap)	#cmap=plt.get_cmap('viridis'))
 	### CHANGE TO COLOR CONTRAST? 
 	vmin = np.amin(allSignal[0])
 	vmax = np.amax(allSignal[0])/3 #3 #1.5
 	img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-		interpolation='None', aspect='auto', cmap='jet', vmin=vmin, vmax=vmax)
+		interpolation='None', aspect='auto', cmap=colorMap, vmin=vmin, vmax=vmax)
+
 	### TESTING LINE for TIGHTER Y-AXIS !!!!! 
 	# img = ax1.imshow(allSignal[0][:40], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), 40), origin='lower', 
 	# 	interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis')) #  np.amax(allFreqs[0]))
 	###
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
-	## fmt lines are for colorbar scientific notation
-	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)
+	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
 	fmt.set_powerlimits((0,0))
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=20)
-	# ax1.set_xlabel('Time (ms)', fontsize=fontsiz)
-	ax1.set_ylabel('Frequency (Hz)', fontsize=fontsiz)
+	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
+	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-	# ax1.margins(x=0)
 
 
 	### HISTOGRAM -- for bottom panel!! 
@@ -528,11 +526,10 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	divider2 = make_axes_locatable(ax2)
 	cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
 	cax2.axis('off')
-	ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=20)
-	ax2.set_xlabel('Time (ms)', fontsize=fontsiz)
-	ax2.set_ylabel('Rate (Hz)', fontsize=fontsiz) # CLARIFY Y AXIS
+	ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
+	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
+	ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
-	# ax2.margins(x=0)
 	plt.show()
 
 
@@ -540,7 +537,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	plt.tight_layout()
 
 	if saveFig:
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContribFigs_cmapJet/'
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 	# popContribFigs_cmapJet/'
 		fileName = pop + '_combinedSpike.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile, dpi=300)
@@ -548,7 +545,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	## TESTING LINE
 	return allSignal, allFreqs
 
-
+## LFP: data and plotting ## 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes=['avg']):
 	### dataFile: str --> path to .pkl data file to load for analysis 
 	### pop: str or list  
@@ -576,8 +573,6 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes
 
 
 	return lfpOutput
-
-
 def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
@@ -684,8 +679,9 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 
 
 
-
-### USEFUL VARIABLES ### 
+##########################
+#### USEFUL VARIABLES ####
+##########################
 ## set layer bounds:
 layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
 

@@ -59111,3 +59111,28 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 **** Changed one of the comments describing what this function does
 **** I recall that it didn't perform great! I had to mess with the values quite a bit when experimenting
 **** ^^ Because of this, I'm going to move it into the unused functions section!! 
+*** def getSpikeData():
+**** looks okay to me! 
+*** def plotCombinedSpike():
+**** Taking out contrained_layout comment on subplots:
+***** fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize) #, constrained_layout=True)
+**** font size lines:
+***** commented out --> ### fontsiz = fontSize
+***** plt.rcParams.update({'font.size': fontSize})  #fontsiz})
+***** May even just remove fontSize as an argument bc I end up setting font sizes for labels and title
+***** ARGUMENT DELETED FOR NOW:
+****** fontSize=12,
+****** 	### fontSize: int 	--> DEFAULT: 12
+***** Commented out --> ## plt.rcParams.update({'font.size': fontSize})
+***** ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)	#fontsiz)
+***** ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize)	#fontsiz) # CLARIFY Y AXIS
+***** ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)	#20)
+***** ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)	#20)
+***** ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)	#fontSize)	#fontsiz)
+**** Took out xlabel for top plot (spectrogram) --> 
+# ax1.set_xlabel('Time (ms)', fontsize=fontsiz) ## X-axis is redunant with bottom plot, so no need for this to be in here 
+
+**** Taking out ax.margins lines:
+***** These are already commented out! If I recall correctly I tried these out to see if I could get the data to go right up to the very edges of the plots -- achieved already in other ways (believe with set_xlim)
+***** 	# ax2.margins(x=0)
+***** 	# ax1.margins(x=0)
