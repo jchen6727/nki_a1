@@ -315,16 +315,16 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 		return dfPeak, dfAvg
 
 
-def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=None, figSize=None, savePath=None, saveFig=True):
+def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=None, figSize=None, savePath=None, saveFig=True):
 	#### --> This function will plot a heatmap of the peak or average LFP amplitudes across electrodes & cell populations
-	### dataFrame: pandas dataFrame (can be obtained from getDataFrames function above)
-	### electrodes: list, if none --> default: use all electrodes + 'avg'
-	### pops: list, if none --> default: 
-	### cbarLabel: str, label for color bar, optional
-	### title: str, also optional 
-	### figSize: tuple --> default is (12,6)
-	### savePath: str --> path to save figures 
-	### saveFig: bool OR path --> default True 
+	### dataFrame: pandas dataFrame  --> These can be obtained from getDataFrames function above)
+	### electrodes: list 	--> DEFAULT: use all electrodes + 'avg'
+	### pops: list 			--> DEFAULT: all cortical pops 
+	### title: str  		--> Optional; title of the entire figure
+	### cbarLabel: str 		--> DEFAULT: 'LFP amplitudes (mV)'  -->  (label on the color scale bar)
+	### figSize: tuple 		--> DEFAULT: (12,6)
+	### savePath: str, path to directory where figures should be saved  --> DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/'
+	### saveFig: bool 		-->  DEFAULT: True 
 
 
 	## Set label for color scalebar 
@@ -385,7 +385,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 
 	## Create heatmap! 
-	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar=True) 
+	ax = sns.heatmap(pivotedDataFrame, xticklabels=x_axis_labels, yticklabels=y_axis_labels, linewidth=0.4, cbar_kws={'label': cbarLabel})
 
 	## Set labels on x and y axes 
 	plt.xlabel('Cell populations', fontsize=labelFontSize)
@@ -395,7 +395,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 
 	if saveFig:
 		if savePath is None:
-			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' # popContribFigs/' # popContribFigs_cmapJet/'
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/'
 		else:
 			prePath = savePath
 		fileName = 'heatmap.png'

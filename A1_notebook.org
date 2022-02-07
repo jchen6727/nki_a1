@@ -59085,11 +59085,22 @@ def getDataFrames2(dataFile, timeRange, verbose=0):
 **** Clarified some comments (minor)
 **** What's going on with the ordering problem with the pops...?
 ***** --> if pops is None:  ### POTENTIAL ISSUE WITH ORDERING OR NO??? 
-**** Took out color bar comment --> #cbar_kws={'label': cbarLabel})
+**** Took out color bar comment --> 
+***** #cbar_kws={'label': cbarLabel})
+***** I also took out the cbarLabel argument! 
+****** 	### cbarLabel: str 		--> Optional; label for color bar
+**** Added colorbar back in!!! 
+***** added back cbarLabel argument
+***** Added back cbar_kws line too
 **** Took out dpi comment --> 
 #, dpi=1200) 
 **** Made savePath an argument and took out this comment:
 ***** # prePath = # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' # popContribFigs_cmapJet/'
-***** 
 **** Took out commented-out testing line:
 #return pivotedDataFrame ## <-- pivotedDataFrame FOR TESTING ## UNCOMMENT ABOVE PLOTTING LINES WHEN DONE TESTING !! 
+**** prePath defaults changed --> 
+***** if savePath is None:
+prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # popContribFigs/' # popContribFigs_cmapJet/'
+***** else:	prePath = savePath
+***** recall that during this big preprint push, I was saving to --> 
+'/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' # popContribFigs/' # popContribFigs_cmapJet/'
