@@ -58929,6 +58929,7 @@ vmax: 4.738658140436272e-06
 **** Changed the comment describing the freqBand argument from freqband to freqBand 
 *** def getDataFiles():
 **** Clarified the comment describing what this function returns 
+**** I also moved this into the unused function section, bc it is not currently being used!!!! 
 *** def getDataFrames vs. getDataFrames2: --> 
 **** What was the difference here...?? 
 ***** Ah -- I believe this was done while debugging the lfp heatmap function, to see if different ways of setting up the pandas data frames resulted in different results, that way could see if I was doing something weird originally. 
@@ -59106,3 +59107,7 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/' # popContribFigs/' # popContribFigs_cmapJet/'
 *** 'evalPops' functions --> 
 **** Placed the evalPops fx that are not yet written into their own separate section near the top 
+*** def getBandpassRange():
+**** Changed one of the comments describing what this function does
+**** I recall that it didn't perform great! I had to mess with the values quite a bit when experimenting
+**** ^^ Because of this, I'm going to move it into the unused functions section!! 

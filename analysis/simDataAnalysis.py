@@ -25,7 +25,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 ######################################################################
-##### plotMUA and plotCustomLFPTimeSeries are NOT BEING USED !!! #####
+##### These functions are currently NOT BEING USED !!! #####
 def plotMUA(dataFile, colorList, timeRange=None, pops=None):
 	#### plotMUA FUNCTION STILL NOT WORKING WELL FOR TIME RANGES WITH LOW VALUES AT timeRange[0]!!! FIGURE OUT WHY THIS IS! 
 	### dataFile: str --> path and filename (complete, e.g. '/Users/ericagriffith/Desktop/.../0_0.pkl')
@@ -190,10 +190,37 @@ def plotCustomLFPTimeSeries(dataFile, colorList, filtFreq, electrodes=['avg'], s
 			plt.show()
 		if saveFig:
 			plt.savefig(filename,bbox_inches='tight')
+def getBandpassRange(freqBand):
+	##### --> This function correlates bandpass frequency range for each frequency band; can be used for bandpassing LFP data 
+	##### --> delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
+	### freqBand: str --> e.g. 'delta', 'alpha', 'beta', 'gamma', 'theta'
+
+	if freqBand == 'delta':
+		filtFreq = 5 #[0.5, 5] # Hz
+	elif freqBand =='beta':
+		filtFreq = [21, 40] # [15, 29]
+	elif freqBand == 'alpha':
+		filtFreq = [11, 17]	#[9, 15]
+	elif freqBand == 'theta':
+		filtFreq = 30 #[4, 9] #[5, 7.25]
+	else:
+		filtFreq = None
+
+	return filtFreq
+def getDataFiles(based):
+	### based: str ("base directory")
+	#### ---> This function returns a list of all the .pkl files (allDataFiles) in the 'based' directory
+
+	allFiles = os.listdir(based)
+	allDataFiles = []
+	for file in allFiles:
+		if '.pkl' in file:
+			allDataFiles.append(file)
+	return allDataFiles 
 ######################################################################
 
 ######################################################################
-##### evalPops functions are NOT YET WORKING!!! ##### 
+##### evalPops functions are NOT YET FINISHED!!! ##### 
 def evalPopsRelative():
 	includePopsRel = []
 	return includePopsRel
@@ -221,8 +248,9 @@ def getWaveletInfo(freqBand, based, verbose=0):
 	## based: str --> path to directory with the .pkl data files 
 	## verbose: bool --> if 0, default to only putting out timeRange and dataFile, if 1 --> include channel as well 
 
-	waveletInfo = {'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520], 'channel': 14},
-	'beta': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [456, 572], 'channel': 14}, 
+	waveletInfo = {
+	'delta': {'dataFile': 'A1_v34_batch65_v34_batch65_0_0_data.pkl', 'timeRange': [1480, 2520], 'channel': 14},
+	'beta': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl',	'timeRange': [456, 572], 'channel': 14}, 
 	'alpha': {'dataFile': 'A1_v34_batch67_v34_batch67_0_0_data.pkl', 'timeRange': [3111, 3325], 'channel': 9}, 
 	'theta': {'dataFile': 'A1_v34_batch67_v34_batch67_1_1_data.pkl', 'timeRange': [2785, 3350], 'channel': 8}}
 
@@ -235,18 +263,6 @@ def getWaveletInfo(freqBand, based, verbose=0):
 		return timeRange, dataFile, channel
 	else:
 		return timeRange, dataFile
-
-
-def getDataFiles(based):
-	### based: str ("base directory")
-	#### ---> This function returns a list of all the .pkl files (allDataFiles) in the 'based' directory
-
-	allFiles = os.listdir(based)
-	allDataFiles = []
-	for file in allFiles:
-		if '.pkl' in file:
-			allDataFiles.append(file)
-	return allDataFiles 
 
 
 def getDataFrames(dataFile, timeRange, verbose=0):
@@ -426,25 +442,6 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 
 	return ax
 
-
-
-def getBandpassRange(band):
-	##### --> NOTE: BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO ?
-	##### --> NOTE: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
-	### band: str --> e.g. 'delta', 'alpha', 'beta', 'gamma', 'theta'
-
-	if band == 'delta':
-		filtFreq = 5 #[0.5, 5] # Hz
-	elif band =='beta':
-		filtFreq = [21, 40] # [15, 29]
-	elif band == 'alpha':
-		filtFreq = [11, 17]	#[9, 15]
-	elif band == 'theta':
-		filtFreq = 30 #[4, 9] #[5, 7.25] #[4, 9]
-	else:
-		filtFreq = None
-
-	return filtFreq
 
 
 def getSpikeData(dataFile, graphType, pop, timeRange=None): 
