@@ -497,14 +497,6 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	allSignal = spectDict['allSignal']
 	allFreqs = spectDict['allFreqs']
 
-	# Set color contrast parameters 
-	if vmaxContrast is None:
-		vmin = None
-		vmax = None
-	else:
-		vmin = np.amin(allSignal[0])
-		vmax = np.amax(allSignal[0]) / vmaxContrast 
-
 	# Set frequencies to be plotted 
 	if maxFreq is None:
 		maxFreq = np.amax(allFreqs[0])
@@ -513,6 +505,14 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		if type(maxFreq) is not int:
 			maxFreq = round(maxFreq)
 		imshowSignal = allSignal[0][:maxFreq]
+
+	# Set color contrast parameters 
+	if vmaxContrast is None:
+		vmin = None
+		vmax = None
+	else:
+		vmin = np.amin(imshowSignal)
+		vmax = np.amax(imshowSignal) / vmaxContrast
 
 	ax1 = plt.subplot(211)
 
@@ -839,7 +839,7 @@ if plotSpikeData:
 
 		## Then call plotting function 
 		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
-		pop=pop, figSize=(10,7), colorMap='jet', maxFreq=32.5, saveFig=1)
+		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
  
 
 
