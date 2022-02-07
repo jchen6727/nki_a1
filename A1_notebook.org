@@ -58485,7 +58485,7 @@ Ttest_indResult(statistic=-13.977887801531262, pvalue=2.219062049416792e-43)
 **** (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
 * <2022-02-02 Wed -- edits before A1 preprint>
 ** TO DO: 
-*** [DONE-ish] (1) Stats fig tasks:
+*** [DONE] (1) Stats fig tasks:
 **** [DONE] (i) TEXT: Edit caption for alternative stats fig !!
 ***** --> FIRST SENTENCE: 
 Comparison of wavelet properties in model and non-human primate data. 
@@ -58535,7 +58535,6 @@ Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
 ***** (cont) what do we think? I figured we could either do this, or we could stick to the duration figure and I could add in the others (peakF and num cycles) to the supplementary figures. any thoughts? 
 **** [DONE -- BY SAM] (iii) TEXT: If accepted ^^, edit results text paragraph
 **** [DONE] (iv) Change the title !! Don't refer to "wavelets" anymore
-**** (v) Reword wavelet results paragraph -- think sam is on this!! 
 *** (2) Pop contrib tasks :
 **** [DONE] (i) Get final feedback on pop contrib fig formatting
 ***** drawing100_labeled.png + what's in the gdoc!!
@@ -58546,20 +58545,19 @@ Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
 ***** Sam is gonna try some stuff -- he says looks good for now; leave this here for the moment; check back in later. 
 **** (ii) TEXT: draft & add feasibility text
 ***** This was done as a first step towards being able to analyze the 
-**** (iii) Change the spectrograms on the figure!!!
+**** [DONE] (iii) Change the spectrograms on the figure!!!
 ***** use jet colormap not viridis 
 **** (iii) TEXT: draft & add text re: gamma story
 *** (3) CSD spont / speech fig tasks:
 **** (i) TEXT: Draft a sentence or two that states how the layer determinations were made 
-*** [DONE] (4) Wavelet match fig: 
+*** [DONE] (4) Wavelet match fig tasks: 
 **** [DONE] (i) Await feedback from sam / salva re: getting rid of or making fig text higher res
 **** [DONE] (ii) Draft up new figure:
 ***** CHOICES: Blank out text + make in inkscape OR re-generate the wavelets w/ the text gone or larger. 
 ***** Re-generating the wavelet files locally 
 **** [DONE] (iii) Ask for more feedback !!
-*** (5) TEXT: Go through and take out mention of "wavelets" -- use "oscillations / oscillation events" instead!!
-
-
+*** [DONE] (5) TEXT: Go through and take out mention of "wavelets" -- use "oscillations / oscillation events" instead!!
+**** THIS WAS DONE BY SAM!
 
 ** Taking out old fig 8:
 *** old caption -- Figure 8. Comparison of wavelet event durations (ms) in model (yellow) and non-human primate (blue) data. Wavelets were detected in resting state recordings, then sorted by frequency band (delta, theta, alpha, beta, gamma) and laminar region (supragranular, granular, infragranular). 
@@ -58820,4 +58818,103 @@ Ttest_indResult(statistic=-13.977887801531262,pvalue=2.219062049416792e-43)
 *** Modifications to simDataAnalysis.py --> 
 **** in def plotCombinedLFP() --> 
 	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap='jet')#cmap=plt.get_cmap('viridis'))
-**** in def plotCombinedSpike() --> 
+**** in def plotCombinedSpike() --> cmap='jet'
+**** Also changed the location of saving for to include popContribFigs_cmapJet -- SHOULD REALLY AUTOMATE THIS; DO THIS LATER!!! 
+**** Moving this to its own function -- bandpass filtering LFP (visual noise!!):
+	# filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
+***** deleting these lines:
+bandpassLFP = 0
+if bandpassLFP:
+	if delta:
+		filtFreq = 5 #[0.5, 5] # Hz
+	elif beta:
+		filtFreq = [21, 40] # [15, 29]
+	elif alpha:
+		filtFreq = [11, 17]	#[9, 15]
+	elif theta:
+		filtFreq = 30 #[4, 9] #[5, 7.25] #[4, 9]
+else:
+	filtFreq = None
+***** def getBandpassRange(band):
+*** okay worked!! I have the heatmap, the theta wavelet, and the plots -- now make new .svg document. 
+*** ^^ How do I adjust the color range on these maps? 
+**** vmin, vmax
+**** IT3:
+***** Testing for IT3, electrode 1 -- ORIG vmin, vmax values:
+vmin: 6.904018642698846e-12
+vmax: 0.001404245799476004
+***** Changed vmax to 0.0009 
+**** IT5A:
+***** orig vmin, vmax values:
+vmin: 1.1596911287346053e-14
+vmax: 1.6345935597989395e-05
+***** Change vmax to 1.5e-05
+***** Change also to 1e-05
+***** Changed also to 8e-06
+**** PT5B:
+***** orig vmin, vmax:
+vmin: 1.0397100691322093e-14
+vmax: 4.738658140436272e-06
+***** Change to 3e-06
+***** Change to 1e-06 
+**** ^^ all these are saved in ...A1/data/figs/popContribFigs/popContribFigs_cmapJet
+*** okay so now I have the heatmap, the wavelet, and the plots w/ diff spectrogram color ranges 
+*** okay!! did it! --> (A1/data/figs/popContribFigs/popContribFigs_cmapJet/FINAL_cmapJet_popContrib_LABELED2.png)
+*** taking out the old fig --> (A1/data/figs/popContribFigs/popContribFig_.png)
+*** REPLACED FIG 9 in GOOGLE DOC!!
+** Okay, remaining tasks are all to do with the text:
+*** [IN PROGRESS] (I) TEXT: draft & add feasibility text to pop contrib section 
+**** LATEST VERSION: The analysis shown in Fig. 9 was performed for a single oscillation event, allowing us to see which populations were the most active at the time of the oscillation. This approach will be used to analyze the other oscillation events that have been identified in the model data. By doing this, we hope to gain broader insight into the cell population dynamics underlying oscillation events in each frequency band. Analyzing the model oscillation events in this way will allow us to make predictions about population activity during oscillations in the living system. 
+
+
+**** ============ MORE TEXT BELOW =============
+**** To demonstrate feasibility, the analysis shown here in Figure 9 was performed for a single oscillation event. However, this approach will be used to analyze the other oscillation events that have been identified in the model data. By doing this, we hope to gain broader insight into the cell population dynamics underlying oscillation events in each frequency band. This will allow us to make predictions about population activity during oscillations in the living system. 
+***** To demonstrate feasibility, the analysis shown here in Figure 9 was performed for a single oscillation event. However, this approach will be used to analyze the other oscillation events that have been identified in the model data. By doing this, we hope to gain broader insight into the cell population dynamics occurring throughout oscillation events in different frequency bands. This will allow us to make predictions about population activity during oscillation events in the living system. 
+*****  To demonstrate feasibility, the analysis shown here in Figure 9 was performed for a single oscillation event. However, this approach will be used to analyze the other oscillation events that have been identified in the model data. By doing this, we hope to gain broader insight into the cell population dynamics happening during oscillation events from each frequency band.This will allow us to make predictions about population activity during oscillation events in the living system. 
+***** To demonstrate feasibility, the analysis shown here in Figure 9 was performed for a single oscillation event. However, this approach will be used to analyze the other oscillation events that have been identified in the model data. By doing this, we hope to gain broader insight into the cell population dynamics underlying oscillation events in each frequency band. This will allow us to make predictions about population activity during oscillations in the living system. 
+**** However, this analysis will be applied to other model oscillation events, across all frequency bands.
+**** The analysis shown here in Figure 9 was performed for a single oscillation event, in order to demonstrate the feasibility of this approach. To gain broader insight into the cell population dynamics occurring during oscillation events of different frequencies
+**** This analysis will also be applied to the other model oscillation events across different frequency bands. By doing this, we hope to gain insight into the cell population dynamics occurring during oscillations of different frequencies.
+**** This was done as a first step towards being able to analyze the 
+**** The analysis shown in Figure 9 was performed for a single oscillation event; this was done to demonstrate the feasibility of this approach. This analysis will also be applied to the other model oscillation events across different frequency bands. By doing this, we hope to gain insight into the cell population dynamics occurring during oscillations of different frequencies.**** be expanded (also be applied) to the other model oscillation events, across frequency bands.  
+*** (II) TEXT: draft & add text re: gamma story in pop contrib situation
+**** Comments from Sam:
+***** (1) the LFP wavelet spectrograms show peaks in low frequency range (theta), while the spiking activity shows peaks in gamma range - that's consistent with previous ephys/modeling data, but worth highlighting.
+***** (2) I also do see some hints of gamma in the LFP spectrograms, at ~same time as the gamma in the spiking activity spectrograms. if change the color range on top panels, might make it more noticeable. this presence of low/high frequency also fits into the cross frequency coupling story.
+*** [DONE] (III) TEXT: Draft a sentence or two that states how the layer determinations were made
+**** LATEST VERSION: To examine patterns of LFP/CSD activity in NHP recordings, we first determined the supragranular, granular, and infragranular layer depths for each macaque subject. In macaques, the determination of the supragranular, granular, and infragranular layer depths relied on functional demarcation of these regions based on responses to preferred modality stimuli. For each NHP subject, we examined an averaged CSD profile resulting from the presentation of a stimulus which provoked an excitatory response in A1 (e.g. clicks, best frequency tones). An early sink in this CSD profile indicated the presence of the granular layer, while source / sink pairs above and below the granular layer designated the presence of the supragranular and infragranular layers, respectively. 
+**** ============ MORE TEXT BELOW =============
+**** In macaques, the determination of the supragranular, granular, and infragranular layer depths relied on functional demarcation of these regions based on responses to preferred modality stimuli. For each macaque subject, we examined an averaged CSD profile resulting from the presentation of a stimulus which provoked an excitatory response in A1 (e.g. clicks, best frequency tones). An early sink in this CSD profile indicated the presence of the granular layer, while source / sink pairs above and below the granular layer designated the presence of the suprgranular and infragranular layers, respectively. 
+**** Determination of the supragranular, granular, and infragranular layer depths relied on functional demarcation of these regions based on responses to preferred modality stimuli. For each macaque subject, we examined an averaged CSD profile resulting from the presentation of a stimulus which provoked an excitatory response in A1 (e.g. clicks, best frequency tones). 
+***** The granular layer was indicated by the presence of an early sink. A large-amplitude source and sink pair above the granular layer indicated the boundaries of the supragranular region, while the infragranular layer boundaries were recognized by the sink and source pair located underneath the granular layer. 
+***** ^^ An early sink in this CSD profile indicated the presence of the granular layer, while source / sink pairs above and below the granular layer designated the presence of the suprgranular and infragranular layers, respectively. 
+**** Layers were determined differently in NHP vs. the model. In the model A1 column, the cortical depth was fixed (layers were determined ... how? anatomically based on monkey function?). However, in the monkeys, layer determinations were made functionally (based on functional responses, rather than fixed anatomic positions). For macaques, each monkey was subjected to recording during different states / tasks. To determine the laminar region boundaries, we looked at the averaged ERP (evoked-response profile??) in the CSD. 
+**** To determine the channel to layer correspondence for the macaque (NHP) data, we examined averaged CSD profiles resulting from the presentation of preferred modality stimuli (e.g. best frequency tones) or other stimuli which provoked an excitatory response in A1 (e.g. clicks). This was done individually for each macaque subject, since...
+****  --> in some of the NHP experiments/data, which rely on functional demarcation of granular layers (based on response to inputs), compared to the model which uses a single demarcation
+**** FROM NOELLE:
+***** from email thread w/ noelle over gmail
+***** RESPONSE 1:  I've attached a CSD profile from a recording in A1 related to the BF tone of this A1 site (BF=11Khz) which show's a typical profile that we would see to a preferred modality stimulus in a cortical area, and which we would use to determine layers. 
+***** (1) GRAN: So first you would look for the earliest sink (red color) to designate the Gran layer (usually it does not have the largest sink amplitude), in this case chs 13-14. 
+***** (2) SUPRA: Then above that you look for a pretty large amplitude source (blue color) over sink (red color) pair to designate the Supra layer in this case Chs 4-12. Within the Supra layer the boundaries of S1 and S2 are simply determined by the boundaries of the source for S1 and the boundaries of the sink for S2. 
+***** (3) INFRA: The infra layers are usually easy to designate: a sink over source pair directly under the Gran layer. Sometimes within the Infra layer the boundaries of I1 and I2 are harder to define.
+***** But *remember this is dependent on the reponse to a preferred modality stimulus* . If it was a non-prefrerred modality stimulus, such as non-BF tone which causes suppression in A1, the sinks and sources would be reversed.  We just use these CSD signatures as indicators of layers.
+***** RESPONSE 2: So if the stimuli are of a modality that cause an excitatory response in A1 (i.e. suprathreshold MUA firing) e.g. BBN bursts (unless it's an A1 site that has a low BF (< 1400Hz) which usually doesn't respond or responds with with suppression to BBN, so have to use the BF tones in that case), oldTono (which is made up of pure frequency tones ranging from 0.3-32KHz in half octave steps presented in a random order)  or clicks, the CSD profile will look very similar (i.e. similar in pattern: Supra source over sink, Gran sink, Infra sink over source) to the one I sent previously. As there are no stimuli being presented during Spontaneous you won't have a stimulus response profile to help in choosing layers so we usually use the nearest in time presentation of BBN or click or BF streams to assign layers to channels and use those for the Spontaneous file. Generally during an experiment/recording we present a BBN stream (approx. 100 presentations within a stream) quite often (maybe every 40mins or so) to check that the brain hasn't moved up or down the electrode and the electrode chs we assigned to a specific layer are still in that layer.
+*** (IV) Put the text from (I) into appropriate place !!! 
+*** (V) Put the text from (II) into appropriate place !!!
+*** [DONE] (VI) Put the text from (III) into appropriate place !!! 
+* <2022-02-03 Thu -- modifications to text before preprint submission>
+** Pop contrib fig text --> feel like this was kind of addressed ish in the first part of the discussion?? 
+[--> frame this as a novelty, then also describe future direction → The analysis shown in Fig. 9 was performed for a single oscillation event, allowing us to see which populations were the most active at the time of the oscillation. This approach will be used to analyze the other oscillation events that have been identified in the model data. By doing this, we hope to gain broader insight into the cell population dynamics underlying oscillation events in each frequency band. Analyzing the model oscillation events in this way will allow us to make predictions about population activity during oscillations in the living system.]
+** Max power frequency for fig 9:
+*** IT3 max power frequency in LFP signal at electrode 1: [7]
+*** IT5A max power frequency in LFP signal at electrode 10: [7]
+*** PT5B max power frequency in LFP signal at electrode 11: [7]
+* <2022-02-07 Mon -- Improvements to make on A1 paper / results>
+** What are the improvements that I could make / what did we want for the next paper?
+** --> We want to look at the kind of lfp pop contribution analysis that we did for the single theta wavelet, but do this over all theta wavelets, then for all wavelets in each frequency band. 
+** I feel like there were other programming things I wanted to improve in my main scripts:
+*** a1dat/plotWavelets.py --> anything to improve there that I changed?
+*** A1/analysis/simDataAnalysis.py 
+*** netpyne/netpyne/analysis/lfp_orig.py and spikes_orig.py <-- what could I improve here / any loose ends to tie up? 
+
+

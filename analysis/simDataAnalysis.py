@@ -487,7 +487,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, cbarLabel=None, title=
 	plt.yticks(rotation=0, fontsize=10) #fontsize=8)
 
 	if saveFig:
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' # popContribFigs_cmapJet/'
 		fileName = 'heatmap.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile, dpi=300)#, dpi=1200)
@@ -520,7 +520,23 @@ def evalPops(dataFrame):
 # 	includePopsAbs = []
 # 	return includePopsAbs
 
+def getBandpassRange(band):
+	##### --> NOTE: BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO ?
+	##### --> NOTE: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
+	### band: str --> e.g. 'delta', 'alpha', 'beta', 'gamma', 'theta'
 
+	if band == 'delta':
+		filtFreq = 5 #[0.5, 5] # Hz
+	elif band =='beta':
+		filtFreq = [21, 40] # [15, 29]
+	elif band == 'alpha':
+		filtFreq = [11, 17]	#[9, 15]
+	elif band == 'theta':
+		filtFreq = 30 #[4, 9] #[5, 7.25] #[4, 9]
+	else:
+		filtFreq = None
+
+	return filtFreq
 
 
 def getSpikeData(dataFile, graphType, pop, timeRange=None): 
@@ -574,8 +590,17 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	allFreqs = spectDict['allFreqs']
 
 	ax1 = plt.subplot(211)
+	# img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+	# 	interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis'))
+	### CHANGE TO COLOR CONTRAST? 
+	vmin = np.amin(allSignal[0])
+	vmax = np.amax(allSignal[0])/3 #3 #1.5
 	img = ax1.imshow(allSignal[0], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
-		interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis'))
+		interpolation='None', aspect='auto', cmap='jet', vmin=vmin, vmax=vmax)
+	### TESTING LINE for TIGHTER Y-AXIS !!!!! 
+	# img = ax1.imshow(allSignal[0][:40], extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), 40), origin='lower', 
+	# 	interpolation='None', aspect='auto', cmap='jet')	#cmap=plt.get_cmap('viridis')) #  np.amax(allFreqs[0]))
+	###
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 	## fmt lines are for colorbar scientific notation
@@ -610,10 +635,13 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	plt.tight_layout()
 
 	if saveFig:
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContribFigs_cmapJet/'
 		fileName = pop + '_combinedSpike.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile, dpi=300)
+
+	## TESTING LINE
+	return allSignal, allFreqs
 
 
 def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes=['avg']):
@@ -683,6 +711,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 
 	vmin = np.array([s.TFR for s in spec]).min()
 	vmax = np.array([s.TFR for s in spec]).max()
+	print('vmin: ' + str(vmin)) ### COLOR MAP TESTING LINES 
+	print('vmax: ' + str(vmax)) ### COLOR MAP TESTING LINES 
+	# vmax = 0.0009 	# IT3
+	# vmax = 0.8e-05 	# IT5A
+	# vmax = 1e-06 		# PT5B 
 	vc = [vmin, vmax]
 
 	ax1 = plt.subplot(2, 1, 1)
@@ -710,13 +743,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	t = timeSeriesDict['t']
 	lfp = timeSeriesDict['LFP'] # timeSeriesDict['lfpPlot'] #timeSeriesDict['LFP'] ### ELECTRODE FIX???
 
-	# separation = 1 
-	# ydisp = np.absolute(lfp).max() * separation
-	# if electrode == 'avg' :
-	# 	lfpPlot = np.mean(lfp, axis=1)
-	# elif isinstance(electrode, Number):
-	# 	lfpPlot = lfp[:, electrode]  ### NEED THIS SECOND ELEMENT IN LIST TO BE ELECTRODE NUM!!!
-
 	### TEST LINE ### <-- should do same as above electrodes lines?? BUT I DID TAKE OUT ELECTRODE ARGUMENT!!!
 	lfpPlot = timeSeriesDict['lfpPlot']
 
@@ -740,8 +766,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	plt.tight_layout()
 	plt.show()
 
-	if saveFig:
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	if saveFig:  ## NOTE: SHOULD FIX PREPATH SO THIS IS AUTOMATED MORE 
+		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContribFigs_cmapJet/'
 		if titleSubset:
 			elecInFileName = titleSubset[-2:]
 		else:
@@ -886,8 +912,7 @@ if evalPopsBool:
 
 
 ########################
-# includePops = ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-includePops = ['IT3', 'IT5A', 'PT5B']
+includePops = ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
@@ -905,9 +930,9 @@ if plotSpikeData:
 
 
 		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
-		pop=pop, figSize=(10,7), fontSize=15)  # pop=includePops, 
-
+		allSignal, allFreqs = plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
+		pop=pop, figSize=(10,7), fontSize=15, saveFig=1)  # pop=includePops, 
+		### allSignal, allFreqs is for TESTING PURPOSES!! 
 
 
 ###### COMBINED LFP PLOTTING ######
@@ -917,38 +942,23 @@ if plotSpikeData:
 
 plotLFPCombinedData = 0
 
-# ### BAND PASS FILTER LFP DATA -- MOVE THIS INTO WAVELET INFO 
-# filtFreq: delta (0.5-4 Hz), theta (4-9 Hz), alpha (9-15 Hz), beta (15-29 Hz), gamma (30-80 Hz)
-bandpassLFP = 0
-if bandpassLFP:
-	if delta:
-		filtFreq = 5 #[0.5, 5] # Hz
-	elif beta:
-		filtFreq = [21, 40] # [15, 29]
-	elif alpha:
-		filtFreq = [11, 17]	#[9, 15]
-	elif theta:
-		filtFreq = 30 #[4, 9] #[5, 7.25] #[4, 9]
-else:
-	filtFreq = None
-
-
-includePops = ['IT3', 'IT5A']	# ['IT3', 'IT5A', 'IT5B', 'CT5B', 'PT5B']		# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
-		if pop == 'IT3':
-			electrodes = [1] #[9] #[1,9] #['avg']
+		## Get electrodes associated with each pop 
+		if pop == 'IT3':  ## COULD ADD THESE INTO DICT SOMEWHERE ELSE FOR ACCESS!!! 
+			electrodes = [1] 
 		elif pop == 'IT5A':
 			electrodes = [10]
+		elif pop == 'PT5B':
+			electrodes = [11]
 		elif pop == 'IT5B':
 			electrodes = [11]
 		elif pop == 'CT5B':
 			electrodes = [11]
-		elif pop == 'PT5B':
-			electrodes = [11] #['avg']	#[11]
 		else:
 			electrodes = ['avg']
 
@@ -967,11 +977,25 @@ if plotLFPCombinedData:
 		elif isinstance(electrodes[0], Number):
 			plotTitleSubset = ', electrode ' + str(electrodes[0])
 
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
-			figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset, saveFig=0)
+		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
+		# 	figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset, saveFig=1)
 
 
+		############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES
+		# #### TURN PSD LINES INTO THEIR OWN FUNCTION #### 
+		# figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrodes, plots=['PSD'], showFig=False)#, saveData=1)
 
+		# signalList = outputData['allSignal']
+		# signal = signalList[0]
+		# freqsList = outputData['allFreqs']
+		# freqs = freqsList[0]
+
+		# # print(str(signal.shape))
+		# # print(str(freqs.shape))
+
+		# maxSignalIndex = np.where(signal==np.amax(signal))
+		# maxPowerFrequency = freqs[maxSignalIndex]
+		# print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))
 
 
 ######################################################
