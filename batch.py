@@ -919,7 +919,7 @@ def custom_stim(filename):
     cfgLoad2 = cfgLoad
 
     # conn gains 
-    params[('NetStim1', 'weight')] = [1]#, 5, 10, 20, 40] # 50 Hz
+    params[('NetStim1', 'weight')] = [0, 1]#, 5, 10, 20, 40] # 50 Hz
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
