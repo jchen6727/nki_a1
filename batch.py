@@ -939,7 +939,7 @@ def custom_stim(filename):
     initCfg[('NetStim1', 'loc')] = 0.5
     initCfg[('NetStim1', 'start')] = 1500
     initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
-    initCfg[('NetStim1', 'noise')] = 0.5, # 50 Hz
+    initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
     initCfg[('NetStim1', 'number')] = 50 * 10 # enough spikes for 10 seconds
 
 
