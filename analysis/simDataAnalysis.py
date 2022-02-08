@@ -555,7 +555,7 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		plt.savefig(pathToFile, dpi=300)
 
 ## LFP: data and plotting ## 
-def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes=['avg']):
+def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
 	### pop: str or list  		--> cell population to get the LFP data for 
 	### plotType: str or list 	--> 'spectrogram' or 'timeSeries'
@@ -580,7 +580,6 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes=['avg']):
 		plots = plotType
 
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots) # filtFreq=filtFreq (see above; in args)
-
 
 	return lfpOutput
 def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
