@@ -582,17 +582,17 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=None, fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
-	### timeRange: list, e.g. [start, stop]
-	### pop: list or str --> relevant population to plot data for 
-	### colorDict: dict --> corresponds pop to color 
-	### ylim: list --> [min, max]
-	### figSize: tuple --> default is (10,7)
-	### fontSize: int --> default is 12 
+	### timeRange: list 	--> [start, stop]
+	### pop: list or str 	--> relevant population to plot data for 
+	### colorDict: dict 	--> corresponds pop to color 
+	### ylim: list 			--> for limits on y-axis (Hz); [min, max]
+	### figSize: tuple 		--> DEFAULT: (10,7)
+	### fontSize: int 		--> DEFAULT: 12 
 	### titleSubset: str 
-	### saveFig: bool --> DEFAULT: True 
+	### saveFig: bool 		--> DEFAULT: True 
 		# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
 
 
@@ -604,7 +604,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 
 
 	## Create figure 
-	figSize = (10,7)
+	if figSize is None:
+		figSize = (10,7)
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
 	## Set font size 

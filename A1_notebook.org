@@ -59178,3 +59178,5 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 **** arguments:
 ***** -- electrode is commented out..? leave for now then ponder later
 ***** In descriptions of the arguments in the comments, I added titleSubset and saveFig and made sure the order of the comments matched the order of the args 
+**** Changed figSize arg to None, and then have a line in the fx that changes it to (10,7) if set to None <-- previously just reset figSize to (10,7)!! 
+****  
