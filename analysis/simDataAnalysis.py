@@ -443,10 +443,10 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	return ax
 
 ## Spike Activity: data and plotting ## 
-def getSpikeData(dataFile, graphType, pop, timeRange=None): 
+def getSpikeData(dataFile, pop, graphType, timeRange): 
 	### dataFile: path to .pkl data file to load 
-	### graphType: str --> either 'hist' or 'spect'
 	### pop: list or str --> which pop to include 
+	### graphType: str --> either 'hist' or 'spect'
 	### timeRange: list --> e.g. [start, stop]
 
 	sim.load(dataFile, instantiate=False)
@@ -456,27 +456,24 @@ def getSpikeData(dataFile, graphType, pop, timeRange=None):
 	elif type(pop) is list:
 		popList = pop
 
-	if timeRange is None:
-		timeRange = [0, sim.cfg.duration]
-
 	if graphType is 'spect':
 		spikeDict = sim.analysis.getRateSpectrogramData(include=popList, timeRange=timeRange)
 	elif graphType is 'hist':
 		spikeDict = sim.analysis.getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate')
 
 	return spikeDict 
-def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(10,7), colorMap='jet', savePath=None, vmaxContrast=None, maxFreq=None, saveFig=True):
+def plotCombinedSpike(spectDict, histDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, savePath=None, saveFig=True):
 	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
 	### histDict: dict  --> can be gotten with getSpikeData(graphType='hist')
 	### timeRange: list --> e.g. [start, stop]
-	### colorDict: dict --> dict that corresponds pops to colors 
 	### pop: str or list of length 1 --> population to include 
+	### colorDict: dict --> dict that corresponds pops to colors 
 	### figSize: tuple 	--> DEFAULT: (10,7)
 	### colorMap: str 	--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
-	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### vmaxContrast: float or int --> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
-			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
 	### maxFreq: int --> whole number that determines the maximum frequency plotted on the spectrogram 
+			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
+	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 	--> DEFAULT: True
  
 	# Get relevant pop
@@ -572,7 +569,6 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	elif type(pop) is list:
 		popList = pop
 
-
 	# Set up which kind of data -- i.e. timeSeries or spectrogram 
 	if type(plotType) is str:
 		plots = [plotType]
@@ -582,15 +578,15 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', ylim=None, titleSubset=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list 	--> [start, stop]
 	### pop: list or str 	--> relevant population to plot data for 
 	### colorDict: dict 	--> corresponds pop to color 
-	### ylim: list 			--> for limits on y-axis (Hz); [min, max]
 	### figSize: tuple 		--> DEFAULT: (10,7)
-	### fontSize: int 		--> DEFAULT: 12 
+	### colorMap: str 		--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
+	### ylim: list 			--> for limits on y-axis (Hz); [min, max]
 	### titleSubset: str 
 	### saveFig: bool 		--> DEFAULT: True 
 		# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
@@ -628,7 +624,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	vc = [vmin, vmax]
 
 	ax1 = plt.subplot(2, 1, 1)
-	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap='jet')#cmap=plt.get_cmap('viridis'))
+	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -659,7 +656,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	divider2 = make_axes_locatable(ax2)
 	cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 	cax2.axis('off')
-	#ax2.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  # plt.plot(t[0:len(lfpPlot)], -lfpPlot, color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
 	ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 	if titleSubset is not None:
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset

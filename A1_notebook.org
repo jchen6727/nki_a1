@@ -59174,6 +59174,10 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 * <2022-02-08 Tue -- continue cleaning up analysis code>
 ** Yesterday I left off on getLFPDatadict() in A1/analysis/simDataAnalysis.py -- continue from here!
 ** A1/analysis/simDataAanlysis.py:
+*** def getSpikeData():
+**** 	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+**** ^^ TOOK OUT THESE LINES AND CHNAGED TIMERANGE ARG TO NOT BEING EQUAL TO NONE
 *** def plotCombinedLFP():
 **** arguments:
 ***** -- electrode is commented out..? leave for now then ponder later
@@ -59191,5 +59195,12 @@ plt.rcParams.update({'font.size': fontsiz})
 ****** ax2.set_title(timeSeriesTitle, fontsize=titleFontSize) #20) 	#('LFP Signal for ' + popToPlot)
 ****** ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
 ****** ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)	#15) ### UNITS uV or mV?? 
-
-
+***** Taking out fontSize argument:
+****** fontSize=12,
+****** 	### fontSize: int 		--> DEFAULT: 12 
+**** Taking out line where lfpPlot signs are inverted (already commented out):
+***** # ax2.plot(t[0:len(lfpPlot)], -lfpPlot+(1*ydisp), color=colorDict[popToPlot], linewidth=lw)  
+***** # plt.plot(t[0:len(lfpPlot)], -lfpPlot, color=colorDict[popToPlot], linewidth=lw)  # color=colorDict[includePops[0]] # -lfpPlot+(i*ydisp)
+**** Added colorMap as an arg (default 'jet') and changed imshow line:
+***** img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+***** #'jet')#cmap=plt.get_cmap('viridis'))
