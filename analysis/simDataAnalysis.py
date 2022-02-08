@@ -578,7 +578,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', ylim=None, titleSubset=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', ylim=None, titleSubset=None, savePath=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list 	--> [start, stop]
@@ -588,6 +588,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	### colorMap: str 		--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
 	### ylim: list 			--> for limits on y-axis (Hz); [min, max]
 	### titleSubset: str 
+	### savePath: str 
 	### saveFig: bool 		--> DEFAULT: True 
 		# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
 
@@ -670,8 +671,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	plt.tight_layout()
 	plt.show()
 
-	if saveFig:  ## NOTE: SHOULD FIX PREPATH SO THIS IS AUTOMATED MORE 
-		prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/popContribFigs_cmapJet/'
+	if saveFig:
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
 		if titleSubset:
 			elecInFileName = titleSubset[-2:]
 		else:

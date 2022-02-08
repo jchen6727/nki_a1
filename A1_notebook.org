@@ -59204,3 +59204,4 @@ plt.rcParams.update({'font.size': fontsiz})
 **** Added colorMap as an arg (default 'jet') and changed imshow line:
 ***** img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 ***** #'jet')#cmap=plt.get_cmap('viridis'))
+**** Added savePath argument to plotCombinedLFP -- same as plotCombinedSpike
