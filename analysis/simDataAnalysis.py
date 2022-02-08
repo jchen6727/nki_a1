@@ -638,8 +638,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
 	else:
 		spectTitle = 'LFP Spectrogram for ' + popToPlot
-	ax1.set_title(spectTitle, fontsize=titleFontSize)	#20)	#('LFP Spectrogram for ' + popToPlot)
-	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)	#15)
+	ax1.set_title(spectTitle, fontsize=titleFontSize)
+	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 	if ylim is not None:
 		ax1.set_ylim(ylim[0], ylim[1])
@@ -665,10 +665,10 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
 	else:
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot
-	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize) #20) 	#('LFP Signal for ' + popToPlot)
+	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
-	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)	#15) ### UNITS uV or mV?? 
+	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
 
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()

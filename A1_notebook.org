@@ -59185,3 +59185,11 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 fontsiz = fontSize
 plt.rcParams.update({'font.size': fontsiz})
 
+***** Lines changed :
+****** ax1.set_title(spectTitle, fontsize=titleFontSize)	#20)	#('LFP Spectrogram for ' + popToPlot)
+****** ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)	#15)
+****** ax2.set_title(timeSeriesTitle, fontsize=titleFontSize) #20) 	#('LFP Signal for ' + popToPlot)
+****** ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
+****** ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)	#15) ### UNITS uV or mV?? 
+
+
