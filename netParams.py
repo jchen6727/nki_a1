@@ -12,9 +12,9 @@ import pickle, json
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
 try:
-	from __main__ import cfg  # import SimConfig object with params from parent module
+    from __main__ import cfg  # import SimConfig object with params from parent module
 except:
-	from cfg import cfg
+    from cfg import cfg
 
 
 #------------------------------------------------------------------------------
@@ -667,10 +667,10 @@ if cfg.addBkgConn:
 #  	for key in [k for k in dir(cfg) if k.startswith('IClamp')]:
 # 		params = getattr(cfg, key, None)
 # 		[pop,sec,loc,start,dur,amp] = [params[s] for s in ['pop','sec','loc','start','dur','amp']]
-		
+        
 #         		# add stim source
 # 		netParams.stimSourceParams[key] = {'type': 'IClamp', 'delay': start, 'dur': dur, 'amp': amp}
-		
+        
 # 		# connect stim source to target
 # 		netParams.stimTargetParams[key+'_'+pop] =  {
 # 			'source': key, 
@@ -682,24 +682,28 @@ if cfg.addBkgConn:
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------
 if cfg.addNetStim:
-	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-		params = getattr(cfg, key, None)
-		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+    for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+        params = getattr(cfg, key, None)
+        [pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+        [params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
 
-		# add stim source
-		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+        # add stim source
+        netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+        
+        if not isinstance(pop, list):
+            pop = [pop]
 
-		# connect stim source to target 
-		netParams.stimTargetParams[key+'_'+pop] =  {
-			'source': key, 
-			'conds': {'pop': pop, 'ynorm': ynorm},
-			'sec': sec, 
-			'loc': loc,
-			'synMech': synMech,
-			'weight': weight,
-			'synMechWeightFactor': synMechWeightFactor,
-			'delay': delay}
+        for eachPop in pop:
+            # connect stim source to target 
+            netParams.stimTargetParams[key+'_'+pop] =  {
+                'source': key, 
+                'conds': {'pop': pop, 'ynorm': ynorm},
+                'sec': sec, 
+                'loc': loc,
+                'synMech': synMech,
+                'weight': weight,
+                'synMechWeightFactor': synMechWeightFactor,
+                'delay': delay}
 
 #------------------------------------------------------------------------------
 # Description
