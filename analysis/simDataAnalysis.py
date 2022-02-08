@@ -514,8 +514,8 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		vmin = np.amin(imshowSignal)
 		vmax = np.amax(imshowSignal) / vmaxContrast
 
+	# Plot spectrogram 
 	ax1 = plt.subplot(211)
-
 	img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
 			interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
 	divider1 = make_axes_locatable(ax1)
@@ -555,13 +555,13 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 		plt.savefig(pathToFile, dpi=300)
 
 ## LFP: data and plotting ## 
-def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes=['avg']):
-	### dataFile: str --> path to .pkl data file to load for analysis 
-	### pop: str or list  
-	### timeRange: list, e.g. [start, stop]
-	### plotType: str or list --> 'spectrogram' or 'timeSeries'
-	### filtFreq: list --> frequencies to bandpass filter lfp data 
-	### electrodes: list --> default: ['avg'] --> # SINGLE ELEMENT LIST; correct this or improve it?!?
+def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes=['avg']):
+	### dataFile: str 			--> path to .pkl data file to load for analysis 
+	### pop: str or list  		--> cell population to get the LFP data for 
+	### plotType: str or list 	--> 'spectrogram' or 'timeSeries'
+	### timeRange: list  		-->  e.g. [start, stop]
+	### electrodes: list 		--> DEFAULT: ['avg'] --> # SINGLE ELEMENT LIST; correct this or improve it?!?
+		### NOT IN USE CURRENTLY: filtFreq: list --> DEFAULT: None; frequencies to bandpass filter lfp data  <-- supposed to come from def getBandpassRange() 
 
 	# Load data file 
 	sim.load(dataFile, instantiate=False)
@@ -572,13 +572,14 @@ def getLFPDataDict(dataFile, pop, timeRange, plotType, filtFreq=None, electrodes
 	elif type(pop) is list:
 		popList = pop
 
+
 	# Set up which kind of data -- i.e. timeSeries or spectrogram 
 	if type(plotType) is str:
 		plots = [plotType]
 	elif type(plotType) is list:
 		plots = plotType
 
-	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, filtFreq=filtFreq, plots=plots)
+	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 
 	return lfpOutput
@@ -838,9 +839,9 @@ if plotSpikeData:
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict, 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
 		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
- 
+
 
 
 ###### COMBINED LFP PLOTTING ######
@@ -885,8 +886,8 @@ if plotLFPCombinedData:
 		elif isinstance(electrodes[0], Number):
 			plotTitleSubset = ', electrode ' + str(electrodes[0])
 
-		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
-		# 	figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset, saveFig=1)
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
+			figSize=(10,7), fontSize=15, titleSubset=plotTitleSubset, saveFig=1)
 
 
 		############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES

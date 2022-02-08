@@ -59162,6 +59162,13 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 		# allSignal, allFreqs = ### allSignal, allFreqs is for TESTING PURPOSES!!
 *****   # pop=includePops (from spikeSpectDict)
 *****   # pop=includePops (from histDict)
+**** NOTE --> In the color contrast lines, the vmin and vmax determinations need to be made AFTER imshowSignal is decided, since otherwise vmin and vmax will be decided based on the whole dataset, even if partial dataset is plotted in the spectrogram. 
+*** def getLFPDataDict():
+**** Taking out filtFreq as argument (filtFreq=None)
+**** Thus taking filtFreq as arg out of last line with getLFPdata
+**** ^^ Leaving comments in to address this in case I want to add it back later! 
+
+
 
 
 ** TO ADDRESS:
