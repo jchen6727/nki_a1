@@ -59167,11 +59167,12 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 **** Taking out filtFreq as argument (filtFreq=None)
 **** Thus taking filtFreq as arg out of last line with getLFPdata
 **** ^^ Leaving comments in to address this in case I want to add it back later! 
-
-
-
-
 ** TO ADDRESS:
 *** minFreq functionality in plotCombinedSpike()
 *** alpha timeRange issue
 *** cell pop ordering in the lfp plotting / dataframes functions 
+* <2022-02-08 Tue -- continue cleaning up analysis code>
+** Yesterday I left off on getLFPDatadict() in A1/analysis/simDataAnalysis.py -- continue from here!
+** A1/analysis/simDataAanlysis.py:
+*** def plotCombinedLFP():
+**** 
