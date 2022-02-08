@@ -586,12 +586,15 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list, e.g. [start, stop]
-	### colorDict: dict --> corresponds pop to color 
-	# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
 	### pop: list or str --> relevant population to plot data for 
+	### colorDict: dict --> corresponds pop to color 
 	### ylim: list --> [min, max]
 	### figSize: tuple --> default is (10,7)
 	### fontSize: int --> default is 12 
+	### titleSubset: str 
+	### saveFig: bool --> DEFAULT: True 
+		# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
+
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -607,7 +610,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	## Set font size 
 	fontsiz = fontSize
 	plt.rcParams.update({'font.size': fontsiz})
-
 
 
 	##### SPECTROGRAM  --> TOP PANEL !! 

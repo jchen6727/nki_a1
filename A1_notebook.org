@@ -59175,4 +59175,6 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 ** Yesterday I left off on getLFPDatadict() in A1/analysis/simDataAnalysis.py -- continue from here!
 ** A1/analysis/simDataAanlysis.py:
 *** def plotCombinedLFP():
-**** 
+**** arguments:
+***** -- electrode is commented out..? leave for now then ponder later
+***** In descriptions of the arguments in the comments, I added titleSubset and saveFig and made sure the order of the comments matched the order of the args 
