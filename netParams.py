@@ -697,7 +697,7 @@ if cfg.addNetStim:
             # connect stim source to target 
             netParams.stimTargetParams[key+'_'+pop] =  {
                 'source': key, 
-                'conds': {'pop': pop, 'ynorm': ynorm},
+                'conds': {'pop': eachPop, 'ynorm': ynorm},
                 'sec': sec, 
                 'loc': loc,
                 'synMech': synMech,
