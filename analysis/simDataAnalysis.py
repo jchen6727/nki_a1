@@ -489,8 +489,8 @@ def plotCombinedSpike(spectDict, histDict, timeRange, colorDict, pop, figSize=(1
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
 	# Set font sizes
-	titleFontSize = 20
 	labelFontSize = 12
+	titleFontSize = 20
 
 
 	### SPECTROGRAM -- for top panel!!
@@ -582,7 +582,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodes, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=None, fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=None, figSize=(10,7), fontSize=12, titleSubset=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list 	--> [start, stop]
@@ -604,14 +604,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 
 
 	## Create figure 
-	if figSize is None:
-		figSize = (10,7)
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
 	## Set font size 
-	fontsiz = fontSize
-	plt.rcParams.update({'font.size': fontsiz})
-
+	labelFontSize = 15 		# NOTE: in plotCombinedSpike, labelFontSize = 12
+	titleFontSize = 20
 
 	##### SPECTROGRAM  --> TOP PANEL !! 
 	# lfp = spectDict['LFP']  # #<--- UNUSED
@@ -634,16 +631,15 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap='jet')#cmap=plt.get_cmap('viridis'))
 	divider1 = make_axes_locatable(ax1)
 	cax1 = divider1.append_axes('right', size='3%', pad=0.2)
-	## fmt lines are for colorbar scientific notation
-	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)
+	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
 	fmt.set_powerlimits((0,0))
-	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)#, format=fmt)
+	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
 	if titleSubset is not None:
 		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
 	else:
 		spectTitle = 'LFP Spectrogram for ' + popToPlot
-	ax1.set_title(spectTitle, fontsize=20)	#('LFP Spectrogram for ' + popToPlot)
-	ax1.set_ylabel('Frequency (Hz)', fontsize=15)
+	ax1.set_title(spectTitle, fontsize=titleFontSize)	#20)	#('LFP Spectrogram for ' + popToPlot)
+	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)	#15)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 	if ylim is not None:
 		ax1.set_ylim(ylim[0], ylim[1])
@@ -669,10 +665,10 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, ylim=N
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
 	else:
 		timeSeriesTitle = 'LFP Signal for ' + popToPlot
-	ax2.set_title(timeSeriesTitle, fontsize=20) 	#('LFP Signal for ' + popToPlot)
-	ax2.set_xlabel('Time (ms)', fontsize=fontSize)
+	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize) #20) 	#('LFP Signal for ' + popToPlot)
+	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
-	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=15) ### UNITS uV or mV?? 
+	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)	#15) ### UNITS uV or mV?? 
 
 	# plt.suptitle(popToPlot)
 	plt.tight_layout()
@@ -830,7 +826,7 @@ includePops = ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will i
 ## TO DO: 
 ## Smooth or mess with bin size to smooth out spectrogram for spiking data
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 if plotSpikeData:
 	for pop in includePops:
@@ -851,9 +847,9 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 0
+plotLFPCombinedData = 1
 
-includePops = ['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3']#, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
