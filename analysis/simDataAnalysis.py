@@ -555,12 +555,12 @@ def plotCombinedSpike(spectDict, histDict, timeRange, pop, colorDict, figSize=(1
 		plt.savefig(pathToFile, dpi=300)
 
 ## LFP: data and plotting ## 
-def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
+def getLFPDataDict(dataFile, pop, plotType, timeRange, electrode):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
 	### pop: str or list  		--> cell population to get the LFP data for 
 	### plotType: str or list 	--> 'spectrogram' or 'timeSeries'
 	### timeRange: list  		-->  e.g. [start, stop]
-	### electrodes: list 		--> DEFAULT: ['avg'] --> # SINGLE ELEMENT LIST; correct this or improve it?!?
+	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
 		### NOT IN USE CURRENTLY: filtFreq: list --> DEFAULT: None; frequencies to bandpass filter lfp data  <-- supposed to come from def getBandpassRange() 
 
 	# Load data file 
@@ -573,10 +573,10 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 		popList = pop
 
 	# Electrodes
-	if type(electrodes) is not list: 
-		electrodesList = [electrodes]
+	if type(electrode) is not list: 
+		electrodeList = [electrode]
 	else:
-		electrodesList = electrodes
+		electrodeList = electrode
 
 
 	# Set up which kind of data -- i.e. timeSeries or spectrogram 
@@ -585,7 +585,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	elif type(plotType) is list:
 		plots = plotType
 
-	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodesList, plots=plots) # filtFreq=filtFreq (see above; in args)
+	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodeList, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
 def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, titleSubset=None, savePath=None, saveFig=True): # electrode='avg',
@@ -660,9 +660,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 
 	##### TIME SERIES  ## ON BOTTOM PANEL !! 
 	t = timeSeriesDict['t']
-	lfp = timeSeriesDict['LFP'] # timeSeriesDict['lfpPlot'] #timeSeriesDict['LFP'] ### ELECTRODE FIX???
-
-	### TEST LINE ### <-- should do same as above electrodes lines?? BUT I DID TAKE OUT ELECTRODE ARGUMENT!!!
 	lfpPlot = timeSeriesDict['lfpPlot']
 
 	lw = 1.0

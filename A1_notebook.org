@@ -59231,6 +59231,8 @@ plt.rcParams.update({'font.size': fontsiz})
 * <2022-02-09 Wed -- analysis code>
 ** thal int for morning --
 ** Continue w/ cleaning up simDataAnalysis.py:
+*** def getLFPDataDict():
+**** Since electrodes arg is really just for list of 1 electrode, I am going to change this!!!  
 *** def plotCombinedLFP():
 **** Was working on this yesterday
 **** Added vmaxContrast as an argument to plotCombinedLFP()
@@ -59250,3 +59252,10 @@ plt.rcParams.update({'font.size': fontsiz})
 		vmax = preVmax / vmaxContrast 
 		# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
 	vc = [vmin, vmax]
+**** Commented out (and then deleted) this line in the time series section that graps all the LFP data:
+***** 	# lfp = timeSeriesDict['LFP'] # timeSeriesDict['lfpPlot'] # timeSeriesDict['LFP'] ### ELECTRODE FIX???
+***** ^^ This line is not actually used, and the 'lfpPlot' line is what is actually being plotted! 
+***** ^^ I did delete this line!!
+**** Deleting this comment above the timeSeries 'lfpPlot' line since no longer relevant:
+***** 	### TEST LINE ### <-- should do same as above electrodes lines?? BUT I DID TAKE OUT ELECTRODE ARGUMENT!!!
+***** ^^ the lfpPlot key in timeSeriesDict['lfpPlot'] should take care of it -- in getLFPDataDict(). 
