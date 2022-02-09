@@ -59259,3 +59259,39 @@ plt.rcParams.update({'font.size': fontsiz})
 **** Deleting this comment above the timeSeries 'lfpPlot' line since no longer relevant:
 ***** 	### TEST LINE ### <-- should do same as above electrodes lines?? BUT I DID TAKE OUT ELECTRODE ARGUMENT!!!
 ***** ^^ the lfpPlot key in timeSeriesDict['lfpPlot'] should take care of it -- in getLFPDataDict(). 
+**** Getting rid of the suptitle comment: 	# plt.suptitle(popToPlot)
+**** Taking out this comment under description of the args:
+***** # 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
+**** What's going on with the titleSubset argument -- improve this!! --> 
+***** Put in a testing line to remind myself what this does:
+****** plotTitleSubset: , electrode 1
+***** In the code it's used in these lines --> 
+****** spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
+****** timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
+**** Going to take out titleSubset as an arg:
+***** titleSubset=None,
+***** 	### titleSubset: str 
+**** Replace titleSubset lines:
+***** titleElectrode is an arg now
+***** ^^ This will unfortunately only be used for title, and I sense there's a better way to do this, where I call getLFPDataDict inside of plotCombinedLFP and collapse the args that way or something, but .... going with this for now!
+**** Set up title lines: 
+	## Set up titles for spectrogram and timeSeries plots:
+	spectTitlePreamble = 'LFP Spectrogram for ' + popToPlot
+	timeSeriesTitlePreamble = 'LFP Signal for ' + popToPlot 
+
+	if titleElectrode is not None:
+		if type(titleElectrode) is list:
+			titleElectrode = titleElectrode[0]
+		if titleElectrode == 'avg':
+			elecTitleSubset = ', averaged over all electrodes'
+		else:
+			elecTitleSubset = ', electrode ' + str(titleElectrode)
+
+		spectTitle = spectTitlePreamble + elecTitleSubset
+		timeSeriesTitle = timeSeriesTitlePreamble + elecTitleSubset
+	else:
+		spectTitle = spectTitlePreamble
+		timeSeriesTitle = timeSeriesTitlePreamble
+**** Getting rid of:
+***** # plt.margins(x=0) in timeSeries title section  
+***** ^^ (next to ax1.set_xlim(left=timeRange[0], right=timeRange[1]))

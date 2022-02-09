@@ -588,7 +588,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrode):
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodeList, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, titleSubset=None, savePath=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list 	--> [start, stop]
@@ -598,11 +598,10 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	### colorMap: str 		--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
 	### maxFreq: int 		--> whole number that determines the maximum frequency plotted on the spectrogram 
 			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
-	### vmaxContrast: float or int --> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
-	### titleSubset: str 
-	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	### vmaxContrast: float or int 			--> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
+	### titleElectrode: str or (1-element) list	-->  FOR USE IN PLOT TITLES !! --> This is for the electrode that will appear in the title 
+	### savePath: str 	  	--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 		--> DEFAULT: True 
-		# 	MAY NOT BE NECESSARY  --> ### electrode: str or int --> (LENGTH OF 1 -- FIX THIS LATER?) electrodes better??? 
 
 
 	# Get relevant pop
@@ -619,7 +618,27 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	labelFontSize = 15 		# NOTE: in plotCombinedSpike, labelFontSize = 12
 	titleFontSize = 20
 
-	##### SPECTROGRAM  --> TOP PANEL !! 
+	## Set up titles for spectrogram and timeSeries plots:
+	spectTitlePreamble = 'LFP Spectrogram for ' + popToPlot
+	timeSeriesTitlePreamble = 'LFP Signal for ' + popToPlot 
+
+	if titleElectrode is not None:
+		if type(titleElectrode) is list:
+			titleElectrode = titleElectrode[0]
+		if titleElectrode == 'avg':
+			elecTitleSubset = ', averaged over all electrodes'
+		else:
+			elecTitleSubset = ', electrode ' + str(titleElectrode)
+
+		spectTitle = spectTitlePreamble + elecTitleSubset
+		timeSeriesTitle = timeSeriesTitlePreamble + elecTitleSubset
+	else:
+		spectTitle = spectTitlePreamble
+		timeSeriesTitle = timeSeriesTitlePreamble
+
+
+
+	##### SPECTROGRAM  --> TOP PANEL !! #####
 	spec = spectDict['spec']
 
 	S = spec[0].TFR
@@ -638,6 +657,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
 	vc = [vmin, vmax]
 
+	## Plot Spectrogram 
 	ax1 = plt.subplot(2, 1, 1)
 	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
 		vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
@@ -646,10 +666,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
 	fmt.set_powerlimits((0,0))
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	if titleSubset is not None:
-		spectTitle = 'LFP Spectrogram for ' + popToPlot + titleSubset
-	else:
-		spectTitle = 'LFP Spectrogram for ' + popToPlot
 	ax1.set_title(spectTitle, fontsize=titleFontSize)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
@@ -658,7 +674,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 
 
 
-	##### TIME SERIES  ## ON BOTTOM PANEL !! 
+	##### TIME SERIES  --> BOTTOM PANEL !! #####
 	t = timeSeriesDict['t']
 	lfpPlot = timeSeriesDict['lfpPlot']
 
@@ -668,19 +684,15 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 	cax2.axis('off')
 	ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
-	if titleSubset is not None:
-		timeSeriesTitle = 'LFP Signal for ' + popToPlot + titleSubset
-	else:
-		timeSeriesTitle = 'LFP Signal for ' + popToPlot
 	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	ax2.set_xlim(left=timeRange[0], right=timeRange[1]) # plt.margins(x=0)
+	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
 
-	# plt.suptitle(popToPlot)
 	plt.tight_layout()
 	plt.show()
 
+	## Save figure 
 	if saveFig:
 		if savePath is None:
 			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
@@ -689,7 +701,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		if titleSubset:
 			elecInFileName = titleSubset[-2:]
 		else:
-			elecInFileName = 'avgElecs'   #### BE SURE THROUGHOUT THIS THAT THE DEFAULT IS AVERAGED ELECTRODES -- GO THROUGH THIS LATER TO MAKE SURE!!! 
+			elecInFileName = 'avgElecs' 
 		fileName = pop + '_combinedLFP_' + 'elec' + elecInFileName + '.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile, dpi=300)
@@ -880,8 +892,8 @@ if plotLFPCombinedData:
 			electrodes = ['avg']
 
 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
-		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrodes=electrodes) 
-		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrodes=electrodes) #filtFreq=filtFreq, 
+		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrodes) 
+		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrodes) #filtFreq=filtFreq, 
 
 
 		### Call plotting function 
@@ -889,15 +901,18 @@ if plotLFPCombinedData:
 			ylim = [1, 40]
 		else:
 			ylim=None
-		if electrodes[0] == 'avg':
-			plotTitleSubset= ' (averaged over all electrodes)'
-		elif isinstance(electrodes[0], Number):
-			plotTitleSubset = ', electrode ' + str(electrodes[0])
+		# if electrodes[0] == 'avg':
+		# 	plotTitleSubset= ' (averaged over all electrodes)'
+		# elif isinstance(electrodes[0], Number):
+		# 	plotTitleSubset = ', electrode ' + str(electrodes[0])
 
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, ylim=ylim, 
-			figSize=(10,7), titleSubset=plotTitleSubset, saveFig=1)
+		# print('plotTitleSubset: ' + plotTitleSubset)
 
+		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
+		# 	figSize=(10,7), titleSubset=plotTitleSubset, saveFig=1)
 
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
+			figSize=(10,7), titleElectrode=['avg'], saveFig=0) # titleElectrode=electrodes
 		############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES
 		# #### TURN PSD LINES INTO THEIR OWN FUNCTION #### 
 		# figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrodes, plots=['PSD'], showFig=False)#, saveData=1)
