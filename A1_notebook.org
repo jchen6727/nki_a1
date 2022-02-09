@@ -59178,6 +59178,13 @@ prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/LFP_heatmaps/' # p
 **** 	if timeRange is None:
 		timeRange = [0, sim.cfg.duration]
 **** ^^ TOOK OUT THESE LINES AND CHNAGED TIMERANGE ARG TO NOT BEING EQUAL TO NONE
+*** def getLFPDataDict():
+**** I added some lines about electrodes to make sure that even if they are entered as ints that the code will work --> 
+**** 	# Electrodes
+	if type(electrodes) is not list: 
+		electrodesList = [electrodes]
+	else:
+		electrodesList = electrodes
 *** def plotCombinedLFP():
 **** arguments:
 ***** -- electrode is commented out..? leave for now then ponder later
@@ -59205,3 +59212,25 @@ plt.rcParams.update({'font.size': fontsiz})
 ***** img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 ***** #'jet')#cmap=plt.get_cmap('viridis'))
 **** Added savePath argument to plotCombinedLFP -- same as plotCombinedSpike
+***** Also changed the saving lines to --> 
+	if saveFig:
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
+**** Took out this unused, commented-out line at the beginning of the spectrogram section:
+***** 	# lfp = spectDict['LFP']  # #<--- UNUSED
+**** Took out this electrodes comment:
+***** ### DO I NEED TO CHANGE THIS IF ELECTRODES...??? NO, DOES THAT IN lfp_orig.py I believe!!!
+*****  ^^ Was in response to me wondering if "spec = spectDict['spec']"  was enough and yes it is -- since the spectDict is coming from sim.analysis.gtLFPData, 
+**** Changed ylim to maxFreq --> and added in same thing about minFreq not being implemented as I do in plotCombinedSpike
+***** ylim=None,
+***** ### ylim: list --> for limits on y-axis (Hz); [min, max]
+***** 	if ylim is not None:
+		ax1.set_ylim(ylim[0], ylim[1])
+* <2022-02-09 Wed -- analysis code>
+** thal int for morning --
+** Continue w/ cleaning up simDataAnalysis.py:
+*** def plotCombinedLFP():
+**** Was working on this yesterday
+**** 
