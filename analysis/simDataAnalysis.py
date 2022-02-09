@@ -588,7 +588,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrodes):
 	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodesList, plots=plots) # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, titleSubset=None, savePath=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, titleSubset=None, savePath=None, saveFig=True): # electrode='avg',
 	### spectDict: dict with spectrogram data
 	### timeSeriesDict: dict with timeSeries data
 	### timeRange: list 	--> [start, stop]
@@ -598,6 +598,7 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	### colorMap: str 		--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
 	### maxFreq: int 		--> whole number that determines the maximum frequency plotted on the spectrogram 
 			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
+	### vmaxContrast: float or int --> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
 	### titleSubset: str 
 	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 		--> DEFAULT: True 
@@ -622,16 +623,19 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 	spec = spectDict['spec']
 
 	S = spec[0].TFR
-	F = spec[0].f   
+	F = spec[0].f
 	T = timeRange
 
+	## Set up vmin / vmax color contrasts 
 	vmin = np.array([s.TFR for s in spec]).min()
-	vmax = np.array([s.TFR for s in spec]).max()
-	print('vmin: ' + str(vmin)) ### COLOR MAP TESTING LINES 
-	print('vmax: ' + str(vmax)) ### COLOR MAP TESTING LINES 
-	# vmax = 0.0009 	# IT3
-	# vmax = 0.8e-05 	# IT5A
-	# vmax = 1e-06 		# PT5B 
+	# print('vmin: ' + str(vmin)) ### COLOR MAP CONTRAST TESTING LINES 
+	if vmaxContrast is None:
+		vmax = np.array([s.TFR for s in spec]).max()
+	else:
+		preVmax = np.array([s.TFR for s in spec]).max()
+		# print('original vmax: ' + str(preVmax))		### COLOR MAP CONTRAST TESTING LINES 
+		vmax = preVmax / vmaxContrast 
+		# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
 	vc = [vmin, vmax]
 
 	ax1 = plt.subplot(2, 1, 1)

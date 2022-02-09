@@ -59233,4 +59233,20 @@ plt.rcParams.update({'font.size': fontsiz})
 ** Continue w/ cleaning up simDataAnalysis.py:
 *** def plotCombinedLFP():
 **** Was working on this yesterday
-**** 
+**** Added vmaxContrast as an argument to plotCombinedLFP()
+**** Taking out this commented-out notes about the vmax values for IT3, IT5A, and PT5B in the theta wavelet:
+***** # IT3 vmax = 0.0009		
+***** # IT5A vmax = 0.8e-05	
+***** # PT5B vmax = 1e-06 
+**** Also changed the vmin / vmax lines to this --> 
+	## Set up vmin / vmax color contrasts 
+	vmin = np.array([s.TFR for s in spec]).min()
+	# print('vmin: ' + str(vmin)) ### COLOR MAP CONTRAST TESTING LINES 
+	if vmaxContrast is None:
+		vmax = np.array([s.TFR for s in spec]).max()
+	else:
+		preVmax = np.array([s.TFR for s in spec]).max()
+		# print('original vmax: ' + str(preVmax))		### COLOR MAP CONTRAST TESTING LINES 
+		vmax = preVmax / vmaxContrast 
+		# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
+	vc = [vmin, vmax]
