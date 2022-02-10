@@ -235,17 +235,36 @@ def evalPopsAbsolute():
 def evalPops(dataFrame):
 	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
 
-	# includePopsRel = []
-	# includePopsAbs = []
-	# return includePopsRel, includePopsAbs
-
+	# Maximum values 
 	maxPops = dataFrame.idxmax()
 	maxPopsList = list(maxPops)
-	maxPopstDict = dict(maxPops)
+	maxPopsDict = dict(maxPops)
 
-	maxValues = dataFrame.idx()
+	maxPopsDict['avg'] = maxPopsDict.pop(20)
+
+	maxValues = dataFrame.max()
 	maxValuesList = list(maxValues)
 	maxValuesDict = dict(maxValues)
+
+	maxValuesDict['avg'] = maxValuesDict.pop(20)
+
+
+	# Minimum values
+	minPops = dataFrame.idxmin()
+	minPopsList = list(minPops)
+	minPopsDict = dict(minPop)
+
+	minPopsDict['avg'] = minPopsDict.pop(20)
+
+	minValues = dataFrame.min()
+	minValuesList = list(minValues)
+	minValuesDict = dict(minValues)
+
+	minValuesDict['avg'] = minValuesDict.pop(20)
+
+
+	return maxPops, maxPopsList, maxPopsDict, maxValues, maxValuesList, maxValuesDict
+
 ######################################################################
 
 
@@ -858,6 +877,15 @@ if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+
+	maxPopsPeak, maxPopsPeakList, maxPopsPeakDict, maxValuesPeak, maxValuesPeakList, maxValuesPeakDict = \
+	evalPops(dfPeak)
+
+	maxPopsAvg, maxPopsAvgList, maxPopsAvgDict, maxValuesAvg, maxValuesAvgList, maxValuesAvgDict = \
+	evalPops(dfAvg)
+
+
+
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
 	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'

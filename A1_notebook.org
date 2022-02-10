@@ -59496,4 +59496,10 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 **** (2) https://www.kite.com/python/answers/how-to-find-the-max-value-of-a-pandas-dataframe-column-in-python
 *** So, looks like df.max() gives me the values, while df.idxmax() returns the index of those values -- works great with the dfPeak and dfAvg data frames. 
 *** ^^ But, now I need to figure out how to output this data / turn it into a dict or list or some other python data type -- or work with a pandas "series"?
+*** okay -- SO, now I able to return dicts that have the max values, and another with the actual pop that corresponds to that max value. These are in separate dicts, with the keys being the same electrodes. 
+*** *I SHOULD ALSO BEING DOING THIS FOR THE MINIMUM VALUES!!!*
+*** Deleting these lines from the original rough draft of the evalPops function:
+	# includePopsRel = []
+	# includePopsAbs = []
+	# return includePopsRel, includePopsAbs
 *** 
