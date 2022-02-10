@@ -235,35 +235,28 @@ def evalPopsAbsolute():
 def evalPops(dataFrame):
 	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
 
-	# Maximum values 
+	## Maximum values ## 
 	maxPops = dataFrame.idxmax()
-	maxPopsList = list(maxPops)
-	maxPopsDict = dict(maxPops)
-
+	maxPopsDict = dict(maxPops) 			# maxPopsList = list(maxPops)
 	maxPopsDict['avg'] = maxPopsDict.pop(20)
 
 	maxValues = dataFrame.max()
-	maxValuesList = list(maxValues)
-	maxValuesDict = dict(maxValues)
-
+	maxValuesDict = dict(maxValues)			# maxValuesList = list(maxValues)
 	maxValuesDict['avg'] = maxValuesDict.pop(20)
 
 
-	# Minimum values
+	## Minimum values ## 
 	minPops = dataFrame.idxmin()
-	minPopsList = list(minPops)
-	minPopsDict = dict(minPop)
-
+	minPopsDict = dict(minPops)				# minPopsList = list(minPops)
 	minPopsDict['avg'] = minPopsDict.pop(20)
 
 	minValues = dataFrame.min()
-	minValuesList = list(minValues)
-	minValuesDict = dict(minValues)
-
+	minValuesDict = dict(minValues)			# minValuesList = list(minValues)
 	minValuesDict['avg'] = minValuesDict.pop(20)
 
 
-	return maxPops, maxPopsList, maxPopsDict, maxValues, maxValuesList, maxValuesDict
+	return maxPopsDict, maxValuesDict # maxPops, maxValues  # maxPopsList, maxValuesList 
+	# return minPopsDict, minValuesDict  ## minPops, minValues, 
 
 ######################################################################
 
@@ -878,12 +871,13 @@ if evalPopsBool:
 	print('dataFile: ' + str(dataFile))
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 
-	maxPopsPeak, maxPopsPeakList, maxPopsPeakDict, maxValuesPeak, maxValuesPeakList, maxValuesPeakDict = \
+	maxPopsPeak, maxPopsPeakDict, maxValuesPeak, maxValuesPeakDict = \
 	evalPops(dfPeak)
+	# maxPopsPeakList, maxValuesPeakList
 
-	maxPopsAvg, maxPopsAvgList, maxPopsAvgDict, maxValuesAvg, maxValuesAvgList, maxValuesAvgDict = \
+	maxPopsAvg, maxPopsAvgDict, maxValuesAvg, maxValuesAvgDict = \
 	evalPops(dfAvg)
-
+	# maxPopsAvgList, maxValuesAvgList 
 
 
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
