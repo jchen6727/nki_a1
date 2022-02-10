@@ -59323,4 +59323,70 @@ plt.rcParams.update({'font.size': fontsiz})
 ** Turn PSD code into a function -- 
 *** This psd code (copy-pasted below) was in the main code block in the plot LFP section. 
 *** ^^ I used this code in order to look at the most powerful frequency in each of the component lfp signals I was looking at for the theta wavelet. 
-*** 
+*** Originally, in the main code block lines, I had used sim.analysis.plotLFP in order to get the figs, outputData -- really I just need the outputData. Would I be able to use getLFPData instead? -- MAKE TWO FUNCTIONS TO COMPARE 
+** ^^ To do this, changing netpyne 'lfp' branch on my fork of netpyne!!! such that getLFPData function in lfp_orig.py includes PSD calculations:
+*** plots arg has 'PSD' added to it --> plots=['timeSeries', 'spectrogram', 'PSD']
+*** Removing Welch PSD calculation lines (commented out; and present in plotLFP below):
+        # ALTERNATIVE PSD CALCULATION USING WELCH
+        # from http://joelyancey.com/lfp-python-practice/
+        # from scipy import signal as spsig
+        # Fs = int(1000.0/sim.cfg.recordStep)
+        # maxFreq=100
+        # f, psd = spsig.welch(lfpPlot, Fs, nperseg=100)
+        # plt.semilogy(f,psd,'k')
+        # sb.despine()
+        # plt.xlim((0,maxFreq))
+        # plt.yticks(size=fontsiz)
+        # plt.xticks(size=fontsiz)
+        # plt.ylabel('$uV^{2}/Hz$',size=fontsiz)
+*** Removing the max freq testing lines (commented out; and present in plotLFP below):
+            ## max freq testing lines !! ##
+            # print('type(freqs): ' + str(type(freqs)))
+            # print('max freq: ' + str(np.amax(freqs)))
+            # print('type(signal): ' + str(type(signal)))
+            # print('max signal: ' + str(np.amax(signal)))
+            # print('signal[0]: ' + str(signal[0]))
+            # ###
+*** Commented out these plotting lines:
+        # for i,elec in enumerate(electrodes):
+        #     if not overlay:
+        #         plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+        #     if elec == 'avg':
+        #         color = 'k'
+        #     elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+        #         color = colors[i % len(colors)]
+        #     freqs = allFreqs[i]
+        #     signal = allSignal[i]
+        #     plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
+
+        #     plt.xlim([0, maxFreq])
+        #     if len(electrodes) > 1 and not overlay:
+        #         plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
+        #     plt.ylabel(ylabel, fontsize=fontSize)
+
+        # # format plot
+        # plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+        # if overlay:
+        #     plt.legend(fontsize=fontSize)
+        # plt.tight_layout()
+        # if pop is None:
+        #     plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+        # elif pop is not None:
+        #     PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
+        #     plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
+        # plt.subplots_adjust(bottom=0.08, top=0.92)
+
+        # if logx:
+        #     pass
+        # #from IPython import embed; embed()
+
+        # # save figure
+        # if saveFig:
+        #     if isinstance(saveFig, basestring):
+        #         filename = saveFig
+        #     else:
+        #         filename = sim.cfg.filename + '_LFP_psd.png'
+        #     plt.savefig(filename, dpi=dpi)
+*** Added outputData update lines:
+    if 'PSD' in plots:
+        outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
