@@ -629,12 +629,13 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 			elecTitleSubset = ', averaged over all electrodes'
 		else:
 			elecTitleSubset = ', electrode ' + str(titleElectrode)
-
 		spectTitle = spectTitlePreamble + elecTitleSubset
 		timeSeriesTitle = timeSeriesTitlePreamble + elecTitleSubset
+		figFilename = pop + '_combinedLFP_elec_' + str(titleElectrode) + '.png'
 	else:
 		spectTitle = spectTitlePreamble
 		timeSeriesTitle = timeSeriesTitlePreamble
+		figFilename = pop + '_combinedLFP.png'
 
 
 
@@ -698,17 +699,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
 		else:
 			prePath = savePath
-		if titleSubset:
-			elecInFileName = titleSubset[-2:]
-		else:
-			elecInFileName = 'avgElecs' 
-		fileName = pop + '_combinedLFP_' + 'elec' + elecInFileName + '.png'
-		pathToFile = prePath + fileName
+		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
 
-## PSD
-
+## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
 def getPSDinfo(dataFile, pop, timeRange, electrode, plotPSD=False):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
 	### pop: str or list  		--> cell population to get the LFP data for
@@ -824,15 +819,20 @@ theta = 1
 if delta:
 	timeRange, dataFile = getWaveletInfo('delta', based)
 	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
+	ylim = [1, 40]
+	maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
 elif beta:
 	timeRange, dataFile = getWaveletInfo('beta', based)
 	wavelet='beta'
+	maxFreq=None
 elif alpha:
 	timeRange, dataFile = getWaveletInfo('alpha', based) ## recall timeRange issue (see nb)
 	wavelet='alpha'
+	maxFreq=None
 elif theta:
 	timeRange, dataFile = getWaveletInfo('theta', based)
 	wavelet='theta'
+	maxFreq=None
 elif gamma:
 	print('Cannot analyze gamma wavelet at this time')
 
@@ -910,9 +910,6 @@ if plotLFPCombinedData:
 			electrodes = [11]
 		elif pop == 'CT5B':
 			electrodes = [11]
-		# ## PSD POP TESTING BLOCK BEGIN ## 
-		# elif pop == ''
-		# ## PSD POP TESTING BLOCK END ## 
 		else:
 			electrodes = ['avg']
 
@@ -921,17 +918,10 @@ if plotLFPCombinedData:
 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrodes) #filtFreq=filtFreq, 
 
 
-		### Call plotting function 
-		if delta:
-			ylim = [1, 40]
-		else:
-			ylim=None
-
-
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
 			figSize=(10,7), titleElectrode=electrodes, saveFig=1)
 
-		maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
+		maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes, plotPSD=1)
 
 
 

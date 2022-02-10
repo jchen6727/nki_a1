@@ -59443,3 +59443,44 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 		# maxSignalIndex = np.where(signal==np.amax(signal))
 		# maxPowerFrequency = freqs[maxSignalIndex]
 		# print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))
+** Filename saving in def plotCombinedLFP():
+*** Original lines:
+	if saveFig:
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
+		# if titleSubset:
+		# 	elecInFileName = titleSubset[-2:]
+		# else:
+		# 	elecInFileName = 'avgElecs' 
+
+		fileName = pop + '_combinedLFP_' + 'elec' + elecInFileName + '.png'
+		pathToFile = prePath + fileName
+		plt.savefig(pathToFile, dpi=300)
+*** ^^ titleSubset is no longer an arg, so threw an error when I tested! 
+*** now changed the lines earlier when dealing with titleElectrode to produce a figFilename:
+	if titleElectrode is not None:
+		if type(titleElectrode) is list:
+			titleElectrode = titleElectrode[0]
+		if titleElectrode == 'avg':
+			elecTitleSubset = ', averaged over all electrodes'
+		else:
+			elecTitleSubset = ', electrode ' + str(titleElectrode)
+		spectTitle = spectTitlePreamble + elecTitleSubset
+		timeSeriesTitle = timeSeriesTitlePreamble + elecTitleSubset
+		figFilename = pop + '_combinedLFP_elec_' + str(titleElectrode) + '.png'
+	else:
+		spectTitle = spectTitlePreamble
+		timeSeriesTitle = timeSeriesTitlePreamble
+		figFilename = pop + '_combinedLFP.png'
+*** and then I changed the save figure lines to this: 
+	## Save figure 
+	if saveFig:
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
+		pathToFile = prePath + figFilename
+		plt.savefig(pathToFile, dpi=300)
+*** works!! 
