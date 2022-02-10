@@ -59390,3 +59390,56 @@ plt.rcParams.update({'font.size': fontsiz})
 *** Added outputData update lines:
     if 'PSD' in plots:
         outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
+** OKAY, well the plotLFP and getLFPData methods for PSD both seem to be equivalent
+** HOWEVER, little odd that while testing, every time I test an individual electrode for a pop (e.g. 'CT5B' at elec 1 or elec 11, etc.), no matter what the pop or what the electrode (thus far), I always get 7 as the max power frequency, and if I do 'avg' (no matter what the pop, thus far), I always get 100. BUT, at least they do appear to be equal in terms of the methods, so I will scrap the plotLFP for now. 
+** Continuing with PSD function:
+*** Getting rid of getPSDinfo_usingPlotLFP <-- works same as usingGetLFPData()
+def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
+	### dataFile: str 			--> path to .pkl data file to load for analysis 
+	### pop: str or list  		--> cell population to get the LFP data for
+	### timeRange: list  		--> e.g. [start, stop]
+	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
+
+
+	# Load data file 
+	sim.load(dataFile, instantiate=False)
+
+	# Get LFP data 
+	### NOTE: make sure electrode list / int is fixed 
+	figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'], showFig=False)
+
+	# Get signal & frequency lists 
+	signalList = outputData['allSignal']
+	signal = signalList[0]
+	freqsList = outputData['allFreqs']
+	freqs = freqsList[0]
+
+	maxSignalIndex = np.where(signal==np.amax(signal))
+	maxPowerFrequency = freqs[maxSignalIndex]
+	print(pop + ' max power frequency in LFP signal at electrode ' + str(electrode[0]) + ': ' + str(maxPowerFrequency))
+
+	return maxPowerFrequency
+*** def getPSDinfo() is the function for now!!
+*** Change this ^^ in the main code block too 
+**** Got rid of this testing line: 	
+	maxPowerFrequencyPLOTLFP = getPSDinfo_usingPlotLFP(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
+**** Got rid of this testing line:
+     if maxPowerFrequencyGETLFP == maxPowerFrequencyPLOTLFP:
+			print('max power frequencies are EQUAL ')
+**** Getting rid of these testing lines since they are now in the getPSDinfo() function:
+
+		# ############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES
+		# #### TURN PSD LINES INTO THEIR OWN FUNCTION #### 
+		# figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrodes, plots=['PSD'], showFig=False)#, saveData=1)
+
+		# signalList = outputData['allSignal']
+		# signal = signalList[0]
+		# freqsList = outputData['allFreqs']
+		# freqs = freqsList[0]
+
+		# # print(str(signal.shape))
+		# # print(str(freqs.shape))
+
+		# maxSignalIndex = np.where(signal==np.amax(signal))
+		# maxPowerFrequency = freqs[maxSignalIndex]
+		# print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))

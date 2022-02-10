@@ -708,43 +708,22 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 
 
 ## PSD
-def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
+
+def getPSDinfo(dataFile, pop, timeRange, electrode, plotPSD=False):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
 	### pop: str or list  		--> cell population to get the LFP data for
 	### timeRange: list  		-->  e.g. [start, stop]
 	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
+	### plotPSD: bool 			--> Determines whether or not to plot the PSD signals 	--> DEFAULT: False
 
 
 	# Load data file 
 	sim.load(dataFile, instantiate=False)
 
-	# Get LFP data 
-	### NOTE: make sure electrode list / int is fixed 
-	figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'], showFig=False)
-
-	# Get signal & frequency lists 
-	signalList = outputData['allSignal']
-	signal = signalList[0]
-	freqsList = outputData['allFreqs']
-	freqs = freqsList[0]
-
-	maxSignalIndex = np.where(signal==np.amax(signal))
-	maxPowerFrequency = freqs[maxSignalIndex]
-	print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))
-
-	return maxPowerFrequency
-
-def getPSDinfo_usingGetLFPData(dataFile, pop, timeRange, electrode):
-	### dataFile: str 			--> path to .pkl data file to load for analysis 
-	### pop: str or list  		--> cell population to get the LFP data for
-	### timeRange: list  		-->  e.g. [start, stop]
-	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
-
-	# Load data file 
-	sim.load(dataFile, instantiate=False)
-
+	# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
 	outputData = sim.analysis.getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])
 
+	# Get signal & frequency data
 	signalList = outputData['allSignal']
 	signal = signalList[0]
 	freqsList = outputData['allFreqs']
@@ -755,7 +734,11 @@ def getPSDinfo_usingGetLFPData(dataFile, pop, timeRange, electrode):
 
 	maxSignalIndex = np.where(signal==np.amax(signal))
 	maxPowerFrequency = freqs[maxSignalIndex]
-	print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))
+	print(pop + ' max power frequency in LFP signal at electrode ' + str(electrode[0]) + ': ' + str(maxPowerFrequency))
+
+	# Create PSD plots, if specified 
+	if plotPSD:
+		sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])
 
 	return maxPowerFrequency
 
@@ -910,7 +893,7 @@ if plotSpikeData:
 
 plotLFPCombinedData = 1
 
-includePops = ['IT3']#, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
@@ -927,6 +910,9 @@ if plotLFPCombinedData:
 			electrodes = [11]
 		elif pop == 'CT5B':
 			electrodes = [11]
+		# ## PSD POP TESTING BLOCK BEGIN ## 
+		# elif pop == ''
+		# ## PSD POP TESTING BLOCK END ## 
 		else:
 			electrodes = ['avg']
 
@@ -942,26 +928,11 @@ if plotLFPCombinedData:
 			ylim=None
 
 
-		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
-		# 	figSize=(10,7), titleElectrode=electrodes, saveFig=1)
+		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
+			figSize=(10,7), titleElectrode=electrodes, saveFig=1)
 
-		maxPowerFrequencyGETLFP = getPSDinfo_usingGetLFPData(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
-		maxPowerFrequencyPLOTLFP = getPSDinfo_usingPlotLFP(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
-		# ############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES
-		# #### TURN PSD LINES INTO THEIR OWN FUNCTION #### 
-		# figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrodes, plots=['PSD'], showFig=False)#, saveData=1)
+		maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
 
-		# signalList = outputData['allSignal']
-		# signal = signalList[0]
-		# freqsList = outputData['allFreqs']
-		# freqs = freqsList[0]
-
-		# # print(str(signal.shape))
-		# # print(str(freqs.shape))
-
-		# maxSignalIndex = np.where(signal==np.amax(signal))
-		# maxPowerFrequency = freqs[maxSignalIndex]
-		# print(pop + ' max power frequency in LFP signal at electrode ' + str(electrodes[0]) + ': ' + str(maxPowerFrequency))
 
 
 
