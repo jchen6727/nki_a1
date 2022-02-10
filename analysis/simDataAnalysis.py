@@ -715,13 +715,12 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
 
 
-
 	# Load data file 
 	sim.load(dataFile, instantiate=False)
 
 	# Get LFP data 
 	### NOTE: make sure electrode list / int is fixed 
-	figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'], showFig=False)#, saveData=1)
+	figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'], showFig=False)
 
 	# Get signal & frequency lists 
 	signalList = outputData['allSignal']
@@ -744,7 +743,7 @@ def getPSDinfo_usingGetLFPData(dataFile, pop, timeRange, electrode):
 	# Load data file 
 	sim.load(dataFile, instantiate=False)
 
-	outputData = sim.analysis.getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'], showFig=False)#, saveData=1)
+	outputData = sim.analysis.getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])
 
 	signalList = outputData['allSignal']
 	signal = signalList[0]
@@ -946,9 +945,8 @@ if plotLFPCombinedData:
 		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
 		# 	figSize=(10,7), titleElectrode=electrodes, saveFig=1)
 
-
-		maxPowerFrequencyPLOTLFP = getPSDinfo_usingPlotLFP(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
 		maxPowerFrequencyGETLFP = getPSDinfo_usingGetLFPData(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
+		maxPowerFrequencyPLOTLFP = getPSDinfo_usingPlotLFP(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes)
 		# ############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES
 		# #### TURN PSD LINES INTO THEIR OWN FUNCTION #### 
 		# figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrodes, plots=['PSD'], showFig=False)#, saveData=1)
