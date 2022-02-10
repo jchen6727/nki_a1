@@ -780,18 +780,6 @@ if local:
 
 ######## SET WAVELET TO LOOK AT		!!
 
-# wavelets = ['delta', 'beta', 'alpha', 'theta']
-
-# for wavelet in wavelets:
-# 	timeRange, dataFile = getWaveletInfo(wavelet, based)
-# 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
-# 	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-# 	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
-# 	plt.show(peakPlot)
-# 	avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-# 	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
-# 	plt.show(avgPlot)
-
 #########
 delta = 0
 beta = 	0
@@ -867,7 +855,7 @@ if plotSpikeData:
 ###### COMBINED LFP PLOTTING ######
 ## TO DO: 
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
-## Could also compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
+## Compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
 plotLFPCombinedData = 1
 
@@ -901,18 +889,12 @@ if plotLFPCombinedData:
 			ylim = [1, 40]
 		else:
 			ylim=None
-		# if electrodes[0] == 'avg':
-		# 	plotTitleSubset= ' (averaged over all electrodes)'
-		# elif isinstance(electrodes[0], Number):
-		# 	plotTitleSubset = ', electrode ' + str(electrodes[0])
 
-		# print('plotTitleSubset: ' + plotTitleSubset)
-
-		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
-		# 	figSize=(10,7), titleSubset=plotTitleSubset, saveFig=1)
 
 		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=ylim, 
-			figSize=(10,7), titleElectrode=['avg'], saveFig=0) # titleElectrode=electrodes
+			figSize=(10,7), titleElectrode=electrodes, saveFig=1)
+
+
 		############# PSD ################# <---- USEFUL FOR CHECKING THE MOST POWERFUL FREQUENCY IN THE LFP SIGNAL FOR PARTICULAR POPS  / ELECTRODES
 		# #### TURN PSD LINES INTO THEIR OWN FUNCTION #### 
 		# figs, outputData = sim.analysis.plotLFP(pop=pop, timeRange=timeRange, electrodes=electrodes, plots=['PSD'], showFig=False)#, saveData=1)
