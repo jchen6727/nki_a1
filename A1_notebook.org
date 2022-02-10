@@ -59484,3 +59484,16 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 *** works!! 
+** NEXT TASK: set up evalPops function such that it automatically spits out both the pop(s) and the associated electrode with the strongest LFP contributions
+*** evalPops -- this is the function to start with!! 
+*** def evalPops
+*** ^^ okay so what do I want this to do? 
+**** I would like this to do what I did manually for the theta wavelet. 
+**** ^^ and what I did for this is that I plotted the avg and peak heatmaps (using the dataFrames) and then picked the pop-electrodes with the darkest colors (aka highest values)
+*** Run the evalPops section in the main code (with the plotting commented out) just to re-familiarize myself with the structure of the dataFrame contents
+*** Resources on finding max value in a pandas dataFrame:
+**** (1) https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.max.html
+**** (2) https://www.kite.com/python/answers/how-to-find-the-max-value-of-a-pandas-dataframe-column-in-python
+*** So, looks like df.max() gives me the values, while df.idxmax() returns the index of those values -- works great with the dfPeak and dfAvg data frames. 
+*** ^^ But, now I need to figure out how to output this data / turn it into a dict or list or some other python data type -- or work with a pandas "series"?
+*** 

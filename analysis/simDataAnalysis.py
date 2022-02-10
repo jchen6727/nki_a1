@@ -235,9 +235,17 @@ def evalPopsAbsolute():
 def evalPops(dataFrame):
 	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
 
-	includePopsRel = []
-	includePopsAbs = []
-	return includePopsRel, includePopsAbs
+	# includePopsRel = []
+	# includePopsAbs = []
+	# return includePopsRel, includePopsAbs
+
+	maxPops = dataFrame.idxmax()
+	maxPopsList = list(maxPops)
+	maxPopstDict = dict(maxPops)
+
+	maxValues = dataFrame.idx()
+	maxValuesList = list(maxValues)
+	maxValuesDict = dict(maxValues)
 ######################################################################
 
 
@@ -311,8 +319,8 @@ def getDataFrames(dataFile, timeRange, verbose=0):
 			elif isinstance(elec, Number):
 				elecKey = 'elec' + str(elec)
 				lfpPopData[pop][elecKey] = {}
-				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) ## LFP data (from 1 pop) averaged in time, over 1 electrode 
-				lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec])
+				lfpPopData[pop][elecKey]['avg'] = np.average(popLFPdata[:, elec]) 	## LFP data (from 1 pop) averaged in time, over 1 electrode 
+				lfpPopData[pop][elecKey]['peak'] = np.amax(popLFPdata[:, elec]) 	## Maximum LFP value from 1 pop, over time, recorded at 1 electrode 
 
 
 	#### PEAK LFP AMPLITUDES, DATA FRAME ####
@@ -702,7 +710,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-
 ## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
 def getPSDinfo(dataFile, pop, timeRange, electrode, plotPSD=False):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
@@ -845,7 +852,7 @@ elif gamma:
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
 
-evalPopsBool = 0
+evalPopsBool = 1
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -853,14 +860,14 @@ if evalPopsBool:
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
-	peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
-	plt.show(peakPlot)
+	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	# plt.show(peakPlot)
 
-	avgTitle = 'Avg LFP Amplitudes of Theta Wavelet' #'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
-	plt.show(avgPlot)
+	# avgTitle = 'Avg LFP Amplitudes of Theta Wavelet' #'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# # avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
+	# avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
+	# plt.show(avgPlot)
 
 
 ########################
@@ -891,7 +898,7 @@ if plotSpikeData:
 ## [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
 ## Compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
@@ -899,7 +906,7 @@ if plotLFPCombinedData:
 	for pop in includePops:
 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
 
-		## Get electrodes associated with each pop 
+		## Get electrodes associated with each pop   #### <-- THESE SHOULD BE RETURNED AUTOMATICALLY FROM EVAL POPS FX
 		if pop == 'IT3':  ## COULD ADD THESE INTO DICT SOMEWHERE ELSE FOR ACCESS!!! 
 			electrodes = [1] 
 		elif pop == 'IT5A':
@@ -921,7 +928,8 @@ if plotLFPCombinedData:
 		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
 			figSize=(10,7), titleElectrode=electrodes, saveFig=1)
 
-		maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes, plotPSD=1)
+		### Get the strongest frequency in the LFP signal ### 
+		# maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes, plotPSD=1)
 
 
 
