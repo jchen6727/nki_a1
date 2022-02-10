@@ -270,7 +270,27 @@ def evalPops(dataFrame):
 
 
 	### Get the pop / electrode pairing from the top 5 highest values .... 
+	dictKeys = ['first', 'second', 'third', 'fourth', 'fifth']
+	dictValues = ['pop', 'electrode', 'value']
+
 	top5pops = {}
+	bottom5pops = {}
+
+	for place in dictKeys:
+		top5pops[place] = {}
+		bottom5pops[place] = {}
+		for dictValue in dictValues:
+			if value == 'pop':
+				top5pops[place][dictValue] = 'placeholder'
+				bottom5pops[place][dictValue] = 'placeholder'
+			elif value == 'electrode':
+				top5pops[place][dictValue] = 'placeholder2'
+				bottom5pops[place][dictValue] = 'placeholder2'
+			elif value == 'value':
+				top5pops[place][dictValue] = 'placeholder3'
+				bottom5pops[place][dictValue] = 'placeholder3'
+
+
 	top5pops['first'] = {}  ## keys: pop, electrode, value 
 	top5pops['second'] = {}
 	top5pops['third'] = {}
