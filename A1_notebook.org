@@ -59511,4 +59511,19 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 	# top3pops[1] = maxPopsDict[maxValuesDict_sorted[1][0]]
 	# top3pops[2] = maxPopsDict[maxValuesDict_sorted[2][0]]
 
-*** 
+** Okay, now the evalPops() script does output the top and bottom 5 pops, with the corresponding electrode and LFP value, but this needs to be made more efficient!! 
+*** Deleting these old return comments:
+	# , maxPopsDict, maxValuesDict # maxPops, maxValues  # maxPopsList, maxValuesList 
+	# return minPopsDict, minValuesDict  ## minPops, minValues, 
+*** Also deleting this old line where I attempted to sort the max values dict:
+	# for key, value in sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+*** Deleting these testing lines (now commented out) in the main code block, in the evalPops section:
+**** old return values:
+	#, maxPopsPeakDict, maxValuesPeakDict = evalPops(dfPeak)
+	## ^^ RETURNS A DICT 
+**** testing line where I sorted one of the dicts (this now happens in the evalPops function):
+# maxValuesPeakDict_sorted = sorted(maxValuesPeakDict.items(), key=lambda kv: kv[1], reverse=True)
+**** old return values for evalPops(dfAvg):
+	# maxPopsAvg, maxPopsAvgDict, maxValuesAvg, maxValuesAvgDict = \
+	# evalPops(dfAvg)
+	# maxPopsAvgList, maxValuesAvgList 
