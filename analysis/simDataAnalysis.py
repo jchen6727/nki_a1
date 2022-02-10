@@ -244,8 +244,59 @@ def evalPops(dataFrame):
 	maxValuesDict = dict(maxValues)			# maxValuesList = list(maxValues)
 	maxValuesDict['avg'] = maxValuesDict.pop(20)
 
+	# for key, value in sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+	maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+	## ^^ this will result in something like:
+	### [(9, 0.5670525182931198), (1, 0.3420748960387809), (10, 0.33742019248236954), 
+	### (13, 0.32119689278509755), (12, 0.28783570785551094), (15, 0.28720528519895633), 
+	### (11, 0.2639944261574631), (8, 0.22602826003777302), (5, 0.2033219839190444), 
+	### (14, 0.1657402764440641), (16, 0.15516847639341205), (19, 0.107089151806042), 
+	### (17, 0.10295759810425918), (18, 0.07873739475515538), (6, 0.07621437123298459), 
+	### (3, 0.06367696913556453), (2, 0.06276483442249459), (4, 0.06113624787605265), 
+	### (7, 0.057098300660935186), (0, 0.027993550732642168), ('avg', 0.016416523477252705)]
+	## Each element is a tuple -- (electrode, value)
+	## dict_sorted[0][0] -- electrode corresponding to the highest value
+	## dict_sorted[0][1] -- highest LFP amplitude in the dataFrame 
 
-	## Minimum values ## 
+	## dict_sorted[1][0] -- electrode corresponding to 2nd highest value
+	## dict_sorted[1][1] -- second highest LFP amplitude in the dataFrame
+
+	## dict_sorted[2][0] -- electrode corresponding to 3rd highest value
+	## dict_sorted[2][1] -- third highest LFP amplitude in the dataFrame
+
+	## maxPopsDict[dict_sorted[0][0]] -- pop associated w/ the electrode that corresponds to the highest Value 
+	## maxPopsDict[dict_sorted[1][0]]
+	## maxPopsDict[dict_sorted[2][0]]
+
+
+	### Get the pop / electrode pairing from the top 5 highest values .... 
+	top5pops = {}
+	top5pops['first'] = {}  ## keys: pop, electrode, value 
+	top5pops['second'] = {}
+	top5pops['third'] = {}
+	top5pops['fourth'] = {}
+	top5pops['fifth'] = {}
+
+	top5pops['first']['pop'] = maxPopsDict[maxValuesDict_sorted[0][0]]
+	top5pops['second']['pop'] = maxPopsDict[maxValuesDict_sorted[1][0]]
+	top5pops['third']['pop'] = maxPopsDict[maxValuesDict_sorted[2][0]]
+	top5pops['fourth']['pop'] = maxPopsDict[maxValuesDict_sorted[3][0]]
+	top5pops['fifth']['pop'] = maxPopsDict[maxValuesDict_sorted[4][0]]
+
+	top5pops['first']['electrode'] = maxValuesDict_sorted[0][0]
+	top5pops['second']['electrode'] = maxValuesDict_sorted[1][0]
+	top5pops['third']['electrode'] = maxValuesDict_sorted[2][0]
+	top5pops['fourth']['electrode'] = maxValuesDict_sorted[3][0]
+	top5pops['fifth']['electrode'] = maxValuesDict_sorted[4][0]
+
+	top5pops['first']['value'] = maxValuesDict_sorted[0][1]
+	top5pops['second']['value'] = maxValuesDict_sorted[1][1]
+	top5pops['third']['value'] = maxValuesDict_sorted[2][1]
+	top5pops['fourth']['value'] = maxValuesDict_sorted[3][1]
+	top5pops['fifth']['value'] = maxValuesDict_sorted[4][1]
+
+
+	## Minimum values ##  
 	minPops = dataFrame.idxmin()
 	minPopsDict = dict(minPops)				# minPopsList = list(minPops)
 	minPopsDict['avg'] = minPopsDict.pop(20)
@@ -255,7 +306,37 @@ def evalPops(dataFrame):
 	minValuesDict['avg'] = minValuesDict.pop(20)
 
 
-	return maxPopsDict, maxValuesDict # maxPops, maxValues  # maxPopsList, maxValuesList 
+	minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
+
+	### Get the pop / electrode pairing from the 5 most negative values .... 
+	bottom5pops = {}
+	bottom5pops['first'] = {}  ## keys: pop, electrode, value 
+	bottom5pops['second'] = {}
+	bottom5pops['third'] = {}
+	bottom5pops['fourth'] = {}
+	bottom5pops['fifth'] = {}
+
+	bottom5pops['first']['pop'] = minPopsDict[minValuesDict_sorted[0][0]]
+	bottom5pops['second']['pop'] = minPopsDict[minValuesDict_sorted[1][0]]
+	bottom5pops['third']['pop'] = minPopsDict[minValuesDict_sorted[2][0]]
+	bottom5pops['fourth']['pop'] = minPopsDict[minValuesDict_sorted[3][0]]
+	bottom5pops['fifth']['pop'] = minPopsDict[minValuesDict_sorted[4][0]]
+
+
+	bottom5pops['first']['electrode'] = minValuesDict_sorted[0][0]
+	bottom5pops['second']['electrode'] = minValuesDict_sorted[1][0]
+	bottom5pops['third']['electrode'] = minValuesDict_sorted[2][0]
+	bottom5pops['fourth']['electrode'] = minValuesDict_sorted[3][0]
+	bottom5pops['fifth']['electrode'] = minValuesDict_sorted[4][0]
+
+	bottom5pops['first']['value'] = minValuesDict_sorted[0][1]
+	bottom5pops['second']['value'] = minValuesDict_sorted[1][1]
+	bottom5pops['third']['value'] = minValuesDict_sorted[2][1]
+	bottom5pops['fourth']['value'] = minValuesDict_sorted[3][1]
+	bottom5pops['fifth']['value'] = minValuesDict_sorted[4][1]
+
+
+	return top5pops, bottom5pops	# , maxPopsDict, maxValuesDict # maxPops, maxValues  # maxPopsList, maxValuesList 
 	# return minPopsDict, minValuesDict  ## minPops, minValues, 
 
 ######################################################################
@@ -871,12 +952,14 @@ if evalPopsBool:
 	print('dataFile: ' + str(dataFile))
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 
-	maxPopsPeak, maxPopsPeakDict, maxValuesPeak, maxValuesPeakDict = \
-	evalPops(dfPeak)
-	# maxPopsPeakList, maxValuesPeakList
+	top5pops, bottom5pops = evalPops(dfPeak) 	#, maxPopsPeakDict, maxValuesPeakDict = evalPops(dfPeak)
+	## ^^ RETURNS A DICT 
 
-	maxPopsAvg, maxPopsAvgDict, maxValuesAvg, maxValuesAvgDict = \
-	evalPops(dfAvg)
+	# maxValuesPeakDict_sorted = sorted(maxValuesPeakDict.items(), key=lambda kv: kv[1], reverse=True)
+
+
+	# maxPopsAvg, maxPopsAvgDict, maxValuesAvg, maxValuesAvgDict = \
+	# evalPops(dfAvg)
 	# maxPopsAvgList, maxValuesAvgList 
 
 

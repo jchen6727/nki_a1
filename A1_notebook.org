@@ -59503,4 +59503,12 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 	# includePopsAbs = []
 	# return includePopsRel, includePopsAbs
 *** Added in lines to make dicts and lists from the original data frames (dfPeak or dfAAvg)
-*** okay looks like the dicts are the main data type that I'm going to use, so 
+*** okay looks like the dicts are the main data type that I'm going to use, so only return that instead of the lists. 
+*** Deleting these old test lines:
+	### OLD: Get the pop / electrode pairing from the top 3 highest values .... 
+	# top3pops = []
+	# top3pops[0] = maxPopsDict[maxValuesDict_sorted[0][0]]
+	# top3pops[1] = maxPopsDict[maxValuesDict_sorted[1][0]]
+	# top3pops[2] = maxPopsDict[maxValuesDict_sorted[2][0]]
+
+*** 
