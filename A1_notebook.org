@@ -59593,3 +59593,41 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 			elif infoType == 'lfpValue':
 				top5popsTEST[popRank[i]][infoType] = maxValuesDict_sorted[i][1]
 *** Now do the same with the most negative LFP signals!
+*** ^^ Done! Tested to make sure that the dict produced by the for loop and by the more brute-force lines is the same (true -- also did this with the top5pops dict)
+*** Old lines:
+    ### Get the pop / electrode pairing from the 5 most negative values .... 
+	bottom5pops = {}
+	bottom5pops['first'] = {}  ## keys: pop, electrode, value 
+	bottom5pops['second'] = {}
+	bottom5pops['third'] = {}
+	bottom5pops['fourth'] = {}
+	bottom5pops['fifth'] = {}
+
+	bottom5pops['first']['pop'] = minPopsDict[minValuesDict_sorted[0][0]]
+	bottom5pops['second']['pop'] = minPopsDict[minValuesDict_sorted[1][0]]
+	bottom5pops['third']['pop'] = minPopsDict[minValuesDict_sorted[2][0]]
+	bottom5pops['fourth']['pop'] = minPopsDict[minValuesDict_sorted[3][0]]
+	bottom5pops['fifth']['pop'] = minPopsDict[minValuesDict_sorted[4][0]]
+
+
+	bottom5pops['first']['electrode'] = minValuesDict_sorted[0][0]
+	bottom5pops['second']['electrode'] = minValuesDict_sorted[1][0]
+	bottom5pops['third']['electrode'] = minValuesDict_sorted[2][0]
+	bottom5pops['fourth']['electrode'] = minValuesDict_sorted[3][0]
+	bottom5pops['fifth']['electrode'] = minValuesDict_sorted[4][0]
+
+	bottom5pops['first']['lfpValue'] = minValuesDict_sorted[0][1]
+	bottom5pops['second']['lfpValue'] = minValuesDict_sorted[1][1]
+	bottom5pops['third']['lfpValue'] = minValuesDict_sorted[2][1]
+	bottom5pops['fourth']['lfpValue'] = minValuesDict_sorted[3][1]
+	bottom5pops['fifth']['lfpValue'] = minValuesDict_sorted[4][1]
+*** Deleting this comment since this is done now:
+	## RECALL that min pop info is calculated BELOW this -- need to move that up later. 
+*** Deleting these comments as well, since list is never used:
+**** # maxPopsList = list(maxPops)
+**** # maxValuesList = list(maxValues)
+*** Move this function out of the "unused" subsection of the functions section
+**** ^^ Done! 
+** Now in main code block, take output of evalPops and automate pops to include & associated electrodes from the spike & LFP plotting below. 
+*** Took out this "TO DO" comment:
+## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
