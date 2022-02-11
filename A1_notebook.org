@@ -59653,3 +59653,12 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 		includePopsMin.append(bottom5popsPeak[key]['pop'])
 		electrodesMin.append(bottom5popsPeak[key]['electrode'])
 
+**** Can now take out these testing lines since they are covered in the getPopElectrodesList function --> 
+***** 	includePopsMinPeak, electrodesMinPeak = getPopElectrodeLists(bottom5popsPeak)
+	MinPeakLists = [[]] * 2
+	MinPeakLists[0] = includePopsMinPeak.copy()
+	MinPeakLists[1] = electrodesMinPeak.copy()
+***** 	includePopsMaxPeak, electrodesMaxPeak = getPopElectrodeLists(top5popsPeak)
+	MaxPeakLists = [[]] * 2
+	MaxPeakLists[0] = includePopsMaxPeak.copy()
+	MaxPeakLists[1] = electrodesMaxPeak.copy()
