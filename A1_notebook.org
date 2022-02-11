@@ -59628,6 +59628,28 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 **** # maxValuesList = list(maxValues)
 *** Move this function out of the "unused" subsection of the functions section
 **** ^^ Done! 
+** Q: Should I add in functionality to evalPops so that it doesn't repeat near-same pop/electrode pairs? e.g. IT3 electrode 10 and IT3 electrode 11? - PUT THIS IN A COMMENT!!
 ** Now in main code block, take output of evalPops and automate pops to include & associated electrodes from the spike & LFP plotting below. 
 *** Took out this "TO DO" comment:
 ## TO DO: Make a function that outputs list of pops vs. looking at it graphically (how many pops to include? avg or peak?)
+*** So evalPops now spits out a top5pops and a bottom5pops dict -- how are these structured? 
+**** top5pops.keys() --> 'first' thru 'fifth'
+**** top5pops['first'].keys() --> pop, electrode, lfpValue
+**** Don't REALLY need lfpValue but it's good to take a look 
+**** Add the pops into includePops 
+*** Added function getPopElectrodeLists 
+**** This takes the top5pops or bottom5pops dict(s) from evalPops and turns them into lists 
+***** Deleting these test lines now, since they are covered in the function:
+
+	includePopsMax = []
+	electrodesMax = []
+	for key in top5popsPeak:
+		includePopsMax.append(top5popsPeak[key]['pop'])
+		electrodesMax.append(top5popsPeak[key]['electrode'])
+
+	includePopsMin = []
+	electrodesMin = []
+	for key in bottom5popsPeak:
+		includePopsMin.append(bottom5popsPeak[key]['pop'])
+		electrodesMin.append(bottom5popsPeak[key]['electrode'])
+

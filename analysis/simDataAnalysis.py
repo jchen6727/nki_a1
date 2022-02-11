@@ -437,7 +437,18 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	return ax
 
 ## Return top 5 & bottom 5 pop-electrode pairs ## 
+def getPopElectrodeLists(evalPopsDict):
+	### evalPopsDict: dict --> can be returned from def evalPops() below 
+
+	includePops = []
+	electrodes = []
+	for key in evalPopsDict:
+		includePops.append(evalPopsDict[key]['pop'])
+		electrodes.append(evalPopsDict[key]['electrode'])
+
+	return includePops, electrodes
 def evalPops(dataFrame):
+	## NOTE: Add functionality to this such that near-same pop/electrode pairs are not included (e.g. IT3 electrode 10, IT3 electrode 11)
 	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
 
 	## MAXIMUM VALUES ## 
@@ -510,7 +521,6 @@ def evalPops(dataFrame):
 			elif infoType == 'lfpValue':
 				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][1]
 				bottom5pops[popRank[i]][infoType] = minValuesDict_sorted[i][1]
-
 
 	return top5pops, bottom5pops
 
@@ -921,22 +931,27 @@ if evalPopsBool:
 	print('dataFile: ' + str(dataFile))
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
+	#### By PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
+	includePopsMax, electrodesMax = getPopElectrodeLists(top5popsPeak)
+	includePopsMin, electrodesMin = getPopElectrodeLists(bottom5popsPeak)
 
-	top5popsAvg, bottom5popsAvg = evalPops(dfaVg)
 
 	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle) ## TESTING 
+	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
 	# plt.show(peakPlot)
 
-	# avgTitle = 'Avg LFP Amplitudes of Theta Wavelet' #'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# # avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)  ## TESTING 
+	#### By AVP LFP Amplitudes ####
+	top5popsAvg, bottom5popsAvg = evalPops(dfAvg)
+
+	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'   # 'Avg LFP Amplitudes of Theta Wavelet' 
+	# avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
 	# plt.show(avgPlot)
 
 
+
 ########################
-includePops = ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+# includePops = ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 ###### COMBINED SPIKE DATA PLOTTING ######
 ## TO DO: 
@@ -965,7 +980,7 @@ if plotSpikeData:
 
 plotLFPCombinedData = 0
 
-includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+# includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotLFPCombinedData:
 	for pop in includePops:
