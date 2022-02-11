@@ -59527,3 +59527,69 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 	# maxPopsAvg, maxPopsAvgDict, maxValuesAvg, maxValuesAvgDict = \
 	# evalPops(dfAvg)
 	# maxPopsAvgList, maxValuesAvgList 
+* <2022-02-11 Fri -- simDataAnalysis.py>
+** Okay -- pick back up on the evalPops function --
+*** Making the top5pops and bottom5pops code more concise!!! 
+*** Getting rid of these testing lines; didn't end up using --
+	# for rank in popRank:
+	# 	top5pops[rank] = {}
+	# 	bottom5pops[rank] = {}
+	# 	for infoType in popInfo:
+	# 		if infoType == 'pop':
+	# 			top5pops[rank][infoType] = 'placeholder' # maxPopsDict[maxValuesDict_sorted[i][0]]
+	# 			bottom5pops[rank][infoType] = 'placeholder'
+	# 		elif infoType == 'electrode':
+	# 			top5pops[rank][infoType] = 'placeholder2'
+	# 			bottom5pops[rank][infoType] = 'placeholder2'
+	# 		elif infoType == 'lfpValue':
+	# 			top5pops[rank][infoType] = 'placeholder3'
+	# 			bottom5pops[rank][infoType] = 'placeholder3'
+*** Now deleting the less-efficient lines bc they are covered in the loop above:
+	### Get the pop / electrode pairing from the top 5 highest values .... 
+	top5pops = {}
+
+	top5pops['first'] = {}  ## keys: pop, electrode, value 
+	top5pops['second'] = {}
+	top5pops['third'] = {}
+	top5pops['fourth'] = {}
+	top5pops['fifth'] = {}
+
+	top5pops['first']['pop'] = maxPopsDict[maxValuesDict_sorted[0][0]]
+	top5pops['second']['pop'] = maxPopsDict[maxValuesDict_sorted[1][0]]
+	top5pops['third']['pop'] = maxPopsDict[maxValuesDict_sorted[2][0]]
+	top5pops['fourth']['pop'] = maxPopsDict[maxValuesDict_sorted[3][0]]
+	top5pops['fifth']['pop'] = maxPopsDict[maxValuesDict_sorted[4][0]]
+
+	top5pops['first']['electrode'] = maxValuesDict_sorted[0][0]
+	top5pops['second']['electrode'] = maxValuesDict_sorted[1][0]
+	top5pops['third']['electrode'] = maxValuesDict_sorted[2][0]
+	top5pops['fourth']['electrode'] = maxValuesDict_sorted[3][0]
+	top5pops['fifth']['electrode'] = maxValuesDict_sorted[4][0]
+
+	top5pops['first']['lfpValue'] = maxValuesDict_sorted[0][1]
+	top5pops['second']['lfpValue'] = maxValuesDict_sorted[1][1]
+	top5pops['third']['lfpValue'] = maxValuesDict_sorted[2][1]
+	top5pops['fourth']['lfpValue'] = maxValuesDict_sorted[3][1]
+	top5pops['fifth']['lfpValue'] = maxValuesDict_sorted[4][1]
+*** Deleting this comment:
+	#### ATTEMPT TO MAKE THE LINES BELOW THIS (UNCOMMENTED) MORE EFFICIENT!!! 
+*** New loop:
+	popRank = ['first', 'second', 'third', 'fourth', 'fifth']
+	popInfo = ['pop', 'electrode', 'lfpValue']
+
+	top5popsTEST = {}
+	#bottom5pops = {}	## RECALL that min pop info is calculated BELOW this -- need to move that up later. 
+
+
+
+	for i in range(len(popRank)):
+		top5popsTEST[popRank[i]] = {}
+		# bottom5pops[popRank[i]] = {}
+		for infoType in popInfo:
+			if infoType == 'pop':
+				top5popsTEST[popRank[i]][infoType] = maxPopsDict[maxValuesDict_sorted[i][0]]
+			elif infoType == 'electrode':
+				top5popsTEST[popRank[i]][infoType] = maxValuesDict_sorted[i][0]
+			elif infoType == 'lfpValue':
+				top5popsTEST[popRank[i]][infoType] = maxValuesDict_sorted[i][1]
+*** Now do the same with the most negative LFP signals!

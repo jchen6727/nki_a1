@@ -254,7 +254,8 @@ def evalPops(dataFrame):
 	### (17, 0.10295759810425918), (18, 0.07873739475515538), (6, 0.07621437123298459), 
 	### (3, 0.06367696913556453), (2, 0.06276483442249459), (4, 0.06113624787605265), 
 	### (7, 0.057098300660935186), (0, 0.027993550732642168), ('avg', 0.016416523477252705)]
-	## Each element is a tuple -- (electrode, value)
+	
+	## Each element of this ^^ is a tuple -- (electrode, value)
 	## dict_sorted[0][0] -- electrode corresponding to the highest value
 	## dict_sorted[0][1] -- highest LFP amplitude in the dataFrame 
 
@@ -269,52 +270,6 @@ def evalPops(dataFrame):
 	## maxPopsDict[dict_sorted[2][0]]
 	#############
 
-	#### ATTEMPT TO MAKE THE LINES BELOW THIS (UNCOMMENTED) MORE EFFICIENT!!! 
-	# dictKeys = ['first', 'second', 'third', 'fourth', 'fifth']
-	# dictValues = ['pop', 'electrode', 'value']
-
-	# top5pops = {}
-	# bottom5pops = {}
-
-	# for place in dictKeys:
-	# 	top5pops[place] = {}
-	# 	bottom5pops[place] = {}
-	# 	for dictValue in dictValues:
-	# 		if value == 'pop':
-	# 			top5pops[place][dictValue] = 'placeholder'
-	# 			bottom5pops[place][dictValue] = 'placeholder'
-	# 		elif value == 'electrode':
-	# 			top5pops[place][dictValue] = 'placeholder2'
-	# 			bottom5pops[place][dictValue] = 'placeholder2'
-	# 		elif value == 'value':
-	# 			top5pops[place][dictValue] = 'placeholder3'
-	# 			bottom5pops[place][dictValue] = 'placeholder3'
-
-	### Get the pop / electrode pairing from the top 5 highest values .... 
-	top5pops['first'] = {}  ## keys: pop, electrode, value 
-	top5pops['second'] = {}
-	top5pops['third'] = {}
-	top5pops['fourth'] = {}
-	top5pops['fifth'] = {}
-
-	top5pops['first']['pop'] = maxPopsDict[maxValuesDict_sorted[0][0]]
-	top5pops['second']['pop'] = maxPopsDict[maxValuesDict_sorted[1][0]]
-	top5pops['third']['pop'] = maxPopsDict[maxValuesDict_sorted[2][0]]
-	top5pops['fourth']['pop'] = maxPopsDict[maxValuesDict_sorted[3][0]]
-	top5pops['fifth']['pop'] = maxPopsDict[maxValuesDict_sorted[4][0]]
-
-	top5pops['first']['electrode'] = maxValuesDict_sorted[0][0]
-	top5pops['second']['electrode'] = maxValuesDict_sorted[1][0]
-	top5pops['third']['electrode'] = maxValuesDict_sorted[2][0]
-	top5pops['fourth']['electrode'] = maxValuesDict_sorted[3][0]
-	top5pops['fifth']['electrode'] = maxValuesDict_sorted[4][0]
-
-	top5pops['first']['value'] = maxValuesDict_sorted[0][1]
-	top5pops['second']['value'] = maxValuesDict_sorted[1][1]
-	top5pops['third']['value'] = maxValuesDict_sorted[2][1]
-	top5pops['fourth']['value'] = maxValuesDict_sorted[3][1]
-	top5pops['fifth']['value'] = maxValuesDict_sorted[4][1]
-
 
 	## Minimum values ##  
 	minPops = dataFrame.idxmin()
@@ -325,8 +280,40 @@ def evalPops(dataFrame):
 	minValuesDict = dict(minValues)			# minValuesList = list(minValues)
 	minValuesDict['avg'] = minValuesDict.pop(20)
 
-
 	minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
+
+
+
+	### Get the pop / electrode pairing from the top 5 highest values ### 
+	popRank = ['first', 'second', 'third', 'fourth', 'fifth']
+	popInfo = ['pop', 'electrode', 'lfpValue']
+
+	top5pops = {}
+	bottom5popsTEST = {}	## RECALL that min pop info is calculated BELOW this -- need to move that up later. 
+
+
+
+	for i in range(len(popRank)):
+		top5pops[popRank[i]] = {}
+		bottom5popsTEST[popRank[i]] = {}
+		for infoType in popInfo:
+			if infoType == 'pop':
+				top5pops[popRank[i]][infoType] = maxPopsDict[maxValuesDict_sorted[i][0]]
+				bottom5popsTEST[popRank[i]][infoType] = 
+			elif infoType == 'electrode':
+				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][0]
+				bottom5popsTEST[popRank[i]][infoType] = 
+			elif infoType == 'lfpValue':
+				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][1]
+				bottom5popsTEST[popRank[i]][infoType] = 
+
+
+
+
+
+
+
+
 
 	### Get the pop / electrode pairing from the 5 most negative values .... 
 	bottom5pops = {}
@@ -356,7 +343,7 @@ def evalPops(dataFrame):
 	bottom5pops['fifth']['value'] = minValuesDict_sorted[4][1]
 
 
-	return top5pops, bottom5pops
+	return top5pops, top5popsTEST, bottom5pops
 
 ######################################################################
 
@@ -972,9 +959,9 @@ if evalPopsBool:
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
 	# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
 
-	top5pops, bottom5pops = evalPops(dfPeak) 
+	top5pops, top5popsTEST, bottom5pops = evalPops(dfPeak) 
 
-	top5popsAVG, bottom5popsAVG = evalPops(dfAvg)
+	# top5popsAVG, bottom5popsAVG = evalPops(dfAvg)
 
 
 	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
