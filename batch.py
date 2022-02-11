@@ -919,7 +919,9 @@ def custom_stim(filename):
     cfgLoad2 = cfgLoad
 
     # conn gains 
-    params[('NetStim1', 'weight')] = [0, 1]#, 5, 10, 20, 40] # 50 Hz
+    params[('NetStim1', 'weight')] = [1, 5, 10, 20] # 50 Hz
+    params[('NetStim1', 'interval')] = [1000.0/50.0, 1000.0/100.0] # 50 Hz
+    params[('NetStim1', 'noise')] = [0.5, 1.0] # 50 Hz
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -927,7 +929,7 @@ def custom_stim(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 6500
+    initCfg['duration'] = 6000
     initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
@@ -937,10 +939,10 @@ def custom_stim(filename):
     initCfg[('NetStim1', 'ynorm')] = [0.0, 3.0]
     initCfg[('NetStim1', 'sec')] = 'soma'
     initCfg[('NetStim1', 'loc')] = 0.5
-    initCfg[('NetStim1', 'start')] = 1500
-    initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
-    initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
-    initCfg[('NetStim1', 'number')] = 50 * 10 # enough spikes for 10 seconds
+    initCfg[('NetStim1', 'start')] = 3000
+    #initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
+    #initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
+    initCfg[('NetStim1', 'number')] = 100 * 10 # enough spikes for 10 seconds
 
 
     # plotting and saving params

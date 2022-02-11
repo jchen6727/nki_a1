@@ -59,10 +59,10 @@ if __name__ == '__main__':
     dataType = 'spont' #'speech' #'spont'
 
     if dataType == 'spont':
-        filenames = ['data/v34_batch57/v34_batch57_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1,2,3,4] for cseed in [0,1,2,3,4]]
-        filenames = ['data/v34_batch66/v34_batch66_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0] for cseed in [0]]
+        filenames = ['data/v34_batch68/v34_batch68_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1] for cseed in [0,1]]
+        filenames = ['data/v34_batch68/v34_batch68_%d_data.pkl' % (iseed) for iseed in [0]]
 
-        timeRange = [1500, 31500]
+        timeRange = [500, 6500]
 
         #filenames = ['data/v34_batch56/v34_batch56_0_0_data.pkl']
         #timeRange = [2000, 2200]
@@ -79,20 +79,6 @@ if __name__ == '__main__':
         # good_rasters = [
         # '0_0_0_0_1',
         # '0_0_0_0_2',
-        # '0_0_0_1_1',
-        # '0_0_0_1_2',
-        # '0_0_1_0_1',
-        # '0_0_1_0_2',
-        # '0_1_0_0_1',
-        # '0_1_0_0_2',
-        # '0_1_0_1_2',
-        # '0_1_1_0_1',
-        # '0_1_1_0_2',
-        # '1_0_0_0_2',
-        # '1_1_0_1_5',
-        # '1_1_1_0_5',
-        # '1_1_1_1_4',
-        # '1_1_1_1_5',
         # ]
 
         # filenames = ['data/v34_batch55/v34_batch55_%s_data.pkl' % (s1) for s1 in good_rasters] 
@@ -108,39 +94,42 @@ if __name__ == '__main__':
         sim.load(filename, instantiate=False)
 
         # standardd plots
-        sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': [1500,31500], 'figSize': (18,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
-        sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 31500], dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_30sec')
+        #sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': timeRange, 'figSize': (18,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
+        #sim.analysis.plotSpikeHist(include=['allCells', 'IT'],saveFig=1, timeRange=[1500, 6500])
+        
+        #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=timeRange, dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_5sec')
         #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 6500], dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_5sec')
         #sim.analysis.plotLFP(**{'plots': ['spectrogram'], 'electrodes': ['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 'timeRange': timeRange, 'maxFreq': 50, 'figSize': (8,24), 'saveData': False, 'saveFig': filename[:-4]+'_LFP_spec_7s_all_elecs', 'showFig': False})
+        
         out = sim.analysis.plotLFP(**{'plots': ['timeSeries'], 
                 'electrodes': 
                 #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-                ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
+                ['avg'],#, [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
                 'timeRange': timeRange, 
                 #'maxFreq': 50, 
                 'figSize': (24,12), 
                 'saveData': False, 
                 'saveFig': filename[:-4]+'_LFP_timeSeries_10s_avg', 'showFig': False})
 
-        out = sim.analysis.plotLFP(**{'plots': ['spectrogram'], 
-                'electrodes': 
-                #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-                ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
-                'timeRange': timeRange, 
-                'maxFreq': 50, 
-                'figSize': (16,12), 
-                'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_spect_8s_3layers', 'showFig': False})
+        # # out = sim.analysis.plotLFP(**{'plots': ['spectrogram'], 
+        # #         #'electrodes': 
+        # #         #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
+        # #         #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
+        # #         'timeRange': timeRange, 
+        # #         'maxFreq': 50, 
+        # #         'figSize': (16,12), 
+        # #         'saveData': False, 
+        # #         'saveFig': filename[:-4]+'_LFP_spect_8s_3layers', 'showFig': False})
 
-        out = sim.analysis.plotLFP(**{'plots': ['PSD'], 
-                'electrodes': 
-                #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-                ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
-                'timeRange': timeRange, 
-                'maxFreq': 50, 
-                'figSize': (8,12), 
-                'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_psd_10s_3layers', 'showFig': False})
+        # out = sim.analysis.plotLFP(**{'plots': ['PSD'], 
+        #         'electrodes': 
+        #         #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
+        #         ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
+        #         'timeRange': timeRange, 
+        #         'maxFreq': 50, 
+        #         'figSize': (8,12), 
+        #         'saveData': False, 
+        #         'saveFig': filename[:-4]+'_LFP_psd_10s_3layers', 'showFig': False})
 
 
         # required for combined PSD plot
