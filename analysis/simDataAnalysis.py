@@ -943,9 +943,7 @@ if evalPopsBool:
 
 	#### PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
-
 	MaxPeakLists = getPopElectrodeLists(top5popsPeak)
-
 	MinPeakLists = getPopElectrodeLists(bottom5popsPeak)
 
 	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
@@ -955,8 +953,8 @@ if evalPopsBool:
 
 	#### AVP LFP Amplitudes ####
 	top5popsAvg, bottom5popsAvg = evalPops(dfAvg)
-	includePopsMaxAvg, electrodesMaxAvg = getPopElectrodeLists(top5popsAvg)
-	includePopsMinAvg, electrodesMinAvg = getPopElectrodeLists(bottom5popsAvg)
+	MaxAvgLists = getPopElectrodeLists(top5popsAvg)
+	MinAvgLists = getPopElectrodeLists(bottom5popsAvg)
 
 	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'   # 'Avg LFP Amplitudes of Theta Wavelet' 
 	# avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)

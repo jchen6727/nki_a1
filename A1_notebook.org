@@ -59662,3 +59662,19 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 	MaxPeakLists = [[]] * 2
 	MaxPeakLists[0] = includePopsMaxPeak.copy()
 	MaxPeakLists[1] = electrodesMaxPeak.copy()
+*** Can also get rid of these lines now that I have their output from the getPopsElectrodesList function:
+	includePopsMaxAvg, electrodesMaxAvg = getPopElectrodeLists(top5popsAvg)
+	includePopsMinAvg, electrodesMinAvg = getPopElectrodeLists(bottom5popsAvg)
+* <2022-02-14 Mon -- meeting & code>
+** Meeting: 
+*** okay yeah so not too much to share visually, but for what i've been up to -- 
+*** so the first thing, as you know, was that i was working on just improving and cleaning up the code that we'd used for a lot of the plots & calculations for the preprint. 
+*** so I wrapped that up mostly, there's a couple small things here and there that I might change or automate over time, but I pretty much wrapped that up last week
+*** so what I started working on after that is code to look at all wavelets from a particular frequency band -- 
+*** I started looking at noticed that I do see similarities in terms of what pops are prominently active -- it's not always the same, but it's there, so I started working on two things --
+**** (1) I started writing code to do something that sam, you had suggested, a few weeks ago, which was to maybe look at relative change in signal as opposed to just the absolute magnitude of the lfp signal.
+**** (2) I also started writing code to look at "control" regions of the recordings, where there are no osc events of any frequency happening in any of the electrodes
+*** So I've been working on this, but I started seeing all the netpyne stuff that's happening, so on friday and today I actually have been messing around with
+*** Thal interneuron -- so during the preprint push, sam introduced me to inkscape (had been using gimp). so I've been working on putting those into inkscape. 
+** simDataAnalysis.py:
+
