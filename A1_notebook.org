@@ -59710,3 +59710,17 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 ** All events in freq band code:
 *** Instead of going thru them individually, could I use the dlms files to somehow shortcut this? 
 **** ^^ look in load.py 
+*** To download dlms data again --> go to eyg_data bucket on gcp, but to eyg_data/wavelets (NOT eyg_data/A1/wavelets)
+*** ^^ In load.py --> 
+**** dlms={chan:dout[chan]['lms'] for chan in lchan}; 
+**** ^^ # make a dictionary of morlet spectrograms keyed by channel
+*** For sims, lchan is all channels --> 
+**** lchan = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19] 
+*** And for NHP, lchan is NOT all channels, but is instead 5 channels --> 
+**** lchan = [s1,s2,g,i1,i2]
+** RECALL batch57 lfp pop contributions not properly recorded!!! 
+*** Have to mess around with batch65 and batch67 .pkl recordings
+** Matchups btwn batch57 and batches 65 & 67:
+*** batch57_3_4 == batch65_0_0
+*** batch57_3_2 == batch67_0_0
+*** batch57_3_3 == batch67_1_1
