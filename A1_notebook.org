@@ -59677,4 +59677,36 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** So I've been working on this, but I started seeing all the netpyne stuff that's happening, so on friday and today I actually have been messing around with
 *** Thal interneuron -- so during the preprint push, sam introduced me to inkscape (had been using gimp). so I've been working on putting those into inkscape. 
 ** simDataAnalysis.py:
-
+* <2022-02-15 Tue -- osc event by freq band code>
+** Find sam some 200ms / few second CSD data excerpts 
+*** ^^ From batch57 or batch65 
+*** Where was that code? --> 
+**** A1/analysis/plotBatchCSD.py
+**** getting a lot of invalid character errors:
+**** having to delete / retype stuff:
+***** # filenames = ['data/v34_batch27/v34_batch27_%d_%d.pkl' % (iseed, cseed) for iseed in range(5) for cseed in range(5)]
+***** # filenames = ['../data/NHPdata/spont/contproc/A1/1-bu031032017@os_eye06_20.mat']
+***** ​# Get the layerBounds for each of the filenames!! 
+*** Sent over 4 200ms csd plots:
+**** (1) batch65_0_0, 6900-7100ms 
+**** (2) batch65_0_0, 7700-7900ms
+**** (3) batch67_0_0, 8100-8300ms
+**** (4) batch65_0_0, 4500-4700ms 
+**** Send these .pkl files:
+***** A1_v34_batch65_v34_batch65_0_0_data.pkl
+***** A1_v34_batch67_v34_batch67_0_0_data.pkl
+**** Sent over the .mat files as well
+** 2000 ms CSD plots:
+*** Examples:
+**** A1_v34_batch67_v34_batch67_1_1_data_CSD_8500-10500
+**** A1_v34_batch67_v34_batch67_1_1_data_CSD_500-2500
+**** A1_v34_batch67_v34_batch67_0_0_data_CSD_6500-8500
+**** A1_v34_batch67_v34_batch67_0_0_data_CSD_2500-4500
+**** A1_v34_batch65_v34_batch65_0_0_data_CSD_4500-6500
+* <2022-02-16 Wed -- osc event code & Research Day>
+** Research day application:
+*** Submitted online!!
+** NBS WIP + Seminar today 
+** All events in freq band code:
+*** Instead of going thru them individually, could I use the dlms files to somehow shortcut this? 
+**** ^^ look in load.py 
