@@ -21,6 +21,7 @@ from numbers import Number
 import seaborn as sns 
 import pandas as pd 
 import pickle
+import morlet
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
@@ -237,18 +238,29 @@ def evalPopsAbsolute():
 
 ######################################################################
 #### FUNCTION(S) IN PROGRESS 
-def evalWaveletsByBand(freqBand, dlmsPklFile):
-	## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+def evalWaveletsByBand(based, dlmsPklFile, dfPklFile):
+			## not in use right now --> ## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+	## based: str 				--> Beginning of path to the .pkl files 
 	## dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
+	## dfPklFile: .pkl file 	--> from df.pkl file, saved from load.py 
 
 	print('Evaluating all oscillation events in a given frequency band')
 
+	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' ### COULD make this an arg!! 
+	subjectDir = dlmsPklFile.split('_dlms.pkl')[0]
+
 	# Load dlms file
-	subjectDir = dlms.split('_dlms.pkl')[0]
-	dlmsFullPath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' + subjectDir + '/' + dlmsPklFile
+	dlmsFullPath = based + subjectDir + '/' + dlmsPklFile
 	dlmsFile = open(dlmsFullPath, 'rb')
 	dlms = pickle.load(dlmsFile)
 	dlmsFile.close()
+
+	# Load df file 
+	dfFullPath = based + subjectDir + '/' + dfPklFile
+	df = pd.read_pickle(dfFullPath)
+
+	return dlms, df
+
 
 
 
@@ -949,12 +961,30 @@ elif gamma:
 
 
 
+
+#################################################
+####### Evaluating Pops by Frequency Band #######
+#################################################
+
+evalWaveletsByBandBool = 1
+
+if evalWaveletsByBandBool:
+	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
+	dlmsPklFile = 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
+	dfPklFile = 'v34_batch57_3_4_data_timeRange_0_6_df.pkl'   ### AUTOMATE / CONDENSE THIS SOMEHOW... 
+	dlmsData, dfData = evalWaveletsByBand(based=basedPkl, dlmsPklFile=dlmsPklFile, dfPklFile=dfPklFile)
+
+
+
+
+
+
 ########################
 ####### PLOTTING #######
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
-evalPopsBool = 1
+evalPopsBool = 0
 
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -988,7 +1018,7 @@ if evalPopsBool:
 plotLFPCombinedData = 0
 
 # includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-includePops = includePopsMaxPeak.copy()
+# includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
 
 
 if plotLFPCombinedData:
@@ -1029,16 +1059,6 @@ if plotLFPCombinedData:
 # 		# else:
 # 		# 	electrodes = ['avg']
 
-# 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
-# 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrodes) 
-# 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrodes) #filtFreq=filtFreq, 
-
-
-# 		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
-# 			figSize=(10,7), titleElectrode=electrodes, saveFig=1)
-
-# 		### Get the strongest frequency in the LFP signal ### 
-# 		# maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes, plotPSD=1)
 
 ## TO DO: 
 ## (1) [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band

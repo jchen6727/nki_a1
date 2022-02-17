@@ -59752,7 +59752,44 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 ***** 1_4
 **** I have a dlms file locally for v34_batch57_3_4_timeRange_0_6 as well 
 *** To load dlms.pkl file --> see plotWavelets.py readSubjectFiles for example:
-**** dlmsFullPath = waveletPath + subjectName + '/' + 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
-**** 		dlms_file = open(dlmsFullPath, 'rb')
-**** 		dlms = pickle.load(dlms_file)
-**** 		dlms_file.close()
+****    dlmsFullPath = waveletPath + subjectName + '/' + 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
+****    dlms_file = open(dlmsFullPath, 'rb')
+**** 	dlms = pickle.load(dlms_file)
+**** 	dlms_file.close()
+*** ^^ Hm, I did this, but keep getting "no module named morlet" error? 
+** Morlet module error:
+*** Started talking about this above
+*** Okay, so these are the lines in the function currently:
+**** subjectDir = dlmsPklFile.split('_dlms.pkl')[0]
+****    dlmsFullPath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' + subjectDir + '/' + dlmsPklFile
+**** 	dlmsFile = open(dlmsFullPath, 'rb')
+**** 	dlms = pickle.load(dlmsFile)
+**** 	dlmsFile.close()
+*** Error occurs in pickle.load(dlmsFile)
+*** Try to import morlet.py from a1dat ...? 
+**** ^^ https://stackoverflow.com/questions/4383571/importing-files-from-different-folder
+**** But instead, I copy-pasted morlet.py from a1dat into A1/analysis --> now try importing it and re-running --> okay works now
+*** ^^ OKAY! so, now when I do this it's dlms[0][0] --> then can access any of the attributes mentioned in morlet.py MorletSpec class
+** Add in df and allData loading --> 
+*** allData info (from load.py) --> 
+    ## save CSD data etc. 
+    allDataDict = {}
+    allDataDict['dt'] = dt
+    allDataDict['tt'] = tt
+    allDataDict['sampr'] = sampr
+    allDataDict['dat'] = dat
+    allDataDict['CSD'] = CSD
+    allDataDict['timeRange'] = timeRange
+    
+    ### ORIG LINE --> allDataFileName = pathToSave + fn.split('/')[-1][:-4] + '_allData.pkl'
+    allDataFileName = pathToSave + filenameForSaving + '_allData.pkl'
+    allDataFile = open(allDataFileName,'wb')
+    pickle.dump(allDataDict, allDataFile)
+    allDataFile.close()
+*** df --> 
+**** pandas data frame
+*** Load in df
+**** from plotWavelets.py --> 
+	dfFullPath = waveletPath + subjectName + '/' + subjectName + '_df.pkl'
+	df = pd.read_pickle(dfFullPath)
+**** added dfPklFile to args 
