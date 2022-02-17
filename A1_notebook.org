@@ -59722,5 +59722,19 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** Have to mess around with batch65 and batch67 .pkl recordings
 ** Matchups btwn batch57 and batches 65 & 67:
 *** batch57_3_4 == batch65_0_0
+**** batch57_3_4_timeRange_0_6:
+***** https://console.cloud.google.com/storage/browser/eyg_data/wavelets/v34_batch57_3_4_data_timeRange_0_6?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&project=ecas2-nsf1904444
+**** batch57_3_4_timeRange_6_11:
+***** https://console.cloud.google.com/storage/browser/eyg_data/wavelets/v34_batch57_3_4_data_timeRange_6_11;tab=objects?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false
+**** To get dlms.pkl files from batch57_3_4:
+***** Run these commands on local machine!! 
+***** [DONE] (1) gsutil -m cp gs://eyg_data/wavelets/v34_batch57_3_4_data_timeRange_0_6/v34_batch57_3_4_data_timeRange_0_6_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_0_6/
+***** (2) gsutil -m cp gs://eyg_data/wavelets/v34_batch57_3_4_data_timeRange_6_11/v34_batch57_3_4_data_timeRange_6_11_dlms.pkl /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/v34_batch57_3_4_data_timeRange_6_11/
 *** batch57_3_2 == batch67_0_0
 *** batch57_3_3 == batch67_1_1
+**** batch57_3_3_timeRange_0_6:
+***** https://console.cloud.google.com/storage/browser/eyg_data/wavelets/v34_batch57_3_3_data_timeRange_0_6?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&project=ecas2-nsf1904444&prefix=&forceOnObjectsSortingFiltering=false
+* <2022-02-17 Thu - osc event code>
+** Working on function to evaluate all osc events in particular frequency band:
+*** def evalFreqBand()
+*** 

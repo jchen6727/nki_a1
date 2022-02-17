@@ -234,6 +234,13 @@ def evalPopsAbsolute():
 	return includePopsAbs
 ######################################################################
 
+######################################################################
+#### FUNCTION(S) IN PROGRESS 
+def evalFreqBand(freqBand):
+	## freqBand: str 	--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+	print('Evaluating all oscillation events in a given frequency band')
+######################################################################
+
 
 
 ###################
