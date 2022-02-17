@@ -236,8 +236,9 @@ def evalPopsAbsolute():
 
 ######################################################################
 #### FUNCTION(S) IN PROGRESS 
-def evalFreqBand(freqBand):
+def evalFreqBand(freqBand, dlms):
 	## freqBand: str 	--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+	## dlms: .pkl file 	--> from dlms.pkl file, saved from load.py 
 	print('Evaluating all oscillation events in a given frequency band')
 ######################################################################
 

@@ -59737,4 +59737,5 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 * <2022-02-17 Thu - osc event code>
 ** Working on function to evaluate all osc events in particular frequency band:
 *** def evalFreqBand()
-*** 
+*** Added arg freqBand -- this will be a string that indicates what band to look at
+*** Added arg dlms -- this is the dlms.pkl file saved in load.py (and stored on gcp bucket) that has a dictionary with all of the osc events sorted by channel 
