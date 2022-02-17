@@ -20,6 +20,7 @@ import netpyne
 from numbers import Number
 import seaborn as sns 
 import pandas as pd 
+import pickle
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
@@ -236,10 +237,17 @@ def evalPopsAbsolute():
 
 ######################################################################
 #### FUNCTION(S) IN PROGRESS 
-def evalFreqBand(freqBand, dlms):
+def evalFreqBand(freqBand, dlmsPklFile):
 	## freqBand: str 	--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
-	## dlms: .pkl file 	--> from dlms.pkl file, saved from load.py 
+	## dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
 	print('Evaluating all oscillation events in a given frequency band')
+
+	# Load dlms file
+	subjectDir = dlms.split('_dlms.pkl')[0]
+	dlmsFullPath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' + subjectDir + '/' + dlmsPklFile
+	dlmsFile = open(dlmsFullPath, 'rb')
+	dlms = pickle.load(dlmsFile)
+	dlmsFile.close()
 ######################################################################
 
 

@@ -59739,3 +59739,20 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** def evalFreqBand()
 *** Added arg freqBand -- this will be a string that indicates what band to look at
 *** Added arg dlms -- this is the dlms.pkl file saved in load.py (and stored on gcp bucket) that has a dictionary with all of the osc events sorted by channel 
+*** I need to load the dlms.pkl file(s) that I have to look at this dictionary:
+**** /Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/____dlms.pkl
+**** ^^ I have dlms files currently for v34_batch27 --> 
+***** 0_1
+***** 0_2
+***** 0_3
+***** 0_4
+***** 1_0
+***** 1_1
+***** 1_2
+***** 1_4
+**** I have a dlms file locally for v34_batch57_3_4_timeRange_0_6 as well 
+*** To load dlms.pkl file --> see plotWavelets.py readSubjectFiles for example:
+**** dlmsFullPath = waveletPath + subjectName + '/' + 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
+**** 		dlms_file = open(dlmsFullPath, 'rb')
+**** 		dlms = pickle.load(dlms_file)
+**** 		dlms_file.close()
