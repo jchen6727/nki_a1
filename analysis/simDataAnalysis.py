@@ -237,9 +237,10 @@ def evalPopsAbsolute():
 
 ######################################################################
 #### FUNCTION(S) IN PROGRESS 
-def evalFreqBand(freqBand, dlmsPklFile):
-	## freqBand: str 	--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+def evalWaveletsByBand(freqBand, dlmsPklFile):
+	## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
 	## dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
+
 	print('Evaluating all oscillation events in a given frequency band')
 
 	# Load dlms file
@@ -248,6 +249,9 @@ def evalFreqBand(freqBand, dlmsPklFile):
 	dlmsFile = open(dlmsFullPath, 'rb')
 	dlms = pickle.load(dlmsFile)
 	dlmsFile.close()
+
+
+
 ######################################################################
 
 
