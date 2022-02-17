@@ -888,6 +888,7 @@ def fig_LFP_PSD_matrix():
         meanCorr[label] = corrMatrix.iloc[cluster, range(clusters[0][0], clusters[3][-1])].mean().mean()
 
 
+
     # PCA
     dfnorm = df.div(df.max(axis=1), axis=0)   
     #dfnorm = Sc().fit_transform(df) 
