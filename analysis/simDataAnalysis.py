@@ -238,28 +238,29 @@ def evalPopsAbsolute():
 
 ######################################################################
 #### FUNCTION(S) IN PROGRESS 
-def evalWaveletsByBand(based, dlmsPklFile, dfPklFile):
+def evalWaveletsByBand(based, dfPklFile):
 			## not in use right now --> ## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
 	## based: str 				--> Beginning of path to the .pkl files 
-	## dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
+			## dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
 	## dfPklFile: .pkl file 	--> from df.pkl file, saved from load.py 
 
 	print('Evaluating all oscillation events in a given frequency band')
 
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' ### COULD make this an arg!! 
-	subjectDir = dlmsPklFile.split('_dlms.pkl')[0]
-
-	# Load dlms file
-	dlmsFullPath = based + subjectDir + '/' + dlmsPklFile
-	dlmsFile = open(dlmsFullPath, 'rb')
-	dlms = pickle.load(dlmsFile)
-	dlmsFile.close()
+	subjectDir = dfPklFile.split('_df.pkl')[0]
 
 	# Load df file 
 	dfFullPath = based + subjectDir + '/' + dfPklFile
 	df = pd.read_pickle(dfFullPath)
 
-	return dlms, df
+	# # Load dlms file
+	# dlmsFullPath = based + subjectDir + '/' + dlmsPklFile
+	# dlmsFile = open(dlmsFullPath, 'rb')
+	# dlms = pickle.load(dlmsFile)
+	# dlmsFile.close()
+
+
+	return df
 
 
 
@@ -294,10 +295,10 @@ def getWaveletInfo(freqBand, based, verbose=0):
 
 ## Heatmaps ## 
 def getDataFrames(dataFile, timeRange, verbose=0):
-	#### -->  This function will return data frames of peak and average lfp amplitudes, for picking cell pops
-	### dataFile: str --> .pkl file to load
-	### timeRange: list --> e.g. [start, stop]
-	### verbose: bool --> if 0, return only the data frames; if 1 - return all lists and dataframes 
+	## This function will return data frames of peak and average lfp amplitudes, for picking cell pops
+	### dataFile: str 		--> .pkl file to load, with data from the whole recording
+	### timeRange: list 	--> e.g. [start, stop]
+	### verbose: bool 		--> if 0, return only the data frames; if 1 - return all lists and dataframes 
 
 	## Load data file
 	sim.load(dataFile, instantiate=False)
@@ -972,7 +973,8 @@ if evalWaveletsByBandBool:
 	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
 	dlmsPklFile = 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
 	dfPklFile = 'v34_batch57_3_4_data_timeRange_0_6_df.pkl'   ### AUTOMATE / CONDENSE THIS SOMEHOW... 
-	dlmsData, dfData = evalWaveletsByBand(based=basedPkl, dlmsPklFile=dlmsPklFile, dfPklFile=dfPklFile)
+	# dlmsData, dfData = evalWaveletsByBand(based=basedPkl, dlmsPklFile=dlmsPklFile, dfPklFile=dfPklFile)
+	dfData = evalWaveletsByBand(based=basedPkl, dfPklFile=dfPklFile)
 
 
 

@@ -59793,3 +59793,13 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 	dfFullPath = waveletPath + subjectName + '/' + subjectName + '_df.pkl'
 	df = pd.read_pickle(dfFullPath)
 **** added dfPklFile to args 
+*** Might be most useful to do df, and leave out allData and dlms? 
+*** ^^ Okay I commented out the dlms lines so far 
+* <2022-02-18 Fri -- osc event code>
+** Osc event code
+** LFP data for Yoshi:
+*** Where did I do my CSD code for him again? which script? --> in plotBatchCSD.py in A1/analysis
+*** The .mat files are in A1/data/figs/spontSimCSD
+* <2022-02-22 Tue -- reading>
+** Today I'm going to be reading about oscillation events / generators so that I can get back on track w/ thinking about this kind of stuff!!!
+** 
