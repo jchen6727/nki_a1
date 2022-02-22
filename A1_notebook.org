@@ -59811,4 +59811,11 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 **** Seems like something that if I could better understand it, would be really useful for developing another paper using the model. 
 **** I have the actual monkey data to do this, and I also have the model data. I have spiking data, which the paper specifically said would be helpful. 
 ** "Laminar Profile and Physiology of the [alpha] Rhythm in Primary Visual, Auditory, and Somatosensory Regions of Neocortex"
-*** 
+*** Volume conduction contamination of LFP infragranular signal is mentioned in the abstract here -- again, reminds me to look into why unipolar vs bipolar LFP signals would reduce this problem. 
+*** "functional identification of supragranular, gran- ular, and infragranular cortical layers is straightforward based on our previous studies (Peterson et al., 1995; Schroeder et al., 1998, 2001)" <-- could use this for our paper as well!!! 
+*** WHAT does it mean exactly when they say the data was "realigned to these troughs" -- ???? 
+
+** Layer identification text that could be helpful:
+*** From 'laminar profile & physiology of the alpha rhythm...' paper:
+**** "... functional identification of supragranular, gran- ular, and infragranular cortical layers is straightforward based on our previous studies (Peterson et al., 1995; Schroeder et al., 1998, 2001)" <-- could use this for our paper as well!!! 
+**** "... to illustrate the selection of supragranular, granular, and infragranular record- ings for the following quantitative analyses, Figure 1 displays rep- resentative profiles of stimulus-evoked activity in V1, S1, and A1. In each case, there is initial activation (current sink) in the middle granular layers (Fig. 1, single arrows), followed at short latency by current source/sink configurations in supragranular and infra- granular layers (Fig. 1, double arrows). This basic laminar activa- tion sequence is stereotypic in V1, S1, and A1 and provides the means to reliably identify cortical layers (Schroeder et al., 1991, 1998; Steinschneider et al., 1992; Peterson et al., 1995)"
