@@ -59806,5 +59806,8 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** Here they characterize the coupling btwn alpha and gamma band activity in different cortical layers 
 **** ^^ alpha in deeper layers
 **** ^^ gamma in V1 is produced primarily in supra- and granular layer(s) 
-*** 'Robust coupling btwn alpha phase in deeper layers and gamma amplitude in gran- and superficial layers' 
-*** 
+*** 'Robust coupling btwn alpha phase in deeper layers and gamma amplitude in gran- and superficial layers ... w/ power being anticorrelated'
+*** Overall Impression:
+**** Seems like something that if I could better understand it, would be really useful for developing another paper using the model. 
+**** I have the actual monkey data to do this, and I also have the model data. I have spiking data, which the paper specifically said would be helpful. 
+** 
