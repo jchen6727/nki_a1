@@ -59810,4 +59810,5 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** Overall Impression:
 **** Seems like something that if I could better understand it, would be really useful for developing another paper using the model. 
 **** I have the actual monkey data to do this, and I also have the model data. I have spiking data, which the paper specifically said would be helpful. 
-** 
+** "Laminar Profile and Physiology of the [alpha] Rhythm in Primary Visual, Auditory, and Somatosensory Regions of Neocortex"
+*** 
