@@ -59829,9 +59829,6 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 **** "... functional identification of supragranular, gran- ular, and infragranular cortical layers is straightforward based on our previous studies (Peterson et al., 1995; Schroeder et al., 1998, 2001)" <-- could use this for our paper as well!!! 
 **** "... to illustrate the selection of supragranular, granular, and infragranular record- ings for the following quantitative analyses, Figure 1 displays rep- resentative profiles of stimulus-evoked activity in V1, S1, and A1. In each case, there is initial activation (current sink) in the middle granular layers (Fig. 1, single arrows), followed at short latency by current source/sink configurations in supragranular and infra- granular layers (Fig. 1, double arrows). This basic laminar activa- tion sequence is stereotypic in V1, S1, and A1 and provides the means to reliably identify cortical layers (Schroeder et al., 1991, 1998; Steinschneider et al., 1992; Peterson et al., 1995)"
 * <2022-02-23 Wed -- LFPy ECOG & netpyne & reading>
-** NetPyNE updates --
-*** Joe said that netpyne is officially updated -- need to get this working with respect to the heatmaps function etc. how am I going to do this? Maybe I will take certain scripts that are necessary for 
-
 ** Reading:
 *** laminar profile paper (C. schroeder, etc.):
 **** LFP vs. CSD alpha alignment changes sources / loci of activity 
@@ -59839,3 +59836,69 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 **** Sensory inhibition vs. Sampling rate / parsing (??) 
 **** Jones, Shaak, etc etc. 
 *** ^^ I feel like I should be able to do this pretty readily given the data that I have already, no? e.g. the heatmaps? 
+** TO DO: look at PSD of CSD & LFP both similar to laminar profile paper, to see if I see what they see re: supragranular vs infragranular activity. 
+** NetPyNE updates --
+*** Joe said that netpyne is officially updated -- need to get this working with respect to the heatmaps function etc. how am I going to do this? 
+*** --> Maybe I will take certain scripts that are necessary for the A1/analysis/simDataAnalysis.py functions and somehow reconfigure them so that they are self-contained when necessary, or when possible, use the newer netpyne functions. 
+*** Go thru A1/simDataAnalysis.py and make inventory of the necessary changes. 
+** simDataAnalysis.py changes to make in light of netpyne updates --> 
+*** I do 'from netpyne import sim' and 'import netpyne' --> consolidate...?
+*** Go function-by-function (unused / in progress functions below) --> 
+**** def plotMUA (not being used) --> 
+***** sim.load -- should be fine
+**** def plotCustomLFPTimeSeries (not being used) --> 
+***** sim.load --> should be fine I imagine
+***** sim.cfg.duration & sim.cfg.recordStep --> should be fine I imagine
+***** sim.allSimData['LFPPops'] --> CHECK THIS 
+**** def getBandpassRange (not being used) --> 
+***** NONE
+**** def getDataFiles (not being used) --> 
+***** NONE
+**** def evalPopsRelative() & def evalPopsAbsolute() --> 
+***** UNFINISHED / POTENTIALLY NO LONGER RELEVANT? 
+***** --> NOTHING TO CHECK
+**** def evalWaveletsByBand (IN PROGRESS) --> 
+***** nothing to check so far!!! 
+*** Functions currently in use:
+**** def getWaveletInfo():
+***** NOTHING TO CHECK 
+**** def getDataFrames():
+***** sim.load
+***** sim.net.allPops.keys()
+***** sim.net.recXElectrode.nsites
+***** sim.allSimData['LFPPops']
+***** sim.cfg.recordStep 
+**** def plotDataFrames():
+***** NOTHING TO CHECK
+**** def getPopElectrodeLists():
+***** NOTHING TO CHECK
+**** def evalPops():
+***** NOTHING TO CHECK
+**** !! def getSpikeData():
+***** sim.load
+***** SHOULD CHECK THIS --> sim.analysis.getRateSpectrogramData 
+***** SHOULD CHECK THIS --> sim.analysis.getSpikeHistData
+**** def plotCombinedSpike():
+***** NOTHING TO CHECK!! 
+**** !! def getLFPDataDict():
+***** sim.load
+***** SHOULD CHECK THIS --> sim.analysis.getLFPData
+**** def plotCombinedLFP():
+***** NOTHING TO CHECK!
+**** !! def getPSDinfo():
+***** sim.load
+***** SHOULD CHECK THIS --> sim.analysis.getLFPData
+***** SHOULD CHECK THIS --> sim.analysis.plotLFP
+*** Main things to check:
+**** Easy / probably not changed:
+***** sim.load
+***** sim.net.allPops.keys()
+***** sim.net.recXElectrode.nsites
+***** sim.allSimData['LFPPops']
+***** sim.cfg.recordStep 
+***** sim.cfg.duration
+**** Definitely need to check on:
+***** sim.analysis.getRateSpectrogramData  (in def getSpikeData)
+***** sim.analysis.getSpikeHistData (in def getSpikeData)
+***** sim.analysis.getLFPData (in def getLFPDataDict & def getPSDinfo)
+***** sim.analysis.plotLFP (in def getPSDinfo)

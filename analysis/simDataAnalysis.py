@@ -239,9 +239,9 @@ def evalPopsAbsolute():
 ######################################################################
 #### FUNCTION(S) IN PROGRESS 
 def evalWaveletsByBand(based, dfPklFile):
-			## not in use right now --> ## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+	## NOT IN USE RIGHT NOW --> ## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
+	## NOT IN USE RIGHT NOW --> dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
 	## based: str 				--> Beginning of path to the .pkl files 
-			## dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
 	## dfPklFile: .pkl file 	--> from df.pkl file, saved from load.py 
 
 	print('Evaluating all oscillation events in a given frequency band')
