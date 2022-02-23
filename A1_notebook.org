@@ -59841,6 +59841,244 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** Joe said that netpyne is officially updated -- need to get this working with respect to the heatmaps function etc. how am I going to do this? 
 *** --> Maybe I will take certain scripts that are necessary for the A1/analysis/simDataAnalysis.py functions and somehow reconfigure them so that they are self-contained when necessary, or when possible, use the newer netpyne functions. 
 *** Go thru A1/simDataAnalysis.py and make inventory of the necessary changes. 
+*** Currently, my stuff in simDataAnalysis.py works with 'lfp' branch of my fork of netpyne -- I think I should just keep this as is (check on github first), then switch to development branch of netpyne and pull all the recent changes. 
+**** https://github.com/ericaygriffith/netpyne/tree/lfp
+**** on local machine --> cd ~/Desktop/NEUROSIM/netpyne
+**** git branch --> 'lfp'
+**** git checkout development
+ericagriffith% git checkout development
+Switched to branch 'development'
+Your branch is up to date with 'origin/development'.
+**** git remote -v 
+***** ericagriffith% git remote -v
+origin	https://github.com/ericaygriffith/netpyne.git (fetch)
+origin	https://github.com/ericaygriffith/netpyne.git (push)
+upstream	https://github.com/suny-downstate-medical-center/netpyne.git (fetch)
+upstream
+https://github.com/suny-downstate-medical-center/netpyne.git (push)
+**** git pull upstream development
+ericagriffith% git pull upstream development
+remote: Enumerating objects: 1296, done.
+remote: Counting objects: 100% (1072/1072), done.
+remote: Compressing objects: 100% (533/533), done.
+remote: Total 894 (delta 703), reused 519 (delta 361), pack-reused 0
+Receiving objects: 100% (894/894), 149.27 KiB | 2.99 MiB/s, done.
+Resolving deltas: 100% (703/703), completed with 78 local objects.
+From https://github.com/suny-downstate-medical-center/netpyne
+ * branch              development -> FETCH_HEAD
+   6a710e99..d8b7e94c  development -> upstream/development
+Updating 6a710e99..d8b7e94c
+Fast-forward
+ CHANGES.md                                              |  39 +-
+ doc/build.py                                            |   2 +-
+ doc/source/about.rst                                    |  66 ++--
+ doc/source/conf.py                                      |   9 +-
+ doc/source/index.rst                                    |   2 +-
+ doc/source/install.rst                                  |   2 +-
+ doc/source/reference.rst                                | 140 ++++++-
+ examples/CA3model_3pops/cfg.py                          |   9 +-
+ examples/LFPrecording/cell_lfp.py                       |  22 +-
+ examples/LFPrecording/net_lfp.py                        |  27 +-
+ examples/M1detailed/cfg.py                              |   2 +-
+ examples/batchCell/batch.py                             |   9 +-
+ examples/batchCell/cfg.py                               |   2 +-
+ examples/batchCell/init.py                              |   8 +-
+ examples/batch_rxd_net/CSTR_cellParams.json             | 560 ++++++++++++++++++++++++++++
+ examples/batch_rxd_net/README.md                        |  30 ++
+ examples/batch_rxd_net/batch.py                         |  33 ++
+ examples/batch_rxd_net/cfg.py                           |  46 +++
+ examples/batch_rxd_net/init.py                          |  26 ++
+ examples/batch_rxd_net/mod/HCN1.mod                     |  67 ++++
+ examples/batch_rxd_net/mod/IC.mod                       |  88 +++++
+ examples/batch_rxd_net/mod/IKsin.mod                    |  97 +++++
+ examples/batch_rxd_net/mod/ar_traub.mod                 |  47 +++
+ examples/batch_rxd_net/mod/cadad.mod                    |  74 ++++
+ examples/batch_rxd_net/mod/cadyn.mod                    |  52 +++
+ examples/batch_rxd_net/mod/cagk.mod                     |  87 +++++
+ examples/batch_rxd_net/mod/cal_mh.mod                   | 139 +++++++
+ examples/batch_rxd_net/mod/cal_mig.mod                  | 131 +++++++
+ examples/batch_rxd_net/mod/can_mig.mod                  | 144 ++++++++
+ examples/batch_rxd_net/mod/canin.mod                    | 127 +++++++
+ examples/batch_rxd_net/mod/cat_mig.mod                  | 139 +++++++
+ examples/batch_rxd_net/mod/cat_traub.mod                |  67 ++++
+ examples/batch_rxd_net/mod/catcb.mod                    | 109 ++++++
+ examples/batch_rxd_net/mod/gabab.mod                    | 210 +++++++++++
+ examples/batch_rxd_net/mod/ghk.inc                      |  40 ++
+ examples/batch_rxd_net/mod/h_BS.mod                     |  88 +++++
+ examples/batch_rxd_net/mod/h_harnett.mod                |  69 ++++
+ examples/batch_rxd_net/mod/h_kole.mod                   |  76 ++++
+ examples/batch_rxd_net/mod/h_migliore.mod               | 102 +++++
+ examples/batch_rxd_net/mod/hin.mod                      |  76 ++++
+ examples/batch_rxd_net/mod/ican_sidi.mod                | 110 ++++++
+ examples/batch_rxd_net/mod/kBK.mod                      | 108 ++++++
+ examples/batch_rxd_net/mod/kap_BS.mod                   | 124 +++++++
+ examples/batch_rxd_net/mod/kapcb.mod                    | 120 ++++++
+ examples/batch_rxd_net/mod/kapin.mod                    | 124 +++++++
+ examples/batch_rxd_net/mod/kctin.mod                    |  97 +++++
+ examples/batch_rxd_net/mod/kdmc_BS.mod                  |  93 +++++
+ examples/batch_rxd_net/mod/kdr_BS.mod                   |  89 +++++
+ examples/batch_rxd_net/mod/kdrin.mod                    | 103 ++++++
+ examples/batch_rxd_net/mod/misc.h                       | 134 +++++++
+ examples/batch_rxd_net/mod/nafx.mod                     | 170 +++++++++
+ examples/batch_rxd_net/mod/nap_sidi.mod                 | 109 ++++++
+ examples/batch_rxd_net/mod/nax_BS.mod                   | 115 ++++++
+ examples/batch_rxd_net/mod/savedist.mod                 |  14 +
+ examples/batch_rxd_net/mod/vecstim.mod                  |  83 +++++
+ examples/batch_rxd_net/netParams.py                     | 122 ++++++
+ examples/dipoleRecording/IT2_reduced_cellParams.json    | 633 ++++++++++++++++++++++++++++++++
+ examples/dipoleRecording/PT5B_full_cellParams.json      |   1 +
+ examples/dipoleRecording/cell_dipole.py                 |  50 +++
+ examples/dipoleRecording/mod/IC.mod                     |  88 +++++
+ examples/dipoleRecording/mod/cadad.mod                  |  74 ++++
+ examples/dipoleRecording/mod/cagk.mod                   |  87 +++++
+ examples/dipoleRecording/mod/cal_mig.mod                | 131 +++++++
+ examples/dipoleRecording/mod/can_mig.mod                | 144 ++++++++
+ examples/dipoleRecording/mod/cat_mig.mod                | 136 +++++++
+ examples/dipoleRecording/mod/ghk.inc                    |  40 ++
+ examples/dipoleRecording/mod/h_kole.mod                 |  76 ++++
+ examples/dipoleRecording/mod/h_migliore.mod             | 102 +++++
+ examples/dipoleRecording/mod/ican_sidi.mod              | 110 ++++++
+ examples/dipoleRecording/mod/kBK.mod                    | 108 ++++++
+ examples/dipoleRecording/mod/kap_BS.mod                 | 124 +++++++
+ examples/dipoleRecording/mod/kdmc_BS.mod                |  93 +++++
+ examples/dipoleRecording/mod/kdr_BS.mod                 |  89 +++++
+ examples/dipoleRecording/mod/misc.h                     | 134 +++++++
+ examples/dipoleRecording/mod/nax_BS.mod                 | 115 ++++++
+ examples/dipoleRecording/mod/savedist.mod               |  14 +
+ examples/dipoleRecording/net_dipole.py                  |  72 ++++
+ examples/intervalSaveWeights/README.md                  |   2 +-
+ examples/intervalSaveWeights/init.py                    |   3 +-
+ examples/intervalSaving/init.py                         |   3 +-
+ examples/rxd_net/netParams.py                           |   8 +-
+ netpyne/__init__.py                                     |   2 +-
+ netpyne/analysis/__init__.py                            |  17 +-
+ netpyne/analysis/csd.py                                 | 173 +++++----
+ netpyne/analysis/dipole.py                              | 207 +++++++++++
+ netpyne/analysis/lfp.py                                 |  75 ++--
+ netpyne/analysis/lfp_orig.py                            |   6 +-
+ netpyne/analysis/mapping.py                             | 246 +++++++++++++
+ netpyne/analysis/network.py                             | 339 -----------------
+ netpyne/analysis/spikes.py                              |  72 +++-
+ netpyne/analysis/spikes_orig.py                         |  12 +-
+ netpyne/analysis/tools.py                               |  18 +-
+ netpyne/analysis/utils.py                               |  12 +-
+ netpyne/batch/grid.py                                   |   9 +-
+ netpyne/cell/compartCell.py                             |   6 +-
+ netpyne/network/conn.py                                 |  25 +-
+ netpyne/network/netrxd.py                               |  12 +-
+ netpyne/plotting/__init__.py                            |  12 +-
+ netpyne/plotting/examples.py                            | 160 --------
+ netpyne/plotting/plotLFP.py                             | 444 ----------------------
+ netpyne/plotting/plotLFPLocations.py                    | 122 ++++++
+ netpyne/plotting/plotLFPPSD.py                          | 361 ++++++++++++++++++
+ netpyne/plotting/plotLFPSpectrogram.py                  | 303 +++++++++++++++
+ netpyne/plotting/plotLFPTimeSeries.py                   | 338 +++++++++++++++++
+ netpyne/plotting/plotRaster.py                          | 287 ++++++---------
+ netpyne/plotting/plotShape.py                           | 312 ++++++++++++++++
+ netpyne/plotting/plotSpikeFreq.py                       | 520 ++++++++++++++++++++++++++
+ netpyne/plotting/plotSpikeHist.py                       | 447 +++++++++++-----------
+ netpyne/plotting/plotTraces.py                          |  89 -----
+ netpyne/plotting/plotter.py                             | 176 ++++++---
+ netpyne/plotting/test_plotRaster.py                     | 106 ------
+ netpyne/sim/__init__.py                                 |   2 +-
+ netpyne/sim/gather.py                                   | 211 +++++++----
+ netpyne/sim/load.py                                     |  32 +-
+ netpyne/sim/run.py                                      | 107 +++++-
+ netpyne/sim/save.py                                     | 252 +++++--------
+ netpyne/sim/setup.py                                    |  91 ++++-
+ netpyne/sim/utils.py                                    |  34 +-
+ netpyne/sim/validate.py                                 | 146 ++++++++
+ netpyne/sim/validator.py                                | 411 +++++++++++++++++++++
+ netpyne/sim/wrappers.py                                 |  19 +-
+ netpyne/specs/simConfig.py                              |  18 +-
+ netpyne/support/recxelectrode.py                        |  30 +-
+ netpyne/tutorials/saving_loading_tut/saving_dist_cfg.py |   2 +-
+ netpyne/tutorials/saving_loading_tut/saving_tut.ipynb   |  10 +-
+ requirements.txt                                        |   1 +
+ setup.py                                                |   2 +-
+ 127 files changed, 11362 insertions(+), 2129 deletions(-)
+ create mode 100644 examples/batch_rxd_net/CSTR_cellParams.json
+ create mode 100644 examples/batch_rxd_net/README.md
+ create mode 100644 examples/batch_rxd_net/batch.py
+ create mode 100644 examples/batch_rxd_net/cfg.py
+ create mode 100644 examples/batch_rxd_net/init.py
+ create mode 100644 examples/batch_rxd_net/mod/HCN1.mod
+ create mode 100644 examples/batch_rxd_net/mod/IC.mod
+ create mode 100755 examples/batch_rxd_net/mod/IKsin.mod
+ create mode 100644 examples/batch_rxd_net/mod/ar_traub.mod
+ create mode 100644 examples/batch_rxd_net/mod/cadad.mod
+ create mode 100755 examples/batch_rxd_net/mod/cadyn.mod
+ create mode 100644 examples/batch_rxd_net/mod/cagk.mod
+ create mode 100644 examples/batch_rxd_net/mod/cal_mh.mod
+ create mode 100644 examples/batch_rxd_net/mod/cal_mig.mod
+ create mode 100644 examples/batch_rxd_net/mod/can_mig.mod
+ create mode 100755 examples/batch_rxd_net/mod/canin.mod
+ create mode 100644 examples/batch_rxd_net/mod/cat_mig.mod
+ create mode 100644 examples/batch_rxd_net/mod/cat_traub.mod
+ create mode 100755 examples/batch_rxd_net/mod/catcb.mod
+ create mode 100644 examples/batch_rxd_net/mod/gabab.mod
+ create mode 100644 examples/batch_rxd_net/mod/ghk.inc
+ create mode 100644 examples/batch_rxd_net/mod/h_BS.mod
+ create mode 100644 examples/batch_rxd_net/mod/h_harnett.mod
+ create mode 100644 examples/batch_rxd_net/mod/h_kole.mod
+ create mode 100644 examples/batch_rxd_net/mod/h_migliore.mod
+ create mode 100755 examples/batch_rxd_net/mod/hin.mod
+ create mode 100644 examples/batch_rxd_net/mod/ican_sidi.mod
+ create mode 100644 examples/batch_rxd_net/mod/kBK.mod
+ create mode 100644 examples/batch_rxd_net/mod/kap_BS.mod
+ create mode 100755 examples/batch_rxd_net/mod/kapcb.mod
+ create mode 100755 examples/batch_rxd_net/mod/kapin.mod
+ create mode 100755 examples/batch_rxd_net/mod/kctin.mod
+ create mode 100644 examples/batch_rxd_net/mod/kdmc_BS.mod
+ create mode 100644 examples/batch_rxd_net/mod/kdr_BS.mod
+ create mode 100755 examples/batch_rxd_net/mod/kdrin.mod
+ create mode 100644 examples/batch_rxd_net/mod/misc.h
+ create mode 100755 examples/batch_rxd_net/mod/nafx.mod
+ create mode 100644 examples/batch_rxd_net/mod/nap_sidi.mod
+ create mode 100644 examples/batch_rxd_net/mod/nax_BS.mod
+ create mode 100644 examples/batch_rxd_net/mod/savedist.mod
+ create mode 100644 examples/batch_rxd_net/mod/vecstim.mod
+ create mode 100644 examples/batch_rxd_net/netParams.py
+ create mode 100644 examples/dipoleRecording/IT2_reduced_cellParams.json
+ create mode 100644 examples/dipoleRecording/PT5B_full_cellParams.json
+ create mode 100644 examples/dipoleRecording/cell_dipole.py
+ create mode 100644 examples/dipoleRecording/mod/IC.mod
+ create mode 100644 examples/dipoleRecording/mod/cadad.mod
+ create mode 100644 examples/dipoleRecording/mod/cagk.mod
+ create mode 100644 examples/dipoleRecording/mod/cal_mig.mod
+ create mode 100644 examples/dipoleRecording/mod/can_mig.mod
+ create mode 100644 examples/dipoleRecording/mod/cat_mig.mod
+ create mode 100644 examples/dipoleRecording/mod/ghk.inc
+ create mode 100644 examples/dipoleRecording/mod/h_kole.mod
+ create mode 100644 examples/dipoleRecording/mod/h_migliore.mod
+ create mode 100644 examples/dipoleRecording/mod/ican_sidi.mod
+ create mode 100644 examples/dipoleRecording/mod/kBK.mod
+ create mode 100644 examples/dipoleRecording/mod/kap_BS.mod
+ create mode 100644 examples/dipoleRecording/mod/kdmc_BS.mod
+ create mode 100644 examples/dipoleRecording/mod/kdr_BS.mod
+ create mode 100644 examples/dipoleRecording/mod/misc.h
+ create mode 100644 examples/dipoleRecording/mod/nax_BS.mod
+ create mode 100644 examples/dipoleRecording/mod/savedist.mod
+ create mode 100644 examples/dipoleRecording/net_dipole.py
+ create mode 100644 netpyne/analysis/dipole.py
+ create mode 100644 netpyne/analysis/mapping.py
+ delete mode 100644 netpyne/plotting/examples.py
+ delete mode 100644 netpyne/plotting/plotLFP.py
+ create mode 100644 netpyne/plotting/plotLFPLocations.py
+ create mode 100644 netpyne/plotting/plotLFPPSD.py
+ create mode 100644 netpyne/plotting/plotLFPSpectrogram.py
+ create mode 100644 netpyne/plotting/plotLFPTimeSeries.py
+ create mode 100644 netpyne/plotting/plotShape.py
+ create mode 100644 netpyne/plotting/plotSpikeFreq.py
+ delete mode 100644 netpyne/plotting/plotTraces.py
+ delete mode 100644 netpyne/plotting/test_plotRaster.py
+ create mode 100644 netpyne/sim/validate.py
+ create mode 100644 netpyne/sim/validator.py
+**** git push origin development 
+ericagriffith% git push origin development
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/ericaygriffith/netpyne.git
+   6a710e99..d8b7e94c  development -> development
 ** simDataAnalysis.py changes to make in light of netpyne updates --> 
 *** I do 'from netpyne import sim' and 'import netpyne' --> consolidate...?
 *** Go function-by-function (unused / in progress functions below) --> 
@@ -59902,3 +60140,10 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 ***** sim.analysis.getSpikeHistData (in def getSpikeData)
 ***** sim.analysis.getLFPData (in def getLFPDataDict & def getPSDinfo)
 ***** sim.analysis.plotLFP (in def getPSDinfo)
+** Going thru the functions above:
+*** Doing the more relevant ones first!!
+*** sim.analysis.getRateSpectrogramData  
+**** Used in A1/analysis/simDataAnalysis --> in def getSpikeData
+**** the def getRateSpectrogramData() is in 'lfp' branch of my fork of netpyne, in spikes_orig.py 
+
+
