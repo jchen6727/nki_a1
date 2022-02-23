@@ -59815,6 +59815,15 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** "functional identification of supragranular, gran- ular, and infragranular cortical layers is straightforward based on our previous studies (Peterson et al., 1995; Schroeder et al., 1998, 2001)" <-- could use this for our paper as well!!! 
 *** WHAT does it mean exactly when they say the data was "realigned to these troughs" -- ???? 
 
+** Relevant questions for A1: 
+*** DO THIS --> Should I be looking at the PSD for both the LFP and the CSD signal over all layers? (see 'laminar profile' paper) 
+**** In the 'laminar profile' paper, they note that for LFP, alpha was strongest in infragranular, but with CSD, alpha strongest in supragranular layers
+**** Now, is this done on filtered or unfiltered lfp / csd ? I believe unfiltered...? 
+*** Similarly to ^^, should I be looking at CSD when it comes to the heatmaps???
+*** go over 'layer-specific entrainment' paper again bc I want to understand why the actual spiking data would be helpful re: spiking contribution to high-gamma 
+*** bipolar LFP -- why does this reduce volume conduction problems?? and what does it mean?? 
+**** 'laminar profile' paper seems to indicate that the bipolar LFP is the first derivative of the LFP data. 
+
 ** Layer identification text that could be helpful:
 *** From 'laminar profile & physiology of the alpha rhythm...' paper:
 **** "... functional identification of supragranular, gran- ular, and infragranular cortical layers is straightforward based on our previous studies (Peterson et al., 1995; Schroeder et al., 1998, 2001)" <-- could use this for our paper as well!!! 
