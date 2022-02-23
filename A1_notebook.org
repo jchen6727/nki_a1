@@ -59828,3 +59828,14 @@ def getPSDinfo_usingPlotLFP(dataFile, pop, timeRange, electrode):
 *** From 'laminar profile & physiology of the alpha rhythm...' paper:
 **** "... functional identification of supragranular, gran- ular, and infragranular cortical layers is straightforward based on our previous studies (Peterson et al., 1995; Schroeder et al., 1998, 2001)" <-- could use this for our paper as well!!! 
 **** "... to illustrate the selection of supragranular, granular, and infragranular record- ings for the following quantitative analyses, Figure 1 displays rep- resentative profiles of stimulus-evoked activity in V1, S1, and A1. In each case, there is initial activation (current sink) in the middle granular layers (Fig. 1, single arrows), followed at short latency by current source/sink configurations in supragranular and infra- granular layers (Fig. 1, double arrows). This basic laminar activa- tion sequence is stereotypic in V1, S1, and A1 and provides the means to reliably identify cortical layers (Schroeder et al., 1991, 1998; Steinschneider et al., 1992; Peterson et al., 1995)"
+* <2022-02-23 Wed -- LFPy ECOG & netpyne & reading>
+** NetPyNE updates --
+*** Joe said that netpyne is officially updated -- need to get this working with respect to the heatmaps function etc. how am I going to do this? Maybe I will take certain scripts that are necessary for 
+
+** Reading:
+*** laminar profile paper (C. schroeder, etc.):
+**** LFP vs. CSD alpha alignment changes sources / loci of activity 
+**** ^^ Using LFP approach, should see predominantly infragranular activity, but with CSD, supragranular sources emerge. 
+**** Sensory inhibition vs. Sampling rate / parsing (??) 
+**** Jones, Shaak, etc etc. 
+*** ^^ I feel like I should be able to do this pretty readily given the data that I have already, no? e.g. the heatmaps? 
