@@ -60145,5 +60145,11 @@ To https://github.com/ericaygriffith/netpyne.git
 *** sim.analysis.getRateSpectrogramData  
 **** Used in A1/analysis/simDataAnalysis --> in def getSpikeData
 **** the def getRateSpectrogramData() is in 'lfp' branch of my fork of netpyne, in spikes_orig.py 
-
-
+* <2022-02-24 Thu -- LFPy ECOG code>
+** Working on adjustments for LFPy and ECOG code
+*** LFPy example:
+**** https://github.com/LFPy/LFPy/blob/master/examples/example_ECoG_4sphere.py
+*** NetPyNE EEG example:
+**** https://github.com/suny-downstate-medical-center/netpyne/blob/development/netpyne/analysis/dipole.py
+*** GOAL: We have NetPyNE script to take A1 current dipoles to produce EEG, and now want to run the same current dipole data to produce ECoG 
+*** 
