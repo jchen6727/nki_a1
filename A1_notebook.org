@@ -60152,4 +60152,6 @@ To https://github.com/ericaygriffith/netpyne.git
 *** NetPyNE EEG example:
 **** https://github.com/suny-downstate-medical-center/netpyne/blob/development/netpyne/analysis/dipole.py
 *** GOAL: We have NetPyNE script to take A1 current dipoles to produce EEG, and now want to run the same current dipole data to produce ECoG 
-*** 
+*** Sam said he talked to Charlie and said that the iEEG stuff does not need to be done for this grant deadline, since it is approx the same. 
+* <2022-02-25 Fri -- osc event code + reading>
+** "Dual Gamma Rhythm Generators Control Interlaminar Synchrony in Auditory Cortex"
