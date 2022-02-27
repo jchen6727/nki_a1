@@ -60187,8 +60187,8 @@ To https://github.com/ericaygriffith/netpyne.git
 **** Definitely need to check on:
 ***** [DONE] sim.analysis.getRateSpectrogramData  (in def getSpikeData)
 ***** [DONE] sim.analysis.getSpikeHistData (in def getSpikeData)
-***** sim.analysis.getLFPData (in def getLFPDataDict & def getPSDinfo)
-***** sim.analysis.plotLFP (in def getPSDinfo)
+***** [DONE] sim.analysis.getLFPData (in def getLFPDataDict & def getPSDinfo)
+***** [DONE] sim.analysis.plotLFP (in def getPSDinfo)
 ** Going thru the functions getRateSpectrogramData & getSpikeHistData:
 *** sim.analysis.getRateSpectrogramData  
 **** Used in A1/analysis/simDataAnalysis --> in def getSpikeData
@@ -60200,5 +60200,8 @@ To https://github.com/ericaygriffith/netpyne.git
 *** sim.analysis.getLFPData:
 **** in A1/analysis/simDataAnalysis -- in def getLFPDataDict & def getPSDinfo
 **** Okay now this function has been transferred over to simDataAnalysis.py, modified, and tested!
-*** Next look at getLFPData use in def getPSDinfo() 
-**** 
+*** Next look at getLFPData use in def getPSDinfo() (in A1/analysis/simDataAnalysis.py):
+**** DONE
+*** Next look at plotLFP in def getPSDinfo()
+**** Done with this as well!
+** NOTE: Should combine the LFP functions in A1/analysis/simDataAnalysis.py, or if keeping them separate, should eliminate redundancies.  
