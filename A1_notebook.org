@@ -60205,3 +60205,4 @@ To https://github.com/ericaygriffith/netpyne.git
 *** Next look at plotLFP in def getPSDinfo()
 **** Done with this as well!
 ** NOTE: Should combine the LFP functions in A1/analysis/simDataAnalysis.py, or if keeping them separate, should eliminate redundancies.  
+** Now switch to net netpyne development branch and test again!! 
