@@ -60185,13 +60185,20 @@ To https://github.com/ericaygriffith/netpyne.git
 ***** sim.cfg.recordStep 
 ***** sim.cfg.duration
 **** Definitely need to check on:
-***** sim.analysis.getRateSpectrogramData  (in def getSpikeData)
-***** sim.analysis.getSpikeHistData (in def getSpikeData)
+***** [DONE] sim.analysis.getRateSpectrogramData  (in def getSpikeData)
+***** [DONE] sim.analysis.getSpikeHistData (in def getSpikeData)
 ***** sim.analysis.getLFPData (in def getLFPDataDict & def getPSDinfo)
 ***** sim.analysis.plotLFP (in def getPSDinfo)
-** Going thru the functions above:
+** Going thru the functions getRateSpectrogramData & getSpikeHistData:
 *** sim.analysis.getRateSpectrogramData  
 **** Used in A1/analysis/simDataAnalysis --> in def getSpikeData
 **** the def getRateSpectrogramData() is in 'lfp' branch of my fork of netpyne, in spikes_orig.py 
 *** I created a NEWsimDataAnalysis.py script in A1/analysis in order to test netpyne functions as I bring them in!!
 *** I've brought in def getRateSpectrogramData and def getSpikeHistData
+*** I tested both getRateSpectrogramData and getSpikeHistData in old and new simDataAnalysis.py scripts, and I made sure they worked!! 
+** Next going thru the LFP functions (getLFPData & plotLFP):
+*** sim.analysis.getLFPData:
+**** in A1/analysis/simDataAnalysis -- in def getLFPDataDict & def getPSDinfo
+**** Okay now this function has been transferred over to simDataAnalysis.py, modified, and tested!
+*** Next look at getLFPData use in def getPSDinfo() 
+**** 

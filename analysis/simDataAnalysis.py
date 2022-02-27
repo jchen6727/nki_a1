@@ -266,6 +266,608 @@ def evalWaveletsByBand(based, dfPklFile):
 
 
 
+
+#################################################################################################################
+######### NetPyNE Functions that have been modified for use here!! ##############################################
+#################################################################################################################
+
+### SPIKE DATA ### 
+def getRateSpectrogramData(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, transformMethod = 'morlet', norm=False):
+    """
+    Parameters
+    ----------
+    include : list
+        <Short description of include>
+        **Default:** ``['allCells', 'eachPop']``
+        **Options:** ``<option>`` <description of option>
+
+    timeRange : <``None``?>
+        <Short description of timeRange>
+        **Default:** ``None``
+        **Options:** ``<option>`` <description of option>
+
+    binSize : int
+        <Short description of binSize>
+        **Default:** ``5``
+        **Options:** ``<option>`` <description of option>
+
+    minFreq : int
+        <Short description of minFreq>
+        **Default:** ``1``
+        **Options:** ``<option>`` <description of option>
+
+    maxFreq : int
+        <Short description of maxFreq>
+        **Default:** ``100``
+        **Options:** ``<option>`` <description of option>
+
+    stepFreq : int
+        <Short description of stepFreq>
+        **Default:** ``1``
+        **Options:** ``<option>`` <description of option>
+
+    NFFT : int
+        <Short description of NFFT>
+        **Default:** ``256``
+        **Options:** ``<option>`` <description of option>
+
+    noverlap : int
+        <Short description of noverlap>
+        **Default:** ``128``
+        **Options:** ``<option>`` <description of option>
+
+    smooth : int
+        <Short description of smooth>
+        **Default:** ``0``
+        **Options:** ``<option>`` <description of option>
+
+    transformMethod : str
+        <Short description of transformMethod>
+        **Default:** ``'morlet'``
+        **Options:** ``<option>`` <description of option>
+
+    norm : bool
+        <Short description of norm>
+        **Default:** ``False``
+        **Options:** ``<option>`` <description of option>
+"""
+
+    # from .. import sim  #### <-- already have 'from netpyne import sim' above in the imports!!! 
+
+    print('Getting firing rate spectrogram data ...')
+
+    # Replace 'eachPop' with list of pops
+    if 'eachPop' in include:
+        include.remove('eachPop')
+        for pop in sim.net.allPops: include.append(pop)
+
+    # time range
+    if timeRange is None:
+        timeRange = [0,sim.cfg.duration]
+
+    histData = []
+
+    allSignal, allFreqs = [], []
+
+    # Plot separate line for each entry in include
+    for iplot,subset in enumerate(include):
+        from netpyne.analysis.utils import getCellsInclude
+        cells, cellGids, netStimLabels = getCellsInclude([subset])
+        numNetStims = 0
+
+        # Select cells to include
+        if len(cellGids) > 0:
+            try:
+                spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
+            except:
+                spkinds,spkts = [],[]
+        else:
+            spkinds,spkts = [],[]
+
+
+        # Add NetStim spikes
+        spkts, spkinds = list(spkts), list(spkinds)
+        numNetStims = 0
+        if 'stims' in sim.allSimData:
+            for netStimLabel in netStimLabels:
+                netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
+                    for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
+                if len(netStimSpks) > 0:
+                    lastInd = max(spkinds) if len(spkinds)>0 else 0
+                    spktsNew = netStimSpks
+                    spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
+                    spkts.extend(spktsNew)
+                    spkinds.extend(spkindsNew)
+                    numNetStims += 1
+
+        histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+        histoT = histo[1][:-1]+binSize/2
+        histoCount = histo[0]
+        histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to rates
+
+        histData.append(histoCount)
+
+        # Morlet wavelet transform method
+        if transformMethod == 'morlet':
+            from morlet import MorletSpec, index2ms
+
+            Fs = 1000.0 / binSize
+
+            morletSpec = MorletSpec(histoCount, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+            freqs = morletSpec.f
+            spec = morletSpec.TFR
+            ylabel = 'Power'
+            allSignal.append(spec)
+            allFreqs.append(freqs)
+
+    # plotting
+    T = timeRange
+
+    # save figure data
+    figData = {'histData': histData, 'histT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
+
+    return {'allSignal': allSignal, 'allFreqs':allFreqs}
+def getSpikeHistData(include=['eachPop', 'allCells'], timeRange=None, binSize=5, graphType='bar', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, **kwargs):
+    """
+    Parameters
+    ----------
+    include : list
+        Populations and cells to include in the plot.
+        **Default:**
+        ``['eachPop', 'allCells']`` plots histogram for each population and overall average
+        **Options:**
+        ``['all']`` plots all cells and stimulations,
+        ``['allNetStims']`` plots just stimulations,
+        ``['popName1']`` plots a single population,
+        ``['popName1', 'popName2']`` plots multiple populations,
+        ``[120]`` plots a single cell,
+        ``[120, 130]`` plots multiple cells,
+        ``[('popName1', 56)]`` plots a cell from a specific population,
+        ``[('popName1', [0, 1]), ('popName2', [4, 5, 6])]``, plots cells from multiple populations
+
+    timeRange : list [start, stop]
+        Time range to plot.
+        **Default:**
+        ``None`` plots entire time range
+        **Options:** ``<option>`` <description of option>
+
+    binSize : int
+        Size of bin in ms to use for spike histogram.
+        **Default:** ``5``
+        **Options:** ``<option>`` <description of option>
+
+    graphType : str
+        Show histograms as line graphs or bar plots.
+        **Default:** ``'bar'``
+        **Options:** ``'line'``
+
+    measure : str
+        Whether to plot spike freguency (rate) or spike count.
+        **Default:** ``'rate'``
+        **Options:** ``'count'``
+
+    norm : bool
+        Whether to normalize the data or not.
+        **Default:** ``False`` does not normalize the data
+        **Options:** ``<option>`` <description of option>
+
+    smooth : int
+        Window width for smoothing.
+        **Default:** ``None`` does not smooth the data
+        **Options:** ``<option>`` <description of option>
+
+    filtFreq : int or list
+        Frequency for low-pass filter (int) or frequencies for bandpass filter in a list: [low, high]
+        **Default:** ``None`` does not filter the data
+        **Options:** ``<option>`` <description of option>
+
+    filtOrder : int
+        Order of the filter defined by `filtFreq`.
+        **Default:** ``3``
+        **Options:** ``<option>`` <description of option>
+
+    axis : bool
+        Whether to include a labeled axis on the figure.
+        **Default:** ``True`` includes a labeled axis
+        **Options:** ``False`` includes a scale bar
+
+    kwargs : <type>
+        <Short description of kwargs>
+        **Default:** *required*
+
+    Returns
+    -------
+"""
+    # from .. import sim  ### <--- SHOULD ALREADY HAVE THIS
+
+    print('Getting spike histogram data...')
+
+    # Replace 'eachPop' with list of pops
+    if 'eachPop' in include:
+        include.remove('eachPop')
+        for pop in sim.net.allPops: include.append(pop)
+
+
+    # time range
+    if timeRange is None:
+        timeRange = [0, sim.cfg.duration]
+
+    histoData = []
+
+    # Plot separate line for each entry in include
+    for iplot,subset in enumerate(include):
+        from netpyne.analysis.utils import getCellsInclude
+        if isinstance(subset, list):
+            cells, cellGids, netStimLabels = getCellsInclude(subset)
+        else:
+            cells, cellGids, netStimLabels = getCellsInclude([subset])
+        numNetStims = 0
+
+        # Select cells to include
+        if len(cellGids) > 0:
+            try:
+                spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
+            except:
+                spkinds,spkts = [],[]
+        else:
+            spkinds,spkts = [],[]
+
+        # Add NetStim spikes
+        spkts, spkinds = list(spkts), list(spkinds)
+        numNetStims = 0
+        if 'stims' in sim.allSimData:
+            for netStimLabel in netStimLabels:
+                netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
+                for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
+                if len(netStimSpks) > 0:
+                    lastInd = max(spkinds) if len(spkinds)>0 else 0
+                    spktsNew = netStimSpks
+                    spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
+                    spkts.extend(spktsNew)
+                    spkinds.extend(spkindsNew)
+                    numNetStims += 1
+
+        histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+        histoT = histo[1][:-1]+binSize/2
+        histoCount = histo[0]
+
+        if measure == 'rate':
+            histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+
+        if filtFreq:
+            from scipy import signal
+            fs = 1000.0/binSize
+            nyquist = fs/2.0
+            if isinstance(filtFreq, list): # bandpass
+                Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+                b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+            elif isinstance(filtFreq, Number): # lowpass
+                Wn = filtFreq/nyquist
+                b, a = signal.butter(filtOrder, Wn)
+            histoCount = signal.filtfilt(b, a, histoCount)
+
+        if norm:
+            histoCount /= max(histoCount)
+
+        if smooth:
+            histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
+
+        histoData.append(histoCount)
+
+    # save figure data
+    figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
+
+    return {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
+
+### LFP ### 
+def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'spectrogram', 'PSD'], inputLFP=None, NFFT=256, noverlap=128, nperseg=256, 
+    minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, logx=False, logy=False, normSignal=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, 
+    transformMethod='morlet'):
+    """
+    Function for plotting local field potentials (LFP)
+
+    Parameters
+    ----------
+    pop: str (NOTE: for now) 
+        Population to plot lfp data for (sim.allSimData['LFPPops'][pop] <-- requires LFP pop saving!)
+        ``None`` plots overall LFP data 
+
+    timeRange : list [start, stop]
+        Time range to plot.
+        **Default:**
+        ``None`` plots entire time range
+
+    electrodes : list
+        List of electrodes to include; ``'avg'`` is the average of all electrodes; ``'all'`` is each electrode separately.
+        **Default:** ``['avg', 'all']``
+
+    plots : list
+        List of plot types to show.
+        **Default:** ``['timeSeries', 'spectrogram']`` <-- added 'PSD' (EYG, 2/10/2022)
+
+    NFFT : int (power of 2)
+        Number of data points used in each block for the PSD and time-freq FFT.
+        **Default:** ``256``
+
+    noverlap : int (<nperseg)
+        Number of points of overlap between segments for PSD and time-freq.
+        **Default:** ``128``
+
+    nperseg : int
+        Length of each segment for time-freq.
+        **Default:** ``256``
+
+    minFreq : float
+        Minimum frequency shown in plot for PSD and time-freq.
+        **Default:** ``1``
+
+    maxFreq : float
+        Maximum frequency shown in plot for PSD and time-freq.
+        **Default:** ``100``
+
+    stepFreq : float
+        Step frequency.
+        **Default:** ``1``
+
+    smooth : int
+        Window size for smoothing LFP; no smoothing if ``0``
+        **Default:** ``0``
+
+    separation : float
+        Separation factor between time-resolved LFP plots; multiplied by max LFP value.
+        **Default:** ``1.0``
+
+    logx : bool
+        Whether to make x-axis logarithmic
+        **Default:** ``False``
+        **Options:** ``<option>`` <description of option>
+
+    logy : bool
+        Whether to make y-axis logarithmic
+        **Default:** ``False``
+
+    normSignal : bool
+        Whether to normalize the signal.
+        **Default:** ``False``
+
+    normSpec : bool
+        Needs documentation.
+        **Default:** ``False``
+
+    filtFreq : int or list
+        Frequency for low-pass filter (int) or frequencies for bandpass filter in a list: [low, high]
+        **Default:** ``False`` does not filter the data
+
+    filtOrder : int
+        Order of the filter defined by `filtFreq`.
+        **Default:** ``3``
+
+    detrend : bool
+        Whether to detrend.
+        **Default:** ``False``
+
+    transformMethod : str
+        Transform method.
+        **Default:** ``'morlet'``
+        **Options:** ``'fft'``
+
+    Returns
+    -------
+    (dict)
+        A tuple consisting of the Matplotlib figure handles and a dictionary containing the plot data
+    """
+
+    # from .. import sim   ### <-- should already be there!!!! in imports!! 
+
+    print('Getting LFP data ...')
+
+
+    # time range
+    if timeRange is None:
+        timeRange = [0,sim.cfg.duration]
+
+    # populations
+    if pop is None:
+        if inputLFP is not None:
+            lfp = inputLFP[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+        else:
+            lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+    elif pop is not None:
+        if type(pop) is str:
+            popToPlot = pop
+        elif type(pop) is list:
+            popToPlot = pop[0]
+        lfp = np.array(sim.allSimData['LFPPops'][popToPlot])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+
+    if filtFreq:
+        from scipy import signal
+        fs = 1000.0/sim.cfg.recordStep
+        nyquist = fs/2.0
+        if isinstance(filtFreq, list): # bandpass
+            Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+            b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+        elif isinstance(filtFreq, Number): # lowpass
+            Wn = filtFreq/nyquist
+            b, a = signal.butter(filtOrder, Wn)
+        for i in range(lfp.shape[1]):
+            lfp[:,i] = signal.filtfilt(b, a, lfp[:,i])
+
+    if detrend:
+        from scipy import signal
+        for i in range(lfp.shape[1]):
+            lfp[:,i] = signal.detrend(lfp[:,i])
+
+    if normSignal:
+        for i in range(lfp.shape[1]):
+            offset = min(lfp[:,i])
+            if offset <= 0:
+                lfp[:,i] += abs(offset)
+            lfp[:,i] /= max(lfp[:,i])
+
+    # electrode selection
+    if 'all' in electrodes:
+        electrodes.remove('all')
+        electrodes.extend(list(range(int(sim.net.recXElectrode.nsites))))
+
+
+    data = {'lfp': lfp}  # returned data
+
+
+    # time series -----------------------------------------
+    if 'timeSeries' in plots:
+        ydisp = np.absolute(lfp).max() * separation
+        offset = 1.0*ydisp
+        t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
+
+        for i,elec in enumerate(electrodes):
+            if elec == 'avg':
+                lfpPlot = np.mean(lfp, axis=1)
+                color = 'k'
+                lw=1.0
+            elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+                lfpPlot = lfp[:, elec]
+                color = 'k' #colors[i%len(colors)]
+                lw = 1.0
+
+            if len(t) < len(lfpPlot):
+                lfpPlot = lfpPlot[:len(t)]
+
+
+        data['lfpPlot'] = lfpPlot
+        data['ydisp'] =  ydisp
+        data['t'] = t
+
+    # Spectrogram ------------------------------
+    if 'spectrogram' in plots:
+        import matplotlib.cm as cm
+        numCols = 1 #np.round(len(electrodes) / maxPlots) + 1
+
+        # Morlet wavelet transform method
+        if transformMethod == 'morlet':
+            spec = []
+            freqList = None
+            if logy:
+                freqList = np.logspace(np.log10(minFreq), np.log10(maxFreq), int((maxFreq-minFreq)/stepFreq))
+
+            for i,elec in enumerate(electrodes):
+                if elec == 'avg':
+                    lfpPlot = np.mean(lfp, axis=1)
+                elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+                    lfpPlot = lfp[:, elec]
+                fs = int(1000.0 / sim.cfg.recordStep)
+                t_spec = np.linspace(0, morlet.index2ms(len(lfpPlot), fs), len(lfpPlot))
+                spec.append(MorletSpec(lfpPlot, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+            f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+
+            vmin = np.array([s.TFR for s in spec]).min()
+            vmax = np.array([s.TFR for s in spec]).max()
+
+            for i,elec in enumerate(electrodes):
+                T = timeRange
+                F = spec[i].f
+                if normSpec:
+                    spec[i].TFR = spec[i].TFR / vmax
+                    S = spec[i].TFR
+                    vc = [0, 1]
+                else:
+                    S = spec[i].TFR
+                    vc = [vmin, vmax]
+
+
+        # FFT transform method
+        elif transformMethod == 'fft':
+
+            from scipy import signal as spsig
+            spec = []
+
+            for i,elec in enumerate(electrodes):
+                if elec == 'avg':
+                    lfpPlot = np.mean(lfp, axis=1)
+                elif isinstance(elec, Number) and elec <= sim.net.recXElectrode.nsites:
+                    lfpPlot = lfp[:, elec]
+                # creates spectrogram over a range of data
+                # from: http://joelyancey.com/lfp-python-practice/
+                fs = int(1000.0/sim.cfg.recordStep)
+                f, t_spec, x_spec = spsig.spectrogram(lfpPlot, fs=fs, window='hanning',
+                detrend=mlab.detrend_none, nperseg=nperseg, noverlap=noverlap, nfft=NFFT,  mode='psd')
+                x_mesh, y_mesh = np.meshgrid(t_spec*1000.0, f[f<maxFreq])
+                spec.append(10*np.log10(x_spec[f<maxFreq]))
+
+            vmin = np.array(spec).min()
+            vmax = np.array(spec).max()
+
+    # Power Spectral Density ------------------------------
+    if 'PSD' in plots:
+        allFreqs = []
+        allSignal = []
+        data['allFreqs'] = allFreqs
+        data['allSignal'] = allSignal
+
+        for i,elec in enumerate(electrodes):
+            if elec == 'avg':
+                lfpPlot = np.mean(lfp, axis=1)
+            elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+                lfpPlot = lfp[:, elec]
+
+            # Morlet wavelet transform method
+            if transformMethod == 'morlet':
+                # from ..support.morlet import MorletSpec, index2ms
+
+                Fs = int(1000.0/sim.cfg.recordStep)
+
+                #t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+                morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+                freqs = F = morletSpec.f
+                spec = morletSpec.TFR
+                signal = np.mean(spec, 1)
+                ylabel = 'Power'
+
+            # FFT transform method
+            elif transformMethod == 'fft':
+                Fs = int(1000.0/sim.cfg.recordStep)
+                power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+
+                if smooth:
+                    signal = _smooth1d(10*np.log10(power[0]), smooth)
+                else:
+                    signal = 10*np.log10(power[0])
+                freqs = power[1]
+                ylabel = 'Power (dB/Hz)'
+
+            allFreqs.append(freqs)
+            allSignal.append(signal)
+
+
+        normPSD=0 ## THIS IS AN ARG I BELIEVE (in plotLFP) -- PERHAPS DO THE SAME HERE...? 
+        if normPSD:
+            vmax = np.max(allSignal)
+            for i, s in enumerate(allSignal):
+                allSignal[i] = allSignal[i]/vmax
+
+
+
+
+    outputData = {'LFP': lfp, 'lfpPlot': lfpPlot, 'electrodes': electrodes, 'timeRange': timeRange}
+    ### Added lfpPlot to this, because that usually has the post-processed electrode-based lfp data
+
+    if 'timeSeries' in plots:
+        outputData.update({'t': t})
+
+    if 'spectrogram' in plots:
+        outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]})
+
+    if 'PSD' in plots:
+        outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
+
+
+    return outputData
+#################################################################################################################
+
+
+
 ###################
 #### FUNCTIONS ####
 ###################
@@ -565,293 +1167,6 @@ def evalPops(dataFrame):
 	return top5pops, bottom5pops
 
 ## Spike Activity: data and plotting ## 
-def getRateSpectrogramData(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, transformMethod = 'morlet', norm=False):
-    """
-    Parameters
-    ----------
-    include : list
-        <Short description of include>
-        **Default:** ``['allCells', 'eachPop']``
-        **Options:** ``<option>`` <description of option>
-
-    timeRange : <``None``?>
-        <Short description of timeRange>
-        **Default:** ``None``
-        **Options:** ``<option>`` <description of option>
-
-    binSize : int
-        <Short description of binSize>
-        **Default:** ``5``
-        **Options:** ``<option>`` <description of option>
-
-    minFreq : int
-        <Short description of minFreq>
-        **Default:** ``1``
-        **Options:** ``<option>`` <description of option>
-
-    maxFreq : int
-        <Short description of maxFreq>
-        **Default:** ``100``
-        **Options:** ``<option>`` <description of option>
-
-    stepFreq : int
-        <Short description of stepFreq>
-        **Default:** ``1``
-        **Options:** ``<option>`` <description of option>
-
-    NFFT : int
-        <Short description of NFFT>
-        **Default:** ``256``
-        **Options:** ``<option>`` <description of option>
-
-    noverlap : int
-        <Short description of noverlap>
-        **Default:** ``128``
-        **Options:** ``<option>`` <description of option>
-
-    smooth : int
-        <Short description of smooth>
-        **Default:** ``0``
-        **Options:** ``<option>`` <description of option>
-
-    transformMethod : str
-        <Short description of transformMethod>
-        **Default:** ``'morlet'``
-        **Options:** ``<option>`` <description of option>
-
-    norm : bool
-        <Short description of norm>
-        **Default:** ``False``
-        **Options:** ``<option>`` <description of option>
-"""
-
-    # from .. import sim  #### <-- already have 'from netpyne import sim' above in the imports!!! 
-
-    print('Getting firing rate spectrogram data ...')
-
-    # Replace 'eachPop' with list of pops
-    if 'eachPop' in include:
-        include.remove('eachPop')
-        for pop in sim.net.allPops: include.append(pop)
-
-    # time range
-    if timeRange is None:
-        timeRange = [0,sim.cfg.duration]
-
-    histData = []
-
-    allSignal, allFreqs = [], []
-
-    # Plot separate line for each entry in include
-    for iplot,subset in enumerate(include):
-        from netpyne.analysis.utils import getCellsInclude
-        cells, cellGids, netStimLabels = getCellsInclude([subset])
-        numNetStims = 0
-
-        # Select cells to include
-        if len(cellGids) > 0:
-            try:
-                spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
-            except:
-                spkinds,spkts = [],[]
-        else:
-            spkinds,spkts = [],[]
-
-
-        # Add NetStim spikes
-        spkts, spkinds = list(spkts), list(spkinds)
-        numNetStims = 0
-        if 'stims' in sim.allSimData:
-            for netStimLabel in netStimLabels:
-                netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
-                    for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
-                if len(netStimSpks) > 0:
-                    lastInd = max(spkinds) if len(spkinds)>0 else 0
-                    spktsNew = netStimSpks
-                    spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
-                    spkts.extend(spktsNew)
-                    spkinds.extend(spkindsNew)
-                    numNetStims += 1
-
-        histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-        histoT = histo[1][:-1]+binSize/2
-        histoCount = histo[0]
-        histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to rates
-
-        histData.append(histoCount)
-
-        # Morlet wavelet transform method
-        if transformMethod == 'morlet':
-            from morlet import MorletSpec, index2ms
-
-            Fs = 1000.0 / binSize
-
-            morletSpec = MorletSpec(histoCount, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-            freqs = morletSpec.f
-            spec = morletSpec.TFR
-            ylabel = 'Power'
-            allSignal.append(spec)
-            allFreqs.append(freqs)
-
-    # plotting
-    T = timeRange
-
-    # save figure data
-    figData = {'histData': histData, 'histT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
-
-    return {'allSignal': allSignal, 'allFreqs':allFreqs}
-def getSpikeHistData(include=['eachPop', 'allCells'], timeRange=None, binSize=5, graphType='bar', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, **kwargs):
-    """
-    Parameters
-    ----------
-    include : list
-        Populations and cells to include in the plot.
-        **Default:**
-        ``['eachPop', 'allCells']`` plots histogram for each population and overall average
-        **Options:**
-        ``['all']`` plots all cells and stimulations,
-        ``['allNetStims']`` plots just stimulations,
-        ``['popName1']`` plots a single population,
-        ``['popName1', 'popName2']`` plots multiple populations,
-        ``[120]`` plots a single cell,
-        ``[120, 130]`` plots multiple cells,
-        ``[('popName1', 56)]`` plots a cell from a specific population,
-        ``[('popName1', [0, 1]), ('popName2', [4, 5, 6])]``, plots cells from multiple populations
-
-    timeRange : list [start, stop]
-        Time range to plot.
-        **Default:**
-        ``None`` plots entire time range
-        **Options:** ``<option>`` <description of option>
-
-    binSize : int
-        Size of bin in ms to use for spike histogram.
-        **Default:** ``5``
-        **Options:** ``<option>`` <description of option>
-
-    graphType : str
-        Show histograms as line graphs or bar plots.
-        **Default:** ``'bar'``
-        **Options:** ``'line'``
-
-    measure : str
-        Whether to plot spike freguency (rate) or spike count.
-        **Default:** ``'rate'``
-        **Options:** ``'count'``
-
-    norm : bool
-        Whether to normalize the data or not.
-        **Default:** ``False`` does not normalize the data
-        **Options:** ``<option>`` <description of option>
-
-    smooth : int
-        Window width for smoothing.
-        **Default:** ``None`` does not smooth the data
-        **Options:** ``<option>`` <description of option>
-
-    filtFreq : int or list
-        Frequency for low-pass filter (int) or frequencies for bandpass filter in a list: [low, high]
-        **Default:** ``None`` does not filter the data
-        **Options:** ``<option>`` <description of option>
-
-    filtOrder : int
-        Order of the filter defined by `filtFreq`.
-        **Default:** ``3``
-        **Options:** ``<option>`` <description of option>
-
-    axis : bool
-        Whether to include a labeled axis on the figure.
-        **Default:** ``True`` includes a labeled axis
-        **Options:** ``False`` includes a scale bar
-
-    kwargs : <type>
-        <Short description of kwargs>
-        **Default:** *required*
-
-    Returns
-    -------
-"""
-    # from .. import sim  ### <--- SHOULD ALREADY HAVE THIS
-
-    print('Getting spike histogram data...')
-
-    # Replace 'eachPop' with list of pops
-    if 'eachPop' in include:
-        include.remove('eachPop')
-        for pop in sim.net.allPops: include.append(pop)
-
-
-    # time range
-    if timeRange is None:
-        timeRange = [0, sim.cfg.duration]
-
-    histoData = []
-
-    # Plot separate line for each entry in include
-    for iplot,subset in enumerate(include):
-        from netpyne.analysis.utils import getCellsInclude
-        if isinstance(subset, list):
-            cells, cellGids, netStimLabels = getCellsInclude(subset)
-        else:
-            cells, cellGids, netStimLabels = getCellsInclude([subset])
-        numNetStims = 0
-
-        # Select cells to include
-        if len(cellGids) > 0:
-            try:
-                spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
-            except:
-                spkinds,spkts = [],[]
-        else:
-            spkinds,spkts = [],[]
-
-        # Add NetStim spikes
-        spkts, spkinds = list(spkts), list(spkinds)
-        numNetStims = 0
-        if 'stims' in sim.allSimData:
-            for netStimLabel in netStimLabels:
-                netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
-                for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
-                if len(netStimSpks) > 0:
-                    lastInd = max(spkinds) if len(spkinds)>0 else 0
-                    spktsNew = netStimSpks
-                    spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
-                    spkts.extend(spktsNew)
-                    spkinds.extend(spkindsNew)
-                    numNetStims += 1
-
-        histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-        histoT = histo[1][:-1]+binSize/2
-        histoCount = histo[0]
-
-        if measure == 'rate':
-            histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-
-        if filtFreq:
-            from scipy import signal
-            fs = 1000.0/binSize
-            nyquist = fs/2.0
-            if isinstance(filtFreq, list): # bandpass
-                Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-                b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-            elif isinstance(filtFreq, Number): # lowpass
-                Wn = filtFreq/nyquist
-                b, a = signal.butter(filtOrder, Wn)
-            histoCount = signal.filtfilt(b, a, histoCount)
-
-        if norm:
-            histoCount /= max(histoCount)
-
-        if smooth:
-            histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
-
-        histoData.append(histoCount)
-
-    # save figure data
-    figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
-
-    return {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
-
 def getSpikeData(dataFile, pop, graphType, timeRange): 
 	### dataFile: path to .pkl data file to load 
 	### pop: list or str --> which pop to include 
@@ -994,7 +1309,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrode):
 	elif type(plotType) is list:
 		plots = plotType
 
-	lfpOutput = sim.analysis.getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodeList, plots=plots) # filtFreq=filtFreq (see above; in args)
+	lfpOutput = getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodeList, plots=plots) # sim.analysis.getLFPData # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
 def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=True): # electrode='avg',
@@ -1124,7 +1439,7 @@ def getPSDinfo(dataFile, pop, timeRange, electrode, plotPSD=False):
 	sim.load(dataFile, instantiate=False)
 
 	# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
-	outputData = sim.analysis.getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])
+	outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
 
 	# Get signal & frequency data
 	signalList = outputData['allSignal']
@@ -1301,7 +1616,7 @@ if evalPopsBool:
 ###### COMBINED LFP PLOTTING ######
 ###################################
 
-plotLFPCombinedData = 0
+plotLFPCombinedData = 1
 
 includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 # includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
@@ -1310,7 +1625,7 @@ includePops = ['CT5B']#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will id
 if plotLFPCombinedData:
 	for i in range(len(includePops)):
 		pop = includePops[i]
-		electrode = [electrodesMaxPeak[i]]
+		electrode = [10] #[electrodesMaxPeak[i]]
 
 		print('Plotting LFP spectrogram and timeSeries for ' + pop + ' at electrode ' + str(electrode))
 
@@ -1323,7 +1638,7 @@ if plotLFPCombinedData:
 			figSize=(10,7), titleElectrode=electrode, saveFig=0)
 
 		### Get the strongest frequency in the LFP signal ### 
-		# maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrodes, plotPSD=1)
+		maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrode, plotPSD=1)
 
 
 
@@ -1358,7 +1673,7 @@ if plotLFPCombinedData:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 # includePops = includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
