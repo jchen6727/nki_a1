@@ -60155,3 +60155,43 @@ To https://github.com/ericaygriffith/netpyne.git
 *** Sam said he talked to Charlie and said that the iEEG stuff does not need to be done for this grant deadline, since it is approx the same. 
 * <2022-02-25 Fri -- osc event code + reading>
 ** "Dual Gamma Rhythm Generators Control Interlaminar Synchrony in Auditory Cortex"
+*** 2011 -- kind of old by now! Nancy Kopell is on this. 
+*** lower-frequency gamma rhythms originate in supragranular L2/3
+*** higher-frequency gamma originates in granular (L4) 
+*** ^^ This is their claim, based on previous research, specifically Lachaux et al., 2005. I wonder if that paper used LFP or CSD for their approach. 
+*** TO DO: I should organize a document that discusses the different frequency bands (gamma, alpha, beta), and corresponding hypotheses about the laminae they generate in (and what data was used to determine this, namely LFP or CSD), and what cellular mechanisms are supposed to underlie them (e.g. for low gamma, GABAA receptor-mediated synaptic inhibition)
+*** "Principal cell spike rate and timing follow the faster gamma rhythm in layers 4 and 5 but not layer 2/3" <-- this seems like an MUA correlation type of thing! KEEP THIS IN MIND!! 
+** Ideas for what I could do:
+*** From dual gamma rhythm paper:
+**** Principal cell spike rate and timing follow the faster gamma rhythm in layers 4 and 5 but not layer 2/3
+**** ^^ This seems like an MUA correlation type of thing. 
+**** "In layer 2/3 principal cells, field-triggered spike time histograms showed a tight probability maximum on the descending phase of each field period"
+* <2022-02-27 Sun -- reading & osc event code>
+** Finished reading a paper
+** Made a spreadsheet google doc w/ notes on these diff oscillation papers:
+*** https://docs.google.com/spreadsheets/d/1CnO1xP3MZowzgxwKDYoJ3dAeIczNrm1IDHTNuBy8OuU/edit#gid=0
+*** Need to come up with some ideas to do!!
+** Continue updating netpyne capabilities in A1/analysis/simDataAnalysis.py
+*** okay --> copy-pasted NEWsimDataAnalysis.py, in A1/analysis
+*** Not going to add this to A1 repo, but this will serve as my testing ground as I update this script. 
+*** See Wednesday's entry for specific functions to change / check!! 
+** Functions to change / modify in simDataAnalysis.py:
+*** Main things to check:
+**** Easy / probably not changed:
+***** sim.load
+***** sim.net.allPops.keys()
+***** sim.net.recXElectrode.nsites
+***** sim.allSimData['LFPPops']
+***** sim.cfg.recordStep 
+***** sim.cfg.duration
+**** Definitely need to check on:
+***** sim.analysis.getRateSpectrogramData  (in def getSpikeData)
+***** sim.analysis.getSpikeHistData (in def getSpikeData)
+***** sim.analysis.getLFPData (in def getLFPDataDict & def getPSDinfo)
+***** sim.analysis.plotLFP (in def getPSDinfo)
+** Going thru the functions above:
+*** sim.analysis.getRateSpectrogramData  
+**** Used in A1/analysis/simDataAnalysis --> in def getSpikeData
+**** the def getRateSpectrogramData() is in 'lfp' branch of my fork of netpyne, in spikes_orig.py 
+*** I created a NEWsimDataAnalysis.py script in A1/analysis in order to test netpyne functions as I bring them in!!
+*** I've brought in def getRateSpectrogramData and def getSpikeHistData
