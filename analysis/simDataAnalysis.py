@@ -2058,25 +2058,51 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=Tru
 
 
 ## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
-def getPSD(inputData=None):
-	### Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
+def getPSD(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
+	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
+	### dataFile --> .pkl file with simulation recording 
 	### inputData --> data to be analyzed 
-	### 
-
-	# psdData = 0 ### PLACEHOLDER
-
-	# # Load data file 
-	# sim.load(dataFile, instantiate=False)
-
-	# if lfpData is None:
-	# 	outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
-
-	# elif lfpData is not None:  ### THIS IS FOR SUMMED LFP DATA!!! 
-	# 	outputData = getLFPData(inputLFP=lfpData, timeRange=None, electrodes=None, plots=['PSD'])
+	### minFreq
+	### maxFreq
+	### stepFreq
+	### transformMethod --> str; options are 'morlet' or 'fft'
 
 
-	if inputData is None:
-		sim.load(dataFile, instantiate=False)
+	# load simulation .pkl file 
+	sim.load(dataFile, instantiate=False)  ## Loading this just to get the sim.cfg.recordStep !! 
+
+	allFreqs = []
+	allSignal = []
+
+
+	# Morlet wavelet transform method
+	if transformMethod == 'morlet':
+
+		Fs = int(1000.0/sim.cfg.recordStep)
+
+		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+		freqs = F = morletSpec.f
+		spec = morletSpec.TFR
+		signal = np.mean(spec, 1)
+		ylabel = 'Power'
+
+	# FFT transform method
+	elif transformMethod == 'fft':
+		Fs = int(1000.0/sim.cfg.recordStep)
+		power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+		if smooth:
+			signal = _smooth1d(10*np.log10(power[0]), smooth)
+		else:
+			signal = 10*np.log10(power[0])
+		freqs = power[1]
+		ylabel = 'Power (dB/Hz)'
+
+
+	allFreqs.append(freqs)
+	allSignal.append(signal)
+
+
+	psdData = {'allFreqs': allFreqs, 'allSignal': allSignal}
 
 	return psdData 
 
