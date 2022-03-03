@@ -289,7 +289,7 @@ def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False)
 ######################################################################
 
 ######################################################################
-##### evalPops functions are NOT YET FINISHED!!! ##### 
+##### FUNCTIONS IN PROGRESS ##### 
 def evalPopsRelative():
 	includePopsRel = []
 	return includePopsRel
@@ -301,10 +301,6 @@ def evalPopsAbsolute():
 
 	includePopsAbs = []
 	return includePopsAbs
-######################################################################
-
-######################################################################
-#### FUNCTION(S) IN PROGRESS 
 def evalWaveletsByBand(based, dfPklFile):
 	## NOT IN USE RIGHT NOW --> ## freqBand: str 			--> e.g. 'alpha', 'beta' ,'theta', 'delta', 'gamma'
 	## NOT IN USE RIGHT NOW --> dlmsPklFile: .pkl file 	--> from dlms.pkl file, saved from load.py 
@@ -1517,8 +1513,6 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 
 
 
-
-
 ###################
 #### FUNCTIONS ####
 ###################
@@ -1544,7 +1538,7 @@ def getWaveletInfo(freqBand, based, verbose=0):
 		return timeRange, dataFile
 
 ## Heatmaps ## 
-def getDataFrames(dataFile, timeRange, verbose=0):
+def getDataFrames(dataFile, timeRange, verbose=0):  ### Make this work with arbitrary input data, not just LFP so can look at CSD as well!!!! 
 	## This function will return data frames of peak and average lfp amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
 	### timeRange: list 	--> e.g. [start, stop]
