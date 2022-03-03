@@ -1959,11 +1959,11 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-def getSumLFP(dataFile, popElecDict, timeRange=None):
+def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 	### dataFile: str --> .pkl file to load w/ simulation data 
-			# --> NOT IN USE RIGHT NOW ### pops: list --> list of pops to combine 
 	### popElecDict: dict --> e.g. {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
 	### timeRange: list --> e.g. [start, stop]
+	### showFig: bool --> Determines whether or not plt.show() will be called 
 
 	print('Getting combined LFP signal')
 
@@ -1978,15 +1978,24 @@ def getSumLFP(dataFile, popElecDict, timeRange=None):
 		elec = popElecDict[pop]
 		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 		lfpData[pop]['total'] = popLFPdata
-		lfpData[pop]['elec'] = popLFPdata[:, elec]     ## lfpPlot = lfp[:, elec]
-
-	# for pop in popElecDict:
-	# lfpData['sum'] = 
+		lfpData[pop]['elec'] = popLFPdata[:, elec]
 
 	pops = list(popElecDict.keys())
 	lfpData['sum'] = np.zeros(lfpData[pops[0]]['elec'].shape)
 	for pop in pops:
 		lfpData['sum'] += lfpData[pop]['elec']
+
+
+	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+	if showFig:
+		plt.plot(t, lfpData['sum'])
+		plt.xlabel('Time (ms)')
+		plt.ylabel('LFP signal (mV or uV?)')
+		popsInTitle = ''
+		for i in range(len(pops)):
+			popsInTitle += pop + ', elec ' + str(popElecDict[pop]) + ', '
+		plt.title('LFP timeSeries: ' + popsInTitle)
+		plt.show()
 
 	return lfpData
 
