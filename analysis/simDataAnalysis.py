@@ -658,19 +658,30 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
         timeRange = [0,sim.cfg.duration]
 
     # populations
-    if pop is None:
-        if inputLFP is not None:
-            lfp = inputLFP[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-        else:
-            lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-    elif pop is not None:
-        if type(pop) is str:
-            popToPlot = pop
-        elif type(pop) is list and len(pop)==1:
-            popToPlot = pop[0]
-        # elif type(pop) is list and len(pop) > 1:  #### USE THIS AS JUMPING OFF POINT TO EXPAND FOR LIST OF MULTIPLE POPS!!! 
+    #### CLEAN THIS UP.... go through all the possibilities implied by these if statements and make sure all are accounted for! 
+    if inputLFP is None: 
+        if pop is None:
+            if timeRange is None:
+                lfp = np.array(sim.allSimData['LFP'])
+            elif timeRange is not None: 
+                lfp = np.array(sim.allSimData['LFP'])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
-        lfp = np.array(sim.allSimData['LFPPops'][popToPlot])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+        elif pop is not None:
+            if type(pop) is str:
+                popToPlot = pop
+            elif type(pop) is list and len(pop)==1:
+                popToPlot = pop[0]
+            # elif type(pop) is list and len(pop) > 1:  #### USE THIS AS JUMPING OFF POINT TO EXPAND FOR LIST OF MULTIPLE POPS?? 
+            lfp = np.array(sim.allSimData['LFPPops'][popToPlot])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+    #### MAKE SURE THAT THIS ADDITION DOESN'T MAKE ANYTHING ELSE BREAK!! 
+    elif inputLFP is not None:  ### DOING THIS FOR PSD FOR SUMMED LFP SIGNAL !!! 
+        lfp = inputLFP 
+
+        # if timeRange is None:
+        #     lfp = inputLFP 
+        # elif timeRange is not None:
+        #     lfp = inputLFP[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:] ### hmm. 
 
 
     if filtFreq:
@@ -699,10 +710,14 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
             lfp[:,i] /= max(lfp[:,i])
 
     # electrode selection
-    if 'all' in electrodes:
-        electrodes.remove('all')
-        electrodes.extend(list(range(int(sim.net.recXElectrode.nsites))))
-
+    print('electrodes: ' + str(electrodes))
+    electrodes=None
+    if electrodes is None:
+        print('electrodes is None -- improve this')
+    elif type(electrodes) is list:
+        if 'all' in electrodes:
+            electrodes.remove('all')
+            electrodes.extend(list(range(int(sim.net.recXElectrode.nsites))))
 
     data = {'lfp': lfp}  # returned data
 
@@ -799,12 +814,8 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
         data['allFreqs'] = allFreqs
         data['allSignal'] = allSignal
 
-        for i,elec in enumerate(electrodes):
-            if elec == 'avg':
-                lfpPlot = np.mean(lfp, axis=1)
-            elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-                lfpPlot = lfp[:, elec]
-
+        if electrodes is None: #### THIS IS FOR PSD INFO FOR SUMMED LFP SIGNAL  !!! 
+            lfpPlot = lfp
             # Morlet wavelet transform method
             if transformMethod == 'morlet':
                 # from ..support.morlet import MorletSpec, index2ms
@@ -832,6 +843,41 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
 
             allFreqs.append(freqs)
             allSignal.append(signal)
+
+        else:
+            for i,elec in enumerate(electrodes):
+                if elec == 'avg':
+                    lfpPlot = np.mean(lfp, axis=1)
+                elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+                    lfpPlot = lfp[:, elec]
+
+                # Morlet wavelet transform method
+                if transformMethod == 'morlet':
+                    # from ..support.morlet import MorletSpec, index2ms
+
+                    Fs = int(1000.0/sim.cfg.recordStep)
+
+                    #t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+                    morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+                    freqs = F = morletSpec.f
+                    spec = morletSpec.TFR
+                    signal = np.mean(spec, 1)
+                    ylabel = 'Power'
+
+                # FFT transform method
+                elif transformMethod == 'fft':
+                    Fs = int(1000.0/sim.cfg.recordStep)
+                    power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+
+                    if smooth:
+                        signal = _smooth1d(10*np.log10(power[0]), smooth)
+                    else:
+                        signal = 10*np.log10(power[0])
+                    freqs = power[1]
+                    ylabel = 'Power (dB/Hz)'
+
+                allFreqs.append(freqs)
+                allSignal.append(signal)
 
 
         normPSD=0 ## THIS IS AN ARG I BELIEVE (in plotLFP) -- PERHAPS DO THE SAME HERE...? 
@@ -1988,7 +2034,7 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 
 	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 	if showFig:
-		### TIME SERIES OF SUMMED LFP SIGNAL
+		### PLOT TIME SERIES OF SUMMED LFP SIGNAL
 		plt.figure(figsize = (12,7))
 		plt.plot(t, lfpData['sum'])
 		plt.xlabel('Time (ms)')
@@ -2005,7 +2051,6 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 	return lfpData
 
 
-
 ## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
 def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
@@ -2015,15 +2060,15 @@ def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False)
 	### lfpData: input LFP data to use instead of loading sim.load(dataFile)
 	### plotPSD: bool 			--> Determines whether or not to plot the PSD signals 	--> DEFAULT: False
 
-	if lfpData is None:
-		# Load data file 
-		sim.load(dataFile, instantiate=False)
+	# Load data file 
+	sim.load(dataFile, instantiate=False)
 
+	if lfpData is None:
 		# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
 		outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
 
-	elif lfpData is not None:
-		outputData = 
+	elif lfpData is not None:  ### THIS IS FOR SUMMED LFP DATA!!! 
+		outputData = getLFPData(inputLFP=lfpData, timeRange=None, electrodes=None, plots=['PSD'])
 
 	# Get signal & frequency data
 	signalList = outputData['allSignal']
@@ -2228,9 +2273,10 @@ if plotLFPCombinedData:
 ###### COMBINING TOP 3 LFP SIGNAL !! 
 includePops = ['IT3', 'IT5A', 'PT5B']
 popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-# lfpDataTEST = getSumLFP(dataFile=dataFile, pops=includePops, timeRange=timeRange)
 lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)
 
+### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
+maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
 
 # if plotLFPCombinedData:
 # 	for pop in includePops:

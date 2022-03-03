@@ -60241,3 +60241,7 @@ To https://github.com/ericaygriffith/netpyne.git
 **** IT3 (LFP --> electrode 1) 
 **** IT5A (LFP --> electrode 10) 
 **** PT5B (LFP --> electrode 11)
+*** okay so I have the summed LFP timeSeries signal working!!!
+**** THINGS TO NOTE: I should make the title more generalizable for the lfp timeseries
+**** Get the PSD of this signal!!!
+**** 
