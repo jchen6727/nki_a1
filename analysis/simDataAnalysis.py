@@ -219,6 +219,73 @@ def getDataFiles(based):
 		if '.pkl' in file:
 			allDataFiles.append(file)
 	return allDataFiles 
+def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False):
+	##### SHOULD TURN THIS INTO PLOT PSD 
+	### dataFile: str 			--> path to .pkl data file to load for analysis 
+	### pop: str or list  		--> cell population to get the LFP data for
+	### timeRange: list  		-->  e.g. [start, stop]
+	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
+	### lfpData: input LFP data to use instead of loading sim.load(dataFile)
+	### plotPSD: bool 			--> Determines whether or not to plot the PSD signals 	--> DEFAULT: False
+
+	# Load data file 
+	sim.load(dataFile, instantiate=False)
+
+	if lfpData is None:
+		# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
+		outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
+
+	elif lfpData is not None:  ### THIS IS FOR SUMMED LFP DATA!!! 
+		outputData = getLFPData(inputLFP=lfpData, timeRange=None, electrodes=None, plots=['PSD'])
+
+	# Get signal & frequency data
+	signalList = outputData['allSignal']
+	signal = signalList[0]
+	freqsList = outputData['allFreqs']
+	freqs = freqsList[0]
+
+	# print(str(signal.shape))
+	# print(str(freqs.shape))
+
+	maxSignalIndex = np.where(signal==np.amax(signal))
+	maxPowerFrequency = freqs[maxSignalIndex]
+	if electrode is None:
+		print('max power frequency in LFP signal: ' + str(maxPowerFrequency))
+	else:
+		print(pop + ' max power frequency in LFP signal at electrode ' + str(electrode[0]) + ': ' + str(maxPowerFrequency))
+
+	# Create PSD plots, if specified 
+	if plotPSD:
+		# plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD']) # sim.analysis.plotLFP
+
+
+		# freqs = allFreqs[i]
+		# signal = allSignal[i]
+		maxFreq=100
+		lineWidth=1.0
+		color='black'
+		plt.figure(figsize=(10,7))
+		plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color) #, label='Electrode %s'%(str(elec)))
+		## max freq testing lines !! ##
+		# print('type(freqs): ' + str(type(freqs)))
+		# print('max freq: ' + str(np.amax(freqs)))
+		# print('type(signal): ' + str(type(signal)))
+		# print('max signal: ' + str(np.amax(signal)))
+		# print('signal[0]: ' + str(signal[0]))
+		# ###
+		plt.xlim([0, maxFreq])
+
+		# plt.ylabel(ylabel, fontsize=fontSize)
+
+		# format plot
+		plt.xticks(np.arange(0, maxFreq, step=5))
+		fontSize=12
+		plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+		plt.tight_layout()
+		plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+		plt.show()
+
+	return maxPowerFrequency
 ######################################################################
 
 ######################################################################
@@ -806,84 +873,84 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
 			vmin = np.array(spec).min()
 			vmax = np.array(spec).max()
 
-	# Power Spectral Density ------------------------------
-	if 'PSD' in plots:
-		allFreqs = []
-		allSignal = []
-		data['allFreqs'] = allFreqs
-		data['allSignal'] = allSignal
+	# # Power Spectral Density ------------------------------
+	# if 'PSD' in plots:
+	# 	allFreqs = []
+	# 	allSignal = []
+	# 	data['allFreqs'] = allFreqs
+	# 	data['allSignal'] = allSignal
 
-		if electrodes is None: #### THIS IS FOR PSD INFO FOR SUMMED LFP SIGNAL  !!! 
-			lfpPlot = lfp
-			# Morlet wavelet transform method
-			if transformMethod == 'morlet':
-				# from ..support.morlet import MorletSpec, index2ms
+	# 	if electrodes is None: #### THIS IS FOR PSD INFO FOR SUMMED LFP SIGNAL  !!! 
+	# 		lfpPlot = lfp
+	# 		# Morlet wavelet transform method
+	# 		if transformMethod == 'morlet':
+	# 			# from ..support.morlet import MorletSpec, index2ms
 
-				Fs = int(1000.0/sim.cfg.recordStep)
+	# 			Fs = int(1000.0/sim.cfg.recordStep)
 
-				#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
-				morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-				freqs = F = morletSpec.f
-				spec = morletSpec.TFR
-				signal = np.mean(spec, 1)
-				ylabel = 'Power'
+	# 			#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+	# 			morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+	# 			freqs = F = morletSpec.f
+	# 			spec = morletSpec.TFR
+	# 			signal = np.mean(spec, 1)
+	# 			ylabel = 'Power'
 
-			# FFT transform method
-			elif transformMethod == 'fft':
-				Fs = int(1000.0/sim.cfg.recordStep)
-				power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+	# 		# FFT transform method
+	# 		elif transformMethod == 'fft':
+	# 			Fs = int(1000.0/sim.cfg.recordStep)
+	# 			power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
 
-				if smooth:
-					signal = _smooth1d(10*np.log10(power[0]), smooth)
-				else:
-					signal = 10*np.log10(power[0])
-				freqs = power[1]
-				ylabel = 'Power (dB/Hz)'
+	# 			if smooth:
+	# 				signal = _smooth1d(10*np.log10(power[0]), smooth)
+	# 			else:
+	# 				signal = 10*np.log10(power[0])
+	# 			freqs = power[1]
+	# 			ylabel = 'Power (dB/Hz)'
 
-			allFreqs.append(freqs)
-			allSignal.append(signal)
+	# 		allFreqs.append(freqs)
+	# 		allSignal.append(signal)
 
-		else:
-			for i,elec in enumerate(electrodes):
-				if elec == 'avg':
-					lfpPlot = np.mean(lfp, axis=1)
-				elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-					lfpPlot = lfp[:, elec]
+	# 	else:
+	# 		for i,elec in enumerate(electrodes):
+	# 			if elec == 'avg':
+	# 				lfpPlot = np.mean(lfp, axis=1)
+	# 			elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+	# 				lfpPlot = lfp[:, elec]
 
-				# Morlet wavelet transform method
-				if transformMethod == 'morlet':
-					# from ..support.morlet import MorletSpec, index2ms
+	# 			# Morlet wavelet transform method
+	# 			if transformMethod == 'morlet':
+	# 				# from ..support.morlet import MorletSpec, index2ms
 
-					Fs = int(1000.0/sim.cfg.recordStep)
+	# 				Fs = int(1000.0/sim.cfg.recordStep)
 
-					#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
-					morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-					freqs = F = morletSpec.f
-					spec = morletSpec.TFR
-					signal = np.mean(spec, 1)
-					ylabel = 'Power'
+	# 				#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+	# 				morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+	# 				freqs = F = morletSpec.f
+	# 				spec = morletSpec.TFR
+	# 				signal = np.mean(spec, 1)
+	# 				ylabel = 'Power'
 
-				# FFT transform method
-				elif transformMethod == 'fft':
-					Fs = int(1000.0/sim.cfg.recordStep)
-					power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+	# 			# FFT transform method
+	# 			elif transformMethod == 'fft':
+	# 				Fs = int(1000.0/sim.cfg.recordStep)
+	# 				power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
 
-					if smooth:
-						signal = _smooth1d(10*np.log10(power[0]), smooth)
-					else:
-						signal = 10*np.log10(power[0])
-					freqs = power[1]
-					ylabel = 'Power (dB/Hz)'
+	# 				if smooth:
+	# 					signal = _smooth1d(10*np.log10(power[0]), smooth)
+	# 				else:
+	# 					signal = 10*np.log10(power[0])
+	# 				freqs = power[1]
+	# 				ylabel = 'Power (dB/Hz)'
 
-				allFreqs.append(freqs)
-				allSignal.append(signal)
+	# 			allFreqs.append(freqs)
+	# 			allSignal.append(signal)
 
 
-		normPSD=0 ## THIS IS AN ARG I BELIEVE (in plotLFP) -- PERHAPS DO THE SAME HERE...? 
-		if normPSD:
-			vmax = np.max(allSignal)
-			for i, s in enumerate(allSignal):
-				allSignal[i] = allSignal[i]/vmax
+	# 	normPSD=0 ## THIS IS AN ARG I BELIEVE (in plotLFP) -- PERHAPS DO THE SAME HERE...? 
+	# 	if normPSD:
+	# 		vmax = np.max(allSignal)
+	# 		for i, s in enumerate(allSignal):
+	# 			allSignal[i] = allSignal[i]/vmax
 
 
 
@@ -897,8 +964,8 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
 	if 'spectrogram' in plots:
 		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]})
 
-	if 'PSD' in plots:
-		outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
+	# if 'PSD' in plots:
+	# 	outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
 
 
 	return outputData
@@ -1185,115 +1252,115 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 				filename = sim.cfg.filename + '_LFP_timeseries.png'
 			plt.savefig(filename, dpi=dpi)
 
-	# PSD ----------------------------------
-	if 'PSD' in plots:
-		if overlay:
-			figs.append(plt.figure(figsize=figSize))
-		else:
-			numCols = 1 # np.round(len(electrodes) / maxPlots) + 1
-			figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
-			#import seaborn as sb
+	# # PSD ----------------------------------
+	# if 'PSD' in plots:
+	# 	if overlay:
+	# 		figs.append(plt.figure(figsize=figSize))
+	# 	else:
+	# 		numCols = 1 # np.round(len(electrodes) / maxPlots) + 1
+	# 		figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+	# 		#import seaborn as sb
 
-		allFreqs = []
-		allSignal = []
-		data['allFreqs'] = allFreqs
-		data['allSignal'] = allSignal
+	# 	allFreqs = []
+	# 	allSignal = []
+	# 	data['allFreqs'] = allFreqs
+	# 	data['allSignal'] = allSignal
 
-		for i,elec in enumerate(electrodes):
-			if elec == 'avg':
-				lfpPlot = np.mean(lfp, axis=1)
-			elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-				lfpPlot = lfp[:, elec]
+	# 	for i,elec in enumerate(electrodes):
+	# 		if elec == 'avg':
+	# 			lfpPlot = np.mean(lfp, axis=1)
+	# 		elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+	# 			lfpPlot = lfp[:, elec]
 
-			# Morlet wavelet transform method
-			if transformMethod == 'morlet':
-				Fs = int(1000.0/sim.cfg.recordStep)
+	# 		# Morlet wavelet transform method
+	# 		if transformMethod == 'morlet':
+	# 			Fs = int(1000.0/sim.cfg.recordStep)
 
-				#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
-				morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-				freqs = F = morletSpec.f
-				spec = morletSpec.TFR
-				signal = np.mean(spec, 1)
-				ylabel = 'Power'
+	# 			#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+	# 			morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+	# 			freqs = F = morletSpec.f
+	# 			spec = morletSpec.TFR
+	# 			signal = np.mean(spec, 1)
+	# 			ylabel = 'Power'
 
-			# FFT transform method
-			elif transformMethod == 'fft':
-				Fs = int(1000.0/sim.cfg.recordStep)
-				power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+	# 		# FFT transform method
+	# 		elif transformMethod == 'fft':
+	# 			Fs = int(1000.0/sim.cfg.recordStep)
+	# 			power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
 
-				if smooth:
-					signal = _smooth1d(10*np.log10(power[0]), smooth)
-				else:
-					signal = 10*np.log10(power[0])
-				freqs = power[1]
-				ylabel = 'Power (dB/Hz)'
+	# 			if smooth:
+	# 				signal = _smooth1d(10*np.log10(power[0]), smooth)
+	# 			else:
+	# 				signal = 10*np.log10(power[0])
+	# 			freqs = power[1]
+	# 			ylabel = 'Power (dB/Hz)'
 
-			allFreqs.append(freqs)
-			allSignal.append(signal)
+	# 		allFreqs.append(freqs)
+	# 		allSignal.append(signal)
 
-		# ALTERNATIVE PSD CALCULATION USING WELCH
-		# from http://joelyancey.com/lfp-python-practice/
-		# from scipy import signal as spsig
-		# Fs = int(1000.0/sim.cfg.recordStep)
-		# maxFreq=100
-		# f, psd = spsig.welch(lfpPlot, Fs, nperseg=100)
-		# plt.semilogy(f,psd,'k')
-		# sb.despine()
-		# plt.xlim((0,maxFreq))
-		# plt.yticks(size=fontsiz)
-		# plt.xticks(size=fontsiz)
-		# plt.ylabel('$uV^{2}/Hz$',size=fontsiz)
+	# 	# ALTERNATIVE PSD CALCULATION USING WELCH
+	# 	# from http://joelyancey.com/lfp-python-practice/
+	# 	# from scipy import signal as spsig
+	# 	# Fs = int(1000.0/sim.cfg.recordStep)
+	# 	# maxFreq=100
+	# 	# f, psd = spsig.welch(lfpPlot, Fs, nperseg=100)
+	# 	# plt.semilogy(f,psd,'k')
+	# 	# sb.despine()
+	# 	# plt.xlim((0,maxFreq))
+	# 	# plt.yticks(size=fontsiz)
+	# 	# plt.xticks(size=fontsiz)
+	# 	# plt.ylabel('$uV^{2}/Hz$',size=fontsiz)
 
-		if normPSD:
-			vmax = np.max(allSignal)
-			for i, s in enumerate(allSignal):
-				allSignal[i] = allSignal[i]/vmax
+	# 	if normPSD:
+	# 		vmax = np.max(allSignal)
+	# 		for i, s in enumerate(allSignal):
+	# 			allSignal[i] = allSignal[i]/vmax
 
-		for i,elec in enumerate(electrodes):
-			if not overlay:
-				plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
-			if elec == 'avg':
-				color = 'k'
-			elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-				color = colors[i % len(colors)]
-			freqs = allFreqs[i]
-			signal = allSignal[i]
-			plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
-			## max freq testing lines !! ##
-			# print('type(freqs): ' + str(type(freqs)))
-			# print('max freq: ' + str(np.amax(freqs)))
-			# print('type(signal): ' + str(type(signal)))
-			# print('max signal: ' + str(np.amax(signal)))
-			# print('signal[0]: ' + str(signal[0]))
-			# ###
-			plt.xlim([0, maxFreq])
-			if len(electrodes) > 1 and not overlay:
-				plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
-			plt.ylabel(ylabel, fontsize=fontSize)
+	# 	for i,elec in enumerate(electrodes):
+	# 		if not overlay:
+	# 			plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
+	# 		if elec == 'avg':
+	# 			color = 'k'
+	# 		elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+	# 			color = colors[i % len(colors)]
+	# 		freqs = allFreqs[i]
+	# 		signal = allSignal[i]
+	# 		plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
+	# 		## max freq testing lines !! ##
+	# 		# print('type(freqs): ' + str(type(freqs)))
+	# 		# print('max freq: ' + str(np.amax(freqs)))
+	# 		# print('type(signal): ' + str(type(signal)))
+	# 		# print('max signal: ' + str(np.amax(signal)))
+	# 		# print('signal[0]: ' + str(signal[0]))
+	# 		# ###
+	# 		plt.xlim([0, maxFreq])
+	# 		if len(electrodes) > 1 and not overlay:
+	# 			plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
+	# 		plt.ylabel(ylabel, fontsize=fontSize)
 
-		# format plot
-		plt.xlabel('Frequency (Hz)', fontsize=fontSize)
-		if overlay:
-			plt.legend(fontsize=fontSize)
-		plt.tight_layout()
-		if pop is None:
-			plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
-		elif pop is not None:
-			PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
-			plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
-		plt.subplots_adjust(bottom=0.08, top=0.92)
+	# 	# format plot
+	# 	plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+	# 	if overlay:
+	# 		plt.legend(fontsize=fontSize)
+	# 	plt.tight_layout()
+	# 	if pop is None:
+	# 		plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+	# 	elif pop is not None:
+	# 		PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
+	# 		plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
+	# 	plt.subplots_adjust(bottom=0.08, top=0.92)
 
-		if logx:
-			pass
-		#from IPython import embed; embed()
+	# 	if logx:
+	# 		pass
+	# 	#from IPython import embed; embed()
 
-		# save figure
-		if saveFig:
-			if isinstance(saveFig, basestring):
-				filename = saveFig
-			else:
-				filename = sim.cfg.filename + '_LFP_psd.png'
-			plt.savefig(filename, dpi=dpi)
+	# 	# save figure
+	# 	if saveFig:
+	# 		if isinstance(saveFig, basestring):
+	# 			filename = saveFig
+	# 		else:
+	# 			filename = sim.cfg.filename + '_LFP_psd.png'
+	# 		plt.savefig(filename, dpi=dpi)
 
 	# Spectrogram ------------------------------
 	if 'spectrogram' in plots:
@@ -1429,8 +1496,8 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 	if 'timeSeries' in plots:
 		outputData.update({'t': t})
 
-	if 'PSD' in plots:
-		outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
+	# if 'PSD' in plots:
+	# 	outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
 
 	if 'spectrogram' in plots:
 		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]})
@@ -2056,9 +2123,8 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=Tru
 
 	return lfpData
 
-
 ## PSD: data and plotting ## 
-def getPSD(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
+def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
 	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
 	### dataFile --> .pkl file with simulation recording 
 	### inputData --> data to be analyzed 
@@ -2138,74 +2204,6 @@ def plotPSD(psdData, minFreq=0, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold')
 	plt.show()
 
-
-def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False):
-	##### SHOULD TURN THIS INTO PLOT PSD 
-	### dataFile: str 			--> path to .pkl data file to load for analysis 
-	### pop: str or list  		--> cell population to get the LFP data for
-	### timeRange: list  		-->  e.g. [start, stop]
-	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
-	### lfpData: input LFP data to use instead of loading sim.load(dataFile)
-	### plotPSD: bool 			--> Determines whether or not to plot the PSD signals 	--> DEFAULT: False
-
-	# Load data file 
-	sim.load(dataFile, instantiate=False)
-
-	if lfpData is None:
-		# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
-		outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
-
-	elif lfpData is not None:  ### THIS IS FOR SUMMED LFP DATA!!! 
-		outputData = getLFPData(inputLFP=lfpData, timeRange=None, electrodes=None, plots=['PSD'])
-
-	# Get signal & frequency data
-	signalList = outputData['allSignal']
-	signal = signalList[0]
-	freqsList = outputData['allFreqs']
-	freqs = freqsList[0]
-
-	# print(str(signal.shape))
-	# print(str(freqs.shape))
-
-	maxSignalIndex = np.where(signal==np.amax(signal))
-	maxPowerFrequency = freqs[maxSignalIndex]
-	if electrode is None:
-		print('max power frequency in LFP signal: ' + str(maxPowerFrequency))
-	else:
-		print(pop + ' max power frequency in LFP signal at electrode ' + str(electrode[0]) + ': ' + str(maxPowerFrequency))
-
-	# Create PSD plots, if specified 
-	if plotPSD:
-		# plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD']) # sim.analysis.plotLFP
-
-
-		# freqs = allFreqs[i]
-		# signal = allSignal[i]
-		maxFreq=100
-		lineWidth=1.0
-		color='black'
-		plt.figure(figsize=(10,7))
-		plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color) #, label='Electrode %s'%(str(elec)))
-		## max freq testing lines !! ##
-		# print('type(freqs): ' + str(type(freqs)))
-		# print('max freq: ' + str(np.amax(freqs)))
-		# print('type(signal): ' + str(type(signal)))
-		# print('max signal: ' + str(np.amax(signal)))
-		# print('signal[0]: ' + str(signal[0]))
-		# ###
-		plt.xlim([0, maxFreq])
-
-		# plt.ylabel(ylabel, fontsize=fontSize)
-
-		# format plot
-		plt.xticks(np.arange(0, maxFreq, step=5))
-		fontSize=12
-		plt.xlabel('Frequency (Hz)', fontsize=fontSize)
-		plt.tight_layout()
-		plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
-		plt.show()
-
-	return maxPowerFrequency
 
 
 ##########################
@@ -2391,11 +2389,11 @@ if plotLFPCombinedData:
 ###### COMBINING TOP 3 LFP SIGNAL !! 
 includePops = ['IT3', 'IT5A', 'PT5B']
 popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)#, elecs=False)
+lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)
 
 ### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
-psdData = getPSD(dataFile=dataFile, inputData = lfpDataTEST['sum'])
+psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
 plotPSD(psdData)
 
 
