@@ -1988,12 +1988,17 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 
 	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 	if showFig:
+		### TIME SERIES OF SUMMED LFP SIGNAL
+		plt.figure(figsize = (12,7))
 		plt.plot(t, lfpData['sum'])
 		plt.xlabel('Time (ms)')
-		plt.ylabel('LFP signal (mV or uV?)')
+		plt.ylabel('LFP Amplitude (mV)')
 		popsInTitle = ''
 		for i in range(len(pops)):
-			popsInTitle += pop + ', elec ' + str(popElecDict[pop]) + ', '
+			if i==2:  ### MAKE THIS MORE GENERALIZABLE!! 
+				popsInTitle += pops[i] + ' elec ' + str(popElecDict[pops[i]])
+			else:
+				popsInTitle += pops[i] + ' elec ' + str(popElecDict[pops[i]]) + ' + '
 		plt.title('LFP timeSeries: ' + popsInTitle)
 		plt.show()
 
@@ -2002,19 +2007,23 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 
 
 ## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
-def getPSDinfo(dataFile, pop, timeRange, electrode, plotPSD=False):
+def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
 	### pop: str or list  		--> cell population to get the LFP data for
 	### timeRange: list  		-->  e.g. [start, stop]
 	### electrode: list or int or str designating the electrode of interest --> e.g. 10, [10], 'avg'
+	### lfpData: input LFP data to use instead of loading sim.load(dataFile)
 	### plotPSD: bool 			--> Determines whether or not to plot the PSD signals 	--> DEFAULT: False
 
+	if lfpData is None:
+		# Load data file 
+		sim.load(dataFile, instantiate=False)
 
-	# Load data file 
-	sim.load(dataFile, instantiate=False)
+		# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
+		outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
 
-	# Get LFP data 				--> ### NOTE: make sure electrode list / int is fixed 
-	outputData = getLFPData(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD'])  # sim.analysis.getLFPData
+	elif lfpData is not None:
+		outputData = 
 
 	# Get signal & frequency data
 	signalList = outputData['allSignal']
