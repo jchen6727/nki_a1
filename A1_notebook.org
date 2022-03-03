@@ -60258,6 +60258,13 @@ To https://github.com/ericaygriffith/netpyne.git
 **** (i) Condense plotLFP and getLFPdata functions!!!! They are nearly the same!!!!!!! and it's making things confusing!!
 ***** I commented out all of the PSD code in plotLFP and getLFPData functions!! 
 **** (ii) Configure this such that I can easily access the CSD data as well!!! 
+***** okay made a new section to test code in 
+***** Starting by loading the dataFile
+****** ^^ >>> sim.allSimData.keys()
+****** dict_keys(['LFP', 'LFPPops', 'spkt', 'spkid', 't', 'popRates', 'avgRate'])
+***** Import the csd script (from netpyne.analysis import csd) 
+***** Hard-coded the spacing_um, dt, and sampr
+***** 
 **** DONE (iii) Separate PSD function into getPSD and plotPSD such that arbitrary input data can be used!!! 
 **** (iv) electrode / electrodes, etc used as arg throughout -- make sure to clean this up / make it consistent!!!
 **** (v) see what 'bins' the PSD is being calculated with...? is that why this thing keeps telling me [7] as an output? shouldn't necessarily be an integer yeah? figure this out!!! 

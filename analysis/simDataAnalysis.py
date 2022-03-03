@@ -2381,14 +2381,18 @@ if plotLFPCombinedData:
 
 
 ###### COMBINING TOP 3 LFP SIGNAL !! 
-includePops = ['IT3', 'IT5A', 'PT5B']
-popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)
+summedLFP = 1 #1
+if summedLFP: 
+	includePops = ['IT3', 'IT5A', 'PT5B']
+	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
+	lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)
 
 ### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
-psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
-plotPSD(psdData)
+lfpPSD = 0 #1
+if lfpPSD: 
+	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
+	plotPSD(psdData)
 
 
 # if plotLFPCombinedData:
@@ -2415,8 +2419,19 @@ plotPSD(psdData)
 ## (2) Compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
 
+#####################
+######## CSD ########
+#####################
 
+sim.load(dataFile, instantiate=False)
+## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
+from netpyne.analysis import csd 
+dt = sim.cfg.recordStep
+sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
+spacing_um = 100 
 
+lfpDataToUse = lfpDataTEST['sum'].transpose
+csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######

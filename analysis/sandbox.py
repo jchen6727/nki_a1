@@ -5,10 +5,13 @@ import numpy as np
 
 
 
+##### CSD ###### 
+
+
+
+
 
 ###### CONDENSING plotLFP and getLFPData function!!! #######
-
-
 ### LFP ### 
 def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'spectrogram', 'PSD'], inputLFP=None, NFFT=256, noverlap=128, nperseg=256, 
 	minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, logx=False, logy=False, normSignal=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, 
