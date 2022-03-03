@@ -1450,6 +1450,9 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 
 
 
+
+
+
 ###################
 #### FUNCTIONS ####
 ###################
@@ -2056,7 +2059,46 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=Tru
 
 
 ## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
+
+def getPSD():
+	### This function should use the code from the netpyne functions, but separate it such that any input data can be used. 
+
+	psdData = 0 ### PLACEHOLDER
+
+	return psdData 
+
+def plotPSD(psdData, maxFreq=100, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
+	### 	----> NOTE: MAKE OVERLAY OPTION POSSIBLE? 
+	### This function should plot the PSD data 
+	### psdData -->  output of def getPSD()
+	### maxFreq --> 
+	### lineWidth --> 
+	### fontSize --> 
+	### color --> Default: 'k' (black)
+	### figSize --> Default: (10,7)
+
+	# Get signal & frequency data
+	signalList = psdData['allSignal']
+	signal = signalList[0]
+	freqsList = psdData['allFreqs']
+	freqs = freqsList[0]
+
+
+	plt.figure(figsize=figSize)
+	plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color)
+
+	# format plot
+	plt.xlim([0, maxFreq])
+	plt.xticks(np.arange(0, maxFreq, step=5))
+	plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+	# plt.ylabel(ylabel, fontsize=fontSize)
+	plt.tight_layout()
+	plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+	plt.show()
+
+
 def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False):
+	##### SHOULD TURN THIS INTO PLOT PSD 
 	### dataFile: str 			--> path to .pkl data file to load for analysis 
 	### pop: str or list  		--> cell population to get the LFP data for
 	### timeRange: list  		-->  e.g. [start, stop]
