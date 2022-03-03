@@ -1957,6 +1957,16 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
+def getSumLFP(pops):
+	### pops: list --> list of pops to combine 
+	print('Getting combined LFP signal')
+
+	sim.load(dataFile, instantiate=False)
+	
+
+
+
+
 ## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
 def getPSDinfo(dataFile, pop, timeRange, electrode, plotPSD=False):
 	### dataFile: str 			--> path to .pkl data file to load for analysis 

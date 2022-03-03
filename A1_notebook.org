@@ -60206,3 +60206,38 @@ To https://github.com/ericaygriffith/netpyne.git
 **** Done with this as well!
 ** NOTE: Should combine the LFP functions in A1/analysis/simDataAnalysis.py, or if keeping them separate, should eliminate redundancies.  
 ** Now switch to net netpyne development branch and test again!! 
+*** ModuleNotFoundError: No module named 'schema'
+*** pip install schema (now trying again!!) 
+* <2022-02-28 Mon -- meeting & osc event code>
+** Meeting:
+*** Research day presentation due soon -- so I've been working on slides and video presentation for that, since have to submit a recorded presentation soon for that. 
+*** Got all my thal interneuron figs into inkscape
+*** Got all of my osc event code script (A1/analysis/simDataAnalysis.py) to work with the newest version of netpyne on the development branch, so now I can work from there!! 
+*** I've also been reading osc generator papers -- made a spreadsheet where i've been taking notes. I've noticed that there's kind of a split btwn lfp and csd -- have located a handful of papers that look at the power spectra of the different layers. the ones that use LFP have slightly different but of course related results compared to the CSD, so I've been 
+** Continue reading:
+*** Simultaneous Recordings from the Primary Visual Cortex and Lateral Geniculate Nucleus Reveal Rhythmic Interactions and a Cortical Source for Gamma-Band Oscillations
+* <2022-03-01 Tue -- slides>
+** Starting to work on slides for WIP & for research day!!
+* <2022-03-02 Wed -- slides>
+** Continue w/ slides and text for WIP & research day!
+* <2022-03-03 Thu -- slides & osc frequency>
+** Continue w/ slides and text for WIP & research day!
+** Sam also mentioned me looking into what we talked about over lab meeting:
+*** okay so -- my question is though, what exactly needs to be added together. 
+**** Sam mentioned "adding together" something to see if the frequency of something equaled the frequency of something else. 
+**** ^^ But, I'm not sure what needs to be added together and what the thing is that is getting compared to. 
+**** There's the spike frequency, the LFP, and the CSD. 
+**** The osc event was detected in the CSD, and determined to be in the theta frequency, with peakF at 5.5 Hz
+**** I looked at the PSD of the LFP rhythm of each pop at these electrodes. The peak power is at ~7 Hz for all of these pops. 
+**** I did NOT look at the PSD of the spiking rates. 
+*** okay -- talked to sam and he said that I should add together the LFP signal from these top 3 pops and then (1) look at the PSD of that signal! and (2) look at the time series of that signal!  
+*** okay so need to go back to A1/analysis/simDataAnalysis.py 
+** LFP signal / PSD for top contributing pops (combined):
+*** Working in A1/analysis/simDataAnalysis.py
+*** Theta wavelet info --> 
+**** dataFile: 'A1_v34_batch67_v34_batch67_1_1_data.pkl'
+**** timeRange: [2785, 3350]
+*** Top pops that I plotted in figure 8 --> 
+**** IT3 (LFP --> electrode 1) 
+**** IT5A (LFP --> electrode 10) 
+**** PT5B (LFP --> electrode 11)
