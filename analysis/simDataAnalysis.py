@@ -1100,9 +1100,12 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
             lfp[:,i] /= max(lfp[:,i])
 
     # electrode selection
-    if 'all' in electrodes:
-        electrodes.remove('all')
-        electrodes.extend(list(range(int(sim.net.recXElectrode.nsites))))
+    if electrodes is None:
+        print('electrodes is None: improve this -- ') ### FOR PSD PLOTTING / INFO FOR SUMMED LFP SIGNAL!!
+    elif type(electrodes) is list:
+        if 'all' in electrodes:
+            electrodes.remove('all')
+            electrodes.extend(list(range(int(sim.net.recXElectrode.nsites))))
 
     # plotting
     figs = []
@@ -2005,11 +2008,12 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
+def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=True):
 	### dataFile: str --> .pkl file to load w/ simulation data 
 	### popElecDict: dict --> e.g. {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
 	### timeRange: list --> e.g. [start, stop]
 	### showFig: bool --> Determines whether or not plt.show() will be called 
+		# NOT IN USE RIGHT NOW --> ### elecs: bool ---> True by default; means that electrodes will be taken into account. False means --> will not be (total)
 
 	print('Getting combined LFP signal')
 
@@ -2081,11 +2085,41 @@ def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False)
 
 	maxSignalIndex = np.where(signal==np.amax(signal))
 	maxPowerFrequency = freqs[maxSignalIndex]
-	print(pop + ' max power frequency in LFP signal at electrode ' + str(electrode[0]) + ': ' + str(maxPowerFrequency))
+	if electrode is None:
+		print('max power frequency in LFP signal: ' + str(maxPowerFrequency))
+	else:
+		print(pop + ' max power frequency in LFP signal at electrode ' + str(electrode[0]) + ': ' + str(maxPowerFrequency))
 
 	# Create PSD plots, if specified 
 	if plotPSD:
-		plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD']) # sim.analysis.plotLFP
+		# plotLFP(pop=pop, timeRange=timeRange, electrodes=electrode, plots=['PSD']) # sim.analysis.plotLFP
+
+
+		# freqs = allFreqs[i]
+		# signal = allSignal[i]
+		maxFreq=100
+		lineWidth=1.0
+		color='black'
+		plt.figure(figsize=(10,7))
+		plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color) #, label='Electrode %s'%(str(elec)))
+		## max freq testing lines !! ##
+		# print('type(freqs): ' + str(type(freqs)))
+		# print('max freq: ' + str(np.amax(freqs)))
+		# print('type(signal): ' + str(type(signal)))
+		# print('max signal: ' + str(np.amax(signal)))
+		# print('signal[0]: ' + str(signal[0]))
+		# ###
+		plt.xlim([0, maxFreq])
+
+		# plt.ylabel(ylabel, fontsize=fontSize)
+
+		# format plot
+		plt.xticks(np.arange(0, maxFreq, step=5))
+		fontSize=12
+		plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+		plt.tight_layout()
+		plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+		plt.show()
 
 	return maxPowerFrequency
 
@@ -2273,7 +2307,7 @@ if plotLFPCombinedData:
 ###### COMBINING TOP 3 LFP SIGNAL !! 
 includePops = ['IT3', 'IT5A', 'PT5B']
 popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)
+lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, elecs=False)
 
 ### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)

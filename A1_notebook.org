@@ -60244,4 +60244,14 @@ To https://github.com/ericaygriffith/netpyne.git
 *** okay so I have the summed LFP timeSeries signal working!!!
 **** THINGS TO NOTE: I should make the title more generalizable for the lfp timeseries
 **** Get the PSD of this signal!!!
-**** 
+**** okay I've done that now
+** I need to clean up this code and condense the get and plotLFP functions !!!
+** NEXT (per convo w/ sam):
+*** (A) Take PSD of the CSD --> 
+**** of which CSD signals??
+*** (B) Can you see if you can measure period (time between peaks) on that time-series ...?
+**** "one looks around 2940, another close to 3100" 
+**** "so that would be ~6.25 Hz"
+*** (C) PSD for individual pops --> 
+**** "and what were the individual pops? 7 or 7.5?"
+*** 
