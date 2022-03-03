@@ -1957,12 +1957,21 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-def getSumLFP(pops):
+def getSumLFP(pops, timeRange=None):
 	### pops: list --> list of pops to combine 
+	### timeRange: list --> e.g. [start, stop]
+
 	print('Getting combined LFP signal')
 
 	sim.load(dataFile, instantiate=False)
-	
+
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+
+
+	for pop in pops:
+		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
 
 
 
