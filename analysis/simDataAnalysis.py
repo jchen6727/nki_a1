@@ -2057,7 +2057,7 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=Tru
 	return lfpData
 
 
-## PSD: Get most powerful frequency from LFP data w/ option to plot the PSD ## 
+## PSD: data and plotting ## 
 def getPSD(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
 	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
 	### dataFile --> .pkl file with simulation recording 
@@ -2101,11 +2101,14 @@ def getPSD(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMet
 	allFreqs.append(freqs)
 	allSignal.append(signal)
 
+	### To print out frequency w/ max power: 
+	maxSignalIndex = np.where(signal==np.amax(signal))
+	maxPowerFrequency = freqs[maxSignalIndex]
+	print('max power frequency in signal: ' + str(maxPowerFrequency))
 
 	psdData = {'allFreqs': allFreqs, 'allSignal': allSignal}
 
 	return psdData 
-
 def plotPSD(psdData, minFreq=0, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
 	### 	----> NOTE: MAKE OVERLAY OPTION POSSIBLE? 
 	### This function should plot the PSD data 
@@ -2391,7 +2394,10 @@ popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
 lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)#, elecs=False)
 
 ### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
-maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
+# maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
+psdData = getPSD(dataFile=dataFile, inputData = lfpDataTEST['sum'])
+plotPSD(psdData)
+
 
 # if plotLFPCombinedData:
 # 	for pop in includePops:
