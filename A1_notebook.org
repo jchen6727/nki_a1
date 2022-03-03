@@ -60258,3 +60258,4 @@ To https://github.com/ericaygriffith/netpyne.git
 **** (i) Condense plotLFP and getLFPdata functions!!!! They are nearly the same!!!!!!! and it's making things confusing!!
 **** (ii) electrode / electrodes, etc used as arg throughout -- make sure to clean this up / make it consistent!!!
 **** (iii) see what 'bins' the PSD is being calculated with...? is that why this thing keeps telling me [7] as an output? shouldn't necessarily be an integer yeah? figure this out!!! 
+**** (iv) Convert spaces / tabs so that it's all tabs!!! 
