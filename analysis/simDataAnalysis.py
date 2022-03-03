@@ -1957,7 +1957,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-def getSumLFP(pops, timeRange=None):
+def getSumLFP(dataFile, pops, timeRange=None):
+	### dataFile: str --> .pkl file to load w/ simulation data 
 	### pops: list --> list of pops to combine 
 	### timeRange: list --> e.g. [start, stop]
 
