@@ -2430,8 +2430,10 @@ dt = sim.cfg.recordStep
 sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
 spacing_um = 100 
 
-lfpDataToUse = lfpDataTEST['sum'].transpose
-csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
+lfpDataToUse = lfpDataTEST['sum'].T #lfpDataTEST['sum'].transpose()
+# csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
+lfpFromSim = sim.allSimData['LFP']
+
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######

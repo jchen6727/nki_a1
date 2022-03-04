@@ -60264,7 +60264,42 @@ To https://github.com/ericaygriffith/netpyne.git
 ****** dict_keys(['LFP', 'LFPPops', 'spkt', 'spkid', 't', 'popRates', 'avgRate'])
 ***** Import the csd script (from netpyne.analysis import csd) 
 ***** Hard-coded the spacing_um, dt, and sampr
-***** 
+***** Having trouble w/ bandpass because of the lfps[0] line --> 
+****** https://stackoverflow.com/questions/39627852/why-does-the-shape-of-a-1d-array-not-show-the-number-of-rows-as-1
+****** 
+**** DONE (iii) Separate PSD function into getPSD and plotPSD such that arbitrary input data can be used!!! 
+**** (iv) electrode / electrodes, etc used as arg throughout -- make sure to clean this up / make it consistent!!!
+**** (v) see what 'bins' the PSD is being calculated with...? is that why this thing keeps telling me [7] as an output? shouldn't necessarily be an integer yeah? figure this out!!! 
+**** DONE (vi) Convert spaces / tabs so that it's all tabs!!! 
+* <2022-03-04 Fri -- continue w/ PSD / CSD / LFP code>
+** Continue with the to-do list from yesterday!!
+** CSD data gathering:
+*** I want to be able to get the CSD of any arbitrary LFP data that I input
+*** Problem I'm having now is that the lfps[0] in the getbandpass function in csd.py requires for the data to be in a column not a row I think? hm. 
+*** So - I think the solution for me will be to make sure that the output data that I'm getting from the getSumLFP function is in the same format as it would be when I get the LFP data from sim.allSimData['LFP']
+*** sim.allSimData['LFP'] --> 
+**** 
+** NEXT STEPS: 
+*** (A) Take PSD of the CSD --> 
+**** of which CSD signals??
+*** (B) Can you see if you can measure period (time between peaks) on that time-series ...?
+**** "one looks around 2940, another close to 3100" 
+**** "so that would be ~6.25 Hz"
+*** (C) PSD for individual pops --> 
+**** "and what were the individual pops? 7 or 7.5?"
+*** (D) Other things to fix:
+**** (i) Condense plotLFP and getLFPdata functions!!!! They are nearly the same!!!!!!! and it's making things confusing!!
+***** I commented out all of the PSD code in plotLFP and getLFPData functions!! 
+**** (ii) Configure this such that I can easily access the CSD data as well!!! 
+***** okay made a new section to test code in 
+***** Starting by loading the dataFile
+****** ^^ >>> sim.allSimData.keys()
+****** dict_keys(['LFP', 'LFPPops', 'spkt', 'spkid', 't', 'popRates', 'avgRate'])
+***** Import the csd script (from netpyne.analysis import csd) 
+***** Hard-coded the spacing_um, dt, and sampr
+***** Having trouble w/ bandpass because of the lfps[0] line --> 
+****** https://stackoverflow.com/questions/39627852/why-does-the-shape-of-a-1d-array-not-show-the-number-of-rows-as-1
+****** 
 **** DONE (iii) Separate PSD function into getPSD and plotPSD such that arbitrary input data can be used!!! 
 **** (iv) electrode / electrodes, etc used as arg throughout -- make sure to clean this up / make it consistent!!!
 **** (v) see what 'bins' the PSD is being calculated with...? is that why this thing keeps telling me [7] as an output? shouldn't necessarily be an integer yeah? figure this out!!! 
