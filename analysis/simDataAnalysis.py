@@ -2317,8 +2317,6 @@ if evalWaveletsByBandBool:
 
 
 
-
-
 ########################
 ####### PLOTTING #######
 ########################
@@ -2385,7 +2383,7 @@ summedLFP = 1 #1
 if summedLFP: 
 	includePops = ['IT3', 'IT5A', 'PT5B']
 	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-	lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange)
+	lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
 ### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
@@ -2394,29 +2392,6 @@ if lfpPSD:
 	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
 	plotPSD(psdData)
 
-
-# if plotLFPCombinedData:
-# 	for pop in includePops:
-# 		print('Plotting LFP spectrogram and timeSeries for ' + pop)
-
-# 		# ## Get electrodes associated with each pop   #### <-- THESE SHOULD BE RETURNED AUTOMATICALLY FROM EVAL POPS FX
-# 		# if pop == 'IT3':  ## COULD ADD THESE INTO DICT SOMEWHERE ELSE FOR ACCESS!!! 
-# 		# 	electrodes = [1] 
-# 		# elif pop == 'IT5A':
-# 		# 	electrodes = [10]
-# 		# elif pop == 'PT5B':
-# 		# 	electrodes = [11]
-# 		# elif pop == 'IT5B':
-# 		# 	electrodes = [11]
-# 		# elif pop == 'CT5B':
-# 		# 	electrodes = [11]
-# 		# else:
-# 		# 	electrodes = ['avg']
-
-
-## TO DO: 
-## (1) [IN PROGRESS] Filter the timeRanged lfp data to the wavelet frequency band
-## (2) Compare the change in lfp amplitude from "baseline"  (e.g. some time window before the wavelet and then during the wavelet event) 
 
 
 #####################
@@ -2430,7 +2405,7 @@ dt = sim.cfg.recordStep
 sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
 spacing_um = 100 
 
-lfpDataToUse = lfpDataTEST['sum'].T #lfpDataTEST['sum'].transpose()
+lfpDataToUse = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose()
 # csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
 lfpFromSim = sim.allSimData['LFP']
 
