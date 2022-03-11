@@ -17,6 +17,7 @@ import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
 import netpyne
+from netpyne.analysis import csd
 from numbers import Number
 import seaborn as sns 
 import pandas as pd 
@@ -2118,6 +2119,32 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 
 	return lfpData
 
+
+## CSD: data ## 
+def getCSDdata(dataFile, pop=None):#, lfpData=None):
+	## dataFile: str
+	## pop: str 
+			# NOT IN USE RIGHT NOW --> ## lfpData
+
+	# load .pkl simulation file 
+	sim.load(dataFile, instantiate=False)
+
+	# dt, sampr, spacing_um 
+	dt = sim.cfg.recordStep
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	spacing_um = 100 
+
+
+	if pop is None:
+		lfpData = sim.allSimData['LFP']
+	else:
+		lfpData = sim.allSimData['LFP'][pop]
+
+	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um)
+
+	return csdData 
+
+
 ## PSD: data and plotting ## 
 def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
 	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
@@ -2380,7 +2407,7 @@ if plotLFPCombinedData:
 
 
 ###### COMBINING TOP 3 LFP SIGNAL !! 
-summedLFP = 1 #1
+summedLFP = 0 #1
 if summedLFP: 
 	includePops = ['IT3', 'IT5A', 'PT5B']
 	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
@@ -2406,9 +2433,15 @@ dt = sim.cfg.recordStep
 sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
 spacing_um = 100 
 
-lfpDataToUse = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose()
-# csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
+# lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
 lfpFromSim = sim.allSimData['LFP']
+# popLfpFromSim = sim.allSimData['']
+
+lfpDataToUse = lfpFromSim
+csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
+
+print(str(csdData.shape))
+
 
 
 ##########################################
