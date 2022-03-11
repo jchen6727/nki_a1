@@ -1538,14 +1538,14 @@ def getWaveletInfo(freqBand, based, verbose=0):
 	else:
 		return timeRange, dataFile
 
-## Heatmaps ## 
-def getCSDDataFrames(dataFile, timeRange=None):
+## Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
+def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
-			### csdData: array 
 	### timeRange: list 	--> e.g. [start, stop]
+	### verbose: bool 
 
-	# Load .pkl data file...? Is this necessary? 
+	# Load .pkl data file...? Is this necessary? Yes if I end up commenting this out for the getCSDdata function! 
 	sim.load(dataFile, instantiate=False)
 
 	# Get all cell pops (cortical)
@@ -1593,10 +1593,49 @@ def getCSDDataFrames(dataFile, timeRange=None):
 				csdPopData[pop][elecKey]['avg'] = np.average(popCSDdata[:, elec])	## CSD data from 1 pop, averaged in time, over 1 electrode 
 				csdPopData[pop][elecKey]['peak'] = np.amax(popCSDdata[:, elec])		## Maximum CSD value from 1 pop, over time, recorded at 1 electrode 
 
-	return csdPopData 	#popCSDdata 
 
 
+	#### PEAK CSD AMPLITUDES, DATA FRAME ####
+	peakValues = {}
+	peakValues['pops'] = []
+	peakValues['peakCSD'] = [[] for i in range(len(pops))]  # should be 36? 
+	p=0
+	for pop in pops:
+		peakValues['pops'].append(pop)
+		for i, elec in enumerate(evalElecs): 
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg': 
+				elecKey = 'avg'
+			peakValues['peakCSD'][p].append(csdPopData[pop][elecKey]['peak'])
+		p+=1
+	dfPeak = pd.DataFrame(peakValues['peakCSD'], index=pops)
 
+
+	#### AVERAGE LFP AMPLITUDES, DATA FRAME ####
+	avgValues = {}
+	avgValues['pops'] = []
+	avgValues['avgCSD'] = [[] for i in range(len(pops))]
+	q=0
+	for pop in pops:
+		avgValues['pops'].append(pop)
+		for i, elec in enumerate(evalElecs):
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg':
+				elecKey = 'avg'
+			avgValues['avgCSD'][q].append(csdPopData[pop][elecKey]['avg'])
+		q+=1
+	dfAvg = pd.DataFrame(avgValues['avgCSD'], index=pops)
+
+
+	# return csdPopData
+	if verbose:
+		return dfPeak, dfAvg, peakValues, avgValues, csdPopData 
+	else:
+		return dfPeak, dfAvg
+
+## Heatmaps for LFP data ## 
 def getDataFrames(dataFile, timeRange, verbose=0):  ### Make this work with arbitrary input data, not just LFP so can look at CSD as well!!!! 
 	## This function will return data frames of peak and average LFP amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
@@ -1769,6 +1808,8 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 		fileName = 'heatmap.png'
 		pathToFile = prePath + fileName
 		plt.savefig(pathToFile, dpi=300)
+
+	plt.show()
 
 	return ax
 
@@ -2179,19 +2220,20 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 
 
 ## CSD: data ## 
-def getCSDdata(dataFile, pop=None):#, lfpData=None):
+def getCSDdata(dataFile=None, pop=None):#, lfpData=None):
 	## dataFile: str
 	## pop: str 
 			# NOT IN USE RIGHT NOW --> ## lfpData
 
 	# load .pkl simulation file 
-	# if dataFile:
-	sim.load(dataFile, instantiate=False) ## Should I be loading this at the beginning somewhere and not doing it over and over for every fx? 
+	if dataFile:
+		sim.load(dataFile, instantiate=False) ## Should I be loading this at the beginning somewhere and not doing it over and over for every fx? 
+	else:
+		print('dataFile already loaded elsewhere!')
 
-	# dt, sampr, spacing_um 
+	# dt, sampr, spacing_um  ### <-- I *could* make these arguments instead of determining them here!! 
 	dt = sim.cfg.recordStep
 	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-
 	spacing_um = 100 
 
 	if pop is None:
@@ -2504,8 +2546,11 @@ if csdTest:
 	print(str(csdData.shape))
 
 
-csdPopData = getCSDDataFrames(dataFile, timeRange=None)
-# popCSDdata = getCSDDataFrames(dataFile, timeRange=None)
+# csdPopData = getCSDDataFrames(dataFile, timeRange=None)
+dfPeak, dfAvg = getCSDDataFrames(dataFile, timeRange=None)
+peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
