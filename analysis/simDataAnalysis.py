@@ -1539,8 +1539,66 @@ def getWaveletInfo(freqBand, based, verbose=0):
 		return timeRange, dataFile
 
 ## Heatmaps ## 
+def getCSDDataFrames(dataFile, timeRange=None):
+	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
+	### dataFile: str 		--> .pkl file to load, with data from the whole recording
+			### csdData: array 
+	### timeRange: list 	--> e.g. [start, stop]
+
+	# Load .pkl data file...? Is this necessary? 
+	sim.load(dataFile, instantiate=False)
+
+	# Get all cell pops (cortical)
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	allPops = list(sim.net.allPops.keys())
+	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+
+	## Get all electrodes 
+	evalElecs = []
+	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+	### add 'avg' to electrode list 
+	evalElecs.append('avg')
+
+
+	## get CSD data
+	csdPopData = {}
+
+	for pop in pops:  ## do this for ALL THE CELL POPULATIONS -- the pop selection will occur in plotting 
+		csdPopData[pop] = {}
+
+		popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
+
+		if timeRange is None:
+			popCSDdata = popCSDdataFULL.copy()
+		else:
+			popCSDdata = popCSDdataFULL[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+
+		for i, elec in enumerate(evalElecs): ### HOW IS THIS GOING TO WORK WITH CSD VS LFP?? HM -- VAKNIN GOOD ENOUGH TO SOLVE THIS PROBLEM? 
+			if elec == 'avg':
+				csdPopData[pop]['avg'] = {}
+
+				avgPopData = np.mean(popCSDdata, axis=1)	## csd data (from 1 pop) at each timepoint, averaged over all electrodes
+
+				avgAvgCSD = np.average(avgPopData)
+				csdPopData[pop]['avg']['avg'] = avgAvgCSD	## time-average of CSD data (from 1 pop) that has been averaged in space (over all electrodes)
+
+				peakAvgCSD = np.amax(avgPopData)
+				csdPopData[pop]['avg']['peak'] = peakAvgCSD	## highest datapoint of all the CSD data (from 1 pop) that has been averaged in space (over all electrodes)
+
+			elif isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+				csdPopData[pop][elecKey] = {}
+				csdPopData[pop][elecKey]['avg'] = np.average(popCSDdata[:, elec])	## CSD data from 1 pop, averaged in time, over 1 electrode 
+				csdPopData[pop][elecKey]['peak'] = np.amax(popCSDdata[:, elec])		## Maximum CSD value from 1 pop, over time, recorded at 1 electrode 
+
+	return csdPopData 	#popCSDdata 
+
+
+
 def getDataFrames(dataFile, timeRange, verbose=0):  ### Make this work with arbitrary input data, not just LFP so can look at CSD as well!!!! 
-	## This function will return data frames of peak and average lfp amplitudes, for picking cell pops
+	## This function will return data frames of peak and average LFP amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
 	### timeRange: list 	--> e.g. [start, stop]
 	### verbose: bool 		--> if 0, return only the data frames; if 1 - return all lists and dataframes 
@@ -2127,18 +2185,19 @@ def getCSDdata(dataFile, pop=None):#, lfpData=None):
 			# NOT IN USE RIGHT NOW --> ## lfpData
 
 	# load .pkl simulation file 
-	sim.load(dataFile, instantiate=False)
+	# if dataFile:
+	sim.load(dataFile, instantiate=False) ## Should I be loading this at the beginning somewhere and not doing it over and over for every fx? 
 
 	# dt, sampr, spacing_um 
 	dt = sim.cfg.recordStep
 	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-	spacing_um = 100 
 
+	spacing_um = 100 
 
 	if pop is None:
 		lfpData = sim.allSimData['LFP']
 	else:
-		lfpData = sim.allSimData['LFP'][pop]
+		lfpData = sim.allSimData['LFPPops'][pop]
 
 	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um)
 
@@ -2426,23 +2485,27 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-sim.load(dataFile, instantiate=False)
-## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
-from netpyne.analysis import csd 
-dt = sim.cfg.recordStep
-sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
-spacing_um = 100 
+csdTest = 0
+if csdTest:
+	sim.load(dataFile, instantiate=False)
+	## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
+	from netpyne.analysis import csd 
+	dt = sim.cfg.recordStep
+	sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
+	spacing_um = 100 
 
-# lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
-lfpFromSim = sim.allSimData['LFP']
-# popLfpFromSim = sim.allSimData['']
+	# lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
+	lfpFromSim = sim.allSimData['LFP']
+	# popLfpFromSim = sim.allSimData['']
 
-lfpDataToUse = lfpFromSim
-csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
+	lfpDataToUse = lfpFromSim
+	csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
 
-print(str(csdData.shape))
+	print(str(csdData.shape))
 
 
+csdPopData = getCSDDataFrames(dataFile, timeRange=None)
+# popCSDdata = getCSDDataFrames(dataFile, timeRange=None)
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
