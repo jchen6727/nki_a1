@@ -2071,7 +2071,8 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=True):
+def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
+	# THIS FUNCTON ALLOWS YOU TO ADD TOGETHER LFP CONTRIBUTIONS FROM ARBITRARY POPS AT SPECIFIED ELECTRODES
 	### dataFile: str --> .pkl file to load w/ simulation data 
 	### popElecDict: dict --> e.g. {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
 	### timeRange: list --> e.g. [start, stop]
@@ -2098,8 +2099,8 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True): #, elecs=Tru
 	for pop in pops:
 		lfpData['sum'] += lfpData[pop]['elec']
 
-
 	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
 	if showFig:
 		### PLOT TIME SERIES OF SUMMED LFP SIGNAL
 		plt.figure(figsize = (12,7))
