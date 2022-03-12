@@ -2217,6 +2217,52 @@ def getSumLFP(dataFile, popElecDict, timeRange=None, showFig=True):
 		plt.show()
 
 	return lfpData
+def getSumLFP2(dataFile, popElecDict, timeRange=None, showFig=True):
+	# THIS FUNCTON ALLOWS YOU TO ADD TOGETHER LFP CONTRIBUTIONS FROM ARBITRARY POPS AT SPECIFIED ELECTRODES
+	### dataFile: str --> .pkl file to load w/ simulation data 
+	### popElecDict: dict --> e.g. {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
+	### timeRange: list --> e.g. [start, stop]
+	### showFig: bool --> Determines whether or not plt.show() will be called 
+		# NOT IN USE RIGHT NOW --> ### elecs: bool ---> True by default; means that electrodes will be taken into account. False means --> will not be (total)
+
+	print('Getting combined LFP signal')
+
+	sim.load(dataFile, instantiate=False)
+
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]
+
+	lfpData = {}
+	for pop in popElecDict:
+		lfpData[pop] = {}
+		elec = popElecDict[pop]
+		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+		lfpData[pop]['total'] = popLFPdata
+		lfpData[pop]['elec'] = popLFPdata[:, elec]
+
+	pops = list(popElecDict.keys())
+	lfpData['sum'] = np.zeros(lfpData[pops[0]]['elec'].shape)
+	for pop in pops:
+		lfpData['sum'] += lfpData[pop]['elec']
+
+	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
+	if showFig:
+		### PLOT TIME SERIES OF SUMMED LFP SIGNAL
+		plt.figure(figsize = (12,7))
+		plt.plot(t, lfpData['sum'])
+		plt.xlabel('Time (ms)')
+		plt.ylabel('LFP Amplitude (mV)')
+		popsInTitle = ''
+		for i in range(len(pops)):
+			if i==2:  ### MAKE THIS MORE GENERALIZABLE!! 
+				popsInTitle += pops[i] + ' elec ' + str(popElecDict[pops[i]])
+			else:
+				popsInTitle += pops[i] + ' elec ' + str(popElecDict[pops[i]]) + ' + '
+		plt.title('LFP timeSeries: ' + popsInTitle)
+		plt.show()
+
+	return lfpData
 
 
 ## CSD: data ## 
