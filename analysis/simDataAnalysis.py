@@ -2235,6 +2235,8 @@ def getSumLFP2(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 
 
 	lfpData = {} 	# dictionary to store lfp data 
+
+	## Calculating sum of LFP signals at specified electrodes! 
 	if elecs:
 		if type(pops) is list:  	# We need pops w/ corresponding electrodes if we want to calculate summed LFP at specfic electrodes! 
 			print('pops argument needs to be a dict with pop as key & corresponding electrode as value, e.g. {\'IT3\': 1, \'IT5A\': 10, \'PT5B\': 11}')
@@ -2245,15 +2247,21 @@ def getSumLFP2(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 				elec = pops[pop]		# electrode that corresponds with the current pop being evaluated! 
 				popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 				lfpData[pop]['elec'] = popLFPdata[:, elec]
+
+			popList = list(pops.keys()) 	## Make a list from the 'pops' dict keys -- this will be a list of the relevant populations 
+			lfpData['sum'] = np.zeros(lfpData[popList[0]]['elec'].shape) 	## have to establish an array of zeros first so the below 'for' loop functions properly
+			for i in range(len(pops)):
+				lfpData['sum'] += lfpData[popList[i]]['elec']
+
+	## Calculating sum of LFP signals over ALL electrodes! 
 	else:
 		print('Calculating summed LFP signal from ' + str(pops) + ' over all electrodes')
 		for pop in pops:
 			lfpData[pop] = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
-		lfpData['sum'] = np.zeros(lfpData[pops[0]].shape)
+		lfpData['sum'] = np.zeros(lfpData[pops[0]].shape)  ## have to establish an array of zeros first so the below 'for' loop functions properly
 		for i in range(len(pops)):
 			lfpData['sum'] += lfpData[pops[i]]
-
 
 
 	if showFig:
@@ -2267,45 +2275,6 @@ def getSumLFP2(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 
 
 	return lfpData 
-
-
-
-
-
-
-
-
-	lfpData = {}
-	for pop in popElecDict:
-		lfpData[pop] = {}
-		elec = popElecDict[pop]
-		popLFPdata = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-		lfpData[pop]['total'] = popLFPdata
-		lfpData[pop]['elec'] = popLFPdata[:, elec]
-
-	pops = list(popElecDict.keys())
-	lfpData['sum'] = np.zeros(lfpData[pops[0]]['elec'].shape)
-	for pop in pops:
-		lfpData['sum'] += lfpData[pop]['elec']
-
-	t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
-
-	if showFig:
-		### PLOT TIME SERIES OF SUMMED LFP SIGNAL
-		plt.figure(figsize = (12,7))
-		plt.plot(t, lfpData['sum'])
-		plt.xlabel('Time (ms)')
-		plt.ylabel('LFP Amplitude (mV)')
-		popsInTitle = ''
-		for i in range(len(pops)):
-			if i==2:  ### MAKE THIS MORE GENERALIZABLE!! 
-				popsInTitle += pops[i] + ' elec ' + str(popElecDict[pops[i]])
-			else:
-				popsInTitle += pops[i] + ' elec ' + str(popElecDict[pops[i]]) + ' + '
-		plt.title('LFP timeSeries: ' + popsInTitle)
-		plt.show()
-
-	return lfpData
 
 
 ## CSD: data ## 
@@ -2524,7 +2493,6 @@ elif gamma:
 #################################################
 
 evalWaveletsByBandBool = 0
-
 if evalWaveletsByBandBool:
 	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
 	dlmsPklFile = 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
@@ -2541,7 +2509,6 @@ if evalWaveletsByBandBool:
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
 evalPopsBool = 0
-
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
@@ -2576,7 +2543,6 @@ plotLFPCombinedData = 0
 includePops = ['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 # includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
 
-
 if plotLFPCombinedData:
 	for i in range(len(includePops)):
 		pop = includePops[i]
@@ -2597,11 +2563,14 @@ if plotLFPCombinedData:
 
 
 ###### COMBINING TOP 3 LFP SIGNAL !! 
-summedLFP = 0 #1
+summedLFP = 1 #1
 if summedLFP: 
 	includePops = ['IT3', 'IT5A', 'PT5B']
 	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-	lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
+	lfpDataTEST_fullElecs = getSumLFP2(dataFile=dataFile, pops=includePops, elecs=False, timeRange=timeRange, showFig=False)
+	lfpDataTEST = getSumLFP2(dataFile=dataFile, pops=popElecDict, elecs=True, timeRange=timeRange, showFig=False)	# getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
+
+
 
 ### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
@@ -2618,27 +2587,29 @@ if lfpPSD:
 
 csdTest = 0
 if csdTest:
-	sim.load(dataFile, instantiate=False)
-	## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
-	from netpyne.analysis import csd 
-	dt = sim.cfg.recordStep
-	sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
-	spacing_um = 100 
+	#### testing out calculating CSD from LFP data #####
+	# sim.load(dataFile, instantiate=False)
+	# ## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
+	# from netpyne.analysis import csd 
+	# dt = sim.cfg.recordStep
+	# sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
+	# spacing_um = 100 
 
-	# lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
-	lfpFromSim = sim.allSimData['LFP']
-	# popLfpFromSim = sim.allSimData['']
+	# # lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
+	# lfpFromSim = sim.allSimData['LFP']
+	# # popLfpFromSim = sim.allSimData['']
 
-	lfpDataToUse = lfpFromSim
-	csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
+	# lfpDataToUse = lfpFromSim
+	# csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
 
-	print(str(csdData.shape))
+	# print(str(csdData.shape))
+	###### 
 
-
-# csdPopData = getCSDDataFrames(dataFile, timeRange=None)
-dfPeak, dfAvg = getCSDDataFrames(dataFile, timeRange=None)
-peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
-avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
+	# csdPopData = getCSDDataFrames(dataFile, timeRange=None)
+	dfPeak, dfAvg = getCSDDataFrames(dataFile, timeRange=None)
+	peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
 
 
 ##########################################
