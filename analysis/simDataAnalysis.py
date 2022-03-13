@@ -2269,10 +2269,19 @@ def getSumLFP2(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 		plt.figure(figsize = (12,7))
 		plt.xlabel('Time (ms)')
 		plt.ylabel('LFP Amplitude (mV)')
-		# plt.title()
-		# plt.plot(t, )
-		# plt.show() 
-
+		plt.plot(t, lfpData['sum'])
+		### Create title of plot ### 
+		titlePreamble = 'Summed LFP signal from '
+		popsInTitle = ''
+		if elecs and type(pops) is dict:
+			for pop in pops:
+				popsInTitle += ' ' + pop + '(elec ' + str(pops[pop]) + ')'
+		elif not elecs:
+			for pop in pops:
+				popsInTitle += pop + ' '
+		lfpSumTitle = titlePreamble + popsInTitle 
+		plt.title(lfpSumTitle)
+		plt.show()
 
 	return lfpData 
 
