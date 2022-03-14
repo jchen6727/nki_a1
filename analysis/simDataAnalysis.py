@@ -1513,7 +1513,6 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 
 
 
-
 ###################
 #### FUNCTIONS ####
 ###################
@@ -1915,27 +1914,54 @@ def evalPops2(dataFrame, electrode):
 	
 	## Adjust data frame
 	if elec == 0:		# if electrode is 0, then this is topmost, so only include 0, 1 
-		dataFrameRestricted = dataFrame[[elec, bottomElec]]
+		dataFrameSubset = dataFrame[[elec, bottomElec]]
 	elif elec == 19:	# if electrode is 19, this is bottom-most, so only include 18, 19
-		dataFrameRestricted = dataFrame[[topElec, elec]]
+		dataFrameSubset = dataFrame[[topElec, elec]]
 	elif topElec >=0 and bottomElec <= 19:    # NOTE: could just do 'else' here yes? no bc of the 'avg' situation (elec 20) 
-		dataFrameRestricted = dataFrame[[topElec, elec, bottomElec]]
+		dataFrameSubset = dataFrame[[topElec, elec, bottomElec]]
 
 
 
-	## MAXIMUM VALUES ## 
-	maxPops = dataFrameRestricted.idxmax()
+	#### MAXIMUM VALUES #### 
+	maxPops = dataFrameSubset.idxmax()
 	maxPopsDict = dict(maxPops)
 	# maxPopsDict['avg'] = maxPopsDict.pop(20)
 
-	maxValues = dataFrameRestricted.max()
+	maxValues = dataFrameSubset.max()
 	maxValuesDict = dict(maxValues)
 	# maxValuesDict['avg'] = maxValuesDict.pop(20)
 
 	maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
 
-	# return popsDict 
 
+	#### MINIMUM VALUES #### 
+	minPops = dataFrameSubset.idxmin()
+	minPopsDict = dict(minPops)				# minPopsList = list(minPops)
+	# minPopsDict['avg'] = minPopsDict.pop(20)
+
+	minValues = dataFrameSubset.min()
+	minValuesDict = dict(minValues)			# minValuesList = list(minValues)
+	# minValuesDict['avg'] = minValuesDict.pop(20)
+
+	minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
+
+
+	#### ABSOLUTE VALUES ##### 
+	## NOTE: I would like to do the magnitude though, rather than max and min... or would I? or all three? 
+	absDataFrameSubset = dataFrameSubset.abs()
+	absMaxPops = absDataFrameSubset.idxmax()
+	absMaxPopsDict = dict(absMaxPops)
+
+	absMaxValues = absDataFrameSubset.max()
+	absMaxValuesDict = dict(absMaxValues)
+
+	absMaxValuesDict_sorted = sorted(absMaxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+
+
+
+	return absMaxValuesDict_sorted # absMaxPopsDict, absMaxValuesDict # absPops # maxValuesDict_sorted 
+	# absMaxPopsDict, absMaxValuesDict --> 
+		## ({7: 'ITS4', 8: 'ITS4', 9: 'IT3'}, {7: 0.1393524255867742, 8: 0.212712479354659, 9: 0.36414029624640915})
 
 def getPopElectrodeLists(evalPopsDict, verbose=0):
 	## This function returns a list of lists, 2 elements long, with first element being a list of pops to include
@@ -2494,7 +2520,8 @@ elif alpha:
 	wavelet='alpha'
 	maxFreq=None
 elif theta:
-	timeRange, dataFile = getWaveletInfo('theta', based)
+	# timeRange, dataFile = getWaveletInfo('theta', based)
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
 	wavelet='theta'
 	maxFreq=None
 elif gamma:
@@ -2528,6 +2555,14 @@ if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
 	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
+
+
+	#### TESTING NEW evalPops FUNCTION #### 
+	# testDictPeak = evalPops2(dataFrame=dfPeak, electrode=waveletElectrode)  # waveletElectrode obtained from getWaveletInfo 
+	# testDictAvg = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	# dfAvgAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	# absMaxPopsDict, absMaxValuesDict = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 
 	#### PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
