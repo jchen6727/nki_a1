@@ -2171,7 +2171,6 @@ def plotCombinedLFP(spectDict, timeSeriesDict, timeRange, pop, colorDict, figSiz
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
 
-
 def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	# THIS FUNCTON ALLOWS YOU TO ADD TOGETHER LFP CONTRIBUTIONS FROM ARBITRARY POPS AT SPECIFIED ELECTRODES
 	### dataFile: str --> .pkl file to load w/ simulation data 
@@ -2302,16 +2301,16 @@ def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transfor
 		signal = np.mean(spec, 1)
 		ylabel = 'Power'
 
-	# FFT transform method
-	elif transformMethod == 'fft':
-		Fs = int(1000.0/sim.cfg.recordStep)
-		power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
-		if smooth:
-			signal = _smooth1d(10*np.log10(power[0]), smooth)
-		else:
-			signal = 10*np.log10(power[0])
-		freqs = power[1]
-		ylabel = 'Power (dB/Hz)'
+	# # FFT transform method
+	# elif transformMethod == 'fft':
+	# 	Fs = int(1000.0/sim.cfg.recordStep)
+	# 	power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+	# 	if smooth:
+	# 		signal = _smooth1d(10*np.log10(power[0]), smooth)
+	# 	else:
+	# 		signal = 10*np.log10(power[0])
+	# 	freqs = power[1]
+	# 	ylabel = 'Power (dB/Hz)'
 
 
 	allFreqs.append(freqs)
@@ -2532,7 +2531,7 @@ if plotLFPCombinedData:
 
 
 ###### COMBINING TOP 3 LFP SIGNAL !! 
-summedLFP = 1 #1
+summedLFP = 0 #1
 if summedLFP: 
 	includePops = ['IT3', 'IT5A', 'PT5B']
 	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
@@ -2541,7 +2540,7 @@ if summedLFP:
 
 
 
-### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
+######## LFP PSD ########   ---> 	### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
 lfpPSD = 0 #1
 if lfpPSD: 
@@ -2554,17 +2553,17 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-csdTest = 0
+csdTest = 1
 if csdTest:
 	#### testing out calculating CSD from LFP data #####
 	# sim.load(dataFile, instantiate=False)
-	# ## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
+	# # ## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
 	# from netpyne.analysis import csd 
 	# dt = sim.cfg.recordStep
 	# sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
 	# spacing_um = 100 
 
-	# # lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
+	# # # lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
 	# lfpFromSim = sim.allSimData['LFP']
 	# # popLfpFromSim = sim.allSimData['']
 
@@ -2575,10 +2574,18 @@ if csdTest:
 	###### 
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
-	# csdPopData = getCSDDataFrames(dataFile, timeRange=None)
 	dfPeak, dfAvg = getCSDDataFrames(dataFile, timeRange=None)
 	peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
 	avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+
+
+######## CSD PSD ########
+csdPSD = 0
+if csdPSD:
+	psdData = getPSDdata(dataFile=dataFile, inputData = csdData)
+
+
+
 
 
 ##########################################
