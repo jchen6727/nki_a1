@@ -1814,26 +1814,6 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	return ax
 
 ## Return top 5 & bottom 5 pop-electrode pairs ## 
-def getPopElectrodeLists(evalPopsDict, verbose=0):
-	## This function returns a list of lists, 2 elements long, with first element being a list of pops to include
-	## 			and the second being the corresponding list of electrodes 
-	### evalPopsDict: dict 	--> can be returned from def evalPops() below 
-	### verbose: bool 		--> Determines PopElecLists is returned, or PopElecLists + includePops + electrodes 
-
-	includePops = []
-	electrodes = []
-	for key in evalPopsDict:
-		includePops.append(evalPopsDict[key]['pop'])
-		electrodes.append(evalPopsDict[key]['electrode'])
-
-	PopElecLists = [[]] * 2
-	PopElecLists[0] = includePops.copy()
-	PopElecLists[1] = electrodes.copy()
-
-	if verbose:
-		return PopElecLists, includePops, electrodes
-	else:
-		return PopElecLists
 def evalPops(dataFrame):
 	## NOTE: Add functionality to this such that near-same pop/electrode pairs are not included (e.g. IT3 electrode 10, IT3 electrode 11)
 	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
@@ -1910,6 +1890,73 @@ def evalPops(dataFrame):
 				bottom5pops[popRank[i]][infoType] = minValuesDict_sorted[i][1]
 
 	return top5pops, bottom5pops
+def evalPops2(dataFrame, electrode):
+	## dataFrame: pandas dataFrame with peak or avg LFP or CSD data of each pop at each electrode --> output of getDataFrames
+	## electrode: electrode where the oscillation event of interest occurred - focus on data from this electrode plus the ones immediately above and below it
+
+
+	### THOUGHTS: 
+	# pop off the 20 --> avg (of what though; see how this is calculated again?)
+		# it is calculated in getDataFrames; pretty straightforward but little finnicky 
+	# Restrict the dataFrame to columns that are just the electrode + the ones above / below 
+	# 	(if applicable -- i.e. 0 / 19 N/A)
+	# 	then look at MAGNITUDE of the values in the columns to determine top... 3? hm. how to decide? 
+	# 	maybe the pops that rise over a certain... "level" ? outliers? hm.... 
+
+
+	#### BUT FIRST NEED TO RESTRICT THE DATA FRAME TO THE APPROPRIATE ELECTRODES !!! 
+
+	## adjacent electrode (top)
+	topElec = electrode - 1
+	## electrode
+	elec = electrode 
+	## adjacent electrode (bottom)   # RECALL: electrode depth gets larger the higher the electrode number ! 
+	bottomElec = electrode + 1
+	
+	## Adjust data frame
+	if elec == 0:		# if electrode is 0, then this is topmost, so only include 0, 1 
+		dataFrameRestricted = dataFrame[[elec, bottomElec]]
+	elif elec == 19:	# if electrode is 19, this is bottom-most, so only include 18, 19
+		dataFrameRestricted = dataFrame[[topElec, elec]]
+	elif topElec >=0 and bottomElec <= 19:    # NOTE: could just do 'else' here yes? no bc of the 'avg' situation (elec 20) 
+		dataFrameRestricted = dataFrame[[topElec, elec, bottomElec]]
+
+
+
+	## MAXIMUM VALUES ## 
+	maxPops = dataFrameRestricted.idxmax()
+	maxPopsDict = dict(maxPops)
+	# maxPopsDict['avg'] = maxPopsDict.pop(20)
+
+	maxValues = dataFrameRestricted.max()
+	maxValuesDict = dict(maxValues)
+	# maxValuesDict['avg'] = maxValuesDict.pop(20)
+
+	maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+
+	# return popsDict 
+
+
+def getPopElectrodeLists(evalPopsDict, verbose=0):
+	## This function returns a list of lists, 2 elements long, with first element being a list of pops to include
+	## 			and the second being the corresponding list of electrodes 
+	### evalPopsDict: dict 	--> can be returned from def evalPops(), above 
+	### verbose: bool 		--> Determines PopElecLists is returned, or PopElecLists + includePops + electrodes 
+
+	includePops = []
+	electrodes = []
+	for key in evalPopsDict:
+		includePops.append(evalPopsDict[key]['pop'])
+		electrodes.append(evalPopsDict[key]['electrode'])
+
+	PopElecLists = [[]] * 2
+	PopElecLists[0] = includePops.copy()
+	PopElecLists[1] = electrodes.copy()
+
+	if verbose:
+		return PopElecLists, includePops, electrodes
+	else:
+		return PopElecLists
 
 ## Spike Activity: data and plotting ## 
 def getSpikeData(dataFile, pop, graphType, timeRange): 
@@ -2476,7 +2523,7 @@ if evalWaveletsByBandBool:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
-evalPopsBool = 0
+evalPopsBool = 1
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
@@ -2553,7 +2600,7 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-csdTest = 1
+csdTest = 0
 if csdTest:
 	#### testing out calculating CSD from LFP data #####
 	# sim.load(dataFile, instantiate=False)
