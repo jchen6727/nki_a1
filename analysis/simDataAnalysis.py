@@ -2331,9 +2331,8 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 
 	return lfpData 
 
-
 ## CSD: data ## 
-def getCSDdata(dataFile=None, pop=None):#, lfpData=None):
+def getCSDdata(dataFile=None, pop=None):
 	## dataFile: str
 	## pop: str 
 			# NOT IN USE RIGHT NOW --> ## lfpData
