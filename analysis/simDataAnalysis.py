@@ -1905,18 +1905,7 @@ def evalPops2(dataFrame, electrode):
 
 	#### BUT FIRST NEED TO RESTRICT THE DATA FRAME TO THE APPROPRIATE ELECTRODES !!! 
 
-	#### SPECIFY THE APPROPRIATE ELECTRODES #### 
-	## adjacent electrode (top)
-	topElec = electrode - 1
-	## electrode
-	elec = electrode 
-	## adjacent electrode (bottom)   # RECALL: electrode depth gets larger the higher the electrode number ! 
-	bottomElec = electrode + 1
-
-
 	#### SUBSET THE DATAFRAME ACCORDING TO SPECIFIED ELECTRODE & ADJACENT ELECTRODE(S) ####  
-	dataFrameSubsetElec = dataFrame[[elec]]
-	dataFrameSubsetElecAbs = dataFrameSubsetElec.abs()
 
 	if electrode == 0:									# if electrode is 0, then this is topmost, so only include 0, 1  	# dataFrameSubset = dataFrame[[elec, bottomElec]]
 		# Determine electrodes to use for subsetting 
@@ -1947,6 +1936,8 @@ def evalPops2(dataFrame, electrode):
 		dataFrameSubsetBottomElec = dataFrame[[bottomElec]]
 		dataFrameSubsetBottomElecAbs = dataFrameSubsetBottomElec.abs()
 
+	dataFrameSubsetElec = dataFrame[[elec]]
+	dataFrameSubsetElecAbs = dataFrameSubsetElec.abs()
 
 	# So now I have: 
 	## dataframes with electrode subset and adjacent electrode(s) subset (e.g. dataFrameSubsetElec, dataFrameSubsetBottomElec, dataFrameSubsetTopElec)
@@ -1955,10 +1946,28 @@ def evalPops2(dataFrame, electrode):
 	# What I want: 
 	## To find the "highest" values from each electrode-column, as well as the electrode, and the population associated with the value
 
-	maxValues = {}
-	maxValues['Elec'] = {}
-	if dataFrameSubsetTop:
-		print('wait - placeholder')
+	# maxPopsValues = {}
+	# maxPopsValues['elec'] = {}
+	# maxPopsValues['elec']['electrodeNumber'] = electrode
+	dfElec = dataFrameSubsetElecAbs.sort_values(by=[elec], ascending=False) # elec OR maxPopsValues['elec']['electrodeNumber']
+	dfElecSub = dfElec[dfElec[elec]>0.1]
+	
+	if bottomElec is not None:
+		# maxPopsValues['bottomElec'] = {}
+		# maxPopsValues['bottomElec']['electrodeNumber'] = bottomElec
+		dfBottomElec = dataFrameSubsetBottomElecAbs.sort_values(by=[bottomElec], ascending=False) # bottomElec OR maxPopsValues['bottomElec']['electrodeNumber']
+		dfBottomElecSub = dfBottomElec[dfBottomElec[bottomElec]>0.1]
+	
+	if topElec is not None:
+		# maxPopsValues['topElec'] = {}
+		# maxPopsValues['topElec']['electrodeNumber'] = topElec
+		dfTopElec = dataFrameSubsetTopElecAbs.sort_values(by=[topElec], ascending=False) # topElec OR maxPopsValues['topElec']['electrodeNumber']
+		dfTopElecSub = dfTopElec[dfTopElec[topElec]>0.1]
+
+
+
+	return dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs
+
 
 
 	# #####################################################################
@@ -1998,8 +2007,7 @@ def evalPops2(dataFrame, electrode):
 	# absMaxValuesDict_sorted = sorted(absMaxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
 
 
-
-	return dataFrameSubsetElec # absMaxValuesDict_sorted # absMaxPopsDict, absMaxValuesDict # absPops # maxValuesDict_sorted 
+	# return dataFrameSubsetElec # absMaxValuesDict_sorted # absMaxPopsDict, absMaxValuesDict # absPops # maxValuesDict_sorted 
 	# absMaxPopsDict, absMaxValuesDict --> 
 		## ({7: 'ITS4', 8: 'ITS4', 9: 'IT3'}, {7: 0.1393524255867742, 8: 0.212712479354659, 9: 0.36414029624640915})
 
@@ -2380,7 +2388,7 @@ def getCSDdata(dataFile=None, pop=None):#, lfpData=None):
 	else:
 		lfpData = sim.allSimData['LFPPops'][pop]
 
-	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um)
+	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 
 	return csdData 
 
@@ -2603,8 +2611,8 @@ if evalPopsBool:
 	# dfAvgAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# absMaxPopsDict, absMaxValuesDict = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-
+	# dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 
 	#### PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
