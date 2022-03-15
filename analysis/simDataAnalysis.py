@@ -287,6 +287,103 @@ def getPSDinfo(dataFile, pop, timeRange, electrode, lfpData=None, plotPSD=False)
 		plt.show()
 
 	return maxPowerFrequency
+def evalPopsOLD(dataFrame):
+	###### --> Return top 5 & bottom 5 pop-electrode pairs ## 
+	## NOTE: Add functionality to this such that near-same pop/electrode pairs are not included (e.g. IT3 electrode 10, IT3 electrode 11)
+	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
+
+	## MAXIMUM VALUES ## 
+	maxPops = dataFrame.idxmax()
+	maxPopsDict = dict(maxPops)
+	maxPopsDict['avg'] = maxPopsDict.pop(20)
+
+	maxValues = dataFrame.max()
+	maxValuesDict = dict(maxValues)
+	maxValuesDict['avg'] = maxValuesDict.pop(20)
+
+	maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+	#############
+	## ^^ This will result in something like:
+	### [(9, 0.5670525182931198), (1, 0.3420748960387809), (10, 0.33742019248236954), 
+	### (13, 0.32119689278509755), (12, 0.28783570785551094), (15, 0.28720528519895633), 
+	### (11, 0.2639944261574631), (8, 0.22602826003777302), (5, 0.2033219839190444), 
+	### (14, 0.1657402764440641), (16, 0.15516847639341205), (19, 0.107089151806042), 
+	### (17, 0.10295759810425918), (18, 0.07873739475515538), (6, 0.07621437123298459), 
+	### (3, 0.06367696913556453), (2, 0.06276483442249459), (4, 0.06113624787605265), 
+	### (7, 0.057098300660935186), (0, 0.027993550732642168), ('avg', 0.016416523477252705)]
+	
+	## Each element of this ^^ is a tuple -- (electrode, value)
+	## dict_sorted[0][0] -- electrode corresponding to the highest value
+	## dict_sorted[0][1] -- highest LFP amplitude in the dataFrame 
+
+	## dict_sorted[1][0] -- electrode corresponding to 2nd highest value
+	## dict_sorted[1][1] -- second highest LFP amplitude in the dataFrame
+
+	## dict_sorted[2][0] -- electrode corresponding to 3rd highest value
+	## dict_sorted[2][1] -- third highest LFP amplitude in the dataFrame
+
+	## maxPopsDict[dict_sorted[0][0]] -- pop associated w/ the electrode that corresponds to the highest Value 
+	## maxPopsDict[dict_sorted[1][0]]
+	## maxPopsDict[dict_sorted[2][0]]
+	#############
+
+
+	## MINIMUM VALUES ##  
+	minPops = dataFrame.idxmin()
+	minPopsDict = dict(minPops)				# minPopsList = list(minPops)
+	minPopsDict['avg'] = minPopsDict.pop(20)
+
+	minValues = dataFrame.min()
+	minValuesDict = dict(minValues)			# minValuesList = list(minValues)
+	minValuesDict['avg'] = minValuesDict.pop(20)
+
+	minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
+
+
+
+	### Get the pop / electrode pairing for top 5 and bottom 5 pops ### 
+	popRank = ['first', 'second', 'third', 'fourth', 'fifth']
+	popInfo = ['pop', 'electrode', 'lfpValue']
+
+	top5pops = {}
+	bottom5pops = {}
+
+
+	for i in range(len(popRank)):
+		top5pops[popRank[i]] = {}
+		bottom5pops[popRank[i]] = {}
+		for infoType in popInfo:
+			if infoType == 'pop':
+				top5pops[popRank[i]][infoType] = maxPopsDict[maxValuesDict_sorted[i][0]]
+				bottom5pops[popRank[i]][infoType] = minPopsDict[minValuesDict_sorted[i][0]]
+			elif infoType == 'electrode':
+				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][0]
+				bottom5pops[popRank[i]][infoType] = minValuesDict_sorted[i][0]
+			elif infoType == 'lfpValue':
+				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][1]
+				bottom5pops[popRank[i]][infoType] = minValuesDict_sorted[i][1]
+
+	return top5pops, bottom5pops
+def getPopElectrodeLists(evalPopsDict, verbose=0):
+	## This function returns a list of lists, 2 elements long, with first element being a list of pops to include
+	## 			and the second being the corresponding list of electrodes 
+	### evalPopsDict: dict 	--> can be returned from def evalPops(), above 
+	### verbose: bool 		--> Determines PopElecLists is returned, or PopElecLists + includePops + electrodes 
+
+	includePops = []
+	electrodes = []
+	for key in evalPopsDict:
+		includePops.append(evalPopsDict[key]['pop'])
+		electrodes.append(evalPopsDict[key]['electrode'])
+
+	PopElecLists = [[]] * 2
+	PopElecLists[0] = includePops.copy()
+	PopElecLists[1] = electrodes.copy()
+
+	if verbose:
+		return PopElecLists, includePops, electrodes
+	else:
+		return PopElecLists
 ######################################################################
 
 ######################################################################
@@ -1812,101 +1909,14 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 
 	return ax
 
-## Return top 5 & bottom 5 pop-electrode pairs ## 
-def evalPops(dataFrame):
-	## NOTE: Add functionality to this such that near-same pop/electrode pairs are not included (e.g. IT3 electrode 10, IT3 electrode 11)
-	### dataFrame: pandas dataFrame --> can be gotten from getDataFrames
-
-	## MAXIMUM VALUES ## 
-	maxPops = dataFrame.idxmax()
-	maxPopsDict = dict(maxPops)
-	maxPopsDict['avg'] = maxPopsDict.pop(20)
-
-	maxValues = dataFrame.max()
-	maxValuesDict = dict(maxValues)
-	maxValuesDict['avg'] = maxValuesDict.pop(20)
-
-	maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
-	#############
-	## ^^ This will result in something like:
-	### [(9, 0.5670525182931198), (1, 0.3420748960387809), (10, 0.33742019248236954), 
-	### (13, 0.32119689278509755), (12, 0.28783570785551094), (15, 0.28720528519895633), 
-	### (11, 0.2639944261574631), (8, 0.22602826003777302), (5, 0.2033219839190444), 
-	### (14, 0.1657402764440641), (16, 0.15516847639341205), (19, 0.107089151806042), 
-	### (17, 0.10295759810425918), (18, 0.07873739475515538), (6, 0.07621437123298459), 
-	### (3, 0.06367696913556453), (2, 0.06276483442249459), (4, 0.06113624787605265), 
-	### (7, 0.057098300660935186), (0, 0.027993550732642168), ('avg', 0.016416523477252705)]
-	
-	## Each element of this ^^ is a tuple -- (electrode, value)
-	## dict_sorted[0][0] -- electrode corresponding to the highest value
-	## dict_sorted[0][1] -- highest LFP amplitude in the dataFrame 
-
-	## dict_sorted[1][0] -- electrode corresponding to 2nd highest value
-	## dict_sorted[1][1] -- second highest LFP amplitude in the dataFrame
-
-	## dict_sorted[2][0] -- electrode corresponding to 3rd highest value
-	## dict_sorted[2][1] -- third highest LFP amplitude in the dataFrame
-
-	## maxPopsDict[dict_sorted[0][0]] -- pop associated w/ the electrode that corresponds to the highest Value 
-	## maxPopsDict[dict_sorted[1][0]]
-	## maxPopsDict[dict_sorted[2][0]]
-	#############
-
-
-	## MINIMUM VALUES ##  
-	minPops = dataFrame.idxmin()
-	minPopsDict = dict(minPops)				# minPopsList = list(minPops)
-	minPopsDict['avg'] = minPopsDict.pop(20)
-
-	minValues = dataFrame.min()
-	minValuesDict = dict(minValues)			# minValuesList = list(minValues)
-	minValuesDict['avg'] = minValuesDict.pop(20)
-
-	minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
-
-
-
-	### Get the pop / electrode pairing for top 5 and bottom 5 pops ### 
-	popRank = ['first', 'second', 'third', 'fourth', 'fifth']
-	popInfo = ['pop', 'electrode', 'lfpValue']
-
-	top5pops = {}
-	bottom5pops = {}
-
-
-	for i in range(len(popRank)):
-		top5pops[popRank[i]] = {}
-		bottom5pops[popRank[i]] = {}
-		for infoType in popInfo:
-			if infoType == 'pop':
-				top5pops[popRank[i]][infoType] = maxPopsDict[maxValuesDict_sorted[i][0]]
-				bottom5pops[popRank[i]][infoType] = minPopsDict[minValuesDict_sorted[i][0]]
-			elif infoType == 'electrode':
-				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][0]
-				bottom5pops[popRank[i]][infoType] = minValuesDict_sorted[i][0]
-			elif infoType == 'lfpValue':
-				top5pops[popRank[i]][infoType] = maxValuesDict_sorted[i][1]
-				bottom5pops[popRank[i]][infoType] = minValuesDict_sorted[i][1]
-
-	return top5pops, bottom5pops
-def evalPops2(dataFrame, electrode):
-	## dataFrame: pandas dataFrame with peak or avg LFP or CSD data of each pop at each electrode --> output of getDataFrames
-	## electrode: electrode where the oscillation event of interest occurred - focus on data from this electrode plus the ones immediately above and below it
-
-
-	### THOUGHTS: 
-	# pop off the 20 --> avg (of what though; see how this is calculated again?)
-		# it is calculated in getDataFrames; pretty straightforward but little finnicky 
-	# Restrict the dataFrame to columns that are just the electrode + the ones above / below 
-	# 	(if applicable -- i.e. 0 / 19 N/A)
-	# 	then look at MAGNITUDE of the values in the columns to determine top... 3? hm. how to decide? 
-	# 	maybe the pops that rise over a certain... "level" ? outliers? hm.... 
-
-
-	#### BUT FIRST NEED TO RESTRICT THE DATA FRAME TO THE APPROPRIATE ELECTRODES !!! 
+## Pops with the highest contributions to LFP / CSD signal at a particular electrode ## 
+def evalPops(dataFrame, electrode, verbose=0):
+	##### -->  This function outputs a dict with the pops & values from the main & adjacent electrodes specified in the 'electrode' arg 
+	## dataFrame: pandas dataFrame --> with peak or avg LFP or CSD data of each pop at each electrode --> output of getDataFrames
+	## electrode: int 	--> electrode where the oscillation event of interest occurred - focus on data from this electrode plus the ones immediately above and below it
+	## verbose: bool 	--> Default: 0 (False), only returns maxPopsValues. True returns dict + main electrode data frames. 
 
 	#### SUBSET THE DATAFRAME ACCORDING TO SPECIFIED ELECTRODE & ADJACENT ELECTRODE(S) ####  
-
 	if electrode == 0:									# if electrode is 0, then this is topmost, so only include 0, 1  	# dataFrameSubset = dataFrame[[elec, bottomElec]]
 		# Determine electrodes to use for subsetting 
 		elec = electrode
@@ -1943,9 +1953,8 @@ def evalPops2(dataFrame, electrode):
 	## dataframes with electrode subset and adjacent electrode(s) subset (e.g. dataFrameSubsetElec, dataFrameSubsetBottomElec, dataFrameSubsetTopElec)
 	## dataframes with absolute values of electrode subset and adjacent electrode(s) subset (e.g. dataFrameSubsetElecAbs, dataFrameSubsetBottomElecAbs)
 
-	# What I want: 
-	## To find the "highest" values from each electrode-column, as well as the electrode, and the population associated with the value
 
+	#### MAIN ELECTRODE #### 
 	## Make dict for storage 
 	maxPopsValues = {}
 	maxPopsValues['elec'] = {}
@@ -1954,10 +1963,11 @@ def evalPops2(dataFrame, electrode):
 	dfElecAbs = dataFrameSubsetElecAbs.sort_values(by=[elec], ascending=False) # elec OR maxPopsValues['elec']['electrodeNumber']
 	dfElecSub = dfElecAbs[dfElecAbs[elec]>0.1]
 	elecPops = list(dfElecSub.index)
-	## Put above info into storage dict 
+	## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 	for pop in elecPops:
 		maxPopsValues['elec'][pop] = list(dataFrameSubsetElec.loc[pop])[0]
 
+	#### BOTTOM ADJACENT ELECTRODE #### 
 	if bottomElec is not None:
 		## Dict for storage 
 		maxPopsValues['bottomElec'] = {}
@@ -1966,10 +1976,11 @@ def evalPops2(dataFrame, electrode):
 		dfBottomElecAbs = dataFrameSubsetBottomElecAbs.sort_values(by=[bottomElec], ascending=False) # bottomElec OR maxPopsValues['bottomElec']['electrodeNumber']
 		dfBottomElecSub = dfBottomElecAbs[dfBottomElecAbs[bottomElec]>0.1]
 		bottomElecPops = list(dfBottomElecSub.index)
-		## Put above info into storage dict
+		## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 		for pop in bottomElecPops:
 			maxPopsValues['bottomElec'][pop] = list(dataFrameSubsetBottomElec.loc[pop])[0]
-	
+
+	#### TOP ADJACENT ELECTRODE #### 
 	if topElec is not None:
 		## Dict for storage 
 		maxPopsValues['topElec'] = {}
@@ -1978,80 +1989,14 @@ def evalPops2(dataFrame, electrode):
 		dfTopElecAbs = dataFrameSubsetTopElecAbs.sort_values(by=[topElec], ascending=False) # topElec OR maxPopsValues['topElec']['electrodeNumber']
 		dfTopElecSub = dfTopElecAbs[dfTopElecAbs[topElec]>0.1]
 		topElecPops = list(dfTopElecSub.index)
-		## Put above info into storage dict
+		## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 		for pop in topElecPops:
 			maxPopsValues['topElec'][pop] = list(dataFrameSubsetTopElec.loc[pop])[0]
 
-	# Now take the dfElecAbs type dataframes --> turn them back into their "real" values
-	# dfElec = dataFrameSubsetElec.loc[]
-
-
-
-	return maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs
-
-
-
-	# #####################################################################
-	# #### MAXIMUM VALUES #### 
-	# maxPops = dataFrameSubset.idxmax()
-	# maxPopsDict = dict(maxPops)
-	# # maxPopsDict['avg'] = maxPopsDict.pop(20)
-
-	# maxValues = dataFrameSubset.max()
-	# maxValuesDict = dict(maxValues)
-	# # maxValuesDict['avg'] = maxValuesDict.pop(20)
-
-	# maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
-
-
-	# #### MINIMUM VALUES #### 
-	# minPops = dataFrameSubset.idxmin()
-	# minPopsDict = dict(minPops)				# minPopsList = list(minPops)
-	# # minPopsDict['avg'] = minPopsDict.pop(20)
-
-	# minValues = dataFrameSubset.min()
-	# minValuesDict = dict(minValues)			# minValuesList = list(minValues)
-	# # minValuesDict['avg'] = minValuesDict.pop(20)
-
-	# minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
-
-
-	# #### ABSOLUTE VALUES ##### 
-	# ## NOTE: I would like to do the magnitude though, rather than max and min... or would I? or all three? 
-	# absDataFrameSubset = dataFrameSubset.abs()
-	# absMaxPops = absDataFrameSubset.idxmax()
-	# absMaxPopsDict = dict(absMaxPops)
-
-	# absMaxValues = absDataFrameSubset.max()
-	# absMaxValuesDict = dict(absMaxValues)
-
-	# absMaxValuesDict_sorted = sorted(absMaxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
-
-
-	# return dataFrameSubsetElec # absMaxValuesDict_sorted # absMaxPopsDict, absMaxValuesDict # absPops # maxValuesDict_sorted 
-	# absMaxPopsDict, absMaxValuesDict --> 
-		## ({7: 'ITS4', 8: 'ITS4', 9: 'IT3'}, {7: 0.1393524255867742, 8: 0.212712479354659, 9: 0.36414029624640915})
-
-def getPopElectrodeLists(evalPopsDict, verbose=0):
-	## This function returns a list of lists, 2 elements long, with first element being a list of pops to include
-	## 			and the second being the corresponding list of electrodes 
-	### evalPopsDict: dict 	--> can be returned from def evalPops(), above 
-	### verbose: bool 		--> Determines PopElecLists is returned, or PopElecLists + includePops + electrodes 
-
-	includePops = []
-	electrodes = []
-	for key in evalPopsDict:
-		includePops.append(evalPopsDict[key]['pop'])
-		electrodes.append(evalPopsDict[key]['electrode'])
-
-	PopElecLists = [[]] * 2
-	PopElecLists[0] = includePops.copy()
-	PopElecLists[1] = electrodes.copy()
-
 	if verbose:
-		return PopElecLists, includePops, electrodes
+		return maxPopsValues, dfElecSub, dataFrameSubsetElec
 	else:
-		return PopElecLists
+		return maxPopsValues
 
 ## Spike Activity: data and plotting ## 
 def getSpikeData(dataFile, pop, graphType, timeRange): 
