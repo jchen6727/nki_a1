@@ -1934,45 +1934,45 @@ def evalPops2(dataFrame, electrode):
 
 
 
+	# #####################################################################
+	# #### MAXIMUM VALUES #### 
+	# maxPops = dataFrameSubset.idxmax()
+	# maxPopsDict = dict(maxPops)
+	# # maxPopsDict['avg'] = maxPopsDict.pop(20)
 
-	#### MAXIMUM VALUES #### 
-	maxPops = dataFrameSubset.idxmax()
-	maxPopsDict = dict(maxPops)
-	# maxPopsDict['avg'] = maxPopsDict.pop(20)
+	# maxValues = dataFrameSubset.max()
+	# maxValuesDict = dict(maxValues)
+	# # maxValuesDict['avg'] = maxValuesDict.pop(20)
 
-	maxValues = dataFrameSubset.max()
-	maxValuesDict = dict(maxValues)
-	# maxValuesDict['avg'] = maxValuesDict.pop(20)
-
-	maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
-
-
-	#### MINIMUM VALUES #### 
-	minPops = dataFrameSubset.idxmin()
-	minPopsDict = dict(minPops)				# minPopsList = list(minPops)
-	# minPopsDict['avg'] = minPopsDict.pop(20)
-
-	minValues = dataFrameSubset.min()
-	minValuesDict = dict(minValues)			# minValuesList = list(minValues)
-	# minValuesDict['avg'] = minValuesDict.pop(20)
-
-	minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
+	# maxValuesDict_sorted = sorted(maxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
 
 
-	#### ABSOLUTE VALUES ##### 
-	## NOTE: I would like to do the magnitude though, rather than max and min... or would I? or all three? 
-	absDataFrameSubset = dataFrameSubset.abs()
-	absMaxPops = absDataFrameSubset.idxmax()
-	absMaxPopsDict = dict(absMaxPops)
+	# #### MINIMUM VALUES #### 
+	# minPops = dataFrameSubset.idxmin()
+	# minPopsDict = dict(minPops)				# minPopsList = list(minPops)
+	# # minPopsDict['avg'] = minPopsDict.pop(20)
 
-	absMaxValues = absDataFrameSubset.max()
-	absMaxValuesDict = dict(absMaxValues)
+	# minValues = dataFrameSubset.min()
+	# minValuesDict = dict(minValues)			# minValuesList = list(minValues)
+	# # minValuesDict['avg'] = minValuesDict.pop(20)
 
-	absMaxValuesDict_sorted = sorted(absMaxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
+	# minValuesDict_sorted = sorted(minValuesDict.items(), key=lambda kv: kv[1], reverse=False)
+
+
+	# #### ABSOLUTE VALUES ##### 
+	# ## NOTE: I would like to do the magnitude though, rather than max and min... or would I? or all three? 
+	# absDataFrameSubset = dataFrameSubset.abs()
+	# absMaxPops = absDataFrameSubset.idxmax()
+	# absMaxPopsDict = dict(absMaxPops)
+
+	# absMaxValues = absDataFrameSubset.max()
+	# absMaxValuesDict = dict(absMaxValues)
+
+	# absMaxValuesDict_sorted = sorted(absMaxValuesDict.items(), key=lambda kv: kv[1], reverse=True)
 
 
 
-	return absMaxValuesDict_sorted # absMaxPopsDict, absMaxValuesDict # absPops # maxValuesDict_sorted 
+	return dataFrameSubsetElec # absMaxValuesDict_sorted # absMaxPopsDict, absMaxValuesDict # absPops # maxValuesDict_sorted 
 	# absMaxPopsDict, absMaxValuesDict --> 
 		## ({7: 'ITS4', 8: 'ITS4', 9: 'IT3'}, {7: 0.1393524255867742, 8: 0.212712479354659, 9: 0.36414029624640915})
 
@@ -2575,7 +2575,9 @@ if evalPopsBool:
 	# testDictAvg = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# dfAvgAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# absMaxPopsDict, absMaxValuesDict = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	# absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+
 
 	#### PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
