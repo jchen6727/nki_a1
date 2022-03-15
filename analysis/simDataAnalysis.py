@@ -1946,27 +1946,48 @@ def evalPops2(dataFrame, electrode):
 	# What I want: 
 	## To find the "highest" values from each electrode-column, as well as the electrode, and the population associated with the value
 
-	# maxPopsValues = {}
-	# maxPopsValues['elec'] = {}
-	# maxPopsValues['elec']['electrodeNumber'] = electrode
-	dfElec = dataFrameSubsetElecAbs.sort_values(by=[elec], ascending=False) # elec OR maxPopsValues['elec']['electrodeNumber']
-	dfElecSub = dfElec[dfElec[elec]>0.1]
-	
+	## Make dict for storage 
+	maxPopsValues = {}
+	maxPopsValues['elec'] = {}
+	maxPopsValues['elec']['electrodeNumber'] = electrode
+	## Values / pops associated with main electrode 
+	dfElecAbs = dataFrameSubsetElecAbs.sort_values(by=[elec], ascending=False) # elec OR maxPopsValues['elec']['electrodeNumber']
+	dfElecSub = dfElecAbs[dfElecAbs[elec]>0.1]
+	elecPops = list(dfElecSub.index)
+	## Put above info into storage dict 
+	for pop in elecPops:
+		maxPopsValues['elec'][pop] = list(dataFrameSubsetElec.loc[pop])[0]
+
 	if bottomElec is not None:
-		# maxPopsValues['bottomElec'] = {}
-		# maxPopsValues['bottomElec']['electrodeNumber'] = bottomElec
-		dfBottomElec = dataFrameSubsetBottomElecAbs.sort_values(by=[bottomElec], ascending=False) # bottomElec OR maxPopsValues['bottomElec']['electrodeNumber']
-		dfBottomElecSub = dfBottomElec[dfBottomElec[bottomElec]>0.1]
+		## Dict for storage 
+		maxPopsValues['bottomElec'] = {}
+		maxPopsValues['bottomElec']['electrodeNumber'] = bottomElec
+		## Values / pops associated with bottom adjacent electrode 
+		dfBottomElecAbs = dataFrameSubsetBottomElecAbs.sort_values(by=[bottomElec], ascending=False) # bottomElec OR maxPopsValues['bottomElec']['electrodeNumber']
+		dfBottomElecSub = dfBottomElecAbs[dfBottomElecAbs[bottomElec]>0.1]
+		bottomElecPops = list(dfBottomElecSub.index)
+		## Put above info into storage dict
+		for pop in bottomElecPops:
+			maxPopsValues['bottomElec'][pop] = list(dataFrameSubsetBottomElec.loc[pop])[0]
 	
 	if topElec is not None:
-		# maxPopsValues['topElec'] = {}
-		# maxPopsValues['topElec']['electrodeNumber'] = topElec
-		dfTopElec = dataFrameSubsetTopElecAbs.sort_values(by=[topElec], ascending=False) # topElec OR maxPopsValues['topElec']['electrodeNumber']
-		dfTopElecSub = dfTopElec[dfTopElec[topElec]>0.1]
+		## Dict for storage 
+		maxPopsValues['topElec'] = {}
+		maxPopsValues['topElec']['electrodeNumber'] = topElec
+		## Values / pops associated with top adjacent electrode 
+		dfTopElecAbs = dataFrameSubsetTopElecAbs.sort_values(by=[topElec], ascending=False) # topElec OR maxPopsValues['topElec']['electrodeNumber']
+		dfTopElecSub = dfTopElecAbs[dfTopElecAbs[topElec]>0.1]
+		topElecPops = list(dfTopElecSub.index)
+		## Put above info into storage dict
+		for pop in topElecPops:
+			maxPopsValues['topElec'][pop] = list(dataFrameSubsetTopElec.loc[pop])[0]
+
+	# Now take the dfElecAbs type dataframes --> turn them back into their "real" values
+	# dfElec = dataFrameSubsetElec.loc[]
 
 
 
-	return dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs
+	return maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs
 
 
 
@@ -2612,7 +2633,7 @@ if evalPopsBool:
 	# absMaxPopsDict, absMaxValuesDict = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 
 	#### PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
