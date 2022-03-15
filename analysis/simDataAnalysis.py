@@ -1913,12 +1913,25 @@ def evalPops2(dataFrame, electrode):
 	bottomElec = electrode + 1
 	
 	## Adjust data frame
+	dataFrameSubsetElec = dataFrame[[elec]]
+	dataFrameSubsetElecAbs = dataFrameSubsetElec.abs()
 	if elec == 0:		# if electrode is 0, then this is topmost, so only include 0, 1 
-		dataFrameSubset = dataFrame[[elec, bottomElec]]
+		# dataFrameSubset = dataFrame[[elec, bottomElec]]
+		dataFrameSubsetBottomElec = dataFrame[[bottomElec]]
+		dataFrameSubsetBottomElecAbs = dataFrameSubsetBottomElec.abs()
+
 	elif elec == 19:	# if electrode is 19, this is bottom-most, so only include 18, 19
-		dataFrameSubset = dataFrame[[topElec, elec]]
+		# dataFrameSubset = dataFrame[[topElec, elec]]
+		dataFrameSubsetTopElec = dataFrame[[topElec]]
+		dataFrameSubsetTopElecAbs = dataFrameSubsetTopElec.abs()
+
 	elif topElec >=0 and bottomElec <= 19:    # NOTE: could just do 'else' here yes? no bc of the 'avg' situation (elec 20) 
-		dataFrameSubset = dataFrame[[topElec, elec, bottomElec]]
+		# dataFrameSubset = dataFrame[[topElec, elec, bottomElec]]
+		dataFrameSubsetTopElec = dataFrame[[topElec]]
+		dataFrameSubsetTopElecAbs = dataFrameSubsetTopElec.abs()
+		dataFrameSubsetBottomElec = dataFrame[[bottomElec]]
+		dataFrameSubsetBottomElecAbs = dataFrameSubsetBottomElec.abs()
+
 
 
 
