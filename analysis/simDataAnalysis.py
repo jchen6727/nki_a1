@@ -1965,7 +1965,13 @@ def evalPops(dataFrame, electrode, verbose=0):
 	maxPopsValues['elec']['electrodeNumber'] = electrode
 	## Values / pops associated with main electrode 
 	dfElecAbs = dataFrameSubsetElecAbs.sort_values(by=[elec], ascending=False) # elec OR maxPopsValues['elec']['electrodeNumber']
-	dfElecSub = dfElecAbs[dfElecAbs[elec]>0.1]
+		#### SUBSET VIA HARDCODED THRESHOLD --> 
+	# dfElecSub = dfElecAbs[dfElecAbs[elec]>0.1]
+		#### OR SUBSET BY TAKING ANY VALUE > (MAX VALUE / 3) ---> 
+	# maxValueElec = list(dfElecAbs.max())[0]
+	# dfElecSub = dfElecAbs[dfElecAbs[elec]>(maxValueElec/3)]
+		#### OR SUBSET BY TAKING THE TOP 5 CONTRIBUTORS ----> 
+	dfElecSub = dfElecAbs.head(5)
 	elecPops = list(dfElecSub.index)
 	## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 	for pop in elecPops:
@@ -1978,7 +1984,7 @@ def evalPops(dataFrame, electrode, verbose=0):
 		maxPopsValues['bottomElec']['electrodeNumber'] = bottomElec
 		## Values / pops associated with bottom adjacent electrode 
 		dfBottomElecAbs = dataFrameSubsetBottomElecAbs.sort_values(by=[bottomElec], ascending=False) # bottomElec OR maxPopsValues['bottomElec']['electrodeNumber']
-		dfBottomElecSub = dfBottomElecAbs[dfBottomElecAbs[bottomElec]>0.1]
+		dfBottomElecSub = dfBottomElecAbs.head(5)		# dfBottomElecSub = dfBottomElecAbs[dfBottomElecAbs[bottomElec]>0.1]
 		bottomElecPops = list(dfBottomElecSub.index)
 		## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 		for pop in bottomElecPops:
@@ -1991,7 +1997,7 @@ def evalPops(dataFrame, electrode, verbose=0):
 		maxPopsValues['topElec']['electrodeNumber'] = topElec
 		## Values / pops associated with top adjacent electrode 
 		dfTopElecAbs = dataFrameSubsetTopElecAbs.sort_values(by=[topElec], ascending=False) # topElec OR maxPopsValues['topElec']['electrodeNumber']
-		dfTopElecSub = dfTopElecAbs[dfTopElecAbs[topElec]>0.1]
+		dfTopElecSub = dfTopElecAbs.head(5) 		# dfTopElecSub = dfTopElecAbs[dfTopElecAbs[topElec]>0.1]
 		topElecPops = list(dfTopElecSub.index)
 		## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 		for pop in topElecPops:
@@ -2335,7 +2341,7 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 
 	return lfpData 
 
-## CSD: data ## 
+## CSD: data and plotting ## 
 def getCSDdata(dt, sampr, dataFile=None, pop=None, spacing_um=100):
 	## dataFile: str
 	## pop: str 
@@ -2362,7 +2368,24 @@ def getCSDdata(dt, sampr, dataFile=None, pop=None, spacing_um=100):
 	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 
 	return csdData 
+def plotCombinedCSD(pop, figSize=(10,7)):
+	### pop: list or str 	--> relevant population to plot data for 
+	### figSize: tuple 		--> DEFAULT: (10,7)
 
+	# Get relevant pop
+	if type(pop) is str:
+		popToPlot = pop
+	elif type(pop) is list:
+		popToPlot = pop[0]
+
+	# Create figure 
+	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
+
+	# Set font sizes
+	labelFontSize = 12  ## NOTE: spike has this as 12, lfp plotting has this as 15 
+	titleFontSize = 20
+
+	
 
 ## PSD: data and plotting ## 
 def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
@@ -2585,10 +2608,12 @@ if evalPopsBool:
 	# dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 
+
+	#### THESE FUNCTIONS ARE DEPRECATED NOW !!!!! #### 
 	#### PEAK LFP Amplitudes ####
-	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
-	MaxPeakLists = getPopElectrodeLists(top5popsPeak)
-	MinPeakLists = getPopElectrodeLists(bottom5popsPeak)
+	# top5popsPeak, bottom5popsPeak = evalPops(dfPeak)    
+	# MaxPeakLists = getPopElectrodeLists(top5popsPeak)
+	# MinPeakLists = getPopElectrodeLists(bottom5popsPeak)
 
 	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
 	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
@@ -2596,9 +2621,9 @@ if evalPopsBool:
 
 
 	#### AVP LFP Amplitudes ####
-	top5popsAvg, bottom5popsAvg = evalPops(dfAvg)
-	MaxAvgLists = getPopElectrodeLists(top5popsAvg)
-	MinAvgLists = getPopElectrodeLists(bottom5popsAvg)
+	# top5popsAvg, bottom5popsAvg = evalPops(dfAvg)
+	# MaxAvgLists = getPopElectrodeLists(top5popsAvg)
+	# MinAvgLists = getPopElectrodeLists(bottom5popsAvg)
 
 	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'   # 'Avg LFP Amplitudes of Theta Wavelet' 
 	# avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
@@ -2642,7 +2667,6 @@ if summedLFP:
 	# lfpDataTEST = getSumLFP2(dataFile=dataFile, pops=popElecDict, elecs=True, timeRange=timeRange, showFig=False)	# getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
 
-
 ######## LFP PSD ########   ---> 	### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
 lfpPSD = 0 #1
@@ -2658,37 +2682,16 @@ if lfpPSD:
 
 csdTest = 1
 if csdTest:
-	#### testing out calculating CSD from LFP data #####
-	# sim.load(dataFile, instantiate=False)
-	# # ## use netpyne CSD functions to get the CSD data !! Use the condition that arbitrary lfp input data can be given!! 
-	# from netpyne.analysis import csd 
-	# dt = sim.cfg.recordStep
-	# sampr = 1.0/(dt/1000.0) # sim.cfg.recordStep --> == dt  # # divide by 1000.0 to turn denominator from units of ms to s
-	# spacing_um = 100 
-
-	# # # lfpDataSummed = lfpDataTEST['sum']  #.T #lfpDataTEST['sum'].transpose() ## summedLFP = 1  
-	# lfpFromSim = sim.allSimData['LFP']
-	# # popLfpFromSim = sim.allSimData['']
-
-	# lfpDataToUse = lfpFromSim
-	# csdData = csd.getCSD(LFP_input_data=lfpDataToUse, dt=dt, sampr=sampr, spacing_um=spacing_um)
-
-	# print(str(csdData.shape))
-	###### 
-
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
 	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
 	# avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
-
+	maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
 
 ######## CSD PSD ########
 csdPSD = 0
 if csdPSD:
 	psdData = getPSDdata(dataFile=dataFile, inputData = csdData)
-
-
-
 
 
 ##########################################
