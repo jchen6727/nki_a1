@@ -1643,6 +1643,10 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 
 	# Load .pkl data file...? Is this necessary? Yes if I end up commenting this out for the getCSDdata function! 
 	sim.load(dataFile, instantiate=False)
+	# Get args for getCSDdata
+	dt = sim.cfg.recordStep
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	spacing_um = 100 
 
 	# Get all cell pops (cortical)
 	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
@@ -1662,7 +1666,7 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 	for pop in pops:  ## do this for ALL THE CELL POPULATIONS -- the pop selection will occur in plotting 
 		csdPopData[pop] = {}
 
-		popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
 		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
 
 		if timeRange is None:
@@ -2332,21 +2336,23 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data ## 
-def getCSDdata(dataFile=None, pop=None):
+def getCSDdata(dt, sampr, dataFile=None, pop=None, spacing_um=100):
 	## dataFile: str
 	## pop: str 
-			# NOT IN USE RIGHT NOW --> ## lfpData
+	## dt: time step of the simulation (usually --> sim.cfg.recordStep)
+	## sampr: sampling rate (Hz) (usually --> 1/(dt/1000))
+	## spacing_um: 100 by DEFAULT (spacing between electrodes in microns)
 
 	# load .pkl simulation file 
 	if dataFile:
 		sim.load(dataFile, instantiate=False) ## Should I be loading this at the beginning somewhere and not doing it over and over for every fx? 
+		## Should I remove these since they are now args? 
+		dt = sim.cfg.recordStep
+		sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+		spacing_um = 100 
 	else:
 		print('dataFile already loaded elsewhere!')
 
-	# dt, sampr, spacing_um  ### <-- I *could* make these arguments instead of determining them here!! 
-	dt = sim.cfg.recordStep
-	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-	spacing_um = 100 
 
 	if pop is None:
 		lfpData = sim.allSimData['LFP']
@@ -2563,7 +2569,7 @@ if evalWaveletsByBandBool:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
-evalPopsBool = 1
+evalPopsBool = 0
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
@@ -2577,7 +2583,7 @@ if evalPopsBool:
 	# absMaxPopsDict, absMaxValuesDict = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 	# dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	# maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
 
 	#### PEAK LFP Amplitudes ####
 	top5popsPeak, bottom5popsPeak = evalPops(dfPeak) 
@@ -2650,7 +2656,7 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-csdTest = 0
+csdTest = 1
 if csdTest:
 	#### testing out calculating CSD from LFP data #####
 	# sim.load(dataFile, instantiate=False)
@@ -2671,9 +2677,9 @@ if csdTest:
 	###### 
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
-	dfPeak, dfAvg = getCSDDataFrames(dataFile, timeRange=None)
-	peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
-	avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
+	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	# avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
 
 
 ######## CSD PSD ########
