@@ -1905,33 +1905,60 @@ def evalPops2(dataFrame, electrode):
 
 	#### BUT FIRST NEED TO RESTRICT THE DATA FRAME TO THE APPROPRIATE ELECTRODES !!! 
 
+	#### SPECIFY THE APPROPRIATE ELECTRODES #### 
 	## adjacent electrode (top)
 	topElec = electrode - 1
 	## electrode
 	elec = electrode 
 	## adjacent electrode (bottom)   # RECALL: electrode depth gets larger the higher the electrode number ! 
 	bottomElec = electrode + 1
-	
-	## Adjust data frame
+
+
+	#### SUBSET THE DATAFRAME ACCORDING TO SPECIFIED ELECTRODE & ADJACENT ELECTRODE(S) ####  
 	dataFrameSubsetElec = dataFrame[[elec]]
 	dataFrameSubsetElecAbs = dataFrameSubsetElec.abs()
-	if elec == 0:		# if electrode is 0, then this is topmost, so only include 0, 1 
-		# dataFrameSubset = dataFrame[[elec, bottomElec]]
+
+	if electrode == 0:									# if electrode is 0, then this is topmost, so only include 0, 1  	# dataFrameSubset = dataFrame[[elec, bottomElec]]
+		# Determine electrodes to use for subsetting 
+		elec = electrode
+		bottomElec = electrode + 1
+		topElec = None
+		# Subset the dataFrame & create another with absolute values of the subset 
 		dataFrameSubsetBottomElec = dataFrame[[bottomElec]]
 		dataFrameSubsetBottomElecAbs = dataFrameSubsetBottomElec.abs()
 
-	elif elec == 19:	# if electrode is 19, this is bottom-most, so only include 18, 19
-		# dataFrameSubset = dataFrame[[topElec, elec]]
+	elif electrode == 19:	# if electrode is 19, this is bottom-most, so only include 18, 19 	# dataFrameSubset = dataFrame[[topElec, elec]]
+		# Determine electrodes to use for subsetting 
+		elec = electrode
+		bottomElec = None
+		topElec = electrode - 1
+		# Subset the dataFrame & create another with absolute values of the subset 
 		dataFrameSubsetTopElec = dataFrame[[topElec]]
 		dataFrameSubsetTopElecAbs = dataFrameSubsetTopElec.abs()
 
-	elif topElec >=0 and bottomElec <= 19:    # NOTE: could just do 'else' here yes? no bc of the 'avg' situation (elec 20) 
-		# dataFrameSubset = dataFrame[[topElec, elec, bottomElec]]
+	elif electrode > 0 and electrode < 19:														# dataFrameSubset = dataFrame[[topElec, elec, bottomElec]]
+		# Determine electrodes to use for subsetting 
+		elec = electrode
+		bottomElec = electrode + 1
+		topElec = electrode - 1
+		# Subset the dataFrame & create another with absolute values of the subset 
 		dataFrameSubsetTopElec = dataFrame[[topElec]]
 		dataFrameSubsetTopElecAbs = dataFrameSubsetTopElec.abs()
 		dataFrameSubsetBottomElec = dataFrame[[bottomElec]]
 		dataFrameSubsetBottomElecAbs = dataFrameSubsetBottomElec.abs()
 
+
+	# So now I have: 
+	## dataframes with electrode subset and adjacent electrode(s) subset (e.g. dataFrameSubsetElec, dataFrameSubsetBottomElec, dataFrameSubsetTopElec)
+	## dataframes with absolute values of electrode subset and adjacent electrode(s) subset (e.g. dataFrameSubsetElecAbs, dataFrameSubsetBottomElecAbs)
+
+	# What I want: 
+	## To find the "highest" values from each electrode-column, as well as the electrode, and the population associated with the value
+
+	maxValues = {}
+	maxValues['Elec'] = {}
+	if dataFrameSubsetTop:
+		print('wait - placeholder')
 
 
 	# #####################################################################
