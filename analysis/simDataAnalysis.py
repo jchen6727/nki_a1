@@ -2342,17 +2342,18 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data and plotting ## 
-def getCSDdata(dt, sampr, dataFile=None, pop=None, spacing_um=100):
-	## dataFile: str
-	## pop: str 
+def getCSDdata(dataFile=None, timeRange=None, dt=None, sampr=None, pop=None, spacing_um=100):
+	#### Outputs an array of CSD data 
+	## dataFile: str     --> .pkl file with recorded simulation 
+	## timeRange: list --> e.g. [start, stop]
 	## dt: time step of the simulation (usually --> sim.cfg.recordStep)
 	## sampr: sampling rate (Hz) (usually --> 1/(dt/1000))
+	## pop: str 
 	## spacing_um: 100 by DEFAULT (spacing between electrodes in microns)
 
 	# load .pkl simulation file 
 	if dataFile:
-		sim.load(dataFile, instantiate=False) ## Should I be loading this at the beginning somewhere and not doing it over and over for every fx? 
-		## Should I remove these since they are now args? 
+		sim.load(dataFile, instantiate=False)
 		dt = sim.cfg.recordStep
 		sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
 		spacing_um = 100 
@@ -2365,11 +2366,18 @@ def getCSDdata(dt, sampr, dataFile=None, pop=None, spacing_um=100):
 	else:
 		lfpData = sim.allSimData['LFPPops'][pop]
 
-	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
+	csdDataFull = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
+
+	if timeRange is not None:
+		csdData = csdDataFull[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
+	else:
+		csdData = csdDataFull
 
 	return csdData 
-def plotCombinedCSD(pop, figSize=(10,7)):
+def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
+	### csdData: array --> output of getCSDdata (BE SURE TO TEST THIS!!)
 	### pop: list or str 	--> relevant population to plot data for 
+	### electrode: int 		--> electrode at which to plot the CSD data 
 	### figSize: tuple 		--> DEFAULT: (10,7)
 
 	# Get relevant pop
@@ -2385,7 +2393,28 @@ def plotCombinedCSD(pop, figSize=(10,7)):
 	labelFontSize = 12  ## NOTE: spike has this as 12, lfp plotting has this as 15 
 	titleFontSize = 20
 
-	
+	#### SPECTROGRAM #### 
+
+
+	#### TIME SERIES ####
+
+	# TIME (x-axis) --> t = timeSeriesDict['t']
+	# CSD (y-axis) --> LFP EQUIVALENT: lfpPlot = timeSeriesDict['lfpPlot']
+
+	lw = 1.0
+	ax2 = plt.subplot(2, 1, 2)
+	divider2 = make_axes_locatable(ax2)
+	cax2 = divider2.append_axes('right', size='3%', pad=0.2)
+	cax2.axis('off')
+	ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
+	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
+	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
+
+	plt.tight_layout()
+	plt.show()
+
 
 ## PSD: data and plotting ## 
 def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
@@ -2682,11 +2711,16 @@ if lfpPSD:
 
 csdTest = 1
 if csdTest:
+		# dt = sim.cfg.recordStep
+		# sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+		# spacing_um = 100 
+	csdData = getCSDdata(dataFile=dataFile)
+	csdDataPop = getCSDdata(dataFile=dataFile, pop='ITS4')
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
-	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
+	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
 	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
 	# avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
-	maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
+	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
 
 ######## CSD PSD ########
 csdPSD = 0
