@@ -2396,6 +2396,11 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 		### from lfp 
 		# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
+	if 'timeSeries' in outputType:
+		print('Returning timeSeries data')		# PLACEHOLDER
+	if 'spectrogram' in outputType:
+		print('Returning spectrogram data')		# PLACEHOLDER 
+
 	return csdData 
 def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
 	### csdData: array 		--> output of getCSDdata --> shape will be [num timePoints, num electrodes]  (transpose of LFP shape)
