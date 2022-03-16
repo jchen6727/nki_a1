@@ -2287,11 +2287,14 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
-def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
-	### csdData: array 		--> output of getCSDdata --> shape will be [num timePoints, num electrodes]  (transpose of LFP shape)
-	### pop: list or str 	--> relevant population to plot data for 
-	### electrode: int 		--> electrode at which to plot the CSD data 
-	### figSize: tuple 		--> DEFAULT: (10,7)
+def plotCombinedCSD(timeSeriesDict, pop, electrode, figSize=(10,7)):
+	### timeSeriesDict: dict 	--> output of getCSDdata (with outputType=['timeSeries'])
+		## ADD THIS !!!--> ### spectDict: dict 		--> output of getCSDdata (with outputType=['spectrogram'])
+	### csdData: dict  			--> output of getCSDdata
+	### pop: list or str 		--> relevant population to plot data for 
+	### electrode: int 			--> electrode at which to plot the CSD data 
+	### figSize: tuple 			--> DEFAULT: (10,7)
+		#### NOTE: Should expand this to have timeSeriesDict and spectDict but keep args this way for now!! 
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2356,25 +2359,25 @@ def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
 
 	#### TIME SERIES ####-------------------------------------------------------
 
-	# TIME (x-axis) --> t = timeSeriesDict['t']
-	# CSD (y-axis) --> LFP EQUIVALENT: lfpPlot = timeSeriesDict['lfpPlot']
+	# time (x-axis)
+	t = timeSeriesDict['t']
 
-	# ## quick test plot of timeSeries data 
-	# timeArray = csdOutputData['t']
-	# csdArray = csdOutputData['csd']
-	# plt.plot(timeArray, csdArray)
-	# plt.show()
+	# CSD (y-axis)
+	csdTimeSeries = timeSeriesDict['csd']
+
+	# timeSeries title
+	timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', electrode ' + str(electrode)
 
 	lw = 1.0
 	ax2 = plt.subplot(2, 1, 2)
 	divider2 = make_axes_locatable(ax2)
 	cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 	cax2.axis('off')
-	ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+	ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
 	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
-	ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
+	ax2.set_ylabel('CSD Amplitude (NOTE: ADD UNITS)', fontsize=labelFontSize)
 
 	plt.tight_layout()
 	plt.show()
@@ -2676,14 +2679,16 @@ if lfpPSD:
 csdTest = 1
 if csdTest:
 	### TESTING ### 
-	csdData =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop=None)
+	# csdData =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop=None)
 	# csdData2 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=None, pop=None)
 
 	# csdData3 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop=None)
 	# csdData4 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop=None)
 
 	# csdData5 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop='ITS4')
-	# csdData6 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
+	csdData6 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
+
+	plotCombinedCSD(timeSeriesDict=csdData6, pop='ITS4', electrode=[8], figSize=(10,7))
 
 	# csdData7 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8,9], pop=None)
 	# csdData8 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8,9], pop=['ITS4'])
