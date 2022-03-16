@@ -2344,24 +2344,26 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 ## CSD: data and plotting ## 
 def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrodes=None, dt=None, sampr=None, pop=None, spacing_um=100):
 	#### Outputs an array of CSD data 
-	## dataFile: str     --> .pkl file with recorded simulation 
-	## outputType: list of strings --> options are 'timeSeries' +/- 'spectrogram'
-	## timeRange: list --> e.g. [start, stop]
-	## electrodes: list 		--> e.g. [7, 8, 9] --> NOTE: here, this will usually be of length 1 
-	## dt: time step of the simulation (usually --> sim.cfg.recordStep)
-	## sampr: sampling rate (Hz) (usually --> 1/(dt/1000))
+	## dataFile: str     			--> .pkl file with recorded simulation 
+	## outputType: list of strings 	--> options are 'timeSeries' +/- 'spectrogram'
+	## timeRange: list 				--> e.g. [start, stop]
+	## electrodes: list 			--> e.g. [7, 8, 9] --> NOTE: here, this will usually be of length 1 
+	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
+	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
 	## pop: str or list 
-	## spacing_um: 100 by DEFAULT (spacing between electrodes in microns)
+	## spacing_um: 100 by DEFAULT (spacing between electrodes in MICRONS)
 		## add outputType to args so I can get output for timeSeries OR spectrogram here? 
 
 	# load .pkl simulation file 
 	if dataFile:
 		sim.load(dataFile, instantiate=False)
-		dt = sim.cfg.recordStep
-		sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-		spacing_um = 100 
 	else:
-		print('dataFile already loaded elsewhere!')
+		print('No dataFile; will use data from dataFile already loaded elsewhere!')
+
+	# Determine timestep, sampling rate, and electrode spacing 
+	dt = sim.cfg.recordStep
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	spacing_um = spacing_um		# 100um by default # 
 
 
 	if pop is None:
@@ -2393,7 +2395,6 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 
 		### from lfp 
 		# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
-
 
 	return csdData 
 def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
@@ -2733,16 +2734,13 @@ if lfpPSD:
 
 csdTest = 1
 if csdTest:
-		# dt = sim.cfg.recordStep
-		# sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-		# spacing_um = 100 
 	# csdData = getCSDdata(dataFile=dataFile)
 	# csdDataPop = getCSDdata(dataFile=dataFile, pop='ITS4')
-	csdData = getCSDdata(dataFile=dataFile, timeRange=timeRange)
-	csdDataPop = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop='ITS4')
-	csdDataPop2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop=['ITS4'])
-	csdDataElec = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop=None)
-	csdDataElec2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop='ITS4')
+	# csdData = getCSDdata(dataFile=dataFile, timeRange=timeRange)
+	# csdDataPop = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop='ITS4')
+	# csdDataPop2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop=['ITS4'])
+	# csdDataElec = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop=None)
+	# csdDataElec2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop='ITS4')
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
 	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
