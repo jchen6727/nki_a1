@@ -2151,12 +2151,12 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data and plotting ## 
-def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrodes=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
+def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrode=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
 	#### Outputs a dict with csd and time data arrays 		#### USED TO: Output an array of CSD data 
 	## dataFile: str     			--> .pkl file with recorded simulation 
-	## outputType: list of strings 	--> options are 'timeSeries' +/- 'spectrogram'
+	## outputType: list of strings 	--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
 	## timeRange: list 				--> e.g. [start, stop]
-	## electrodes: list 			--> e.g. [7, 8, 9] --> NOTE: here, this will usually be of length 1 
+	## electrode: int or list 			--> e.g. 8, or [8]
 	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
 	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
 	## pop: str or list 
@@ -2186,35 +2186,39 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			pop = pop[0]
 		lfpData = sim.allSimData['LFPPops'][pop]
 
-	## CSD data --> all electrodes, all timepoints
+	## (Step 1 in segmenting CSD data) CSD data --> ALL electrodes, ALL timepoints
 	csdData_allElecs_allTime = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 
-	## CSD data --> all electrodes, segmented by timeRange 
-	if timeRange is not None:
-		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
-	else:
+
+	## (Step 2 in segmenting CSD data) CSD data --> ALL electrodes, SPECIFIED (OR ALL) timepoints
+	if timeRange is None:
 		timeRange = [0, sim.cfg.duration]			# this is for use later, in the outputType if statements below 
 		csdData_allElecs = csdData_allElecs_allTime
-
-	## CSD data --> specified electrode(s), segmented by timeRange 
-	##### IF THE TRANSPOSITION WORKS OUT BETTER (see: spectrogram2), THEN DO THE TRANSPOSING HERE!!! 
-	if electrodes is not None:
-		electrodes = list(electrodes)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
-		elec = electrodes[0]	## Assuming list of length 1 & not average 
-		if elec == 'avg':
-			csdData = np.mean(csdData_allElecs, axis=0)
-		elif isinstance(elec, Number):
-			csdData = csdData_allElecs[elec, :]
-		# for i, elec in enumerate(electrodes):
-		# 	if elec == 'avg':
-		# 		csdData = np.mean(csdData_allElecs, axis=0)
-		# 	elif isinstance(elec, Number):
-		# 		csdData = csdData_allElecs[elec, :]  ### NOTE: keep in mine this really only works for 1 electrode, bc csdData will keep being overwritten 
 	else:
+		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
+
+
+	## (Step 3 in segmenting CSD data) CSD data --> SPECIFIED (OR ALL) electrode(s), SPECIFIED (OR ALL) timepoints  
+	if electrode is None:
 		csdData = csdData_allElecs
+		print('Outputting CSD data for ALL electrodes!')
+	else:
+		electrode = list(electrode)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
+		if len(electrode) > 1:
+			## NOTE: at some point, change this so the correct electrode-specific CSD data is provided!!! 
+			print('More than one electrode listed!! --> outputData[\'csd\'] will contain CSD data from ALL electrodes!')
+			csdData = csdData_allElecs
+		elif len(electrode) == 1:
+			elec = electrode[0]
+			if elec == 'avg':
+				csdData = np.mean(csdData_allElecs, axis=0)
+			elif isinstance(elec, Number):
+				csdData = csdData_allElecs[elec, :]
 
 
 	outputData = {'csd': csdData}
+
+
 	# timeSeries --------------------------------------------
 	if 'timeSeries' in outputType:
 		print('Returning timeSeries data')
@@ -2224,111 +2228,63 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 
 
 	# spectrogram -------------------------------------------
-	elif 'spectrogram' in outputType:
+	if 'spectrogram' in outputType:
 		print('Returning spectrogram data')
 
-		# Should I transpose the shape of the csdData array??
-		## csdDataSpect = np.transpose(csdData)
-
 		spec = []
 		freqList = None
 
-		# for i, elec in enumerate(electrodes):
-		# 	## in LFP --> lfpPlot = lfp[:, elec] --> could do the same for CSD (transpose then select, if dimension-dependent)
-		# 	## ^^ would use csdData_allElecs --> transpose this --> then csdData (or use csdDataSpect)= csdData_allElecs_T[:, elec]
-		# 	fs = int(1000.0 / sim.cfg.recordStep)
-		# 	t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) 
-		# 	spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+		## Determine electrode(s) to loop over: 
+		if electrode is None: 
+			print('No electrode specified; returning spectrogram data for ALL electrodes')
+			electrode = []
+			electrode.extend(list(range(int(sim.net.recXElectrode.nsites))))
 
-		## This will work ONLY IF I am looking at ONE ELECTRODE AT A TIME, and if the dimensions of the csdData don't need to be transposed!!!! 
-				#### ^^ This strikes me as too many conditions!!! But stick with it for now and test and refine.
-				#### Otherwise, use the for loop above (plus any necessary modifications) 
-		fs = int(1000.0 / sim.cfg.recordStep)
-		t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft ...? 
-		spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+		print('Electrodes considered for spectrogram data: ' + str(electrode))
 
-		### Should I even bother to include this? 
+
+		## Spectrogram Data Calculations! 
+		if len(electrode) > 1:
+			for i, elec in enumerate(electrode):
+				csdDataSpect_allElecs = np.transpose(csdData_allElecs)  # Transposing this data may not be necessary!!! 
+				csdDataSpect = csdDataSpect_allElecs[:, elec]
+				fs = int(1000.0 / sim.cfg.recordStep)
+				t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
+				spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+		elif len(electrode) == 1: 	# use csdData, as determined above the timeSeries and spectrogram 'if' statements (already has correct electrode-specific CSD data!)
+			fs = int(1000.0 / sim.cfg.recordStep)
+			t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
+			spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+
+		## Get frequency list 
 		f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
 
+		## vmin, vmax --> vc = [vmin, vmax]
 		vmin = np.array([s.TFR for s in spec]).min()
 		vmax = np.array([s.TFR for s in spec]).max()
-
-		# for i, elec in enumerate(electrodes):
-		# 	T = timeRange
-		# 	F = spec[i].f
-		# 	# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
-		# 		# spec[i].TFR = spec[i].TFR / vmax
-		# 		# S = spec[i].TFR
-		# 		# vc = [0, 1]
-		# 	# else: #### indent the following lines if commenting this out!! 
-		# 	S = spec[i].TFR
-		# 	vc = [vmin, vmax]
-
-		## THIS WILL ONLY WORK IF LOOKING AT ONE ELECTRODE AT A TIME!!! i=0
-		T = timeRange
-		F = spec[0].f
-		S = spec[0].TFR
 		vc = [vmin, vmax]
 
-		outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
-		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) ### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
-		### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? 
+		## T (timeRange)
+		T = timeRange 
 
-	elif 'spectrogram2' in outputType:
-		print('Returning spectrogram data USING TRANSPOSED CSD ')
+		## F, S
+		for i, elec in enumerate(electrode):   # works for electrode of length 1 or greater! No need for if statement regarding length. 
+			F = spec[i].f
+			# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
+				# spec[i].TFR = spec[i].TFR / vmax
+				# S = spec[i].TFR
+				# vc = [0, 1]
+			S = spec[i].TFR
 
-		# Should I transpose the shape of the csdData array??
-		csdDataT_allElecs = np.transpose(csdData_allElecs)
-		print('shape of transposed csd: ' + str(csdDataT_allElecs.shape))
-		csdDataT = csdDataT_allElecs[:, elec]
-
-
-		spec = []
-		freqList = None
-
-		# for i, elec in enumerate(electrodes):
-		# 	## in LFP --> lfpPlot = lfp[:, elec] --> could do the same for CSD (transpose then select, if dimension-dependent)
-		# 	## ^^ would use csdData_allElecs --> transpose this --> then csdData (or use csdDataSpect)= csdData_allElecs_T[:, elec]
-		# 	fs = int(1000.0 / sim.cfg.recordStep)
-		# 	t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) 
-		# 	spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-		## This will work ONLY IF I am looking at ONE ELECTRODE AT A TIME, and if the dimensions of the csdData don't need to be transposed!!!! 
-				#### ^^ This strikes me as too many conditions!!! But stick with it for now and test and refine.
-				#### Otherwise, use the for loop above (plus any necessary modifications) 
-		fs = int(1000.0 / sim.cfg.recordStep)
-		t_spec = np.linspace(0, morlet.index2ms(len(csdDataT), fs), len(csdDataT)) # Seems this is only used for the fft ...? 
-		spec.append(MorletSpec(csdDataT, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-		### Should I even bother to include this? 
-		f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
-
-		vmin = np.array([s.TFR for s in spec]).min()
-		vmax = np.array([s.TFR for s in spec]).max()
-
-		# for i, elec in enumerate(electrodes):
-		# 	T = timeRange
-		# 	F = spec[i].f
-		# 	# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
-		# 		# spec[i].TFR = spec[i].TFR / vmax
-		# 		# S = spec[i].TFR
-		# 		# vc = [0, 1]
-		# 	# else: #### indent the following lines if commenting this out!! 
-		# 	S = spec[i].TFR
-		# 	vc = [vmin, vmax]
-
-		## THIS WILL ONLY WORK IF LOOKING AT ONE ELECTRODE AT A TIME!!! i=0
-		T = timeRange
-		F = spec[0].f
-		S = spec[0].TFR
-		vc = [vmin, vmax]
 
 		outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
-		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) ### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
-		### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? 
-		outputData.update({'csdDataT': csdDataT})
+		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) 
+			### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
+			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
-	return outputData 			# formerly: return csdData 
+	return outputData
 def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
 	### csdData: array 		--> output of getCSDdata --> shape will be [num timePoints, num electrodes]  (transpose of LFP shape)
 	### pop: list or str 	--> relevant population to plot data for 
@@ -2724,8 +2680,8 @@ if csdTest:
 	# csdDataPop = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrodes=[8], pop='ITS4')
 
 	#### SPECTROGRAM TESTS ###### 
-	csdData = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrodes=[8], pop=None)
-	csdDataT = getCSDdata(dataFile=dataFile, outputType=['spectrogram2'], timeRange=timeRange, electrodes=[8], pop=None)
+	csdData = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrodes=None, pop=None)
+	# csdDataT = getCSDdata(dataFile=dataFile, outputType=['spectrogram2'], timeRange=timeRange, electrodes=[8], pop=None)
 
 	# ## quick test plot of the above
 	# timeArray = csdOutputData['t']
