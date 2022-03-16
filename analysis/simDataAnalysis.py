@@ -711,7 +711,7 @@ def getSpikeHistData(include=['eachPop', 'allCells'], timeRange=None, binSize=5,
 	return {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
 
 ### LFP ### 
-def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'spectrogram', 'PSD'], inputLFP=None, NFFT=256, noverlap=128, nperseg=256, 
+def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'spectrogram'], inputLFP=None, NFFT=256, noverlap=128, nperseg=256, 
 	minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, logx=False, logy=False, normSignal=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, 
 	transformMethod='morlet'):
 	"""
@@ -734,7 +734,7 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
 
 	plots : list
 		List of plot types to show.
-		**Default:** ``['timeSeries', 'spectrogram']`` <-- added 'PSD' (EYG, 2/10/2022)
+		**Default:** ``['timeSeries', 'spectrogram']`` <-- added 'PSD' (EYG, 2/10/2022) <-- 'PSD' taken out on 3/16/22
 
 	NFFT : int (power of 2)
 		Number of data points used in each block for the PSD and time-freq FFT.
@@ -966,87 +966,6 @@ def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['time
 
 			vmin = np.array(spec).min()
 			vmax = np.array(spec).max()
-
-	# # Power Spectral Density ------------------------------
-	# if 'PSD' in plots:
-	# 	allFreqs = []
-	# 	allSignal = []
-	# 	data['allFreqs'] = allFreqs
-	# 	data['allSignal'] = allSignal
-
-	# 	if electrodes is None: #### THIS IS FOR PSD INFO FOR SUMMED LFP SIGNAL  !!! 
-	# 		lfpPlot = lfp
-	# 		# Morlet wavelet transform method
-	# 		if transformMethod == 'morlet':
-	# 			# from ..support.morlet import MorletSpec, index2ms
-
-	# 			Fs = int(1000.0/sim.cfg.recordStep)
-
-	# 			#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
-	# 			morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-	# 			freqs = F = morletSpec.f
-	# 			spec = morletSpec.TFR
-	# 			signal = np.mean(spec, 1)
-	# 			ylabel = 'Power'
-
-	# 		# FFT transform method
-	# 		elif transformMethod == 'fft':
-	# 			Fs = int(1000.0/sim.cfg.recordStep)
-	# 			power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
-
-	# 			if smooth:
-	# 				signal = _smooth1d(10*np.log10(power[0]), smooth)
-	# 			else:
-	# 				signal = 10*np.log10(power[0])
-	# 			freqs = power[1]
-	# 			ylabel = 'Power (dB/Hz)'
-
-	# 		allFreqs.append(freqs)
-	# 		allSignal.append(signal)
-
-	# 	else:
-	# 		for i,elec in enumerate(electrodes):
-	# 			if elec == 'avg':
-	# 				lfpPlot = np.mean(lfp, axis=1)
-	# 			elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-	# 				lfpPlot = lfp[:, elec]
-
-	# 			# Morlet wavelet transform method
-	# 			if transformMethod == 'morlet':
-	# 				# from ..support.morlet import MorletSpec, index2ms
-
-	# 				Fs = int(1000.0/sim.cfg.recordStep)
-
-	# 				#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
-	# 				morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-	# 				freqs = F = morletSpec.f
-	# 				spec = morletSpec.TFR
-	# 				signal = np.mean(spec, 1)
-	# 				ylabel = 'Power'
-
-	# 			# FFT transform method
-	# 			elif transformMethod == 'fft':
-	# 				Fs = int(1000.0/sim.cfg.recordStep)
-	# 				power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
-
-	# 				if smooth:
-	# 					signal = _smooth1d(10*np.log10(power[0]), smooth)
-	# 				else:
-	# 					signal = 10*np.log10(power[0])
-	# 				freqs = power[1]
-	# 				ylabel = 'Power (dB/Hz)'
-
-	# 			allFreqs.append(freqs)
-	# 			allSignal.append(signal)
-
-
-	# 	normPSD=0 ## THIS IS AN ARG I BELIEVE (in plotLFP) -- PERHAPS DO THE SAME HERE...? 
-	# 	if normPSD:
-	# 		vmax = np.max(allSignal)
-	# 		for i, s in enumerate(allSignal):
-	# 			allSignal[i] = allSignal[i]/vmax
-
-
 
 
 	outputData = {'LFP': lfp, 'lfpPlot': lfpPlot, 'electrodes': electrodes, 'timeRange': timeRange}
@@ -1345,116 +1264,6 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 			else:
 				filename = sim.cfg.filename + '_LFP_timeseries.png'
 			plt.savefig(filename, dpi=dpi)
-
-	# # PSD ----------------------------------
-	# if 'PSD' in plots:
-	# 	if overlay:
-	# 		figs.append(plt.figure(figsize=figSize))
-	# 	else:
-	# 		numCols = 1 # np.round(len(electrodes) / maxPlots) + 1
-	# 		figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
-	# 		#import seaborn as sb
-
-	# 	allFreqs = []
-	# 	allSignal = []
-	# 	data['allFreqs'] = allFreqs
-	# 	data['allSignal'] = allSignal
-
-	# 	for i,elec in enumerate(electrodes):
-	# 		if elec == 'avg':
-	# 			lfpPlot = np.mean(lfp, axis=1)
-	# 		elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-	# 			lfpPlot = lfp[:, elec]
-
-	# 		# Morlet wavelet transform method
-	# 		if transformMethod == 'morlet':
-	# 			Fs = int(1000.0/sim.cfg.recordStep)
-
-	# 			#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
-	# 			morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-	# 			freqs = F = morletSpec.f
-	# 			spec = morletSpec.TFR
-	# 			signal = np.mean(spec, 1)
-	# 			ylabel = 'Power'
-
-	# 		# FFT transform method
-	# 		elif transformMethod == 'fft':
-	# 			Fs = int(1000.0/sim.cfg.recordStep)
-	# 			power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
-
-	# 			if smooth:
-	# 				signal = _smooth1d(10*np.log10(power[0]), smooth)
-	# 			else:
-	# 				signal = 10*np.log10(power[0])
-	# 			freqs = power[1]
-	# 			ylabel = 'Power (dB/Hz)'
-
-	# 		allFreqs.append(freqs)
-	# 		allSignal.append(signal)
-
-	# 	# ALTERNATIVE PSD CALCULATION USING WELCH
-	# 	# from http://joelyancey.com/lfp-python-practice/
-	# 	# from scipy import signal as spsig
-	# 	# Fs = int(1000.0/sim.cfg.recordStep)
-	# 	# maxFreq=100
-	# 	# f, psd = spsig.welch(lfpPlot, Fs, nperseg=100)
-	# 	# plt.semilogy(f,psd,'k')
-	# 	# sb.despine()
-	# 	# plt.xlim((0,maxFreq))
-	# 	# plt.yticks(size=fontsiz)
-	# 	# plt.xticks(size=fontsiz)
-	# 	# plt.ylabel('$uV^{2}/Hz$',size=fontsiz)
-
-	# 	if normPSD:
-	# 		vmax = np.max(allSignal)
-	# 		for i, s in enumerate(allSignal):
-	# 			allSignal[i] = allSignal[i]/vmax
-
-	# 	for i,elec in enumerate(electrodes):
-	# 		if not overlay:
-	# 			plt.subplot(np.ceil(len(electrodes)/numCols), numCols,i+1)
-	# 		if elec == 'avg':
-	# 			color = 'k'
-	# 		elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
-	# 			color = colors[i % len(colors)]
-	# 		freqs = allFreqs[i]
-	# 		signal = allSignal[i]
-	# 		plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
-	# 		## max freq testing lines !! ##
-	# 		# print('type(freqs): ' + str(type(freqs)))
-	# 		# print('max freq: ' + str(np.amax(freqs)))
-	# 		# print('type(signal): ' + str(type(signal)))
-	# 		# print('max signal: ' + str(np.amax(signal)))
-	# 		# print('signal[0]: ' + str(signal[0]))
-	# 		# ###
-	# 		plt.xlim([0, maxFreq])
-	# 		if len(electrodes) > 1 and not overlay:
-	# 			plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
-	# 		plt.ylabel(ylabel, fontsize=fontSize)
-
-	# 	# format plot
-	# 	plt.xlabel('Frequency (Hz)', fontsize=fontSize)
-	# 	if overlay:
-	# 		plt.legend(fontsize=fontSize)
-	# 	plt.tight_layout()
-	# 	if pop is None:
-	# 		plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
-	# 	elif pop is not None:
-	# 		PSDtitle = 'LFP Power Spectral Density of ' + pop + ' population'
-	# 		plt.suptitle(PSDtitle, fontsize=fontSize, fontweight='bold')
-	# 	plt.subplots_adjust(bottom=0.08, top=0.92)
-
-	# 	if logx:
-	# 		pass
-	# 	#from IPython import embed; embed()
-
-	# 	# save figure
-	# 	if saveFig:
-	# 		if isinstance(saveFig, basestring):
-	# 			filename = saveFig
-	# 		else:
-	# 			filename = sim.cfg.filename + '_LFP_psd.png'
-	# 		plt.savefig(filename, dpi=dpi)
 
 	# Spectrogram ------------------------------
 	if 'spectrogram' in plots:
@@ -2343,7 +2152,7 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 
 ## CSD: data and plotting ## 
 def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrodes=None, dt=None, sampr=None, pop=None, spacing_um=100):
-	#### Outputs an array of CSD data 
+	#### Outputs a dict with csd and time data arrays 		#### USED TO: Output an array of CSD data 
 	## dataFile: str     			--> .pkl file with recorded simulation 
 	## outputType: list of strings 	--> options are 'timeSeries' +/- 'spectrogram'
 	## timeRange: list 				--> e.g. [start, stop]
@@ -2352,7 +2161,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
 	## pop: str or list 
 	## spacing_um: 100 by DEFAULT (spacing between electrodes in MICRONS)
-		## add outputType to args so I can get output for timeSeries OR spectrogram here? 
+		###  NOTE: Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
 
 	# load .pkl simulation file 
 	if dataFile:
@@ -2365,7 +2174,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
 	spacing_um = spacing_um		# 100um by default # 
 
-
+	## Get LFP data   # ----> NOTE: SHOULD I MAKE AN LFP INPUT OPTION?????? FOR SUMMED LFP DATA???
 	if pop is None:
 		lfpData = sim.allSimData['LFP']
 	else:
@@ -2380,6 +2189,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 	if timeRange is not None:
 		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
 	else:
+		timeRange = [0, sim.cfg.duration]			# this is for use later, in the outputType if statements below 
 		csdData_allElecs = csdData_allElecs_allTime
 
 	## CSD data --> specified electrode(s), segmented by timeRange 
@@ -2393,15 +2203,25 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 	else:
 		csdData = csdData_allElecs
 
-		### from lfp 
-		# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
 
+	outputData = {'csd': csdData}
+	# timeSeries --------------------------------------------
 	if 'timeSeries' in outputType:
-		print('Returning timeSeries data')		# PLACEHOLDER
-	if 'spectrogram' in outputType:
-		print('Returning spectrogram data')		# PLACEHOLDER 
+		print('Returning timeSeries data')
 
-	return csdData 
+		t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)   # time array for x-axis 
+		outputData.update({'t': t})
+
+
+	# spectrogram -------------------------------------------
+	if 'spectrogram' in outputType:
+		print('Returning spectrogram data')
+
+
+
+
+
+	return outputData 			# csdData 
 def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
 	### csdData: array 		--> output of getCSDdata --> shape will be [num timePoints, num electrodes]  (transpose of LFP shape)
 	### pop: list or str 	--> relevant population to plot data for 
@@ -2746,6 +2566,13 @@ if csdTest:
 	# csdDataPop2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop=['ITS4'])
 	# csdDataElec = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop=None)
 	# csdDataElec2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop='ITS4')
+	####
+	csdOutputData = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrodes=[8], pop=None)
+	# ## quick test plot of the above
+	# timeArray = csdOutputData['t']
+	# csdArray = csdOutputData['csd']
+	# plt.plot(timeArray, csdArray)
+	# plt.show()
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
 	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
