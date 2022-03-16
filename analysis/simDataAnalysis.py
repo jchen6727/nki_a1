@@ -2224,7 +2224,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 
 
 	# spectrogram -------------------------------------------
-	if 'spectrogram' in outputType:
+	elif 'spectrogram' in outputType:
 		print('Returning spectrogram data')
 
 		# Should I transpose the shape of the csdData array??
@@ -2274,7 +2274,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) ### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
 		### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? 
 
-	if 'spectrogram2' in outputType:
+	elif 'spectrogram2' in outputType:
 		print('Returning spectrogram data USING TRANSPOSED CSD ')
 
 		# Should I transpose the shape of the csdData array??
