@@ -2342,14 +2342,17 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data and plotting ## 
-def getCSDdata(dataFile=None, timeRange=None, dt=None, sampr=None, pop=None, spacing_um=100):
+def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrodes=None, dt=None, sampr=None, pop=None, spacing_um=100):
 	#### Outputs an array of CSD data 
 	## dataFile: str     --> .pkl file with recorded simulation 
+	## outputType: list of strings --> options are 'timeSeries' +/- 'spectrogram'
 	## timeRange: list --> e.g. [start, stop]
+	## electrodes: list 		--> e.g. [7, 8, 9] --> NOTE: here, this will usually be of length 1 
 	## dt: time step of the simulation (usually --> sim.cfg.recordStep)
 	## sampr: sampling rate (Hz) (usually --> 1/(dt/1000))
-	## pop: str 
+	## pop: str or list 
 	## spacing_um: 100 by DEFAULT (spacing between electrodes in microns)
+		## add outputType to args so I can get output for timeSeries OR spectrogram here? 
 
 	# load .pkl simulation file 
 	if dataFile:
@@ -2364,18 +2367,37 @@ def getCSDdata(dataFile=None, timeRange=None, dt=None, sampr=None, pop=None, spa
 	if pop is None:
 		lfpData = sim.allSimData['LFP']
 	else:
+		if type(pop) is list:
+			pop = pop[0]
 		lfpData = sim.allSimData['LFPPops'][pop]
 
-	csdDataFull = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
+	## CSD data --> all electrodes, all timepoints
+	csdData_allElecs_allTime = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 
+	## CSD data --> all electrodes, segmented by timeRange 
 	if timeRange is not None:
-		csdData = csdDataFull[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
+		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
 	else:
-		csdData = csdDataFull
+		csdData_allElecs = csdData_allElecs_allTime
+
+	## CSD data --> specified electrode(s), segmented by timeRange 
+	if electrodes is not None:
+		electrodes = list(electrodes)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
+		for i, elec in enumerate(electrodes):
+			if elec == 'avg':
+				csdData = np.mean(csdData_allElecs, axis=0)
+			elif isinstance(elec, Number):
+				csdData = csdData_allElecs[elec, :]
+	else:
+		csdData = csdData_allElecs
+
+		### from lfp 
+		# t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)
+
 
 	return csdData 
 def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
-	### csdData: array --> output of getCSDdata (BE SURE TO TEST THIS!!)
+	### csdData: array 		--> output of getCSDdata --> shape will be [num timePoints, num electrodes]  (transpose of LFP shape)
 	### pop: list or str 	--> relevant population to plot data for 
 	### electrode: int 		--> electrode at which to plot the CSD data 
 	### figSize: tuple 		--> DEFAULT: (10,7)
@@ -2714,8 +2736,13 @@ if csdTest:
 		# dt = sim.cfg.recordStep
 		# sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
 		# spacing_um = 100 
-	csdData = getCSDdata(dataFile=dataFile)
-	csdDataPop = getCSDdata(dataFile=dataFile, pop='ITS4')
+	# csdData = getCSDdata(dataFile=dataFile)
+	# csdDataPop = getCSDdata(dataFile=dataFile, pop='ITS4')
+	csdData = getCSDdata(dataFile=dataFile, timeRange=timeRange)
+	csdDataPop = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop='ITS4')
+	csdDataPop2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop=['ITS4'])
+	csdDataElec = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop=None)
+	csdDataElec2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop='ITS4')
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
 	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
