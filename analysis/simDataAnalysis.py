@@ -2152,33 +2152,34 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 
 ## CSD: data and plotting ## 
 def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrode=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
-	#### Outputs a dict with csd and time data arrays 		#### USED TO: Output an array of CSD data 
-	## dataFile: str     			--> .pkl file with recorded simulation 
-	## outputType: list of strings 	--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
-	## timeRange: list 				--> e.g. [start, stop]
-	## electrode: int or list 			--> e.g. 8, or [8]
+	#### Outputs a dict with CSD and other relevant data for plotting! 
+	## dataFile: str     					--> .pkl file with recorded simulation 
+	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
+	## timeRange: list 						--> e.g. [start, stop]
+	## electrode: list or None 				--> e.g. [8], None
 	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
 	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
-	## pop: str or list 
-	## spacing_um: 100 by DEFAULT (spacing between electrodes in MICRONS)
-	## minFreq: float / int 	--> DEFAULT: 1 Hz  
-	## maxFreq: float / int 	--> DEFAULT: 100 Hz 
-	## stepFreq: float / int 	--> DEFAULT: 1 Hz 
-			###  NOTE: Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
+	## pop: str or list 					--> e.g. 'ITS4' or ['ITS4']
+	## spacing_um: int 						--> 100 by DEFAULT (spacing between electrodes in MICRONS)
+	## minFreq: float / int 				--> DEFAULT: 1 Hz  
+	## maxFreq: float / int 				--> DEFAULT: 100 Hz 
+	## stepFreq: float / int 				--> DEFAULT: 1 Hz 
+			## TO DO: 
+			###  --> Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
 
 
-	# load .pkl simulation file 
+	## load .pkl simulation file 
 	if dataFile:
 		sim.load(dataFile, instantiate=False)
 	else:
 		print('No dataFile; will use data from dataFile already loaded elsewhere!')
 
-	# Determine timestep, sampling rate, and electrode spacing 
+	## Determine timestep, sampling rate, and electrode spacing 
 	dt = sim.cfg.recordStep
 	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
 	spacing_um = spacing_um		# 100um by default # 
 
-	## Get LFP data   # ----> NOTE: SHOULD I MAKE AN LFP INPUT OPTION?????? FOR SUMMED LFP DATA???
+	## Get LFP data   # ----> NOTE: SHOULD I MAKE AN LFP INPUT OPTION?????? FOR SUMMED LFP DATA??? (also noted above in arg descriptions)
 	if pop is None:
 		lfpData = sim.allSimData['LFP']
 	else:
@@ -2186,11 +2187,12 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			pop = pop[0]
 		lfpData = sim.allSimData['LFPPops'][pop]
 
-	## (Step 1 in segmenting CSD data) CSD data --> ALL electrodes, ALL timepoints
+
+	## Step 1 in segmenting CSD data --> ALL electrodes, ALL timepoints
 	csdData_allElecs_allTime = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 
 
-	## (Step 2 in segmenting CSD data) CSD data --> ALL electrodes, SPECIFIED (OR ALL) timepoints
+	## Step 2 in segmenting CSD data --> ALL electrodes, SPECIFIED (OR ALL) timepoints
 	if timeRange is None:
 		timeRange = [0, sim.cfg.duration]			# this is for use later, in the outputType if statements below 
 		csdData_allElecs = csdData_allElecs_allTime
@@ -2198,12 +2200,12 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)]
 
 
-	## (Step 3 in segmenting CSD data) CSD data --> SPECIFIED (OR ALL) electrode(s), SPECIFIED (OR ALL) timepoints  
+	## Step 3 in segmenting CSD data --> SPECIFIED (OR ALL) electrode(s), SPECIFIED (OR ALL) timepoints  
 	if electrode is None:
 		csdData = csdData_allElecs
 		print('Outputting CSD data for ALL electrodes!')
 	else:
-		electrode = list(electrode)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
+		# electrode = list(electrode)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
 		if len(electrode) > 1:
 			## NOTE: at some point, change this so the correct electrode-specific CSD data is provided!!! 
 			print('More than one electrode listed!! --> outputData[\'csd\'] will contain CSD data from ALL electrodes!')
@@ -2356,6 +2358,12 @@ def plotCombinedCSD(csdData, pop, electrode, figSize=(10,7)):
 
 	# TIME (x-axis) --> t = timeSeriesDict['t']
 	# CSD (y-axis) --> LFP EQUIVALENT: lfpPlot = timeSeriesDict['lfpPlot']
+
+	# ## quick test plot of timeSeries data 
+	# timeArray = csdOutputData['t']
+	# csdArray = csdOutputData['csd']
+	# plt.plot(timeArray, csdArray)
+	# plt.show()
 
 	lw = 1.0
 	ax2 = plt.subplot(2, 1, 2)
@@ -2667,27 +2675,20 @@ if lfpPSD:
 
 csdTest = 1
 if csdTest:
-	# csdData = getCSDdata(dataFile=dataFile)
-	# csdDataPop = getCSDdata(dataFile=dataFile, pop='ITS4')
-	# csdData = getCSDdata(dataFile=dataFile, timeRange=timeRange)
-	# csdDataPop = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop='ITS4')
-	# csdDataPop2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=None, pop=['ITS4'])
-	# csdDataElec = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop=None)
-	# csdDataElec2 = getCSDdata(dataFile=dataFile, timeRange=timeRange, electrodes=[8], pop='ITS4')
+	### TESTING ### 
+	csdData =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop=None)
+	# csdData2 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=None, pop=None)
 
-	#### timeSeries tests ###### 
-	# csdData = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrodes=[8], pop=None)
-	# csdDataPop = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrodes=[8], pop='ITS4')
+	# csdData3 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop=None)
+	# csdData4 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop=None)
 
-	#### SPECTROGRAM TESTS ###### 
-	csdData = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrodes=None, pop=None)
-	# csdDataT = getCSDdata(dataFile=dataFile, outputType=['spectrogram2'], timeRange=timeRange, electrodes=[8], pop=None)
+	# csdData5 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop='ITS4')
+	# csdData6 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
 
-	# ## quick test plot of the above
-	# timeArray = csdOutputData['t']
-	# csdArray = csdOutputData['csd']
-	# plt.plot(timeArray, csdArray)
-	# plt.show()
+	# csdData7 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8,9], pop=None)
+	# csdData8 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8,9], pop=['ITS4'])
+
+
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
 	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
