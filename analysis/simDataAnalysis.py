@@ -2299,7 +2299,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
-def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None, colorMap='jet', figSize=(10,7)):
+def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None):
 	### timeSeriesDict: dict 			--> output of getCSDdata (with outputType=['timeSeries'])
 	### spectDict: dict 				--> output of getCSDdata (with outputType=['spectrogram'])
 	### csdData: dict  					--> output of getCSDdata
@@ -2308,6 +2308,8 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	### vmaxContrast: float or int 		--> Denominator; This will help with color contrast if desired!, e.g. 1.5 or 3 (DEFAULT: None)
 	### colorMap: str 					--> DEFAULT: jet; cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis'
 	### figSize: tuple 					--> DEFAULT: (10,7)
+	### minFreq: int 					--> DEFAULT: None
+	### maxFreq: int 					--> DEFAULT: None
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2330,7 +2332,7 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	# These lines will work as long as the getCSDdata function that retrieves the spectDict had only 1 electrode in electrode arg!!
 	S = spectDict['S']
 	F = spectDict['F']
-	T = spectDict['T']
+	T = spectDict['T']				# timeRange
 
 	# vmin and vmax  -- adjust for color contrast purposes, if desired 
 	vc = spectDict['vc']
@@ -2362,7 +2364,7 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
 	ax1.set_title(spectTitle, fontsize=titleFontSize)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
-	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])  ### <-- NOTE: should this be 'T'??
+	ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 	# if maxFreq is not None:
 	# 	ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
 
@@ -2380,6 +2382,10 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	# timeSeries title
 	timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', electrode ' + str(electrode)
 
+	# y-axis label
+	timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
+
+	# Format spectrogram plot 
 	lw = 1.0
 	ax2 = plt.subplot(2, 1, 2)
 	divider2 = make_axes_locatable(ax2)
@@ -2388,8 +2394,8 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	ax2.set_xlim(left=timeRange[0], right=timeRange[1])  ### NOTE: should this be t[0] and t[-1]
-	ax2.set_ylabel('CSD Amplitude (NOTE: ADD UNITS)', fontsize=labelFontSize)
+	ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+	ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 	plt.tight_layout()
 	plt.show()
