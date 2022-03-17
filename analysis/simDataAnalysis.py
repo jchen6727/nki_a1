@@ -423,11 +423,11 @@ def evalWaveletsByBand(based, dfPklFile):
 
 	return df
 ## plotting functions
-def plotTimeSeries(dataType=['LFP', 'CSD'], timeSeriesDict):
+def plotTimeSeries(timeSeriesDict, dataType=['LFP', 'CSD']):
 	### dataType: list of str 		--> Indicates which dataType will be input / plotted
 	### timeSeriesDict: dict 		--> Output of ____ (which exact funtions)
 	print('Plot time series for LFP or CSD data')
-def plotSpectrogram(dataType=['LFP', 'CSD', 'Spike'], spectDict):
+def plotSpectrogram(spectDict, dataType=['LFP', 'CSD', 'Spike']):
 	### dataType: list of str 		--> Indicates which dataType will be input / plotted
 	### spectDict: dict 			--> output of ____ which functions?
 	print('Plot spectrogram for LFP, CSD, or Spiking data')
@@ -2322,7 +2322,9 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	labelFontSize = 12  ## NOTE: spike has this as 12, lfp plotting has this as 15 
 	titleFontSize = 20
 
-
+	# Set electrode variable, for plot titles
+	if type(electrode) is list:
+		electrode = electrode[0]
 
 	#### SPECTROGRAM ####-------------------------------------------------------
 	# These lines will work as long as the getCSDdata function that retrieves the spectDict had only 1 electrode in electrode arg!!
@@ -2690,9 +2692,10 @@ csdTest = 1
 if csdTest:
 	print('Testing combined plotting next')
 	### TESTING DATA AND PLOTTING ####
-	# timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[electrode], dt=None, sampr=None, pop=pop)
-	# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[electrode], dt=None, sampr=None, pop=pop)
+	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
+	spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop='ITS4')
 
+	plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7))
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
