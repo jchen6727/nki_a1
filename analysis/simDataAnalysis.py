@@ -2346,6 +2346,8 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 		vc = [vmin, vmax]
 
 
+	# spectrogram title
+	spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
 
 	# Plot the spectrogram 
 	ax1 = plt.subplot(2, 1, 1)
@@ -2356,7 +2358,7 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
 	fmt.set_powerlimits((0,0))
 	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	# ax1.set_title(spectTitle, fontsize=titleFontSize)
+	ax1.set_title(spectTitle, fontsize=titleFontSize)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])  ### <-- NOTE: should this be 'T'??
 	# if maxFreq is not None:
@@ -2384,7 +2386,7 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	ax2.set_xlim(left=timeRange[0], right=timeRange[1])  ### NOTE: timeRange?!?! 
+	ax2.set_xlim(left=timeRange[0], right=timeRange[1])  ### NOTE: should this be t[0] and t[-1]
 	ax2.set_ylabel('CSD Amplitude (NOTE: ADD UNITS)', fontsize=labelFontSize)
 
 	plt.tight_layout()
