@@ -422,6 +422,18 @@ def evalWaveletsByBand(based, dfPklFile):
 
 
 	return df
+## plotting functions
+def plotTimeSeries(dataType=['LFP', 'CSD'], timeSeriesDict):
+	### dataType: list of str 		--> Indicates which dataType will be input / plotted
+	### timeSeriesDict: dict 		--> Output of ____ (which exact funtions)
+	print('Plot time series for LFP or CSD data')
+def plotSpectrogram(dataType=['LFP', 'CSD', 'Spike'], spectDict):
+	### dataType: list of str 		--> Indicates which dataType will be input / plotted
+	### spectDict: dict 			--> output of ____ which functions?
+	print('Plot spectrogram for LFP, CSD, or Spiking data')
+def plotHistogram(histDict):
+	### histDict: dict 			--> output of ___which function exactly? 
+	print('Plot histogram of spiking data')
 ######################################################################
 
 
@@ -2287,14 +2299,15 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
-def plotCombinedCSD(timeSeriesDict, pop, electrode, figSize=(10,7)):
-	### timeSeriesDict: dict 	--> output of getCSDdata (with outputType=['timeSeries'])
-		## ADD THIS !!!--> ### spectDict: dict 		--> output of getCSDdata (with outputType=['spectrogram'])
-	### csdData: dict  			--> output of getCSDdata
-	### pop: list or str 		--> relevant population to plot data for 
-	### electrode: int 			--> electrode at which to plot the CSD data 
+def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None, figSize=(10,7)):
+	### timeSeriesDict: dict 			--> output of getCSDdata (with outputType=['timeSeries'])
+	### spectDict: dict 				--> output of getCSDdata (with outputType=['spectrogram'])
+	### csdData: dict  					--> output of getCSDdata
+	### pop: list or str 				--> relevant population to plot data for 
+	### electrode: int 					--> electrode at which to plot the CSD data 
+	### vmaxContrast: float or int 		--> Denominator; This will help with color contrast if desired!, e.g. 1.5 or 3 (DEFAULT: None)
+
 	### figSize: tuple 			--> DEFAULT: (10,7)
-		#### NOTE: Should expand this to have timeSeriesDict and spectDict but keep args this way for now!! 
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2310,50 +2323,90 @@ def plotCombinedCSD(timeSeriesDict, pop, electrode, figSize=(10,7)):
 	titleFontSize = 20
 
 
+
 	#### SPECTROGRAM ####-------------------------------------------------------
+	# These lines will work as long as the getCSDdata function that retrieves the spectDict had only 1 electrode in electrode arg!!
+	S = spectDict['S']
+	F = spectDict['F']
+	T = spectDict['T']
+
+	# vmin and vmax  -- adjust for color contrast purposes, if desired 
+	vc = spectDict['vc']
+	orig_vmin = vc[0]
+	orig_vmax = vc[1]
+	## Color contrast testing lines for color map!! 
+	if vmaxContrast is None:
+		vmin = orig_vmin
+		vmax = orig_vmax
+	else:
+		print('original vmax: ' + str(orig_vmax))
+		vmin = orig_vmin
+		vmax = orig_vmax / vmaxContrast
+		print('new vmax: ' + str(vmax))
+		vc = [vmin, vmax]
 
 
-	#### FROM plotCombinedLFP():
-	# ##### SPECTROGRAM  --> TOP PANEL !! #####
-	# spec = spectDict['spec']
 
-	# S = spec[0].TFR
-	# F = spec[0].f
-	# T = timeRange
 
-	# ## Set up vmin / vmax color contrasts 
-	# vmin = np.array([s.TFR for s in spec]).min()
-	# # print('vmin: ' + str(vmin)) ### COLOR MAP CONTRAST TESTING LINES 
-	# if vmaxContrast is None:
-	# 	vmax = np.array([s.TFR for s in spec]).max()
+
+
+	######## From plotCombinedLFP: ----------------------
+
+
+	# ## Plot Spectrogram 
+	# ax1 = plt.subplot(2, 1, 1)
+	# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+	# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+	# divider1 = make_axes_locatable(ax1)
+	# cax1 = divider1.append_axes('right', size='3%', pad=0.2)
+	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
+	# fmt.set_powerlimits((0,0))
+	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+	# ax1.set_title(spectTitle, fontsize=titleFontSize)
+	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
+	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+	# if maxFreq is not None:
+	# 	ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
+
+
+
+	######## From spike histogram plotting: ----------------------
+
+	# allSignal = spectDict['allSignal']
+	# allFreqs = spectDict['allFreqs']
+
+	# # Set frequencies to be plotted 
+	# if maxFreq is None:
+	# 	maxFreq = np.amax(allFreqs[0])
+	# 	imshowSignal = allSignal[0]
 	# else:
-	# 	preVmax = np.array([s.TFR for s in spec]).max()
-	# 	# print('original vmax: ' + str(preVmax))		### COLOR MAP CONTRAST TESTING LINES 
-	# 	vmax = preVmax / vmaxContrast 
-	# 	# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
-	# vc = [vmin, vmax]
+	# 	if type(maxFreq) is not int:
+	# 		maxFreq = round(maxFreq)
+	# 	imshowSignal = allSignal[0][:maxFreq]
 
-########## 
-	# ### SEEMS LIKE THESE LINES BELOW ARE FOR PLOTTING ### 
-	# 		plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-	# 		if normSpec:
-	# 			plt.colorbar(label='Normalized power')
-	# 		else:
-	# 			plt.colorbar(label='Power')
-	# 		plt.ylabel('Hz')
-	# 		plt.tight_layout()
-	# 		if len(electrodes) > 1:
-	# 			plt.title('Electrode %s' % (str(elec)), fontsize=fontSize - 2)
+	# # Set color contrast parameters 
+	# if vmaxContrast is None:
+	# 	vmin = None
+	# 	vmax = None
+	# else:
+	# 	vmin = np.amin(imshowSignal)
+	# 	vmax = np.amax(imshowSignal) / vmaxContrast
 
-	# plt.xlabel('time (ms)', fontsize=fontSize)
-	# plt.tight_layout()
-	# if pop is None:
-	# 	plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
-	# elif pop is not None:
-	# 	spectTitle = 'LFP spectrogram of ' + pop + ' population'
-	# 	plt.suptitle(spectTitle, size=fontSize, fontweight='bold')
+	# # Plot spectrogram 
+	# ax1 = plt.subplot(211)
+	# img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+	# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+	# divider1 = make_axes_locatable(ax1)
+	# cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
+	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
+	# fmt.set_powerlimits((0,0))
+	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+	# ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
+	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
+	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 
-	# plt.subplots_adjust(bottom=0.08, top=0.90)
+
+
 
 
 
@@ -2678,20 +2731,10 @@ if lfpPSD:
 
 csdTest = 1
 if csdTest:
-	### TESTING ### 
-	# csdData =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop=None)
-	# csdData2 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=None, pop=None)
-
-	# csdData3 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop=None)
-	# csdData4 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop=None)
-
-	# csdData5 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=None, pop='ITS4')
-	csdData6 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
-
-	plotCombinedCSD(timeSeriesDict=csdData6, pop='ITS4', electrode=[8], figSize=(10,7))
-
-	# csdData7 =  getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8,9], pop=None)
-	# csdData8 =  getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8,9], pop=['ITS4'])
+	print('Testing combined plotting next')
+	### TESTING DATA AND PLOTTING ####
+	# timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[electrode], dt=None, sampr=None, pop=pop)
+	# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[electrode], dt=None, sampr=None, pop=pop)
 
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
