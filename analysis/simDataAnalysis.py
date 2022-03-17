@@ -2365,8 +2365,13 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	ax1.set_title(spectTitle, fontsize=titleFontSize)
 	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 	ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-	# if maxFreq is not None:
-	# 	ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
+
+	if minFreq is not None and maxFreq is not None:
+		ax1.set_ylim(minFreq, maxFreq)
+	elif minFreq is None and maxFreq is not None:
+		ax1.set_ylim(1, maxFreq)
+	elif minFreq is not None and maxFreq is None:
+		ax1.set_ylim(minFreq, 100)
 
 
 
@@ -2701,7 +2706,7 @@ if csdTest:
 	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
 	spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop='ITS4')
 
-	plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7))
+	plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7))#, maxFreq=70)
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
