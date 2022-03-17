@@ -2299,15 +2299,15 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
-def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None, figSize=(10,7)):
+def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None, colorMap='jet', figSize=(10,7)):
 	### timeSeriesDict: dict 			--> output of getCSDdata (with outputType=['timeSeries'])
 	### spectDict: dict 				--> output of getCSDdata (with outputType=['spectrogram'])
 	### csdData: dict  					--> output of getCSDdata
 	### pop: list or str 				--> relevant population to plot data for 
 	### electrode: int 					--> electrode at which to plot the CSD data 
 	### vmaxContrast: float or int 		--> Denominator; This will help with color contrast if desired!, e.g. 1.5 or 3 (DEFAULT: None)
-
-	### figSize: tuple 			--> DEFAULT: (10,7)
+	### colorMap: str 					--> DEFAULT: jet; cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis'
+	### figSize: tuple 					--> DEFAULT: (10,7)
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2347,65 +2347,20 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 
 
 
-
-
-
-	######## From plotCombinedLFP: ----------------------
-
-
-	# ## Plot Spectrogram 
-	# ax1 = plt.subplot(2, 1, 1)
-	# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-	# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
-	# divider1 = make_axes_locatable(ax1)
-	# cax1 = divider1.append_axes('right', size='3%', pad=0.2)
-	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
-	# fmt.set_powerlimits((0,0))
-	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+	# Plot the spectrogram 
+	ax1 = plt.subplot(2, 1, 1)
+	img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) ## NOTE: instead of np.amax(F) should I be doing maxFreq? (similarly for minFreq // np.amin(F))
+	divider1 = make_axes_locatable(ax1)
+	cax1 = divider1.append_axes('right', size='3%', pad=0.2)
+	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
+	fmt.set_powerlimits((0,0))
+	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
 	# ax1.set_title(spectTitle, fontsize=titleFontSize)
-	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
-	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
+	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])  ### <-- NOTE: should this be 'T'??
 	# if maxFreq is not None:
 	# 	ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
-
-
-
-	######## From spike histogram plotting: ----------------------
-
-	# allSignal = spectDict['allSignal']
-	# allFreqs = spectDict['allFreqs']
-
-	# # Set frequencies to be plotted 
-	# if maxFreq is None:
-	# 	maxFreq = np.amax(allFreqs[0])
-	# 	imshowSignal = allSignal[0]
-	# else:
-	# 	if type(maxFreq) is not int:
-	# 		maxFreq = round(maxFreq)
-	# 	imshowSignal = allSignal[0][:maxFreq]
-
-	# # Set color contrast parameters 
-	# if vmaxContrast is None:
-	# 	vmin = None
-	# 	vmax = None
-	# else:
-	# 	vmin = np.amin(imshowSignal)
-	# 	vmax = np.amax(imshowSignal) / vmaxContrast
-
-	# # Plot spectrogram 
-	# ax1 = plt.subplot(211)
-	# img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
-	# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
-	# divider1 = make_axes_locatable(ax1)
-	# cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
-	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
-	# fmt.set_powerlimits((0,0))
-	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	# ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
-	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
-	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-
-
 
 
 
@@ -2429,7 +2384,7 @@ def plotCombinedCSD(timeSeriesDict, spectDict, pop, electrode, vmaxContrast=None
 	ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 	ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+	ax2.set_xlim(left=timeRange[0], right=timeRange[1])  ### NOTE: timeRange?!?! 
 	ax2.set_ylabel('CSD Amplitude (NOTE: ADD UNITS)', fontsize=labelFontSize)
 
 	plt.tight_layout()
