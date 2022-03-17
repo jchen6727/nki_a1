@@ -2312,27 +2312,6 @@ def plotCombinedCSD(timeSeriesDict, pop, electrode, figSize=(10,7)):
 
 	#### SPECTROGRAM ####-------------------------------------------------------
 
-	# ### SEEMS LIKE THESE LINES BELOW ARE FOR PLOTTING ### 
-	# 		plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
-	# 		if normSpec:
-	# 			plt.colorbar(label='Normalized power')
-	# 		else:
-	# 			plt.colorbar(label='Power')
-	# 		plt.ylabel('Hz')
-	# 		plt.tight_layout()
-	# 		if len(electrodes) > 1:
-	# 			plt.title('Electrode %s' % (str(elec)), fontsize=fontSize - 2)
-
-	# plt.xlabel('time (ms)', fontsize=fontSize)
-	# plt.tight_layout()
-	# if pop is None:
-	# 	plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
-	# elif pop is not None:
-	# 	spectTitle = 'LFP spectrogram of ' + pop + ' population'
-	# 	plt.suptitle(spectTitle, size=fontSize, fontweight='bold')
-
-	# plt.subplots_adjust(bottom=0.08, top=0.90)
-
 
 	#### FROM plotCombinedLFP():
 	# ##### SPECTROGRAM  --> TOP PANEL !! #####
@@ -2354,6 +2333,27 @@ def plotCombinedCSD(timeSeriesDict, pop, electrode, figSize=(10,7)):
 	# 	# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
 	# vc = [vmin, vmax]
 
+########## 
+	# ### SEEMS LIKE THESE LINES BELOW ARE FOR PLOTTING ### 
+	# 		plt.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('viridis'))
+	# 		if normSpec:
+	# 			plt.colorbar(label='Normalized power')
+	# 		else:
+	# 			plt.colorbar(label='Power')
+	# 		plt.ylabel('Hz')
+	# 		plt.tight_layout()
+	# 		if len(electrodes) > 1:
+	# 			plt.title('Electrode %s' % (str(elec)), fontsize=fontSize - 2)
+
+	# plt.xlabel('time (ms)', fontsize=fontSize)
+	# plt.tight_layout()
+	# if pop is None:
+	# 	plt.suptitle('LFP spectrogram', size=fontSize, fontweight='bold')
+	# elif pop is not None:
+	# 	spectTitle = 'LFP spectrogram of ' + pop + ' population'
+	# 	plt.suptitle(spectTitle, size=fontSize, fontweight='bold')
+
+	# plt.subplots_adjust(bottom=0.08, top=0.90)
 
 
 
