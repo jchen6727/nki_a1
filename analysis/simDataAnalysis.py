@@ -1897,7 +1897,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 
 
 		# Set up imshowSignal
-		imshowSignal = allSignal[0][minFreq:maxFreq]
+		imshowSignal = allSignal[0][minFreq:maxFreq+1]  ## Can't tell if the +1 is necessary or not here - leave it in for now!! 
 
 
 		# Set color contrast parameters (vmin / vmax)
@@ -2436,6 +2436,9 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		if maxFreq is None:
 			maxFreq = np.amax(F)	# 100
 
+		## Set up imshowSignal
+		imshowSignal = S[minFreq:maxFreq+1] ## NOTE: Is the +1 necessary here or not? Same question for spiking data. Leave it in for now. 
+
 
 	#### TIME SERIES CALCULATIONS ####-------------------------------------------------------
 	if 'timeSeries' in plotTypes:
@@ -2454,7 +2457,9 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
-		img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
 			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
@@ -2464,7 +2469,7 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax1.set_title(spectTitle, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-		ax1.set_ylim(minFreq, maxFreq)
+		# ax1.set_ylim(minFreq, maxFreq)				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
 
 		### PLOT TIMESERIES ###
 		# timeSeries title
@@ -2490,8 +2495,10 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
 		# plot and format 
 		ax1 = plt.subplot(1, 1, 1)
-		img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) ## ANSWER: NO --> NOTE: instead of np.amax(F) should I be doing maxFreq? (similarly for minFreq // np.amin(F))
+		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) ## ANSWER: NO --> NOTE: instead of np.amax(F) should I be doing maxFreq? (similarly for minFreq // np.amin(F))
+		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
+			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) 
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -2501,7 +2508,7 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax1.set_xlabel('Time (ms)', fontsize=labelFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-		ax1.set_ylim(minFreq, maxFreq)
+		# ax1.set_ylim(minFreq, maxFreq) 				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
 
 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
@@ -2830,9 +2837,9 @@ if csdTest:
 	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
 	spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop='ITS4')
 
-	# plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'])#, maxFreq=70)
+	#### plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'])#, maxFreq=70)
 	plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, pop='ITS4', electrode=[8], 
-		minFreq=None, maxFreq=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'])
+		minFreq=15, maxFreq=70, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'])
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
