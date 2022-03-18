@@ -2017,21 +2017,21 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrode):
 	lfpOutput = getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodeList, plots=plots) # sim.analysis.getLFPData # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSeries'], spectDict=None, timeSeriesDict=None, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=True): # electrode='avg',
-	### timeRange: list 	--> [start, stop]
-	### pop: list or str 	--> relevant population to plot data for 
-	### colorDict: dict 	--> corresponds pop to color 
-	### plotTypes: list 	--> DEFAULT: ['spectrogram', 'timeSeries'] 
-	### spectDict: dict with spectrogram data
-	### timeSeriesDict: dict with timeSeries data
-	### figSize: tuple 		--> DEFAULT: (10,7)
-	### colorMap: str 		--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
-	### maxFreq: int 		--> whole number that determines the maximum frequency plotted on the spectrogram 
-			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
-	### vmaxContrast: float or int 			--> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
+def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSeries'], spectDict=None, timeSeriesDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=True): # electrode='avg',
+	### timeRange: list 						--> [start, stop]
+	### pop: list or str 						--> relevant population to plot data for 
+	### colorDict: dict 						--> corresponds pop to color 
+	### plotTypes: list 						--> DEFAULT: ['spectrogram', 'timeSeries'] 
+	### spectDict: dict 						--> Contains spectrogram data; output of getLFPDataDict
+	### timeSeriesDict: dict 					--> Contains timeSeries data; output of getLFPDataDict
+	### figSize: tuple 							--> DEFAULT: (10,7)
+	### colorMap: str 							--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
+	### maxFreq: int 							--> whole number that determines the maximum frequency plotted on the spectrogram 
+	### minFreq: int 							--> whole number that determines the minimum frequency plotted on the spectrogram
+	### vmaxContrast: float or int 				--> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
 	### titleElectrode: str or (1-element) list	-->  FOR USE IN PLOT TITLES !! --> This is for the electrode that will appear in the title 
-	### savePath: str 	  	--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
-	### saveFig: bool 		--> DEFAULT: True 
+	### savePath: str 	  						--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	### saveFig: bool 							--> DEFAULT: True 
 
 
 	# Get relevant pop
@@ -2076,21 +2076,40 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		T = timeRange
 
 		## Set up vmin / vmax color contrasts 
-		vmin = np.array([s.TFR for s in spec]).min()
-		# print('vmin: ' + str(vmin)) ### COLOR MAP CONTRAST TESTING LINES 
+		orig_vmin = np.array([s.TFR for s in spec]).min()
+		orig_vmax = np.array([s.TFR for s in spec]).max()
+
 		if vmaxContrast is None:
-			vmax = np.array([s.TFR for s in spec]).max()
+			vmin = orig_vmin
+			vmax = orig_vmax
 		else:
-			preVmax = np.array([s.TFR for s in spec]).max()
-			# print('original vmax: ' + str(preVmax))		### COLOR MAP CONTRAST TESTING LINES 
-			vmax = preVmax / vmaxContrast 
-			# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
+			vmin = orig_vmin
+			vmax = orig_vmax / vmaxContrast 
+			print('original vmax: ' + str(orig_vmax))
+			print('new vmax: ' + str(vmax))
+
 		vc = [vmin, vmax]
+
+
+		## Set up minFreq and maxFreq for spectrogram
+		if minFreq is None:
+			minFreq = np.amin(F) 	# 1
+		if maxFreq is None:
+			maxFreq = np.amax(F)	# 100
+		print('minFreq: ' + str(minFreq) + ' Hz')
+		print('maxFreq: ' + str(maxFreq) + ' Hz')
+
+		## Set up imshowSignal
+		imshowSignal = S[minFreq:maxFreq+1] ## NOTE: Is the +1 necessary here or not? Same question for spiking data. Leave it in for now. 
+
+
 
 	#### TIME SERIES CALCULATIONS ####-------------------------------------------------------
 	if 'timeSeries' in plotTypes:
 		t = timeSeriesDict['t']
 		lfpPlot = timeSeriesDict['lfpPlot']
+
+
 
 	#### PLOTTING ####-------------------------------------------------------
 	# Plot both 
@@ -2098,7 +2117,9 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 
 		## Plot Spectrogram 
 		ax1 = plt.subplot(2, 1, 1)
-		img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
 			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
@@ -2108,8 +2129,8 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		ax1.set_title(spectTitle, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-		if maxFreq is not None:
-			ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
+		# ax1.set_ylim(minFreq, maxFreq)		## Redundant if ax1.imshow extent reflects minFreq and maxFreq
+
 
 		## Plot Time Series
 		lw = 1.0
@@ -2126,7 +2147,9 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 	# Plot only spectrogram 
 	elif 'spectrogram' in plotTypes and 'timeSeries' not in plotTypes:
 		ax1 = plt.subplot(1, 1, 1)
-		img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
 			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
@@ -2136,8 +2159,7 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		ax1.set_title(spectTitle, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-		if maxFreq is not None:
-			ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
+		# ax1.set_ylim(minFreq, maxFreq)		## Redundant if ax1.imshow extent reflects minFreq and maxFreq
 
 	# Plot only timeSeries 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
@@ -2781,7 +2803,7 @@ if evalPopsBool:
 ###### COMBINED LFP PLOTTING ######
 ###################################
 
-plotLFPCombinedData = 0
+plotLFPCombinedData = 1
 
 includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 # includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
@@ -2795,11 +2817,11 @@ if plotLFPCombinedData:
 
 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrode) 
-		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode) #filtFreq=filtFreq, 
+		# LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode) #filtFreq=filtFreq, 
 
-		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['timeSeries'], 
-			spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, figSize=(10,7), colorMap='jet', 
-			maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=False)
+		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram'], 
+			spectDict=LFPSpectOutput, timeSeriesDict=None, figSize=(10,7), colorMap='jet', 
+			minFreq=15, maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=False)
 
 		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
 		# 	figSize=(10,7), titleElectrode=electrode, saveFig=0)
@@ -2830,7 +2852,7 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-csdTest = 1
+csdTest = 0
 if csdTest:
 	print('Testing combined plotting next')
 	### TESTING DATA AND PLOTTING ####
