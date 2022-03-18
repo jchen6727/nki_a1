@@ -2017,7 +2017,7 @@ def getLFPDataDict(dataFile, pop, plotType, timeRange, electrode):
 	lfpOutput = getLFPData(pop=popList, timeRange=timeRange, electrodes=electrodeList, plots=plots) # sim.analysis.getLFPData # filtFreq=filtFreq (see above; in args)
 
 	return lfpOutput
-def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSeries'], spectDict=None, timeSeriesDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=True): # electrode='avg',
+def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSeries'], spectDict=None, timeSeriesDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, electrode=None, savePath=None, saveFig=True): # electrode='avg',
 	### timeRange: list 						--> [start, stop]
 	### pop: list or str 						--> relevant population to plot data for 
 	### colorDict: dict 						--> corresponds pop to color 
@@ -2029,10 +2029,11 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 	### maxFreq: int 							--> whole number that determines the maximum frequency plotted on the spectrogram 
 	### minFreq: int 							--> whole number that determines the minimum frequency plotted on the spectrogram
 	### vmaxContrast: float or int 				--> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
-	### titleElectrode: str or (1-element) list	-->  FOR USE IN PLOT TITLES !! --> This is for the electrode that will appear in the title 
+	### electrode: int 					--> electrode at which to plot the CSD data 
+		# ^^^ REPLACEMENT ### titleElectrode: str or (1-element) list	-->  FOR USE IN PLOT TITLES !! --> This is for the electrode that will appear in the title 
 	### savePath: str 	  						--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 							--> DEFAULT: True 
-
+		### NOTE: RE-WORK HOW THE ELECTRODE GETS FACTORED INTO THE TITLE AND SAVING!! 
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2043,28 +2044,14 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 	## Create figure 
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
+	# Set electrode variable, for plot title(s)
+	if type(electrode) is list:
+		electrode = electrode[0]
+
+
 	## Set font size 
 	labelFontSize = 15 		# NOTE: in plotCombinedSpike, labelFontSize = 12
 	titleFontSize = 20
-
-	## Set up titles for spectrogram and timeSeries plots:
-	spectTitlePreamble = 'LFP Spectrogram for ' + popToPlot
-	timeSeriesTitlePreamble = 'LFP Signal for ' + popToPlot 
-
-	if titleElectrode is not None:
-		if type(titleElectrode) is list:
-			titleElectrode = titleElectrode[0]
-		if titleElectrode == 'avg':
-			elecTitleSubset = ', averaged over all electrodes'
-		else:
-			elecTitleSubset = ', electrode ' + str(titleElectrode)
-		spectTitle = spectTitlePreamble + elecTitleSubset
-		timeSeriesTitle = timeSeriesTitlePreamble + elecTitleSubset
-		figFilename = pop + '_combinedLFP_elec_' + str(titleElectrode) + '.png'
-	else:
-		spectTitle = spectTitlePreamble
-		timeSeriesTitle = timeSeriesTitlePreamble
-		figFilename = pop + '_combinedLFP.png'
 
 
 	#### SPECTROGRAM CALCULATIONS ####-------------------------------------------------------
@@ -2115,12 +2102,13 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 	# Plot both 
 	if 'spectrogram' in plotTypes and 'timeSeries' in plotTypes:
 
-		## Plot Spectrogram 
+		### PLOT SPECTROGRAM ###
+		# spectrogram title #
+		spectTitle = 'LFP Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)   ## NOTE: make condition for avg elec? 
+		# plot and format # 
 		ax1 = plt.subplot(2, 1, 1)
-		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
-			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))	 # imshowSignal --> S 	 	# minFreq --> np.amin(F)  	# maxFreq --> np.amax(F) 
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -2132,7 +2120,10 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		# ax1.set_ylim(minFreq, maxFreq)		## Redundant if ax1.imshow extent reflects minFreq and maxFreq
 
 
-		## Plot Time Series
+		### PLOT TIME SERIES ###
+		# timeSeries title # 
+		timeSeriesTitle = 'LFP Signal for ' + popToPlot + ', electrode ' + str(electrode)
+		# plot and format #
 		lw = 1.0
 		ax2 = plt.subplot(2, 1, 2)
 		divider2 = make_axes_locatable(ax2)
@@ -2144,13 +2135,18 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 		ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
 
+		# For potential figure saving
+		figFilename = popToPlot + '_combinedLFP_elec_' + str(electrode) + '.png'
+
 	# Plot only spectrogram 
 	elif 'spectrogram' in plotTypes and 'timeSeries' not in plotTypes:
+		### PLOT SPECTROGRAM ###
+		# spectrogram title # 
+		spectTitle = 'LFP Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
+		# plot and format # 
 		ax1 = plt.subplot(1, 1, 1)
-		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
-			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))  # imshowSignal --> S 	 	# minFreq --> np.amin(F)  	# maxFreq --> np.amax(F) 
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -2161,8 +2157,15 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 		# ax1.set_ylim(minFreq, maxFreq)		## Redundant if ax1.imshow extent reflects minFreq and maxFreq
 
+		# For potential figure saving
+		figFilename = popToPlot + '_LFP_spectrogram_elec_' + str(electrode) + '.png'
+
 	# Plot only timeSeries 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
+		### PLOT TIME SERIES ###
+		# timeSeries title # 
+		timeSeriesTitle = 'LFP Signal for ' + popToPlot + ', electrode ' + str(electrode)
+		# plot and format # 
 		lw = 1.0
 		ax2 = plt.subplot(1, 1, 1)
 		divider2 = make_axes_locatable(ax2)
@@ -2174,8 +2177,10 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 		ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
 
+		# For potential figure saving
+		figFilename = popToPlot + '_LFP_timeSeries_elec_' + str(electrode) + '.png'
+
 	plt.tight_layout()
-	plt.show()
 
 	## Save figure 
 	if saveFig:
@@ -2185,6 +2190,9 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 			prePath = savePath
 		pathToFile = prePath + figFilename
 		plt.savefig(pathToFile, dpi=300)
+
+	## Show figure 
+	plt.show()
 
 def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	# THIS FUNCTON ALLOWS YOU TO ADD TOGETHER LFP CONTRIBUTIONS FROM ARBITRARY POPS AT SPECIFIED ELECTRODES
@@ -2396,19 +2404,20 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
-def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram']):
-	### timeSeriesDict: dict 			--> output of getCSDdata (with outputType=['timeSeries'])
-	### spectDict: dict 				--> output of getCSDdata (with outputType=['spectrogram'])
-	### csdData: dict  					--> output of getCSDdata
+def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], savePath=None, saveFig=True):
 	### pop: list or str 				--> relevant population to plot data for 
 	### electrode: int 					--> electrode at which to plot the CSD data 
+	### colorDict: dict 				--> corresponds pop to color 
+	### timeSeriesDict: dict 			--> output of getCSDdata (with outputType=['timeSeries'])
+	### spectDict: dict 				--> output of getCSDdata (with outputType=['spectrogram'])
 	### vmaxContrast: float or int 		--> Denominator; This will help with color contrast if desired!, e.g. 1.5 or 3 (DEFAULT: None)
 	### colorMap: str 					--> DEFAULT: jet; cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis'
 	### figSize: tuple 					--> DEFAULT: (10,7)
 	### minFreq: int 					--> DEFAULT: None
 	### maxFreq: int 					--> DEFAULT: None
 	### plotTypes: list 				--> DEFAULT: ['timeSeries', 'spectrogram']
-		## NOTE: Could change the spectrogram such that minFreq / maxFreq behaves similarly to the way it now does in the spiking plot function! 
+	### savePath: str    				--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	### saveFig: bool 					--> DEFAULT: True
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2479,10 +2488,8 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
-		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-		# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
-			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
+			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))  # minFreq --> np.amin(F)  	# maxFreq --> np.amax(F)	# imshowSignal --> S
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -2512,7 +2519,12 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
+		# For potential saving 
+		figFilename = popToPlot + '_combinedCSD_elec_' + str(electrode) + '.png'
+
 	elif 'spectrogram' in plotTypes and 'timeSeries' not in plotTypes:
+
+		### PLOT SPECTROGRAM ### 
 		# spectrogram title
 		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
 		# plot and format 
@@ -2532,8 +2544,12 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 		# ax1.set_ylim(minFreq, maxFreq) 				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
 
+		# For potential saving 
+		figFilename = popToPlot + '_CSD_spectrogram_elec_' + str(electrode) + '.png'
 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
+
+		### PLOT TIME SERIES ### 
 		# timeSeries title
 		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', electrode ' + str(electrode)
 
@@ -2552,9 +2568,22 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
+		# For potential saving 
+		figFilename = popToPlot + '_CSD_timeSeries_elec_' + str(electrode) + '.png'
+ 
 	plt.tight_layout()
-	plt.show()
 
+	## Save figure 
+	if saveFig:
+		if savePath is None:
+			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 		# popContribFigs_cmapJet/'
+		else:
+			prePath = savePath
+		pathToFile = prePath + figFilename
+		plt.savefig(pathToFile, dpi=300)
+
+	## Show figure
+	plt.show()
 
 ## PSD: data and plotting ## 
 def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
@@ -2817,11 +2846,11 @@ if plotLFPCombinedData:
 
 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrode) 
-		# LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode) #filtFreq=filtFreq, 
+		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode) #filtFreq=filtFreq, 
 
-		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram'], 
-			spectDict=LFPSpectOutput, timeSeriesDict=None, figSize=(10,7), colorMap='jet', 
-			minFreq=15, maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=False)
+		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['timeSeries'], 
+			spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, figSize=(10,7), colorMap='jet', 
+			minFreq=15, maxFreq=None, vmaxContrast=None, electrode=electrode, savePath=None, saveFig=True)
 
 		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
 		# 	figSize=(10,7), titleElectrode=electrode, saveFig=0)
@@ -2860,8 +2889,8 @@ if csdTest:
 	spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop='ITS4')
 
 	#### plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'])#, maxFreq=70)
-	plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, pop='ITS4', electrode=[8], 
-		minFreq=15, maxFreq=70, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'])
+	plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop='ITS4', electrode=[8], 
+		minFreq=15, maxFreq=70, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], saveFig=True)
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
