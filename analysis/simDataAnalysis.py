@@ -2811,9 +2811,12 @@ if plotLFPCombinedData:
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrode) 
 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode) #filtFreq=filtFreq, 
 
+		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['timeSeries'], 
+			spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, figSize=(10,7), colorMap='jet', 
+			maxFreq=None, vmaxContrast=None, titleElectrode=None, savePath=None, saveFig=False)
 
-		plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
-			figSize=(10,7), titleElectrode=electrode, saveFig=0)
+		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
+		# 	figSize=(10,7), titleElectrode=electrode, saveFig=0)
 
 		### Get the strongest frequency in the LFP signal ### 
 		# maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrode, plotPSD=1)
