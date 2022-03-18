@@ -1885,50 +1885,28 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		allSignal = spectDict['allSignal']
 		allFreqs = spectDict['allFreqs']
 
-		# Set frequencies to be plotted (minFreq / maxFreq)
-		# if maxFreq is None:
-		# 	maxFreq = np.amax(allFreqs[0])
-		# 	# imshowSignal = allSignal[0]
-		# else:
-		# 	if type(maxFreq) is not int:
-		# 		maxFreq = round(maxFreq)
-			# imshowSignal = allSignal[0][:maxFreq]
-
 
 		# Set frequencies to be plotted (minFreq / maxFreq)
 		if minFreq is None:
-			minFreq = np.amin(allFreqs[0])			# 1
+			minFreq = np.amin(allFreqs[0])			# DEFAULT: 1
 		if maxFreq is None:
-			maxFreq = np.amax(allFreqs[0])			# 100
+			maxFreq = np.amax(allFreqs[0])			# DEFAULT: 100
+		# elif maxFreq is not None:					# maxFreq must be an integer!! 
+		# 	if type(maxFreq) is not int:
+		# 		maxFreq = round(maxFreq)
 
 
 		# Set up imshowSignal
-		imshowSignal = allSignal[0][:maxFreq]
-
+		imshowSignal = allSignal[0][minFreq:maxFreq]
 
 
 		# Set color contrast parameters (vmin / vmax)
 		if vmaxContrast is None:
-			vmin = None 	# np.amin(imshowSignal)
-			vmax = None 	# np.amax(imshowSignal)
+			vmin = np.amin(imshowSignal)		# None
+			vmax = np.amax(imshowSignal)		# None
 		else:
 			vmin = np.amin(imshowSignal)
 			vmax = np.amax(imshowSignal) / vmaxContrast
-
-		# # vmin and vmax  -- adjust for color contrast purposes, if desired 
-		# vc = spectDict['vc']
-		# orig_vmin = vc[0]
-		# orig_vmax = vc[1]
-		# ## Color contrast testing lines for color map!! 
-		# if vmaxContrast is None:
-		# 	vmin = orig_vmin
-		# 	vmax = orig_vmax
-		# else:
-		# 	print('original vmax: ' + str(orig_vmax))
-		# 	vmin = orig_vmin
-		# 	vmax = orig_vmax / vmaxContrast
-		# 	print('new vmax: ' + str(vmax))
-		# 	vc = [vmin, vmax]
 
 
 	#### HISTOGRAM CALCULATIONS ####-------------------------------------------------------
@@ -1941,9 +1919,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 
 		# Plot Spectrogram 
 		ax1 = plt.subplot(211)
-		# img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
-		# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)  ## CHANGE THIS: maxFreq
-		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
+		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), minFreq, maxFreq), origin='lower', 
 				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
@@ -1953,7 +1929,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-		ax1.set_ylim(minFreq, maxFreq)
+		# ax1.set_ylim(minFreq, maxFreq) ## Redundant if ax1.imshow extent arg uses minFreq and maxFreq (and if imshowSignal is sliced as well)
 
 		# Plot Histogram 
 		ax2 = plt.subplot(212)
@@ -1970,7 +1946,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 	elif 'spectrogram' in plotTypes and 'histogram' not in plotTypes:
 		# Plot Spectrogram 
 		ax1 = plt.subplot(111)
-		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), minFreq, maxFreq), origin='lower', 
 				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax) ## CHANGE maxFreq // np.amax(allFreqs[0])
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
@@ -2410,7 +2386,7 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 	### minFreq: int 					--> DEFAULT: None
 	### maxFreq: int 					--> DEFAULT: None
 	### plotTypes: list 				--> DEFAULT: ['timeSeries', 'spectrogram']
-
+		## NOTE: Could change the spectrogram such that minFreq / maxFreq behaves similarly to the way it now does in the spiking plot function! 
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2442,7 +2418,7 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		vc = spectDict['vc']
 		orig_vmin = vc[0]
 		orig_vmax = vc[1]
-		## Color contrast testing lines for color map!! 
+
 		if vmaxContrast is None:
 			vmin = orig_vmin
 			vmax = orig_vmax
@@ -2847,7 +2823,7 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-csdTest = 0
+csdTest = 1
 if csdTest:
 	print('Testing combined plotting next')
 	### TESTING DATA AND PLOTTING ####
@@ -2874,7 +2850,7 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
@@ -2884,14 +2860,14 @@ if plotSpikeData:
 
 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
 		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
-		# histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
+		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
 		# plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
 		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
 
-		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram'], 
-			spectDict=spikeSpectDict, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=70, 
+		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram', 'histogram'], 
+			spectDict=spikeSpectDict, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
 			vmaxContrast=None, savePath=None, saveFig=False)
 
 
