@@ -1885,22 +1885,51 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		allSignal = spectDict['allSignal']
 		allFreqs = spectDict['allFreqs']
 
-		# Set frequencies to be plotted 
-		if maxFreq is None:
-			maxFreq = np.amax(allFreqs[0])
-			imshowSignal = allSignal[0]
-		else:
-			if type(maxFreq) is not int:
-				maxFreq = round(maxFreq)
-			imshowSignal = allSignal[0][:maxFreq]
+		# Set frequencies to be plotted (minFreq / maxFreq)
+		# if maxFreq is None:
+		# 	maxFreq = np.amax(allFreqs[0])
+		# 	# imshowSignal = allSignal[0]
+		# else:
+		# 	if type(maxFreq) is not int:
+		# 		maxFreq = round(maxFreq)
+			# imshowSignal = allSignal[0][:maxFreq]
 
-		# Set color contrast parameters 
+
+		# Set frequencies to be plotted (minFreq / maxFreq)
+		if minFreq is None:
+			minFreq = np.amin(allFreqs[0])			# 1
+		if maxFreq is None:
+			maxFreq = np.amax(allFreqs[0])			# 100
+
+
+		# Set up imshowSignal
+		imshowSignal = allSignal[0][:maxFreq]
+
+
+
+		# Set color contrast parameters (vmin / vmax)
 		if vmaxContrast is None:
-			vmin = None
-			vmax = None
+			vmin = None 	# np.amin(imshowSignal)
+			vmax = None 	# np.amax(imshowSignal)
 		else:
 			vmin = np.amin(imshowSignal)
 			vmax = np.amax(imshowSignal) / vmaxContrast
+
+		# # vmin and vmax  -- adjust for color contrast purposes, if desired 
+		# vc = spectDict['vc']
+		# orig_vmin = vc[0]
+		# orig_vmax = vc[1]
+		# ## Color contrast testing lines for color map!! 
+		# if vmaxContrast is None:
+		# 	vmin = orig_vmin
+		# 	vmax = orig_vmax
+		# else:
+		# 	print('original vmax: ' + str(orig_vmax))
+		# 	vmin = orig_vmin
+		# 	vmax = orig_vmax / vmaxContrast
+		# 	print('new vmax: ' + str(vmax))
+		# 	vc = [vmin, vmax]
+
 
 	#### HISTOGRAM CALCULATIONS ####-------------------------------------------------------
 	if 'histogram' in plotTypes:
@@ -1912,7 +1941,9 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 
 		# Plot Spectrogram 
 		ax1 = plt.subplot(211)
-		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+		# img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+		# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)  ## CHANGE THIS: maxFreq
+		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), np.amax(allFreqs[0])), origin='lower', 
 				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
@@ -1922,6 +1953,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+		ax1.set_ylim(minFreq, maxFreq)
 
 		# Plot Histogram 
 		ax2 = plt.subplot(212)
@@ -1939,7 +1971,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		# Plot Spectrogram 
 		ax1 = plt.subplot(111)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
-				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax) ## CHANGE maxFreq // np.amax(allFreqs[0])
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
@@ -1948,7 +1980,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-
+		# ax1.set_ylim(minFreq, maxFreq)
 
 	elif 'spectrogram' not in plotTypes and 'histogram' in plotTypes:
 		# Plot Histogram 
@@ -2422,6 +2454,13 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 			vc = [vmin, vmax]
 
 
+		## Set up minFreq and maxFreq for spectrogram
+		if minFreq is None:
+			minFreq = np.amin(F) 	# 1
+		if maxFreq is None:
+			maxFreq = np.amax(F)	# 100
+
+
 	#### TIME SERIES CALCULATIONS ####-------------------------------------------------------
 	if 'timeSeries' in plotTypes:
 		# time (x-axis)
@@ -2434,16 +2473,13 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 	#### PLOTTING ####-------------------------------------------------------
 	if 'spectrogram' in plotTypes and 'timeSeries' in plotTypes:
 
-		## Create figure 
-		fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
-
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
 		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
 		img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) ## NOTE: instead of np.amax(F) should I be doing maxFreq? (similarly for minFreq // np.amin(F))
+			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -2452,14 +2488,7 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax1.set_title(spectTitle, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-
-		if minFreq is not None and maxFreq is not None:
-			ax1.set_ylim(minFreq, maxFreq)
-		elif minFreq is None and maxFreq is not None:
-			ax1.set_ylim(1, maxFreq)
-		elif minFreq is not None and maxFreq is None:
-			ax1.set_ylim(minFreq, 100)
-
+		ax1.set_ylim(minFreq, maxFreq)
 
 		### PLOT TIMESERIES ###
 		# timeSeries title
@@ -2486,7 +2515,7 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		# plot and format 
 		ax1 = plt.subplot(1, 1, 1)
 		img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) ## NOTE: instead of np.amax(F) should I be doing maxFreq? (similarly for minFreq // np.amin(F))
+			vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap)) ## ANSWER: NO --> NOTE: instead of np.amax(F) should I be doing maxFreq? (similarly for minFreq // np.amin(F))
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
@@ -2496,13 +2525,8 @@ def plotCombinedCSD(pop, electrode, timeSeriesDict=None, spectDict=None, vmaxCon
 		ax1.set_xlabel('Time (ms)', fontsize=labelFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+		ax1.set_ylim(minFreq, maxFreq)
 
-		if minFreq is not None and maxFreq is not None:
-			ax1.set_ylim(minFreq, maxFreq)
-		elif minFreq is None and maxFreq is not None:
-			ax1.set_ylim(1, maxFreq)
-		elif minFreq is not None and maxFreq is None:
-			ax1.set_ylim(minFreq, 100)
 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
 		# timeSeries title
@@ -2831,7 +2855,8 @@ if csdTest:
 	spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop='ITS4')
 
 	# plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'])#, maxFreq=70)
-	plotCombinedCSD(timeSeriesDict=timeSeriesDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'])#, maxFreq=70)
+	plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, pop='ITS4', electrode=[8], 
+		minFreq=None, maxFreq=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'])
 
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
 	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
@@ -2849,7 +2874,7 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 0
+plotSpikeData = 1
 
 includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
@@ -2859,15 +2884,15 @@ if plotSpikeData:
 
 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
 		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
-		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
+		# histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
 		# plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
 		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
 
-		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
-			spectDict=spikeSpectDict, histDict=histDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, 
-			savePath=None, saveFig=False)
+		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram'], 
+			spectDict=spikeSpectDict, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=70, 
+			vmaxContrast=None, savePath=None, saveFig=False)
 
 
  # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
