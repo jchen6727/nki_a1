@@ -1880,59 +1880,144 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 	labelFontSize = 12
 	titleFontSize = 20
 
+	#### SPECTROGRAM CALCULATIONS ####-------------------------------------------------------
+	if 'spectrogram' in plotTypes:
+		allSignal = spectDict['allSignal']
+		allFreqs = spectDict['allFreqs']
+
+		# Set frequencies to be plotted 
+		if maxFreq is None:
+			maxFreq = np.amax(allFreqs[0])
+			imshowSignal = allSignal[0]
+		else:
+			if type(maxFreq) is not int:
+				maxFreq = round(maxFreq)
+			imshowSignal = allSignal[0][:maxFreq]
+
+		# Set color contrast parameters 
+		if vmaxContrast is None:
+			vmin = None
+			vmax = None
+		else:
+			vmin = np.amin(imshowSignal)
+			vmax = np.amax(imshowSignal) / vmaxContrast
+
+	#### HISTOGRAM CALCULATIONS ####-------------------------------------------------------
+	if 'histogram' in plotTypes:
+		histoT = histDict['histoT']
+		histoCount = histDict['histoData']
+
+	#### PLOTTING ####-------------------------------------------------------
+	if 'spectrogram' in plotTypes and 'histogram' in plotTypes:
+
+		# Plot Spectrogram 
+		ax1 = plt.subplot(211)
+		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+		divider1 = make_axes_locatable(ax1)
+		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
+		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
+		fmt.set_powerlimits((0,0))
+		plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+		ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
+		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
+		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+
+		# Plot Histogram 
+		ax2 = plt.subplot(212)
+		ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+		divider2 = make_axes_locatable(ax2)
+		cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
+		cax2.axis('off')
+		ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
+		ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
+		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
+		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+
+
+	elif 'spectrogram' in plotTypes and 'histogram' not in plotTypes:
+		# Plot Spectrogram 
+		ax1 = plt.subplot(111)
+		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+		divider1 = make_axes_locatable(ax1)
+		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
+		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
+		fmt.set_powerlimits((0,0))
+		plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+		ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
+		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
+		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+
+
+	elif 'spectrogram' not in plotTypes and 'histogram' in plotTypes:
+		# Plot Histogram 
+		ax2 = plt.subplot(111)
+		ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+		divider2 = make_axes_locatable(ax2)
+		cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
+		cax2.axis('off')
+		ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
+		ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
+		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
+		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 
 
 	### SPECTROGRAM -- for top panel!!
-	allSignal = spectDict['allSignal']
-	allFreqs = spectDict['allFreqs']
+	# allSignal = spectDict['allSignal']
+	# allFreqs = spectDict['allFreqs']
 
-	# Set frequencies to be plotted 
-	if maxFreq is None:
-		maxFreq = np.amax(allFreqs[0])
-		imshowSignal = allSignal[0]
-	else:
-		if type(maxFreq) is not int:
-			maxFreq = round(maxFreq)
-		imshowSignal = allSignal[0][:maxFreq]
+	# # Set frequencies to be plotted 
+	# if maxFreq is None:
+	# 	maxFreq = np.amax(allFreqs[0])
+	# 	imshowSignal = allSignal[0]
+	# else:
+	# 	if type(maxFreq) is not int:
+	# 		maxFreq = round(maxFreq)
+	# 	imshowSignal = allSignal[0][:maxFreq]
 
-	# Set color contrast parameters 
-	if vmaxContrast is None:
-		vmin = None
-		vmax = None
-	else:
-		vmin = np.amin(imshowSignal)
-		vmax = np.amax(imshowSignal) / vmaxContrast
+	# # Set color contrast parameters 
+	# if vmaxContrast is None:
+	# 	vmin = None
+	# 	vmax = None
+	# else:
+	# 	vmin = np.amin(imshowSignal)
+	# 	vmax = np.amax(imshowSignal) / vmaxContrast
+
+
+
 
 	# Plot spectrogram 
-	ax1 = plt.subplot(211)
-	img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
-			interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
-	divider1 = make_axes_locatable(ax1)
-	cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
-	fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
-	fmt.set_powerlimits((0,0))
-	plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
-	ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
-	ax1.set_xlim(left=timeRange[0], right=timeRange[1])
+	# ax1 = plt.subplot(211)
+	# img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
+	# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+	# divider1 = make_axes_locatable(ax1)
+	# cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
+	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
+	# fmt.set_powerlimits((0,0))
+	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+	# ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
+	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
+	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 
 
 	### HISTOGRAM -- for bottom panel!! 
-	histoT = histDict['histoT']
-	histoCount = histDict['histoData']
+	# histoT = histDict['histoT']
+	# histoCount = histDict['histoData']
 
-	ax2 = plt.subplot(212)
-	ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
-	divider2 = make_axes_locatable(ax2)
-	cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
-	cax2.axis('off')
-	ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
-	ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
-	ax2.set_xlim(left=timeRange[0], right=timeRange[1])
-	plt.show()
+	# ax2 = plt.subplot(212)
+	# ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+	# divider2 = make_axes_locatable(ax2)
+	# cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
+	# cax2.axis('off')
+	# ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
+	# ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
+	# ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
+	# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+	# plt.show()
 
 	plt.tight_layout()
+	plt.show()
 
 	if saveFig:
 		if savePath is None:
