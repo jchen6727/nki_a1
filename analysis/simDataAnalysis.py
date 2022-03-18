@@ -1851,7 +1851,7 @@ def getSpikeData(dataFile, pop, graphType, timeRange):
 		spikeDict = getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate') ## sim.analysis.getSpikeHistData
 
 	return spikeDict 
-def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'histogram'], spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
+def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'histogram'], spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
 	### timeRange: list 				--> e.g. [start, stop]
 	### pop: str or list of length 1 	--> population to include 
 	### colorDict: dict 				--> dict that corresponds pops to colors 
@@ -1860,8 +1860,8 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 	### histDict: dict  				--> can be gotten with getSpikeData(graphType='hist')
 	### figSize: tuple 					--> DEFAULT: (10,7)
 	### colorMap: str 					--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
-	### maxFreq: int --> whole number that determines the maximum frequency plotted on the spectrogram 
-			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
+	### minFreq: int 					--> whole number that determines the minimum frequency plotted on the spectrogram 
+	### maxFreq: int 					--> whole number that determines the maximum frequency plotted on the spectrogram 
 	### vmaxContrast: float or int 		--> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
 	### savePath: str   				--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 					--> DEFAULT: True
@@ -1962,59 +1962,6 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
 		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 
-
-	### SPECTROGRAM -- for top panel!!
-	# allSignal = spectDict['allSignal']
-	# allFreqs = spectDict['allFreqs']
-
-	# # Set frequencies to be plotted 
-	# if maxFreq is None:
-	# 	maxFreq = np.amax(allFreqs[0])
-	# 	imshowSignal = allSignal[0]
-	# else:
-	# 	if type(maxFreq) is not int:
-	# 		maxFreq = round(maxFreq)
-	# 	imshowSignal = allSignal[0][:maxFreq]
-
-	# # Set color contrast parameters 
-	# if vmaxContrast is None:
-	# 	vmin = None
-	# 	vmax = None
-	# else:
-	# 	vmin = np.amin(imshowSignal)
-	# 	vmax = np.amax(imshowSignal) / vmaxContrast
-
-
-
-
-	# Plot spectrogram 
-	# ax1 = plt.subplot(211)
-	# img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), np.amin(allFreqs[0]), maxFreq), origin='lower', 
-	# 		interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
-	# divider1 = make_axes_locatable(ax1)
-	# cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
-	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
-	# fmt.set_powerlimits((0,0))
-	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	# ax1.set_title('Spike Rate Spectrogram for ' + popToPlot, fontsize=titleFontSize)
-	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
-	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-
-
-	### HISTOGRAM -- for bottom panel!! 
-	# histoT = histDict['histoT']
-	# histoCount = histDict['histoData']
-
-	# ax2 = plt.subplot(212)
-	# ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
-	# divider2 = make_axes_locatable(ax2)
-	# cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
-	# cax2.axis('off')
-	# ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
-	# ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	# ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
-	# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
-	# plt.show()
 
 	plt.tight_layout()
 	plt.show()
@@ -2902,7 +2849,7 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 1
+plotSpikeData = 0
 
 includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
@@ -2915,8 +2862,12 @@ if plotSpikeData:
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
-		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
+		# plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
+		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
+
+		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
+			spectDict=spikeSpectDict, histDict=histDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, 
+			savePath=None, saveFig=False)
 
 
  # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
