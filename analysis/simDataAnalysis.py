@@ -1851,20 +1851,21 @@ def getSpikeData(dataFile, pop, graphType, timeRange):
 		spikeDict = getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate') ## sim.analysis.getSpikeHistData
 
 	return spikeDict 
-def plotCombinedSpike(spectDict, histDict, timeRange, pop, colorDict, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True, plotTypes=['timeSeries', 'spectrogram']):
-	### spectDict: dict --> can be gotten with getSpikeData(graphType='spect')
-	### histDict: dict  --> can be gotten with getSpikeData(graphType='hist')
-	### timeRange: list --> e.g. [start, stop]
-	### pop: str or list of length 1 --> population to include 
-	### colorDict: dict --> dict that corresponds pops to colors 
-	### figSize: tuple 	--> DEFAULT: (10,7)
-	### colorMap: str 	--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
+def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'histogram'], spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
+	### timeRange: list 				--> e.g. [start, stop]
+	### pop: str or list of length 1 	--> population to include 
+	### colorDict: dict 				--> dict that corresponds pops to colors 
+	### plotTypes: list 				--> ['spectrogram', 'histogram']
+	### spectDict: dict 				--> can be gotten with getSpikeData(graphType='spect')
+	### histDict: dict  				--> can be gotten with getSpikeData(graphType='hist')
+	### figSize: tuple 					--> DEFAULT: (10,7)
+	### colorMap: str 					--> DEFAULT: 'jet' 	--> cmap for ax.imshow lines --> Options are currently 'jet' or 'viridis' 
 	### maxFreq: int --> whole number that determines the maximum frequency plotted on the spectrogram 
 			### --> NOTE --> ### NOT IMPLEMENTED YET !! minFreq: int --> whole number that determines the minimum frequency plotted on the spectrogram
-	### vmaxContrast: float or int --> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
-	### savePath: str   --> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
-	### saveFig: bool 	--> DEFAULT: True
-	### plotTypes: list 	--> DEFAULT: ['timeSeries', 'spectrogram']
+	### vmaxContrast: float or int 		--> Denominator This will help with color contrast if desired!!!, e.g. 1.5 or 3
+	### savePath: str   				--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
+	### saveFig: bool 					--> DEFAULT: True
+
  
 	# Get relevant pop
 	if type(pop) is str:
@@ -2113,60 +2114,6 @@ def plotCombinedLFP(timeRange, pop, colorDict, plotTypes=['spectrogram', 'timeSe
 
 	plt.tight_layout()
 	plt.show()
-
-	##### SPECTROGRAM  --> TOP PANEL !! #####
-	# spec = spectDict['spec']
-
-	# S = spec[0].TFR
-	# F = spec[0].f
-	# T = timeRange
-
-	# ## Set up vmin / vmax color contrasts 
-	# vmin = np.array([s.TFR for s in spec]).min()
-	# # print('vmin: ' + str(vmin)) ### COLOR MAP CONTRAST TESTING LINES 
-	# if vmaxContrast is None:
-	# 	vmax = np.array([s.TFR for s in spec]).max()
-	# else:
-	# 	preVmax = np.array([s.TFR for s in spec]).max()
-	# 	# print('original vmax: ' + str(preVmax))		### COLOR MAP CONTRAST TESTING LINES 
-	# 	vmax = preVmax / vmaxContrast 
-	# 	# print('new vmax: ' + str(vmax)) 				### COLOR MAP CONTRAST TESTING LINES 
-	# vc = [vmin, vmax]
-
-	## Plot Spectrogram 
-	# ax1 = plt.subplot(2, 1, 1)
-	# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
-	# 	vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap(colorMap))
-	# divider1 = make_axes_locatable(ax1)
-	# cax1 = divider1.append_axes('right', size='3%', pad=0.2)
-	# fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
-	# fmt.set_powerlimits((0,0))
-	# plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
-	# ax1.set_title(spectTitle, fontsize=titleFontSize)
-	# ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
-	# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
-	# if maxFreq is not None:
-	# 	ax1.set_ylim(1, maxFreq) 	## TO DO: turn '1' into minFreq
-
-
-
-	##### TIME SERIES  --> BOTTOM PANEL !! #####
-	# t = timeSeriesDict['t']
-	# lfpPlot = timeSeriesDict['lfpPlot']
-
-	# lw = 1.0
-	# ax2 = plt.subplot(2, 1, 2)
-	# divider2 = make_axes_locatable(ax2)
-	# cax2 = divider2.append_axes('right', size='3%', pad=0.2)
-	# cax2.axis('off')
-	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
-	# ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
-	# ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-	# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
-	# ax2.set_ylabel('LFP Amplitudes (mV)', fontsize=labelFontSize)
-
-	# plt.tight_layout()
-	# plt.show()
 
 	## Save figure 
 	if saveFig:
@@ -2795,7 +2742,7 @@ if evalPopsBool:
 ###### COMBINED LFP PLOTTING ######
 ###################################
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 # includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
@@ -2870,9 +2817,9 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 0
+plotSpikeData = 1
 
-# includePops = includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
 if plotSpikeData:
 	for pop in includePops:
