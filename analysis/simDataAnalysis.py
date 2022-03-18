@@ -1942,6 +1942,9 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
 		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 
+		# For potential figure saving
+		figFilename = popToPlot + '_combinedSpike.png'
+
 
 	elif 'spectrogram' in plotTypes and 'histogram' not in plotTypes:
 		# Plot Spectrogram 
@@ -1958,6 +1961,9 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 		# ax1.set_ylim(minFreq, maxFreq)
 
+		# For potential figure saving
+		figFilename = popToPlot + '_spike_spectrogram.png'
+
 	elif 'spectrogram' not in plotTypes and 'histogram' in plotTypes:
 		# Plot Histogram 
 		ax2 = plt.subplot(111)
@@ -1970,18 +1976,23 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
 		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 
+		# For potential figure saving
+		figFilename = popToPlot + '_spike_histogram.png'
 
 	plt.tight_layout()
-	plt.show()
 
+	## Save figure
 	if saveFig:
 		if savePath is None:
 			prePath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/' 	# popContribFigs_cmapJet/'
 		else:
 			prePath = savePath
-		fileName = pop + '_combinedSpike.png'
-		pathToFile = prePath + fileName
+		# fileName = pop + '_combinedSpike.png'
+		pathToFile = prePath + figFilename	# fileName
 		plt.savefig(pathToFile, dpi=300)
+
+	## Show figure
+	plt.show()
 
 ## LFP: data and plotting ## 
 def getLFPDataDict(dataFile, pop, plotType, timeRange, electrode):
@@ -2832,7 +2843,7 @@ if evalPopsBool:
 ###### COMBINED LFP PLOTTING ######
 ###################################
 
-plotLFPCombinedData = 1
+plotLFPCombinedData = 0
 
 includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 # includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
@@ -2908,7 +2919,7 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 0
+plotSpikeData = 1
 
 includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 
@@ -2917,16 +2928,16 @@ if plotSpikeData:
 		print('Plotting spike data for ' + pop)
 
 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
-		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
+		# spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
 		# plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
 		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
 
-		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram', 'histogram'], 
-			spectDict=spikeSpectDict, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
-			vmaxContrast=None, savePath=None, saveFig=False)
+		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
+			spectDict=None, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
+			vmaxContrast=None, savePath=None, saveFig=True)
 
 
  # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
