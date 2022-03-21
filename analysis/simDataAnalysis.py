@@ -1460,6 +1460,7 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
 	### timeRange: list 	--> e.g. [start, stop]
 	### verbose: bool 
+		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
 
 	# Load .pkl data file...? Is this necessary? Yes if I end up commenting this out for the getCSDdata function! 
 	sim.load(dataFile, instantiate=False)
@@ -1473,7 +1474,7 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 	allPops = list(sim.net.allPops.keys())
 	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
 
-	## Get all electrodes 
+	## Get all electrodes 	## SEE TO-DO ABOVE!! (make an if statement)
 	evalElecs = []
 	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
 	### add 'avg' to electrode list 
@@ -1484,9 +1485,12 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 	csdPopData = {}
 
 	for pop in pops:  ## do this for ALL THE CELL POPULATIONS -- the pop selection will occur in plotting 
+		print('Calculating CSD for pop ' + pop)
+
 		csdPopData[pop] = {}
 
-		popCSDdataFULL_origShape = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape_dict = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csd']
 		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
 
 		if timeRange is None:
