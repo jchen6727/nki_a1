@@ -1489,7 +1489,7 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 
 		csdPopData[pop] = {}
 
-		popCSDdataFULL_origShape_dict = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape_dict = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um, outputType=[]) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
 		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csd']
 		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
 
