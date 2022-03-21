@@ -2294,7 +2294,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRang
 	## stepFreq: float / int 				--> DEFAULT: 1 Hz 
 			## TO DO: 
 			###  --> Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
-
+			###  --> Should I make it such that output can include both timeSeries and spectrogram so don't have to run this twice? test this!! 
 
 	## load .pkl simulation file 
 	if dataFile:
@@ -2758,23 +2758,23 @@ theta = 1
 # gamma = 0 
 
 if delta:
-	timeRange, dataFile = getWaveletInfo('delta', based)
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('delta', based=based, verbose=1)
 	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
-	ylim = [1, 40]
-	maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
+	# ylim = [1, 40]
+	# maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
 elif beta:
-	timeRange, dataFile = getWaveletInfo('beta', based)
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('beta', based=based, verbose=1)
 	wavelet='beta'
-	maxFreq=None
+	# maxFreq=None
 elif alpha:
-	timeRange, dataFile = getWaveletInfo('alpha', based) ## recall timeRange issue (see nb)
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('alpha', based=based, verbose=1) ## recall timeRange issue (see nb)
 	wavelet='alpha'
-	maxFreq=None
+	# maxFreq=None
 elif theta:
 	# timeRange, dataFile = getWaveletInfo('theta', based)
 	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
 	wavelet='theta'
-	maxFreq=None
+	# maxFreq=None
 elif gamma:
 	print('Cannot analyze gamma wavelet at this time')
 
@@ -2801,42 +2801,29 @@ if evalWaveletsByBandBool:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
-evalPopsBool = 0
+evalPopsBool = 1
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
-	dfPeak, dfAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
+	print('electrode: ' + str(waveletElectrode))
+
+	# Get data frames for LFP and CSD data
+	### dfPeak_LFP, dfAvg_LFP = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
+	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+
+	# Get the pops with the max contributions 
+	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+	maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
 
 
-	#### TESTING NEW evalPops FUNCTION #### 
-	# testDictPeak = evalPops2(dataFrame=dfPeak, electrode=waveletElectrode)  # waveletElectrode obtained from getWaveletInfo 
-	# testDictAvg = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	# dfAvgAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	# absMaxPopsDict, absMaxValuesDict = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	# absMaxValuesDict_sorted = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	# dataFrameSubsetElec = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
-	# maxPopsValues, dfElecSub, dfBottomElecSub, dfTopElecSub, dataFrameSubsetElec, dataFrameSubsetElecAbs = evalPops2(dataFrame=dfAvg, electrode=waveletElectrode)
+	# Get data dicts
+	### CSD_timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, 
+		# electrode=waveletElectrode, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+	### CSD_spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, 
+		# electrode=waveletElectrode, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
 
-
-	#### THESE FUNCTIONS ARE DEPRECATED NOW !!!!! #### 
-	#### PEAK LFP Amplitudes ####
-	# top5popsPeak, bottom5popsPeak = evalPops(dfPeak)    
-	# MaxPeakLists = getPopElectrodeLists(top5popsPeak)
-	# MinPeakLists = getPopElectrodeLists(bottom5popsPeak)
-
-	# peakTitle = 'Peak LFP Amplitudes of ' + wavelet + ' Wavelet'
-	# peakPlot = plotDataFrames(dfPeak, pops=ECortPops, title=peakTitle)
-	# plt.show(peakPlot)
-
-
-	#### AVP LFP Amplitudes ####
-	# top5popsAvg, bottom5popsAvg = evalPops(dfAvg)
-	# MaxAvgLists = getPopElectrodeLists(top5popsAvg)
-	# MinAvgLists = getPopElectrodeLists(bottom5popsAvg)
-
-	# avgTitle = 'Avg LFP Amplitudes of ' + wavelet + ' Wavelet'   # 'Avg LFP Amplitudes of Theta Wavelet' 
-	# avgPlot = plotDataFrames(dfAvg, pops=ECortPops, title=avgTitle)
-	# plt.show(avgPlot)
+	# Make combined CSD Plots 
+	### plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], savePath=None, saveFig=True)
 
 
 ###################################
@@ -2844,10 +2831,8 @@ if evalPopsBool:
 ###################################
 
 plotLFPCombinedData = 0
-
 includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 # includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
-
 if plotLFPCombinedData:
 	for i in range(len(includePops)):
 		pop = includePops[i]
@@ -2919,10 +2904,8 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 1
-
+plotSpikeData = 0
 includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-
 if plotSpikeData:
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
