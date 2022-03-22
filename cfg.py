@@ -17,7 +17,7 @@ cfg = specs.SimConfig()
 #
 # SIMULATION CONFIGURATION
 #
-#------------------------------------------0#------------------------------------
+#------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 # Run parameters
@@ -38,6 +38,8 @@ cfg.printRunTime = 0.1
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
 cfg.printPopAvgRates = [500, cfg.duration]
+
+cfg.validateNetParams = True
 
 #------------------------------------------------------------------------------
 # Recording 
