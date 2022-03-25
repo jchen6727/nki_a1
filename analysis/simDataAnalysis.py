@@ -2804,6 +2804,7 @@ if evalWaveletsByBandBool:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
+## Can plot LFP dataframes (heatmaps) from here as well 
 evalPopsBool = 0
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
@@ -2812,24 +2813,14 @@ if evalPopsBool:
 
 	# Get data frames for LFP and CSD data
 	### dfPeak_LFP, dfAvg_LFP = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
-	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+	### dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
 
 	# Get the pops with the max contributions 
-	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
-	maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
+	# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+	# maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
 
 
 	# maxPopsValues_avgCSD['elec']
-
-
-	# Get data dicts
-	### CSD_timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, 
-		# electrode=waveletElectrode, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-	### CSD_spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, 
-		# electrode=waveletElectrode, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-
-	# Make combined CSD Plots 
-	### plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], savePath=None, saveFig=True)
 
 
 ###################################
@@ -2837,9 +2828,9 @@ if evalPopsBool:
 ###################################
 
 plotLFPCombinedData = 0
-includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-# includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
 if plotLFPCombinedData:
+	includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+	# includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
 	for i in range(len(includePops)):
 		pop = includePops[i]
 		electrode = [10] #[electrodesMaxPeak[i]]
@@ -2872,7 +2863,7 @@ if summedLFP:
 
 ######## LFP PSD ########   ---> 	### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
 # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
-lfpPSD = 0 #1
+lfpPSD = 0 
 if lfpPSD: 
 	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
 	plotPSD(psdData)
@@ -2883,34 +2874,40 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-plotCSDCombinedData = 1
+## Combined Plotting 
+plotCSDCombinedData = 0
 if plotCSDCombinedData:
 	print('Plotting Combined CSD data')
 	electrode=[9]
 	includePops=['IT3', 'ITS4', 'IT5A']
 	for pop in includePops:
-		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=electrode, pop=pop)
-		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=electrode, pop=pop)
+		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=electrode, pop=pop, maxFreq=40)
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=electrode, pop=pop, maxFreq=40)
 
 		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
 			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], saveFig=True) # maxFreq=100
 
 
-# getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, 
-	# electrode=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-### ^^ Should I be doing minFreq and maxFreq here or no? just in plotCombinedCSD? Check it out. 
-
-
-plotCSDheatmaps = 0
+## CSD heatmaps
+plotCSDheatmaps = 1
 if plotCSDheatmaps:
-	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
-	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
-	peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
-	avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	# figSize=(10,7)
+	# figSize=(7,7)  # <-- good for when 4 electrodes 
+	# electrodes=None
+	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+	peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=[8,9,10], pops=ECortPops, title='Peak CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
+	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=[8,9,10], pops=ECortPops, title='Avg CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
 	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
 
+## LFP heatmaps for comparison
+plotLFPheatmaps = 0
+if plotLFPheatmaps:
+	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	peakLFPPlot = plotDataFrames(dfLFPPeak, electrodes=None, pops=ECortPops, title='Peak LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
 
-######## CSD PSD ########
+
+## CSD PSD 
 csdPSD = 0
 if csdPSD:
 	csdDataDict = getCSDdata(dataFile=dataFile, outputType=[], timeRange=timeRange, electrode=[9], pop='NGF3') # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
@@ -2923,9 +2920,9 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotCombinedSpikeData = 0
-includePops = ['IT3', 'ITS4', 'IT5A']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+plotCombinedSpikeData = 0	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 if plotCombinedSpikeData:
+	includePops=['IT5A']# ['IT3', 'ITS4', 'IT5A']
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
 
@@ -2935,7 +2932,7 @@ if plotCombinedSpikeData:
 
 		## Then call plotting function 
 		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
-		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
+		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2.5, maxFreq=None, saveFig=1)
 
 		# plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
 		# 	spectDict=None, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
