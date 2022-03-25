@@ -1454,111 +1454,6 @@ def getWaveletInfo(freqBand, based, verbose=0):
 	else:
 		return timeRange, dataFile
 
-## Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
-def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
-	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
-	### dataFile: str 		--> .pkl file to load, with data from the whole recording
-	### timeRange: list 	--> e.g. [start, stop]
-	### verbose: bool 
-		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
-
-	# Load .pkl data file...? Is this necessary? Yes if I end up commenting this out for the getCSDdata function! 
-	sim.load(dataFile, instantiate=False)
-	# Get args for getCSDdata
-	dt = sim.cfg.recordStep
-	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-	spacing_um = 100 
-
-	# Get all cell pops (cortical)
-	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
-	allPops = list(sim.net.allPops.keys())
-	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
-
-	## Get all electrodes 	## SEE TO-DO ABOVE!! (make an if statement)
-	evalElecs = []
-	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
-	### add 'avg' to electrode list 
-	evalElecs.append('avg')
-
-
-	## get CSD data
-	csdPopData = {}
-
-	for pop in pops:  ## do this for ALL THE CELL POPULATIONS -- the pop selection will occur in plotting 
-		print('Calculating CSD for pop ' + pop)
-
-		csdPopData[pop] = {}
-
-		popCSDdataFULL_origShape_dict = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um, outputType=[]) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
-		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csd']
-		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
-
-		if timeRange is None:
-			popCSDdata = popCSDdataFULL.copy()
-		else:
-			popCSDdata = popCSDdataFULL[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
-
-
-		for i, elec in enumerate(evalElecs): ### HOW IS THIS GOING TO WORK WITH CSD VS LFP?? HM -- VAKNIN GOOD ENOUGH TO SOLVE THIS PROBLEM? 
-			if elec == 'avg':
-				csdPopData[pop]['avg'] = {}
-
-				avgPopData = np.mean(popCSDdata, axis=1)	## csd data (from 1 pop) at each timepoint, averaged over all electrodes
-
-				avgAvgCSD = np.average(avgPopData)
-				csdPopData[pop]['avg']['avg'] = avgAvgCSD	## time-average of CSD data (from 1 pop) that has been averaged in space (over all electrodes)
-
-				peakAvgCSD = np.amax(avgPopData)
-				csdPopData[pop]['avg']['peak'] = peakAvgCSD	## highest datapoint of all the CSD data (from 1 pop) that has been averaged in space (over all electrodes)
-
-			elif isinstance(elec, Number):
-				elecKey = 'elec' + str(elec)
-				csdPopData[pop][elecKey] = {}
-				csdPopData[pop][elecKey]['avg'] = np.average(popCSDdata[:, elec])	## CSD data from 1 pop, averaged in time, over 1 electrode 
-				csdPopData[pop][elecKey]['peak'] = np.amax(popCSDdata[:, elec])		## Maximum CSD value from 1 pop, over time, recorded at 1 electrode 
-
-
-
-	#### PEAK CSD AMPLITUDES, DATA FRAME ####
-	peakValues = {}
-	peakValues['pops'] = []
-	peakValues['peakCSD'] = [[] for i in range(len(pops))]  # should be 36? 
-	p=0
-	for pop in pops:
-		peakValues['pops'].append(pop)
-		for i, elec in enumerate(evalElecs): 
-			if isinstance(elec, Number):
-				elecKey = 'elec' + str(elec)
-			elif elec == 'avg': 
-				elecKey = 'avg'
-			peakValues['peakCSD'][p].append(csdPopData[pop][elecKey]['peak'])
-		p+=1
-	dfPeak = pd.DataFrame(peakValues['peakCSD'], index=pops)
-
-
-	#### AVERAGE LFP AMPLITUDES, DATA FRAME ####
-	avgValues = {}
-	avgValues['pops'] = []
-	avgValues['avgCSD'] = [[] for i in range(len(pops))]
-	q=0
-	for pop in pops:
-		avgValues['pops'].append(pop)
-		for i, elec in enumerate(evalElecs):
-			if isinstance(elec, Number):
-				elecKey = 'elec' + str(elec)
-			elif elec == 'avg':
-				elecKey = 'avg'
-			avgValues['avgCSD'][q].append(csdPopData[pop][elecKey]['avg'])
-		q+=1
-	dfAvg = pd.DataFrame(avgValues['avgCSD'], index=pops)
-
-
-	# return csdPopData
-	if verbose:
-		return dfPeak, dfAvg, peakValues, avgValues, csdPopData 
-	else:
-		return dfPeak, dfAvg
-
 ## Heatmaps for LFP data ## 
 def getDataFrames(dataFile, timeRange, verbose=0):  ### Make this work with arbitrary input data, not just LFP so can look at CSD as well!!!! 
 	## This function will return data frames of peak and average LFP amplitudes, for picking cell pops
@@ -2599,6 +2494,110 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 	## Show figure
 	plt.show()
+# Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
+def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
+	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
+	### dataFile: str 		--> .pkl file to load, with data from the whole recording
+	### timeRange: list 	--> e.g. [start, stop]
+	### verbose: bool 
+		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
+
+	# Load .pkl data file...? Is this necessary? Yes if I end up commenting this out for the getCSDdata function! 
+	sim.load(dataFile, instantiate=False)
+	# Get args for getCSDdata
+	dt = sim.cfg.recordStep
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	spacing_um = 100 
+
+	# Get all cell pops (cortical)
+	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	allPops = list(sim.net.allPops.keys())
+	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+
+	## Get all electrodes 	## SEE TO-DO ABOVE!! (make an if statement)
+	evalElecs = []
+	evalElecs.extend(list(range(int(sim.net.recXElectrode.nsites))))
+	### add 'avg' to electrode list 
+	evalElecs.append('avg')
+
+
+	## get CSD data
+	csdPopData = {}
+
+	for pop in pops:  ## do this for ALL THE CELL POPULATIONS -- the pop selection will occur in plotting 
+		print('Calculating CSD for pop ' + pop)
+
+		csdPopData[pop] = {}
+
+		popCSDdataFULL_origShape_dict = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um, outputType=[]) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csd']
+		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
+
+		if timeRange is None:
+			popCSDdata = popCSDdataFULL.copy()
+		else:
+			popCSDdata = popCSDdataFULL[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
+
+
+		for i, elec in enumerate(evalElecs): ### HOW IS THIS GOING TO WORK WITH CSD VS LFP?? HM -- VAKNIN GOOD ENOUGH TO SOLVE THIS PROBLEM? 
+			if elec == 'avg':
+				csdPopData[pop]['avg'] = {}
+
+				avgPopData = np.mean(popCSDdata, axis=1)	## csd data (from 1 pop) at each timepoint, averaged over all electrodes
+
+				avgAvgCSD = np.average(avgPopData)
+				csdPopData[pop]['avg']['avg'] = avgAvgCSD	## time-average of CSD data (from 1 pop) that has been averaged in space (over all electrodes)
+
+				peakAvgCSD = np.amax(avgPopData)
+				csdPopData[pop]['avg']['peak'] = peakAvgCSD	## highest datapoint of all the CSD data (from 1 pop) that has been averaged in space (over all electrodes)
+
+			elif isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+				csdPopData[pop][elecKey] = {}
+				csdPopData[pop][elecKey]['avg'] = np.average(popCSDdata[:, elec])	## CSD data from 1 pop, averaged in time, over 1 electrode 
+				csdPopData[pop][elecKey]['peak'] = np.amax(popCSDdata[:, elec])		## Maximum CSD value from 1 pop, over time, recorded at 1 electrode 
+
+
+
+	#### PEAK CSD AMPLITUDES, DATA FRAME ####
+	peakValues = {}
+	peakValues['pops'] = []
+	peakValues['peakCSD'] = [[] for i in range(len(pops))]  # should be 36? 
+	p=0
+	for pop in pops:
+		peakValues['pops'].append(pop)
+		for i, elec in enumerate(evalElecs): 
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg': 
+				elecKey = 'avg'
+			peakValues['peakCSD'][p].append(csdPopData[pop][elecKey]['peak'])
+		p+=1
+	dfPeak = pd.DataFrame(peakValues['peakCSD'], index=pops)
+
+
+	#### AVERAGE LFP AMPLITUDES, DATA FRAME ####
+	avgValues = {}
+	avgValues['pops'] = []
+	avgValues['avgCSD'] = [[] for i in range(len(pops))]
+	q=0
+	for pop in pops:
+		avgValues['pops'].append(pop)
+		for i, elec in enumerate(evalElecs):
+			if isinstance(elec, Number):
+				elecKey = 'elec' + str(elec)
+			elif elec == 'avg':
+				elecKey = 'avg'
+			avgValues['avgCSD'][q].append(csdPopData[pop][elecKey]['avg'])
+		q+=1
+	dfAvg = pd.DataFrame(avgValues['avgCSD'], index=pops)
+
+
+	# return csdPopData
+	if verbose:
+		return dfPeak, dfAvg, peakValues, avgValues, csdPopData 
+	else:
+		return dfPeak, dfAvg
 
 ## PSD: data and plotting ## 
 def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
@@ -2805,7 +2804,7 @@ if evalWaveletsByBandBool:
 ########################
 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
-evalPopsBool = 1
+evalPopsBool = 0
 if evalPopsBool:
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
@@ -2818,6 +2817,9 @@ if evalPopsBool:
 	# Get the pops with the max contributions 
 	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
 	maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
+
+
+	# maxPopsValues_avgCSD['elec']
 
 
 	# Get data dicts
@@ -2881,50 +2883,63 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-csdTest = 0
-if csdTest:
-	print('Testing combined plotting next')
-	### TESTING DATA AND PLOTTING ####
-	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=[8], pop='ITS4')
-	spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=[8], pop='ITS4')
+plotCSDCombinedData = 1
+if plotCSDCombinedData:
+	print('Plotting Combined CSD data')
+	electrode=[9]
+	includePops=['IT3', 'ITS4', 'IT5A']
+	for pop in includePops:
+		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=timeRange, electrode=electrode, pop=pop)
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=electrode, pop=pop)
 
-	#### plotCombinedCSD(timeSeriesDict, spectDict, pop='ITS4', electrode=[8], vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'])#, maxFreq=70)
-	plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop='ITS4', electrode=[8], 
-		minFreq=15, maxFreq=70, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], saveFig=True)
+		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
+			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], saveFig=True) # maxFreq=100
 
+
+# getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, 
+	# electrode=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+### ^^ Should I be doing minFreq and maxFreq here or no? just in plotCombinedCSD? Check it out. 
+
+
+plotCSDheatmaps = 0
+if plotCSDheatmaps:
 	###### TESTING OUT CALCULATING & PLOTTING HEATMAPS W/ CSD DATA 
-	# dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
-	# peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
-	# avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile, timeRange=timeRange)
+	peakCSDPlot = plotDataFrames(dfPeak, electrodes=None, pops=None, title='Peak CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
+	avgCSDPlot = plotDataFrames(dfAvg, electrodes=None, pops=None, title='Avg CSD Values', cbarLabel='CSD', figSize=None, savePath=None, saveFig=False)
 	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
+
 
 ######## CSD PSD ########
 csdPSD = 0
 if csdPSD:
-	psdData = getPSDdata(dataFile=dataFile, inputData = csdData)
+	csdDataDict = getCSDdata(dataFile=dataFile, outputType=[], timeRange=timeRange, electrode=[9], pop='NGF3') # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+	csdData = csdDataDict['csd']
+	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, minFreq=1, maxFreq=50, stepFreq=0.5)
+	plotPSD(psdData)
 
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotSpikeData = 0
-includePops = ['IT3']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-if plotSpikeData:
+plotCombinedSpikeData = 0
+includePops = ['IT3', 'ITS4', 'IT5A']	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+if plotCombinedSpikeData:
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
 
 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
-		# spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
+		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
 
 		## Then call plotting function 
-		# plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
-		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
+		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=None, maxFreq=None, saveFig=1)
 
-		plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
-			spectDict=None, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
-			vmaxContrast=None, savePath=None, saveFig=True)
+		# plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
+		# 	spectDict=None, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
+		# 	vmaxContrast=None, savePath=None, saveFig=True)
 
 
  # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
