@@ -2328,6 +2328,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	### plotTypes: list 				--> DEFAULT: ['timeSeries', 'spectrogram']
 	### savePath: str    				--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 					--> DEFAULT: True
+		### TO DO: CHANGE ALL INSTANCES OF "ELECTRODE" TO "CHANNEL"
 
 	# Get relevant pop
 	if type(pop) is str:
@@ -2395,7 +2396,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
-		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
+		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(electrode)
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
@@ -2412,7 +2413,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT TIMESERIES ###
 		# timeSeries title
-		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', electrode ' + str(electrode)
+		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(electrode)
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2430,13 +2431,13 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
-		figFilename = popToPlot + '_combinedCSD_elec_' + str(electrode) + '.png'
+		figFilename = popToPlot + '_combinedCSD_chan_' + str(electrode) + '.png'
 
 	elif 'spectrogram' in plotTypes and 'timeSeries' not in plotTypes:
 
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
-		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', electrode ' + str(electrode)
+		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(electrode)
 		# plot and format 
 		ax1 = plt.subplot(1, 1, 1)
 		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
@@ -2455,13 +2456,13 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		# ax1.set_ylim(minFreq, maxFreq) 				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
 
 		# For potential saving 
-		figFilename = popToPlot + '_CSD_spectrogram_elec_' + str(electrode) + '.png'
+		figFilename = popToPlot + '_CSD_spectrogram_chan_' + str(electrode) + '.png'
 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
 
 		### PLOT TIME SERIES ### 
 		# timeSeries title
-		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', electrode ' + str(electrode)
+		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(electrode)
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2479,7 +2480,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
-		figFilename = popToPlot + '_CSD_timeSeries_elec_' + str(electrode) + '.png'
+		figFilename = popToPlot + '_CSD_timeSeries_chan_' + str(electrode) + '.png'
  
 	plt.tight_layout()
 
