@@ -1616,7 +1616,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	## Set labels on x and y axes 
 	plt.xlabel('Cell populations', fontsize=labelFontSize)
 	plt.xticks(rotation=45, fontsize=tickFontSize)
-	plt.ylabel('Electrodes', fontsize=labelFontSize)
+	plt.ylabel('Channel', fontsize=labelFontSize)
 	plt.yticks(rotation=0, fontsize=tickFontSize) 
 
 	if saveFig:
