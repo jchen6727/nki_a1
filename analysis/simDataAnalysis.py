@@ -2393,7 +2393,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 	# timeSeries --------------------------------------------
-	if 'timeSeries' in outputType and oscEventInfo is not None:  ### make case for when it IS None
+	if 'timeSeries' in outputType:  ### make case for when it IS None  # and oscEventInfo is not None
 		print('Returning timeSeries data')
 
 		##############################
@@ -2448,20 +2448,21 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		spec = []
 		freqList = None
 
-		## Determine electrode(s) to loop over: 
-		if electrode is None: 
-			print('No electrode specified; returning spectrogram data for ALL electrodes')
-			electrode = []
-			electrode.extend(list(range(int(sim.net.recXElectrode.nsites))))
+		# ## Determine electrode(s) to loop over: 
+		# if electrode is None: 
+		# 	print('No electrode specified; returning spectrogram data for ALL electrodes')
+		# 	electrode = []
+		# 	electrode.extend(list(range(int(sim.net.recXElectrode.nsites))))
 
-		print('Channels considered for spectrogram data: ' + str(electrode))
+		# print('Channels considered for spectrogram data: ' + str(chan))
 
 
-		## Spectrogram Data Calculations! 
+
+		## Spectrogram Data Calculations 
 		if len(electrode) > 1:
 			for i, elec in enumerate(electrode):
-				csdDataSpect_allElecs = np.transpose(csdData_allElecs)  # Transposing this data may not be necessary!!! 
-				csdDataSpect = csdDataSpect_allElecs[:, elec]
+				csdDataSpect_allChans = np.transpose(csdData)	#(csdData_allElecs)  # Transposing this data may not be necessary!!! 
+				csdDataSpect = csdDataSpect_allChans[:, chan]
 				fs = int(1000.0 / sim.cfg.recordStep)
 				t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
 				spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
@@ -2470,6 +2471,24 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 			fs = int(1000.0 / sim.cfg.recordStep)
 			t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
 			spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+
+
+		## Spectrogram Data Calculations ## 
+		fs = int(1000.0 / sim.cfg.recordStep)
+
+		##############################
+		#### BEFORE THE OSC EVENT ####
+		t_specBefore = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData))
+
+		##############################
+		#### DURING THE OSC EVENT #### 
+		t_specDuring = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData))
+
+		#############################
+		#### AFTER THE OSC EVENT #### 
+		t_specAfter = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData))
+
 
 
 		## Get frequency list 
