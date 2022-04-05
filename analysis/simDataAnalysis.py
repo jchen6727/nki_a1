@@ -384,6 +384,146 @@ def getPopElectrodeLists(evalPopsDict, verbose=0):
 		return PopElecLists, includePops, electrodes
 	else:
 		return PopElecLists
+def getCSDdataOLD(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrode=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
+	#### Outputs a dict with CSD and other relevant data for plotting! 
+	## dataFile: str     					--> .pkl file with recorded simulation 
+	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
+	## timeRange: list 						--> e.g. [start, stop]
+	## electrode: list or None 				--> e.g. [8], None
+	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
+	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
+	## pop: str or list 					--> e.g. 'ITS4' or ['ITS4']
+	## spacing_um: int 						--> 100 by DEFAULT (spacing between electrodes in MICRONS)
+	## minFreq: float / int 				--> DEFAULT: 1 Hz  
+	## maxFreq: float / int 				--> DEFAULT: 100 Hz 
+	## stepFreq: float / int 				--> DEFAULT: 1 Hz 
+			## TO DO: 
+			###  --> Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
+			###  --> Should I make it such that output can include both timeSeries and spectrogram so don't have to run this twice? test this!! 
+
+	## load .pkl simulation file 
+	if dataFile:
+		sim.load(dataFile, instantiate=False)
+	else:
+		print('No dataFile; will use data from dataFile already loaded elsewhere!')
+
+	## Determine timestep, sampling rate, and electrode spacing 
+	dt = sim.cfg.recordStep
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	spacing_um = spacing_um		# 100um by default # 
+
+	## Get LFP data   # ----> NOTE: SHOULD I MAKE AN LFP INPUT OPTION?????? FOR SUMMED LFP DATA??? (also noted above in arg descriptions)
+	if pop is None:
+		lfpData = sim.allSimData['LFP']
+	else:
+		if type(pop) is list:
+			pop = pop[0]
+		lfpData = sim.allSimData['LFPPops'][pop]
+
+
+	## Step 1 in segmenting CSD data --> ALL electrodes, ALL timepoints
+	csdData_allElecs_allTime = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
+
+
+	## Step 2 in segmenting CSD data --> ALL electrodes, SPECIFIED (OR ALL) timepoints
+	if timeRange is None:
+		timeRange = [0, sim.cfg.duration]			# this is for use later, in the outputType if statements below 
+		csdData_allElecs = csdData_allElecs_allTime
+	else:
+		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] ## NOTE: this assumes timeRange is in ms!! 
+
+
+	## Step 3 in segmenting CSD data --> SPECIFIED (OR ALL) electrode(s), SPECIFIED (OR ALL) timepoints  
+	if electrode is None:
+		csdData = csdData_allElecs
+		print('Outputting CSD data for ALL electrodes!')
+	else:
+		# electrode = list(electrode)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
+		if len(electrode) > 1:
+			## NOTE: at some point, change this so the correct electrode-specific CSD data is provided!!! 
+			print('More than one electrode listed!! --> outputData[\'csd\'] will contain CSD data from ALL electrodes!')
+			csdData = csdData_allElecs
+		elif len(electrode) == 1:
+			elec = electrode[0]
+			if elec == 'avg':
+				csdData = np.mean(csdData_allElecs, axis=0)
+			elif isinstance(elec, Number):
+				csdData = csdData_allElecs[elec, :]
+
+
+	outputData = {'csd': csdData}
+
+
+	# timeSeries --------------------------------------------
+	if 'timeSeries' in outputType:
+		print('Returning timeSeries data')
+
+		## original way of determining t 
+		t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)   # time array for x-axis 
+		## more like load.py
+		# t = 
+
+		outputData.update({'t': t})
+
+
+	# spectrogram -------------------------------------------
+	if 'spectrogram' in outputType:
+		print('Returning spectrogram data')
+
+		spec = []
+		freqList = None
+
+		## Determine electrode(s) to loop over: 
+		if electrode is None: 
+			print('No electrode specified; returning spectrogram data for ALL electrodes')
+			electrode = []
+			electrode.extend(list(range(int(sim.net.recXElectrode.nsites))))
+
+		print('Channels considered for spectrogram data: ' + str(electrode))
+
+
+		## Spectrogram Data Calculations! 
+		if len(electrode) > 1:
+			for i, elec in enumerate(electrode):
+				csdDataSpect_allElecs = np.transpose(csdData_allElecs)  # Transposing this data may not be necessary!!! 
+				csdDataSpect = csdDataSpect_allElecs[:, elec]
+				fs = int(1000.0 / sim.cfg.recordStep)
+				t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
+				spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+		elif len(electrode) == 1: 	# use csdData, as determined above the timeSeries and spectrogram 'if' statements (already has correct electrode-specific CSD data!)
+			fs = int(1000.0 / sim.cfg.recordStep)
+			t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
+			spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+
+
+		## Get frequency list 
+		f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+
+		## vmin, vmax --> vc = [vmin, vmax]
+		vmin = np.array([s.TFR for s in spec]).min()
+		vmax = np.array([s.TFR for s in spec]).max()
+		vc = [vmin, vmax]
+
+		## T (timeRange)
+		T = timeRange 
+
+		## F, S
+		for i, elec in enumerate(electrode):   # works for electrode of length 1 or greater! No need for if statement regarding length. 
+			F = spec[i].f
+			# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
+				# spec[i].TFR = spec[i].TFR / vmax
+				# S = spec[i].TFR
+				# vc = [0, 1]
+			S = spec[i].TFR
+
+
+		outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
+		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) 
+			### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
+			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
+
+	return outputData
 ######################################################################
 
 ######################################################################
@@ -2180,147 +2320,7 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data and plotting ## 
-def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], timeRange=None, electrode=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
-	#### Outputs a dict with CSD and other relevant data for plotting! 
-	## dataFile: str     					--> .pkl file with recorded simulation 
-	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
-	## timeRange: list 						--> e.g. [start, stop]
-	## electrode: list or None 				--> e.g. [8], None
-	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
-	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
-	## pop: str or list 					--> e.g. 'ITS4' or ['ITS4']
-	## spacing_um: int 						--> 100 by DEFAULT (spacing between electrodes in MICRONS)
-	## minFreq: float / int 				--> DEFAULT: 1 Hz  
-	## maxFreq: float / int 				--> DEFAULT: 100 Hz 
-	## stepFreq: float / int 				--> DEFAULT: 1 Hz 
-			## TO DO: 
-			###  --> Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
-			###  --> Should I make it such that output can include both timeSeries and spectrogram so don't have to run this twice? test this!! 
-
-	## load .pkl simulation file 
-	if dataFile:
-		sim.load(dataFile, instantiate=False)
-	else:
-		print('No dataFile; will use data from dataFile already loaded elsewhere!')
-
-	## Determine timestep, sampling rate, and electrode spacing 
-	dt = sim.cfg.recordStep
-	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-	spacing_um = spacing_um		# 100um by default # 
-
-	## Get LFP data   # ----> NOTE: SHOULD I MAKE AN LFP INPUT OPTION?????? FOR SUMMED LFP DATA??? (also noted above in arg descriptions)
-	if pop is None:
-		lfpData = sim.allSimData['LFP']
-	else:
-		if type(pop) is list:
-			pop = pop[0]
-		lfpData = sim.allSimData['LFPPops'][pop]
-
-
-	## Step 1 in segmenting CSD data --> ALL electrodes, ALL timepoints
-	csdData_allElecs_allTime = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
-
-
-	## Step 2 in segmenting CSD data --> ALL electrodes, SPECIFIED (OR ALL) timepoints
-	if timeRange is None:
-		timeRange = [0, sim.cfg.duration]			# this is for use later, in the outputType if statements below 
-		csdData_allElecs = csdData_allElecs_allTime
-	else:
-		csdData_allElecs = csdData_allElecs_allTime[:,int(timeRange[0]/dt):int(timeRange[1]/dt)] ## NOTE: this assumes timeRange is in ms!! 
-
-
-	## Step 3 in segmenting CSD data --> SPECIFIED (OR ALL) electrode(s), SPECIFIED (OR ALL) timepoints  
-	if electrode is None:
-		csdData = csdData_allElecs
-		print('Outputting CSD data for ALL electrodes!')
-	else:
-		# electrode = list(electrode)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
-		if len(electrode) > 1:
-			## NOTE: at some point, change this so the correct electrode-specific CSD data is provided!!! 
-			print('More than one electrode listed!! --> outputData[\'csd\'] will contain CSD data from ALL electrodes!')
-			csdData = csdData_allElecs
-		elif len(electrode) == 1:
-			elec = electrode[0]
-			if elec == 'avg':
-				csdData = np.mean(csdData_allElecs, axis=0)
-			elif isinstance(elec, Number):
-				csdData = csdData_allElecs[elec, :]
-
-
-	outputData = {'csd': csdData}
-
-
-	# timeSeries --------------------------------------------
-	if 'timeSeries' in outputType:
-		print('Returning timeSeries data')
-
-		## original way of determining t 
-		t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)   # time array for x-axis 
-		## more like load.py
-		# t = 
-
-		outputData.update({'t': t})
-
-
-	# spectrogram -------------------------------------------
-	if 'spectrogram' in outputType:
-		print('Returning spectrogram data')
-
-		spec = []
-		freqList = None
-
-		## Determine electrode(s) to loop over: 
-		if electrode is None: 
-			print('No electrode specified; returning spectrogram data for ALL electrodes')
-			electrode = []
-			electrode.extend(list(range(int(sim.net.recXElectrode.nsites))))
-
-		print('Channels considered for spectrogram data: ' + str(electrode))
-
-
-		## Spectrogram Data Calculations! 
-		if len(electrode) > 1:
-			for i, elec in enumerate(electrode):
-				csdDataSpect_allElecs = np.transpose(csdData_allElecs)  # Transposing this data may not be necessary!!! 
-				csdDataSpect = csdDataSpect_allElecs[:, elec]
-				fs = int(1000.0 / sim.cfg.recordStep)
-				t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
-				spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-		elif len(electrode) == 1: 	# use csdData, as determined above the timeSeries and spectrogram 'if' statements (already has correct electrode-specific CSD data!)
-			fs = int(1000.0 / sim.cfg.recordStep)
-			t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
-			spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-
-		## Get frequency list 
-		f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
-
-		## vmin, vmax --> vc = [vmin, vmax]
-		vmin = np.array([s.TFR for s in spec]).min()
-		vmax = np.array([s.TFR for s in spec]).max()
-		vc = [vmin, vmax]
-
-		## T (timeRange)
-		T = timeRange 
-
-		## F, S
-		for i, elec in enumerate(electrode):   # works for electrode of length 1 or greater! No need for if statement regarding length. 
-			F = spec[i].f
-			# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
-				# spec[i].TFR = spec[i].TFR / vmax
-				# S = spec[i].TFR
-				# vc = [0, 1]
-			S = spec[i].TFR
-
-
-		outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
-		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) 
-			### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
-			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
-
-	return outputData
-def getCSDdata2(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEventInfo=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
+def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEventInfo=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
 	#### Outputs a dict with CSD and other relevant data for plotting! 
 	## dataFile: str     					--> .pkl file with recorded simulation 
 	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
@@ -2348,14 +2348,24 @@ def getCSDdata2(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEven
 	## Extract oscillation event info 
 	if oscEventInfo is not None:
 		# chan, left, right, minT, maxT, alignoffset
+		# RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
 		chan = oscEventInfo['chan']
+		print('channel: ' + str(chan))
 		left = oscEventInfo['left']
+		print('left: ' + str(left))
 		right = oscEventInfo['right']
+		print('right: ' + str(right))
 		minT = oscEventInfo['minT']
+		print('minT: ' + str(minT))
 		maxT = oscEventInfo['maxT']
+		print('maxT: ' + str(maxT))
 		alignoffset = oscEventInfo['alignoffset']
+		print('alignoffset: ' + str(alignoffset))
+		w2 = oscEventInfo['w2']
+		print('w2: ' + str(w2))
 	else:
 		chan=None
+		print('No oscillation event data detected!')
 
 
 
@@ -2375,53 +2385,61 @@ def getCSDdata2(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEven
 
 
 
-	## Step 1 for CSD data --> Get CSD data for ALL channels, ALL timepoints
-	csdData_allChans = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
-
-
-	## Step 2 for CSD data --> Segment by particular channel and by left:right timepoints 
-		#### NOTE: what about the case of avg electrode? Ever need or want to look at that?? 
-	if chan is None:
-		csdData = csdData_allChans
-		print('Outputting CSD data for ALL channels over ALL timepoints!')
-	else:
-		csdData = csdData_allChans[chan, left:right]
-
-	outputData = {'csd': csdData}
-
-
-	# if channel is None:
-	# 	csdData = csdData_allChans
-	# 	print('Outputting CSD data for ALL channels!')
-	# else:
-	# 	# electrode = list(electrode)  # if electrodes is int, this will turn it into a list; if it's a list, won't change anything. 
-	# 	if len(channel) > 1:
-	# 		## NOTE: at some point, change this so the correct electrode-specific CSD data is provided!!! 
-	# 		print('More than one channel listed!! --> outputData[\'csd\'] will contain CSD data from ALL electrodes!')
-	# 		csdData = csdData_allChans
-	# 	elif len(channel) == 1:
-	# 		chan = channel[0]
-	# 		if chan == 'avg':
-	# 			csdData = np.mean(csdData_allChans, axis=0)
-	# 		elif isinstance(chan, Number):
-	# 			csdData = csdData_allChans[chan, :]
-
-	# outputData = {'csd': csdData}  ## CSD data for all time points (not segmented by osc event timing yet!)
+	## Get CSD data for ALL channels, over ALL timepoints
+	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
+	# Input full CSD data into outputData dict 
+	outputData = {'csd': csdData}  # REMEMBER: ALL CHANS, ALL TIMEPOINTS!! 
 
 
 
 	# timeSeries --------------------------------------------
-	if 'timeSeries' in outputType:
+	if 'timeSeries' in outputType and oscEventInfo is not None:  ### make case for when it IS None
 		print('Returning timeSeries data')
 
-		## original way of determining t 
-		#  t = np.arange(timeRange[0], timeRange[1], sim.cfg.recordStep)   # time array for x-axis 
-		## more like load.py
-		# Need left, right, minT, maxT, alignoffset
-		# t = 
+		##############################
+		#### BEFORE THE OSC EVENT ####
+		idx0_before = max(0,left - w2)
+		idx1_before = left 
+		# (1) Calculate CSD before osc event
+		csdBefore = csdData[chan,idx0_before:idx1_before]
+		# (2) Calculate timepoint data 
+		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
+		tt_before = np.linspace(minT-beforeT,minT,len(csdBefore)) + alignoffset
+		# (3) Input time and CSD data for before osc event into outputData dict 
+		outputData.update({'beforeT': beforeT})
+		outputData.update({'tt_before': tt_before})
+		outputData.update({'csdBefore': csdBefore})
 
-		outputData.update({'t': t})
+		##############################
+		#### DURING THE OSC EVENT #### 			--> # Need left, right, minT, maxT, alignoffset
+		# (1) Calculate CSD during osc event
+		csdDuring = csdData[chan,left:right]
+		# (2) Calculate timepoint data 
+		tt_during = np.linspace(minT,maxT,len(csdDuring)) + alignoffset				# 		duringT = np.linspace(minT,maxT,len(csdDuring)) + alignoffset 
+		# (3) Input time and CSD data for during osc event into outputData dict 
+		outputData.update({'tt_during': tt_during})
+		outputData.update({'csdDuring': csdDuring})
 
+		#############################
+		#### AFTER THE OSC EVENT #### 
+		idx0_after = int(right)
+		idx1_after = min(idx0_after + w2,max(csdData.shape[0],csdData.shape[1]))
+		# (1) Calculate CSD after osc event
+		csdAfter = csdData[chan,idx0_after:idx1_after]
+		# (2) Calculate timepoint data 
+		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
+		tt_after = np.linspace(maxT,maxT+afterT,len(csdAfter)) + alignoffset
+		# (3) Input time and CSD data for after osc event into outputData dict 
+		outputData.update({'afterT': afterT})
+		outputData.update({'tt_after': tt_after})
+		outputData.update({'csdAfter': csdAfter})
+
+		# Update outputData with the channel info as well
+		outputData.update({'chan': chan})
+
+		# Get xlim for plotting
+		xl = (minT-beforeT + alignoffset, maxT+afterT + alignoffset)
+		outputData.update({'xl': xl})
 
 	# spectrogram -------------------------------------------
 	if 'spectrogram' in outputType:
@@ -2481,7 +2499,7 @@ def getCSDdata2(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEven
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
-def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, alignoffset=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], savePath=None, saveFig=True):
+def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, alignoffset=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], hasBefore=1, hasAfter=1, savePath=None, saveFig=True):
 	### pop: list or str 				--> relevant population to plot data for 
 	### electrode: int 					--> electrode at which to plot the CSD data 
 	### colorDict: dict 				--> corresponds pop to color 
@@ -2494,6 +2512,8 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	### minFreq: int 					--> DEFAULT: None
 	### maxFreq: int 					--> DEFAULT: None
 	### plotTypes: list 				--> DEFAULT: ['timeSeries', 'spectrogram']
+	### hasBefore: bool 				--> DEFAULT: 1 (before osc event data will be plotted)
+	### hasAfter: bool  				--> DEFAULT: 1 (after osc event data will be plotted)
 	### savePath: str    				--> Path to directory where fig should be saved; DEFAULT: '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/popContribFigs/'
 	### saveFig: bool 					--> DEFAULT: True
 		### TO DO: CHANGE ALL INSTANCES OF "ELECTRODE" TO "CHANNEL"
@@ -2551,17 +2571,24 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 
 	#### TIME SERIES CALCULATIONS ####-------------------------------------------------------
-	if 'timeSeries' in plotTypes:
+	if 'timeSeries' in plotTypes:  ### NOTE!!!! --> should I do "hasbefore" and 'hasafter' as args?!??! 
 		# time (x-axis)
-		if alignoffset is None:
-			t = timeSeriesDict['t']
-		else:
-			t_orig = timeSeriesDict['t']
-			t = t_orig+alignoffset
+		tt_during = timeSeriesDict['tt_during']
 
 		# CSD (y-axis)
-		csdTimeSeries = timeSeriesDict['csd']
+		csdDuring = timeSeriesDict['csdDuring']
 
+		if hasBefore:
+			# time (x-axis)
+			tt_before = timeSeriesDict['tt_before']
+			# CSD (y-axis)
+			csdBefore = timeSeriesDict['csdBefore']
+
+		if hasAfter:
+			# time (x-axis)
+			tt_after = timeSeriesDict['tt_after']
+			# CSD (y-axis)
+			csdAfter = timeSeriesDict['csdAfter']
 
 	#### PLOTTING ####-------------------------------------------------------
 	if 'spectrogram' in plotTypes and 'timeSeries' in plotTypes:
@@ -2585,7 +2612,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT TIMESERIES ###
 		# timeSeries title
-		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(electrode)
+		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2596,10 +2623,24 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		divider2 = make_axes_locatable(ax2)
 		cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 		cax2.axis('off')
-		ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		# Plot CSD before Osc Event
+		if hasBefore: 
+			ax2.plot(tt_before, csdBefore, color='k', linewidth=1.0)
+		# Plot CSD during Osc Event
+		ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) 		# ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		# Plot CSD after Osc Event 
+		if hasAfter:
+			ax2.plot(tt_after, csdAfter, color='k', linewidth=1.0)
+		# Set title and x-axis label
 		ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 		ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-		ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		# Set x-axis limits 
+		if hasBefore and hasAfter:
+			xl = timeSeriesDict['xl']
+			ax2.set_xlim((xl))
+		else:
+			ax2.set_xlim(left=tt_during[0], right=tt_during[-1]) 		# ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		# Set y-axis label 
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
@@ -2634,7 +2675,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT TIME SERIES ### 
 		# timeSeries title
-		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(electrode)
+		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2645,10 +2686,28 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		divider2 = make_axes_locatable(ax2)
 		cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 		cax2.axis('off')
-		ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		# Plot CSD before Osc Event
+		if hasBefore: 
+			ax2.plot(tt_before, csdBefore, color='k', linewidth=1.0)
+		# Plot CSD during Osc Event 			# 		ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		# Plot CSD after Osc Event 
+		if hasAfter:
+			ax2.plot(tt_after, csdAfter, color='k', linewidth=1.0)
+		# Set title and x-axis label
 		ax2.set_title(timeSeriesTitle, fontsize=titleFontSize)
 		ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
-		ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		# Set x-axis limits 
+		if hasBefore and hasAfter:
+			xl = timeSeriesDict['xl']
+			ax2.set_xlim((xl))
+		elif hasBefore and not hasAfter:
+			ax2.set_xlim(left=tt_before[0], right=tt_during[-1])
+		elif not hasBefore and hasAfter:
+			ax2.set_xlim(left=tt_during[0], right=tt_after[-1])
+		else:
+			ax2.set_xlim(left=tt_during[0], right=tt_during[-1])	# ax2.set_xlim(left=t[0], right=t[-1]) 	# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		# Set y-axis label 
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
@@ -2663,7 +2722,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		else:
 			prePath = savePath
 		pathToFile = prePath + figFilename
-		plt.savefig(pathToFile, dpi=300)
+		plt.savefig(pathToFile, dpi=600)
 
 	## Show figure
 	plt.show()
@@ -3054,48 +3113,57 @@ if plotCSDCombinedData:
 	electrode=[8]
 	includePops=['ITS4']#, 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
 	for pop in includePops:
-		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=None, electrode=None, pop=None, maxFreq=40)
+		# timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=None, electrode=None, pop=pop, maxFreq=40)
 		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=electrode, pop=pop, maxFreq=40)
+		thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
+							'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
+							'w2': 3376}
+		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
 
+		# ### time axis testing lines ###
+		# minT = 2785.22321038684
+		# maxT = 3347.9278996316607
+		# alignoffset = -3086.95
+		# left = 55704
+		# right = 66958
+		# w2 = 3376  # w2 = int(w2*0.6)  # 3376 is after this!!  ## This is just for the before / after 
 
-		### time axis testing lines ###
-		minT = 2785.22321038684
-		maxT = 3347.9278996316607
-		alignoffset = -3086.95
-		left = 55704
-		right = 66958
-		w2 = 3376  # w2 = int(w2*0.6)  # 3376 is after this!! 
+		# # CSD 
+		# CSD = timeSeriesDict['csd']  # NOTE: already segmented by relevant channel (8) 
 
-		# ## Calculate beforeT
+		# # ## Calculate beforeT
 		# idx0_before = max(0,left - w2)
 		# idx1_before = left 
 		# beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
 		# print('beforeT: ' + str(beforeT))
+		# sig_before = CSD[chan,idx0_before:idx1_before]
 
 		## Calculate tt for during:
-		chan=8
-		CSD_orig = timeSeriesDict['csd'] ## already segmented by channel, if specified in the timeSeriesDict getCSDData args!! 
-		timeRangeX=[0,6] ## RECALL THAT THIS IS IN SECONDS  !! 
-		dt = 0.05 # (should load this from somewhere, but i know this is dt so keep this for now)
-		dtX = dt/1000.0 ### HAVE TO CHANGE THIS TO SECONDS 
-		CSD = CSD_orig[int(timeRangeX[0]/dtX):int(timeRangeX[1]/dtX)] # [:,int(timeRangeX[0]/dtX):int(timeRangeX[1]/dtX)]
+		# chan=8
+		# CSD_orig = timeSeriesDict['csd'] ## already segmented by channel, if specified in the timeSeriesDict getCSDData args!! 
+		# timeRangeX=[0,6] ## RECALL THAT THIS IS IN SECONDS  !! 
+		# dt = 0.05 # (should load this from somewhere, but i know this is dt so keep this for now)
+		# dtX = dt/1000.0 ### HAVE TO CHANGE THIS TO SECONDS 
+		# CSD = CSD_orig[int(timeRangeX[0]/dtX):int(timeRangeX[1]/dtX)] # [:,int(timeRangeX[0]/dtX):int(timeRangeX[1]/dtX)]
 		## ^^ not even necessary!! 
-		sig_during0 = CSD[chan,left:right] #CSD[chan,left:right] ### THIS IS NOT!! 
-		sig_during = CSD_orig[chan,left:right]
-		tt_during = np.linspace(minT,maxT,len(sig_during)) + alignoffset  ## OKAY THIS IS THE SAME!! 
+		# sig_during0 = CSD[chan,left:right] # CSD[chan,left:right] 
+		# sig_during = CSD[left:right]
+		# tt_during = np.linspace(minT,maxT,len(sig_during)) + alignoffset  
 
 		# chan, left, right, minT, maxT, alignoffset
 
 
-		# ## Calculate afterT 
+		# # ## Calculate afterT 
 		# idx0_after = int(right)
 		# idx1_after = min(idx0_after + w2,max(CSD.shape[0],CSD.shape[1]))
 		# afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)
 		# print('afterT: ' + str(afterT))
+		# sig_after = CSD[chan,idx0_after:idx1_after]
 
 
-		# plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=None, alignoffset=-3086.95, colorDict=colorDict, pop=pop, electrode=electrode, 
-		# 	minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'], saveFig=True) # maxFreq=100
+		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=None, colorDict=colorDict, pop=pop, electrode=electrode, 
+			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'], 
+			hasBefore=0, hasAfter=1, saveFig=True) # maxFreq=100
 
 
 ## CSD heatmaps
