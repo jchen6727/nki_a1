@@ -583,285 +583,6 @@ def plotHistogram(histDict):
 ######### NetPyNE Functions that have been modified for use here!! ##############################################
 #################################################################################################################
 
-### SPIKE DATA ### 
-def getRateSpectrogramData(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, transformMethod = 'morlet', norm=False):
-	"""
-	include : list
-		<Short description of include>
-		**Default:** ``['allCells', 'eachPop']``
-		**Options:** ``<option>`` <description of option>
-
-	timeRange : <``None``?>
-		<Short description of timeRange>
-		**Default:** ``None``
-		**Options:** ``<option>`` <description of option>
-
-	binSize : int
-		<Short description of binSize>
-		**Default:** ``5``
-		**Options:** ``<option>`` <description of option>
-
-	minFreq : int
-		<Short description of minFreq>
-		**Default:** ``1``
-		**Options:** ``<option>`` <description of option>
-
-	maxFreq : int
-		<Short description of maxFreq>
-		**Default:** ``100``
-		**Options:** ``<option>`` <description of option>
-
-	stepFreq : int
-		<Short description of stepFreq>
-		**Default:** ``1``
-		**Options:** ``<option>`` <description of option>
-
-	NFFT : int
-		<Short description of NFFT>
-		**Default:** ``256``
-		**Options:** ``<option>`` <description of option>
-
-	noverlap : int
-		<Short description of noverlap>
-		**Default:** ``128``
-		**Options:** ``<option>`` <description of option>
-
-	smooth : int
-		<Short description of smooth>
-		**Default:** ``0``
-		**Options:** ``<option>`` <description of option>
-
-	transformMethod : str
-		<Short description of transformMethod>
-		**Default:** ``'morlet'``
-		**Options:** ``<option>`` <description of option>
-
-	norm : bool
-		<Short description of norm>
-		**Default:** ``False``
-		**Options:** ``<option>`` <description of option> 
-		"""
-	print('Getting firing rate spectrogram data ...')
-
-	# Replace 'eachPop' with list of pops
-	if 'eachPop' in include:
-		include.remove('eachPop')
-		for pop in sim.net.allPops: include.append(pop)
-
-	# time range
-	if timeRange is None:
-		timeRange = [0,sim.cfg.duration]
-
-	histData = []
-
-	allSignal, allFreqs = [], []
-
-	# Plot separate line for each entry in include
-	for iplot,subset in enumerate(include):
-		from netpyne.analysis.utils import getCellsInclude
-		cells, cellGids, netStimLabels = getCellsInclude([subset])
-		numNetStims = 0
-
-		# Select cells to include
-		if len(cellGids) > 0:
-			try:
-				spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
-			except:
-				spkinds,spkts = [],[]
-		else:
-			spkinds,spkts = [],[]
-
-
-		# Add NetStim spikes
-		spkts, spkinds = list(spkts), list(spkinds)
-		numNetStims = 0
-		if 'stims' in sim.allSimData:
-			for netStimLabel in netStimLabels:
-				netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
-					for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
-				if len(netStimSpks) > 0:
-					lastInd = max(spkinds) if len(spkinds)>0 else 0
-					spktsNew = netStimSpks
-					spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
-					spkts.extend(spktsNew)
-					spkinds.extend(spkindsNew)
-					numNetStims += 1
-
-		histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-		histoT = histo[1][:-1]+binSize/2
-		histoCount = histo[0]
-		histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to rates
-
-		histData.append(histoCount)
-
-		# Morlet wavelet transform method
-		if transformMethod == 'morlet':
-			from morlet import MorletSpec, index2ms
-
-			Fs = 1000.0 / binSize
-
-			morletSpec = MorletSpec(histoCount, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-			freqs = morletSpec.f
-			spec = morletSpec.TFR
-			ylabel = 'Power'
-			allSignal.append(spec)
-			allFreqs.append(freqs)
-
-	# plotting
-	T = timeRange
-
-	# save figure data
-	figData = {'histData': histData, 'histT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
-
-	return {'allSignal': allSignal, 'allFreqs':allFreqs}
-def getSpikeHistData(include=['eachPop', 'allCells'], timeRange=None, binSize=5, graphType='bar', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, **kwargs):
-	"""
-	include : list
-		Populations and cells to include in the plot.
-		**Default:**
-		``['eachPop', 'allCells']`` plots histogram for each population and overall average
-		**Options:**
-		``['all']`` plots all cells and stimulations,
-		``['allNetStims']`` plots just stimulations,
-		``['popName1']`` plots a single population,
-		``['popName1', 'popName2']`` plots multiple populations,
-		``[120]`` plots a single cell,
-		``[120, 130]`` plots multiple cells,
-		``[('popName1', 56)]`` plots a cell from a specific population,
-		``[('popName1', [0, 1]), ('popName2', [4, 5, 6])]``, plots cells from multiple populations
-
-	timeRange : list [start, stop]
-		Time range to plot.
-		**Default:**
-		``None`` plots entire time range
-		**Options:** ``<option>`` <description of option>
-
-	binSize : int
-		Size of bin in ms to use for spike histogram.
-		**Default:** ``5``
-		**Options:** ``<option>`` <description of option>
-
-	graphType : str
-		Show histograms as line graphs or bar plots.
-		**Default:** ``'bar'``
-		**Options:** ``'line'``
-
-	measure : str
-		Whether to plot spike freguency (rate) or spike count.
-		**Default:** ``'rate'``
-		**Options:** ``'count'``
-
-	norm : bool
-		Whether to normalize the data or not.
-		**Default:** ``False`` does not normalize the data
-		**Options:** ``<option>`` <description of option>
-
-	smooth : int
-		Window width for smoothing.
-		**Default:** ``None`` does not smooth the data
-		**Options:** ``<option>`` <description of option>
-
-	filtFreq : int or list
-		Frequency for low-pass filter (int) or frequencies for bandpass filter in a list: [low, high]
-		**Default:** ``None`` does not filter the data
-		**Options:** ``<option>`` <description of option>
-
-	filtOrder : int
-		Order of the filter defined by `filtFreq`.
-		**Default:** ``3``
-		**Options:** ``<option>`` <description of option>
-
-	axis : bool
-		Whether to include a labeled axis on the figure.
-		**Default:** ``True`` includes a labeled axis
-		**Options:** ``False`` includes a scale bar
-
-	kwargs : <type>
-		<Short description of kwargs>
-		**Default:** *required*
-	"""
-
-	# from .. import sim  ### <--- SHOULD ALREADY HAVE THIS
-
-	print('Getting spike histogram data...')
-
-	# Replace 'eachPop' with list of pops
-	if 'eachPop' in include:
-		include.remove('eachPop')
-		for pop in sim.net.allPops: include.append(pop)
-
-
-	# time range
-	if timeRange is None:
-		timeRange = [0, sim.cfg.duration]
-
-	histoData = []
-
-	# Plot separate line for each entry in include
-	for iplot,subset in enumerate(include):
-		from netpyne.analysis.utils import getCellsInclude
-		if isinstance(subset, list):
-			cells, cellGids, netStimLabels = getCellsInclude(subset)
-		else:
-			cells, cellGids, netStimLabels = getCellsInclude([subset])
-		numNetStims = 0
-
-		# Select cells to include
-		if len(cellGids) > 0:
-			try:
-				spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
-			except:
-				spkinds,spkts = [],[]
-		else:
-			spkinds,spkts = [],[]
-
-		# Add NetStim spikes
-		spkts, spkinds = list(spkts), list(spkinds)
-		numNetStims = 0
-		if 'stims' in sim.allSimData:
-			for netStimLabel in netStimLabels:
-				netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
-				for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
-				if len(netStimSpks) > 0:
-					lastInd = max(spkinds) if len(spkinds)>0 else 0
-					spktsNew = netStimSpks
-					spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
-					spkts.extend(spktsNew)
-					spkinds.extend(spkindsNew)
-					numNetStims += 1
-
-		histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-		histoT = histo[1][:-1]+binSize/2
-		histoCount = histo[0]
-
-		if measure == 'rate':
-			histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-
-		if filtFreq:
-			from scipy import signal
-			fs = 1000.0/binSize
-			nyquist = fs/2.0
-			if isinstance(filtFreq, list): # bandpass
-				Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-				b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-			elif isinstance(filtFreq, Number): # lowpass
-				Wn = filtFreq/nyquist
-				b, a = signal.butter(filtOrder, Wn)
-			histoCount = signal.filtfilt(b, a, histoCount)
-
-		if norm:
-			histoCount /= max(histoCount)
-
-		if smooth:
-			histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
-
-		histoData.append(histoCount)
-
-	# save figure data
-	figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
-
-	return {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
-
 ### LFP ### 
 def getLFPData(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSeries', 'spectrogram'], inputLFP=None, NFFT=256, noverlap=128, nperseg=256, 
 	minFreq=1, maxFreq=100, stepFreq=1, smooth=0, separation=1.0, logx=False, logy=False, normSignal=False, normSpec=False, filtFreq=False, filtOrder=3, detrend=False, 
@@ -1870,6 +1591,323 @@ def evalPops(dataFrame, electrode, verbose=0):
 		return maxPopsValues
 
 ## Spike Activity: data and plotting ## 
+def getRateSpectrogramData(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, transformMethod = 'morlet', norm=False):
+	""" MODIFIED FROM NETPYNE 
+	include : list
+		<Short description of include>
+		**Default:** ``['allCells', 'eachPop']``
+		**Options:** ``<option>`` <description of option>
+
+	timeRange : <``None``?>
+		<Short description of timeRange>
+		**Default:** ``None``
+		**Options:** ``<option>`` <description of option>
+
+	binSize : int
+		<Short description of binSize>
+		**Default:** ``5``
+		**Options:** ``<option>`` <description of option>
+
+	minFreq : int
+		<Short description of minFreq>
+		**Default:** ``1``
+		**Options:** ``<option>`` <description of option>
+
+	maxFreq : int
+		<Short description of maxFreq>
+		**Default:** ``100``
+		**Options:** ``<option>`` <description of option>
+
+	stepFreq : int
+		<Short description of stepFreq>
+		**Default:** ``1``
+		**Options:** ``<option>`` <description of option>
+
+	NFFT : int
+		<Short description of NFFT>
+		**Default:** ``256``
+		**Options:** ``<option>`` <description of option>
+
+	noverlap : int
+		<Short description of noverlap>
+		**Default:** ``128``
+		**Options:** ``<option>`` <description of option>
+
+	smooth : int
+		<Short description of smooth>
+		**Default:** ``0``
+		**Options:** ``<option>`` <description of option>
+
+	transformMethod : str
+		<Short description of transformMethod>
+		**Default:** ``'morlet'``
+		**Options:** ``<option>`` <description of option>
+
+	norm : bool
+		<Short description of norm>
+		**Default:** ``False``
+		**Options:** ``<option>`` <description of option> 
+		"""
+	print('Getting firing rate spectrogram data ...')
+
+	# Replace 'eachPop' with list of pops
+	if 'eachPop' in include:
+		include.remove('eachPop')
+		for pop in sim.net.allPops: include.append(pop)
+
+	# time range
+	if timeRange is None:
+		timeRange = [0,sim.cfg.duration]
+
+	histData = []
+
+	allSignal, allFreqs = [], []
+
+	# Plot separate line for each entry in include
+	for iplot,subset in enumerate(include):
+		from netpyne.analysis.utils import getCellsInclude
+		cells, cellGids, netStimLabels = getCellsInclude([subset])
+		numNetStims = 0
+
+		# Select cells to include
+		if len(cellGids) > 0:
+			try:
+				spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
+			except:
+				spkinds,spkts = [],[]
+		else:
+			spkinds,spkts = [],[]
+
+
+		# Add NetStim spikes
+		spkts, spkinds = list(spkts), list(spkinds)
+		numNetStims = 0
+		if 'stims' in sim.allSimData:
+			for netStimLabel in netStimLabels:
+				netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
+					for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
+				if len(netStimSpks) > 0:
+					lastInd = max(spkinds) if len(spkinds)>0 else 0
+					spktsNew = netStimSpks
+					spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
+					spkts.extend(spktsNew)
+					spkinds.extend(spkindsNew)
+					numNetStims += 1
+
+		histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+		histoT = histo[1][:-1]+binSize/2
+		histoCount = histo[0]
+		histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to rates
+
+		histData.append(histoCount)
+
+		# Morlet wavelet transform method
+		if transformMethod == 'morlet':
+			from morlet import MorletSpec, index2ms
+
+			Fs = 1000.0 / binSize
+
+			morletSpec = MorletSpec(histoCount, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+			freqs = morletSpec.f
+			spec = morletSpec.TFR
+			ylabel = 'Power'
+			allSignal.append(spec)
+			allFreqs.append(freqs)
+
+	# plotting
+	T = timeRange
+
+	# save figure data
+	figData = {'histData': histData, 'histT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
+
+	return {'allSignal': allSignal, 'allFreqs':allFreqs}
+def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize=5, graphType='bar', measure='rate', norm=False, smooth=None, filtFreq=None, filtOrder=3, axis=True, **kwargs):
+	""" MODIFIED FROM NETPYNE 
+	include : list
+		Populations and cells to include in the plot.
+		**Default:**
+		``['eachPop', 'allCells']`` plots histogram for each population and overall average
+		**Options:**
+		``['all']`` plots all cells and stimulations,
+		``['allNetStims']`` plots just stimulations,
+		``['popName1']`` plots a single population,
+		``['popName1', 'popName2']`` plots multiple populations,
+		``[120]`` plots a single cell,
+		``[120, 130]`` plots multiple cells,
+		``[('popName1', 56)]`` plots a cell from a specific population,
+		``[('popName1', [0, 1]), ('popName2', [4, 5, 6])]``, plots cells from multiple populations
+
+	oscEventInfo : dict 
+		Dict with information about the oscillation event 
+		--> chan, left, right, minT, maxT, alignoffset, w2
+
+	else:
+		chan=None
+		print('No oscillation event data detected!')
+
+	binSize : int
+		Size of bin in ms to use for spike histogram.
+		**Default:** ``5``
+		**Options:** ``<option>`` <description of option>
+
+	graphType : str
+		Show histograms as line graphs or bar plots.
+		**Default:** ``'bar'``
+		**Options:** ``'line'``
+
+	measure : str
+		Whether to plot spike freguency (rate) or spike count.
+		**Default:** ``'rate'``
+		**Options:** ``'count'``
+
+	norm : bool
+		Whether to normalize the data or not.
+		**Default:** ``False`` does not normalize the data
+		**Options:** ``<option>`` <description of option>
+
+	smooth : int
+		Window width for smoothing.
+		**Default:** ``None`` does not smooth the data
+		**Options:** ``<option>`` <description of option>
+
+	filtFreq : int or list
+		Frequency for low-pass filter (int) or frequencies for bandpass filter in a list: [low, high]
+		**Default:** ``None`` does not filter the data
+		**Options:** ``<option>`` <description of option>
+
+	filtOrder : int
+		Order of the filter defined by `filtFreq`.
+		**Default:** ``3``
+		**Options:** ``<option>`` <description of option>
+
+	axis : bool
+		Whether to include a labeled axis on the figure.
+		**Default:** ``True`` includes a labeled axis
+		**Options:** ``False`` includes a scale bar
+
+	kwargs : <type>
+		<Short description of kwargs>
+		**Default:** *required*
+	"""
+
+	# from .. import sim  ### <--- SHOULD ALREADY HAVE THIS
+
+	print('Getting spike histogram data...')
+
+	# Replace 'eachPop' with list of pops
+	if 'eachPop' in include:
+		include.remove('eachPop')
+		for pop in sim.net.allPops: include.append(pop)
+
+	## Extract oscillation event info 
+	if oscEventInfo is not None:
+		# Extract chan, left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
+		chan = oscEventInfo['chan']
+		left = oscEventInfo['left']
+		right = oscEventInfo['right']
+		minT = oscEventInfo['minT']
+		maxT = oscEventInfo['maxT']
+		alignoffset = oscEventInfo['alignoffset']
+		w2 = oscEventInfo['w2']
+		# Print out the values for view in terminal 
+		print('channel: ' + str(chan))
+		print('left: ' + str(left))
+		print('right: ' + str(right))
+		print('minT: ' + str(minT))
+		print('maxT: ' + str(maxT))
+		print('alignoffset: ' + str(alignoffset))
+		print('w2: ' + str(w2))
+		# Calculate idx0 and idx1 for before, and beforeT
+		idx0_before = max(0,left - w2)
+		idx1_before = left 
+		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
+		outputData.update({'beforeT': beforeT})
+		# Calculate idx0 and idx1 for after, and afterT
+		idx0_after = int(right)
+		idx1_after = min(idx0_after + w2,max(csdData.shape[0],csdData.shape[1]))
+		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
+		outputData.update({'afterT': afterT})
+	else:
+		print('No oscillation event data detected!')
+
+
+	T_during = [minT+alignoffset, maxT+alignoffset]
+	T_full = [(minT-beforeT) + alignoffset, (maxT+afterT) + alignoffset]
+
+	# # time range
+	# if timeRange is None:
+	# 	timeRange = [0, sim.cfg.duration]
+
+
+
+
+	histoData = []
+
+	# Plot separate line for each entry in include
+	for iplot,subset in enumerate(include):
+		from netpyne.analysis.utils import getCellsInclude
+		if isinstance(subset, list):
+			cells, cellGids, netStimLabels = getCellsInclude(subset)
+		else:
+			cells, cellGids, netStimLabels = getCellsInclude([subset])
+		numNetStims = 0
+
+		# Select cells to include
+		if len(cellGids) > 0:
+			try:
+				spkinds,spkts = list(zip(*[(spkgid,spkt) for spkgid,spkt in zip(sim.allSimData['spkid'],sim.allSimData['spkt']) if spkgid in cellGids]))
+			except:
+				spkinds,spkts = [],[]
+		else:
+			spkinds,spkts = [],[]
+
+		# Add NetStim spikes
+		spkts, spkinds = list(spkts), list(spkinds)
+		numNetStims = 0
+		if 'stims' in sim.allSimData:
+			for netStimLabel in netStimLabels:
+				netStimSpks = [spk for cell,stims in sim.allSimData['stims'].items() \
+				for stimLabel,stimSpks in stims.items() for spk in stimSpks if stimLabel == netStimLabel]
+				if len(netStimSpks) > 0:
+					lastInd = max(spkinds) if len(spkinds)>0 else 0
+					spktsNew = netStimSpks
+					spkindsNew = [lastInd+1+i for i in range(len(netStimSpks))]
+					spkts.extend(spktsNew)
+					spkinds.extend(spkindsNew)
+					numNetStims += 1
+
+		histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+		histoT = histo[1][:-1]+binSize/2
+		histoCount = histo[0]
+
+		if measure == 'rate':
+			histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+
+		if filtFreq:
+			from scipy import signal
+			fs = 1000.0/binSize
+			nyquist = fs/2.0
+			if isinstance(filtFreq, list): # bandpass
+				Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+				b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+			elif isinstance(filtFreq, Number): # lowpass
+				Wn = filtFreq/nyquist
+				b, a = signal.butter(filtOrder, Wn)
+			histoCount = signal.filtfilt(b, a, histoCount)
+
+		if norm:
+			histoCount /= max(histoCount)
+
+		if smooth:
+			histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
+
+		histoData.append(histoCount)
+
+	# save figure data
+	figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
+
+	return {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
+#  def getSpikeData outputs spike data dicts for use in plotCombinedSpike
 def getSpikeData(dataFile, pop, graphType, timeRange): 
 	### dataFile: path to .pkl data file to load 
 	### pop: list or str --> which pop to include 
@@ -2372,20 +2410,20 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	if oscEventInfo is not None:
 		# Extract chan, left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
 		chan = oscEventInfo['chan']
-		print('channel: ' + str(chan))
 		left = oscEventInfo['left']
-		print('left: ' + str(left))
 		right = oscEventInfo['right']
-		print('right: ' + str(right))
 		minT = oscEventInfo['minT']
-		print('minT: ' + str(minT))
 		maxT = oscEventInfo['maxT']
-		print('maxT: ' + str(maxT))
 		alignoffset = oscEventInfo['alignoffset']
-		print('alignoffset: ' + str(alignoffset))
 		w2 = oscEventInfo['w2']
+		# Print out the values for view in terminal 
+		print('channel: ' + str(chan))
+		print('left: ' + str(left))
+		print('right: ' + str(right))
+		print('minT: ' + str(minT))
+		print('maxT: ' + str(maxT))
+		print('alignoffset: ' + str(alignoffset))
 		print('w2: ' + str(w2))
-
 		# Calculate idx0 and idx1 for before, and beforeT
 		idx0_before = max(0,left - w2)
 		idx1_before = left 
@@ -2396,7 +2434,6 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		idx1_after = min(idx0_after + w2,max(csdData.shape[0],csdData.shape[1]))
 		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
 		outputData.update({'afterT': afterT})
-
 	else:
 		chan=None
 		print('No oscillation event data detected!')
@@ -2452,98 +2489,57 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		spec = []
 		freqList = None
 
-		# ## Determine electrode(s) to loop over: 
-		# if electrode is None: 
-		# 	print('No electrode specified; returning spectrogram data for ALL electrodes')
-		# 	electrode = []
-		# 	electrode.extend(list(range(int(sim.net.recXElectrode.nsites))))
-
-		# print('Channels considered for spectrogram data: ' + str(chan))
-
-
-		# ## Spectrogram Data Calculations 
-		# if len(electrode) > 1:
-		# 	for i, elec in enumerate(electrode):
-		# 		csdDataSpect_allChans = np.transpose(csdData)	#(csdData_allElecs)  # Transposing this data may not be necessary!!! 
-		# 		csdDataSpect = csdDataSpect_allChans[:, chan]
-		# 		fs = int(1000.0 / sim.cfg.recordStep)
-		# 		t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
-		# 		spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-		# elif len(electrode) == 1: 	# use csdData, as determined above the timeSeries and spectrogram 'if' statements (already has correct electrode-specific CSD data!)
-		# 	fs = int(1000.0 / sim.cfg.recordStep)
-		# 	t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
-		# 	spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-
 
 		## Spectrogram Data Calculations ## 
 		fs = int(1000.0 / sim.cfg.recordStep)
 
-		# csdData = csdData_allElecs[elec, :] <-- segmented over timeRange and elec (formerly)
-		##############################
-		#### BEFORE THE OSC EVENT ####
-		csdBefore = csdData[chan,idx0_before:idx1_before]
-		# t_specBefore = np.linspace(0, morlet.index2ms(len(csdBefore), fs), len(csdBefore))
-		spec.append(MorletSpec(csdBefore, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
-		### ^^ DO I need to do specBefore=[] then specBefore.append...?
+
 
 		##############################
 		#### DURING THE OSC EVENT #### 
 		csdDuring = csdData[chan,left:right]
-		# t_specDuring = np.linspace(0, morlet.index2ms(len(csdDuring), fs), len(csdDuring))
-		spec.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
-		### ^^ DO I need to do specDuring=[] then specDuring.append...? 
+		specDuring = []
+		specDuring.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
+		## vmin, vmax 
+		vminDuring = np.array([s.TFR for s in specDuring]).min()
+		vmaxDuring = np.array([s.TFR for s in specDuring]).max()
+		vcDuring = [vminDuring, vmaxDuring]
+		## T 
+		T_during = [minT + alignoffset, maxT + alignoffset]					# tt_during = np.linspace(minT,maxT,len(csdDuring)) + alignoffset
+		## F, S 															# commented out the normspec lines 
+		F_during = specDuring[0].f
+		S_during = specDuring[0].TFR
+		## outputData update 
+		outputData.update({'T_during': T_during, 'F_during': F_during, 'S_during': S_during, 'vcDuring': vcDuring})
+		outputData.update({'specDuring': specDuring})
 
-		#############################
-		#### AFTER THE OSC EVENT #### 
-		csdAfter = csdData[chan,idx0_after:idx1_after]
-		# t_specAfter = np.linspace(0, morlet.index2ms(len(csdAfter), fs), len(csdAfter))
-		spec.append(MorletSpec(csdAfter, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
-		### ^^ DO I need to do specAfter=[] then specAfter.append...? 
 
+		###############################################
+		#### DURING THE OSC EVENT + BEFORE & AFTER ####
+		csdFull = csdData[chan, idx0_before:idx1_after] 
+		specFull = []
+		specFull.append(MorletSpec(csdFull, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) 
+		## vmin, vmax 
+		vminFull = np.array([s.TFR for s in specFull]).min()
+		vmaxFull = np.array([s.TFR for s in specFull]).max()
+		vcFull = [vminFull, vmaxFull]
+		## T 
+		T_full = [(minT - beforeT) + alignoffset, (maxT + afterT) + alignoffset]
+		## F, S
+		F_full = specFull[0].f
+		S_full = specFull[0].TFR
+		## outputData update 
+		outputData.update({'T_full': T_full, 'F_full': F_full, 'S_full': S_full, 'vcFull': vcFull})
+		outputData.update({'specFull': specFull})
 
 
 		## Get frequency list 
 		f = freqList if freqList is not None else np.arange(minFreq, maxFreq+stepFreq, stepFreq)	# np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user # with arange stepFreq can be a non-integer value!! 
+		outputData.update({'freqs': f[f<=maxFreq]})
 
+		# Update outputData with the channel info as well
+		outputData.update({'chan': chan})
 
-		## vmin, vmax --> vc = [vmin, vmax]
-		vmin = np.array([s.TFR for s in spec]).min()
-		vmax = np.array([s.TFR for s in spec]).max()
-		vc = [vmin, vmax]
-
-
-		## T 				# T = timeRange # xl = (minT-beforeT + alignoffset, maxT+afterT + alignoffset)
-		T_before = [(minT-beforeT) + alignoffset, minT + alignoffset]		# tt_before = np.linspace(minT-beforeT,minT,len(csdBefore)) + alignoffset
-		T_during = [minT + alignoffset, maxT + alignoffset]					# tt_during = np.linspace(minT,maxT,len(csdDuring)) + alignoffset
-		T_after = [maxT + alignoffset, (maxT+afterT) + alignoffset]		# tt_after = np.linspace(maxT,maxT+afterT,len(csdAfter)) + alignoffset
-
-
-
-		# ## F, S
-		# for i, elec in enumerate(electrode):   # works for electrode of length 1 or greater! No need for if statement regarding length. 
-		# 	F = spec[i].f
-		# 	# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
-		# 		# spec[i].TFR = spec[i].TFR / vmax
-		# 		# S = spec[i].TFR
-		# 		# vc = [0, 1]
-		# 	S = spec[i].TFR
-
-		## F, S 
-		F = spec[0].f
-		S = spec[0].TFR
-		# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
-				# spec[i].TFR = spec[i].TFR / vmax
-				# S = spec[i].TFR
-				# vc = [0, 1]
-
-
-		# outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
-		outputData.update({'T_before': T_before, 'T_during': T_during, 'T_after': T_after, 'F': F, 'S': S, 'vc': vc})
-		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) 
-			### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
-			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
 
 	return outputData
 def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, alignoffset=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], hasBefore=1, hasAfter=1, savePath=None, saveFig=True):
@@ -2586,13 +2582,33 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	#### SPECTROGRAM CALCULATIONS ####-------------------------------------------------------
 	if 'spectrogram' in plotTypes:
 
-		# These lines will work as long as the getCSDdata function that retrieves the spectDict had only 1 electrode in electrode arg!!
-		S = spectDict['S']
-		F = spectDict['F']
-		T = spectDict['T']				# timeRange
+		if hasBefore and hasAfter:
+			## S, F, T
+			S = spectDict['S_full']
+			F = spectDict['F_full']
+			T = spectDict['T_full']
+			## vmin, vmax 	-- adjust for color contrast purposes, if desired 
+			vc = spectDict['vcFull']
 
-		# vmin and vmax  -- adjust for color contrast purposes, if desired 
-		vc = spectDict['vc']
+
+		else:
+			## S, F, T
+			S = spectDict['S_during']
+			F = spectDict['F_during']
+			T = spectDict['T_during']
+			## vmin, vmax 	-- adjust for color contrast purposes, if desired 
+			vc = spectDict['vcDuring']
+
+
+		# # These lines will work as long as the getCSDdata function that retrieves the spectDict had only 1 electrode in electrode arg!!
+		# S = spectDict['S']
+		# F = spectDict['F']
+		# T = spectDict['T']				# timeRange
+
+		# # vmin and vmax  -- adjust for color contrast purposes, if desired 
+		# vc = spectDict['vc']
+
+
 		orig_vmin = vc[0]
 		orig_vmax = vc[1]
 
@@ -2642,7 +2658,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
-		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(electrode)
+		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
@@ -2672,7 +2688,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 		cax2.axis('off')
 		# Plot CSD before Osc Event
-		if hasBefore: 
+		if hasBefore:  ### NOTE: combined with hasAfter I think
 			ax2.plot(tt_before, csdBefore, color='k', linewidth=1.0)
 		# Plot CSD during Osc Event
 		ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) 		# ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
@@ -2692,13 +2708,13 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
-		figFilename = popToPlot + '_combinedCSD_chan_' + str(electrode) + '.png'
+		figFilename = popToPlot + '_combinedCSD_chan_' + str(timeSeriesDict['chan']) + '.png'
+
 
 	elif 'spectrogram' in plotTypes and 'timeSeries' not in plotTypes:
-
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
-		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(electrode)
+		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
 		# plot and format 
 		ax1 = plt.subplot(1, 1, 1)
 		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
@@ -2717,7 +2733,8 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		# ax1.set_ylim(minFreq, maxFreq) 				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
 
 		# For potential saving 
-		figFilename = popToPlot + '_CSD_spectrogram_chan_' + str(electrode) + '.png'
+		figFilename = popToPlot + '_CSD_spectrogram_chan_' + str(spectDict['chan']) + '.png'
+
 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
 
@@ -2734,7 +2751,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		divider2 = make_axes_locatable(ax2)
 		cax2 = divider2.append_axes('right', size='3%', pad=0.2)
 		cax2.axis('off')
-		# Plot CSD before Osc Event
+		# Plot CSD before Osc Event  
 		if hasBefore: 
 			ax2.plot(tt_before, csdBefore, color='k', linewidth=1.0)
 		# Plot CSD during Osc Event 			# 		ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
@@ -2759,7 +2776,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
-		figFilename = popToPlot + '_CSD_timeSeries_chan_' + str(electrode) + '.png'
+		figFilename = popToPlot + '_CSD_timeSeries_chan_' + str(timeSeriesDict['chan']) + '.png'
  
 	plt.tight_layout()
 
@@ -2905,7 +2922,7 @@ def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transfor
 		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
 		freqs = F = morletSpec.f
 		spec = morletSpec.TFR
-		signal = np.mean(spec, 1)
+		signal = np.mean(spec, 1) # hmm!! 
 		ylabel = 'Power'
 
 	# # FFT transform method
@@ -3159,59 +3176,18 @@ plotCSDCombinedData = 1
 if plotCSDCombinedData:
 	print('Plotting Combined CSD data')
 	electrode=[8]
-	includePops=['ITS4']#, 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+	includePops=['ITS4', 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
 	for pop in includePops:
-		# timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], timeRange=None, electrode=None, pop=pop, maxFreq=40)
-		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], timeRange=timeRange, electrode=electrode, pop=pop, maxFreq=40)
 		thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
 							'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
 							'w2': 3376}
 		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
-
-		# ### time axis testing lines ###
-		# minT = 2785.22321038684
-		# maxT = 3347.9278996316607
-		# alignoffset = -3086.95
-		# left = 55704
-		# right = 66958
-		# w2 = 3376  # w2 = int(w2*0.6)  # 3376 is after this!!  ## This is just for the before / after 
-
-		# # CSD 
-		# CSD = timeSeriesDict['csd']  # NOTE: already segmented by relevant channel (8) 
-
-		# # ## Calculate beforeT
-		# idx0_before = max(0,left - w2)
-		# idx1_before = left 
-		# beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
-		# print('beforeT: ' + str(beforeT))
-		# sig_before = CSD[chan,idx0_before:idx1_before]
-
-		## Calculate tt for during:
-		# chan=8
-		# CSD_orig = timeSeriesDict['csd'] ## already segmented by channel, if specified in the timeSeriesDict getCSDData args!! 
-		# timeRangeX=[0,6] ## RECALL THAT THIS IS IN SECONDS  !! 
-		# dt = 0.05 # (should load this from somewhere, but i know this is dt so keep this for now)
-		# dtX = dt/1000.0 ### HAVE TO CHANGE THIS TO SECONDS 
-		# CSD = CSD_orig[int(timeRangeX[0]/dtX):int(timeRangeX[1]/dtX)] # [:,int(timeRangeX[0]/dtX):int(timeRangeX[1]/dtX)]
-		## ^^ not even necessary!! 
-		# sig_during0 = CSD[chan,left:right] # CSD[chan,left:right] 
-		# sig_during = CSD[left:right]
-		# tt_during = np.linspace(minT,maxT,len(sig_during)) + alignoffset  
-
-		# chan, left, right, minT, maxT, alignoffset
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
 
 
-		# # ## Calculate afterT 
-		# idx0_after = int(right)
-		# idx1_after = min(idx0_after + w2,max(CSD.shape[0],CSD.shape[1]))
-		# afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)
-		# print('afterT: ' + str(afterT))
-		# sig_after = CSD[chan,idx0_after:idx1_after]
-
-
-		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=None, colorDict=colorDict, pop=pop, electrode=electrode, 
-			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries'], 
-			hasBefore=0, hasAfter=1, saveFig=True) # maxFreq=100
+		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
+			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
+			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100
 
 
 ## CSD heatmaps
