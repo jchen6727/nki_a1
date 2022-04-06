@@ -1650,16 +1650,63 @@ def getRateSpectrogramData(include=['allCells', 'eachPop'], timeRange=None, binS
 		"""
 	print('Getting firing rate spectrogram data ...')
 
-	# Replace 'eachPop' with list of pops
+	## Replace 'eachPop' with list of pops
 	if 'eachPop' in include:
 		include.remove('eachPop')
 		for pop in sim.net.allPops: include.append(pop)
 
-	# time range
-	if timeRange is None:
-		timeRange = [0,sim.cfg.duration]
+	## Set up outputData dict
+	outputData = {}
 
-	histData = []
+	## Extract oscillation event info 
+	if oscEventInfo is not None:
+		# Extract left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
+		left = oscEventInfo['left']
+		right = oscEventInfo['right']
+		minT = oscEventInfo['minT']
+		maxT = oscEventInfo['maxT']
+		alignoffset = oscEventInfo['alignoffset']
+		w2 = oscEventInfo['w2']
+		# Print out the values for view in terminal 
+		print('left: ' + str(left))
+		print('right: ' + str(right))
+		print('minT: ' + str(minT))
+		print('maxT: ' + str(maxT))
+		print('alignoffset: ' + str(alignoffset))
+		print('w2: ' + str(w2))
+		# Calculate idx0 and idx1 for before, and beforeT
+		idx0_before = max(0,left - w2)
+		idx1_before = left 
+		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
+		print('beforeT: ' + str(beforeT))
+		# Calculate idx0 and idx1 for after, and afterT
+		idx0_after = int(right)
+		idx1_after = min(idx0_after + w2, 230000)	# max(csdData.shape[0],csdData.shape[1]))  # <-- believe this would be the number of time points (~230000?)
+		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		
+		print('afterT: ' + str(afterT))
+		# Update outputData with any values necessary for the plotting function
+		outputData.update({'alignoffset': alignoffset})
+	else:
+		print('No oscillation event data detected!')
+
+	## Calculate time ranges for data gathering 		-->  ### NOTE: the time ranges WITHOUT ALIGNOFFSET ADDED TO EITHER ELEMENT OF THE LISTS ensures that spike counts remain accurate!! 
+	# during osc event
+	T_during_withoutAlignOffset = [minT, maxT]  # + alignoffset to both elements 
+	T_during = [minT+alignoffset, maxT+alignoffset]  
+
+	# during osc event + before & after 
+	T_full_withoutAlignOffset = [(minT-beforeT), (maxT+afterT)]
+	T_full = [(minT-beforeT) + alignoffset, (maxT+afterT) + alignoffset]
+
+	# print out time ranges to check 
+	print('T_during: ' + str(T_during))
+	print('T_full: ' + str(T_full))
+	# update outputData dict 
+	outputData.update({'T_during': T_during, 'T_full': T_full})
+
+	# histData = []
+	histDataDuring = []		# hist data during the oscillation event
+	histDataFull = []		# hist data during osc event + buffer periods before and after 
 
 	allSignal, allFreqs = [], []
 
@@ -1795,10 +1842,14 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 		include.remove('eachPop')
 		for pop in sim.net.allPops: include.append(pop)
 
+
+	# Set up outputData dict
+	outputData = {}
+
+
 	## Extract oscillation event info 
 	if oscEventInfo is not None:
-		# Extract chan, left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
-		chan = oscEventInfo['chan']
+		# Extract left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
 		left = oscEventInfo['left']
 		right = oscEventInfo['right']
 		minT = oscEventInfo['minT']
@@ -1806,7 +1857,6 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 		alignoffset = oscEventInfo['alignoffset']
 		w2 = oscEventInfo['w2']
 		# Print out the values for view in terminal 
-		print('channel: ' + str(chan))
 		print('left: ' + str(left))
 		print('right: ' + str(right))
 		print('minT: ' + str(minT))
@@ -1817,20 +1867,35 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 		idx0_before = max(0,left - w2)
 		idx1_before = left 
 		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
+		print('beforeT: ' + str(beforeT))
 		# Calculate idx0 and idx1 for after, and afterT
 		idx0_after = int(right)
 		idx1_after = min(idx0_after + w2, 230000)	# max(csdData.shape[0],csdData.shape[1]))  # <-- believe this would be the number of time points (~230000?)
-		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
+		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		
+		print('afterT: ' + str(afterT))
+		# Update outputData with any values necessary for the plotting function
+		outputData.update({'alignoffset': alignoffset})
 	else:
 		print('No oscillation event data detected!')
 
+
 	# Calculate time range to gather data for (during oscillation event only, or during time of oscillation event + buffer before and after)
+	### NOTE: the time ranges WITHOUT ALIGNOFFSET ADDED TO EITHER ELEMENT OF THE LISTS ensures that spike counts remain accurate!! 
+	# before osc event
+	T_before_withoutAlignOffset = [(minT-beforeT), minT] # + alignoffset to both elements 
 	T_before = [(minT-beforeT) + alignoffset, minT + alignoffset]
-	T_during = [minT+alignoffset, maxT+alignoffset]
-	T_after = [maxT + alignoffset, (maxT+afterT) + alignoffset]
+	# during osc event
+	T_during_withoutAlignOffset = [minT, maxT]  # + alignoffset to both elements 
+	T_during = [minT+alignoffset, maxT+alignoffset]  
+	# after osc event 
+	T_after_withoutAlignOffset = [maxT, (maxT+afterT)] # + alignoffset to both elements
+	T_after = [maxT+alignoffset, (maxT+afterT)+alignoffset]
+	# print out time ranges to check 
 	print('T_before: ' + str(T_before))
 	print('T_during: ' + str(T_during))
 	print('T_after: ' + str(T_after))
+	# update outputData dict 
+	outputData.update({'T_before': T_before, 'T_during': T_during, 'T_after': T_after})
 
 	# Histogram data 
 	histoDataBefore = []
@@ -1870,10 +1935,17 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 					spkinds.extend(spkindsNew)
 					numNetStims += 1
 
+		# Generate list of spike times shifted by alignoffset
+		spkts_withoutAlignOffset = spkts.copy()
+		outputData.update({'spkts_withoutAlignOffset': spkts_withoutAlignOffset})	#, 'spkinds': spkinds})
+		spkts_offset = [spkt+alignoffset for spkt in spkts_withoutAlignOffset]
+		outputData.update({'spkts_offset': spkts_offset})
+
+
 		# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-		histoBefore = np.histogram(spkts, bins = np.arange(T_before[0], T_before[1], binSize))
-		histoDuring = np.histogram(spkts, bins = np.arange(T_during[0], T_during[1], binSize))
-		histoAfter = np.histogram(spkts, bins = np.arange(T_after[0], T_after[1], binSize))
+		histoBefore = np.histogram(spkts_offset, bins = np.arange(T_before[0], T_before[1], binSize))	# first arg used to be spkts
+		histoDuring = np.histogram(spkts_offset, bins = np.arange(T_during[0], T_during[1], binSize))	# first arg used to be spkts
+		histoAfter = np.histogram(spkts_offset, bins = np.arange(T_after[0], T_after[1], binSize))		# first arg used to be spkts
 		# histoT = histo[1][:-1]+binSize/2
 		histoTBefore = histoBefore[1][:-1]+binSize/2
 		histoTDuring = histoDuring[1][:-1]+binSize/2
@@ -1925,13 +1997,13 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 
 	# save figure data
 	# figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'binSize': binSize}	# 'timeRange': timeRange,  ## RENAME figData --> outputData
-	outputData = {'histoDataBefore': histoDataBefore, 'histoDataDuring': histoDataDuring, 'histoDataAfter': histoDataAfter, 
+	outputData.update({'histoDataBefore': histoDataBefore, 'histoDataDuring': histoDataDuring, 'histoDataAfter': histoDataAfter, 
 				'histoTBefore': histoTBefore, 'histoTDuring': histoTDuring, 'histoTAfter': histoTAfter, 
-				'include': include, 'binSize': binSize}
+				'include': include, 'binSize': binSize})
 
 	return outputData 				# {'histoData': histoData, 'histoT': histoT, 'include': include}	# 'timeRange': timeRange, 
 #  def getSpikeData outputs spike data dicts for use in plotCombinedSpike
-def getSpikeData(dataFile, pop, graphType, oscEventInfo): #, timeRange): 
+def getSpikeData(dataFile, pop, graphType, oscEventInfo): 
 	### dataFile: path to .pkl data file to load 
 	### pop: list or str --> which pop to include 
 	### graphType: str --> either 'hist' or 'spect'
@@ -1954,8 +2026,8 @@ def getSpikeData(dataFile, pop, graphType, oscEventInfo): #, timeRange):
 		spikeDict = getSpikeHistData(include=popList, oscEventInfo=oscEventInfo, binSize=5, graphType='bar', measure='rate') ## sim.analysis.getSpikeHistData
 
 	return spikeDict 
-def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'histogram'], hasBefore=1, hasAfter=1, spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
-	### timeRange: list 				--> e.g. [start, stop]
+def plotCombinedSpike(pop, colorDict, plotTypes=['spectrogram', 'histogram'], hasBefore=1, hasAfter=1, spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
+	# DEPRECATED --> ### timeRange: list 				--> e.g. [start, stop]
 	### pop: str or list of length 1 	--> population to include 
 	### colorDict: dict 				--> dict that corresponds pops to colors 
 	### plotTypes: list 				--> ['spectrogram', 'histogram']
@@ -2016,8 +2088,19 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 
 	#### HISTOGRAM CALCULATIONS ####-------------------------------------------------------
 	if 'histogram' in plotTypes:
-		histoT = histDict['histoT']
-		histoCount = histDict['histoData']
+		# histoT = histDict['histoT']
+		histoTBefore = histDict['histoTBefore']
+		histoTDuring = histDict['histoTDuring']
+		histoTAfter = histDict['histoTAfter']
+
+		# histoCount = histDict['histoData']
+		histoCountBefore = histDict['histoDataBefore']
+		histoCountDuring = histDict['histoDataDuring']
+		histoCountAfter = histDict['histoDataAfter']
+
+		# get alignoffset
+		alignoffset = histDict['alignoffset']
+
 
 	#### PLOTTING ####-------------------------------------------------------
 	if 'spectrogram' in plotTypes and 'histogram' in plotTypes:
@@ -2042,13 +2125,21 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 			ax2.bar(histoTBefore, histoCountBefore[0], width = 5, color='k', fill=False)
 			ax2.bar(histoTDuring, histoCountDuring[0], width = 5, color=colorDict[popToPlot], fill=True)
 			ax2.bar(histoTAfter, histoCountAfter[0], width = 5, color='k', fill=False)
+		else:
+			ax2.bar(histoTDuring, histoCountDuring[0], width = 5, color=colorDict[popToPlot], fill=True)
 		divider2 = make_axes_locatable(ax2)
 		cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
 		cax2.axis('off')
 		ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
 		ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
 		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
-		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		if hasBefore and hasAfter:
+			T_before = histDict['T_before']
+			T_after = histDict['T_after']
+			ax2.set_xlim(left=T_before[0], right=T_after[1]) 		# # ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		else:
+			T_during = histDict['T_during']
+			ax2.set_xlim(left=T_during[0], right=T_during[1])
 
 		# For potential figure saving
 		figFilename = popToPlot + '_combinedSpike.png'
@@ -2075,14 +2166,26 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 	elif 'spectrogram' not in plotTypes and 'histogram' in plotTypes:
 		# Plot Histogram 
 		ax2 = plt.subplot(111)
-		ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+		if hasBefore and hasAfter:
+			ax2.bar(histoTBefore, histoCountBefore[0], width = 5, color='k', fill=False)
+			ax2.bar(histoTDuring, histoCountDuring[0], width = 5, color=colorDict[popToPlot], fill=True)
+			ax2.bar(histoTAfter, histoCountAfter[0], width = 5, color='k', fill=False)
+		else:
+			ax2.bar(histoTDuring, histoCountDuring[0], width = 5, color=colorDict[popToPlot], fill=True)
 		divider2 = make_axes_locatable(ax2)
 		cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
 		cax2.axis('off')
 		ax2.set_title('Spike Rate Histogram for ' + popToPlot, fontsize=titleFontSize)
 		ax2.set_xlabel('Time (ms)', fontsize=labelFontSize)
 		ax2.set_ylabel('Rate (Hz)', fontsize=labelFontSize) # CLARIFY Y AXIS
-		ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
+		if hasBefore and hasAfter:
+			T_before = histDict['T_before']
+			T_after = histDict['T_after']
+			ax2.set_xlim(left=T_before[0], right=T_after[1])
+		else:
+			T_during = histDict['T_during']
+			ax2.set_xlim(left=T_during[0], right=T_during[1])
 
 		# For potential figure saving
 		figFilename = popToPlot + '_spike_histogram.png'
@@ -2097,7 +2200,7 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 			prePath = savePath
 		# fileName = pop + '_combinedSpike.png'
 		pathToFile = prePath + figFilename	# fileName
-		plt.savefig(pathToFile, dpi=300)
+		plt.savefig(pathToFile, dpi=600)
 
 	## Show figure
 	plt.show()
@@ -3264,8 +3367,8 @@ if plotCombinedSpikeData:
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)#timeRange=timeRange)
 
 		## Then call plotting function 
-		# plotCombinedSpike(spectDict=None, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
-		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2.5, maxFreq=None, saveFig=1)
+		plotCombinedSpike(spectDict=None, histDict=histDict, colorDict=colorDict, plotTypes=['histogram'],
+		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2.5, maxFreq=None, saveFig=1) # timeRange=timeRange, 
 
 		## old or something?? 
 		# plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
