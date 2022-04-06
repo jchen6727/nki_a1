@@ -1591,17 +1591,16 @@ def evalPops(dataFrame, electrode, verbose=0):
 		return maxPopsValues
 
 ## Spike Activity: data and plotting ## 
-def getRateSpectrogramData(include=['allCells', 'eachPop'], timeRange=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, transformMethod = 'morlet', norm=False):
+def getRateSpectrogramData(include=['allCells', 'eachPop'], oscEventInfo=None, binSize=5, minFreq=1, maxFreq=100, stepFreq=1, NFFT=256, noverlap=128, smooth=0, transformMethod = 'morlet', norm=False):
 	""" MODIFIED FROM NETPYNE 
 	include : list
 		<Short description of include>
 		**Default:** ``['allCells', 'eachPop']``
 		**Options:** ``<option>`` <description of option>
 
-	timeRange : <``None``?>
-		<Short description of timeRange>
-		**Default:** ``None``
-		**Options:** ``<option>`` <description of option>
+	oscEventInfo : dict 
+		Dict with information about the oscillation event 
+		--> chan, left, right, minT, maxT, alignoffset, w2
 
 	binSize : int
 		<Short description of binSize>
