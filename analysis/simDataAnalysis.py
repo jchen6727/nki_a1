@@ -1817,24 +1817,25 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 		idx0_before = max(0,left - w2)
 		idx1_before = left 
 		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
-		outputData.update({'beforeT': beforeT})
 		# Calculate idx0 and idx1 for after, and afterT
 		idx0_after = int(right)
-		idx1_after = min(idx0_after + w2,max(csdData.shape[0],csdData.shape[1]))
+		idx1_after = min(idx0_after + w2, 230000)	# max(csdData.shape[0],csdData.shape[1]))  # <-- believe this would be the number of time points (~230000?)
 		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
-		outputData.update({'afterT': afterT})
 	else:
 		print('No oscillation event data detected!')
 
 	# Calculate time range to gather data for (during oscillation event only, or during time of oscillation event + buffer before and after)
+	T_before = [(minT-beforeT) + alignoffset, minT + alignoffset]
 	T_during = [minT+alignoffset, maxT+alignoffset]
-	T_full = [(minT-beforeT) + alignoffset, (maxT+afterT) + alignoffset]
-
+	T_after = [maxT + alignoffset, (maxT+afterT) + alignoffset]
+	print('T_before: ' + str(T_before))
+	print('T_during: ' + str(T_during))
+	print('T_after: ' + str(T_after))
 
 	# Histogram data 
-	# histoData = []
+	histoDataBefore = []
 	histoDataDuring = []
-	histoDataFull = []
+	histoDataAfter = []
 
 	# Plot separate line for each entry in include
 	for iplot,subset in enumerate(include):
@@ -1870,20 +1871,24 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 					numNetStims += 1
 
 		# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+		histoBefore = np.histogram(spkts, bins = np.arange(T_before[0], T_before[1], binSize))
 		histoDuring = np.histogram(spkts, bins = np.arange(T_during[0], T_during[1], binSize))
-		histoFull = np.histogram(spkts, bins = np.arange(T_full[0], T_full[1], binSize))
+		histoAfter = np.histogram(spkts, bins = np.arange(T_after[0], T_after[1], binSize))
 		# histoT = histo[1][:-1]+binSize/2
+		histoTBefore = histoBefore[1][:-1]+binSize/2
 		histoTDuring = histoDuring[1][:-1]+binSize/2
-		histoTFull = histoFull[1][:-1]+binSize/2
+		histoTAfter = histoAfter[1][:-1]+binSize/2
 		# histoCount = histo[0]
+		histoCountBefore = histoBefore[0]
 		histoCountDuring = histoDuring[0]
-		histoCountFull = histoFull[0]
+		histoCountAfter = histoAfter[0]
 
 
 		if measure == 'rate':
 			# histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+			histoCountBefore = histoCountBefore * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
 			histoCountDuring = histoCountDuring * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-			histoCountFull = histoCountFull * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+			histoCountAfter = histoCountAfter * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
 
 
 		if filtFreq:
@@ -1897,36 +1902,41 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 				Wn = filtFreq/nyquist
 				b, a = signal.butter(filtOrder, Wn)
 			# histoCount = signal.filtfilt(b, a, histoCount)
+			histoCountBefore = signal.filtfilt(b, a, histoCountBefore)
 			histoCountDuring = signal.filtfilt(b, a, histoCountDuring)
-			histoCountFull = signal.filtfilt(b, a, histoCountFull)
+			histoCountAfter = signal.filtfilt(b, a, histoCountAfter)
 
 		if norm:
 			# histoCount /= max(histoCount)
+			histoCountBefore /= max(histoCountBefore)
 			histoCountDuring /= max(histoCountDuring)
-			histoCountFull /= max(histoCountFull)
+			histoCountAfter /= max(histoCountAfter)
 
 		if smooth:
 			# histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
+			histoCountBefore = _smooth1d(histoCountBefore, smooth)[:len(histoTBefore)]  ## get smooth1d from netpyne.analysis.utils if necessary
 			histoCountDuring = _smooth1d(histoCountDuring, smooth)[:len(histoTDuring)]  ## get smooth1d from netpyne.analysis.utils if necessary
-			histoCountFull = _smooth1d(histoCountFull, smooth)[:len(histoTFull)]  ## get smooth1d from netpyne.analysis.utils if necessary
+			histoCountAfter = _smooth1d(histoCountAfter, smooth)[:len(histoTAfter)]  ## get smooth1d from netpyne.analysis.utils if necessary
 
 		# histoData.append(histoCount)  
+		histoDataBefore.append(histoCountBefore)
 		histoDataDuring.append(histoCountDuring)   ## Do I need to make two separate histoDatas for this? 
-		histoDataFull.append(histoCountFull)
+		histoDataAfter.append(histoCountAfter)
 
 	# save figure data
 	# figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'binSize': binSize}	# 'timeRange': timeRange,  ## RENAME figData --> outputData
-	outputData = {'histoDataDuring': histoDataDuring, 'histoDataFull': histoDataFull, 
-				'histoTDuring': histoTDuring, 'histoTFull': histoTFull, 
+	outputData = {'histoDataBefore': histoDataBefore, 'histoDataDuring': histoDataDuring, 'histoDataAfter': histoDataAfter, 
+				'histoTBefore': histoTBefore, 'histoTDuring': histoTDuring, 'histoTAfter': histoTAfter, 
 				'include': include, 'binSize': binSize}
 
 	return outputData 				# {'histoData': histoData, 'histoT': histoT, 'include': include}	# 'timeRange': timeRange, 
 #  def getSpikeData outputs spike data dicts for use in plotCombinedSpike
-def getSpikeData(dataFile, pop, graphType, timeRange): 
+def getSpikeData(dataFile, pop, graphType, oscEventInfo): #, timeRange): 
 	### dataFile: path to .pkl data file to load 
 	### pop: list or str --> which pop to include 
 	### graphType: str --> either 'hist' or 'spect'
-	### timeRange: list --> e.g. [start, stop]
+	### oscEventInfo: dict 
+				## DEPRECATED --> ### timeRange: list --> e.g. [start, stop]
 
 	# Load data file
 	sim.load(dataFile, instantiate=False)
@@ -1939,16 +1949,18 @@ def getSpikeData(dataFile, pop, graphType, timeRange):
 
 	# Set up which kind of data -- i.e. spectrogram or histogram 
 	if graphType is 'spect':
-		spikeDict = getRateSpectrogramData(include=popList, timeRange=timeRange)   ## sim.analysis.getRateSpectrogramData
+		spikeDict = getRateSpectrogramData(include=popList)	## __> haven't yet taken this out as arg in getRateSpectrogramData!! #, timeRange=timeRange)   ## sim.analysis.getRateSpectrogramData
 	elif graphType is 'hist':
-		spikeDict = getSpikeHistData(include=popList, timeRange=timeRange, binSize=5, graphType='bar', measure='rate') ## sim.analysis.getSpikeHistData
+		spikeDict = getSpikeHistData(include=popList, oscEventInfo=oscEventInfo, binSize=5, graphType='bar', measure='rate') ## sim.analysis.getSpikeHistData
 
 	return spikeDict 
-def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'histogram'], spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
+def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'histogram'], hasBefore=1, hasAfter=1, spectDict=None, histDict=None, figSize=(10,7), colorMap='jet', minFreq=None, maxFreq=None, vmaxContrast=None, savePath=None, saveFig=True):
 	### timeRange: list 				--> e.g. [start, stop]
 	### pop: str or list of length 1 	--> population to include 
 	### colorDict: dict 				--> dict that corresponds pops to colors 
 	### plotTypes: list 				--> ['spectrogram', 'histogram']
+	### hasBefore: bool 				--> plot buffer before the osc event
+	### hasAfter: bool 					--> plot buffer after the osc event
 	### spectDict: dict 				--> can be gotten with getSpikeData(graphType='spect')
 	### histDict: dict  				--> can be gotten with getSpikeData(graphType='hist')
 	### figSize: tuple 					--> DEFAULT: (10,7)
@@ -2026,7 +2038,10 @@ def plotCombinedSpike(timeRange, pop, colorDict, plotTypes=['spectrogram', 'hist
 
 		# Plot Histogram 
 		ax2 = plt.subplot(212)
-		ax2.bar(histoT, histoCount[0], width = 5, color=colorDict[popToPlot], fill=True)
+		if hasBefore and hasAfter:
+			ax2.bar(histoTBefore, histoCountBefore[0], width = 5, color='k', fill=False)
+			ax2.bar(histoTDuring, histoCountDuring[0], width = 5, color=colorDict[popToPlot], fill=True)
+			ax2.bar(histoTAfter, histoCountAfter[0], width = 5, color='k', fill=False)
 		divider2 = make_axes_locatable(ax2)
 		cax2 = divider2.append_axes('right', size='3%', pad = 0.2)
 		cax2.axis('off')
@@ -3093,6 +3108,10 @@ elif gamma:
 	print('Cannot analyze gamma wavelet at this time')
 
 
+### OSC EVENT INFO DICTS !!
+thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
+					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
+					'w2': 3376}
 
 
 #################################################
@@ -3186,15 +3205,12 @@ if lfpPSD:
 #####################
 
 ## Combined Plotting 
-plotCSDCombinedData = 1
+plotCSDCombinedData = 0
 if plotCSDCombinedData:
 	print('Plotting Combined CSD data')
 	electrode=[8]
 	includePops=['ITS4', 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
 	for pop in includePops:
-		thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
-							'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
-							'w2': 3376}
 		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
 		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
 
@@ -3237,20 +3253,21 @@ if csdPSD:
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotCombinedSpikeData = 0	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+plotCombinedSpikeData = 1	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 if plotCombinedSpikeData:
-	includePops=['ITS4', 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
+	includePops=['ITS4']	#, 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
 
 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
-		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
-		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, timeRange=timeRange)
+		# spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, timeRange=timeRange)
+		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)#timeRange=timeRange)
 
 		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
-		pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2.5, maxFreq=None, saveFig=1)
+		# plotCombinedSpike(spectDict=None, histDict=histDict, timeRange=timeRange, colorDict=colorDict,
+		# pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2.5, maxFreq=None, saveFig=1)
 
+		## old or something?? 
 		# plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
 		# 	spectDict=None, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
 		# 	vmaxContrast=None, savePath=None, saveFig=True)
