@@ -2345,29 +2345,6 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		print('No dataFile; will use data from dataFile already loaded elsewhere!')
 
 
-	## Extract oscillation event info 
-	if oscEventInfo is not None:
-		# chan, left, right, minT, maxT, alignoffset
-		# RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
-		chan = oscEventInfo['chan']
-		print('channel: ' + str(chan))
-		left = oscEventInfo['left']
-		print('left: ' + str(left))
-		right = oscEventInfo['right']
-		print('right: ' + str(right))
-		minT = oscEventInfo['minT']
-		print('minT: ' + str(minT))
-		maxT = oscEventInfo['maxT']
-		print('maxT: ' + str(maxT))
-		alignoffset = oscEventInfo['alignoffset']
-		print('alignoffset: ' + str(alignoffset))
-		w2 = oscEventInfo['w2']
-		print('w2: ' + str(w2))
-	else:
-		chan=None
-		print('No oscillation event data detected!')
-
-
 
 	## Determine timestep, sampling rate, and electrode spacing 
 	dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
@@ -2391,6 +2368,40 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	outputData = {'csd': csdData}  # REMEMBER: ALL CHANS, ALL TIMEPOINTS!! 
 
 
+	## Extract oscillation event info 
+	if oscEventInfo is not None:
+		# Extract chan, left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
+		chan = oscEventInfo['chan']
+		print('channel: ' + str(chan))
+		left = oscEventInfo['left']
+		print('left: ' + str(left))
+		right = oscEventInfo['right']
+		print('right: ' + str(right))
+		minT = oscEventInfo['minT']
+		print('minT: ' + str(minT))
+		maxT = oscEventInfo['maxT']
+		print('maxT: ' + str(maxT))
+		alignoffset = oscEventInfo['alignoffset']
+		print('alignoffset: ' + str(alignoffset))
+		w2 = oscEventInfo['w2']
+		print('w2: ' + str(w2))
+
+		# Calculate idx0 and idx1 for before, and beforeT
+		idx0_before = max(0,left - w2)
+		idx1_before = left 
+		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
+		outputData.update({'beforeT': beforeT})
+		# Calculate idx0 and idx1 for after, and afterT
+		idx0_after = int(right)
+		idx1_after = min(idx0_after + w2,max(csdData.shape[0],csdData.shape[1]))
+		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
+		outputData.update({'afterT': afterT})
+
+	else:
+		chan=None
+		print('No oscillation event data detected!')
+
+
 
 	# timeSeries --------------------------------------------
 	if 'timeSeries' in outputType:  ### make case for when it IS None  # and oscEventInfo is not None
@@ -2398,20 +2409,16 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 		##############################
 		#### BEFORE THE OSC EVENT ####
-		idx0_before = max(0,left - w2)
-		idx1_before = left 
 		# (1) Calculate CSD before osc event
 		csdBefore = csdData[chan,idx0_before:idx1_before]
 		# (2) Calculate timepoint data 
-		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
 		tt_before = np.linspace(minT-beforeT,minT,len(csdBefore)) + alignoffset
 		# (3) Input time and CSD data for before osc event into outputData dict 
-		outputData.update({'beforeT': beforeT})
 		outputData.update({'tt_before': tt_before})
 		outputData.update({'csdBefore': csdBefore})
 
 		##############################
-		#### DURING THE OSC EVENT #### 			--> # Need left, right, minT, maxT, alignoffset
+		#### DURING THE OSC EVENT ####
 		# (1) Calculate CSD during osc event
 		csdDuring = csdData[chan,left:right]
 		# (2) Calculate timepoint data 
@@ -2422,15 +2429,11 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 		#############################
 		#### AFTER THE OSC EVENT #### 
-		idx0_after = int(right)
-		idx1_after = min(idx0_after + w2,max(csdData.shape[0],csdData.shape[1]))
 		# (1) Calculate CSD after osc event
 		csdAfter = csdData[chan,idx0_after:idx1_after]
 		# (2) Calculate timepoint data 
-		afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)		#		print('afterT: ' + str(afterT))
 		tt_after = np.linspace(maxT,maxT+afterT,len(csdAfter)) + alignoffset
 		# (3) Input time and CSD data for after osc event into outputData dict 
-		outputData.update({'afterT': afterT})
 		outputData.update({'tt_after': tt_after})
 		outputData.update({'csdAfter': csdAfter})
 
@@ -2440,6 +2443,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		# Get xlim for plotting
 		xl = (minT-beforeT + alignoffset, maxT+afterT + alignoffset)
 		outputData.update({'xl': xl})
+
 
 	# spectrogram -------------------------------------------
 	if 'spectrogram' in outputType:
@@ -2457,62 +2461,86 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		# print('Channels considered for spectrogram data: ' + str(chan))
 
 
+		# ## Spectrogram Data Calculations 
+		# if len(electrode) > 1:
+		# 	for i, elec in enumerate(electrode):
+		# 		csdDataSpect_allChans = np.transpose(csdData)	#(csdData_allElecs)  # Transposing this data may not be necessary!!! 
+		# 		csdDataSpect = csdDataSpect_allChans[:, chan]
+		# 		fs = int(1000.0 / sim.cfg.recordStep)
+		# 		t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
+		# 		spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
 
-		## Spectrogram Data Calculations 
-		if len(electrode) > 1:
-			for i, elec in enumerate(electrode):
-				csdDataSpect_allChans = np.transpose(csdData)	#(csdData_allElecs)  # Transposing this data may not be necessary!!! 
-				csdDataSpect = csdDataSpect_allChans[:, chan]
-				fs = int(1000.0 / sim.cfg.recordStep)
-				t_spec = np.linspace(0, morlet.index2ms(len(csdDataSpect), fs), len(csdDataSpect)) 
-				spec.append(MorletSpec(csdDataSpect, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
-
-		elif len(electrode) == 1: 	# use csdData, as determined above the timeSeries and spectrogram 'if' statements (already has correct electrode-specific CSD data!)
-			fs = int(1000.0 / sim.cfg.recordStep)
-			t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
-			spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
+		# elif len(electrode) == 1: 	# use csdData, as determined above the timeSeries and spectrogram 'if' statements (already has correct electrode-specific CSD data!)
+		# 	fs = int(1000.0 / sim.cfg.recordStep)
+		# 	t_spec = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData)) # Seems this is only used for the fft circumstance...? 
+		# 	spec.append(MorletSpec(csdData, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))
 
 
 
 		## Spectrogram Data Calculations ## 
 		fs = int(1000.0 / sim.cfg.recordStep)
 
+		# csdData = csdData_allElecs[elec, :] <-- segmented over timeRange and elec (formerly)
 		##############################
 		#### BEFORE THE OSC EVENT ####
-		t_specBefore = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData))
+		csdBefore = csdData[chan,idx0_before:idx1_before]
+		# t_specBefore = np.linspace(0, morlet.index2ms(len(csdBefore), fs), len(csdBefore))
+		spec.append(MorletSpec(csdBefore, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
+		### ^^ DO I need to do specBefore=[] then specBefore.append...?
 
 		##############################
 		#### DURING THE OSC EVENT #### 
-		t_specDuring = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData))
+		csdDuring = csdData[chan,left:right]
+		# t_specDuring = np.linspace(0, morlet.index2ms(len(csdDuring), fs), len(csdDuring))
+		spec.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
+		### ^^ DO I need to do specDuring=[] then specDuring.append...? 
 
 		#############################
 		#### AFTER THE OSC EVENT #### 
-		t_specAfter = np.linspace(0, morlet.index2ms(len(csdData), fs), len(csdData))
+		csdAfter = csdData[chan,idx0_after:idx1_after]
+		# t_specAfter = np.linspace(0, morlet.index2ms(len(csdAfter), fs), len(csdAfter))
+		spec.append(MorletSpec(csdAfter, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
+		### ^^ DO I need to do specAfter=[] then specAfter.append...? 
 
 
 
 		## Get frequency list 
-		f = freqList if freqList is not None else np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user
+		f = freqList if freqList is not None else np.arange(minFreq, maxFreq+stepFreq, stepFreq)	# np.array(range(minFreq, maxFreq+1, stepFreq))   # only used as output for user # with arange stepFreq can be a non-integer value!! 
+
 
 		## vmin, vmax --> vc = [vmin, vmax]
 		vmin = np.array([s.TFR for s in spec]).min()
 		vmax = np.array([s.TFR for s in spec]).max()
 		vc = [vmin, vmax]
 
-		## T (timeRange)
-		T = timeRange 
 
-		## F, S
-		for i, elec in enumerate(electrode):   # works for electrode of length 1 or greater! No need for if statement regarding length. 
-			F = spec[i].f
-			# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
+		## T 				# T = timeRange # xl = (minT-beforeT + alignoffset, maxT+afterT + alignoffset)
+		T_before = [(minT-beforeT) + alignoffset, minT + alignoffset]		# tt_before = np.linspace(minT-beforeT,minT,len(csdBefore)) + alignoffset
+		T_during = [minT + alignoffset, maxT + alignoffset]					# tt_during = np.linspace(minT,maxT,len(csdDuring)) + alignoffset
+		T_after = [maxT + alignoffset, (maxT+afterT) + alignoffset]		# tt_after = np.linspace(maxT,maxT+afterT,len(csdAfter)) + alignoffset
+
+
+
+		# ## F, S
+		# for i, elec in enumerate(electrode):   # works for electrode of length 1 or greater! No need for if statement regarding length. 
+		# 	F = spec[i].f
+		# 	# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
+		# 		# spec[i].TFR = spec[i].TFR / vmax
+		# 		# S = spec[i].TFR
+		# 		# vc = [0, 1]
+		# 	S = spec[i].TFR
+
+		## F, S 
+		F = spec[0].f
+		S = spec[0].TFR
+		# if normSpec:  #### THIS IS FALSE BY DEFAULT, SO COMMENTING IT OUT HERE 
 				# spec[i].TFR = spec[i].TFR / vmax
 				# S = spec[i].TFR
 				# vc = [0, 1]
-			S = spec[i].TFR
 
 
-		outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
+		# outputData.update({'T': T, 'F': F, 'S': S, 'vc': vc})  ### All the things necessary for plotting!! 
+		outputData.update({'T_before': T_before, 'T_during': T_during, 'T_after': T_after, 'F': F, 'S': S, 'vc': vc})
 		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]}) 
 			### This is at the end of the plotLFP and getLFPdata functions, but not sure what purpose it will serve; keep this in for now!! 
 			### ^^ ah, well, could derive F and S from spec. not sure I need 't' or 'freqs' though? hmmm. 
@@ -2628,6 +2656,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 		# ax1.set_ylim(minFreq, maxFreq)				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
+
 
 		### PLOT TIMESERIES ###
 		# timeSeries title
