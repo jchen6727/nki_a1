@@ -1741,10 +1741,6 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 		Dict with information about the oscillation event 
 		--> chan, left, right, minT, maxT, alignoffset, w2
 
-	else:
-		chan=None
-		print('No oscillation event data detected!')
-
 	binSize : int
 		Size of bin in ms to use for spike histogram.
 		**Default:** ``5``
@@ -1830,18 +1826,15 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 	else:
 		print('No oscillation event data detected!')
 
-
+	# Calculate time range to gather data for (during oscillation event only, or during time of oscillation event + buffer before and after)
 	T_during = [minT+alignoffset, maxT+alignoffset]
 	T_full = [(minT-beforeT) + alignoffset, (maxT+afterT) + alignoffset]
 
-	# # time range
-	# if timeRange is None:
-	# 	timeRange = [0, sim.cfg.duration]
 
-
-
-
-	histoData = []
+	# Histogram data 
+	# histoData = []
+	histoDataDuring = []
+	histoDataFull = []
 
 	# Plot separate line for each entry in include
 	for iplot,subset in enumerate(include):
@@ -1876,12 +1869,22 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 					spkinds.extend(spkindsNew)
 					numNetStims += 1
 
-		histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-		histoT = histo[1][:-1]+binSize/2
-		histoCount = histo[0]
+		# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+		histoDuring = np.histogram(spkts, bins = np.arange(T_during[0], T_during[1], binSize))
+		histoFull = np.histogram(spkts, bins = np.arange(T_full[0], T_full[1], binSize))
+		# histoT = histo[1][:-1]+binSize/2
+		histoTDuring = histoDuring[1][:-1]+binSize/2
+		histoTFull = histoFull[1][:-1]+binSize/2
+		# histoCount = histo[0]
+		histoCountDuring = histoDuring[0]
+		histoCountFull = histoFull[0]
+
 
 		if measure == 'rate':
-			histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+			# histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+			histoCountDuring = histoCountDuring * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+			histoCountFull = histoCountFull * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+
 
 		if filtFreq:
 			from scipy import signal
@@ -1893,20 +1896,31 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 			elif isinstance(filtFreq, Number): # lowpass
 				Wn = filtFreq/nyquist
 				b, a = signal.butter(filtOrder, Wn)
-			histoCount = signal.filtfilt(b, a, histoCount)
+			# histoCount = signal.filtfilt(b, a, histoCount)
+			histoCountDuring = signal.filtfilt(b, a, histoCountDuring)
+			histoCountFull = signal.filtfilt(b, a, histoCountFull)
 
 		if norm:
-			histoCount /= max(histoCount)
+			# histoCount /= max(histoCount)
+			histoCountDuring /= max(histoCountDuring)
+			histoCountFull /= max(histoCountFull)
 
 		if smooth:
-			histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
+			# histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
+			histoCountDuring = _smooth1d(histoCountDuring, smooth)[:len(histoTDuring)]  ## get smooth1d from netpyne.analysis.utils if necessary
+			histoCountFull = _smooth1d(histoCountFull, smooth)[:len(histoTFull)]  ## get smooth1d from netpyne.analysis.utils if necessary
 
-		histoData.append(histoCount)
+		# histoData.append(histoCount)  
+		histoDataDuring.append(histoCountDuring)   ## Do I need to make two separate histoDatas for this? 
+		histoDataFull.append(histoCountFull)
 
 	# save figure data
-	figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
+	# figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'binSize': binSize}	# 'timeRange': timeRange,  ## RENAME figData --> outputData
+	outputData = {'histoDataDuring': histoDataDuring, 'histoDataFull': histoDataFull, 
+				'histoTDuring': histoTDuring, 'histoTFull': histoTFull, 
+				'include': include, 'binSize': binSize}
 
-	return {'include': include, 'histoData': histoData, 'histoT': histoT, 'timeRange': timeRange}
+	return outputData 				# {'histoData': histoData, 'histoT': histoT, 'include': include}	# 'timeRange': timeRange, 
 #  def getSpikeData outputs spike data dicts for use in plotCombinedSpike
 def getSpikeData(dataFile, pop, graphType, timeRange): 
 	### dataFile: path to .pkl data file to load 
