@@ -3105,58 +3105,66 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 		return dfPeak, dfAvg
 
 ## PSD: data and plotting ## 
-def getPSDdata(dataFile, inputData, minFreq=1, maxFreq=100, stepFreq=1, transformMethod='morlet'):
+def getPSDdata(dataFile, inputData, inputDataType='spectrogram', minFreq=1, maxFreq=100, stepFreq=1):
 	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
-	### dataFile --> .pkl file with simulation recording 
-	### inputData --> data to be analyzed 
+	### dataFile:str 				--> .pkl file with simulation recording 
+	### inputData 					--> data to be analyzed 
+	### inputDataType: str			--> 'spectrogram' or 'timeSeries'
 	### minFreq
 	### maxFreq
 	### stepFreq
-	### transformMethod --> str; options are 'morlet' or 'fft'
+				## TAKING THIS OUT --> ### transformMethod --> str; options are 'morlet' or 'fft'
 
 
 	# load simulation .pkl file 
 	sim.load(dataFile, instantiate=False)  ## Loading this just to get the sim.cfg.recordStep !! 
 
+
+
+	#########################################
+	#### Morlet wavelet transform method ####
+	#########################################
+
 	allFreqs = []
 	allSignal = []
 
+	Fs = int(1000.0/sim.cfg.recordStep)
 
-	# Morlet wavelet transform method
-	if transformMethod == 'morlet':
-
-		Fs = int(1000.0/sim.cfg.recordStep)
-
-		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+	## Calculations for raw LFP or CSD timeSeries
+	if inputDataType is 'timeSeries':
+		freqList = np.arange(minFreq, maxFreq+stepFreq, stepFreq)
+		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)
 		freqs = F = morletSpec.f
 		spec = morletSpec.TFR
-		signal = np.mean(spec, 1) # hmm!! 
-		ylabel = 'Power'
+		signal = np.mean(spec, axis=1)  
 
-	# # FFT transform method
-	# elif transformMethod == 'fft':
-	# 	Fs = int(1000.0/sim.cfg.recordStep)
-	# 	power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
-	# 	if smooth:
-	# 		signal = _smooth1d(10*np.log10(power[0]), smooth)
-	# 	else:
-	# 		signal = 10*np.log10(power[0])
-	# 	freqs = power[1]
-	# 	ylabel = 'Power (dB/Hz)'
+		allFreqs.append(freqs)
+		allSignal.append(signal)
 
 
-	allFreqs.append(freqs)
-	allSignal.append(signal)
+	elif inputDataType is 'spectrogram':
+		## what are the outputs of getCSDdata / LFP for spectrogram?
+		## Focus on csd for now
+		
+
+
+
 
 	### To print out frequency w/ max power: 
-	maxSignalIndex = np.where(signal==np.amax(signal))
+	maxSignalIndex_unformatted = np.where(signal==np.amax(signal))
+	x = list(maxSignalIndex_unformatted[0])
+	maxSignalIndex = x[0]
 	maxPowerFrequency = freqs[maxSignalIndex]
+
 	print('max power frequency in signal: ' + str(maxPowerFrequency))
 
 	psdData = {'allFreqs': allFreqs, 'allSignal': allSignal}
 
 	return psdData 
-def plotPSD(psdData, minFreq=0, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
+
+
+
+def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
 	### 	----> NOTE: MAKE OVERLAY OPTION POSSIBLE? 
 	### This function should plot the PSD data 
 	### psdData -->  output of def getPSD()
@@ -3180,7 +3188,8 @@ def plotPSD(psdData, minFreq=0, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	plt.xlim([minFreq, maxFreq])
 	plt.xticks(np.arange(minFreq, maxFreq, step=freqStep))
 	plt.xlabel('Frequency (Hz)', fontsize=fontSize)
-	# plt.ylabel(ylabel, fontsize=fontSize)
+	ylabel = 'Power'
+	plt.ylabel(ylabel, fontsize=fontSize)
 	plt.tight_layout()
 	plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold')
 	plt.show()
@@ -3243,6 +3252,10 @@ colorDict = {}
 for p in range(len(allpops)):
 	colorDict[allpops[p]] = colorList[p]
 
+colorDictCustom = {}
+colorDictCustom['ITP4'] = 'magenta'	# 'tab:purple'
+colorDictCustom['ITS4'] = 'dodgerblue' 	# 'tab:green'
+colorDictCustom['IT5A'] = 'lime'	# 'tab:blue'
 
 
 #############################################
@@ -3394,7 +3407,7 @@ if plotCSDCombinedData:
 		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
 
 
-		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
+		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDictCustom, pop=pop, electrode=electrode, 
 			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
 			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100
 
@@ -3420,19 +3433,21 @@ if plotLFPheatmaps:
 
 
 ## CSD PSD 
-csdPSD = 0
+csdPSD = 1
 if csdPSD:
-	csdDataDict = getCSDdata(dataFile=dataFile, outputType=[], timeRange=timeRange, electrode=[9], pop='NGF3') # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-	csdData = csdDataDict['csd']
-	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, minFreq=1, maxFreq=50, stepFreq=0.5)
-	plotPSD(psdData)
+	includePops=['ITS4', 'ITP4', 'IT5A']
+	for pop in includePops:
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+		csdData = csdDataDict['csdDuring'] # <-- this is the full data over all electrodes and all timepoints, I believe -- only want during osc event yes? 
+		psdData = getPSDdata(dataFile=dataFile, inputData=csdData, minFreq=1, maxFreq=50, stepFreq=0.25)
+		plotPSD(psdData)
 
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotCombinedSpikeData = 1	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+plotCombinedSpikeData = 0	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 if plotCombinedSpikeData:
 	includePops=['ITS4', 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
 	for pop in includePops:
@@ -3443,7 +3458,7 @@ if plotCombinedSpikeData:
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)#timeRange=timeRange)
 
 		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDict, plotTypes=['spectrogram', 'histogram'],
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDictCustom, plotTypes=['spectrogram', 'histogram'],
 		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) # timeRange=timeRange, 
 
 
