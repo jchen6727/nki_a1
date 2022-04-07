@@ -1693,7 +1693,7 @@ def getRateSpectrogramData(include=['allCells', 'eachPop'], oscEventInfo=None, b
 	T_during_withoutAlignOffset = [minT, maxT]  # + alignoffset to both elements 
 	T_during = [minT+alignoffset, maxT+alignoffset]  
 	# during osc event + before & after 
-	T_full_withoutAlignOffset = [(minT-beforeT), (maxT+afterT)]
+	T_full_withoutAlignOffset = [(minT-beforeT), (maxT+afterT)]	 # + alignoffset to both elements 
 	T_full = [(minT-beforeT) + alignoffset, (maxT+afterT) + alignoffset]
 	# print out time ranges to check 
 	print('T_during: ' + str(T_during))
@@ -1743,54 +1743,69 @@ def getRateSpectrogramData(include=['allCells', 'eachPop'], oscEventInfo=None, b
 					spkinds.extend(spkindsNew)
 					numNetStims += 1
 
-		# Generate list of spike times shifted by alignoffset
-		spkts_withoutAlignOffset = spkts.copy()
-		outputData.update({'spkts_withoutAlignOffset': spkts_withoutAlignOffset})	#, 'spkinds': spkinds})
-		spkts_offset = [spkt+alignoffset for spkt in spkts_withoutAlignOffset]
-		outputData.update({'spkts_offset': spkts_offset})
+	# Generate list of spike times shifted by alignoffset
+	spkts_withoutAlignOffset = spkts.copy()
+	outputData.update({'spkts_withoutAlignOffset': spkts_withoutAlignOffset})	#, 'spkinds': spkinds})
+	spkts_offset = [spkt+alignoffset for spkt in spkts_withoutAlignOffset]
+	outputData.update({'spkts_offset': spkts_offset})
 
 
-		# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-		histoDuring = np.histogram(spkts_offset, bins = np.arange(T_during[0], T_during[1], binSize))
-		histoFull = np.histogram(spkts_offset, bins = np.arange(T_full[0], T_full[1], binSize))
-		# histoT = histo[1][:-1]+binSize/2
-		histoTDuring = histoDuring[1][:-1]+binSize/2
-		histoTFull = histoFull[1][:-1]+binSize/2
-		# histoCount = histo[0]
-		histoCountDuring = histoDuring[0]
-		histoCountFull = histoFull[0]
-		# histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to rates
-		histoCountDuring = histoCountDuring * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-		histoCountFull = histoCountFull * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-		# histData.append(histoCount)
-		histDataDuring.append(histoCountDuring)
-		histDataFull.append(histoCountFull)
+	# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+	histoDuring = np.histogram(spkts_offset, bins = np.arange(T_during[0], T_during[1], binSize))
+	histoFull = np.histogram(spkts_offset, bins = np.arange(T_full[0], T_full[1], binSize))
+	# histoT = histo[1][:-1]+binSize/2
+	histoTDuring = histoDuring[1][:-1]+binSize/2
+	histoTFull = histoFull[1][:-1]+binSize/2
+	# histoCount = histo[0]
+	histoCountDuring = histoDuring[0]
+	histoCountFull = histoFull[0]
+	# histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to rates
+	histoCountDuring = histoCountDuring * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+	histoCountFull = histoCountFull * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+	# histData.append(histoCount)
+	histDataDuring.append(histoCountDuring)
+	histDataFull.append(histoCountFull)
 
 
 
-		# Morlet wavelet transform method
-		if transformMethod == 'morlet':
-			from morlet import MorletSpec, index2ms
+	# Morlet wavelet transform method
+	if transformMethod == 'morlet':
+		from morlet import MorletSpec, index2ms
 
-			Fs = 1000.0 / binSize
+		Fs = 1000.0 / binSize
 
-			# morletSpec = MorletSpec(histoCount, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-			morletSpecDuring = MorletSpec(histoCountDuring, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-			morletSpecFull = MorletSpec(histoCountFull, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
-			# freqs = morletSpec.f
-			freqsDuring = morletSpecDuring.f
-			freqsFull = morletSpecFull.f
-			# spec = morletSpec.TFR
-			specDuring = morletSpecDuring.TFR
-			specFull = morletSpecFull.TFR
+		# morletSpec = MorletSpec(histoCount, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+		morletSpecDuring = MorletSpec(histoCountDuring, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+		morletSpecFull = MorletSpec(histoCountFull, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+		# freqs = morletSpec.f
+		freqsDuring = morletSpecDuring.f
+		freqsFull = morletSpecFull.f
+		# spec = morletSpec.TFR
+		specDuring = morletSpecDuring.TFR
+		specFull = morletSpecFull.TFR
 
-			# allSignal.append(spec)
-			allSignalDuring.append(specDuring)
-			allSignalFull.append(specFull)
-			# allFreqs.append(freqs)
-			allFreqsDuring.append(freqsDuring)
-			allFreqsFull.append(freqsFull)
+		# allSignal.append(spec)
+		allSignalDuring.append(specDuring)
+		allSignalFull.append(specFull)
+		# allFreqs.append(freqs)
+		allFreqsDuring.append(freqsDuring)
+		allFreqsFull.append(freqsFull)
 
+
+		## vmin, vmax
+		vminDuring = np.array(specDuring).min()
+		print('vminDuring: ' + str(vminDuring))
+		vmaxDuring = np.array(specDuring).max()
+		print('vmaxDuring: ' + str(vmaxDuring))
+		vcDuring = [vminDuring, vmaxDuring]
+		outputData.update({'vcDuring': vcDuring})
+
+		vminFull = np.array(specFull).min()
+		print('vminFull: ' + str(vminFull))
+		vmaxFull = np.array(specFull).max()
+		print('vmaxFull: ' + str(vmaxFull))
+		vcFull = [vminFull, vmaxFull]
+		outputData.update({'vcFull': vcFull})
 
 	# save figure data
 	# figData = {'histData': histData, 'histT': histoT, 'include': include, 'timeRange': timeRange, 'binSize': binSize}
@@ -1966,65 +1981,65 @@ def getSpikeHistData(include=['eachPop', 'allCells'], oscEventInfo=None, binSize
 					spkinds.extend(spkindsNew)
 					numNetStims += 1
 
-		# Generate list of spike times shifted by alignoffset
-		spkts_withoutAlignOffset = spkts.copy()
-		outputData.update({'spkts_withoutAlignOffset': spkts_withoutAlignOffset})	#, 'spkinds': spkinds})
-		spkts_offset = [spkt+alignoffset for spkt in spkts_withoutAlignOffset]
-		outputData.update({'spkts_offset': spkts_offset})
+	# Generate list of spike times shifted by alignoffset
+	spkts_withoutAlignOffset = spkts.copy()
+	outputData.update({'spkts_withoutAlignOffset': spkts_withoutAlignOffset})	#, 'spkinds': spkinds})
+	spkts_offset = [spkt+alignoffset for spkt in spkts_withoutAlignOffset]
+	outputData.update({'spkts_offset': spkts_offset})
 
 
-		# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
-		histoBefore = np.histogram(spkts_offset, bins = np.arange(T_before[0], T_before[1], binSize))	# first arg used to be spkts
-		histoDuring = np.histogram(spkts_offset, bins = np.arange(T_during[0], T_during[1], binSize))	# first arg used to be spkts
-		histoAfter = np.histogram(spkts_offset, bins = np.arange(T_after[0], T_after[1], binSize))		# first arg used to be spkts
-		# histoT = histo[1][:-1]+binSize/2
-		histoTBefore = histoBefore[1][:-1]+binSize/2
-		histoTDuring = histoDuring[1][:-1]+binSize/2
-		histoTAfter = histoAfter[1][:-1]+binSize/2
-		# histoCount = histo[0]
-		histoCountBefore = histoBefore[0]
-		histoCountDuring = histoDuring[0]
-		histoCountAfter = histoAfter[0]
+	# histo = np.histogram(spkts, bins = np.arange(timeRange[0], timeRange[1], binSize))
+	histoBefore = np.histogram(spkts_offset, bins = np.arange(T_before[0], T_before[1], binSize))	# first arg used to be spkts
+	histoDuring = np.histogram(spkts_offset, bins = np.arange(T_during[0], T_during[1], binSize))	# first arg used to be spkts
+	histoAfter = np.histogram(spkts_offset, bins = np.arange(T_after[0], T_after[1], binSize))		# first arg used to be spkts
+	# histoT = histo[1][:-1]+binSize/2
+	histoTBefore = histoBefore[1][:-1]+binSize/2
+	histoTDuring = histoDuring[1][:-1]+binSize/2
+	histoTAfter = histoAfter[1][:-1]+binSize/2
+	# histoCount = histo[0]
+	histoCountBefore = histoBefore[0]
+	histoCountDuring = histoDuring[0]
+	histoCountAfter = histoAfter[0]
 
 
-		if measure == 'rate':
-			# histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-			histoCountBefore = histoCountBefore * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-			histoCountDuring = histoCountDuring * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
-			histoCountAfter = histoCountAfter * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+	if measure == 'rate':
+		# histoCount = histoCount * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+		histoCountBefore = histoCountBefore * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+		histoCountDuring = histoCountDuring * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
+		histoCountAfter = histoCountAfter * (1000.0 / binSize) / (len(cellGids)+numNetStims) # convert to firing rate
 
 
-		if filtFreq:
-			from scipy import signal
-			fs = 1000.0/binSize
-			nyquist = fs/2.0
-			if isinstance(filtFreq, list): # bandpass
-				Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
-				b, a = signal.butter(filtOrder, Wn, btype='bandpass')
-			elif isinstance(filtFreq, Number): # lowpass
-				Wn = filtFreq/nyquist
-				b, a = signal.butter(filtOrder, Wn)
-			# histoCount = signal.filtfilt(b, a, histoCount)
-			histoCountBefore = signal.filtfilt(b, a, histoCountBefore)
-			histoCountDuring = signal.filtfilt(b, a, histoCountDuring)
-			histoCountAfter = signal.filtfilt(b, a, histoCountAfter)
+	if filtFreq:
+		from scipy import signal
+		fs = 1000.0/binSize
+		nyquist = fs/2.0
+		if isinstance(filtFreq, list): # bandpass
+			Wn = [filtFreq[0]/nyquist, filtFreq[1]/nyquist]
+			b, a = signal.butter(filtOrder, Wn, btype='bandpass')
+		elif isinstance(filtFreq, Number): # lowpass
+			Wn = filtFreq/nyquist
+			b, a = signal.butter(filtOrder, Wn)
+		# histoCount = signal.filtfilt(b, a, histoCount)
+		histoCountBefore = signal.filtfilt(b, a, histoCountBefore)
+		histoCountDuring = signal.filtfilt(b, a, histoCountDuring)
+		histoCountAfter = signal.filtfilt(b, a, histoCountAfter)
 
-		if norm:
-			# histoCount /= max(histoCount)
-			histoCountBefore /= max(histoCountBefore)
-			histoCountDuring /= max(histoCountDuring)
-			histoCountAfter /= max(histoCountAfter)
+	if norm:
+		# histoCount /= max(histoCount)
+		histoCountBefore /= max(histoCountBefore)
+		histoCountDuring /= max(histoCountDuring)
+		histoCountAfter /= max(histoCountAfter)
 
-		if smooth:
-			# histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
-			histoCountBefore = _smooth1d(histoCountBefore, smooth)[:len(histoTBefore)]  ## get smooth1d from netpyne.analysis.utils if necessary
-			histoCountDuring = _smooth1d(histoCountDuring, smooth)[:len(histoTDuring)]  ## get smooth1d from netpyne.analysis.utils if necessary
-			histoCountAfter = _smooth1d(histoCountAfter, smooth)[:len(histoTAfter)]  ## get smooth1d from netpyne.analysis.utils if necessary
+	if smooth:
+		# histoCount = _smooth1d(histoCount, smooth)[:len(histoT)]  ## get smooth1d from netpyne.analysis.utils if necessary
+		histoCountBefore = _smooth1d(histoCountBefore, smooth)[:len(histoTBefore)]  ## get smooth1d from netpyne.analysis.utils if necessary
+		histoCountDuring = _smooth1d(histoCountDuring, smooth)[:len(histoTDuring)]  ## get smooth1d from netpyne.analysis.utils if necessary
+		histoCountAfter = _smooth1d(histoCountAfter, smooth)[:len(histoTAfter)]  ## get smooth1d from netpyne.analysis.utils if necessary
 
-		# histoData.append(histoCount)  
-		histoDataBefore.append(histoCountBefore)
-		histoDataDuring.append(histoCountDuring)   ## Do I need to make two separate histoDatas for this? 
-		histoDataAfter.append(histoCountAfter)
+	# histoData.append(histoCount)  
+	histoDataBefore.append(histoCountBefore)
+	histoDataDuring.append(histoCountDuring)
+	histoDataAfter.append(histoCountAfter)
 
 	# save figure data
 	# figData = {'histoData': histoData, 'histoT': histoT, 'include': include, 'binSize': binSize}	# 'timeRange': timeRange,  ## RENAME figData --> outputData
@@ -2090,31 +2105,51 @@ def plotCombinedSpike(pop, colorDict, plotTypes=['spectrogram', 'histogram'], ha
 
 	#### SPECTROGRAM CALCULATIONS ####-------------------------------------------------------
 	if 'spectrogram' in plotTypes:
-		allSignal = spectDict['allSignal']
-		allFreqs = spectDict['allFreqs']
+		# allSignal = spectDict['allSignal']
+		# allFreqs = spectDict['allFreqs']
 
+		if hasBefore and hasAfter:
+			allSignal = spectDict['allSignalFull'] ### --> [0] ?? --> okay yeah that happens later! 
+			allFreqs = spectDict['allFreqsFull']
+			timeRange = spectDict['T_full']
+			print('timeRange: ' + str(timeRange))
+			vc = spectDict['vcFull']
+		else:
+			allSignal = spectDict['allSignalDuring']
+			allFreqs = spectDict['allFreqsDuring']
+			timeRange = spectDict['T_during']
+			print('timeRange: ' + str(timeRange))
+			vc = spectDict['vcDuring']
+
+
+
+		# Set color contrast parameters (vmin / vmax)
+		orig_vmin = vc[0]
+		orig_vmax = vc[1]
+
+		if vmaxContrast is None:
+			vmin = orig_vmin 	# np.amin(imshowSignal)		# None
+			vmax = orig_vmax	# np.amax(imshowSignal)		# None
+		else:
+			vmin = orig_vmin 	# np.amin(imshowSignal)
+			vmax = orig_vmax / vmaxContrast # np.amax(imshowSignal) / vmaxContrast
+			vc = [vmin, vmax]
+		# ## TRIAL VMIN VMAX LINES
+		# vmin = 1.0e-07
+		# vmax = 0.2
+		# vc = [vmin, vmax]
 
 		# Set frequencies to be plotted (minFreq / maxFreq)
 		if minFreq is None:
 			minFreq = np.amin(allFreqs[0])			# DEFAULT: 1
 		if maxFreq is None:
 			maxFreq = np.amax(allFreqs[0])			# DEFAULT: 100
-		# elif maxFreq is not None:					# maxFreq must be an integer!! 
-		# 	if type(maxFreq) is not int:
-		# 		maxFreq = round(maxFreq)
-
+		elif maxFreq is not None:					# maxFreq must be an integer!! 
+			if type(maxFreq) is not int:
+				maxFreq = round(maxFreq)
 
 		# Set up imshowSignal
 		imshowSignal = allSignal[0][minFreq:maxFreq+1]  ## Can't tell if the +1 is necessary or not here - leave it in for now!! 
-
-
-		# Set color contrast parameters (vmin / vmax)
-		if vmaxContrast is None:
-			vmin = np.amin(imshowSignal)		# None
-			vmax = np.amax(imshowSignal)		# None
-		else:
-			vmin = np.amin(imshowSignal)
-			vmax = np.amax(imshowSignal) / vmaxContrast
 
 
 	#### HISTOGRAM CALCULATIONS ####-------------------------------------------------------
@@ -2133,13 +2168,20 @@ def plotCombinedSpike(pop, colorDict, plotTypes=['spectrogram', 'histogram'], ha
 		alignoffset = histDict['alignoffset']
 
 
-	#### PLOTTING ####-------------------------------------------------------
-	if 'spectrogram' in plotTypes and 'histogram' in plotTypes:
 
+	#### PLOTTING ####-------------------------------------------------------
+	# For filename naming, if/when saving figure --> 
+	if hasBefore and hasAfter:
+		figSaveStr='_full_'
+	else:
+		figSaveStr='_duringOsc_'
+
+	# Plot both spectrogram and histogram -----------------------------------
+	if 'spectrogram' in plotTypes and 'histogram' in plotTypes:
 		# Plot Spectrogram 
 		ax1 = plt.subplot(211)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), minFreq, maxFreq), origin='lower', 
-				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax)
+				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vc[0], vmax=vc[1])	# vmin=vmin, vmax=vmax)
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
@@ -2172,15 +2214,16 @@ def plotCombinedSpike(pop, colorDict, plotTypes=['spectrogram', 'histogram'], ha
 			T_during = histDict['T_during']
 			ax2.set_xlim(left=T_during[0], right=T_during[1])
 
-		# For potential figure saving
-		figFilename = popToPlot + '_combinedSpike.png'
+		# For figure saving
+		figFilename = popToPlot + figSaveStr + '_combinedSpike.png'
 
 
+	# Plot only spectrogram -----------------------------------------
 	elif 'spectrogram' in plotTypes and 'histogram' not in plotTypes:
 		# Plot Spectrogram 
 		ax1 = plt.subplot(111)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(timeRange), np.amax(timeRange), minFreq, maxFreq), origin='lower', 
-				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vmin, vmax=vmax) ## CHANGE maxFreq // np.amax(allFreqs[0])
+				interpolation='None', aspect='auto', cmap=plt.get_cmap(colorMap), vmin=vc[0], vmax=vc[0]) # vmin=vmin, vmax=vmax) ## CHANGE maxFreq // np.amax(allFreqs[0])
 		divider1 = make_axes_locatable(ax1)
 		cax1 = divider1.append_axes('right', size='3%', pad = 0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar to be in scientific notation
@@ -2191,9 +2234,11 @@ def plotCombinedSpike(pop, colorDict, plotTypes=['spectrogram', 'histogram'], ha
 		ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 		# ax1.set_ylim(minFreq, maxFreq)
 
-		# For potential figure saving
-		figFilename = popToPlot + '_spike_spectrogram.png'
+		# For figure saving
+		figFilename = popToPlot + figSaveStr + '_spike_spectrogram.png'
 
+
+	# Plot only histogram -------------------------------------------
 	elif 'spectrogram' not in plotTypes and 'histogram' in plotTypes:
 		# Plot Histogram 
 		ax2 = plt.subplot(111)
@@ -2219,7 +2264,7 @@ def plotCombinedSpike(pop, colorDict, plotTypes=['spectrogram', 'histogram'], ha
 			ax2.set_xlim(left=T_during[0], right=T_during[1])
 
 		# For potential figure saving
-		figFilename = popToPlot + '_spike_histogram.png'
+		figFilename = popToPlot + figSaveStr + '_spike_histogram.png'
 
 	plt.tight_layout()
 
@@ -3389,7 +3434,7 @@ if csdPSD:
 
 plotCombinedSpikeData = 1	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
 if plotCombinedSpikeData:
-	includePops=['ITS4']	#, 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
+	includePops=['ITS4', 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
 
@@ -3398,13 +3443,9 @@ if plotCombinedSpikeData:
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)#timeRange=timeRange)
 
 		## Then call plotting function 
-		# plotCombinedSpike(spectDict=None, histDict=histDict, colorDict=colorDict, plotTypes=['histogram'],
-		# hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2.5, maxFreq=None, saveFig=1) # timeRange=timeRange, 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDict, plotTypes=['spectrogram', 'histogram'],
+		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) # timeRange=timeRange, 
 
-		## old or something?? 
-		# plotCombinedSpike(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['histogram'], 
-		# 	spectDict=None, histDict=histDict, figSize=(10,7), colorMap='jet', minFreq=10, maxFreq=65, 
-		# 	vmaxContrast=None, savePath=None, saveFig=True)
 
 
  # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
