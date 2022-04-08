@@ -26,12 +26,8 @@ import morlet
 from morlet import MorletSpec, index2ms
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 ## trying peakF calculations from load.py
-# from os import path
-# import sys
-# sys.path.append(path.abspath('/Users/ericagriffith/Desktop/NEUROSIM/a1dat'))
-from .. import a1dat 
-# from ...a1dat.load import getIEIstatsbyBand
-
+# import loadSelect
+from loadSelect import * 
 
 ######################################################################
 ##### These functions are currently NOT BEING USED !!! #####
@@ -3230,7 +3226,10 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	plt.suptitle('Power Spectral Density', fontsize=fontSize, fontweight='bold')
 	plt.show()
 
-
+## peakF calculations ## 
+def getPeakF():
+	print('Getting peakF using OEvent methods')
+	
 
 ##########################
 #### USEFUL VARIABLES ####
@@ -3490,7 +3489,7 @@ if csdPSD:
 ## CSD PSD FOR MULTIPLE POPS (SUMMED CSD)
 csdPSD_multiple = 1
 if csdPSD_multiple:
-	includePops=thalPops # ECortPops #['ITS4', 'ITP4', 'IT5A']
+	includePops=['ITS4']#, 'ITP4', 'IT5A'] # ECortPops 
 	csdPopData = {}
 	for pop in includePops:
 		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
@@ -3537,14 +3536,6 @@ if PSDbyPop:
 
 	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
 
-# {'IT2': 6.75, 'ITP4': 6.75, 'ITS4': 6.75, 'IT5B': 6.75, 
-# 'IT5A': 7.0, 'CT5A': 7.0, 'PT5B': 7.0, 'CT5B': 7.0, 'IT6': 7.0, 
-# 'CT6': 7.25, 'IT3': 12.0, 'PV5B': 15.0, 'VIP5A': 22.75, 'SOM3': 34.5, 
-# 'SOM4': 41.5, 'VIP5B': 41.75, 'NGF3': 71.0, 'PV3': 76.75, 'NGF5A': 78.25, 
-# 'NGF5B': 83.5, 'SOM6': 85.5, 'NGF6': 85.75, 'NGF1': 87.25, 'NGF4': 89.75, 
-# 'NGF2': 90.25, 'VIP3': 99.75, 'PV2': 100.0, 'SOM2': 100.0, 'VIP2': 100.0, 
-# 'PV4': 100.0, 'VIP4': 100.0, 'PV5A': 100.0, 'SOM5A': 100.0, 'SOM5B': 100.0, 
-# 'PV6': 100.0, 'VIP6': 100.0}
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######

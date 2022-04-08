@@ -1,6 +1,10 @@
 
 ### Oscillation Event peakF calculations!! 
 
+# IMPORTS # 
+from evstats import *
+
+
 
 noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
 
@@ -115,7 +119,7 @@ def mednorm (dat,byRow=True):
 ######################################################################################################
 ######################################################################################################
 
-## getCV2, getLV, getFF? 
+## getCV2, getLV, getFF?  -> not causing any problems for now. AH -- these come from evstats.py in a1dat
 
 #
 def getIEIstatsbyBand (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth=0.5,getphase=True,savespec=False,useDynThresh=False,threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,normop=mednorm):
