@@ -25,7 +25,12 @@ import pickle
 import morlet
 from morlet import MorletSpec, index2ms
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-
+## trying peakF calculations from load.py
+# from os import path
+# import sys
+# sys.path.append(path.abspath('/Users/ericagriffith/Desktop/NEUROSIM/a1dat'))
+from .. import a1dat 
+# from ...a1dat.load import getIEIstatsbyBand
 
 
 ######################################################################
@@ -2682,6 +2687,19 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		outputData.update({'tt_after': tt_after})
 		outputData.update({'csdAfter': csdAfter})
 
+
+		#################################################
+		#### BEFORE, DURING, AND AFTER THE OSC EVENT #### 
+		# (1) Calculate CSD after osc event
+		csdFull = csdData[chan,idx0_before:idx1_after]
+		# (2) Calculate timepoint data 
+		tt_full = np.linspace(minT-beforeT,maxT+afterT,len(csdFull)) + alignoffset
+		# (3) Input time and CSD data for after osc event into outputData dict 
+		outputData.update({'tt_full': tt_full})
+		outputData.update({'csdFull': csdFull})
+
+
+
 		# Update outputData with the channel info as well
 		outputData.update({'chan': chan})
 
@@ -3105,21 +3123,27 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 		return dfPeak, dfAvg
 
 ## PSD: data and plotting ## 
-def getPSDdata(dataFile, inputData, inputDataType='spectrogram', minFreq=1, maxFreq=100, stepFreq=1):
+def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=100, stepFreq=1):
 	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
 	### dataFile:str 				--> .pkl file with simulation recording 
 	### inputData 					--> data to be analyzed 
 	### inputDataType: str			--> 'spectrogram' or 'timeSeries'
+	### duringOsc: bool 			--> evaluating during an oscillation event or no? 
 	### minFreq
 	### maxFreq
 	### stepFreq
-				## TAKING THIS OUT --> ### transformMethod --> str; options are 'morlet' or 'fft'
 
+	## TO DO: 
+		## Go thru the comments for smaller to-do tasks
+		## Make this generalizable for CSD and LFP -- figure out more efficient way to do this
+		## Be able to extract minFreq and maxFreq and stepFreq from extant spectrogram data input 
 
 	# load simulation .pkl file 
 	sim.load(dataFile, instantiate=False)  ## Loading this just to get the sim.cfg.recordStep !! 
 
 
+	# Set up output data dictionary
+	psdData = {}
 
 	#########################################
 	#### Morlet wavelet transform method ####
@@ -3133,37 +3157,45 @@ def getPSDdata(dataFile, inputData, inputDataType='spectrogram', minFreq=1, maxF
 	## Calculations for raw LFP or CSD timeSeries
 	if inputDataType is 'timeSeries':
 		freqList = np.arange(minFreq, maxFreq+stepFreq, stepFreq)
-		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)
-		freqs = F = morletSpec.f
-		spec = morletSpec.TFR
+		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList) # specDuring[0]
+		freqs = F = morletSpec.f 		# F_during = specDuring[0].f
+		spec = morletSpec.TFR 			# S_during = specDuring[0].TFR
 		signal = np.mean(spec, axis=1)  
 
-		allFreqs.append(freqs)
-		allSignal.append(signal)
+		# allFreqs.append(freqs)
+		# allSignal.append(signal)
 
 
+	## Calculations for spectrogram input 
 	elif inputDataType is 'spectrogram':
-		## what are the outputs of getCSDdata / LFP for spectrogram?
-		## Focus on csd for now
-		
+		## This assumes a dict w/ an output structure that matches getCSDdata output when outputType is spectrogram
+		if duringOsc:
+			freqs = inputData['F_during']
+			spec = inputData['S_during']
+			signal = np.mean(spec, axis=1)
+		elif not duringOsc:
+			freqs = inputData['F_full']
+			spec = inputData['S_full']
+			signal = np.mean(spec, axis=1)
 
 
+	allFreqs.append(freqs)
+	allSignal.append(signal)
+
+	# put allFreqs and allSignal into output data dictionary 
+	psdData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
 
 
-	### To print out frequency w/ max power: 
+	### To print out frequency w/ max power:  ## TO DO: BETTER NAMING 
 	maxSignalIndex_unformatted = np.where(signal==np.amax(signal))
 	x = list(maxSignalIndex_unformatted[0])
 	maxSignalIndex = x[0]
 	maxPowerFrequency = freqs[maxSignalIndex]
+	psdData.update({'maxSignalIndex': maxSignalIndex, 'maxPowerFrequency': maxPowerFrequency})
 
 	print('max power frequency in signal: ' + str(maxPowerFrequency))
 
-	psdData = {'allFreqs': allFreqs, 'allSignal': allSignal}
-
 	return psdData 
-
-
-
 def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
 	### 	----> NOTE: MAKE OVERLAY OPTION POSSIBLE? 
 	### This function should plot the PSD data 
@@ -3181,8 +3213,12 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	freqs = freqsList[0]
 
 
-	plt.figure(figsize=figSize)
-	plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color)
+	freqsToPlot = [freq for freq in freqs if freq >= minFreq and freq <= maxFreq]
+	signalToPlot = signal[freqs.index(freqsToPlot[0]):freqs.index(freqsToPlot[-1])+1]		# signalToPlot = signal[freqs.index(minFreq):freqs.index(maxFreq)+1]
+	if len(freqsToPlot) == len(signalToPlot):
+		plt.figure(figsize=figSize)
+		plt.plot(freqsToPlot, signalToPlot, linewidth=lineWidth, color=color)				# plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color)
+
 
 	# format plot
 	plt.xlim([minFreq, maxFreq])
@@ -3191,7 +3227,7 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	ylabel = 'Power'
 	plt.ylabel(ylabel, fontsize=fontSize)
 	plt.tight_layout()
-	plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold')
+	plt.suptitle('Power Spectral Density', fontsize=fontSize, fontweight='bold')
 	plt.show()
 
 
@@ -3222,6 +3258,9 @@ ICortPops = ['NGF1',
 			'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
 			'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
 			'PV6', 'SOM6', 'VIP6', 'NGF6']
+AllCortPops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 EThalPops = ['TC', 'TCM', 'HTC']				# TEpops = ['TC', 'TCM', 'HTC']
 IThalPops = ['IRE', 'IREM', 'TI', 'TIM']		# TIpops = ['IRE', 'IREM', 'TI', 'TIM']
 reticPops = ['IRE', 'IREM']
@@ -3433,15 +3472,79 @@ if plotLFPheatmaps:
 
 
 ## CSD PSD 
-csdPSD = 1
+csdPSD = 0
 if csdPSD:
-	includePops=['ITS4', 'ITP4', 'IT5A']
+	includePops=['ITS4']#, 'ITP4', 'IT5A']
 	for pop in includePops:
 		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-		csdData = csdDataDict['csdDuring'] # <-- this is the full data over all electrodes and all timepoints, I believe -- only want during osc event yes? 
-		psdData = getPSDdata(dataFile=dataFile, inputData=csdData, minFreq=1, maxFreq=50, stepFreq=0.25)
-		plotPSD(psdData)
+		csdData = csdDataDict['csdDuring'] 
+		# psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
+		# plotPSD(psdData)
+		### Got a list vs array error 
+		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
+		# psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
+		# plotPSD(psdDataSpect)
 
+
+
+## CSD PSD FOR MULTIPLE POPS (SUMMED CSD)
+csdPSD_multiple = 1
+if csdPSD_multiple:
+	includePops=thalPops # ECortPops #['ITS4', 'ITP4', 'IT5A']
+	csdPopData = {}
+	for pop in includePops:
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+		csdData = csdDataDict['csdDuring'] 
+		csdPopData[pop] = csdData
+
+	csdSummedData =  np.zeros(shape=csdPopData[includePops[0]].shape)
+	for pop in includePops:
+		csdSummedData += csdPopData[pop]
+
+	psdSummedData = getPSDdata(dataFile=dataFile, inputData=csdSummedData, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+	plotPSD(psdSummedData)
+
+
+## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT CHANNEL OR NO?)
+csdPSD_wholeCSD = 0
+chan = 8
+if csdPSD_wholeCSD:
+	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=None) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+	csdData = csdDataDict['csdDuring'] 
+
+	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+	plotPSD(psdData)
+
+
+
+## LOOK AT MAX POWER FOR EACH POP -- TO DO: MAKE THIS INTO A FUNCTION !!!! 
+PSDbyPop = 0
+if PSDbyPop:
+	## Get all cell pops (cortical)
+	# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	# allPops = list(sim.net.allPops.keys())
+	# includePops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+	includePops = thalPops 	#AllCortPops
+	maxPowerByPop = {}
+
+	for pop in includePops:
+		# Get the max power frequency for each pop and put it in a dict
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+		csdDataPop = csdDataDict['csdDuring']
+
+		psdDataPop = getPSDdata(dataFile=dataFile, inputData=csdDataPop, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+		maxPowerByPop[pop] = psdDataPop['maxPowerFrequency']
+
+	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
+
+# {'IT2': 6.75, 'ITP4': 6.75, 'ITS4': 6.75, 'IT5B': 6.75, 
+# 'IT5A': 7.0, 'CT5A': 7.0, 'PT5B': 7.0, 'CT5B': 7.0, 'IT6': 7.0, 
+# 'CT6': 7.25, 'IT3': 12.0, 'PV5B': 15.0, 'VIP5A': 22.75, 'SOM3': 34.5, 
+# 'SOM4': 41.5, 'VIP5B': 41.75, 'NGF3': 71.0, 'PV3': 76.75, 'NGF5A': 78.25, 
+# 'NGF5B': 83.5, 'SOM6': 85.5, 'NGF6': 85.75, 'NGF1': 87.25, 'NGF4': 89.75, 
+# 'NGF2': 90.25, 'VIP3': 99.75, 'PV2': 100.0, 'SOM2': 100.0, 'VIP2': 100.0, 
+# 'PV4': 100.0, 'VIP4': 100.0, 'PV5A': 100.0, 'SOM5A': 100.0, 'SOM5B': 100.0, 
+# 'PV6': 100.0, 'VIP6': 100.0}
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
