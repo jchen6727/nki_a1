@@ -27,7 +27,8 @@ from morlet import MorletSpec, index2ms
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 ## trying peakF calculations from load.py
 # import loadSelect
-from loadSelect import * 
+# from loadSelect import * 
+from loadSelect2 import *
 
 ######################################################################
 ##### These functions are currently NOT BEING USED !!! #####
@@ -3227,9 +3228,126 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	plt.show()
 
 ## peakF calculations ## 
-def getPeakF():
+def detectpeaks (image):
+	"""
+	Takes an image and detect the peaks usingthe local maximum filter.
+	Returns a boolean mask of the peaks (i.e. 1 when
+	the pixel's value is the neighborhood maximum, 0 otherwise)
+	"""
+	# from https://stackoverflow.com/questions/3684484/peak-detection-in-a-2d-array
+	# define an 8-connected neighborhood
+	neighborhood = generate_binary_structure(2,2)
+	#apply the local maximum filter; all pixel of maximal value 
+	#in their neighborhood are set to 1
+	local_max = maximum_filter(image, footprint=neighborhood)==image
+	#local_max is a mask that contains the peaks we are 
+	#looking for, but also the background.
+	#In order to isolate the peaks we must remove the background from the mask.
+	#we create the mask of the background
+	background = (image==0)
+	#a little technicality: we must erode the background in order to 
+	#successfully subtract it form local_max, otherwise a line will 
+	#appear along the background border (artifact of the local maximum filter)
+	eroded_background = binary_erosion(background, structure=neighborhood, border_value=1)
+	#we obtain the final mask, containing only peaks, 
+	#by removing the background from the local_max mask (xor operation)
+	detected_peaks = local_max ^ eroded_background
+	return detected_peaks
+def getPeakF(dataFile, inputData, timeData=None, freqmin=0.25, freqmax=110, freqStep=0.25, plotTest=True): #  lchan=None, 
+	### This function will calculate the peakF of a given dataset (oscEvent) using OEvent methodology (see load.py)
+	## dataFile: .pkl file 
+	## inputData: list / array with data to be analyzed
+	## freqmin: float			--> default: 0.25 (see load.py)
+	## freqmax: float			--> default: 110  (see load.py)
+	## freqStep: float 			--> default: 0.25 (see load.py)
+	## plotTest: bool 			--> test if correct image is being evaluated by plotting 
+
+
 	print('Getting peakF using OEvent methods')
-	
+
+	# Establish output data dictionary 
+	outputData = {}
+
+
+	# Load dataFile to determine sampling rate
+	if dataFile:
+		sim.load(dataFile, instantiate=False)		## load .pkl simulation file 
+	else:
+		print('No dataFile; will use data from dataFile already loaded elsewhere!')
+
+	# Calculate sampling rate from simulation timestep 
+	dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+
+	# Argument values for getmorletwin() below 
+	winsz = 565 #10 				# window size
+	getPhase = True
+	noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
+	noiseamp=noiseampCSD 
+	useloglfreq=False
+	mspecwidth=7.0
+
+	# This line is from getIEIstatsbyBand in load.py 
+	## "get morlet specgrams on windows of dat time series (window size in samples = winsz)"
+	lms,lnoise,lsidx,leidx = getmorletwin(inputData,int(winsz*sampr),sampr,freqmin=freqmin,
+		freqmax=freqmax,freqstep=freqStep,getphase=getPhase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,
+		noiseamp=noiseamp) # inputData <-- dat[chan, :] OR dat[:, chan]  # dat[:,chan]
+
+	# msn <-- lmsnorm # This is from getIEIstatsbyBand, where normop == mednorm (per the arguments) 	## lmsnorm = [normop(ms.TFR) for ms in lms]
+	lmsnorm = [mednorm(ms.TFR) for ms in lms]
+
+	# Update output data dictionary with output from getmorletwin & lmsnorm 
+	outputData.update({'lms': lms, 'lmsnorm': lmsnorm, 'lnoise': lnoise, 'lsidx': lsidx, 'leidx': leidx})
+
+
+	# Argument values for getblobsfrompeaks()
+	medthresh = 4.0 # 20 #4.0
+	endfctr = 0.5
+
+	# These lines are from getspecevents (which is called in getIEIstatsbyBand)
+	for windowidx,offidx,ms,msn,noise in zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise): 
+		imgpk = detectpeaks(msn) # detect the 2D local maxima ### NOTE: This should probably give me *ONE* peak!! 
+		imgpk_nonNorm = detectpeaks(ms.TFR)
+		print('imgpk detected')
+		# lblob = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
+		lblob = getblobsfrompeaks(ms.TFR,imgpk_nonNorm,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
+
+		print('lblob gotten')
+
+	outputData.update({'imgpk_nonNorm': imgpk_nonNorm})
+	outputData.update({'imgpk': imgpk, 'lblob': lblob})
+
+
+	## TEST PLOTTING
+	if plotTest:
+		norm=0  ## CAN CHANGE THIS !! 
+
+		fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,7)) # fig = plt.figure() # figsize=figSize
+		ax1 = plt.subplot(1, 1, 1)
+
+		vmin = np.array([s.TFR for s in lms]).min()
+		vmax = np.array([s.TFR for s in lms]).max()
+		vc = [vmin, vmax]
+		print('vmin: ' + str(vmin))
+		print('vmax: ' + str(vmax))
+
+		S = lms[0].TFR
+		if norm:
+			imshowSignalNorm = lmsnorm[0] # .TFR  
+			imshowSignal=imshowSignalNorm
+		else:
+			imshowSignal = S # imshowSignal 	# S #### [freqmin:freqmax+1]		# S[minFreq:maxFreq+1]
+
+		T = timeData
+
+		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), freqmin, freqmax), origin='lower', interpolation='None', aspect='auto', 
+				vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('jet')) # freqmin <-- minFreq # freqmax <-- maxFreq # 'jet' <-- colorMap
+
+
+		plt.show()
+
+	return outputData
+
 
 ##########################
 #### USEFUL VARIABLES ####
@@ -3487,7 +3605,7 @@ if csdPSD:
 
 
 ## CSD PSD FOR MULTIPLE POPS (SUMMED CSD)
-csdPSD_multiple = 1
+csdPSD_multiple = 0
 if csdPSD_multiple:
 	includePops=['ITS4']#, 'ITP4', 'IT5A'] # ECortPops 
 	csdPopData = {}
@@ -3537,6 +3655,27 @@ if PSDbyPop:
 	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
 
 
+################################
+###### peakF calculations ######
+################################
+peakF = 1
+if peakF:
+	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=None, maxFreq=110)
+	csdDuring = timeSeriesDict['csdDuring']
+	ttDuring = timeSeriesDict['tt_during']
+
+	peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, timeData=ttDuring, freqmax=10)#lchan=[8])
+	imgpk = peakFData['imgpk']
+	imgpk_nonNorm = peakFData['imgpk_nonNorm']
+	lms = peakFData['lms']
+	lsidx = peakFData['lsidx']
+	lmsnorm = peakFData['lmsnorm']
+	lnoise = peakFData['lnoise']
+	lblob = peakFData['lblob']
+
+	peaks = np.where(imgpk==True)
+
+	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
