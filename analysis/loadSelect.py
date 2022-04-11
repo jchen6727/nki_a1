@@ -5,6 +5,13 @@
 from evstats import *
 
 
+## MISSING:
+# detectpeaks
+# getblobsfrompeaks
+# getmergesets
+# getmergedblobs
+# getextrafeatures
+# countdups
 
 noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
 
@@ -115,6 +122,163 @@ def mednorm (dat,byRow=True):
       else:
         out[:,col] = dat[:,col]
   return out
+
+
+# finds boundaries where the image dips below the threshold, starting from x,y and moving left,right,up,down
+def findbounds (img,x,y,thresh):
+  ysz, xsz = img.shape
+  y0 = y
+  x0 = x - 1
+  # look left
+  while True:
+    if x0 < 0:
+      x0 = 0
+      break
+    if img[y0][x0] < thresh: break
+    x0 -= 1
+  left = x0
+  # look right
+  x0 = x + 1
+  while True:
+    if x0 >= xsz:
+      x0 = xsz - 1
+      break
+    if img[y0][x0] < thresh: break
+    x0 += 1
+  right = x0
+  # look down
+  x0 = x
+  y0 = y - 1
+  while True:
+    if y0 < 0:
+      y0 = 0
+      break
+    if img[y0][x0] < thresh: break
+    y0 -= 1  
+  bottom = y0
+  # look up
+  x0 = x
+  y0 = y + 1
+  while True:
+    if y0 >= ysz:
+      y0 = ysz - 1
+      break
+    if img[y0][x0] < thresh: break      
+    y0 += 1  
+  top = y0
+  #print('left,right,top,bottom:',left,right,top,bottom)  
+  return left,right,top,bottom
+
+# container for convenience - wavelet info from a single sample
+class WaveletInfo:
+  def __init__ (self,phs=0.0,idx=0,T=0.0,val=0.0):
+    self.phs=phs
+    self.idx=idx
+    self.T=T
+    self.val=val
+
+# 
+class evblob(bbox):
+  """ event blob class, inherits from bbox
+  """
+  NoneVal = -1e9
+  def __init__ (self):
+    self.avgpowevent=0 # avg val during event but only including suprathreshold pixels
+    self.avgpow=self.avgpoworig=0 # avg val during event bounds
+    self.cmass=evblob.NoneVal
+    self.maxval=self.maxpos=self.maxvalorig=evblob.NoneVal # max spectral amplitude value during event
+    self.minval=evblob.NoneVal # min val during event
+    self.minvalbefore=self.maxvalbefore=self.avgpowbefore=evblob.NoneVal
+    self.minvalafter=self.maxvalafter=self.avgpowafter=evblob.NoneVal
+    self.MUAbefore=self.MUA=self.MUAafter=evblob.NoneVal
+    self.arrMUAbefore=self.arrMUA=self.arrMUAafter=evblob.NoneVal # arrays (across channels) of avg MUA values before,during,after event   
+    self.slicex=self.slicey=evblob.NoneVal
+    self.minF=self.maxF=self.peakF=0 # min,max,peak frequencies
+    self.minT=self.maxT=self.peakT=0 # min,max,peak times
+    self.dur = self.Fspan = self.ncycle = self.dom = self.dombefore = self.domafter = self.Foct = 0
+    self.domevent = 0 # dom during event but only including suprathreshold pixels
+    # Foct is logarithmic frequency span
+    self.hasbefore = self.hasafter = False # whether has before,after period    
+    self.ID = -1
+    self.bbox = bbox()
+    self.windowidx = 0 # window index (from which spectrogram obtained)
+    self.offidx = 0 # offset into time-series (since taking windows)
+    self.duringnoise = 0 # during a noise window?
+    # indicates whether other events of given frequency co-occur (on same channel)
+    self.codelta = self.cotheta = self.coalpha = self.cobeta = self.cogamma = self.cohgamma = self.coother = 0
+    self.band = evblob.NoneVal
+    # correlation between CSD and MUA before,during,after event
+    self.CSDMUACorrbefore = self.CSDMUACorr = self.CSDMUACorrafter = 0.0
+    # a few waveform features:
+    # peak and trough values close to the spectral amplitude peak, used to align signals
+    self.WavePeakVal = self.WavePeakIDX = self.WaveTroughVal = self.WaveTroughIDX = 0
+    self.WaveH = self.WaveW = 0 # wave height and width
+    self.WavePeakT = self.WaveTroughT = 0
+    self.WaveletPeak = WaveletInfo() # for alignment by wavelet peak phase (0)
+    self.WaveletLeftTrough = WaveletInfo() # for alignment by wavelet trough phase (-pi)
+    self.WaveletRightTrough = WaveletInfo() # for alignment by wavelet trough phase (pi)
+    self.WaveletLeftH = self.WaveletLeftW = self.WaveletLeftSlope = 0 # wavelet-based height and width
+    self.WaveletRightH = self.WaveletRightW = self.WaveletRightSlope = 0 # wavelet-based height and width
+    self.WaveletFullW = 0 # full width right minus left trough times
+    self.WaveletFullH = 0 # height offset of the right minus left trough values
+    self.WaveletFullSlope = 0 # slope at full length of troughs (baseline) WaveletFullH/WaveletFullW
+    # lagged coherence - for looking at rhythmicity of signal before,during,after oscillatory event
+    #self.laggedCOH = self.laggedCOHbefore = self.laggedCOHafter = 0
+    self.filtsig = [] # filtered signal
+    self.lfiltpeak = []
+    self.lfilttrough = []
+    self.filtsigcor = 0.0 # correlation between filtered and raw signal
+    # self.oscqual = 0.0
+  def __str__ (self):
+    return str(self.left)+' '+str(self.right)+' '+str(self.top)+' '+str(self.bottom)+' '+str(self.avgpow)+' '+str(self.cmass)+' '+str(self.maxval)+' '+str(self.maxpos)
+  def draw (self,scalex,scaley,offidx=0,offidy=0,bbclr='white',mclr='r',linewidth=3):
+    x0,x1=scalex*(self.left+offidx),scalex*(self.right+offidx)
+    y0,y1=scaley*(self.top+offidy),scaley*(self.bottom+offidy)
+    drline(x0,x0,y0,y1,bbclr,linewidth)
+    drline(x1,x1,y0,y1,bbclr,linewidth)
+    drline(x0,x1,y0,y0,bbclr,linewidth)
+    drline(x0,x1,y1,y1,bbclr,linewidth)
+    plot([scalex*(self.maxpos[1]+offidx)],[scaley*(self.maxpos[0]+offidy)],mclr+'o',markersize=12)
+
+# extract the event blobs from local maxima image (impk)
+def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
+  # imnorm is normalized image, lbl is label image obtained from imnorm, imorig is original un-normalized image
+  # medthresh is median threshold for significant peaks
+  # getblobfeatures returns features of blobs in lbl using imnorm
+  lpky,lpkx = np.where(impk) # get the peak coordinates
+  lblob = []
+  for y,x in zip(lpky,lpkx):
+    pkval = imnorm[y][x]
+    thresh = max(medthresh, min(medthresh, endfctr * pkval)) # lower value threshold used to find end of event
+    #thresh = min(medthresh, endfctr * pkval) # lower value threshold used to find end of event
+    #thresh = max(medthresh, endfctr * pkval) # lower value threshold used to find end of event
+    #thresh = max(medthresh, (medthresh + endfctr*pkval)/2.0) # threshold used to find end of event 
+    left,right,top,bottom = findbounds(imnorm,x,y,thresh)
+    #subimg = imnorm[bottom:top+1,left:right+1]
+    #thsubimg = subimg > thresh
+    #print('L,R,T,B:',left,right,top,bottom,subimg.shape,thsubimg.shape,sum(thsubimg))
+    #print('sum(thsubimg)',sum(thsubimg),'amax(subimg)',amax(subimg))    
+    b = evblob()
+    #b.avgpoworig = ndimage.mean(imorig[bottom:top+1,left:right+1],thsubimg,[1])
+    b.maxvalorig = imorig[y][x]
+    #b.avgpow = ndimage.mean(subimg,thsubimg,[1])
+    b.maxval = pkval
+    b.minval = amin(imnorm[bottom:top+1,left:right+1])
+    b.left = left
+    b.right = right
+    b.top = top
+    b.bottom = bottom
+    b.maxpos = (y,x)
+    b.minF = F[b.bottom] # get the frequencies
+    b.maxF = F[min(b.top,len(F)-1)]
+    b.peakF = F[b.maxpos[0]]
+    b.band = getband(b.peakF)
+    b.minT = T[b.left]
+    b.maxT = T[min(b.right,len(T)-1)]
+    b.peakT = T[b.maxpos[1]]
+    lblob.append(b)
+  return lblob
+
 
 ######################################################################################################
 ######################################################################################################
