@@ -3313,13 +3313,13 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 		imgpk = detectpeaks(msn) # detect the 2D local maxima ### NOTE: This should probably give me *ONE* peak!! 
 		imgpk_nonNorm = detectpeaks(ms.TFR)
 		print('imgpk detected')
-		# lblob = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
-		lblob = getblobsfrompeaks(ms.TFR,imgpk_nonNorm,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
+		lblob_norm = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
+		lblob_nonNorm = getblobsfrompeaks(ms.TFR,imgpk_nonNorm,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
 
 		print('lblob gotten')
 
-	outputData.update({'imgpk_nonNorm': imgpk_nonNorm})
-	outputData.update({'imgpk': imgpk, 'lblob': lblob})
+	outputData.update({'imgpk_nonNorm': imgpk_nonNorm, 'lblob_nonNorm': lblob_nonNorm})
+	outputData.update({'imgpk': imgpk, 'lblob_norm': lblob_norm})
 
 
 	## TEST PLOTTING
@@ -3332,21 +3332,63 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 		vmin = np.array([s.TFR for s in lms]).min()
 		vmax = np.array([s.TFR for s in lms]).max()
 		vc = [vmin, vmax]
-		print('vmin: ' + str(vmin))
-		print('vmax: ' + str(vmax))
+		# print('vmin: ' + str(vmin))
+		# print('vmax: ' + str(vmax))
 
-		S = lms[0].TFR
+		
 		if norm:
 			imshowSignalNorm = lmsnorm[0] # .TFR  
 			imshowSignal=imshowSignalNorm
 		else:
+			S = lms[0].TFR
 			imshowSignal = S # imshowSignal 	# S #### [freqmin:freqmax+1]		# S[minFreq:maxFreq+1]
 
-		T = timeData
+		T = lms[0].t # timeData # ms.t # lms[0].t ### CORRECT USING MINT, ALIGNOFFSET, ETC. 
+
 
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), freqmin, freqmax), origin='lower', interpolation='None', aspect='auto', 
 				vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('jet')) # freqmin <-- minFreq # freqmax <-- maxFreq # 'jet' <-- colorMap
 
+
+		## Overlay peak points
+		if norm:
+			freqList = lms[0].f #np.arange(freqmin, freqmax+1, freqStep) # ms.f ?? # lms[0].f
+			peaks = np.where(imgpk==True)
+			# spectrogram y-axis point
+			spec_inds = peaks[0]
+			# time x-axis point
+			time_inds = peaks[1]
+
+			x = []
+			y = []
+			for i in range(len(peaks[0])):
+				x.append(T[time_inds[i]])
+				y.append(freqList[spec_inds[i]])
+
+			plt.scatter(x,y, c='yellow')
+
+
+		else:
+			freqList = lms[0].f # np.arange(freqmin, freqmax+1, freqStep) # ms.f ?? # lms[0].f
+			peaks_nonNorm = np.where(imgpk_nonNorm==True)
+			# spectrogram y-axis point
+			spec_inds = peaks_nonNorm[0]
+			# time x-axis point
+			time_inds = peaks_nonNorm[1]
+
+			x = []
+			y = []
+			for i in range(len(peaks_nonNorm[0])):
+				x.append(T[time_inds[i]])
+				y.append(freqList[spec_inds[i]])
+			plt.scatter(x,y, c='yellow')
+
+			# for pt in zip(x,y):
+			# 	plt.plot(pt)
+			# for i in range(len(imgpk[0])):
+			# 	x = imgpk[0][i]
+			# 	y = imgpk[1][i]
+			# 	plt.plot(x,y)
 
 		plt.show()
 
@@ -3675,7 +3717,7 @@ if peakF:
 	tt_plusTimeBuffer = timeSeriesDict['tt_plusTimeBuffer']
 
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdAllChans, timeData=ttDuring, freqmax=110)	#lchan=[8])
-	peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=ttDuring, freqmax=110)	#lchan=[8])
+	peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, freqmax=110, plotTest=True)	#lchan=[8])
 	imgpk = peakFData['imgpk']
 	imgpk_nonNorm = peakFData['imgpk_nonNorm']
 	lms = peakFData['lms']
@@ -3683,7 +3725,8 @@ if peakF:
 	leidx = peakFData['leidx']
 	lmsnorm = peakFData['lmsnorm']
 	lnoise = peakFData['lnoise']
-	lblob = peakFData['lblob']
+	lblob_norm = peakFData['lblob_norm']
+	lblob_nonNorm = peakFData['lblob_nonNorm']
 	llevent = peakFData['llevent']
 
 	peaks = np.where(imgpk==True)
