@@ -9,6 +9,9 @@ from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 from scipy.ndimage.filters import maximum_filter
 from morlet import MorletSpec
 # from evstats import *  ### from previous attempt(s)
+from scipy.stats.stats import pearsonr
+from filter import bandpass 
+from scipy import ndimage
 
 
 
@@ -162,17 +165,17 @@ def getmorletwin (dat,winsz,sampr,freqmin=1.0,freqmax=100.0,freqstep=1.0, noisea
 # median normalization
 def mednorm (dat,byRow=True):
   nrow,ncol = dat.shape[0],dat.shape[1]
-  out = zeros((nrow,ncol))
+  out = np.zeros((nrow,ncol)) # np.zeros <-- zeros 
   if byRow:
     for row in range(nrow):
-      med = median(dat[row,:])
+      med = np.median(dat[row,:]) # np.median <-- median 
       if med != 0.0:
         out[row,:] = dat[row,:] / med
       else:
         out[row,:] = dat[row,:]
   else:
     for col in range(ncol):
-      med = median(dat[:,col])
+      med = median(dat[:,col]) # np.median <-- median 
       if med != 0.0:
         out[:,col] = dat[:,col] / med
       else:
@@ -205,7 +208,7 @@ def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
     b.maxvalorig = imorig[y][x]
     #b.avgpow = ndimage.mean(subimg,thsubimg,[1])
     b.maxval = pkval
-    b.minval = amin(imnorm[bottom:top+1,left:right+1])
+    b.minval = np.amin(imnorm[bottom:top+1,left:right+1]) ## np.amin <-- amin
     b.left = left
     b.right = right
     b.top = top
@@ -221,6 +224,41 @@ def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
     lblob.append(b)
   return lblob
 
+#### FOR 'getband' above in getblobsfrompeaks
+from collections import OrderedDict
+
+# frequency band ranges for primate auditory system
+def makedbands (useAudGamma = False):
+  dbands = OrderedDict()
+  gapHz = 1
+  dbands['delta'] = [0.5,3.0 + gapHz]
+  dbands['theta'] = [4,8 + gapHz]
+  dbands['alpha'] = [9,14 + gapHz]
+  dbands['beta'] = [15,28 + gapHz]
+  if useAudGamma:
+    dbands['gamma'] = [29,40 + gapHz] # gamma in aud system has lower max than traditional gamma (30-80 Hz)
+    dbands['hgamma'] = [41,200 + gapHz] # considering high gamma anything above 40 Hz
+  else:
+    dbands['gamma'] = [29,80 + gapHz]
+    dbands['hgamma'] = [81,200 + gapHz]    
+  return dbands
+
+
+dbands = makedbands()
+lband = list(dbands.keys())
+
+#
+def getband (f):
+  for k in ['delta','theta','alpha','beta','gamma','hgamma']:
+    if f >= dbands[k][0] and f < dbands[k][1]:
+      return k
+  return 'unknown'
+
+
+#      
+def getFoct (minF, maxF):
+  if maxF - minF > 0.0 and minF > 0.0: return np.log(maxF/minF)  # np.log <-- log 
+  return 0.0
 
 
 ######################################################################################################
@@ -236,7 +274,7 @@ def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
 # when terminating events
 def getspecevents (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,overlapth=0.5,endfctr=0.5,getphase=False):
   llevent = []
-  for windowidx,offidx,ms,msn,noise in zip(arange(len(lms)),lsidx,lms,lmsnorm,lnoise): 
+  for windowidx,offidx,ms,msn,noise in zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise):   # np.arange <-- arange
     imgpk = detectpeaks(msn) # detect the 2D local maxima
     print('imgpk detected')
     lblob = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
@@ -250,8 +288,9 @@ def getspecevents (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,o
     lmergedblobs = getmergedblobs(lmergedblobs,lmergeset,bmerged)
     #print('ndups in lmergedblobs B = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
     # get the extra features (before/during/after with MUA,avg,etc.)
-    getextrafeatures(lmergedblobs,ms,msn,medthresh,csd,MUA,chan,offidx,sampr,endfctr=endfctr,getphase=getphase)
-    print('extra features gotten')
+    ### getextrafeatures(lmergedblobs,ms,msn,medthresh,csd,MUA,chan,offidx,sampr,endfctr=endfctr,getphase=getphase)
+    ### ^^ COMMENTING THIS OUT FOR NOW 
+    ### print('extra features gotten')
     ndup = countdups(lmergedblobs)
     if ndup > 0: print('ndup in lmergedblobs = ', ndup, 'out of ', len(lmergedblobs))
     for blob in lmergedblobs: # store offsets for getting to time-series / wavelet spectrograms
@@ -261,6 +300,301 @@ def getspecevents (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,o
     llevent.append(lmergedblobs) # save merged events
     print('one iteration of getspecevents for-loop complete')
   return llevent
+
+
+def detectpeaks (image):
+  """
+  Takes an image and detect the peaks usingthe local maximum filter.
+  Returns a boolean mask of the peaks (i.e. 1 when
+  the pixel's value is the neighborhood maximum, 0 otherwise)
+  """
+  # from https://stackoverflow.com/questions/3684484/peak-detection-in-a-2d-array
+  # define an 8-connected neighborhood
+  neighborhood = generate_binary_structure(2,2)
+  #apply the local maximum filter; all pixel of maximal value 
+  #in their neighborhood are set to 1
+  local_max = maximum_filter(image, footprint=neighborhood)==image
+  #local_max is a mask that contains the peaks we are 
+  #looking for, but also the background.
+  #In order to isolate the peaks we must remove the background from the mask.
+  #we create the mask of the background
+  background = (image==0)
+  #a little technicality: we must erode the background in order to 
+  #successfully subtract it form local_max, otherwise a line will 
+  #appear along the background border (artifact of the local maximum filter)
+  eroded_background = binary_erosion(background, structure=neighborhood, border_value=1)
+  #we obtain the final mask, containing only peaks, 
+  #by removing the background from the local_max mask (xor operation)
+  detected_peaks = local_max ^ eroded_background
+  return detected_peaks
+
+def countdups (lblob):
+  # count duplicate blobs (same left,top,right,bottom)  
+  lmergeset,bmerged = getmergesets(lblob,1.0,areaop=max) # determine overlapping events
+  return len(lmergeset)
+
+#  ### NOTE: .getintersction?? 
+def getmergesets (lblob,prct,areaop=min):
+  """ get the merged blobs (bounding boxes)
+  lblob is a list of blos (input)
+  prct is the threshold for fraction of overlap required to merge two blobs (boxes)
+  returns a list of sets of merged blobs and a bool list of whether each original blob was merged
+  """                                         
+  sz = len(lblob)
+  bmerged = [False for i in range(sz)]
+  for i,blob in enumerate(lblob): blob.ID = i # make sure ID assigned
+  lmergeset = [] # set of merged blobs (boxes)
+  for i in range(sz):
+    blob0 = lblob[i]
+    for j in range(sz):
+      if i == j: continue
+      blob1 = lblob[j]
+      if blob0.band != blob1.band: continue
+      # enough overlap between bboxes? 
+      if blob0.getintersection(blob1).area() >= prct * areaop(blob0.area(),blob1.area()):
+        # merge them
+        bmerged[i]=bmerged[j]=True
+        found = False
+        for k,mergeset in enumerate(lmergeset): # determine if either of these bboxes are in existing mergesets
+          if i in mergeset or j in mergeset: # one of the bboxes in an existing mergeset?
+            found = True
+            if i not in mergeset: mergeset.add(i) # i not already there? add it in
+            if j not in mergeset: mergeset.add(j) # j not already there? add it in
+        if not found: # did not find either bbox in an existing mergeset? then create a new mergeset
+          mergeset = set()
+          mergeset.add(i)
+          mergeset.add(j)
+          lmergeset.append(mergeset)
+  return lmergeset, bmerged
+
+#
+def getmergedblobs (lblob,lmergeset,bmerged):
+  """ create a new list of blobs (boxes) based on lmergeset, and update the new blobs' properties
+  """ 
+  lblobnew = [] # list of new blobs
+  for i,blob in enumerate(lblob):
+    if not bmerged[i]: lblobnew.append(blob) # non-merged blobs are copied as is
+  for mergeset in lmergeset: # now go through the list of mergesets and create the new blobs
+    lblobtmp = [lblob[ID] for ID in mergeset]
+    for i,blob in enumerate(lblobtmp):
+      if i == 0:
+        box = bbox(blob.left,blob.right,blob.bottom,blob.top)
+        peakF = blob.peakF
+        minF = blob.minF
+        maxF = blob.maxF
+        minT = blob.minT
+        maxT = blob.maxT
+        peakT = blob.peakT
+        maxpos = blob.maxpos
+        maxval = blob.maxval
+        minval = blob.minval
+      else:
+        box = box.getunion(blob)
+        minF = min(minF, blob.minF)
+        maxF = max(maxF, blob.maxF)
+        minT = min(minT, blob.minT)
+        maxT = max(maxT, blob.maxT)
+        if blob.maxval > maxval:
+          peakF = blob.peakF
+          peakT = blob.peakT
+          maxpos = blob.maxpos
+          maxval = blob.maxval
+        if blob.minval < minval:
+          minval = blob.minval
+    blob.left,blob.right,blob.bottom,blob.top = box.left,box.right,box.bottom,box.top
+    blob.minF,blob.maxF,blob.peakF,blob.minT,blob.maxT,blob.peakT=minF,maxF,peakF,minT,maxT,peakT
+    blob.maxpos,blob.maxval = maxpos,maxval
+    blob.minval = minval
+    lblobnew.append(blob)
+  return lblobnew
+
+
+
+# find maximum value, associated index around sig[sidx-winsz:sidx+winsz] as long as within bounds of left,right
+def findpeak (sig, sidx, left, right, winsz):
+  sz = len(sig)
+  maxval = sig[sidx]
+  maxidx = sidx
+  left=int(left); right=int(right); sidx=int(sidx); winsz=int(winsz)
+  SIDX = min(right,sidx+1); EIDX = min(right,sidx+winsz+1)
+  for idx in range(SIDX,EIDX,1):
+    if sig[idx] > maxval:
+      maxval = sig[idx]
+      maxidx = idx
+  SIDX = max(left,sidx-1); EIDX = max(left,sidx-winsz)
+  for idx in range(SIDX,EIDX,-1):
+    if sig[idx] > maxval:
+      maxval = sig[idx]
+      maxidx = idx
+  return maxval,maxidx
+
+# find minimum value, associated index around sig[sidx-winsz:sidx+winsz] as long as within bounds of left,right
+def findtrough (sig, sidx, left, right, winsz):
+  sz = len(sig)
+  minval = sig[sidx]
+  minidx = sidx
+  left=int(left); right=int(right); sidx=int(sidx); winsz=int(winsz)
+  SIDX = min(right,sidx+1); EIDX = min(right,sidx+winsz+1)
+  for idx in range(SIDX,EIDX,1):
+    if sig[idx] < minval:
+      minval = sig[idx]
+      minidx = idx
+  SIDX = max(left,sidx-1); EIDX = max(left,sidx-winsz)
+  for idx in range(SIDX,EIDX,-1):
+    if sig[idx] < minval:
+      minval = sig[idx]
+      minidx = idx
+  return minval,minidx
+
+# find closest to val, associated index around sig[sidx-winsz:sidx+winsz] as long as within bounds of left,right
+def findclosest (sig, sidx, left, right, winsz, val, lookleft=True, lookright=True):
+  sz = len(sig)
+  closeerr = abs(sig[sidx]-val)  
+  closeidx = sidx
+  closeval = sig[sidx]
+  left=int(left); right=int(right); sidx=int(sidx); winsz=int(winsz)
+  if lookright:
+    SIDX = min(right,sidx+1); EIDX = min(right,sidx+winsz+1)
+    for idx in range(SIDX,EIDX,1):
+      err = abs(sig[idx] - val)
+      if err < closeerr:
+        closeerr = err
+        closeval = sig[idx]
+        closeidx = idx
+        #print(err,closeval,closeidx)
+  if lookleft:
+    SIDX = max(left,sidx-1); EIDX = max(left,sidx-winsz)
+    for idx in range(SIDX,EIDX,-1):
+      err = abs(sig[idx] - val)
+      if err < closeerr:
+        closeerr = err      
+        closeval = sig[idx]
+        closeidx = idx
+        #print(err,closeval,closeidx)      
+  return closeval,closeidx
+
+# ### NOTE:  1) mean might be np.mean or ndimage.mean?? 2) bandpass
+def getextrafeatures (lblob, ms, img, medthresh, csd, MUA, chan, offidx, sampr, endfctr = 0.5, getphase = True, getfilt = True):
+  # get extra features for the event blobs, including:
+  # MUA before/after, min/max/avg power before/after
+  # ms is the MorletSpec object (contains non-normalized TFR and PHS when getphase==True
+  # img is the median normalized spectrogram image; MUA is the multiunit activity (should have same sampling rate)
+  # chan is CSD channel (where events detected), note that csd is 1D while MUA is 2D (for now)
+  #vec=h.Vector() # for getting the sample entropy
+  mua = None
+  if MUA is not None: mua = MUA[chan+1,:] # mua on same channel
+  for bdx,blob in enumerate(lblob):
+    # duration/frequency features
+    blob.dur = blob.maxT - blob.minT # duration
+    blob.Fspan = blob.maxF - blob.minF # linear frequency span
+    blob.ncycle = blob.dur*blob.peakF/1e3 # number of cycles
+    blob.Foct = getFoct(blob.minF,blob.maxF)
+    ###
+    w2 = int(blob.width() / 2.)
+    left,right,bottom,top = blob.left,blob.right+1,blob.bottom,blob.top # these are indices into TFR (wavelet spectrogram)
+    #print(bdx,left,right,bottom,top,offidx)
+    subimg = img[bottom:top+1,left:right+1] # is right+1 correct if already inc'ed above?
+    blob.avgpow = np.mean(subimg) # avg power of all pixels in event bounds  ## np.mean <-- mean  OR ndimage.mean?? 
+    thresh = max(medthresh, min(medthresh, endfctr * blob.maxval)) # lower value threshold used to find end of event
+    #thresh = min(medthresh, endfctr * blob.maxval) # lower value threshold used to find end of event
+    #thresh = max(medthresh, endfctr * blob.maxval) # upper value threshold used to find end of event
+    #thresh = max(medthresh, (medthresh + endfctr*blob.maxval)/2.0) # upper value threshold used to find end of event 
+    thsubimg = subimg >= thresh  # 
+    #print(bdx,endfctr,blob.maxval,thresh,subimg.shape,thsubimg.shape,left,right,bottom,top)
+    #print(amax(subimg),amin(thsubimg),amax(thsubimg))
+    blob.avgpowevent = ndimage.mean(subimg,thsubimg,[1])[0] # avg power of suprathreshold pixels    
+    if blob.avgpow>0.0: blob.dom = float(blob.maxval/blob.avgpow) # depth of modulation (all pixels)
+    if blob.avgpowevent>0.0: blob.domevent = float(blob.maxval/blob.avgpowevent) # depth of modulation (suprathreshold pixels)
+    if mua is not None:
+      blob.MUA = mean(mua[left+offidx:right+offidx]) # offset from spectrogram index into original MUA,CSD time-series
+      blob.arrMUA = mean(MUA[:,left+offidx:right+offidx],axis=1) # avg MUA from each channel during the event
+    if mua is not None and right - left > 1: blob.CSDMUACorr = pearsonr(csd[left+offidx:right+offidx],mua[left+offidx:right+offidx])[0]
+    # a few waveform features    
+    wvlen2 = (1e3/blob.peakF)/2 # 1/2 wavelength in milliseconds
+    wvlensz2 = int(wvlen2*sampr/1e3) # 1/2 wavelength in samples
+    blob.WavePeakVal,blob.WavePeakIDX = findpeak(csd, int(blob.maxpos[1])+offidx, left+offidx, right+offidx, wvlensz2)
+    blob.WaveTroughVal,blob.WaveTroughIDX = findtrough(csd, int(blob.maxpos[1])+offidx, left+offidx, right+offidx, wvlensz2)
+    blob.WavePeakIDX -= offidx; blob.WaveTroughIDX -= offidx; # keep indices within spectrogram image
+    blob.WaveH = blob.WavePeakVal - blob.WaveTroughVal
+    blob.WavePeakT = 1e3*blob.WavePeakIDX/sampr
+    blob.WaveTroughT = 1e3*blob.WaveTroughIDX/sampr
+    blob.WaveW = 2 * abs(blob.WavePeakT - blob.WaveTroughT) # should update to use wavelet peak (phase= 0)/trough(phase= -PI) 
+    if getphase: # wavelet-based features
+      freqIDX = list(ms.f).index(blob.peakF) # index into frequency array
+      PHS = ms.PHS[freqIDX,:]
+      blob.WaveletPeak.phs,blob.WaveletPeak.idx=findclosest(PHS,int(blob.maxpos[1]),left,right,wvlensz2,0.0)
+      blob.WaveletPeak.val = csd[blob.WaveletPeak.idx+offidx] # +offidx for correct index into csd (blob.WaveletPeak.idx is into PHS)
+      blob.WaveletPeak.T = 1e3*blob.WaveletPeak.idx/sampr #
+      blob.WaveletLeftTrough.phs,blob.WaveletLeftTrough.idx=findclosest(PHS,int(blob.WaveletPeak.idx),left,right,wvlensz2+int(wvlensz2/2),-pi,lookleft=True,lookright=False)
+      blob.WaveletLeftTrough.val = csd[blob.WaveletLeftTrough.idx+offidx]# +offidx for correct index into csd (WaveletLeftTrough.idx is into PHS)
+      blob.WaveletLeftTrough.T = 1e3*blob.WaveletLeftTrough.idx/sampr #
+      blob.WaveletRightTrough.phs,blob.WaveletRightTrough.idx=findclosest(PHS,int(blob.WaveletPeak.idx),left,right,wvlensz2+int(wvlensz2/2),pi,lookleft=False,lookright=True)
+      blob.WaveletRightTrough.val = csd[blob.WaveletRightTrough.idx+offidx]# +offidx for correct index into csd (WaveletRightTrough.idx is into PHS)
+      blob.WaveletRightTrough.T = 1e3*blob.WaveletRightTrough.idx/sampr #      
+      blob.WaveletLeftH = blob.WaveletPeak.val - blob.WaveletLeftTrough.val
+      blob.WaveletLeftW = blob.WaveletPeak.T - blob.WaveletLeftTrough.T
+      if blob.WaveletLeftW != 0.0: blob.WaveletLeftSlope = blob.WaveletLeftH / blob.WaveletLeftW      
+      blob.WaveletRightH = blob.WaveletPeak.val - blob.WaveletRightTrough.val
+      blob.WaveletRightW = blob.WaveletRightTrough.T - blob.WaveletPeak.T
+      if blob.WaveletRightW != 0.0: blob.WaveletRightSlope = blob.WaveletRightH / blob.WaveletRightW
+      blob.WaveletFullH = blob.WaveletRightTrough.val - blob.WaveletLeftTrough.val
+      blob.WaveletFullW = blob.WaveletRightTrough.T - blob.WaveletLeftTrough.T
+      if blob.WaveletFullW != 0.0: blob.WaveletFullSlope = blob.WaveletFullH / blob.WaveletFullW
+    if getfilt:
+      padsz = int(sampr*0.2)
+      x0 = left+offidx
+      x1 = right+offidx-1
+      x0p = max(0,x0-padsz)
+      x1p = min(len(csd),x1+padsz)
+      fsig = bandpass(csd[x0p:x1p], blob.minF, blob.maxF, sampr, zerophase=True)
+      #print(x0,x1,x0p,x1p,len(fsig))
+      blob.filtsig = fsig[x0-x0p:x0-x0p+x1-x0]
+      if x1-x0>1: blob.filtsigcor = pearsonr(blob.filtsig,csd[x0:x1])[0]
+    # look at values in period before event
+    idx0 = max(0,blob.left - wvlensz2) #max(0,blob.left - w2)
+    idx1 = blob.left
+    if idx1 > idx0 + 1: # any period before?
+      subimg = img[blob.bottom:blob.top+1,idx0:idx1]
+      blob.minvalbefore = amin(subimg)
+      blob.maxvalbefore = amax(subimg)
+      blob.avgpowbefore = mean(subimg)
+      if blob.avgpowbefore>0.0: blob.dombefore = float(blob.maxvalbefore/blob.avgpowbefore)
+      idx0 += offidx; idx1 += offidx # offset from spectrogram index into original MUA,CSD time-series
+      if mua is not None:
+        blob.MUAbefore = mean(mua[idx0:idx1]) # offset from spectrogram index into original MUA,CSD time-series
+        blob.arrMUAbefore = mean(MUA[:,idx0:idx1],axis=1) # avg MUA from each channel before the event
+      if mua is not None and idx1-idx0>1:
+        blob.CSDMUACorrbefore = pearsonr(csd[idx0:idx1],mua[idx0:idx1])[0]
+      blob.hasbefore = True      
+      #idx0 = max(0,blob.left - wvlensz2*2) 
+      #idx1 = blob.left    
+      #blob.laggedCOHbefore = lagged_coherence(csd[idx0:idx1], (blob.minF,blob.maxF), sampr)#, n_cycles=blob.ncycle) # quantifies rhythmicity
+      #if isnan(blob.laggedCOHbefore): blob.laggedCOHbefore = -1.0
+    else:
+      blob.hasbefore = False
+    # look at values in period after event
+    idx0 = blob.right+1
+    idx1 = min(idx0 + wvlensz2,img.shape[1]) # min(idx0 + w2,img.shape[1])
+    if idx1 > idx0 + 1: # any period after?
+      subimg = img[blob.bottom:blob.top+1,idx0:idx1]
+      blob.minvalafter = amin(subimg)
+      blob.maxvalafter = amax(subimg)
+      blob.avgpowafter = mean(subimg)
+      if blob.avgpowafter>0.0: blob.domafter = float(blob.maxvalafter/blob.avgpowafter)
+      idx0 += offidx; idx1 += offidx # offset from spectrogram index into original MUA,CSD time-series
+      if mua is not None:
+        blob.MUAafter = mean(mua[idx0:idx1])
+        blob.arrMUAafter = mean(MUA[:,idx0:idx1],axis=1) # avg MUA from each channel after the event
+      if mua is not None and idx1-idx0>1:
+        blob.CSDMUACorrafter = pearsonr(csd[idx0:idx1],mua[idx0:idx1])[0]
+      blob.hasafter = True      
+      #idx1 = min(idx0 + wvlensz2*2,img.shape[1]) # min(idx0 + w2,img.shape[1])
+      #blob.laggedCOHafter = lagged_coherence(csd[idx0:idx1], (blob.minF,blob.maxF), sampr)#, n_cycles=blob.ncycle) # quantifies rhythmicity
+      #if isnan(blob.laggedCOHafter): blob.laggedCOHafter = -1.0
+    else:
+      blob.hasafter = False
+  getcoband(lblob) # get band of events co-occuring on same channel
+
 
 
 ## getCV2, getLV, getFF?  -> not causing any problems for now. AH -- these come from evstats.py in a1dat

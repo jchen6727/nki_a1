@@ -28,7 +28,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 ## trying peakF calculations from load.py
 # import loadSelect
 # from loadSelect import * 
-from loadSelect2 import *
+# from loadSelect2 import *
+from loadSelect import * 
 
 ######################################################################
 ##### These functions are currently NOT BEING USED !!! #####
@@ -2649,6 +2650,17 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		print('No oscillation event data detected!')
 
 
+	## Get CSD data for ALL channels, over the theta osc timepoints
+	csdDataAllChans = csdData[:,left:right]	#idx0_before:idx1_after]
+	# Input full CSD data into outputData dict 
+	outputData.update({'csdAllChans': csdDataAllChans})  # REMEMBER: ALL CHANS, OSC EVENT TIMEPOINTS!! 
+
+	## Get CSD data for ALL channels, over the theta osc timepoints PLUS time buffer! 
+	csdDataAllChans_plusTimeBuffer = csdData[:,idx0_before:idx1_after]
+	## tt_plusTimeBuffer = np.linspace(minT-beforeT, maxT_afterT, len(csdDataAllChans_plusTimeBuffer)) + alignoffset
+	# Input this data into outputData dict 
+	outputData.update({'csdDataAllChans_plusTimeBuffer': csdDataAllChans_plusTimeBuffer})  # REMEMBER: ALL CHANS, OSC EVENT TIMEPOINTS!! 
+	## outputData.update({'tt_plusTimeBuffer': tt_plusTimeBuffer})
 
 	# timeSeries --------------------------------------------
 	if 'timeSeries' in outputType:  ### make case for when it IS None  # and oscEventInfo is not None
@@ -2688,14 +2700,16 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		#################################################
 		#### BEFORE, DURING, AND AFTER THE OSC EVENT #### 
 		# (1) Calculate CSD after osc event
-		csdFull = csdData[chan,idx0_before:idx1_after]
+		csdOscChan_plusTimeBuffer = csdData[chan,idx0_before:idx1_after]
 		# (2) Calculate timepoint data 
-		tt_full = np.linspace(minT-beforeT,maxT+afterT,len(csdFull)) + alignoffset
+		tt_plusTimeBuffer = np.linspace(minT-beforeT,maxT+afterT,len(csdOscChan_plusTimeBuffer)) + alignoffset
 		# (3) Input time and CSD data for after osc event into outputData dict 
-		outputData.update({'tt_full': tt_full})
-		outputData.update({'csdFull': csdFull})
+		outputData.update({'tt_plusTimeBuffer': tt_plusTimeBuffer})
+		outputData.update({'csdOscChan_plusTimeBuffer': csdOscChan_plusTimeBuffer})
 
 
+
+		### NOTE: ^^ Replaced "full" with OscChan_plusTimeBuffer <--- CHECK FOR DEPENDENCIES AFFECTED ELSEWHERE!!! 
 
 		# Update outputData with the channel info as well
 		outputData.update({'chan': chan})
@@ -2738,7 +2752,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 		###############################################
-		#### DURING THE OSC EVENT + BEFORE & AFTER ####
+		#### DURING THE OSC EVENT + BEFORE & AFTER ####   ### CHANGED THE TERMINOLOGY BUT MAYBE SHOULDN'T HAVE - SEE ABOVE!!! 
 		csdFull = csdData[chan, idx0_before:idx1_after] 
 		specFull = []
 		specFull.append(MorletSpec(csdFull, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) 
@@ -3157,10 +3171,11 @@ def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, mi
 		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList) # specDuring[0]
 		freqs = F = morletSpec.f 		# F_during = specDuring[0].f
 		spec = morletSpec.TFR 			# S_during = specDuring[0].TFR
+		psdData.update({'spec': spec})
 		signal = np.mean(spec, axis=1)  
+		# signal = mednorm(spec) # 		lmsnorm = [mednorm(ms.TFR) for ms in lms]
 
-		# allFreqs.append(freqs)
-		# allSignal.append(signal)
+
 
 
 	## Calculations for spectrogram input 
@@ -3228,35 +3243,11 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	plt.show()
 
 ## peakF calculations ## 
-def detectpeaks (image):
-	"""
-	Takes an image and detect the peaks usingthe local maximum filter.
-	Returns a boolean mask of the peaks (i.e. 1 when
-	the pixel's value is the neighborhood maximum, 0 otherwise)
-	"""
-	# from https://stackoverflow.com/questions/3684484/peak-detection-in-a-2d-array
-	# define an 8-connected neighborhood
-	neighborhood = generate_binary_structure(2,2)
-	#apply the local maximum filter; all pixel of maximal value 
-	#in their neighborhood are set to 1
-	local_max = maximum_filter(image, footprint=neighborhood)==image
-	#local_max is a mask that contains the peaks we are 
-	#looking for, but also the background.
-	#In order to isolate the peaks we must remove the background from the mask.
-	#we create the mask of the background
-	background = (image==0)
-	#a little technicality: we must erode the background in order to 
-	#successfully subtract it form local_max, otherwise a line will 
-	#appear along the background border (artifact of the local maximum filter)
-	eroded_background = binary_erosion(background, structure=neighborhood, border_value=1)
-	#we obtain the final mask, containing only peaks, 
-	#by removing the background from the local_max mask (xor operation)
-	detected_peaks = local_max ^ eroded_background
-	return detected_peaks
-def getPeakF(dataFile, inputData, timeData=None, freqmin=0.25, freqmax=110, freqStep=0.25, plotTest=True): #  lchan=None, 
+def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freqmax=110, freqStep=0.25, plotTest=True): #  lchan=None, 
 	### This function will calculate the peakF of a given dataset (oscEvent) using OEvent methodology (see load.py)
 	## dataFile: .pkl file 
 	## inputData: list / array with data to be analyzed
+	## casAllChans: list / array of csd data with all chans, over osc dur timepoints
 	## freqmin: float			--> default: 0.25 (see load.py)
 	## freqmax: float			--> default: 110  (see load.py)
 	## freqStep: float 			--> default: 0.25 (see load.py)
@@ -3296,8 +3287,21 @@ def getPeakF(dataFile, inputData, timeData=None, freqmin=0.25, freqmax=110, freq
 	# msn <-- lmsnorm # This is from getIEIstatsbyBand, where normop == mednorm (per the arguments) 	## lmsnorm = [normop(ms.TFR) for ms in lms]
 	lmsnorm = [mednorm(ms.TFR) for ms in lms]
 
+
 	# Update output data dictionary with output from getmorletwin & lmsnorm 
 	outputData.update({'lms': lms, 'lmsnorm': lmsnorm, 'lnoise': lnoise, 'lsidx': lsidx, 'leidx': leidx})
+
+	## Trying getspecevents line 
+	evthresh = medthresh = 4.0
+	MUA=None
+	chan = 8
+	overlapth = 0.5
+	getphase=True  ## TRYING FALSE FOR NOW BC of all the issues with getspecevents -- don't feel like debugging now 
+	endfctr=0.5
+	# sig --> full CSD data (not selected for chan)
+	llevent = getspecevents(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,csdAllChans,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
+	outputData.update({'llevent': llevent})
+
 
 
 	# Argument values for getblobsfrompeaks()
@@ -3622,14 +3626,14 @@ if csdPSD_multiple:
 	plotPSD(psdSummedData)
 
 
-## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT CHANNEL OR NO?)
+## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT SPECIFIED CHANNEL)
 csdPSD_wholeCSD = 0
-chan = 8
+# chan = 8
 if csdPSD_wholeCSD:
 	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=None) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
 	csdData = csdDataDict['csdDuring'] 
 
-	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=110, stepFreq=0.25)
 	plotPSD(psdData)
 
 
@@ -3663,17 +3667,27 @@ if peakF:
 	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=None, maxFreq=110)
 	csdDuring = timeSeriesDict['csdDuring']
 	ttDuring = timeSeriesDict['tt_during']
+	# csdAllChans = timeSeriesDict['csdAllChans'] # all channels, only over osc event timepoints (no time buffer)
 
-	peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, timeData=ttDuring, freqmax=10)#lchan=[8])
+	# csdFull = timeSeriesDict['csdFull'] #<-- csdOscChan_plusTimeBuffer
+	csdOscChan_plusTimeBuffer = timeSeriesDict['csdOscChan_plusTimeBuffer']
+	csdAllChans_plusTimeBuffer = timeSeriesDict['csdDataAllChans_plusTimeBuffer']
+	tt_plusTimeBuffer = timeSeriesDict['tt_plusTimeBuffer']
+
+	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdAllChans, timeData=ttDuring, freqmax=110)	#lchan=[8])
+	peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=ttDuring, freqmax=110)	#lchan=[8])
 	imgpk = peakFData['imgpk']
 	imgpk_nonNorm = peakFData['imgpk_nonNorm']
 	lms = peakFData['lms']
 	lsidx = peakFData['lsidx']
+	leidx = peakFData['leidx']
 	lmsnorm = peakFData['lmsnorm']
 	lnoise = peakFData['lnoise']
 	lblob = peakFData['lblob']
+	llevent = peakFData['llevent']
 
 	peaks = np.where(imgpk==True)
+	peaks_nonNorm = np.where(imgpk_nonNorm==True)
 
 	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
 ##########################################
