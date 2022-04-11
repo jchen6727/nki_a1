@@ -2,127 +2,21 @@
 ### Oscillation Event peakF calculations!! 
 
 # IMPORTS # 
-from evstats import *
+
+import numpy as np
+from bbox import bbox# , p2d
+from scipy.ndimage.morphology import generate_binary_structure, binary_erosion  
+from scipy.ndimage.filters import maximum_filter
+from morlet import MorletSpec
+# from evstats import *  ### from previous attempt(s)
 
 
-## MISSING:
-# detectpeaks
-# getblobsfrompeaks
-# getmergesets
-# getmergedblobs
-# getextrafeatures
-# countdups
 
 noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
 
 ###################################################
-######### FUNCTIONS FOR getIEIstatsbyBand #########
+######### FUNCTIONS FOR getblobsfrompeaks #########
 ###################################################
-
-# get morlet specgrams on windows of dat time series (window size in samples = winsz)
-def getmorletwin (dat,winsz,sampr,freqmin=1.0,freqmax=100.0,freqstep=1.0,\
-                  noiseamp=noiseampCSD,getphase=False,useloglfreq=False,mspecwidth=7.0):
-  lms = []
-  n,sz = len(dat),len(dat)
-  lnoise = []; lsidx = []; leidx = []
-  if useloglfreq:
-    minstep=0.1
-    loglfreq = getloglfreq(freqmin,freqmax,minstep)  
-  for sidx in range(0,sz,winsz):
-    lsidx.append(sidx)
-    eidx = sidx + winsz
-    if eidx >= sz: eidx = sz - 1
-    leidx.append(eidx)
-    print(sidx,eidx)
-    sig = dat[sidx:eidx]
-    lnoise.append(max(abs(sig)) > noiseamp)
-    if useloglfreq:
-      ms = MorletSpec(sig,sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,lfreq=loglfreq,width=mspecwidth)
-    else:
-      ms = MorletSpec(sig,sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,width=mspecwidth)
-    lms.append(ms)
-  print('exiting getmorletwin-- returning values')
-  return lms,lnoise,lsidx,leidx
-
-#
-def getDynamicThresh (lmsn, lnoise, thfctr, defthresh):
-  from scipy.stats import chi2
-  #lthresh = [np.percentile(chi2.pdf(x,2),95) for x,n in zip(lmsn,lnoise) if not n]
-  lthresh = [mean(x)+thfctr*std(x) for x,n in zip(lmsn,lnoise) if not n]
-  #lthresh = [np.percentile(x,95) for x,n in zip(lmsn,lnoise) if not n]
-  if len(lthresh) > 0:
-    print('Mean/min/max:',mean(lthresh),min(lthresh),max(lthresh))
-    return min(lthresh)
-  return defthresh # default is 4.0
-
-
-# get oscillatory events
-# lms is list of windowed morlet spectrograms, lmsnorm is spectrograms normalized by median in each power
-# lnoise is whether the window had noise, medthresh is median threshold for significant events,
-# lsidx,leidx are starting/ending indices into original time-series, csd is current source density
-# on the single chan, MUA is multi-channel multiunit activity, overlapth is threshold for merging
-# events when bounding boxes overlap, fctr is fraction of event amplitude to search left/right/up/down
-# when terminating events
-def getspecevents (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,overlapth=0.5,endfctr=0.5,getphase=False):
-  llevent = []
-  for windowidx,offidx,ms,msn,noise in zip(arange(len(lms)),lsidx,lms,lmsnorm,lnoise): 
-    imgpk = detectpeaks(msn) # detect the 2D local maxima
-    print('imgpk detected')
-    lblob = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
-    print('lblob gotten')
-    lblobsig = [blob for blob in lblob if blob.maxval >= medthresh] # take only significant events
-    #print('ndups in lblobsig 0 = ', countdups(lblobsig), 'out of ', len(lblobsig))    
-    lmergeset,bmerged = getmergesets(lblobsig,overlapth,areaop=min) # determine overlapping events
-    lmergedblobs = getmergedblobs(lblobsig,lmergeset,bmerged)
-    #print('ndups in lmergedblobs A = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
-    lmergeset,bmerged = getmergesets(lmergedblobs,1.0,areaop=max) # gets rid of duplicates
-    lmergedblobs = getmergedblobs(lmergedblobs,lmergeset,bmerged)
-    #print('ndups in lmergedblobs B = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
-    # get the extra features (before/during/after with MUA,avg,etc.)
-    getextrafeatures(lmergedblobs,ms,msn,medthresh,csd,MUA,chan,offidx,sampr,endfctr=endfctr,getphase=getphase)
-    print('extra features gotten')
-    ndup = countdups(lmergedblobs)
-    if ndup > 0: print('ndup in lmergedblobs = ', ndup, 'out of ', len(lmergedblobs))
-    for blob in lmergedblobs: # store offsets for getting to time-series / wavelet spectrograms
-      blob.windowidx = windowidx
-      blob.offidx = offidx
-      blob.duringnoise = noise
-    llevent.append(lmergedblobs) # save merged events
-    print('one iteration of getspecevents for-loop complete')
-  return llevent
-
-# get interevent interval distribution
-def getblobIEI (lblob,scalex=1.0):
-  liei = []
-  newlist = sorted(lblob, key=lambda x: x.left)
-  for i in range(1,len(newlist),1):
-    liei.append((newlist[i].left-newlist[i-1].right)*scalex)
-  return liei
-
-# get event blobs in (inclusive for lower bound, strictly less than for upper bound) range of minf,maxf
-def getblobinrange (lblobf, minF,maxF): return [blob for blob in lblobf if blob.peakF >= minF and blob.peakF < maxF]
-
-
-# median normalization
-def mednorm (dat,byRow=True):
-  nrow,ncol = dat.shape[0],dat.shape[1]
-  out = zeros((nrow,ncol))
-  if byRow:
-    for row in range(nrow):
-      med = median(dat[row,:])
-      if med != 0.0:
-        out[row,:] = dat[row,:] / med
-      else:
-        out[row,:] = dat[row,:]
-  else:
-    for col in range(ncol):
-      med = median(dat[:,col])
-      if med != 0.0:
-        out[:,col] = dat[:,col] / med
-      else:
-        out[:,col] = dat[:,col]
-  return out
-
 
 # finds boundaries where the image dips below the threshold, starting from x,y and moving left,right,up,down
 def findbounds (img,x,y,thresh):
@@ -240,6 +134,54 @@ class evblob(bbox):
     drline(x0,x1,y1,y1,bbclr,linewidth)
     plot([scalex*(self.maxpos[1]+offidx)],[scaley*(self.maxpos[0]+offidy)],mclr+'o',markersize=12)
 
+# get morlet specgrams on windows of dat time series (window size in samples = winsz)
+def getmorletwin (dat,winsz,sampr,freqmin=1.0,freqmax=100.0,freqstep=1.0, noiseamp=noiseampCSD,getphase=False,useloglfreq=False,mspecwidth=7.0):
+  lms = []
+  n,sz = len(dat),len(dat)
+  lnoise = []; lsidx = []; leidx = []
+  if useloglfreq:
+    minstep=0.1
+    loglfreq = getloglfreq(freqmin,freqmax,minstep)  
+  for sidx in range(0,sz,winsz):
+    lsidx.append(sidx)
+    eidx = sidx + winsz
+    if eidx >= sz: eidx = sz - 1
+    leidx.append(eidx)
+    print(sidx,eidx)
+    sig = dat[sidx:eidx]
+    lnoise.append(max(abs(sig)) > noiseamp)
+    if useloglfreq:
+      ms = MorletSpec(sig,sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,lfreq=loglfreq,width=mspecwidth)
+    else:
+      ms = MorletSpec(sig,sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,width=mspecwidth)
+    lms.append(ms)
+  print('exiting getmorletwin-- returning values')
+  return lms,lnoise,lsidx,leidx
+
+
+# median normalization
+def mednorm (dat,byRow=True):
+  nrow,ncol = dat.shape[0],dat.shape[1]
+  out = zeros((nrow,ncol))
+  if byRow:
+    for row in range(nrow):
+      med = median(dat[row,:])
+      if med != 0.0:
+        out[row,:] = dat[row,:] / med
+      else:
+        out[row,:] = dat[row,:]
+  else:
+    for col in range(ncol):
+      med = median(dat[:,col])
+      if med != 0.0:
+        out[:,col] = dat[:,col] / med
+      else:
+        out[:,col] = dat[:,col]
+  return out
+
+
+
+######################################################################################################
 # extract the event blobs from local maxima image (impk)
 def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
   # imnorm is normalized image, lbl is label image obtained from imnorm, imorig is original un-normalized image
@@ -280,8 +222,46 @@ def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
   return lblob
 
 
+
 ######################################################################################################
+#### NOT NEEDED AT THE MOMENT 
 ######################################################################################################
+
+# get oscillatory events
+# lms is list of windowed morlet spectrograms, lmsnorm is spectrograms normalized by median in each power
+# lnoise is whether the window had noise, medthresh is median threshold for significant events,
+# lsidx,leidx are starting/ending indices into original time-series, csd is current source density
+# on the single chan, MUA is multi-channel multiunit activity, overlapth is threshold for merging
+# events when bounding boxes overlap, fctr is fraction of event amplitude to search left/right/up/down
+# when terminating events
+def getspecevents (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,overlapth=0.5,endfctr=0.5,getphase=False):
+  llevent = []
+  for windowidx,offidx,ms,msn,noise in zip(arange(len(lms)),lsidx,lms,lmsnorm,lnoise): 
+    imgpk = detectpeaks(msn) # detect the 2D local maxima
+    print('imgpk detected')
+    lblob = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
+    print('lblob gotten')
+    lblobsig = [blob for blob in lblob if blob.maxval >= medthresh] # take only significant events
+    #print('ndups in lblobsig 0 = ', countdups(lblobsig), 'out of ', len(lblobsig))    
+    lmergeset,bmerged = getmergesets(lblobsig,overlapth,areaop=min) # determine overlapping events
+    lmergedblobs = getmergedblobs(lblobsig,lmergeset,bmerged)
+    #print('ndups in lmergedblobs A = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
+    lmergeset,bmerged = getmergesets(lmergedblobs,1.0,areaop=max) # gets rid of duplicates
+    lmergedblobs = getmergedblobs(lmergedblobs,lmergeset,bmerged)
+    #print('ndups in lmergedblobs B = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
+    # get the extra features (before/during/after with MUA,avg,etc.)
+    getextrafeatures(lmergedblobs,ms,msn,medthresh,csd,MUA,chan,offidx,sampr,endfctr=endfctr,getphase=getphase)
+    print('extra features gotten')
+    ndup = countdups(lmergedblobs)
+    if ndup > 0: print('ndup in lmergedblobs = ', ndup, 'out of ', len(lmergedblobs))
+    for blob in lmergedblobs: # store offsets for getting to time-series / wavelet spectrograms
+      blob.windowidx = windowidx
+      blob.offidx = offidx
+      blob.duringnoise = noise
+    llevent.append(lmergedblobs) # save merged events
+    print('one iteration of getspecevents for-loop complete')
+  return llevent
+
 
 ## getCV2, getLV, getFF?  -> not causing any problems for now. AH -- these come from evstats.py in a1dat
 
@@ -366,4 +346,18 @@ def getIEIstatsbyBand (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,
       gc.collect()
   dout['lchan'] = lchan
   return dout
+
+
+
+# get interevent interval distribution
+def getblobIEI (lblob,scalex=1.0):
+  liei = []
+  newlist = sorted(lblob, key=lambda x: x.left)
+  for i in range(1,len(newlist),1):
+    liei.append((newlist[i].left-newlist[i-1].right)*scalex)
+  return liei
+
+# get event blobs in (inclusive for lower bound, strictly less than for upper bound) range of minf,maxf
+def getblobinrange (lblobf, minF,maxF): return [blob for blob in lblobf if blob.peakF >= minF and blob.peakF < maxF]
+
 
