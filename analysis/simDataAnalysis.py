@@ -26,9 +26,6 @@ import morlet
 from morlet import MorletSpec, index2ms
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 ## trying peakF calculations from load.py
-# import loadSelect
-# from loadSelect import * 
-# from loadSelect2 import *
 from loadSelect import * 
 
 ######################################################################
@@ -2569,7 +2566,7 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data and plotting ## 
-def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEventInfo=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1):
+def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEventInfo=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=110, stepFreq=0.25):
 	#### Outputs a dict with CSD and other relevant data for plotting! 
 	## dataFile: str     					--> .pkl file with recorded simulation 
 	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
@@ -2581,8 +2578,8 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	## pop: str or list 					--> e.g. 'ITS4' or ['ITS4']
 	## spacing_um: int 						--> 100 by DEFAULT (spacing between electrodes in MICRONS)
 	## minFreq: float / int 				--> DEFAULT: 1 Hz  
-	## maxFreq: float / int 				--> DEFAULT: 100 Hz 
-	## stepFreq: float / int 				--> DEFAULT: 1 Hz 
+	## maxFreq: float / int 				--> DEFAULT: 110 Hz 
+	## stepFreq: float / int 				--> DEFAULT: 0.25 Hz 
 			## TO DO: 
 			###  --> Should I also have an lfp_input option so that I can get the CSD data of summed LFP data...?
 			###  --> Should I make it such that output can include both timeSeries and spectrogram so don't have to run this twice? test this!! 
@@ -2609,12 +2606,16 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 			pop = pop[0]
 		lfpData = sim.allSimData['LFPPops'][pop]
 
+	## Set up dictionary for output data 
+	outputData = {}
 
 
-	## Get CSD data for ALL channels, over ALL timepoints
+	#### ALL CSD DATA -- ALL CHANS, ALL TIMEPOINTS!!! 
 	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
-	# Input full CSD data into outputData dict 
-	outputData = {'csd': csdData}  # REMEMBER: ALL CHANS, ALL TIMEPOINTS!! 
+	tt = np.linspace(0, sim.cfg.duration, len(csdData)) 
+	# Input full CSD data (and time array) into outputData dict 
+	outputData.update({'csdData': csdData})
+	outputData.update({'tt': tt})
 
 
 	## Extract oscillation event info 
@@ -2650,17 +2651,18 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		print('No oscillation event data detected!')
 
 
-	## Get CSD data for ALL channels, over the theta osc timepoints
+
+
+	#### ALL CHANS, OSC EVENT TIMEPOINTS!! 
 	csdDataAllChans = csdData[:,left:right]	#idx0_before:idx1_after]
 	# Input full CSD data into outputData dict 
-	outputData.update({'csdAllChans': csdDataAllChans})  # REMEMBER: ALL CHANS, OSC EVENT TIMEPOINTS!! 
+	outputData.update({'csdDataAllChans': csdDataAllChans})  
 
-	## Get CSD data for ALL channels, over the theta osc timepoints PLUS time buffer! 
+	#### ALL CHANS, OSC EVENT + BUFFER!!
 	csdDataAllChans_plusTimeBuffer = csdData[:,idx0_before:idx1_after]
-	## tt_plusTimeBuffer = np.linspace(minT-beforeT, maxT_afterT, len(csdDataAllChans_plusTimeBuffer)) + alignoffset
 	# Input this data into outputData dict 
 	outputData.update({'csdDataAllChans_plusTimeBuffer': csdDataAllChans_plusTimeBuffer})  # REMEMBER: ALL CHANS, OSC EVENT TIMEPOINTS!! 
-	## outputData.update({'tt_plusTimeBuffer': tt_plusTimeBuffer})
+
 
 	# timeSeries --------------------------------------------
 	if 'timeSeries' in outputType:  ### make case for when it IS None  # and oscEventInfo is not None
@@ -3134,7 +3136,7 @@ def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
 		return dfPeak, dfAvg
 
 ## PSD: data and plotting ## 
-def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=100, stepFreq=1):
+def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=110, stepFreq=0.25):
 	## Look at the power spectral density of a given data set (e.g. CSD, LFP, summed LFP, etc.)
 	### dataFile:str 				--> .pkl file with simulation recording 
 	### inputData 					--> data to be analyzed 
@@ -3167,8 +3169,8 @@ def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, mi
 
 	## Calculations for raw LFP or CSD timeSeries
 	if inputDataType is 'timeSeries':
-		freqList = np.arange(minFreq, maxFreq+stepFreq, stepFreq)
-		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList) # specDuring[0]
+		# freqList = np.arange(minFreq, maxFreq+stepFreq, stepFreq)
+		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)#, lfreq=freqList) # specDuring[0]
 		freqs = F = morletSpec.f 		# F_during = specDuring[0].f
 		spec = morletSpec.TFR 			# S_during = specDuring[0].TFR
 		psdData.update({'spec': spec})
@@ -3208,7 +3210,7 @@ def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, mi
 	print('max power frequency in signal: ' + str(maxPowerFrequency))
 
 	return psdData 
-def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
+def plotPSD(psdData, minFreq=1, maxFreq=110, freqStep=0.25, lineWidth=1.0, fontSize=12, color='k', figSize=(10,7)):
 	### 	----> NOTE: MAKE OVERLAY OPTION POSSIBLE? 
 	### This function should plot the PSD data 
 	### psdData -->  output of def getPSD()
@@ -3221,8 +3223,11 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	# Get signal & frequency data
 	signalList = psdData['allSignal']
 	signal = signalList[0]
+
 	freqsList = psdData['allFreqs']
 	freqs = freqsList[0]
+	if type(freqs) is not list:
+		freqs = list(freqs)
 
 
 	freqsToPlot = [freq for freq in freqs if freq >= minFreq and freq <= maxFreq]
@@ -3243,7 +3248,7 @@ def plotPSD(psdData, minFreq=1, maxFreq=100, freqStep=5, lineWidth=1.0, fontSize
 	plt.show()
 
 ## peakF calculations ## 
-def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freqmax=110, freqStep=0.25, plotTest=True): #  lchan=None, 
+def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=1.0, freqmax=110, freqStep=0.25, plotTest=True, plotNorm=0): #  lchan=None, 
 	### This function will calculate the peakF of a given dataset (oscEvent) using OEvent methodology (see load.py)
 	## dataFile: .pkl file 
 	## inputData: list / array with data to be analyzed
@@ -3285,7 +3290,7 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 		noiseamp=noiseamp) # inputData <-- dat[chan, :] OR dat[:, chan]  # dat[:,chan]
 
 	# msn <-- lmsnorm # This is from getIEIstatsbyBand, where normop == mednorm (per the arguments) 	## lmsnorm = [normop(ms.TFR) for ms in lms]
-	lmsnorm = [mednorm(ms.TFR) for ms in lms]
+	lmsnorm = [unitnorm(ms.TFR) for ms in lms] ##unitnorm or mednorm 
 
 
 	# Update output data dictionary with output from getmorletwin & lmsnorm 
@@ -3299,9 +3304,14 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 	getphase=True  ## TRYING FALSE FOR NOW BC of all the issues with getspecevents -- don't feel like debugging now 
 	endfctr=0.5
 	# sig --> full CSD data (not selected for chan)
-	llevent = getspecevents(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,csdAllChans,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
+	llevent_norm = getspecevents(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
+	outputData.update({'llevent_norm': llevent_norm})
+
+	## for non-normalized spectrogram 
+	llevent = getspecevents2(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr)
 	outputData.update({'llevent': llevent})
 
+	############################################
 
 
 	# Argument values for getblobsfrompeaks()
@@ -3315,7 +3325,7 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 		print('imgpk detected')
 		lblob_norm = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
 		lblob_nonNorm = getblobsfrompeaks(ms.TFR,imgpk_nonNorm,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
-
+												
 		print('lblob gotten')
 
 	outputData.update({'imgpk_nonNorm': imgpk_nonNorm, 'lblob_nonNorm': lblob_nonNorm})
@@ -3324,7 +3334,6 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 
 	## TEST PLOTTING
 	if plotTest:
-		norm=0  ## CAN CHANGE THIS !! 
 
 		fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,7)) # fig = plt.figure() # figsize=figSize
 		ax1 = plt.subplot(1, 1, 1)
@@ -3336,7 +3345,7 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 		# print('vmax: ' + str(vmax))
 
 		
-		if norm:
+		if plotNorm:
 			imshowSignalNorm = lmsnorm[0] # .TFR  
 			imshowSignal=imshowSignalNorm
 		else:
@@ -3344,51 +3353,34 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=0.25, freq
 			imshowSignal = S # imshowSignal 	# S #### [freqmin:freqmax+1]		# S[minFreq:maxFreq+1]
 
 		T = lms[0].t # timeData # ms.t # lms[0].t ### CORRECT USING MINT, ALIGNOFFSET, ETC. 
+		F = lms[0].f
 
-
-		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), freqmin, freqmax), origin='lower', interpolation='None', aspect='auto', 
-				vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('jet')) # freqmin <-- minFreq # freqmax <-- maxFreq # 'jet' <-- colorMap
+		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
+				vmin=vc[0], vmax=vc[1], cmap=plt.get_cmap('jet')) # np.amin(f) <--freqmin <-- minFreq # np.amax(f) <-- freqmax <-- maxFreq # 'jet' <-- colorMap
 
 
 		## Overlay peak points
-		if norm:
-			freqList = lms[0].f #np.arange(freqmin, freqmax+1, freqStep) # ms.f ?? # lms[0].f
+		if plotNorm:
 			peaks = np.where(imgpk==True)
-			# spectrogram y-axis point
-			spec_inds = peaks[0]
-			# time x-axis point
-			time_inds = peaks[1]
-
-			x = []
-			y = []
-			for i in range(len(peaks[0])):
-				x.append(T[time_inds[i]])
-				y.append(freqList[spec_inds[i]])
-
-			plt.scatter(x,y, c='yellow')
-
-
+			plt.title('Normalized Spectrogram w/ peak points overlaid')
 		else:
-			freqList = lms[0].f # np.arange(freqmin, freqmax+1, freqStep) # ms.f ?? # lms[0].f
-			peaks_nonNorm = np.where(imgpk_nonNorm==True)
-			# spectrogram y-axis point
-			spec_inds = peaks_nonNorm[0]
-			# time x-axis point
-			time_inds = peaks_nonNorm[1]
+			peaks = np.where(imgpk_nonNorm==True)
+			plt.title('Non-normalized Spectrogram w/ peak points overlaid')
 
-			x = []
-			y = []
-			for i in range(len(peaks_nonNorm[0])):
+		# time x-axis point
+		time_inds = peaks[1]
+		# spectrogram y-axis point
+		spec_inds = peaks[0]
+
+		x = []
+		y = []
+		for i in range(len(peaks[0])):
+			if T[time_inds[i]] > np.amin(T) and T[time_inds[i]] < np.amax(T) and F[spec_inds[i]] > np.amin(F) and F[spec_inds[i]] < np.amax(F):
 				x.append(T[time_inds[i]])
-				y.append(freqList[spec_inds[i]])
-			plt.scatter(x,y, c='yellow')
+				y.append(F[spec_inds[i]])
 
-			# for pt in zip(x,y):
-			# 	plt.plot(pt)
-			# for i in range(len(imgpk[0])):
-			# 	x = imgpk[0][i]
-			# 	y = imgpk[1][i]
-			# 	plt.plot(x,y)
+		plt.scatter(x,y, c='yellow', s=5)
+
 
 		plt.show()
 
@@ -3670,12 +3662,14 @@ if csdPSD_multiple:
 
 ## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT SPECIFIED CHANNEL)
 csdPSD_wholeCSD = 0
-# chan = 8
 if csdPSD_wholeCSD:
-	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=None) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+	maxFreq = 110 
+	pop = None #'ITP4' #None
+
+	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
 	csdData = csdDataDict['csdDuring'] 
 
-	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=110, stepFreq=0.25)
+	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=maxFreq, stepFreq=0.25)
 	plotPSD(psdData)
 
 
@@ -3706,31 +3700,47 @@ if PSDbyPop:
 ################################
 peakF = 1
 if peakF:
-	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=None, maxFreq=110)
-	csdDuring = timeSeriesDict['csdDuring']
-	ttDuring = timeSeriesDict['tt_during']
-	# csdAllChans = timeSeriesDict['csdAllChans'] # all channels, only over osc event timepoints (no time buffer)
+	maxFreq = 110 #110 #10
+	plotNorm = 1
+	pop = None #'ITP4'	# None
 
-	# csdFull = timeSeriesDict['csdFull'] #<-- csdOscChan_plusTimeBuffer
+	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
+	## During osc event
+	csdDuring = timeSeriesDict['csdDuring']
+	csdDataAllChans = timeSeriesDict['csdDataAllChans'] # all channels, only over osc event timepoints (no time buffer)
+	tt_During = timeSeriesDict['tt_during']
+
+	## During osc event + before/after time buffer 
 	csdOscChan_plusTimeBuffer = timeSeriesDict['csdOscChan_plusTimeBuffer']
 	csdAllChans_plusTimeBuffer = timeSeriesDict['csdDataAllChans_plusTimeBuffer']
 	tt_plusTimeBuffer = timeSeriesDict['tt_plusTimeBuffer']
 
-	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdAllChans, timeData=ttDuring, freqmax=110)	#lchan=[8])
-	peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, freqmax=110, plotTest=True)	#lchan=[8])
-	imgpk = peakFData['imgpk']
-	imgpk_nonNorm = peakFData['imgpk_nonNorm']
-	lms = peakFData['lms']
-	lsidx = peakFData['lsidx']
-	leidx = peakFData['leidx']
-	lmsnorm = peakFData['lmsnorm']
-	lnoise = peakFData['lnoise']
-	lblob_norm = peakFData['lblob_norm']
-	lblob_nonNorm = peakFData['lblob_nonNorm']
-	llevent = peakFData['llevent']
+	## ALL CSD DATA
+	csdData = timeSeriesDict['csdData']
+	tt = timeSeriesDict['tt']
 
-	peaks = np.where(imgpk==True)
-	peaks_nonNorm = np.where(imgpk_nonNorm==True)
+	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdDataAllChans, timeData=tt_During, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
+	# peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, 
+				# freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
+	# imgpk = peakFData['imgpk']
+	# imgpk_nonNorm = peakFData['imgpk_nonNorm']
+	# lms = peakFData['lms']
+	# lsidx = peakFData['lsidx']
+	# leidx = peakFData['leidx']
+	# lmsnorm = peakFData['lmsnorm']
+	# lnoise = peakFData['lnoise']
+	# ## lblob
+	# lblob_norm = peakFData['lblob_norm']
+	# lblob_nonNorm = peakFData['lblob_nonNorm']
+	# lblob = lblob_nonNorm
+	# ## llevent
+	# llevent = peakFData['llevent']
+	# llevent = llevent[0]
+	# llevent_norm = peakFData['llevent_norm']
+
+
+	# peaks = np.where(imgpk==True)
+	# peaks_nonNorm = np.where(imgpk_nonNorm==True)
 
 	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
 ##########################################

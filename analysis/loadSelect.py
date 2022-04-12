@@ -184,6 +184,26 @@ def mednorm (dat,byRow=True):
 
 
 
+# sub average div std normalization
+def unitnorm (dat,byRow=True):
+  nrow,ncol = dat.shape[0],dat.shape[1]
+  out = np.zeros((nrow,ncol)) ## np.zeros <-- zeros 
+  if byRow:
+    for row in range(nrow):
+      avg = np.mean(dat[row,:])
+      std = np.std(dat[row,:])
+      out[row,:] = dat[row,:] - avg
+      if std != 0.0:
+        out[row,:] /= std
+  else:
+    for col in range(ncol):
+      avg = np.mean(dat[:,col])
+      std = np.std(dat[:,col])
+      out[:,col] = dat[:,col] - avg
+      if std != 0.0:
+        out[:,col] /= std
+  return out
+
 ######################################################################################################
 # extract the event blobs from local maxima image (impk)
 def getblobsfrompeaks (imnorm,impk,imorig,medthresh,endfctr,T,F):
@@ -278,6 +298,36 @@ def getspecevents (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,o
     imgpk = detectpeaks(msn) # detect the 2D local maxima
     print('imgpk detected')
     lblob = getblobsfrompeaks(msn,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
+    print('lblob gotten')
+    lblobsig = [blob for blob in lblob if blob.maxval >= medthresh] # take only significant events
+    #print('ndups in lblobsig 0 = ', countdups(lblobsig), 'out of ', len(lblobsig))    
+    lmergeset,bmerged = getmergesets(lblobsig,overlapth,areaop=min) # determine overlapping events
+    lmergedblobs = getmergedblobs(lblobsig,lmergeset,bmerged)
+    #print('ndups in lmergedblobs A = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
+    lmergeset,bmerged = getmergesets(lmergedblobs,1.0,areaop=max) # gets rid of duplicates
+    lmergedblobs = getmergedblobs(lmergedblobs,lmergeset,bmerged)
+    #print('ndups in lmergedblobs B = ', countdups(lmergedblobs), 'out of ', len(lmergedblobs))
+    # get the extra features (before/during/after with MUA,avg,etc.)
+    ### getextrafeatures(lmergedblobs,ms,msn,medthresh,csd,MUA,chan,offidx,sampr,endfctr=endfctr,getphase=getphase)
+    ### ^^ COMMENTING THIS OUT FOR NOW 
+    ### print('extra features gotten')
+    ndup = countdups(lmergedblobs)
+    if ndup > 0: print('ndup in lmergedblobs = ', ndup, 'out of ', len(lmergedblobs))
+    for blob in lmergedblobs: # store offsets for getting to time-series / wavelet spectrograms
+      blob.windowidx = windowidx
+      blob.offidx = offidx
+      blob.duringnoise = noise
+    llevent.append(lmergedblobs) # save merged events
+    print('one iteration of getspecevents for-loop complete')
+  return llevent
+
+
+def getspecevents2 (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,overlapth=0.5,endfctr=0.5,getphase=False):
+  llevent = []
+  for windowidx,offidx,ms,msn,noise in zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise):   # np.arange <-- arange
+    imgpk = detectpeaks(ms.TFR) # detect the 2D local maxima
+    print('imgpk detected')
+    lblob = getblobsfrompeaks(ms.TFR,imgpk,ms.TFR,medthresh,endfctr=endfctr,T=ms.t,F=ms.f) # cut out the blobs/events
     print('lblob gotten')
     lblobsig = [blob for blob in lblob if blob.maxval >= medthresh] # take only significant events
     #print('ndups in lblobsig 0 = ', countdups(lblobsig), 'out of ', len(lblobsig))    
