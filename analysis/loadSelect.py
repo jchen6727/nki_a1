@@ -731,14 +731,16 @@ def getIEIstatsbyBand (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,
   dout['lchan'] = lchan
   return dout
 
-# 
-def getIEIstatsbyBand2 (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth=0.5,
+# WORKS WITH NON-NORMALIZED SPECTROGRAM DATA!!!! 
+def getIEIstatsbyBand2 (inputData,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth=0.5,
   getphase=True,savespec=True,threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,
   endfctr=0.5,normop=mednorm):
+  ### inputData --> differs from 'dat' in that it already has the channel segmented out; SHOULD I CHANGE THIS AT SOME POINT? 
   # get the interevent statistics split up by frequency band
   dout = {'sampr':sampr,'medthresh':medthresh,'winsz':winsz,'freqmin':freqmin,'freqmax':freqmax,'freqstep':freqstep,'overlapth':overlapth}
   dout['threshfctr'] = threshfctr; dout['mspecwidth'] = mspecwidth; dout['noiseamp']=noiseamp
   dout['endfctr'] = endfctr
+
   # for chan in lchan:
   #   dout[chan] = doutC = {'delta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
   #                         'theta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
@@ -757,9 +759,17 @@ def getIEIstatsbyBand2 (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan
   #   print('completed morlet in getIEIstatsbyBand')
 
   for chan in lchan:
+    dout[chan] = doutC = {'delta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'theta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'alpha':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'beta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'gamma':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'hgamma':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'lnoise':[]}
+
     # Get morlet specgrams on windows of dat time series (window size in samples = winsz)
     lms,lnoise,lsidx,leidx = getmorletwin(inputData,int(winsz*sampr),sampr,freqmin=freqmin,
-      freqmax=freqmax,freqstep=freqstep,getphase=getPhase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,
+      freqmax=freqmax,freqstep=freqstep,getphase=getphase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,
       noiseamp=noiseamp)
 
     if 'lsidx' not in dout: dout['lsidx'] = lsidx # save starting indices into original data array
@@ -785,12 +795,12 @@ def getIEIstatsbyBand2 (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan
     print ('2 if statements on specsamp and specsdur completed')
 
     ### GET SPEC EVENTS 
-    # for normalized spectrogram
-    llevent_norm = getspecevents_norm(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,sig,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
+    # for normalized spectrogram   ### sig --> inputData 
+    llevent_norm = getspecevents_norm(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
     print('completed llevent_norm getspecevents')
 
-    # for non-normalized spectrogram 
-    llevent = getspecevents_nonNorm(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getPhase,endfctr=endfctr)
+    # for non-normalized spectrogram  ### sig --> inputData 
+    llevent = getspecevents_nonNorm(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr)
     print('completed llevent getspecevents')
 
     ### SCALEX 
@@ -799,20 +809,20 @@ def getIEIstatsbyBand2 (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan
     if 'scalex' not in dout: dout['scalex'] = scalex
 
     ### NOISE 
-    # doutC['lnoise'] = lnoise # this is per channel - diff noise on each channel
-    # myt = 0
-    # for levent,msn,ms in zip(llevent,lmsnorm,lms):
-    #   print(myt)
-    #   """ do not skip noise so can look at noise event waveforms in eventviewer; can always filter out noise from dframe
-    #   if lnoise[myt]: # skip noise
-    #     myt+=1
-    #     continue      
-    #   """
-    #   for band in dbands.keys(): # check events by band
-    #     lband = getblobinrange(levent,dbands[band][0],dbands[band][1])
-    #     count = len(lband)
-    #     doutC[band]['Count'].append(count)
-    #     doutC[band]['levent'].append(lband)
+    doutC['lnoise'] = lnoise # this is per channel - diff noise on each channel
+    myt = 0
+    for levent,msn,ms in zip(llevent,lmsnorm,lms):
+      print(myt)
+      """ do not skip noise so can look at noise event waveforms in eventviewer; can always filter out noise from dframe
+      if lnoise[myt]: # skip noise
+        myt+=1
+        continue      
+      """
+      for band in dbands.keys(): # check events by band
+        lband = getblobinrange(levent,dbands[band][0],dbands[band][1])
+        count = len(lband)
+        doutC[band]['Count'].append(count)
+        doutC[band]['levent'].append(lband)
     #     if count > 2:
     #       lbandIEI = getblobIEI(lband,scalex)
     #       cv = getCV2(lbandIEI)

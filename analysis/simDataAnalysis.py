@@ -3665,7 +3665,7 @@ if csdPSD_multiple:
 
 
 ## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT SPECIFIED CHANNEL)
-csdPSD_wholeCSD = 1
+csdPSD_wholeCSD = 0
 if csdPSD_wholeCSD:
 	maxFreq = 110 
 	pop = 'IT5A' #None
@@ -3777,6 +3777,49 @@ if peakF:
 
 
 	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
+
+
+
+getIEIstatsbyBandTEST=1
+if getIEIstatsbyBandTEST:
+	maxFreq = 110 #110 #10
+	chan=8
+	pop = None #'ITP4'	# None
+
+	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
+
+	## CSD DATA
+	csdData = timeSeriesDict['csdData']   ## All chans, all timepoints 
+	fullTimeRange = [0,(sim.cfg.duration/1000.0)] 
+	dt = sim.cfg.recordStep / 1000.0  						# thus, dt also converted to seconds (from ms)
+	sampr = 1.0 / dt
+	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
+
+	## timeRange so it's like load.py
+	timeRange = [0,6]					# in seconds 
+
+	## Segment csdData and tt by timeRange
+	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
+	datChan = dat[chan,:]
+	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
+
+
+
+	noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
+	noiseamp=noiseampCSD 
+	winsz = 10
+	medthresh = 4.0
+	lchan = [chan]
+	MUA = None
+
+
+	dout = getIEIstatsbyBand2(inputData=datChan,winsz=winsz,sampr=sampr,freqmin=0.25,freqmax=maxFreq,freqstep=0.25,
+		medthresh=medthresh,lchan=lchan,MUA=MUA,overlapth=0.5,getphase=True,savespec=True,
+		threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,
+		normop=mednorm)
+
+
+
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
