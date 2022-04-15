@@ -2612,10 +2612,10 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 	#### ALL CSD DATA -- ALL CHANS, ALL TIMEPOINTS!!! 
 	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
-	tt = np.linspace(0, sim.cfg.duration, len(csdData)) 
+	tt = np.linspace(0, sim.cfg.duration, len(csdData[1])) 
 	# Input full CSD data (and time array) into outputData dict 
 	outputData.update({'csdData': csdData})
-	outputData.update({'tt': tt})
+	outputData.update({'tt': tt}) ## Keep in mind this is in milliseconds! 
 
 
 	## Extract oscillation event info 
@@ -3248,11 +3248,13 @@ def plotPSD(psdData, minFreq=1, maxFreq=110, freqStep=0.25, lineWidth=1.0, fontS
 	plt.show()
 
 ## peakF calculations ## 
-def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=1.0, freqmax=110, freqStep=0.25, plotTest=True, plotNorm=0): #  lchan=None, 
+def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.0, freqmax=110, freqStep=0.25, plotTest=True, plotNorm=0): #  lchan=None, 
 	### This function will calculate the peakF of a given dataset (oscEvent) using OEvent methodology (see load.py)
 	## dataFile: .pkl file 
 	## inputData: list / array with data to be analyzed
-	## casAllChans: list / array of csd data with all chans, over osc dur timepoints
+	## csdAllChans: list / array of csd data with all chans, over same timepoints as inputData
+	## timeData
+	## chan: int 
 	## freqmin: float			--> default: 0.25 (see load.py)
 	## freqmax: float			--> default: 110  (see load.py)
 	## freqStep: float 			--> default: 0.25 (see load.py)
@@ -3276,7 +3278,7 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=1.0, freqm
 	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
 
 	# Argument values for getmorletwin() below 
-	winsz = 565 #10 				# window size
+	winsz = 10 #565 #10 				# window size
 	getPhase = True
 	noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
 	noiseamp=noiseampCSD 
@@ -3290,7 +3292,7 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=1.0, freqm
 		noiseamp=noiseamp) # inputData <-- dat[chan, :] OR dat[:, chan]  # dat[:,chan]
 
 	# msn <-- lmsnorm # This is from getIEIstatsbyBand, where normop == mednorm (per the arguments) 	## lmsnorm = [normop(ms.TFR) for ms in lms]
-	lmsnorm = [unitnorm(ms.TFR) for ms in lms] ##unitnorm or mednorm 
+	lmsnorm = [mednorm(ms.TFR) for ms in lms] ##unitnorm or mednorm 
 
 
 	# Update output data dictionary with output from getmorletwin & lmsnorm 
@@ -3299,11 +3301,13 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, freqmin=1.0, freqm
 	## Trying getspecevents line 
 	evthresh = medthresh = 4.0
 	MUA=None
-	chan = 8
+	chan = chan
 	overlapth = 0.5
 	getphase=True  ## TRYING FALSE FOR NOW BC of all the issues with getspecevents -- don't feel like debugging now 
 	endfctr=0.5
 	# sig --> full CSD data (not selected for chan)
+
+	## for normalized spectrogram
 	llevent_norm = getspecevents(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
 	outputData.update({'llevent_norm': llevent_norm})
 
@@ -3661,10 +3665,10 @@ if csdPSD_multiple:
 
 
 ## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT SPECIFIED CHANNEL)
-csdPSD_wholeCSD = 0
+csdPSD_wholeCSD = 1
 if csdPSD_wholeCSD:
 	maxFreq = 110 
-	pop = None #'ITP4' #None
+	pop = 'IT5A' #None
 
 	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
 	csdData = csdDataDict['csdDuring'] 
@@ -3698,49 +3702,79 @@ if PSDbyPop:
 ################################
 ###### peakF calculations ######
 ################################
-peakF = 1
+peakF = 0
 if peakF:
-	maxFreq = 110 #110 #10
-	plotNorm = 1
+	maxFreq = 20 #110 #10
+	plotNorm = 0
+	chan=8
 	pop = None #'ITP4'	# None
 
 	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
-	## During osc event
-	csdDuring = timeSeriesDict['csdDuring']
-	csdDataAllChans = timeSeriesDict['csdDataAllChans'] # all channels, only over osc event timepoints (no time buffer)
-	tt_During = timeSeriesDict['tt_during']
 
-	## During osc event + before/after time buffer 
-	csdOscChan_plusTimeBuffer = timeSeriesDict['csdOscChan_plusTimeBuffer']
-	csdAllChans_plusTimeBuffer = timeSeriesDict['csdDataAllChans_plusTimeBuffer']
-	tt_plusTimeBuffer = timeSeriesDict['tt_plusTimeBuffer']
+	## CSD DATA
+	csdData = timeSeriesDict['csdData']   ## All chans, all timepoints 
+	fullTimeRange = [0,(sim.cfg.duration/1000.0)] 
+	dt = sim.cfg.recordStep / 1000.0  						# thus, dt also converted to seconds (from ms)
+	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
 
-	## ALL CSD DATA
-	csdData = timeSeriesDict['csdData']
-	tt = timeSeriesDict['tt']
+	## timeRange so it's like load.py
+	timeRange = [0,6]					# in seconds 
 
+	## Segment csdData and tt by timeRange
+	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
+	datChan = dat[chan,:]
+	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
+
+	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
+	# peakFData = getPeakF(dataFile=dataFile, inputData=csdData_theta, csdAllChans=csdData_theta_allChans, timeData=tt, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdDataAllChans, timeData=tt_During, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, 
 				# freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
-	# imgpk = peakFData['imgpk']
-	# imgpk_nonNorm = peakFData['imgpk_nonNorm']
-	# lms = peakFData['lms']
-	# lsidx = peakFData['lsidx']
-	# leidx = peakFData['leidx']
-	# lmsnorm = peakFData['lmsnorm']
-	# lnoise = peakFData['lnoise']
-	# ## lblob
-	# lblob_norm = peakFData['lblob_norm']
-	# lblob_nonNorm = peakFData['lblob_nonNorm']
-	# lblob = lblob_nonNorm
-	# ## llevent
-	# llevent = peakFData['llevent']
-	# llevent = llevent[0]
-	# llevent_norm = peakFData['llevent_norm']
+	imgpk = peakFData['imgpk']
+	imgpk_nonNorm = peakFData['imgpk_nonNorm']
+	lms = peakFData['lms']
+	lsidx = peakFData['lsidx']
+	leidx = peakFData['leidx']
+	lmsnorm = peakFData['lmsnorm']
+	lnoise = peakFData['lnoise']
+	## lblob
+	lblob_norm = peakFData['lblob_norm']
+	lblob_nonNorm = peakFData['lblob_nonNorm']
+	lblob = lblob_nonNorm
+	## llevent
+	llevent = peakFData['llevent']
+	llevent = llevent[0]
+	llevent_norm = peakFData['llevent_norm']
+	llevent_norm = llevent_norm[0]
+
+	peaks = np.where(imgpk==True)
+	peaks_nonNorm = np.where(imgpk_nonNorm==True)
 
 
-	# peaks = np.where(imgpk==True)
-	# peaks_nonNorm = np.where(imgpk_nonNorm==True)
+	### LOOK AT CANDIDATES
+	print('Looking at llevent')
+	for i in range(len(llevent)):
+		if llevent[i].peakF > 4 and llevent[i].peakF < 7:
+			print('index: ' + str(i) + ' --> peakF: ' + str(llevent[i].peakF) + ', peakT: ' + str(llevent[i].peakT))
+
+
+	print('Looking at llevent_norm')
+	for i in range(len(llevent_norm)):
+		if llevent_norm[i].peakF > 4 and llevent_norm[i].peakF < 7:
+			print('index: ' + str(i) + ' --> peakF: ' + str(llevent_norm[i].peakF) + ', peakT: ' + str(llevent_norm[i].peakT))
+
+
+	print('Looking at lblob')
+	for i in range(len(lblob)):
+		if lblob[i].peakF > 4 and lblob[i].peakF < 7:
+			print('index: ' + str(i) + ' --> peakF: ' + str(lblob[i].peakF) + ', peakT: ' + str(lblob[i].peakT))
+
+
+	print('Looking at lblob_norm')
+	for i in range(len(lblob_norm)):
+		if lblob_norm[i].peakF > 4 and lblob_norm[i].peakF < 7:
+			print('index: ' + str(i) + ' --> peakF: ' + str(lblob_norm[i].peakF) + ', peakT: ' + str(lblob_norm[i].peakT))
+
 
 	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
 ##########################################
