@@ -3308,11 +3308,11 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 	# sig --> full CSD data (not selected for chan)
 
 	## for normalized spectrogram
-	llevent_norm = getspecevents(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
+	llevent_norm = getspecevents_norm(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
 	outputData.update({'llevent_norm': llevent_norm})
 
 	## for non-normalized spectrogram 
-	llevent = getspecevents2(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr)
+	llevent = getspecevents_nonNorm(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,inputData,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr)
 	outputData.update({'llevent': llevent})
 
 	############################################
