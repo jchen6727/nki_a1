@@ -731,6 +731,88 @@ def getIEIstatsbyBand (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,
   dout['lchan'] = lchan
   return dout
 
+#
+def getIEIstatsbyBand2 (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth=0.5,getphase=True,savespec=False,useDynThresh=False,threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,normop=mednorm):
+  # get the interevent statistics split up by frequency band
+  dout = {'sampr':sampr,'medthresh':medthresh,'winsz':winsz,'freqmin':freqmin,'freqmax':freqmax,'freqstep':freqstep,'overlapth':overlapth}
+  dout['threshfctr'] = threshfctr; dout['useDynThresh']=useDynThresh; dout['mspecwidth'] = mspecwidth; dout['noiseamp']=noiseamp
+  dout['endfctr'] = endfctr
+  for chan in lchan:
+    dout[chan] = doutC = {'delta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'theta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'alpha':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'beta':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'gamma':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'hgamma':{'LV':[],'CV':[],'Count':[],'FF':None,'levent':[],'IEI':[]},
+                          'lnoise':[]}
+    print('up to channel', chan,'getphase:',getphase)
+    if dat.shape[0] > dat.shape[1]:
+      sig = dat[:,chan] # signal (either CSD or LFP)
+      lms,lnoise,lsidx,leidx = getmorletwin(dat[:,chan],int(winsz*sampr),sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,noiseamp=noiseamp)
+    else:
+      sig = dat[chan,:] # signal (either CSD or LFP)
+      lms,lnoise,lsidx,leidx = getmorletwin(dat[chan,:],int(winsz*sampr),sampr,freqmin=freqmin,freqmax=freqmax,freqstep=freqstep,getphase=getphase,useloglfreq=useloglfreq,mspecwidth=mspecwidth,noiseamp=noiseamp)
+    print('completed morlet in getIEIstatsbyBand')
+    if 'lsidx' not in dout: dout['lsidx'] = lsidx # save starting indices into original data array
+    if 'leidx' not in dout: dout['leidx'] = leidx # save ending indices into original data array
+    lmsnorm = [normop(ms.TFR) for ms in lms] # normalize wavelet specgram by median (when normop==mednorm) or unitnorm (sub avg div std)
+    print('done with lmsnorm line')
+    if useDynThresh: # using dynamic threshold?
+      evthresh = getDynamicThresh(lmsnorm, lnoise, threshfctr, medthresh)
+      print('useDynThresh=True, evthresh=',evthresh)
+    else: #  otherwise use the default medthresh
+      evthresh = medthresh
+    print('evthresh = ' + str(evthresh))
+    doutC['evthresh'] = evthresh # save the threshold used    
+    print('doutC line completed')
+    specsamp = lms[0].TFR.shape[1] # number of samples in spectrogram time axis
+    print('specsamp line completed')
+    specdur = specsamp / sampr # spectrogram duration in seconds
+    print('specdur = ' + str(specdur))
+    if 'specsamp' not in dout: dout['specsamp'] = specsamp
+    if 'specdur' not in dout: dout['specdur'] = specdur    
+    print ('2 if statements on specsamp and specsdur completed')
+    llevent = getspecevents(lms,lmsnorm,lnoise,evthresh,lsidx,leidx,sig,MUA,chan,sampr,overlapth=overlapth,getphase=getphase,endfctr=endfctr) # get the spectral events
+    print('completed llevent getspecevents')
+    scalex = 1e3*specdur/specsamp # to scale indices to times
+    print('scalex = ' + str(scalex))
+    if 'scalex' not in dout: dout['scalex'] = scalex
+    doutC['lnoise'] = lnoise # this is per channel - diff noise on each channel
+    myt = 0
+    for levent,msn,ms in zip(llevent,lmsnorm,lms):
+      print(myt)
+      """ do not skip noise so can look at noise event waveforms in eventviewer; can always filter out noise from dframe
+      if lnoise[myt]: # skip noise
+        myt+=1
+        continue      
+      """
+      for band in dbands.keys(): # check events by band
+        lband = getblobinrange(levent,dbands[band][0],dbands[band][1])
+        count = len(lband)
+        doutC[band]['Count'].append(count)
+        doutC[band]['levent'].append(lband)
+        if count > 2:
+          lbandIEI = getblobIEI(lband,scalex)
+          cv = getCV2(lbandIEI)
+          doutC[band]['CV'].append(cv)
+          doutC[band]['IEI'].append(lbandIEI)
+        else:
+          doutC[band]['IEI'].append([])
+        if count > 3:
+          lv = getLV(lbandIEI)
+          doutC[band]['LV'].append(lv)
+          print(band,len(lband),lv,cv)
+      myt+=1
+      for band in dbands.keys(): doutC[band]['FF'] = getFF(doutC[band]['Count'])
+    if savespec:
+      for MS,MSN in zip(lms,lmsnorm): MS.TFR = MSN # do not save lmsnorm separately, just copy it over to lms
+      doutC['lms'] = lms
+    else:
+      del lms,lmsnorm # cleanup memory
+      gc.collect()
+  dout['lchan'] = lchan
+  return dout
+
 
 
 # get interevent interval distribution
