@@ -12,7 +12,7 @@ from morlet import MorletSpec
 from scipy.stats.stats import pearsonr
 from filter import bandpass 
 from scipy import ndimage
-
+import pandas as pd
 
 
 noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
@@ -322,6 +322,7 @@ def getspecevents_norm (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sa
   return llevent
 
 
+### THIS IS NOW IN LOAD.PY ###
 def getspecevents_nonNorm (lms,lmsnorm,lnoise,medthresh,lsidx,leidx,csd,MUA,chan,sampr,overlapth=0.5,endfctr=0.5,getphase=False):
   llevent = []
   for windowidx,offidx,ms,msn,noise in zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise):   # np.arange <-- arange
@@ -731,6 +732,8 @@ def getIEIstatsbyBand (dat,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,
   dout['lchan'] = lchan
   return dout
 
+
+#### THIS FUNCTION IS NOW IN LOAD.PY as getIEIstatsbyBand_nonNorm ####
 # WORKS WITH NON-NORMALIZED SPECTROGRAM DATA!!!! 
 def getIEIstatsbyBand2 (inputData,winsz,sampr,freqmin,freqmax,freqstep,medthresh,lchan,MUA,overlapth=0.5,
   getphase=True,savespec=True,threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,
@@ -845,6 +848,123 @@ def getIEIstatsbyBand2 (inputData,winsz,sampr,freqmin,freqmax,freqstep,medthresh
   dout['lchan'] = lchan
   return dout
 
+
+#  getcyclekeys(), getalignoffset, index2ms, getcyclefeatures, addOSCscore
+def GetDFrame (dout,sampr,CSD, MUA, alignby = 'bywaveletpeak',haveMUA=True):
+  totsize = 0 # total number of events
+  for chan in dout['lchan']:
+    for band in lband:
+      for levent in dout[chan][band]['levent']:
+        totsize += len(levent)
+  print('total number of events = ' + str(totsize))
+  row_list = []
+  columns=['chan','dur','maxvalbefore','maxval','maxvalafter','ncycle',\
+           'dom','dombefore','domafter','domevent',\
+           'MUA','MUAbefore','MUAafter','avgpowbefore','avgpow','avgpowafter','avgpowevent',\
+           'minvalbefore','minval','minvalafter','hasbefore','hasafter',\
+           'band','windowidx','offidx','duringnoise',\
+           'minF','maxF','peakF','Fspan','Foct',\
+           'minT','maxT','peakT','left','right','bottom','top','maxpos',\
+           'codelta','cotheta','coalpha','cobeta','cogamma','cohgamma','coother',\
+           'CSDMUACorr','CSDMUACorrbefore','CSDMUACorrafter',\
+           'WavePeakVal','WavePeakIDX','WaveTroughVal','WaveTroughIDX','WaveH','WaveW','WavePeakT','WaveTroughT',\
+           'WaveletPeakPhase','WaveletPeakVal','WaveletPeakIDX','WaveletPeakT',\
+           'WaveletLeftTroughPhase','WaveletLeftTroughVal','WaveletLeftTroughIDX','WaveletLeftTroughT',\
+           'WaveletRightTroughPhase','WaveletRightTroughVal','WaveletRightTroughIDX','WaveletRightTroughT',\
+           'WaveletLeftH','WaveletLeftW','WaveletLeftSlope',\
+           'WaveletRightH','WaveletRightW','WaveletRightSlope',\
+           'WaveletFullH','WaveletFullW','WaveletFullSlope',\
+           'absPeakT',\
+           'absminT',\
+           'absmaxT',\
+           'absWaveletLeftTroughT',\
+           'absWaveletRightTroughT',\
+           'absWaveletPeakT',\
+           'filtsig','filtsigcor',\
+           'MUARatDOB','MUARatDOA','arrMUAbefore','arrMUA','arrMUAafter',\
+           'RLWidthRat','RLHeightRat','RLSlopeRat',
+           'CSDwvf','MUAwvf','alignoffset','siglen']
+  lcyckeys = getcyclekeys()
+  print('lcyckeys completed')
+  for k in lcyckeys: columns.append('cyc_'+k)
+  print('columns.append completed')
+  allevents = []
+  dchanevents = {}
+  MUAwvf = None # MUA waveform (if MUA provided)
+  for chan in dout['lchan']:
+    for band in lband:
+      for levent in dout[chan][band]['levent']:
+        print('levent loop starting')
+        print('band: ' + str(band)) 
+        print('chan: ' + str(chan)) #+ ', levent: ' + print(levent))
+        for ev in levent:
+          # more featurs - ratio of mua, during event over mua before,after
+          MUARatDOB = MUARatDOA = arrMUAbefore = arrMUA = arrMUAafter = 0
+          # right div by left width, height, slope ratios
+          RLWidthRat = RLHeightRat = RLSlopeRat = 0
+          #print('RLWidthRat = ' + str(RLWidthRat))
+          if haveMUA:
+            if ev.hasbefore and ev.hasafter:
+              if ev.MUAbefore > 0: MUARatDOB = ev.MUA / ev.MUAbefore
+              if ev.MUAafter > 0: MUARatDOA = ev.MUA / ev.MUAafter
+            arrMUAbefore = ev.arrMUAbefore
+            arrMUA = ev.arrMUA
+            arrMUAafter = ev.arrMUAafter
+          # ratio of wavelet left,right widths, heights, slopes
+          if ev.WaveletLeftW > 0.: RLWidthRat = ev.WaveletRightW / ev.WaveletLeftW
+          if ev.WaveletLeftH > 0.: RLHeightRat = ev.WaveletRightH / ev.WaveletLeftH
+          if ev.WaveletLeftSlope != 0.: RLSlopeRat = ev.WaveletRightSlope / ev.WaveletLeftSlope
+          ######################################################################################### 
+          # get the waveforms for storage in the dataframe
+          left,right = int(ev.left+ev.offidx), int(ev.right+ev.offidx) # offidx to get back into the original time-series
+          alignoffset = getalignoffset(ev, alignby)  
+          #print('align offset completed')        
+          CSDwvf = CSD[chan,left:right] # CSD waveform
+          if haveMUA: MUAwvf = MUA[chan+1,left:right] # MUA waveform
+          siglen = len(CSDwvf) # signal length
+          #print('siglen completed')
+          #########################################################################################
+          # vals is a list of values for each event
+          vals = [chan,ev.dur,ev.maxvalbefore,ev.maxval,ev.maxvalafter,ev.ncycle,\
+                  ev.dom,ev.dombefore,ev.domafter,ev.domevent,\
+                  ev.MUA,ev.MUAbefore,ev.MUAafter,ev.avgpowbefore,ev.avgpow,ev.avgpowafter,ev.avgpowevent,\
+                  ev.minvalbefore,ev.minval,ev.minvalafter,int(ev.hasbefore),int(ev.hasafter),\
+                  band,ev.windowidx,ev.offidx,ev.duringnoise,\
+                  ev.minF,ev.maxF,ev.peakF,ev.Fspan,ev.Foct,\
+                  ev.minT,ev.maxT,ev.peakT,ev.left,ev.right,ev.bottom,ev.top,ev.maxpos[1],\
+                  ev.codelta,ev.cotheta,ev.coalpha,ev.cobeta,ev.cogamma,ev.cohgamma,ev.coother,\
+                  ev.CSDMUACorr,ev.CSDMUACorrbefore,ev.CSDMUACorrafter,\
+                  ev.WavePeakVal,ev.WavePeakIDX,ev.WaveTroughVal,ev.WaveTroughIDX,ev.WaveH,ev.WaveW,ev.WavePeakT,ev.WaveTroughT,\
+                  ev.WaveletPeak.phs,ev.WaveletPeak.val,ev.WaveletPeak.idx,ev.WaveletPeak.T,\
+                  ev.WaveletLeftTrough.phs,ev.WaveletLeftTrough.val,ev.WaveletLeftTrough.idx,ev.WaveletLeftTrough.T,\
+                  ev.WaveletRightTrough.phs,ev.WaveletRightTrough.val,ev.WaveletRightTrough.idx,ev.WaveletRightTrough.T,\
+                  ev.WaveletLeftH,ev.WaveletLeftW,ev.WaveletLeftSlope,\
+                  ev.WaveletRightH,ev.WaveletRightW,ev.WaveletRightSlope,\
+                  ev.WaveletFullH,ev.WaveletFullW,ev.WaveletFullSlope,\
+                  ev.peakT+index2ms(ev.offidx,sampr),\
+                  ev.minT+index2ms(ev.offidx,sampr),\
+                  ev.maxT+index2ms(ev.offidx,sampr),\
+                  ev.WaveletLeftTrough.T+index2ms(ev.offidx,sampr),\
+                  ev.WaveletRightTrough.T+index2ms(ev.offidx,sampr),\
+                  ev.WaveletPeak.T+index2ms(ev.offidx,sampr),\
+                  ev.filtsig,ev.filtsigcor,\
+                  MUARatDOB,MUARatDOA,arrMUAbefore,arrMUA,arrMUAafter,\
+                  RLWidthRat,RLHeightRat,RLSlopeRat,
+                  CSDwvf, MUAwvf, alignoffset, siglen]
+          ######################################################################################### 
+          # get the cycle features for storage in the dataframe
+          dprop = getcyclefeatures(ev.filtsig, sampr, 1.5 * ev.maxF)
+          #print('dprop completed')
+          for k in lcyckeys: vals.append(dprop[k])
+          ######################################################################################### 
+          # based on https://stackoverflow.com/questions/10715965/add-one-row-to-pandas-dataframe
+          row_list.append(dict((c,v) for c,v in zip(columns,vals)))
+          allevents.append(ev)
+  # now create the final dataframe
+  pdf = pd.DataFrame(row_list, index=np.arange(0,totsize), columns=columns)
+  pdf = pdf.sort_values('absPeakT') # sort by absPeakT; index will be out of order, but will correspond to dout order
+  addOSCscore(pdf) # add oscillation score
+  return pdf        
 
 
 # get interevent interval distribution
