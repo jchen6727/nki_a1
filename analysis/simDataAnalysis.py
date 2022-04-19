@@ -2593,9 +2593,11 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 	## Determine timestep, sampling rate, and electrode spacing 
-	dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
-	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-	spacing_um = spacing_um		# 100um by default # 
+	# dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
+	# sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	dt = sim.cfg.recordStep/1000.0	# This is in Seconds 
+	sampr = 1.0 / dt 				# Hz 
+	spacing_um = spacing_um			# 100 um by default # 
 
 
 	## Get LFP data   # ----> NOTE: SHOULD I MAKE AN LFP INPUT OPTION?????? FOR SUMMED LFP DATA??? (also noted above in arg descriptions)
@@ -2613,6 +2615,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	#### ALL CSD DATA -- ALL CHANS, ALL TIMEPOINTS!!! 
 	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 	tt = np.linspace(0, sim.cfg.duration, len(csdData[1])) 
+	##  tt = np.arange(0, )
 	# Input full CSD data (and time array) into outputData dict 
 	outputData.update({'csdData': csdData})
 	outputData.update({'tt': tt}) ## Keep in mind this is in milliseconds! 
@@ -2738,7 +2741,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		#### DURING THE OSC EVENT #### 
 		csdDuring = csdData[chan,left:right]
 		specDuring = []
-		specDuring.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) # # Seems this is only used for the fft circumstance...? 
+		specDuring.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))#, getphase=True,width=7.0)) # # Seems this is only used for the fft circumstance...? 
 		## vmin, vmax 
 		vminDuring = np.array([s.TFR for s in specDuring]).min()
 		vmaxDuring = np.array([s.TFR for s in specDuring]).max()
@@ -2757,7 +2760,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		#### DURING THE OSC EVENT + BEFORE & AFTER ####   ### CHANGED THE TERMINOLOGY BUT MAYBE SHOULDN'T HAVE - SEE ABOVE!!! 
 		csdFull = csdData[chan, idx0_before:idx1_after] 
 		specFull = []
-		specFull.append(MorletSpec(csdFull, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList)) 
+		specFull.append(MorletSpec(csdFull, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))#, getphase=True,width=7.0)) 
 		## vmin, vmax 
 		vminFull = np.array([s.TFR for s in specFull]).min()
 		vmaxFull = np.array([s.TFR for s in specFull]).max()
@@ -2805,6 +2808,10 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		popToPlot = pop
 	elif type(pop) is list:
 		popToPlot = pop[0]
+	elif pop is None:
+		popToPlot = None
+
+
 
 	# Create figure 
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
@@ -2897,7 +2904,10 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
-		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
+		if popToPlot is None:
+			spectTitle = 'CSD Spectrogram, channel ' + str(spectDict['chan'])
+		else:
+			spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
@@ -2915,7 +2925,10 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 
 		### PLOT TIMESERIES ###
 		# timeSeries title
-		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
+		if popToPlot is None:
+			timeSeriesTitle = 'CSD Signal, channel ' + str(timeSeriesDict['chan'])
+		else:
+			timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2930,7 +2943,10 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		if hasBefore:  ### NOTE: combined with hasAfter I think
 			ax2.plot(tt_before, csdBefore, color='k', linewidth=1.0)
 		# Plot CSD during Osc Event
-		ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) 		# ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		if popToPlot is None:
+			ax2.plot(tt_during, csdDuring, color='r', linewidth=lw) 		# ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		else:
+			ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) 		# ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 		# Plot CSD after Osc Event 
 		if hasAfter:
 			ax2.plot(tt_after, csdAfter, color='k', linewidth=1.0)
@@ -2947,13 +2963,19 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
-		figFilename = popToPlot + '_combinedCSD_chan_' + str(timeSeriesDict['chan']) + '.png'
+		if popToPlot is None:
+			figFilename = 'CombinedCSD_chan_' + str(timeSeriesDict['chan']) + '.png'
+		else:
+			figFilename = popToPlot + '_combinedCSD_chan_' + str(timeSeriesDict['chan']) + '.png' # figFilename = popToPlot + '_combinedCSD_chan_' + str(timeSeriesDict['chan']) + '.png'
 
 
 	elif 'spectrogram' in plotTypes and 'timeSeries' not in plotTypes:
 		### PLOT SPECTROGRAM ### 
 		# spectrogram title
-		spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
+		if popToPlot is None:
+			spectTitle = 'CSD Spectrogram, channel ' + str(spectDict['chan'])
+		else:
+			spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])  	# spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
 		# plot and format 
 		ax1 = plt.subplot(1, 1, 1)
 		# img = ax1.imshow(S, extent=(np.amin(T), np.amax(T), np.amin(F), np.amax(F)), origin='lower', interpolation='None', aspect='auto', 
@@ -2972,14 +2994,20 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		# ax1.set_ylim(minFreq, maxFreq) 				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
 
 		# For potential saving 
-		figFilename = popToPlot + '_CSD_spectrogram_chan_' + str(spectDict['chan']) + '.png'
+		if popToPlot is None:
+			figFilename = 'CSD_spectrogram_chan_' + str(timeSeriesDict['chan']) + '.png'
+		else:
+			figFilename = popToPlot + '_CSD_spectrogram_chan_' + str(timeSeriesDict['chan']) + '.png'	# figFilename = popToPlot + '_CSD_spectrogram_chan_' + str(spectDict['chan']) + '.png'
 
 
 	elif 'spectrogram' not in plotTypes and 'timeSeries' in plotTypes:
 
 		### PLOT TIME SERIES ### 
 		# timeSeries title
-		timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
+		if popToPlot is None:
+			timeSeriesTitle = 'CSD Signal, channel ' + str(timeSeriesDict['chan'])
+		else:
+			timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])	# timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2992,9 +3020,12 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		cax2.axis('off')
 		# Plot CSD before Osc Event  
 		if hasBefore: 
-			ax2.plot(tt_before, csdBefore, color='k', linewidth=1.0)
+			ax2.plot(tt_before, csdBefore, color='r', linewidth=1.0)
 		# Plot CSD during Osc Event 			# 		ax2.plot(t, csdTimeSeries, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
-		ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		if popToPlot is None:
+			ax2.plot(tt_during, csdDuring, color='k', linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
+		else:
+			ax2.plot(tt_during, csdDuring, color=colorDict[popToPlot], linewidth=lw) # 	# ax2.plot(t[0:len(lfpPlot)], lfpPlot, color=colorDict[popToPlot], linewidth=lw)
 		# Plot CSD after Osc Event 
 		if hasAfter:
 			ax2.plot(tt_after, csdAfter, color='k', linewidth=1.0)
@@ -3015,7 +3046,10 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
 
 		# For potential saving 
-		figFilename = popToPlot + '_CSD_timeSeries_chan_' + str(timeSeriesDict['chan']) + '.png'
+		if popToPlot is None:
+			figFilename = 'CSD_timeSeries_chan_' + str(timeSeriesDict['chan']) + '.png'
+		else:
+			figFilename = popToPlot + '_CSD_timeSeries_chan_' + str(timeSeriesDict['chan']) + '.png'
  
 	plt.tight_layout()
 
@@ -3501,7 +3535,7 @@ elif gamma:
 ### OSC EVENT INFO DICTS !!
 thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
 					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
-					'w2': 3376}
+					'w2': 3376}  # 
 
 
 #################################################
@@ -3599,14 +3633,17 @@ plotCSDCombinedData = 0
 if plotCSDCombinedData:
 	print('Plotting Combined CSD data')
 	electrode=[8]
-	includePops=['ITS4', 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+	includePops=[None] # ['ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+	minFreq = 0.25 # 1 
+	maxFreq = 40 #110 #40 #25 # 110 # 40 
+	stepFreq = 1 # 0.25 # 0.25 # 1
 	for pop in includePops:
-		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
-		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
+		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
 
 
 		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDictCustom, pop=pop, electrode=electrode, 
-			minFreq=1, maxFreq=40, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
+			minFreq=1, maxFreq=maxFreq, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
 			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100
 
 
@@ -3702,10 +3739,10 @@ if PSDbyPop:
 ################################
 ###### peakF calculations ######
 ################################
-peakF = 0
+peakF = 1
 if peakF:
 	maxFreq = 20 #110 #10
-	plotNorm = 0
+	plotNorm = 1
 	chan=8
 	pop = None #'ITP4'	# None
 
@@ -3718,14 +3755,14 @@ if peakF:
 	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
 
 	## timeRange so it's like load.py
-	timeRange = [0,6]					# in seconds 
+	timeRange = [0,6] #[0,11.5] # [0,6]					# in seconds  ### <-- WHY DOESN'T THIS WORK WITH sim.cfg.duration/1000.0? 
 
 	## Segment csdData and tt by timeRange
 	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
 	datChan = dat[chan,:]
 	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
 
-	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
+	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdData_theta, csdAllChans=csdData_theta_allChans, timeData=tt, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdDataAllChans, timeData=tt_During, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, 
@@ -3780,7 +3817,7 @@ if peakF:
 
 
 
-getIEIstatsbyBandTEST=1
+getIEIstatsbyBandTEST=0
 if getIEIstatsbyBandTEST:
 	maxFreq = 110 #110 #10
 	chan=8
