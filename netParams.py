@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 34
+netParams.version = 35
 
 #------------------------------------------------------------------------------
 #
@@ -81,6 +81,28 @@ cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
 
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
+
+# Parametrize PT ih_gbar and exc cells K_gmax to simulate NA/ACh neuromodulation
+for cellLabel in ['PT5B_reduced']:
+    cellParam = netParams.cellParams[cellLabel] 
+
+    for secName in cellParam['secs']:
+        # Adapt ih params based on cfg param
+        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+            if mechName in ['ih','h','h15', 'hd']: 
+                mech['gbar'] = [g*cfg.ihGbar for g in mech['gbar']] if isinstance(mech['gbar'],list) else mech['gbar']*cfg.ihGbar
+
+
+# Adapt Kgbar
+for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
+                    'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',]:
+    cellParam = netParams.cellParams[cellLabel] 
+
+    for secName in cellParam['secs']:
+        for kmech in [k for k in cellParam['secs'][secName]['mechs'].keys() if k in ['kap','kdr']]:
+            cellParam['secs'][secName]['mechs'][kmech]['gbar'] *= cfg.KgbarFactor 
+
 
 # change weightNorm 
 for k in cfg.weightNormScaling:
@@ -739,4 +761,5 @@ v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
 v32 - Added IE presyn-cell-type specific gains
 v33 - Fixed bug in matrix thalamocortical conn (were very low)
 v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
+v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
 """

@@ -61,8 +61,9 @@ if __name__ == '__main__':
     if dataType == 'spont':
         filenames = ['data/v34_batch68/v34_batch68_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1] for cseed in [0,1]]
         filenames = ['data/v34_batch68/v34_batch68_%d_%d_%d_data.pkl' % (iseed1, iseed2, iseed3) for iseed1 in [0,1,2,3] for iseed2 in [0,1] for iseed3 in [0,1]]
+        filenames = ['data/v34_batch66/v34_batch66_0_0_data.pkl']
 
-        timeRange = [2000, 6000]
+        timeRange = [1500, 31500]
 
         #filenames = ['data/v34_batch56/v34_batch56_0_0_data.pkl']
         #timeRange = [2000, 2200]
@@ -101,6 +102,7 @@ if __name__ == '__main__':
                                             ['IT5A', 'PV5A', 'SOM5A', 'NGF5A', 'VIP5A'],
                                             ['IT5B','PT5B', 'PV5B', 'SOM5B', 'NGF5B', 'VIP5B']], 
                                     saveFig=1, 
+                                    binSize=1000,
                                     measure='rate',
                                     timeRange=timeRange)
         
@@ -110,34 +112,41 @@ if __name__ == '__main__':
         
         out = sim.plotting.plotLFPTimeSeries(**{ 
                 'electrodes': 
-                ['avg', 11, 15], 
-                #['avg'],#, [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
+                #['avg', 11, 15], 
+                #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
+                [[10, 11, 12]],
                 'timeRange': timeRange, 
                 #'maxFreq': 50, 
-                'figSize': (24,12), 
+                'figSize': (8,6), 
                 'saveData': False, 
                 'saveFig': True, 
                 'showFig': False})
 
-        # # out = sim.analysis.plotLFP(**{'plots': ['spectrogram'], 
-        # #         #'electrodes': 
-        # #         #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-        # #         #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
-        # #         'timeRange': timeRange, 
-        # #         'maxFreq': 50, 
-        # #         'figSize': (16,12), 
-        # #         'saveData': False, 
-        # #         'saveFig': filename[:-4]+'_LFP_spect_8s_3layers', 'showFig': False})
+        out = sim.analysis.plotLFP(**{'plots': ['spectrogram'], 
+                'electrodes': 
+                #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
+                #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
+                [[10, 11, 12]],
+                'timeRange': timeRange, 
+                'minFreq': 0.05,
+                'maxFreq': 1,
+                'stepFreq': 0.05,  
+                'figSize': (8,6),#(16,12), 
+                'saveData': False, 
+                'saveFig': filename[:-4]+'_LFP_spect_30s_1layer', 'showFig': False})
 
-        # out = sim.analysis.plotLFP(**{'plots': ['PSD'], 
-        #         'electrodes': 
-        #         #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-        #         ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
-        #         'timeRange': timeRange, 
-        #         'maxFreq': 50, 
-        #         'figSize': (8,12), 
-        #         'saveData': False, 
-        #         'saveFig': filename[:-4]+'_LFP_psd_10s_3layers', 'showFig': False})
+        out = sim.analysis.plotLFP(**{'plots': ['PSD'], 
+                'electrodes': 
+                #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
+                #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
+                [[10, 11, 12]],
+                'timeRange': timeRange, 
+                'minFreq': 0.05,
+                'maxFreq': 2,
+                'stepFreq': 0.05, 
+                'figSize': (8,6), 
+                'saveData': False, 
+                'saveFig': filename[:-4]+'_LFP_psd_30s_1layer', 'showFig': False})
 
 
         # required for combined PSD plot
