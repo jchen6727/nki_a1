@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 import os
 import IPython as ipy
 import pickle as pkl
+import numpy as np
 
 
 def plot_LFP_PSD_combined(dataFile, norm=False):
@@ -59,11 +60,11 @@ if __name__ == '__main__':
     dataType = 'spont' #'speech' #'spont'
 
     if dataType == 'spont':
-        filenames = ['data/v34_batch68/v34_batch68_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1] for cseed in [0,1]]
-        filenames = ['data/v34_batch68/v34_batch68_%d_%d_%d_data.pkl' % (iseed1, iseed2, iseed3) for iseed1 in [0,1,2,3] for iseed2 in [0,1] for iseed3 in [0,1]]
-        filenames = ['data/v34_batch66/v34_batch66_0_0_data.pkl']
+        filenames = ['data/v35_batch1/v35_batch1_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1] for cseed in [0,1]]
+        #filenames = ['data/v34_batch68/v34_batch68_%d_%d_%d_data.pkl' % (iseed1, iseed2, iseed3) for iseed1 in [0,1,2,3] for iseed2 in [0,1] for iseed3 in [0,1]]
+        #filenames = ['data/v34_batch66/v34_batch66_0_0_data.pkl']
 
-        timeRange = [1500, 31500]
+        timeRange = [1500, 11450]
 
         #filenames = ['data/v34_batch56/v34_batch56_0_0_data.pkl']
         #timeRange = [2000, 2200]
@@ -96,57 +97,91 @@ if __name__ == '__main__':
 
         # standardd plots
         #sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': timeRange, 'figSize': (18,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
-        sim.analysis.plotSpikeHist(include=['allCells', 
-                                            ['IT3', 'PV3', 'SOM3', 'NGF3', 'VIP3'], 
-                                            ['ITP4','ITS4', 'PV4', 'SOM4', 'NGF4', 'VIP4'], 
-                                            ['IT5A', 'PV5A', 'SOM5A', 'NGF5A', 'VIP5A'],
-                                            ['IT5B','PT5B', 'PV5B', 'SOM5B', 'NGF5B', 'VIP5B']], 
-                                    saveFig=1, 
-                                    binSize=1000,
-                                    measure='rate',
-                                    timeRange=timeRange)
-        
+        # sim.analysis.plotSpikeHist(include=['allCells', 
+        #                                     ['IT3', 'PV3', 'SOM3', 'NGF3', 'VIP3'], 
+        #                                     ['ITP4','ITS4', 'PV4', 'SOM4', 'NGF4', 'VIP4'], 
+        #                                     ['IT5A', 'PV5A', 'SOM5A', 'NGF5A', 'VIP5A'],
+        #                                     ['IT5B','PT5B', 'PV5B', 'SOM5B', 'NGF5B', 'VIP5B']], 
+        #                             saveFig=1, 
+        #                             binSize=1000,
+        #                             measure='rate',
+        #                             timeRange=timeRange)
+        # 
         #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=timeRange, dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_5sec')
         #sim.analysis.plotSpikeStats(stats=['rate'],figSize = (6,12), timeRange=[1500, 6500], dpi=300, showFig=0, saveFig=filename[:-4]+'_stats_5sec')
         #sim.analysis.plotLFP(**{'plots': ['spectrogram'], 'electrodes': ['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 'timeRange': timeRange, 'maxFreq': 50, 'figSize': (8,24), 'saveData': False, 'saveFig': filename[:-4]+'_LFP_spec_7s_all_elecs', 'showFig': False})
-        
+
+        for elec in [10,11,12]:
+            lfp=np.array(sim.allSimData['LFP'])
+            minpos=np.argmin(lfp[3000: , elec])+3000
+            print(elec,minpos)
+            print(sim.allSimData['LFP'][minpos][elec])
+            sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
+            print(sim.allSimData['LFP'][minpos][elec])
+
+        for elec in [10,11,12]:
+            lfp=np.array(sim.allSimData['LFP'])
+            minpos=np.argmin(lfp[3000: , elec])+3000
+            print(elec,minpos)
+            print(sim.allSimData['LFP'][minpos][elec])
+            sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
+            print(sim.allSimData['LFP'][minpos][elec])
+
+        for elec in [10,11,12]:
+            lfp=np.array(sim.allSimData['LFP'])
+            minpos=np.argmin(lfp[3000: , elec])+3000
+            print(elec,minpos)
+            print(sim.allSimData['LFP'][minpos][elec])
+            sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
+            print(sim.allSimData['LFP'][minpos][elec])
+
+
         out = sim.plotting.plotLFPTimeSeries(**{ 
                 'electrodes': 
                 #['avg', 11, 15], 
                 #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
                 [[10, 11, 12]],
                 'timeRange': timeRange, 
-                #'maxFreq': 50, 
                 'figSize': (8,6), 
+                'rcParams': {'font.size': 20},
                 'saveData': False, 
-                'saveFig': True, 
+                'saveFig': filename[:-4]+'_LFP_spect_10s_3layer', 
                 'showFig': False})
 
-        out = sim.analysis.plotLFP(**{'plots': ['spectrogram'], 
+        out = sim.plotting.plotLFPSpectrogram(**{'plots': ['spectrogram'], 
                 'electrodes': 
                 #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
-                #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
+                # ['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14,15,16,17,18,19]],
                 [[10, 11, 12]],
                 'timeRange': timeRange, 
                 'minFreq': 0.05,
-                'maxFreq': 1,
+                'maxFreq': 10,
                 'stepFreq': 0.05,  
                 'figSize': (8,6),#(16,12), 
                 'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_spect_30s_1layer', 'showFig': False})
+                'saveFig': filename[:-4]+'_LFP_spect_10s_3layer', 
+                'showFig': False})
+        
 
-        out = sim.analysis.plotLFP(**{'plots': ['PSD'], 
+        out = sim.plotting.plotLFPPSD(**{'plots': ['PSD'], 
                 'electrodes': 
                 #['avg', [0], [1], [2,3,4,5,6,7,8,9], [10, 11, 12], [13], [14, 15], [16,17,18,19]], 
                 #['avg', [0, 1,2,3,4,5,6,7,8,9], [10, 11, 12], [13,14, 15,16,17,18,19]],
                 [[10, 11, 12]],
                 'timeRange': timeRange, 
                 'minFreq': 0.05,
-                'maxFreq': 2,
-                'stepFreq': 0.05, 
+                'maxFreq': 10,
+                'stepFreq': 0.05,
+                'orderInverse': False, 
                 'figSize': (8,6), 
+                'rcParams': {'font.size': 20},
                 'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_psd_30s_1layer', 'showFig': False})
+                'saveFig': filename[:-4]+'_LFP_PSD_%d_%d'%(timeRange[0], timeRange[1]), 'showFig': False})
+
+        allData.append(out)
+
+    
+    ipy.embed()
 
 
         # required for combined PSD plot

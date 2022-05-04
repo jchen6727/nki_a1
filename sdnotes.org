@@ -10556,7 +10556,9 @@ cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", 
     #initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
     #initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
     initCfg[('NetStim1', 'number')] = 100 * 10 # enough spikes for 10 seconds
-** v35_batch1 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
+** v35_batch1 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation)  -- BUG (netsim on)
+*** notes
+left netstim input at the beginning turned on
 *** code
 def custom_spont(filename):
     params = specs.ODict()
@@ -10635,7 +10637,24 @@ def custom_spont(filename):
     b.method = 'grid'
 
     return b
+** v35_batch2 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
+*** code
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
 
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    #params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    params['ihGbar'] = [0.75, 1.0, 1.25]
+    params['KgbarFactor'] = [0.75, 1.0, 1.25]
 ** blank
 
 
