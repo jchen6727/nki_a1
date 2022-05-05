@@ -736,8 +736,8 @@ def custom_spont(filename):
     #params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
     #params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
-    params['ihGbar'] = [0.75, 1.0, 1.25]
-    params['KgbarFactor'] = [0.75, 1.0, 1.25]
+    params['ihGbar'] = [1.0] #[0.75, 1.0, 1.25]
+    params['KgbarFactor'] = [1.0] # [0.75, 1.0, 1.25]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -3039,7 +3039,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v35_batch2' 
+    b.batchLabel = 'v35_batch3'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')

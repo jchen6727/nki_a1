@@ -39,7 +39,7 @@ cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
 cfg.printPopAvgRates = [500, cfg.duration]
 
-cfg.validateNetParams = True
+cfg.validateNetParams = False
 
 #------------------------------------------------------------------------------
 # Recording 

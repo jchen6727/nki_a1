@@ -60,7 +60,7 @@ if __name__ == '__main__':
     dataType = 'spont' #'speech' #'spont'
 
     if dataType == 'spont':
-        filenames = ['data/v35_batch1/v35_batch1_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1] for cseed in [0,1]]
+        filenames = ['data/v35_batch2/v35_batch2_%d_%d_data.pkl' % (iseed, cseed) for iseed in [0,1,2] for cseed in [0,1,2]]
         #filenames = ['data/v34_batch68/v34_batch68_%d_%d_%d_data.pkl' % (iseed1, iseed2, iseed3) for iseed1 in [0,1,2,3] for iseed2 in [0,1] for iseed3 in [0,1]]
         #filenames = ['data/v34_batch66/v34_batch66_0_0_data.pkl']
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         sim.load(filename, instantiate=False)
 
         # standardd plots
-        #sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': timeRange, 'figSize': (18,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
+        sim.analysis.plotRaster(**{'include': ['allCells'], 'saveFig': True, 'showFig': False, 'popRates': 'minimal', 'orderInverse': True, 'timeRange': timeRange, 'figSize': (18,12), 'lw': 0.3, 'markerSize': 3, 'marker': '.', 'dpi': 300})
         # sim.analysis.plotSpikeHist(include=['allCells', 
         #                                     ['IT3', 'PV3', 'SOM3', 'NGF3', 'VIP3'], 
         #                                     ['ITP4','ITS4', 'PV4', 'SOM4', 'NGF4', 'VIP4'], 
@@ -119,21 +119,21 @@ if __name__ == '__main__':
             sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
             print(sim.allSimData['LFP'][minpos][elec])
 
-        for elec in [10,11,12]:
-            lfp=np.array(sim.allSimData['LFP'])
-            minpos=np.argmin(lfp[3000: , elec])+3000
-            print(elec,minpos)
-            print(sim.allSimData['LFP'][minpos][elec])
-            sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
-            print(sim.allSimData['LFP'][minpos][elec])
+        # for elec in [10,11,12]:
+        #     lfp=np.array(sim.allSimData['LFP'])
+        #     minpos=np.argmin(lfp[3000: , elec])+3000
+        #     print(elec,minpos)
+        #     print(sim.allSimData['LFP'][minpos][elec])
+        #     sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
+        #     print(sim.allSimData['LFP'][minpos][elec])
 
-        for elec in [10,11,12]:
-            lfp=np.array(sim.allSimData['LFP'])
-            minpos=np.argmin(lfp[3000: , elec])+3000
-            print(elec,minpos)
-            print(sim.allSimData['LFP'][minpos][elec])
-            sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
-            print(sim.allSimData['LFP'][minpos][elec])
+        # for elec in [10,11,12]:
+        #     lfp=np.array(sim.allSimData['LFP'])
+        #     minpos=np.argmin(lfp[3000: , elec])+3000
+        #     print(elec,minpos)
+        #     print(sim.allSimData['LFP'][minpos][elec])
+        #     sim.allSimData['LFP'][minpos][elec] = sim.allSimData['LFP'][minpos-5][elec]
+        #     print(sim.allSimData['LFP'][minpos][elec])
 
 
         out = sim.plotting.plotLFPTimeSeries(**{ 
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                 'figSize': (8,6), 
                 'rcParams': {'font.size': 20},
                 'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_spect_10s_3layer', 
+                'saveFig': filename[:-4]+'_LFP_spect_%d_%d'%(timeRange[0], timeRange[1]), 
                 'showFig': False})
 
         out = sim.plotting.plotLFPSpectrogram(**{'plots': ['spectrogram'], 
@@ -159,7 +159,7 @@ if __name__ == '__main__':
                 'stepFreq': 0.05,  
                 'figSize': (8,6),#(16,12), 
                 'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_spect_10s_3layer', 
+                'saveFig': filename[:-4]+'_LFP_spect_%d_%d'%(timeRange[0], timeRange[1]), 
                 'showFig': False})
         
 
@@ -176,7 +176,8 @@ if __name__ == '__main__':
                 'figSize': (8,6), 
                 'rcParams': {'font.size': 20},
                 'saveData': False, 
-                'saveFig': filename[:-4]+'_LFP_PSD_%d_%d'%(timeRange[0], timeRange[1]), 'showFig': False})
+                'saveFig': filename[:-4]+'_LFP_PSD_%d_%d'%(timeRange[0], timeRange[1]), 
+                'showFig': False})
 
         allData.append(out)
 
