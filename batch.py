@@ -750,6 +750,9 @@ def custom_spont(filename):
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
+    initCfg[('seeds', 'conn')] = 1 
+    initCfg[('seeds', 'stim')] = 1
+
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
@@ -3039,7 +3042,7 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['ITS4']) 
 
-    b.batchLabel = 'v35_batch3'
+    b.batchLabel = 'v35_batch4'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
