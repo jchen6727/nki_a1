@@ -750,8 +750,8 @@ def custom_spont(filename):
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
-    initCfg[('seeds', 'conn')] = 1 
-    initCfg[('seeds', 'stim')] = 1
+    initCfg[('seeds', 'conn')] = 0
+    initCfg[('seeds', 'stim')] = 0
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
