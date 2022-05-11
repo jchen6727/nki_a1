@@ -2733,7 +2733,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 		## Spectrogram Data Calculations ## 
-		fs = int(1000.0 / sim.cfg.recordStep)
+		fs = sampr # int(1000.0 / sim.cfg.recordStep)
 
 
 
@@ -2741,7 +2741,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		#### DURING THE OSC EVENT #### 
 		csdDuring = csdData[chan,left:right]
 		specDuring = []
-		specDuring.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))#, getphase=True,width=7.0)) # # Seems this is only used for the fft circumstance...? 
+		specDuring.append(MorletSpec(csdDuring, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, getphase=True,width=7.0)) # lfreq=freqList, # # Seems this is only used for the fft circumstance...? 
 		## vmin, vmax 
 		vminDuring = np.array([s.TFR for s in specDuring]).min()
 		vmaxDuring = np.array([s.TFR for s in specDuring]).max()
@@ -2760,7 +2760,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		#### DURING THE OSC EVENT + BEFORE & AFTER ####   ### CHANGED THE TERMINOLOGY BUT MAYBE SHOULDN'T HAVE - SEE ABOVE!!! 
 		csdFull = csdData[chan, idx0_before:idx1_after] 
 		specFull = []
-		specFull.append(MorletSpec(csdFull, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, lfreq=freqList))#, getphase=True,width=7.0)) 
+		specFull.append(MorletSpec(csdFull, fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq, getphase=True,width=7.0))  # lfreq=freqList, 
 		## vmin, vmax 
 		vminFull = np.array([s.TFR for s in specFull]).min()
 		vmaxFull = np.array([s.TFR for s in specFull]).max()
@@ -2876,7 +2876,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 			maxFreq = np.amax(F)	# 100
 
 		## Set up imshowSignal
-		imshowSignal = S[minFreq:maxFreq+1] ## NOTE: Is the +1 necessary here or not? Same question for spiking data. Leave it in for now. 
+		imshowSignal = S#[minFreq:maxFreq+1] ## NOTE: Is the +1 necessary here or not? Same question for spiking data. Leave it in for now. 
 
 
 	#### TIME SERIES CALCULATIONS ####-------------------------------------------------------
@@ -3537,7 +3537,6 @@ thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684,
 					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
 					'w2': 3376}  # 
 
-
 #################################################
 ####### Evaluating Pops by Frequency Band #######
 #################################################
@@ -3629,22 +3628,22 @@ if lfpPSD:
 #####################
 
 ## Combined Plotting 
-plotCSDCombinedData = 0
+plotCSDCombinedData = 1
 if plotCSDCombinedData:
 	print('Plotting Combined CSD data')
 	electrode=[8]
-	includePops=[None] # ['ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
-	minFreq = 0.25 # 1 
-	maxFreq = 40 #110 #40 #25 # 110 # 40 
-	stepFreq = 1 # 0.25 # 0.25 # 1
+	includePops=['IT2']#[None, 'ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+	minFreq = 1 # 0.25 # 1 
+	maxFreq = 12 #110 #40 #25 # 110 # 40 
+	stepFreq = 0.25 #1 #0.25 # 1 # 0.25 # 0.25 # 1
 	for pop in includePops:
 		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
 		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
 
 
-		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDictCustom, pop=pop, electrode=electrode, 
+		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
 			minFreq=1, maxFreq=maxFreq, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
-			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100
+			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100 # colorDict=colorDictCustom 
 
 
 ## CSD heatmaps
@@ -3722,7 +3721,7 @@ if PSDbyPop:
 	# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
 	# allPops = list(sim.net.allPops.keys())
 	# includePops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
-	includePops = thalPops 	#AllCortPops
+	includePops = ECortPops    #['IT3']#thalPops 	#AllCortPops
 	maxPowerByPop = {}
 
 	for pop in includePops:
@@ -3739,7 +3738,7 @@ if PSDbyPop:
 ################################
 ###### peakF calculations ######
 ################################
-peakF = 1
+peakF = 0
 if peakF:
 	maxFreq = 20 #110 #10
 	plotNorm = 1
