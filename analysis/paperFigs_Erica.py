@@ -1,7 +1,11 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import pickle
+import numpy 
 
+
+#### TO DO: TEST CHANGING THIS SUCH THAT timeRANGE IS NOT VISIBLE IN THE FILES; TOO MUCH CLUTTER!!! 
 
 def sortSubjectFiles(waveletPath, sim):
 	### waveletPath: str --> path to directory with wavelet files
@@ -389,6 +393,52 @@ def statsBoxplotALL(frequencyBands, simListsDict, nhpListsDict, dataCategories, 
 	plt.show()
 
 
+
+## 
+def readChannelFiles(waveletPath, subjectName, frequencyBand, chanNumber):
+	# waveletPath: str; to base directory with wavelets
+	# subjectName: str; Filename of monkey or sim (e.g. 1-bu031032017@os_eye06_20, A1_v34_batch27_v34_batch27_0_0)
+	# frequencyBand: 'str; delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma'
+	# chanNumber: int; relevant channel number
+
+	### dfs data frame (.pkl)
+	dfsFileName = subjectName + '_chan' + str(chanNumber) + '_' + frequencyBand + '.pkl' 
+	dfsFullPath = waveletPath + subjectName + '/chan_' + str(chanNumber) + '/' + dfsFileName
+	dfs = pd.read_pickle(dfsFullPath)
+
+	return dfs 
+def readSubjectFiles(waveletPath, subjectName, dlms=True):
+	### df data frame (.pkl):
+	dfFullPath = waveletPath + subjectName + '/' + subjectName + '_df.pkl'
+	df = pd.read_pickle(dfFullPath)
+
+	### dlms (.pkl): 
+	if dlms:
+		dlmsFullPath = waveletPath + subjectName + '/' + subjectName + '_dlms.pkl'
+		# dlmsFullPath = waveletPath + subjectName + '/' + 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
+		dlms_file = open(dlmsFullPath, 'rb')
+		dlms = pickle.load(dlms_file)
+		dlms_file.close()
+
+
+	## read allDataDict as well (contains CSD, dt, tt, sampr, dat, timeRange)
+	allDataFullPath = waveletPath + subjectName + '/' + subjectName + '_allData.pkl'
+	allData_file = open(allDataFullPath, 'rb')
+	allData = pickle.load(allData_file)
+	allData_file.close()
+
+	CSD = allData['CSD']
+	dt = allData['dt']
+	tt = allData['tt']
+	sampr = allData['sampr']
+	dat = allData['dat']
+	timeRange = allData['timeRange']
+
+	if dlms:
+		return df, dlms, allData, CSD, dt, tt, sampr, dat, timeRange
+	else:
+		return df, allData, CSD, dt, tt, sampr, dat, timeRange
+
 ################################
 ######### RUN LOCATION #########
 ################################
@@ -397,13 +447,73 @@ gcp = 0  # local (0) or gcp (1)?
 if gcp:
 	waveletPath =  '/home/ext_ericaygriffith_gmail_com/A1/data/figs/wavelets/'
 else:
-	waveletPath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
+	waveletPath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' ### NEED TO CHANGE THIS TO APPROPRIATE REPO!! 
 
 
 
 #######################################
 ### FIGURE 6 -- MATCHING OSC EVENTS ### 
 #######################################
+def plotMatchingEvents():  
+	## (1) potentially do the first 4 lines as args? --> (subjectName, freqBand, chan, eventIdx)
+	## (2) OTHER ARGS --> specrange, ylspec ; OR MAKE INTO DICT!! 
+	## (3) May have to change up readChannelFiles and readSubjectFiles in order to reflect new desired osc event stats 
+	subjectName = 'v34_batch57_3_3_data_timeRange_0_6' #'v34_batch57_3_4_data_timeRange_0_6' 	#'2-gt044045014_timeRange_40_80' 	#'A1_v34_batch27_v34_batch27_3_4' #'2-bu027028013_timeRange_0_40'  #'2-rb031032016_timeRange_40_80' #'2-bu027028013_timeRange_40_80'   #'2-rb031032016_timeRange_160_200' #'2-bu027028013_timeRange_0_40' #'A1_v34_batch27_v34_batch27_3_1' #'2-rb031032016_timeRange_40_80' #'A1_v34_batch27_v34_batch27_3_2' #'2-bu027028013_timeRange_40_80' #'A1_v34_batch27_v34_batch27_2_4' # Filename of monkey or sim (e.g. 1-bu031032017@os_eye06_20, A1_v34_batch27_v34_batch27_0_0)
+	frequencyBand = 'theta' # 'delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma'
+	chanNumber = 8 #14 		# Change to relevant channel number 
+	eventIdx = 973 #1666			# Event number 
+
+	#### GET DATA 
+	dfs = readChannelFiles(waveletPath, subjectName, frequencyBand, chanNumber)
+	df, dlms, allData, CSD, dt, tt, sampr, dat, timeRange = readSubjectFiles(waveletPath, subjectName)
+	# print('dfs length of ' + frequencyBand +' = ' + str(len(dfs)))
+
+	#### Get timing data for x-axis
+	## NOTE: for the line below, can use either df or dfs, in this context. 
+	dur,chan,hasbefore,hasafter,windowidx,offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT,w2,left,right,band,alignoffset,filtsigcor,Foct,cycnpeak,ERPscore,OSCscore = getStats(dfs, evidx=eventIdx,align='bywaveletpeak',verbose=True)
+	# print('minT: ' + str(minT))
+	# print('maxT: ' + str(maxT))
+	# print('alignoffset: ' + str(alignoffset))
+	# print('waveletPeakT: ' + str(WaveletPeakT))
+	# print('left: ' + str(left))
+	# print('right: ' + str(right))
+
+	## Resize w2 to match the load.py calculation for the osc event plotting (in def draw() in class eventviewer)
+	w2 = int(w2*0.6)
+	print('w2: ' + str(w2))
+ 
+	## Calculate beforeT
+	idx0_before = max(0,left - w2)
+	idx1_before = left 
+	beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
+	# print('beforeT: ' + str(beforeT))
+
+	## Calculate afterT 
+	idx0_after = int(right)
+	idx1_after = min(idx0_after + w2,max(CSD.shape[0],CSD.shape[1]))
+	afterT = (maxT-minT) * (idx1_after - idx0_after) / (right - left + 1)
+	# print('afterT: ' + str(afterT))
+
+
+	## Calculate tt for before: 
+	sig_before = CSD[chan,idx0_before:idx1_before]
+	tt_before = linspace(minT-beforeT,minT,len(sig_before)) + alignoffset
+
+	## Calculate tt for during:
+	sig_during = CSD[chan,left:right]
+	tt_during = linspace(minT,maxT,len(sig_during)) + alignoffset
+
+	## Calculate tt for after:
+	sig_after = CSD[chan,idx0_after:idx1_after]
+	tt_after = linspace(maxT,maxT+afterT,len(sig_after)) + alignoffset
+
+
+	#### PLOT WAVELETS 
+	specrange = (0,20) 	# DELTA: (0,30) 		# THETA: NHP - (0,15) / SIM - (0,20) 	# ALPHA: NHP - (0,20) / SIM - (0,20) 	 	# BETA: NHP - (0,25) / SIM - (0,30) 		# GAMMA: (0,30) 
+	ylspec = (1,12) 	# DELTA: (1, 10) 		# THETA: (1, 12) 							# ALPHA: (1, 30) 								# BETA: (10,50) 					# GAMMA: (30,95) 
+	plotWavelets(dfs, df, dat, tt, sampr, dlms, subjectName, donetpyne, chanNumber, frequencyBand, eventIdx, waveletPath, specrange=specrange, ylspec=ylspec, saveFig=1)
+
+
 
 
 ###############################
@@ -463,11 +573,10 @@ def plotStats():
 if __name__ == '__main__':
 	# Fig 6
 
-
 	# Fig 7 
 	plotStats()
 
-	# Fig 8
+	# Fig 8 -- maybe needs to be separate?!? 
 
 
 
