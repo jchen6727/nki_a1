@@ -3065,10 +3065,11 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	## Show figure
 	plt.show()
 # Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
-def getCSDDataFrames(dataFile, timeRange=None, verbose=0):
+def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
 	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
-	### timeRange: list 	--> e.g. [start, stop]
+		## --> DEPRECATED ### timeRange: list 	--> e.g. [start, stop]
+	### oscEvenfInfo: dict 			--> dict w/ chan, left, right, minT, maxT, alignoffset
 	### verbose: bool 
 		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
 
@@ -3628,11 +3629,11 @@ if lfpPSD:
 #####################
 
 ## Combined Plotting 
-plotCSDCombinedData = 1
+plotCSDCombinedData = 0
 if plotCSDCombinedData:
 	print('Plotting Combined CSD data')
 	electrode=[8]
-	includePops=['IT2']#[None, 'ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+	includePops=['ITS4']#[None, 'ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
 	minFreq = 1 # 0.25 # 1 
 	maxFreq = 12 #110 #40 #25 # 110 # 40 
 	stepFreq = 0.25 #1 #0.25 # 1 # 0.25 # 0.25 # 1
@@ -3647,7 +3648,7 @@ if plotCSDCombinedData:
 
 
 ## CSD heatmaps
-plotCSDheatmaps = 0
+plotCSDheatmaps = 1
 if plotCSDheatmaps:
 	# figSize=(10,7)
 	# figSize=(7,7)  # <-- good for when 4 electrodes 
