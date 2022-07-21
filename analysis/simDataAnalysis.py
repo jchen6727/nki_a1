@@ -2929,6 +2929,10 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 	return outputData
 
 
+
+
+#### ADDED TO plotSimData.py ##### 
+
 # ##########################
 # #### USEFUL VARIABLES ####
 # ##########################
@@ -2992,6 +2996,8 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 # colorDictCustom['ITP4'] = 'magenta'	# 'tab:purple'
 # colorDictCustom['ITS4'] = 'dodgerblue' 	# 'tab:green'
 # colorDictCustom['IT5A'] = 'lime'	# 'tab:blue'
+
+
 
 
 #############################################
@@ -3084,6 +3090,30 @@ if evalPopsBool:
 ###### COMBINED LFP PLOTTING ######
 ###################################
 
+#### ADDED TO plotSimData.py ##### 
+# plotLFPCombinedData = 0
+# if plotLFPCombinedData:
+# 	includePops = ['IT3'] #, 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+# 	# includePops = includePopsMaxPeak.copy()  ### <-- getting an error about this!! 
+# 	for i in range(len(includePops)):
+# 		pop = includePops[i]
+# 		electrode = [10] #[electrodesMaxPeak[i]]
+
+# 		print('Plotting LFP spectrogram and timeSeries for ' + pop + ' at electrode ' + str(electrode))
+
+# 		## Get dictionaries with LFP data for spectrogram and timeSeries plotting  
+# 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrode) 
+# 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode) #filtFreq=filtFreq, 
+
+# 		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['timeSeries'], 
+# 			spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, figSize=(10,7), colorMap='jet', 
+# 			minFreq=15, maxFreq=None, vmaxContrast=None, electrode=electrode, savePath=None, saveFig=True)
+
+# 		# plotCombinedLFP(spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, timeRange=timeRange, pop=pop, colorDict=colorDict, maxFreq=maxFreq, 
+# 		# 	figSize=(10,7), titleElectrode=electrode, saveFig=0)
+
+# 		### Get the strongest frequency in the LFP signal ### 
+# 		# maxPowerFrequencyGETLFP = getPSDinfo(dataFile=dataFile, pop=pop, timeRange=timeRange, electrode=electrode, plotPSD=1)
 
 
 
@@ -3110,23 +3140,25 @@ if lfpPSD:
 ######## CSD ########
 #####################
 
-## Combined Plotting 
-plotCSDCombinedData = 0
-if plotCSDCombinedData:
-	print('Plotting Combined CSD data')
-	electrode=[8]
-	includePops=['ITS4']#[None, 'ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
-	minFreq = 1 # 0.25 # 1 
-	maxFreq = 12 #110 #40 #25 # 110 # 40 
-	stepFreq = 0.25 #1 #0.25 # 1 # 0.25 # 0.25 # 1
-	for pop in includePops:
-		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
-		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
+
+#### ADDED TO plotSimData.py ##### 
+# ## Combined Plotting 
+# plotCSDCombinedData = 0
+# if plotCSDCombinedData:
+# 	print('Plotting Combined CSD data')
+# 	electrode=[8]
+# 	includePops=['ITS4']#[None, 'ITS4', 'ITP4', 'IT5A'] #[None] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+# 	minFreq = 1 # 0.25 # 1 
+# 	maxFreq = 12 #110 #40 #25 # 110 # 40 
+# 	stepFreq = 0.25 #1 #0.25 # 1 # 0.25 # 0.25 # 1
+# 	for pop in includePops:
+# 		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
+# 		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
 
 
-		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
-			minFreq=1, maxFreq=maxFreq, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
-			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100 # colorDict=colorDictCustom 
+# 		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
+# 			minFreq=1, maxFreq=maxFreq, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
+# 			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100 # colorDict=colorDictCustom 
 
 
 ## CSD heatmaps
