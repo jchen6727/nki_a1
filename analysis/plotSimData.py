@@ -104,6 +104,8 @@ if plotLFPCombinedData:
 
 
 
+
+
 #######################################
 ######## COMBINED CSD PLOTTING ########
 #######################################
@@ -138,11 +140,75 @@ if plotCSDCombinedData:
 
 
 
+###################################
+######## PLOTTING HEATMAPS ########
+###################################
+
+
+##### CSD HEATMAPS ######
+plotCSDheatmaps = 0
+
+if plotCSDheatmaps:   # define electrodes & figSize? 
+	## Get peak and avg dataframes 
+	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+
+	## Plot peak CSD heatmap 
+	# peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', 
+					# cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
+
+	## Plot avg CSD heatmap 
+	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', 
+					cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
+
+	## UNCLEAR ON THIS LINE: 
+	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
+
+
+
+
+##### LFP HEATMAPS ######
+plotLFPheatmaps = 0
+
+if plotLFPheatmaps:
+	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	peakLFPPlot = plotDataFrames(dfLFPPeak, electrodes=None, pops=ECortPops, title='Peak LFP Values', 
+					cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', 
+					cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+
+
+
 
 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
+
+
+plotCombinedSpikeData = 0  
+
+if plotCombinedSpikeData:
+
+	includePops=['ITS4', 'ITP4', 'IT5A']		# ['IT3', 'ITS4', 'IT5A']  ## AUTOMATE THIS SOMEHOW? 
+
+	for pop in includePops:
+		print('Plotting spike data for ' + pop)
+
+		## Get dictionaries with spiking data for spectrogram and histogram plotting 
+		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, oscEventInfo=thetaOscEventInfo)		#	timeRange=timeRange)
+		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)			#	timeRange=timeRange)
+
+		## Then call plotting function 
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDictCustom, plotTypes=['spectrogram', 'histogram'],
+		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) 		# timeRange=timeRange, 
+
+# TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
+
+
+
+
+
+
 
 
 

@@ -3161,24 +3161,28 @@ if lfpPSD:
 # 			hasBefore=1, hasAfter=1, saveFig=True) # maxFreq=100 # colorDict=colorDictCustom 
 
 
-## CSD heatmaps
-plotCSDheatmaps = 1
-if plotCSDheatmaps:
-	# figSize=(10,7)
-	# figSize=(7,7)  # <-- good for when 4 electrodes 
-	# electrodes=None
-	# electrodes=[8,9,10]
-	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
-	# peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
-	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
-	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
 
-## LFP heatmaps for comparison
-plotLFPheatmaps = 0
-if plotLFPheatmaps:
-	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
-	peakLFPPlot = plotDataFrames(dfLFPPeak, electrodes=None, pops=ECortPops, title='Peak LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
-	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+
+#### csd and lfp heatmap plotting ADDED TO plotSimData.py ##### 
+
+# ## CSD heatmaps
+# plotCSDheatmaps = 1
+# if plotCSDheatmaps:
+# 	# figSize=(10,7)
+# 	# figSize=(7,7)  # <-- good for when 4 electrodes 
+# 	# electrodes=None
+# 	# electrodes=[8,9,10]
+# 	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+# 	# peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
+# 	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
+# 	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
+
+# # ## LFP heatmaps for comparison
+# plotLFPheatmaps = 0
+# if plotLFPheatmaps:
+# 	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+# 	peakLFPPlot = plotDataFrames(dfLFPPeak, electrodes=None, pops=ECortPops, title='Peak LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+# 	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
 
 
 ## CSD PSD 
@@ -3248,6 +3252,8 @@ if PSDbyPop:
 		maxPowerByPop[pop] = psdDataPop['maxPowerFrequency']
 
 	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
+
+
 
 
 ################################
@@ -3371,27 +3377,29 @@ if getIEIstatsbyBandTEST:
 
 
 
+
+#### ADDED TO plotSimData.py ##### 
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
 
-plotCombinedSpikeData = 0	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
-if plotCombinedSpikeData:
-	includePops=['ITS4', 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
-	for pop in includePops:
-		print('Plotting spike data for ' + pop)
+# plotCombinedSpikeData = 0	# includePopsMaxPeak.copy()		# ['PT5B']	#['IT3', 'IT5A', 'PT5B']	# placeholder for now <-- will ideally come out of the function above once the pop LFP netpyne issues get resolved! 
+# if plotCombinedSpikeData:
+# 	includePops=['ITS4', 'ITP4', 'IT5A']# ['IT3', 'ITS4', 'IT5A']
+# 	for pop in includePops:
+# 		print('Plotting spike data for ' + pop)
 
-		## Get dictionaries with spiking data for spectrogram and histogram plotting 
-		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, oscEventInfo=thetaOscEventInfo) #timeRange=timeRange)
-		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)#timeRange=timeRange)
+# 		## Get dictionaries with spiking data for spectrogram and histogram plotting 
+# 		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, oscEventInfo=thetaOscEventInfo) #timeRange=timeRange)
+# 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)#timeRange=timeRange)
 
-		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDictCustom, plotTypes=['spectrogram', 'histogram'],
-		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) # timeRange=timeRange, 
+# 		## Then call plotting function 
+# 		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDictCustom, plotTypes=['spectrogram', 'histogram'],
+# 		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) # timeRange=timeRange, 
 
 
 
- # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
+#  # ---> ## TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
 
 
 
