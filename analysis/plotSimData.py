@@ -71,6 +71,46 @@ for p in range(len(allpops)):
 
 
 
+
+
+
+###############################
+####### Evaluating Pops #######
+###############################
+
+## Improve these two sections..... 
+
+## Evaluate pops / wavelets by frequency band ## --> IN PROGRESS 
+evalWavelets_Band = 0
+
+if evalWavelets_Band:
+	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/' 			# '/figs/wavelets/'
+	dlmsPklFile = 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
+	dfPklFile = 'v34_batch57_3_4_data_timeRange_0_6_df.pkl'   ### AUTOMATE / CONDENSE THIS SOMEHOW... 
+	# dlmsData, dfData = evalWaveletsByBand(based=basedPkl, dlmsPklFile=dlmsPklFile, dfPklFile=dfPklFile)
+	dfData = evalWaveletsByBand(based=basedPkl, dfPklFile=dfPklFile)  # THIS FUNCTION IS IN PROGRESS 
+
+
+## Automated pop selection based on max (peak or avg) CSD values ## 
+evalPopsBool = 0
+
+if evalPopsBool:
+	print('timeRange: ' + str(timeRange))
+	print('dataFile: ' + str(dataFile))
+	print('channel: ' + str(waveletElectrode))
+
+	# Get data frames for LFP and CSD data
+	### dfPeak_LFP, dfAvg_LFP = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
+	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+
+	# Get the pops with the max contributions 
+	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+	maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
+
+	# maxPopsValues_avgCSD['elec']
+
+
+
 ###################################
 ###### COMBINED LFP PLOTTING ######
 ###################################
