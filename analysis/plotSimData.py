@@ -207,8 +207,95 @@ if plotCombinedSpikeData:
 
 
 
+################
+##### PSD ######
+################
+
+### LFP ### ---> Evidently this is code for PSD of a summed LFP signal ; adapt for other contexts? 
+
+summedLFP = 0 	 		# COMBINE TOP 3 LFP SIGNALS  
+
+if summedLFP: 
+	includePops = ['IT3', 'IT5A', 'PT5B']
+	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
+	lfpDataTEST_fullElecs = getSumLFP(dataFile=dataFile, pops=includePops, elecs=False, timeRange=timeRange, showFig=True)
+	# lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
 
+lfpPSD = 0 
+if lfpPSD: 
+	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST_fullElecs['sum'])	# inputData = lfpDataTEST['sum'])
+	plotPSD(psdData)
+
+
+
+### CSD ###
+csdPSD = 0
+
+if csdPSD:
+	includePops=['ITS4']			#['ITS4', 'ITP4', 'IT5A']
+	for pop in includePops:
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
+		csdData = csdDataDict['csdDuring'] 
+		# psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
+		# plotPSD(psdData)
+		### Got a list vs array error  -- WAS THIS RESOLVED? TO DO: TEST THIS!!! 
+		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
+		# psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
+		# plotPSD(psdDataSpect)
+
+
+
+### SUMMED CSD (FROM MULTIPLE POPS) ### 
+csdPSD_multiple = 0
+
+if csdPSD_multiple:
+	includePops=['ITS4'] 				# ['ITS4', ITP4', 'IT5A'] # ECortPops 
+	csdPopData = {}
+	for pop in includePops:
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
+		csdData = csdDataDict['csdDuring'] 
+		csdPopData[pop] = csdData
+
+	csdSummedData =  np.zeros(shape=csdPopData[includePops[0]].shape)
+	for pop in includePops:
+		csdSummedData += csdPopData[pop]
+
+	psdSummedData = getPSDdata(dataFile=dataFile, inputData=csdSummedData, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+	plotPSD(psdSummedData)
+
+
+### ENTIRE CSD (DURING OSC EVENT, AT SPECIFIED CHANNEL) ### 
+csdPSD_wholeCSD = 0
+
+if csdPSD_wholeCSD:
+	maxFreq = 110 
+	pop = 'IT5A' #None
+
+	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
+	csdData = csdDataDict['csdDuring'] 
+
+	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=maxFreq, stepFreq=0.25)
+	plotPSD(psdData)
+
+
+
+### LOOK AT MAX POWER FOR EACH POP -- TO DO: MAKE THIS INTO A FUNCTION !!!! ### 
+PSDbyPop = 0
+
+if PSDbyPop:
+	includePops = ECortPops    					# ['IT3'] 	# thalPops 		# AllCortPops
+	maxPowerByPop = {}
+
+	for pop in includePops:
+		# Get the max power frequency for each pop and put it in a dict
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
+		csdDataPop = csdDataDict['csdDuring']
+
+		psdDataPop = getPSDdata(dataFile=dataFile, inputData=csdDataPop, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+		maxPowerByPop[pop] = psdDataPop['maxPowerFrequency']
+
+	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
 
 
 

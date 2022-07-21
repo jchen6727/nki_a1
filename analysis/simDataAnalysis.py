@@ -3047,6 +3047,7 @@ thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684,
 					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
 					'w2': 3376}  # 
 
+
 #################################################
 ####### Evaluating Pops by Frequency Band #######
 #################################################
@@ -3117,22 +3118,22 @@ if evalPopsBool:
 
 
 
+#### ADDED TO plotSimData.py ##### 
+# ###### COMBINING TOP 3 LFP SIGNAL !! 
+# summedLFP = 0 #1
+# if summedLFP: 
+# 	includePops = ['IT3', 'IT5A', 'PT5B']
+# 	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
+# 	lfpDataTEST_fullElecs = getSumLFP(dataFile=dataFile, pops=includePops, elecs=False, timeRange=timeRange, showFig=True)
+# 	# lfpDataTEST = getSumLFP2(dataFile=dataFile, pops=popElecDict, elecs=True, timeRange=timeRange, showFig=False)	# getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
-###### COMBINING TOP 3 LFP SIGNAL !! 
-summedLFP = 0 #1
-if summedLFP: 
-	includePops = ['IT3', 'IT5A', 'PT5B']
-	popElecDict = {'IT3': 1, 'IT5A': 10, 'PT5B': 11}
-	lfpDataTEST_fullElecs = getSumLFP(dataFile=dataFile, pops=includePops, elecs=False, timeRange=timeRange, showFig=True)
-	# lfpDataTEST = getSumLFP2(dataFile=dataFile, pops=popElecDict, elecs=True, timeRange=timeRange, showFig=False)	# getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
-
-######## LFP PSD ########   ---> 	### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
-# maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
-lfpPSD = 0 
-if lfpPSD: 
-	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
-	plotPSD(psdData)
+# ######## LFP PSD ########   ---> 	### GET PSD INFO OF SUMMED LFP SIGNAL!!! 
+# # maxPowerFrequency = getPSDinfo(dataFile=dataFile, pop=None, timeRange=None, electrode=None, lfpData=lfpDataTEST['sum'], plotPSD=True)
+# lfpPSD = 0 
+# if lfpPSD: 
+# 	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST['sum'])
+# 	plotPSD(psdData)
 
 
 
@@ -3185,73 +3186,76 @@ if lfpPSD:
 # 	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
 
 
+
+#### PSD LINES BELOW ADDED TO plotSimData.py ##### 
+
 ## CSD PSD 
-csdPSD = 0
-if csdPSD:
-	includePops=['ITS4']#, 'ITP4', 'IT5A']
-	for pop in includePops:
-		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-		csdData = csdDataDict['csdDuring'] 
-		# psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
-		# plotPSD(psdData)
-		### Got a list vs array error 
-		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
-		# psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
-		# plotPSD(psdDataSpect)
+# csdPSD = 0
+# if csdPSD:
+# 	includePops=['ITS4']#, 'ITP4', 'IT5A']
+# 	for pop in includePops:
+# 		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+# 		csdData = csdDataDict['csdDuring'] 
+# 		# psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
+# 		# plotPSD(psdData)
+# 		### Got a list vs array error 
+# 		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
+# 		# psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
+# 		# plotPSD(psdDataSpect)
 
 
 
 ## CSD PSD FOR MULTIPLE POPS (SUMMED CSD)
-csdPSD_multiple = 0
-if csdPSD_multiple:
-	includePops=['ITS4']#, 'ITP4', 'IT5A'] # ECortPops 
-	csdPopData = {}
-	for pop in includePops:
-		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-		csdData = csdDataDict['csdDuring'] 
-		csdPopData[pop] = csdData
+# csdPSD_multiple = 0
+# if csdPSD_multiple:
+# 	includePops=['ITS4']#, 'ITP4', 'IT5A'] # ECortPops 
+# 	csdPopData = {}
+# 	for pop in includePops:
+# 		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+# 		csdData = csdDataDict['csdDuring'] 
+# 		csdPopData[pop] = csdData
 
-	csdSummedData =  np.zeros(shape=csdPopData[includePops[0]].shape)
-	for pop in includePops:
-		csdSummedData += csdPopData[pop]
+# 	csdSummedData =  np.zeros(shape=csdPopData[includePops[0]].shape)
+# 	for pop in includePops:
+# 		csdSummedData += csdPopData[pop]
 
-	psdSummedData = getPSDdata(dataFile=dataFile, inputData=csdSummedData, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
-	plotPSD(psdSummedData)
+# 	psdSummedData = getPSDdata(dataFile=dataFile, inputData=csdSummedData, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+# 	plotPSD(psdSummedData)
 
 
 ## CSD PSD FOR ENTIRE CSD (DURING OSC EVENT, AT SPECIFIED CHANNEL)
-csdPSD_wholeCSD = 0
-if csdPSD_wholeCSD:
-	maxFreq = 110 
-	pop = 'IT5A' #None
+# csdPSD_wholeCSD = 0
+# if csdPSD_wholeCSD:
+# 	maxFreq = 110 
+# 	pop = 'IT5A' #None
 
-	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-	csdData = csdDataDict['csdDuring'] 
+# 	csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+# 	csdData = csdDataDict['csdDuring'] 
 
-	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=maxFreq, stepFreq=0.25)
-	plotPSD(psdData)
+# 	psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=maxFreq, stepFreq=0.25)
+# 	plotPSD(psdData)
 
 
 
 ## LOOK AT MAX POWER FOR EACH POP -- TO DO: MAKE THIS INTO A FUNCTION !!!! 
-PSDbyPop = 0
-if PSDbyPop:
-	## Get all cell pops (cortical)
-	# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
-	# allPops = list(sim.net.allPops.keys())
-	# includePops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
-	includePops = ECortPops    #['IT3']#thalPops 	#AllCortPops
-	maxPowerByPop = {}
+# PSDbyPop = 0
+# if PSDbyPop:
+# 	## Get all cell pops (cortical)
+# 	# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+# 	# allPops = list(sim.net.allPops.keys())
+# 	# includePops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+# 	includePops = ECortPops    #['IT3']#thalPops 	#AllCortPops
+# 	maxPowerByPop = {}
 
-	for pop in includePops:
-		# Get the max power frequency for each pop and put it in a dict
-		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
-		csdDataPop = csdDataDict['csdDuring']
+# 	for pop in includePops:
+# 		# Get the max power frequency for each pop and put it in a dict
+# 		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop) # pop=None, spacing_um=100, minFreq=1, maxFreq=100, stepFreq=1)
+# 		csdDataPop = csdDataDict['csdDuring']
 
-		psdDataPop = getPSDdata(dataFile=dataFile, inputData=csdDataPop, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
-		maxPowerByPop[pop] = psdDataPop['maxPowerFrequency']
+# 		psdDataPop = getPSDdata(dataFile=dataFile, inputData=csdDataPop, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
+# 		maxPowerByPop[pop] = psdDataPop['maxPowerFrequency']
 
-	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
+# 	{k: v for k, v in sorted(maxPowerByPop.items(), key=lambda item: item[1])}
 
 
 
