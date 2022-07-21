@@ -155,13 +155,53 @@ if evalPopsBool:
 
 
 
+
+
+###################################
+######## PLOTTING HEATMAPS ########
+###################################
+
+
+##### CSD HEATMAPS ######
+plotCSDheatmaps = 0
+
+if plotCSDheatmaps:   # define electrodes & figSize? 
+	## Get peak and avg dataframes 
+	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo=thetaOscEventInfo) ## going to need oscEventInfo here 
+
+	## Plot peak CSD heatmap 
+	peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', 
+					cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
+
+	## Plot avg CSD heatmap 
+	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', 
+					cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
+
+	## UNCLEAR ON THIS LINE: 
+	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
+
+
+
+##### LFP HEATMAPS ######
+plotLFPheatmaps = 0
+
+if plotLFPheatmaps:
+	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
+	peakLFPPlot = plotDataFrames(dfLFPPeak, electrodes=None, pops=ECortPops, title='Peak LFP Values', 
+					cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', 
+					cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
+
+
+
+
 ###################################
 ###### COMBINED LFP PLOTTING ######
 ###################################
 
 
 ### NEED TO DEFINE:
-#### timeRange
+#### timeRange --> NOTE that this is contingent on getWaveletInfo lines in the specific-wavelet section
 
 
 plotLFPCombinedData = 0
@@ -181,10 +221,9 @@ if plotLFPCombinedData:
 		LFPSpectOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['spectrogram'], electrode=electrode) 
 		LFPtimeSeriesOutput = getLFPDataDict(dataFile, pop=pop, timeRange=timeRange, plotType=['timeSeries'], electrode=electrode)
 
-		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['timeSeries'], 
+		plotCombinedLFP(timeRange=timeRange, pop=pop, colorDict=colorDict, plotTypes=['spectrogram','timeSeries'], 
 			spectDict=LFPSpectOutput, timeSeriesDict=LFPtimeSeriesOutput, figSize=(10,7), colorMap='jet', 
 			minFreq=15, maxFreq=None, vmaxContrast=None, electrode=electrode, savePath=None, saveFig=True)
-
 
 
 
@@ -223,47 +262,6 @@ if plotCSDCombinedData:
 			hasBefore=1, hasAfter=1, saveFig=True) # colorDict=colorDictCustom 
 
 
-
-###################################
-######## PLOTTING HEATMAPS ########
-###################################
-
-
-##### CSD HEATMAPS ######
-plotCSDheatmaps = 0
-
-if plotCSDheatmaps:   # define electrodes & figSize? 
-	## Get peak and avg dataframes 
-	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo=thetaOscEventInfo) ## going to need oscEventInfo here 
-
-	## Plot peak CSD heatmap 
-	peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', 
-					cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
-
-	## Plot avg CSD heatmap 
-	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', 
-					cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
-
-	## UNCLEAR ON THIS LINE: 
-	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
-
-
-
-
-##### LFP HEATMAPS ######
-plotLFPheatmaps = 0
-
-if plotLFPheatmaps:
-	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
-	peakLFPPlot = plotDataFrames(dfLFPPeak, electrodes=None, pops=ECortPops, title='Peak LFP Values', 
-					cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
-	avgLFPPlot = plotDataFrames(dfLFPAvg, electrodes=None, pops=ECortPops, title='Avg LFP Values', 
-					cbarLabel='LFP', figSize=(10,7), savePath=None, saveFig=False)
-
-
-
-
-
 ##########################################
 ###### COMBINED SPIKE DATA PLOTTING ######
 ##########################################
@@ -273,7 +271,7 @@ plotCombinedSpikeData = 0
 
 if plotCombinedSpikeData:
 
-	includePops=['ITS4', 'ITP4', 'IT5A']		# ['IT3', 'ITS4', 'IT5A']  ## AUTOMATE THIS SOMEHOW? 
+	includePops=['ITS4', 'ITP4', 'IT5A']		# ['IT3', 'ITS4', 'IT5A']  ## AUTOMATE THIS SOMEHOW? i.e. with eval pops fx's? 
 
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
@@ -295,8 +293,8 @@ if plotCombinedSpikeData:
 ##### PSD ######
 ################
 
-### LFP ### ---> Evidently this is code for PSD of a summed LFP signal ; adapt for other contexts? 
 
+### LFP ### ---> Evidently this is code for PSD of a summed LFP signal ; adapt for other contexts? 
 summedLFP = 0 	 		# COMBINE TOP 3 LFP SIGNALS  
 
 if summedLFP: 
@@ -306,7 +304,7 @@ if summedLFP:
 	# lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
 
-lfpPSD = 0 
+lfpPSD = 0  ## fix bug !! see nb for error 
 if lfpPSD: 
 	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST_fullElecs['sum'])	# inputData = lfpDataTEST['sum'])
 	plotPSD(psdData)
@@ -321,12 +319,12 @@ if csdPSD:
 	for pop in includePops:
 		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
 		csdData = csdDataDict['csdDuring'] 
-		# psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
+		psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
 		# plotPSD(psdData)
-		### Got a list vs array error  -- WAS THIS RESOLVED? TO DO: TEST THIS!!! 
-		# spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
-		# psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
-		# plotPSD(psdDataSpect)
+		### Unclear on significance of these two sections -- figure that out / look back in nb 
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
+		psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
+		plotPSD(psdDataSpect)
 
 
 
@@ -389,7 +387,6 @@ if PSDbyPop:
 ############################
 
 #### peakF calculations ####
-
 peakF = 0
 if peakF:
 	maxFreq = 20 #110 #10
@@ -471,9 +468,7 @@ if peakF:
 
 
 #### getIEIstatsbyBand Testing ####
-
 getIEIstatsbyBandTEST=0
-
 if getIEIstatsbyBandTEST:
 	maxFreq = 110 			# 10
 	chan=8
