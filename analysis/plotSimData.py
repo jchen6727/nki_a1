@@ -234,11 +234,11 @@ plotCSDheatmaps = 0
 
 if plotCSDheatmaps:   # define electrodes & figSize? 
 	## Get peak and avg dataframes 
-	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo=thetaOscEventInfo) ## going to need oscEventInfo here 
 
 	## Plot peak CSD heatmap 
-	# peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', 
-					# cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
+	peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', 
+					cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
 
 	## Plot avg CSD heatmap 
 	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', 

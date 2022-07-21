@@ -3169,19 +3169,20 @@ thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684,
 
 #### csd and lfp heatmap plotting ADDED TO plotSimData.py ##### 
 
-# ## CSD heatmaps
-# plotCSDheatmaps = 1
+## CSD heatmaps
+# plotCSDheatmaps = 0
 # if plotCSDheatmaps:
-# 	# figSize=(10,7)
-# 	# figSize=(7,7)  # <-- good for when 4 electrodes 
-# 	# electrodes=None
-# 	# electrodes=[8,9,10]
-# 	dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
-# 	# peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
-# 	avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
-# 	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
+	# figSize=(10,7)
+	# figSize=(7,7)  # <-- good for when 4 electrodes 
+	# electrodes=None
+	# electrodes=[8,9,10]
+	##dfCSDPeak, dfCSDAvg = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo=thetaOscEventInfo) ## going to need oscEventInfo here 
+	##peakCSDPlot = plotDataFrames(dfCSDPeak, electrodes=None, pops=ECortPops, title='Peak CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=False)
+	## avgCSDPlot = plotDataFrames(dfCSDAvg, electrodes=None, pops=ECortPops, title='Avg CSD Values', cbarLabel='CSD', figSize=(10,7), savePath=None, saveFig=True)
+	
+	# maxPopsValues, dfElecSub, dataFrameSubsetElec = evalPops(dataFrame=dfCSDAvg, electrode=waveletElectrode , verbose=1)
 
-# # ## LFP heatmaps for comparison
+# # # ## LFP heatmaps for comparison
 # plotLFPheatmaps = 0
 # if plotLFPheatmaps:
 # 	dfLFPPeak, dfLFPAvg = getDataFrames(dataFile=dataFile, timeRange=timeRange)
