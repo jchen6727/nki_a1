@@ -128,7 +128,7 @@ thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684,
 evalWavelets_Band = 0
 
 if evalWavelets_Band:
-	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/' 			# '/figs/wavelets/'
+	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/' 			# '/figs/wavelets/'
 	dlmsPklFile = 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
 	dfPklFile = 'v34_batch57_3_4_data_timeRange_0_6_df.pkl'   ### AUTOMATE / CONDENSE THIS SOMEHOW... 
 	# dlmsData, dfData = evalWaveletsByBand(based=basedPkl, dlmsPklFile=dlmsPklFile, dfPklFile=dfPklFile)
@@ -145,7 +145,7 @@ if evalPopsBool:
 
 	# Get data frames for LFP and CSD data
 	### dfPeak_LFP, dfAvg_LFP = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
-	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo = thetaOscEventInfo)
 
 	# Get the pops with the max contributions 
 	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
@@ -510,39 +510,6 @@ if getIEIstatsbyBandTEST:
 		medthresh=medthresh,lchan=lchan,MUA=MUA,overlapth=0.5,getphase=True,savespec=True,
 		threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,
 		normop=mednorm)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

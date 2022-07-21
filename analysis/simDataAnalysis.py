@@ -50,7 +50,8 @@ def evalWaveletsByBand(based, dfPklFile):
 
 	print('Evaluating all oscillation events in a given frequency band')
 
-	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' ### COULD make this an arg!! 
+	if based is None:
+		based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/' ### COULD make this an arg!! # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/' 
 	subjectDir = dfPklFile.split('_df.pkl')[0]
 
 	# Load df file 
@@ -62,7 +63,6 @@ def evalWaveletsByBand(based, dfPklFile):
 	# dlmsFile = open(dlmsFullPath, 'rb')
 	# dlms = pickle.load(dlmsFile)
 	# dlmsFile.close()
-
 
 	return df
 ## plotting functions
@@ -2074,6 +2074,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	## dataFile: str     					--> .pkl file with recorded simulation 
 	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
 	## oscEventInfo: dict 					---> dict w/ chan, left, right, minT, maxT, alignoffset
+		## RIGHT NOW THIS IS *NECESSARY* TO RUN THIS!!! 
 		# DEPRECATED ## timeRange: list 						--> e.g. [start, stop]
 		# DEPRECATED ## channel: list or None 				--> e.g. [8], None
 	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
@@ -2118,14 +2119,13 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	#### ALL CSD DATA -- ALL CHANS, ALL TIMEPOINTS!!! 
 	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
 	tt = np.linspace(0, sim.cfg.duration, len(csdData[1])) 
-	##  tt = np.arange(0, )
 	# Input full CSD data (and time array) into outputData dict 
 	outputData.update({'csdData': csdData})
 	outputData.update({'tt': tt}) ## Keep in mind this is in milliseconds! 
 
 
 	## Extract oscillation event info 
-	if oscEventInfo is not None:
+	if oscEventInfo is not None: ### RIGHT NOW THIS ARG IS NECESSARY FOR RUNNING THIS FUNCTION!!! FIX THIS!!!!
 		# Extract chan, left, right, minT, maxT, alignoffset, w2   # RECALL: HAVE TO CORRECT FOR 6_11 !!! THIS WORKS FOR 0_6 AS IS!!! 
 		chan = oscEventInfo['chan']
 		left = oscEventInfo['left']
@@ -2160,7 +2160,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 	#### ALL CHANS, OSC EVENT TIMEPOINTS!! 
-	csdDataAllChans = csdData[:,left:right]	#idx0_before:idx1_after]
+	csdDataAllChans = csdData[:,left:right]	 	# NOTE: THIS ONLY WORKS IF left and right EXIST!!! AKA IF oscEventInfo is not None!!!				# idx0_before:idx1_after]  
 	# Input full CSD data into outputData dict 
 	outputData.update({'csdDataAllChans': csdDataAllChans})  
 
@@ -2571,8 +2571,8 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
 	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
-		## --> DEPRECATED ### timeRange: list 	--> e.g. [start, stop]
 	### oscEvenfInfo: dict 			--> dict w/ chan, left, right, minT, maxT, alignoffset
+		## RIGHT NOW THIS IS *NECESSARY* TO RUN THIS SINCE NECESSARY IN getCSDdata !!!! 
 	### verbose: bool 
 		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
 
@@ -2603,8 +2603,8 @@ def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
 
 		csdPopData[pop] = {}
 
-		popCSDdataFULL_origShape_dict = getCSDdata(dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um, outputType=[]) 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
-		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csd']
+		popCSDdataFULL_origShape_dict = getCSDdata(oscEventInfo=oscEventInfo, dt=dt, sampr=sampr, dataFile=None, pop=pop, spacing_um=spacing_um, outputType=[]) ## HAVE TO ADD oscEventInfo arg since right now this arg is * NECESSARY * TO RUN getCSDdata!!!! 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csdData']#['csd']
 		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
 
 		if timeRange is None:
@@ -2931,71 +2931,70 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 
 
 
-#### ADDED TO plotSimData.py ##### 
 
 # ##########################
 # #### USEFUL VARIABLES ####
 # ##########################
-# ## set layer bounds:
-# layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+## set layer bounds:
+layerBounds= {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
 
-# ## Cell populations: 
-# allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
-# 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
-# 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']#, 'IC']
-# L1pops = ['NGF1']
-# L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
-# L3pops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3']
-# L4pops = ['ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4']
-# L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
-# L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
-# L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-# thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
-# ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
-# ICortPops = ['NGF1', 
-# 			'PV2', 'SOM2', 'VIP2', 'NGF2', 
-# 			'PV3', 'SOM3', 'VIP3', 'NGF3',
-# 			'PV4', 'SOM4', 'VIP4', 'NGF4',
-# 			'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
-# 			'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
-# 			'PV6', 'SOM6', 'VIP6', 'NGF6']
-# AllCortPops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
-# 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
-# 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-# EThalPops = ['TC', 'TCM', 'HTC']				# TEpops = ['TC', 'TCM', 'HTC']
-# IThalPops = ['IRE', 'IREM', 'TI', 'TIM']		# TIpops = ['IRE', 'IREM', 'TI', 'TIM']
-# reticPops = ['IRE', 'IREM']
-# matrixPops = ['TCM', 'TIM', 'IREM']
-# corePops = ['TC', 'HTC', 'TI', 'IRE']
+## Cell populations: 
+allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']#, 'IC']
+L1pops = ['NGF1']
+L2pops = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2']
+L3pops = ['IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3']
+L4pops = ['ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4']
+L5Apops = ['IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A']
+L5Bpops = ['IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B']
+L6pops = ['IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
+ICortPops = ['NGF1', 
+			'PV2', 'SOM2', 'VIP2', 'NGF2', 
+			'PV3', 'SOM3', 'VIP3', 'NGF3',
+			'PV4', 'SOM4', 'VIP4', 'NGF4',
+			'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
+			'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
+			'PV6', 'SOM6', 'VIP6', 'NGF6']
+AllCortPops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
+'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
+'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
+EThalPops = ['TC', 'TCM', 'HTC']				# TEpops = ['TC', 'TCM', 'HTC']
+IThalPops = ['IRE', 'IREM', 'TI', 'TIM']		# TIpops = ['IRE', 'IREM', 'TI', 'TIM']
+reticPops = ['IRE', 'IREM']
+matrixPops = ['TCM', 'TIM', 'IREM']
+corePops = ['TC', 'HTC', 'TI', 'IRE']
 
 
-# ## electrodes <--> layer
-# L1electrodes = [0]
-# L2electrodes = [1]
-# L3electrodes = [2,3,4,5,6,7,8,9]
-# L4electrodes = [9,10,11,12]
-# L5Aelectrodes = [12,13]
-# L5Belectrodes = [13,14,15]
-# L6electrodes = [15,16,18,19]
-# allElectrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-# supra = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-# gran = [9, 10, 11, 12]
-# infra = [12, 13, 14, 15, 16, 17, 18, 19]
+## electrodes <--> layer
+L1electrodes = [0]
+L2electrodes = [1]
+L3electrodes = [2,3,4,5,6,7,8,9]
+L4electrodes = [9,10,11,12]
+L5Aelectrodes = [12,13]
+L5Belectrodes = [13,14,15]
+L6electrodes = [15,16,18,19]
+allElectrodes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+supra = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+gran = [9, 10, 11, 12]
+infra = [12, 13, 14, 15, 16, 17, 18, 19]
 
-# ## for COLORS in DATA PLOTTING!! 
-# colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.00],
-# 			[0.34,0.67,0.67], [0.90,0.59,0.00], [0.42,0.82,0.83], [1.00,0.85,0.00],
-# 			[0.33,0.67,0.47], [1.00,0.38,0.60], [0.57,0.67,0.33], [0.5,0.2,0.0],
-# 			[0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
+## for COLORS in DATA PLOTTING!! 
+colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.00],
+			[0.34,0.67,0.67], [0.90,0.59,0.00], [0.42,0.82,0.83], [1.00,0.85,0.00],
+			[0.33,0.67,0.47], [1.00,0.38,0.60], [0.57,0.67,0.33], [0.5,0.2,0.0],
+			[0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
 
-# colorDict = {}
-# for p in range(len(allpops)):
-# 	colorDict[allpops[p]] = colorList[p]
+colorDict = {}
+for p in range(len(allpops)):
+	colorDict[allpops[p]] = colorList[p]
 
-# colorDictCustom = {}
-# colorDictCustom['ITP4'] = 'magenta'	# 'tab:purple'
-# colorDictCustom['ITS4'] = 'dodgerblue' 	# 'tab:green'
-# colorDictCustom['IT5A'] = 'lime'	# 'tab:blue'
+colorDictCustom = {}
+colorDictCustom['ITP4'] = 'magenta'	# 'tab:purple'
+colorDictCustom['ITS4'] = 'dodgerblue' 	# 'tab:green'
+colorDictCustom['IT5A'] = 'lime'	# 'tab:blue'
 
 
 
@@ -3004,58 +3003,58 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 #### DATA FILES -- SET BOOLEANS HERE !! #####
 #############################################
 
-# ######### SET LOCAL BOOL	!!
-# local = 1								# if using local machine (1) 	# if using neurosim or other (0)
-# ## Path to data files
-# if local:
-# 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
+######### SET LOCAL BOOL	!!
+local = 1								# if using local machine (1) 	# if using neurosim or other (0)
+## Path to data files
+if local:
+	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 
-# ######## SET WAVELET TO LOOK AT		!!
+######## SET WAVELET TO LOOK AT		!!
 
-# #########
-# delta = 0
-# beta = 	0
-# alpha = 0
-# theta = 1
-# # gamma = 0 
+#########
+delta = 0
+beta = 	0
+alpha = 0
+theta = 1
+# gamma = 0 
 
-# if delta:
-# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('delta', based=based, verbose=1)
-# 	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
-# 	# ylim = [1, 40]
-# 	# maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
-# elif beta:
-# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('beta', based=based, verbose=1)
-# 	wavelet='beta'
-# 	# maxFreq=None
-# elif alpha:
-# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('alpha', based=based, verbose=1) ## recall timeRange issue (see nb)
-# 	wavelet='alpha'
-# 	# maxFreq=None
-# elif theta:
-# 	# timeRange, dataFile = getWaveletInfo('theta', based)
-# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
-# 	wavelet='theta'
-# 	# maxFreq=None
-# elif gamma:
-# 	print('Cannot analyze gamma wavelet at this time')
+if delta:
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('delta', based=based, verbose=1)
+	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
+	# ylim = [1, 40]
+	# maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
+elif beta:
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('beta', based=based, verbose=1)
+	wavelet='beta'
+	# maxFreq=None
+elif alpha:
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('alpha', based=based, verbose=1) ## recall timeRange issue (see nb)
+	wavelet='alpha'
+	# maxFreq=None
+elif theta:
+	# timeRange, dataFile = getWaveletInfo('theta', based)
+	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
+	wavelet='theta'
+	# maxFreq=None
+elif gamma:
+	print('Cannot analyze gamma wavelet at this time')
 
 
-# ### OSC EVENT INFO DICTS !!
-# thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
-# 					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
-# 					'w2': 3376}  # 
+### OSC EVENT INFO DICTS !!
+thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
+					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
+					'w2': 3376}  # 
 
 
 #################################################
 ####### Evaluating Pops by Frequency Band #######
 #################################################
 
-#### ADDED TO plotSimData.py ##### 
+# #### ADDED TO plotSimData.py ##### 
 # evalWaveletsByBandBool = 0
 # if evalWaveletsByBandBool:
-# 	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
+# 	basedPkl = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/' #'/Users/ericagriffith/Desktop/NEUROSIM/A1/data/figs/wavelets/'
 # 	dlmsPklFile = 'v34_batch57_3_4_data_timeRange_0_6_dlms.pkl'
 # 	dfPklFile = 'v34_batch57_3_4_data_timeRange_0_6_df.pkl'   ### AUTOMATE / CONDENSE THIS SOMEHOW... 
 # 	# dlmsData, dfData = evalWaveletsByBand(based=basedPkl, dlmsPklFile=dlmsPklFile, dfPklFile=dfPklFile)
@@ -3070,7 +3069,7 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 
 #### ADDED TO plotSimData.py ##### 
 #### EVALUATING POPULATIONS TO CHOOSE #### 
-## Can plot LFP dataframes (heatmaps) from here as well 
+# # Can plot LFP dataframes (heatmaps) from here as well 
 # evalPopsBool = 0
 # if evalPopsBool:
 # 	print('timeRange: ' + str(timeRange))
@@ -3079,7 +3078,9 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 
 # 	# Get data frames for LFP and CSD data
 # 	### dfPeak_LFP, dfAvg_LFP = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
-# 	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+# 	# ORIG: dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange)
+# 	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo = thetaOscEventInfo)
+
 
 # 	# Get the pops with the max contributions 
 # 	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
