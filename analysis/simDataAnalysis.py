@@ -3004,48 +3004,48 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 #### DATA FILES -- SET BOOLEANS HERE !! #####
 #############################################
 
-######### SET LOCAL BOOL	!!
-local = 1								# if using local machine (1) 	# if using neurosim or other (0)
-## Path to data files
-if local:
-	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
+# ######### SET LOCAL BOOL	!!
+# local = 1								# if using local machine (1) 	# if using neurosim or other (0)
+# ## Path to data files
+# if local:
+# 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'  # '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/miscRuns/shortRuns/'
 
 
-######## SET WAVELET TO LOOK AT		!!
+# ######## SET WAVELET TO LOOK AT		!!
 
-#########
-delta = 0
-beta = 	0
-alpha = 0
-theta = 1
-# gamma = 0 
+# #########
+# delta = 0
+# beta = 	0
+# alpha = 0
+# theta = 1
+# # gamma = 0 
 
-if delta:
-	timeRange, dataFile, waveletElectrode = getWaveletInfo('delta', based=based, verbose=1)
-	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
-	# ylim = [1, 40]
-	# maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
-elif beta:
-	timeRange, dataFile, waveletElectrode = getWaveletInfo('beta', based=based, verbose=1)
-	wavelet='beta'
-	# maxFreq=None
-elif alpha:
-	timeRange, dataFile, waveletElectrode = getWaveletInfo('alpha', based=based, verbose=1) ## recall timeRange issue (see nb)
-	wavelet='alpha'
-	# maxFreq=None
-elif theta:
-	# timeRange, dataFile = getWaveletInfo('theta', based)
-	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
-	wavelet='theta'
-	# maxFreq=None
-elif gamma:
-	print('Cannot analyze gamma wavelet at this time')
+# if delta:
+# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('delta', based=based, verbose=1)
+# 	wavelet='delta' ### MOVE THESE EVENTUALLY -- BEING USED FOR peakTitle
+# 	# ylim = [1, 40]
+# 	# maxFreq = ylim[1]  ## maxFreq is for use in plotCombinedLFP, for the spectrogram plot 
+# elif beta:
+# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('beta', based=based, verbose=1)
+# 	wavelet='beta'
+# 	# maxFreq=None
+# elif alpha:
+# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('alpha', based=based, verbose=1) ## recall timeRange issue (see nb)
+# 	wavelet='alpha'
+# 	# maxFreq=None
+# elif theta:
+# 	# timeRange, dataFile = getWaveletInfo('theta', based)
+# 	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
+# 	wavelet='theta'
+# 	# maxFreq=None
+# elif gamma:
+# 	print('Cannot analyze gamma wavelet at this time')
 
 
-### OSC EVENT INFO DICTS !!
-thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
-					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
-					'w2': 3376}  # 
+# ### OSC EVENT INFO DICTS !!
+# thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684, 
+# 					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
+# 					'w2': 3376}  # 
 
 
 #################################################
