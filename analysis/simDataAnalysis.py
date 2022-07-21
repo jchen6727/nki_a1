@@ -3255,125 +3255,125 @@ if PSDbyPop:
 
 
 
-
+#### ADDED TO plotSimData.py ##### 
 ################################
 ###### peakF calculations ######
 ################################
-peakF = 0
-if peakF:
-	maxFreq = 20 #110 #10
-	plotNorm = 1
-	chan=8
-	pop = None #'ITP4'	# None
+# peakF = 0
+# if peakF:
+# 	maxFreq = 20 #110 #10
+# 	plotNorm = 1
+# 	chan=8
+# 	pop = None #'ITP4'	# None
 
-	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
+# 	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
 
-	## CSD DATA
-	csdData = timeSeriesDict['csdData']   ## All chans, all timepoints 
-	fullTimeRange = [0,(sim.cfg.duration/1000.0)] 
-	dt = sim.cfg.recordStep / 1000.0  						# thus, dt also converted to seconds (from ms)
-	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
+# 	## CSD DATA
+# 	csdData = timeSeriesDict['csdData']   ## All chans, all timepoints 
+# 	fullTimeRange = [0,(sim.cfg.duration/1000.0)] 
+# 	dt = sim.cfg.recordStep / 1000.0  						# thus, dt also converted to seconds (from ms)
+# 	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
 
-	## timeRange so it's like load.py
-	timeRange = [0,6] #[0,11.5] # [0,6]					# in seconds  ### <-- WHY DOESN'T THIS WORK WITH sim.cfg.duration/1000.0? 
+# 	## timeRange so it's like load.py
+# 	timeRange = [0,6] #[0,11.5] # [0,6]					# in seconds  ### <-- WHY DOESN'T THIS WORK WITH sim.cfg.duration/1000.0? 
 
-	## Segment csdData and tt by timeRange
-	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
-	datChan = dat[chan,:]
-	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
+# 	## Segment csdData and tt by timeRange
+# 	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
+# 	datChan = dat[chan,:]
+# 	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
 
-	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
-	# peakFData = getPeakF(dataFile=dataFile, inputData=csdData_theta, csdAllChans=csdData_theta_allChans, timeData=tt, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
-	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdDataAllChans, timeData=tt_During, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
-	# peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, 
-				# freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
-	imgpk = peakFData['imgpk']
-	imgpk_nonNorm = peakFData['imgpk_nonNorm']
-	lms = peakFData['lms']
-	lsidx = peakFData['lsidx']
-	leidx = peakFData['leidx']
-	lmsnorm = peakFData['lmsnorm']
-	lnoise = peakFData['lnoise']
-	## lblob
-	lblob_norm = peakFData['lblob_norm']
-	lblob_nonNorm = peakFData['lblob_nonNorm']
-	lblob = lblob_nonNorm
-	## llevent
-	llevent = peakFData['llevent']
-	llevent = llevent[0]
-	llevent_norm = peakFData['llevent_norm']
-	llevent_norm = llevent_norm[0]
+# 	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
+# 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdData_theta, csdAllChans=csdData_theta_allChans, timeData=tt, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
+# 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdDataAllChans, timeData=tt_During, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
+# 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, 
+# 				# freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
+# 	imgpk = peakFData['imgpk']
+# 	imgpk_nonNorm = peakFData['imgpk_nonNorm']
+# 	lms = peakFData['lms']
+# 	lsidx = peakFData['lsidx']
+# 	leidx = peakFData['leidx']
+# 	lmsnorm = peakFData['lmsnorm']
+# 	lnoise = peakFData['lnoise']
+# 	## lblob
+# 	lblob_norm = peakFData['lblob_norm']
+# 	lblob_nonNorm = peakFData['lblob_nonNorm']
+# 	lblob = lblob_nonNorm
+# 	## llevent
+# 	llevent = peakFData['llevent']
+# 	llevent = llevent[0]
+# 	llevent_norm = peakFData['llevent_norm']
+# 	llevent_norm = llevent_norm[0]
 
-	peaks = np.where(imgpk==True)
-	peaks_nonNorm = np.where(imgpk_nonNorm==True)
-
-
-	### LOOK AT CANDIDATES
-	print('Looking at llevent')
-	for i in range(len(llevent)):
-		if llevent[i].peakF > 4 and llevent[i].peakF < 7:
-			print('index: ' + str(i) + ' --> peakF: ' + str(llevent[i].peakF) + ', peakT: ' + str(llevent[i].peakT))
+# 	peaks = np.where(imgpk==True)
+# 	peaks_nonNorm = np.where(imgpk_nonNorm==True)
 
 
-	print('Looking at llevent_norm')
-	for i in range(len(llevent_norm)):
-		if llevent_norm[i].peakF > 4 and llevent_norm[i].peakF < 7:
-			print('index: ' + str(i) + ' --> peakF: ' + str(llevent_norm[i].peakF) + ', peakT: ' + str(llevent_norm[i].peakT))
+# 	### LOOK AT CANDIDATES
+# 	print('Looking at llevent')
+# 	for i in range(len(llevent)):
+# 		if llevent[i].peakF > 4 and llevent[i].peakF < 7:
+# 			print('index: ' + str(i) + ' --> peakF: ' + str(llevent[i].peakF) + ', peakT: ' + str(llevent[i].peakT))
 
 
-	print('Looking at lblob')
-	for i in range(len(lblob)):
-		if lblob[i].peakF > 4 and lblob[i].peakF < 7:
-			print('index: ' + str(i) + ' --> peakF: ' + str(lblob[i].peakF) + ', peakT: ' + str(lblob[i].peakT))
+# 	print('Looking at llevent_norm')
+# 	for i in range(len(llevent_norm)):
+# 		if llevent_norm[i].peakF > 4 and llevent_norm[i].peakF < 7:
+# 			print('index: ' + str(i) + ' --> peakF: ' + str(llevent_norm[i].peakF) + ', peakT: ' + str(llevent_norm[i].peakT))
 
 
-	print('Looking at lblob_norm')
-	for i in range(len(lblob_norm)):
-		if lblob_norm[i].peakF > 4 and lblob_norm[i].peakF < 7:
-			print('index: ' + str(i) + ' --> peakF: ' + str(lblob_norm[i].peakF) + ', peakT: ' + str(lblob_norm[i].peakT))
+# 	print('Looking at lblob')
+# 	for i in range(len(lblob)):
+# 		if lblob[i].peakF > 4 and lblob[i].peakF < 7:
+# 			print('index: ' + str(i) + ' --> peakF: ' + str(lblob[i].peakF) + ', peakT: ' + str(lblob[i].peakT))
 
 
-	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
+# 	print('Looking at lblob_norm')
+# 	for i in range(len(lblob_norm)):
+# 		if lblob_norm[i].peakF > 4 and lblob_norm[i].peakF < 7:
+# 			print('index: ' + str(i) + ' --> peakF: ' + str(lblob_norm[i].peakF) + ', peakT: ' + str(lblob_norm[i].peakT))
 
 
-
-getIEIstatsbyBandTEST=0
-if getIEIstatsbyBandTEST:
-	maxFreq = 110 #110 #10
-	chan=8
-	pop = None #'ITP4'	# None
-
-	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
-
-	## CSD DATA
-	csdData = timeSeriesDict['csdData']   ## All chans, all timepoints 
-	fullTimeRange = [0,(sim.cfg.duration/1000.0)] 
-	dt = sim.cfg.recordStep / 1000.0  						# thus, dt also converted to seconds (from ms)
-	sampr = 1.0 / dt
-	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
-
-	## timeRange so it's like load.py
-	timeRange = [0,6]					# in seconds 
-
-	## Segment csdData and tt by timeRange
-	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
-	datChan = dat[chan,:]
-	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
+# 	# x = zip(np.arange(len(lms)),lsidx,lms,lmsnorm,lnoise)
 
 
 
-	noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
-	noiseamp=noiseampCSD 
-	winsz = 10
-	medthresh = 4.0
-	lchan = [chan]
-	MUA = None
+# getIEIstatsbyBandTEST=0
+# if getIEIstatsbyBandTEST:
+# 	maxFreq = 110 #110 #10
+# 	chan=8
+# 	pop = None #'ITP4'	# None
+
+# 	timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=maxFreq)
+
+# 	## CSD DATA
+# 	csdData = timeSeriesDict['csdData']   ## All chans, all timepoints 
+# 	fullTimeRange = [0,(sim.cfg.duration/1000.0)] 
+# 	dt = sim.cfg.recordStep / 1000.0  						# thus, dt also converted to seconds (from ms)
+# 	sampr = 1.0 / dt
+# 	tt = np.arange(fullTimeRange[0],fullTimeRange[1],dt) 	# tt = timeSeriesDict['tt']
+
+# 	## timeRange so it's like load.py
+# 	timeRange = [0,6]					# in seconds 
+
+# 	## Segment csdData and tt by timeRange
+# 	dat = csdData[:, int(timeRange[0]/dt):int(timeRange[1]/dt)]
+# 	datChan = dat[chan,:]
+# 	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
 
 
-	dout = getIEIstatsbyBand2(inputData=datChan,winsz=winsz,sampr=sampr,freqmin=0.25,freqmax=maxFreq,freqstep=0.25,
-		medthresh=medthresh,lchan=lchan,MUA=MUA,overlapth=0.5,getphase=True,savespec=True,
-		threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,
-		normop=mednorm)
+
+# 	noiseampCSD = 200.0 / 10.0 # amplitude cutoff for CSD noise; was 200 before units fix
+# 	noiseamp=noiseampCSD 
+# 	winsz = 10
+# 	medthresh = 4.0
+# 	lchan = [chan]
+# 	MUA = None
+
+
+# 	dout = getIEIstatsbyBand2(inputData=datChan,winsz=winsz,sampr=sampr,freqmin=0.25,freqmax=maxFreq,freqstep=0.25,
+# 		medthresh=medthresh,lchan=lchan,MUA=MUA,overlapth=0.5,getphase=True,savespec=True,
+# 		threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,
+# 		normop=mednorm)
 
 
 
