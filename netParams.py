@@ -12,15 +12,15 @@ import pickle, json
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
 try:
-	from __main__ import cfg  # import SimConfig object with params from parent module
+    from __main__ import cfg  # import SimConfig object with params from parent module
 except:
-	from cfg import cfg
+    from cfg import cfg
 
 
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 34
+netParams.version = 35
 
 #------------------------------------------------------------------------------
 #
@@ -102,6 +102,30 @@ for k in cfg.weightNormScaling:
     for sec in netParams.cellParams[k]['secs'].values():
         for i in range(len(sec['weightNorm'])):
             sec['weightNorm'][i] *= cfg.weightNormScaling[k]
+
+
+# Parametrize PT ih_gbar and exc cells K_gmax to simulate NA/ACh neuromodulation
+for cellLabel in ['PT5B_reduced']:
+    cellParam = netParams.cellParams[cellLabel] 
+
+    for secName in cellParam['secs']:
+        # Adapt ih params based on cfg param
+        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+            if mechName in ['ih','h','h15', 'hd']: 
+                mech['gbar'] = [g*cfg.ihGbar for g in mech['gbar']] if isinstance(mech['gbar'],list) else mech['gbar']*cfg.ihGbar
+
+
+# Adapt Kgbar
+for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
+                    'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',]:
+    cellParam = netParams.cellParams[cellLabel] 
+
+    for secName in cellParam['secs']:
+        for kmech in [k for k in cellParam['secs'][secName]['mechs'].keys() if k in ['kap','kdr']]:
+            cellParam['secs'][secName]['mechs'][kmech]['gbar'] *= cfg.KgbarFactor 
+
+
 
 
 
@@ -682,10 +706,10 @@ if cfg.addBkgConn:
 #  	for key in [k for k in dir(cfg) if k.startswith('IClamp')]:
 # 		params = getattr(cfg, key, None)
 # 		[pop,sec,loc,start,dur,amp] = [params[s] for s in ['pop','sec','loc','start','dur','amp']]
-		
+        
 #         		# add stim source
 # 		netParams.stimSourceParams[key] = {'type': 'IClamp', 'delay': start, 'dur': dur, 'amp': amp}
-		
+        
 # 		# connect stim source to target
 # 		netParams.stimTargetParams[key+'_'+pop] =  {
 # 			'source': key, 
@@ -697,24 +721,29 @@ if cfg.addBkgConn:
 # NetStim inputs (to simulate short external stimuli; not bkg)
 #------------------------------------------------------------------------------
 if cfg.addNetStim:
-	for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
-		params = getattr(cfg, key, None)
-		[pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
-		[params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
+    for key in [k for k in dir(cfg) if k.startswith('NetStim')]:
+        params = getattr(cfg, key, None)
+        [pop, ynorm, sec, loc, synMech, synMechWeightFactor, start, interval, noise, number, weight, delay] = \
+        [params[s] for s in ['pop', 'ynorm', 'sec', 'loc', 'synMech', 'synMechWeightFactor', 'start', 'interval', 'noise', 'number', 'weight', 'delay']] 
 
-		# add stim source
-		netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+        # add stim source
+        netParams.stimSourceParams[key] = {'type': 'NetStim', 'start': start, 'interval': interval, 'noise': noise, 'number': number}
+        
+        if not isinstance(pop, list):
+            pop = [pop]
 
-		# connect stim source to target 
-		netParams.stimTargetParams[key+'_'+pop] =  {
-			'source': key, 
-			'conds': {'pop': pop, 'ynorm': ynorm},
-			'sec': sec, 
-			'loc': loc,
-			'synMech': synMech,
-			'weight': weight,
-			'synMechWeightFactor': synMechWeightFactor,
-			'delay': delay}
+        for eachPop in pop:
+            # connect stim source to target 
+            print(key, eachPop)
+            netParams.stimTargetParams[key+'_'+eachPop] =  {
+                'source': key, 
+                'conds': {'pop': eachPop, 'ynorm': ynorm},
+                'sec': sec, 
+                'loc': loc,
+                'synMech': synMech,
+                'weight': weight,
+                'synMechWeightFactor': synMechWeightFactor,
+                'delay': delay}
 
 #------------------------------------------------------------------------------
 # Description
@@ -749,4 +778,5 @@ v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
 v32 - Added IE presyn-cell-type specific gains
 v33 - Fixed bug in matrix thalamocortical conn (were very low)
 v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
+v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
 """

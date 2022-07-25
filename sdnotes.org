@@ -638,6 +638,7 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    IT6 - depol
 ** checked bkg (only long-range) rates in M1 model
 * 19Oct2020 Tuning by layers
+
 ** Allen V1 paper
 "Optimizing a full recurrent network at once was very challenging; instead, we followed a stepwise, layer-by-layer procedure. 
 We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
@@ -738,6 +739,136 @@ Salva
    M2 : 1.158 Hz
    OC : 2.462 Hz
 
+* 18Nov2021 Paper result figs
+
+- multiscale output: raster, stats, voltage traces, LFP/CSD, current dipoles, EEG
+
+model validation:
+- comparison of laminar LFP/CSD exp vs model
+- comparison of osc events; examples for supra, gran, infra (Cosyne poster)
+
+model predictions:
+- select example LFP signal from single electrode from examples above (model and exp), 
+and show contributions from each population: raw LFP and potentially spectrogram; can include spike raster and spectrogram (for comparison with LFP)
+
+other easy/fast potential model predictions:
+- lesion different popuations and/or core vs thal matrix and show effects on dynamics (raster, LFP/CSD)
+* 19Nov20201 Exp data
+** noelle response
+I also just got part of a response from noelle (have a couple follow-up questions and need to look closer at some figs she sent), 
+but basically she thinks the two weird monkeys I showed you yesterday are actually "real" (the very "regular" one, and the one with the blips in the lower layers). 
+she thinks the lower-layer blips aren't an artifact and that they might have pierced a white matter tract right there by accident 
+(and still reading her response about the regularity of the that other one). but at least we can know that she also sees 
+/ saw the same things with those monkeys too! the figs she sent had diff timescales than mine so going to plot them myself w/ her timescales and just make sure they look the same.
+** 2-rb04 
+very regular CSD data across all 50 secs -- gamma (50-70 Hz) across most channels; occasional beta ~10 Hz
+** 2-rb03
+- longer osc events - ~75-175ms (~7-15 Hz) 
+- Most common: only red/blue in L1/2 (top electrodes) - top-down cortical feedback?? artifact? what if remove top 2 electrodes?
+- 2nd most common: top layer + some red/blue bands above granular; and/or below granular
+- some coupled osc? gamma over beta?
+- similar to model??
+** 1-bu3
+- shows more differences across layers than 2-rb03 and 2-rb04
+- infragranular - stroner and faster (gamma); supragran+gran - longer events (50ms to >200ms)
+- some similar to model - long (~200-1000 ms) of strong activation of same channe/layer, including L4
+** 2-ma03
+- weird blips at infragran electrode (white matter tract??)
+** model
+- most peaks happen at L4/L5A and L1; variable durations
+
+** Exp data analysis code
+ericaygriffith  7 hours ago
+
+okay so I put the .mat files and a .csv file w/ the layer-channel info (necessary for plotting NHP csds) into a subdir called 'data' (https://drive.google.com/drive/folders/14b85qqGjeLwCd5q4FiLNnVa2d43yHXB-?usp=sharing)
+
+I also have the script I used to plot large numbers of the spontaneous CSDs here on repro branch : https://github.com/NathanKlineInstitute/A1/blob/repro/analysis/NHPdataAnalysis.py
+
+the way it's set up now is to do that, but I've used it for other things as well (e.g. sorting .mat files, looking at the average CSD of click files, etc. so it can do other stuff too!)
+
+in the main code block at the bottom, there are some variables that can be changed (e.g. origDataDir is path to the directory w/ the .mat and .csv layer file, 
+'test' is an option to either iterate over all of the .mat files in a directory or look at a specific monkey, and dbpath is the path to the .csv file that has the layer info)
+
+the .csv file is used by the getflayers() function
+
+I import functions from two other files, both of which are also in A1/analysis (downsample.py and filter.py -- for downsampling and bandpass filtering respectively)
+
+let me know if anything isn't working / doesn't make sense and of course if you have any suggestions! I aspire to code with your efficiency and organizational skills!! lol
+** code to plot CSD
+if __name__ == '__main__':
+
+  # Parent data directory containing .mat files
+  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
+  
+  ## Sort these files by recording region 
+  # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
+
+  ## Delete or move unwanted / unworted .mat data files 
+  # moveDataFiles(origDataDir,'move')
+
+  ############### 
+  recordingArea = 'A1/' # 'MGB/' 
+  
+  test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
+  testFiles =  ['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  
+  if test:
+    dataFiles = testFiles
+  else:
+    dataPath = origDataDir + recordingArea
+    dataFilesList = os.listdir(dataPath) 
+    dataFiles = []
+    for file in dataFilesList:
+      if '.mat' in file:
+        dataFiles.append(file)
+
+
+  for dataFile in dataFiles: 
+    fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
+
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+            # sampr is the sampling rate after downsampling 
+            # tt is time array (in seconds)
+            # trigtimes is array of stim trigger indices
+            # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
+    ##### SET PATH TO .csv LAYER FILE ##### 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
+
+    ##### GET LAYERS FOR OVERLAY #####
+    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+    lchan = {}
+    lchan['S'] = s2high
+    lchan['G'] = ghigh
+    lchan['I'] = CSD_data.shape[0]-1 #i2high
+    print('s2high: ' + str(s2high))
+
+
+    ##### LFP #####
+    # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+
+
+    ##### CSD #####
+
+    ### Plot batches of CSDs:
+    ## Set up time ranges for loop
+    tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
+    for t in tranges:
+      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+            trigtimes=None,timeRange=[t[0], t[1]],
+            showFig=False, figSize=(6,9), 
+            layerLines=True, layerBounds=lchan, 
+            overlay='LFP', LFP_data=LFP_data, smooth=33,
+            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+
+** LFP electrode depths
+It would be 2200microns from ch1 (uppermost contact) to ch23 (deepest contact), but yes you are correct. 
+For presentation purposes we exclude ch1 and ch23 of the MUA and LFP so that it aligns nicely with the 21chs of the CSD. 
+You are probably aware of this but in some experiments (but not usually) we may use an electrode that has an inter-contact distance of 150microns instead of 100microns.
+Hope this was helpful,
+Noelle.
+ 
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -762,6 +893,277 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 0.85	0.15	0.458333333	0.458333333	0.083333333	1
 ** total number of neurons in A1
 1.6 million (https://www.pnas.org/content/107/36/15927)
+** revisiting macaque A1 L4 stellate cells
+*** SUMMARY
+A1 L4 stellate:
+- charlie commented in paper:  "don't think the layer 4 cells in A1 are spiny stellate. They are called granule cells, 
+and are considered to be excitatory interneurons like SS, but are structurally different (not sure that is important)"
+
+- literature shows stellate are present in A1 L4 (though scarce compared to V1) of mice, rabbit, birds, bats, cats and humans
+
+- no direct evidence in macaque A1 except several papers from the 90s (coauthored by Charlie) which mention macaque A1 L4 stellate cells receiving input from TC.
+
+*** charlie (No); macaque
+don't think the layer 4 cells in A1 are spiny stellate. 
+They are called granule cells, and are considered to be excitatory interneurons like SS, but are structurally different (not sure that is important)
+
+*** Krause 2014 (weak); multispecies
+https://www.frontiersin.org/articles/10.3389/fnsys.2014.00170/full
+
+"However, spiny stellate cells are rare in auditory cortex, 
+their role likely being occupied by pyramidal cells (Smith and Populin, 2001; Barbour and Callaway, 2008; Sakata and Harris, 2009). "
+
+*** Smith 2001 (No); cat
+https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.1084
+
+"No such spiny stellate population is encountered in the middle layers of the auditory cortex. Spiny cells that are not stellate or pyramidal are occasionally encountered 
+but, as a group, do not display consistent anatomical or physiological features that might allow them to function as auditory cortical versions of the visual spiny stellates. 
+Rather, pyramidal cells in the lower half of layer 3 and layer 4 appear to have assumed this role.""
+
+*** Meyer 1989 (Yes); human
+https://www.sciencedirect.com/science/article/abs/pii/0306452289904016?via%3Dihub - The spiny stellate neurons in layer IV of the human auditory cortex  
+
+"The spiny stellate neurons have been studied by the Golgi method in the auditory koniocortex and parakoniocortex of man. S
+piny stellate cells are a consistent though not very common component of layer IV. 
+They are not confined to specific sublayers but occur at all depths of layer IV, and also in layer IIIc. 
+Spiny stellate cells in the auditory areas show a great variety of their dendritic arborization pattern. 
+The presence of all intermediate forms between small pyramidal cells—which constitute the dominant cell type in layer IV 
+and which display an extraordinary heteromorphism—and spiny stellate cells shows the close kinship between both neuronal types."
+
+*** Oliv 2018 chapter 8 (Yes); multispecies
+https://link.springer.com/chapter/10.1007/978-3-319-71798-2_8
+
+Fig 8.2 example of L4 spiny stellate in the cat
+
+Fig 8.3 circuit diagram shows L4 spiny stellate
+
+"In cat ACX, there are also two types of star pyramidal cells (Fig. 8.2Ac) with more radiate dendrites: one with spiny and one with rather smooth dendrites (Winer 1984a). 
+Together with the sparsely spinous stellate cells (Winer 1984b), they could form a group of neurons having more or less equivalent functions like the classical L4 spiny stellate cells 
+of the visual cortex (Lund 1984) (see also Sect. 8.2.4)."
+
+"However, compared to the visual (da Costa and Martin 2011) and somatosensory cortex (Staiger et al. 2004), 
+spiny stellate cells are relatively rare in the ACX of bats (Fitzpatrick and Henson 1994), 
+rabbits (McMullen and Glaser 1982), 
+cats (Winer 1984c; Mitani et al. 1985; one study found none: Smith and Populin 2001), 
+and humans (Meyer et al. 1989). 
+In these species, spiny stellate cells primarily occur in sublayers 4a and 3b (Fig. 8.2Ad). 
+In cat ACX, spiny stellate cells, which have a small spherical dendritic field and an axon targeting L3–5, are driven by thalamic, 
+corticocortical, and commissural stimulation; other physiological properties are unknown (Mitani et al. 1985). "
+
+"Together, there is considerable evidence for species- and modality-specific dif- ferences in L4 organization. 
+In addition to the near absence of pyramidal and spiny stellate cells in ACX, the weak sublamination (particularly compared to the visual cortex) hints at a reduced intralaminar circuitry. 
+A related question is that of the putative target cells of the massive, mainly lemniscal, thalamic inputs to auditory L4 and L3b (Huang and Winer 2000). 
+Certainly, the few principal cells are located among the targets, thereby serving thalamocortical feedforward excitation, but these inputs most likely also terminate on the GABAergic interneurons, 
+providing strong feedforward inhibition (Verbny et al. 2006; Lee and Sherman 2008)."
+
+*** Steinschneider, Fishman, Schroeder and Arezzo, 1998 (Yes); monkey
+https://sci-hub.se/10.1121/1.423877 - "Click train encoding in primary auditory cortex of the awake monkey: Evidence for two mechanisms subserving pitch perception"
+
+"Initial current sinks are located in the thalamorecipient zone of lamina 4 and lower lamina 3 (depths 5 and 6). 
+The location and timing of these sinks and surrounding current sources are consistent with the initial depolarization of lamina 4 stellate cells, 
+basilar regions of lower lamina 3 pyramidal cells and terminal portions of thalamocortical afferents (Steinschneider et al., 1992 [visual]; Tenke et al., 1993)."
+
+
+re: cat A1: "An additional population of cortical neurons, characterized by short duration action potentials ~‘‘thin spikes’’! and thought to represent lamina 4 stellate cells, 
+is able to phase-lock to click trains at rates up to 400 Hz."
+
+*** Steinschneider, ..., Schroeder et al (1991) (Yes); monkey
+https://sci-hub.se/10.1016/0168-5597(92)90026-8 - "Cellular generators of the cortical auditory evoked potential initial component"
+
+"Findings indicate that thalamocortical afferents are a generator of N8 and support a role for lamina 4 stellate cells."
+
+"Elements implicated are lamina 4 stellate cells, which receive monosynaptic input from TC fibers
+(Smith and Moskowitz 1979). Many of these cells are characterized
+by an asymmetrical and vertical orientation of their dendritic trees
+that ascend into lamina 3 (McMillen and Glaser 1982). Because
+stellate cells in auditory cortex receive TC afferents mainly on
+dendritic branches (Smith and Moskowitz 1979) concentrated in
+lower lamina 3 and upper lamina 4 (Jones and Burton 1976), the
+initial stetlate cell depolarization would lead to an open-field configuration with a sink surrounding the dendrites and a source near the
+cell bodies, resulting in a surface-negative potential. "
+
+"We also hypothesize that the initial negative component in the monkey
+cortical AEP is partially generated by lamina 4 stellate cells. Stellate
+cells with a vertical dendritic orientation also occur in middle cortical
+laminae of the human auditory cortex (Seldon 1981)."
+
+"These data and the present findings support a role for stellate cells in the generation of
+the initial auditory cortical component."
+
+*** Fishman 2000
+https://sci-hub.se/10.1121/1.429460 - "Complex tone processing in primary auditory cortex of the awake monkey. I. Neural ensemble correlates of roughness"
+
+"It is likely that MUA recordings, particularly in the thalamorecipient zone, include contributions from thalamo-cortical
+axons and stellate cells, in addition to pyramidal cells."
+
+*** Wang 2010 (yes); avian
+https://www.pnas.org/content/pnas/107/28/12676.full.pdf
+
+*** Harris and Shepherd 2015 (yes); mice
+- L4 spiny stellate is one of the 3 types of L4 IT neurons in sensory cortical circuits
+
+*** check allen brain atlas
+
+only human and mouse
+
+** revisiting macaque A1 PT5B cells
+*** SUMMARY
+- Cortical excitatory neurons are classified into intratelencephalic (IT), pyramidal tract (PT) and corticothalamic (CT), 
+based not only on their projection target but also on their morphology, laminar location, physiology and genetic markers.
+
+- PT cells are characterized by being large L5B pyramidal neurons with thick apical tufts, intrinsically bursting and non-adapting, and express genes distinct from IT and CT.
+
+- Shepherd and Yamawaki, 2021: "PT cells are named (loosely, by tradition) for the most common route of their projection to subcerebral destinations in the brainstem and spinal cord.
+(The terminology of these neurons is a perennial source of confusion; in adult animals, not all PT neurons retain their PT axon branch, 
+owing to area-specific developmental pruning — for example, those in the primary visual cortex (V1) lose their PT branches, but form branches to the midbrain and pons. 
+An equivalent term for PT neurons is ‘subcerebral projection neurons’. 
+The term ‘extratelencephalic’ has also been introduced22, but as both CT and PT neurons project outside the telencephalon, 
+this entails a further distinction between extratelencephalic neurons of layers 5 and 6.)" 
+
+- Therefore PT neurons are not limited to motor corterx, but generally applied by convention to all neocortical regions, including sensory cortices (V1, S1, A1) (Harris and Shepherd 2015; Shepherd and Yamawaki 2021, Baker 2018; Bakken 2021)
+
+- In A1, L5 neurons identified as 'large pyramidal cells' share several features of PT type neurons: thick tufts, mostly in L5B, instrinsically bursting, 
+and project to brainstem, including inferior colliculus, superior olivary complex (SOC), and the cochlear nuclear complex (CN) (Budinger, 2018; 2020; Winer and Prieto, 2001; Winer et al 2002; Baker 2018; Malmierca 2010). 
+Distinct subsets of A1 L5 neurons also match the description of IT and CT neurons.
+ 
+
+*** charlie (No); macaque
+Pyramidal tract in A1?
+
+*** Harris and Shepherd 2015 (yes); mice sensory (canonical)
+IT, PT, CT common to cortical circuits (based mostly on mouse)
+
+*** Billeh 2019 / Allen Brain (No); mice V1
+no distinction of L5 excitatory cells
+
+*** Budinger 2018; 2020 (similar); multispecies
+- large, intrinsically bursting, non adapting pyramidal cells (~PT) found in L5A and L5A/B border (fig 8.2A shows ~thick tuft)
+- medium size pyramidals, regular spiking and adapting (~IT) found throughout L5A and 5B (fig 8.2A shows ~thin tuft)
+- CT cells projecting to thalamus found in both L5 and L6
+
+2018:
+Physiologically, the large pyramidal cells correspond to intrinsically bursting, mostly nonaccommodating, nonadapting cells as described in rat and mouse A1 (Hefti and Smith 2000; Sun et al. 2013). 
+The smaller pyramidal cells are regular spiking and nonaccommodating but sometimes adapting (Hefti and Smith 2000). 
+Together, the different L5 pyramidal cells are a main source of corticofugal pro-jections to the striatum, thalamus, midbrain, and brainstem.
+
+2020:
+- The axons of the very large and large pyramidal cells arborize locally in the subgranular and granular
+layers (Fig. 4); however, their main targets are subcortical structures like the MGB and the inferior colliculi (IC) but also the contralateral ACX (Ojima, 1994; Winer and Prieto, 2001). 
+The small and medium pyramidal cells are abundant throughout L5 (Fig. 3Af). 
+Their apical dendrites hardly reach L1; their axons have widespread branches in the supragranular layers (Fig. 4) and project subcortically and interhemispherically (Winer and Prieto, 2001).
+ 
+- Descending projections are primarily oriented toward the MGB and other structures of the auditory pathway but also to non-auditory nuclei of the telencephalon, 
+ thalamus, midbrain, and hindbrain (e.g. claustrum, striatum, superior colliculus, pons); these projections mainly originate from L5 and L6 pyramidal neurons subserving different connectional systems
+
+- The cortico- collicular projections are strongest for the A1 fields and they arise from several populations of L5 and L6 pyramidal neurons, 
+which, however, are largely different from those that project to the MGB.
+
+- The auditory corticobulbar system includes projections from the ACX to the nuclei of the lateral lemniscus (NLL), superior oli- vary complex (SOC), and the cochlear nuclear complex (CN) 
+
+- Taken together, the auditory corticocollicular and corticobulbar connections are largely organized in segregated channels (Lee et al., 2011). 
+Accordingly, their specific functions may be diverse as their targets but overall they might serve the modulation ofauditory response properties 
+of neurons in the midbrain and hindbrain leading to an adaptation of their sensitivity to sound frequency, intensity, and location; 
+which in turn may enhance the attention, orienting behavior, and learning of the individual
+
+*** Steiner and Tseng 2016
+Handbook of Basal Ganglia Structure and Function. (2016). Handbook of Basal Ganglia Structure and Function, Second Edition, i. doi:10.1016/b978-0-12-802206-1.00050-7 
+
+"Secondly, long-range corticofugal neurons that project ipsilaterally to the brainstem or spinal cord, from which a striatal projection arises as a collateral from the descending axon, 
+are called pyramidal tract neurons (PT). It is currently thought that there are no exclusively corticostriatal cells, but that the cortical afferents are collaterals of other projections (i.e., IT and PT neurons)."
+
+*** Winer and Prieto, 2001; cat
+"Layer V in Cat Primary Auditory Cortex (AI): Cellular Architecture and Identification of Projection Neurons" - https://sci-hub.se/10.1002/cne.1183
+
+Large pyr cells: 
+- They were concentrated in layer Vb (Fig. 1B: 1a) and dispersed in Va.  
+- it formed elaborate local tufts in the layer Ia neuropil
+- It entered the white matter (Fig. 4: 1a, AXON) and local branches projected toward layers III and IV andperhaps beyond (not shown). 
+All layer V pyramidal cells with a prominent apical dendrite and a corticofugal axon shared these features [corticofugal; extratelencelphalic]
+
+
+Medium pyr cells: 
+- apical dendrites up to 500 mm long that ended as simple tufts in layer II
+- local branches reascended as far as layer II . Collaterals projected obliquely (across layers) or laterally (within a layer) for 200–300 mm on each side, 
+so that their local domain might extend 500 mm [corticocortical]
+
+Projections:
+- re: corticocortical conn: Medium (Fig. 13A: 1b) and small (Fig. 13A: 1c) pyramidal cells were often marked, whereas few large pyramidal neurons were labeled
+
+- re: commisural (contralateral) conn:  Those identified reliably are medium (Fig. 14A: 1b) and small (Fig. 14A: 1c) pyramidal cells; 
+Few large pyramidal neurons (Fig. 4: 1a) were labeled, despite the involvement of layer Vb, where they concentrate (Fig. 1B)
+
+- re: corticothalamic (MGB thalamus): The corticogeniculate cells filled layer VI and involved sublayers Va and Vc (Fig 15B: V). 
+Layer VI corticothalamic neurons were smaller than layer V cells (Prieto and Winer, 1999). 
+Layer V projection neurons included many medium (Fig. 15A: 1b), small (Fig. 15A: 1c), and a few large (Fig. 15A: 1a) pyramidal cells.  
+
+- re: corticollicular (inferior colliculus / midbrain): These were the largest corticofugal neurons (Fig. 17E) and almost all
+were pyramidal (Fig. 16A). They were in layer V alone. Corticocollicular neurons occupied the part of layer V nearly devoid of corticothalamic retrograde labeling (compare Figs. 15B, 16B). 
+Large (1a) and medium (1b) pyra- midal cells predominated.  
+
+- perhaps sublaminar origins of the corticofugal systems coordinates the dis- charges of inferior colliculus and medial geniculate body neurons. 
+
+- The larger corticocollicular neurons (Table 2) with thicker axons might compensate for the spatiotem- poral offset between the auditory midbrain and thalamus, intervals that would presumably require fine intracortical timing. 
+The large corticofugal neurons may influence motor-related functions that place conduction velocity at a premium. Since many midbrain targets have a premotor function (Huffman and Henson, 1990), a rapid input is not unexpected. 
+
+- Thus, hooded rat corticotectal [tectum includes superior and inferiro colliculus] cells resemble the cells classified here as large pyramidal cells, whereas the callosal neuron types include medium, small, and fusiform pyramidal cells.
+
+- These data suggest that (1) the correlation between cell morphology, laminar position, and extracortical target is highly specific; 
+and (2) a cell type may participate in more than one connection, with the proviso that functional sub- classes could target different postsynaptic sites. 
+Finally, (3) the intracortical projections support the sublaminar partition of layer V proposed here.
+
+- Cells were intrinsi- cally bursting or regular spiking. Bursting cells have a large soma and an apical dendrite that reached layer I (like AI large pyramidal cells), whereas the latter resem- bled AI medium pyramidal cells.
+
+*** Winer 2002 (Yes); monkey
+"Descending projections to the inferior colliculus from the posteriorthalamus and the auditory cortex in rat, cat, and "
+The corticocollicular labeling was exclusively fromlayer V neurons in primary auditory cortex (AI), and consisted of 
+small (V10Wm in diameter; Fig. 3E: 13,16), medium sized (V15Wm; Fig. 3E: 1, 3), and large(s25Wm; Fig. 3E: 6, 15) pyramidal cells.
+
+
+*** Baker 2018 (Yes); multispecies
+"Specialized Subpopulations of Deep-Layer Pyramidal Neurons in the Neocortex: Bridging Cellular Properties to Functional Consequences" - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6001033/
+
+Additionally, in auditory cortex, L6 IT neurons participate in multimodal integration and L5 ET neurons in learning-induced plasticity of sound localization.
+
+PT also used in visual system
+
+*** Shepherd and Yamawaki 2021 (Yes); rodent/multispecies
+"Untangling the cortico-thalamo-cortical loop: cellular pieces of a knotty circuit puzzle"
+
+"The other component of the cortical projection to the thalamus arises as branches of ‘pyramidal tract’ (PT) neurons, 
+located in layer 5B and so named (loosely, by tradition18,19) for the most common route of their projection to subcerebral destinations in the brainstem and spinal cord. 
+(The terminology of these neurons is a perennial source of confusion; in adult animals, not all PT neurons retain their PT axon branch, 
+owing to area-specific developmental pruning — for example, those in the primary visual cortex (V1) lose their PT branches, but form branches to the midbrain and pons20. 
+An equivalent term for PT neurons is ‘subcerebral projection neurons’21. 
+The term ‘extratelencephalic’ has also been introduced22, but as both CT and PT neurons project outside the telencephalon, 
+this entails a further distinction between extratelencephalic neurons of layers 5 and 6.)"
+
+"Recent findings define thalamus-projecting PT neurons as a distinct subtype tending to lack branches to the medulla and PT."
+
+"Primary auditory cortex
+The primary auditory cortex (A1) receives a core-type projection from the ventral subdivision of the medial geniculate body (MGB). 
+These axons form functional excitatory synaptic contacts mainly onto layer 4 pyramidal neurons, with additional weaker innervation of cortical pyramidal neurons across all layers86. 
+This pattern resembles that of other core-type projections to the cortex, with branches ramifying most densely in layer 4, and to a lesser extent around the layer 5/6 border. 
+The extent to which CT and PT neurons in A1 receive direct input from the auditory thalamus is not yet clear, but laminar profiles of the MGB input suggest relatively weak excitation, 
+consistent with patterns seen in other areas. In the other direction, the CT and PT innervation of TC neurons in the subdivisions of the MGB has also not been fully determined, b
+ut the available anatomical data indicate reciprocity, with auditory cortical projections overlapping extensively with auditory thalamic subregions projecting back to auditory cortical areas87,88.""
+
+*** Bakken 2020
+"Evolution of cellular diversity in primary motor cortex of human, marmoset monkey, and mouse"
+
+"The L5 extratelencephalic-projecting (ET) types (also known as pyramidal tract, PT, or subcerebral types),"
+
+*** Malmierca 2010
+"Descending projections of auditory cortex to the midbrain and brain stem"
+
+Fig 9.9 showing  AC cells projecting to the inferior colliculus (IC), superior olivary complex (SOC), and cochlear nucleus [mostly from L5; some IC from L6]
+
+At least two types of layer V pyramidal neurons with different morphologies participate in the AI corticocollicular
+pathway (Figs. 9.8 and 9.9); these are tufted and nontufted pyramidal neurons. The morphological range of terminal
+fields in the IC after anterograde injections in AI also supports the notion of two separate populations (Bajo and Moore
+2005). Two populations of projecting neurons in layer V in rat AC have been described (Hefti and Smith 2000). Regular
+spiking neurons resemble the nontufted type and the intrinsic bursting neurons correspond to tufted neurons noted in gerbil (Bajo and Moore 2005). It has been suggested that only
+the intrinsic bursting neurons project to the IC, whereas the regular spiking neurons project to other cortical areas and to the putamen (thalamus)
+[i.e. L5B thicktufted bursting PT neurons project to IC]
 
 * CONNECTIVITY
 ** Budinger et al 2018
@@ -1529,6 +1931,7 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v32 - Added IE presyn-cell-type specific gains
 ** v33 - Fixed bug in matrix thalamocortical conn (were very low)
 ** v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
+** v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -9848,7 +10251,7 @@ def optunaRatesLayersWmat():
                     ['VIP6,' 'NGF6'], 
                     ['NGF6,' 'IT6'], 
                     ['NGF6,' 'CT6']]
-** v34_batch30 - tuning; same as v34_batch25 but with added L6 weights
+** v34_batch31 - tuning; same as v34_batch25 but with added L6 weights
 *** code
 
     scaleLow2 = 0.5
@@ -9877,6 +10280,397 @@ def optunaRatesLayersWmat():
                     ['IT6', 'SOM6'], 
                     ['IT6', 'VIP6'], 
                     ['IT6', 'NGF6']]
+
+** v34_batch32-48 - long sims of best from v34_batch31
+*** notes
+    #trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]  # 32-39
+    trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194] # 40-48
+** v34_batch49 - 5x5 seeds; best from v34_batch31 (trial_5214); 11.5-sec
+** v34_batch50 - explore contribution of pops to LFP as func of dist (for NIH R01 grant with UTH)
+*** code
+** v34_batch51 - v34_batch31 (trial_5214); all LFP pops at 1 horizontal distance
+** v34_batch52 - v34_batch31 (trial_5214); selected LFP pops at 20 horizontal distances
+** v34_batch53 - v34_batch31 (trial_5214); record dipole and EEG for first time!
+** v34_batch54 - v34_batch25 (trial_2142); testing LFPpops for long 11.5sec sim at 1ms recordStep
+*** notes
+at 0.1 ms recordStep crashed when gathering
+** v34_batch55 - v34_batch25 (trial_2142); 4.5 secs; with LFP; WITH cochlear IC/speech input; diff thal->conn gains
+*** code
+   params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]]
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 1
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 1.0, 
+                            'weightI': 1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.26, 
+                            'seed': 1}  
+
+
+** v34_batch56 - 1 long sim; v34_batch25 (trial_2142); with LFP recordStep=0.05 to see if avoid artifact
+** v34_batch57 - 5x5 seeds; v34_batch56
+** v34_batch58 - explore IC->Thal params with speech; 25 sims (not seeds, different stim/conn params); v34_batch56 with speech
+** v34_batch59 - explore TC->IT/PV params with speech
+*** code
+    params[('wmat', 'TC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'TC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+
+    params[('wmat', 'TC', 'PV4')] = [0.25, 0.5]
+    params[('wmat', 'HTC', 'PV4')] = [0.25, 0.5]
+
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'IT4'), ('wmat', 'HTC', 'ITS4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 0.25,#1.0, 
+                            'weightI': 0.25,#1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.12, #0.25 
+                            'seed': 1}  
+
+
+** v34_batch60 - 1 long sim (10sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
+*** code
+cfg.py:
+cfg.allCorticalPops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
+cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]
+cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", "ITP4", "ITS4", "IT5A", "CT5A", "IT5B", "PT5B", "CT5B", "IT6", "CT6"]
+** v34_batch61 - CRASHED - 1 very long sim (30 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
+*** notes
+
+** v34_batch62 - explore params with speech; 36 sims (TC->L4, start time); v34_batch56 with speech - TO ANALYZE
+    params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
+
+    params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
+ 
+    params[('ICThalInput', 'startTime')] = [2500, 2550, 2600, 2650]
+
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] 
+
+** v34_batch63 - CRASHED- 1 very long sim (20 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
+** v34_batch64 - 1 very long sim (20 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+** v34_batch65 - 1 long sim (10 sec) with LFPpops; v34_batch57 seed 3_4 (for wavelets)
+*** notes
+- BUG saving LFPPops
+- had to rerun using:
+-- netpyne fix to merge lfppops
+-- pip install NEURON-nightly==8.0.dev99
+-- highmem nodes
+*** code
+    params[('seeds', 'conn')] = [3]#, 3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [4]#, 2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # -------------------------------------------------------- 
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+** v34_batch66 - 1 very long sim (30 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+** v34_batch67 - v34_batch65 with seeds 3_2, 3_3 
+*** code
+    params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+** v34_batch68 - response to netstim to thal E pops with different weights (to reproduce rate + lfp + bold responses)
+*** code test
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    # conn gains 
+    params[('NetStim1', 'weight')] = [1]#, 5, 10, 20, 40] # 50 Hz
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 6500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'pop')] = ['TC', 'TCM', 'HTC']
+    initCfg[('NetStim1', 'ynorm')] = [0.0, 3.0]
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'loc')] = 0.5
+    initCfg[('NetStim1', 'start')] = 1500
+    initCfg[('NetStim1', 'pop')] = 1000.0/50.0, # 50 Hz
+    initCfg[('NetStim1', 'noise')] = 0.5, # 50 Hz
+    initCfg[('NetStim1', 'number')] = 50 * 10, # enough spikes for 10 seconds
+
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+
+
+*** code
+    params[('NetStim1', 'weight')] = [1, 5, 10, 20] # 50 Hz
+    params[('NetStim1', 'interval')] = [1000.0/50.0, 1000.0/100.0] # 50 Hz
+    params[('NetStim1', 'noise')] = [0.5, 1.0] # 50 Hz
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 6000
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'pop')] = ['TC', 'TCM', 'HTC']
+    initCfg[('NetStim1', 'ynorm')] = [0.0, 3.0]
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'loc')] = 0.5
+    initCfg[('NetStim1', 'start')] = 3000
+    #initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
+    #initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
+    initCfg[('NetStim1', 'number')] = 100 * 10 # enough spikes for 10 seconds
+** v35_batch1 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation)  -- BUG (netsim on)
+*** notes
+left netstim input at the beginning turned on
+*** code
+def custom_spont(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    #params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    params['ihGbar'] = [1.0, 1.25]
+    params['KgbarFactor'] = [1.0, 1.25]
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+** v35_batch2 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
+*** code
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    #params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    params['ihGbar'] = [0.75, 1.0, 1.25]
+    params['KgbarFactor'] = [0.75, 1.0, 1.25]
 ** blank
 
 
