@@ -3054,10 +3054,10 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type== 'hpc_slurm_cineca':     ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': ,
-            'nodes': , 
-            'coresPerNode': ,
-            'email': ,
+            'walltime': '4:00:00',          # is there a time limit of 1:00:00 ? 
+            'nodes': 2,                     # arbitrary; may change this later (see nb)
+            'coresPerNode': 48,             # arbitrary; may change this later (see nb)
+            'email': 'erica.griffith@downstate.edu',
             'folder': ,
             'script': 'init.py',
             'mpiCommand': 'mpirun', 
@@ -3083,11 +3083,11 @@ if __name__ == '__main__':
     # b = optunaRatesLayers()
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
-    #b = optunaRatesLayersWmat()
+    # b = optunaRatesLayersWmat()
 
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    #b = fIcurve(pops=['IT3','CT5']) 
+    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    # b = fIcurve(pops=['IT3','CT5']) 
 
     b.batchLabel = 'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
     b.saveFolder = 'data/'+b.batchLabel
