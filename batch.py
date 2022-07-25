@@ -723,11 +723,10 @@ def custom_spont(filename):
     params = specs.ODict()
 
     if not filename:
-        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'  # 'data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json'
 
     # from prev 
     import json
-    # with open('data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json', 'rb') as f:
     with open(filename, 'rb') as f:
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
@@ -3052,6 +3051,20 @@ def setRunCfg(b, type='mpi_bulletin'):
             'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
             'skip': True}
 
+    elif type== 'hpc_slurm_cineca':     ## FILL THIS IN
+        b.runCfg = {'type': 'hpc_slurm',
+            'allocation': 'icei_H_King',
+            'walltime': ,
+            'nodes': , 
+            'coresPerNode': ,
+            'email': ,
+            'folder': ,
+            'script': 'init.py',
+            'mpiCommand': 'mpirun', 
+            # 'nrnCommand': ,
+            # 'skip': ,
+            # 'skipCustom': ,
+        }
 
 
 # ----------------------------------------------------------------------------------------------
@@ -3062,7 +3075,6 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
     b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
@@ -3077,14 +3089,14 @@ if __name__ == '__main__':
     #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     #b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v35_batch6'             # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
+    b.batchLabel = 'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
     b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_cineca')    #'hpc_slurm_gcp')  #'mpi_bulletin') 
     b.run() # run batch
 
 
-    #trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
+    # trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
     # trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]
     
     # batchIndex = 40
