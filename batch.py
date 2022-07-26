@@ -3059,6 +3059,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'walltime': '4:00:00',          # is there a time limit of 1:00:00 ? 
             'nodes': 2,                     # arbitrary; may change this later (see nb)
             'coresPerNode': 48,             # arbitrary; may change this later (see nb)
+            'partition': 'g100_usr_prod',
             'email': 'erica.griffith@downstate.edu',
             'folder': '/g100/home/userexternal/egriffit/A1/',
             'script': 'init.py',
