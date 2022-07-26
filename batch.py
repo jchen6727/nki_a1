@@ -746,13 +746,14 @@ def custom_spont(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500
+    initCfg['duration'] = 2500 #11500
     initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.1   #1.0
     initCfg['recordStep'] = 0.05
 
-    initCfg[('seeds', 'conn')] = 0
-    initCfg[('seeds', 'stim')] = 0
+    ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
+    # initCfg[('seeds', 'conn')] = 0
+    # initCfg[('seeds', 'stim')] = 0
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -3090,7 +3091,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
+    b.batchLabel = 'v34_batch67_TRIAL_0'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_cineca')    #'hpc_slurm_gcp')  #'mpi_bulletin') 
