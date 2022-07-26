@@ -748,7 +748,7 @@ def custom_spont(filename):
     
     initCfg['duration'] = 2500 #11500
     initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
-    initCfg['scaleDensity'] = 0.1   #1.0
+    initCfg['scaleDensity'] = 0.25 # 0.1   #1.0
     initCfg['recordStep'] = 0.05
 
     ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
@@ -3063,11 +3063,11 @@ def setRunCfg(b, type='mpi_bulletin'):
             'email': 'erica.griffith@downstate.edu',
             'folder': '/g100/home/userexternal/egriffit/A1/',
             'script': 'init.py',
-            'mpiCommand': 'mpirun', 
+            'mpiCommand': 'mpirun'} 
             # 'nrnCommand': ,
             # 'skip': ,
             # 'skipCustom': ,
-        }
+        #}
 
 
 # ----------------------------------------------------------------------------------------------
@@ -3092,7 +3092,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_TRIAL_1'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
+    b.batchLabel = 'v34_batch67_TRIAL_2'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_cineca')    #'hpc_slurm_gcp')  #'mpi_bulletin') 
