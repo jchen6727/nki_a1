@@ -734,8 +734,8 @@ def custom_spont(filename):
     
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     
-    params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = [3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
     # params['ihGbar'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
     # params['KgbarFactor'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
