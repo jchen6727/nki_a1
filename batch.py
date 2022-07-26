@@ -3092,7 +3092,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_TRIAL_2'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
+    b.batchLabel = 'v34_batch67_TRIAL_3'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_cineca')    #'hpc_slurm_gcp')  #'mpi_bulletin') 
