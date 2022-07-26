@@ -752,8 +752,8 @@ def custom_spont(filename):
     initCfg['recordStep'] = 0.05
 
     ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
-    # initCfg[('seeds', 'conn')] = 0
-    # initCfg[('seeds', 'stim')] = 0
+    initCfg[('seeds', 'conn')] = 0
+    initCfg[('seeds', 'stim')] = 0
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -3053,7 +3053,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
             'skip': True}
 
-    elif type== 'hpc_slurm_cineca':     ## FILL THIS IN
+    elif type== 'hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
             'walltime': '4:00:00',          # is there a time limit of 1:00:00 ? 
