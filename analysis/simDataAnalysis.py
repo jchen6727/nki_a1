@@ -858,6 +858,7 @@ def geteventprop (dframe,evidx,align):
   return dur,int(chan),hasbefore,hasafter,int(windowidx),offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT ,w2,left,right,band,alignoffset,filtsigcor,Foct,cycnpeak,ERPscore,OSCscore
 # ONLY FOR SIM SUBJECTS FOR NOW!! 
 ### TO DO: (1) expand to NHP (2) add in capability for 'all' regions 
+### NOTE: can / should this even be expanded to NHP? 
 def getOscEventInfo(subjects, frequencyBands, waveletPath):
 	# subjects: list 
 	# frequencyBands: list 
@@ -906,7 +907,11 @@ def getOscEventInfo(subjects, frequencyBands, waveletPath):
 								alignoffset = -WaveletPeakT
 								left = dfsPkl.at[idx,'left']
 								right = dfsPkl.at[idx,'right']
+								## w2 calculations
 								w2 = int((right-left+1)/2.)
+								# Resize w2 to match the load.py calculation for the osc event plotting (in def draw() in class eventviewer)
+								w2 = int(w2*0.6)
+								## print('w2: ' + str(w2))
 
 
 								# add in the above info into dict 

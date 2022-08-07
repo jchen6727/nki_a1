@@ -160,17 +160,73 @@ if evalPopsBool:
 doProposal = 1
 
 if doProposal:
+	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
 	frequencyBands = ['delta', 'theta', 'alpha', 'beta', 'gamma']	# , 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
 	waveletPathSim = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/'
+	layers = getSimLayers()
 
-	subjects_w_LFPrecording = ['v34_batch57_3_2_data_timeRange_0_6']#, 'v34_batch57_3_2_data_timeRange_6_11',
-								# 'v34_batch57_3_3_data_timeRange_0_6', 'v34_batch57_3_3_data_timeRange_6_11',
-								# 'v34_batch57_3_4_data_timeRange_0_6', 'v34_batch57_3_4_data_timeRange_6_11']
+	subjects_w_LFPrecording = ['v34_batch57_3_2_data_timeRange_0_6']#,
+								#'v34_batch57_3_3_data_timeRange_0_6',
+								#'v34_batch57_3_4_data_timeRange_0_6'] 
+								
+								#, 'v34_batch57_3_2_data_timeRange_6_11',
+								#, 'v34_batch57_3_3_data_timeRange_6_11',
+								#, 'v34_batch57_3_4_data_timeRange_6_11']   ## NEED TO ADD TIME CORRECTION!! 
+
+	## EQUIVALENCES ^^
+	### v34_batch57_3_2 == v34_batch67_0_0
+	### v34_batch57_3_3 == v34_batch67_1_1
+	### v34_batch57_3_4 == v34_batch65_0_0
 
 	# waveletCounts_w_LFPrecording = getWaveletCounts(regions, frequencyBands, subjects_w_LFPrecording, waveletPathSim, sim=1, cutoffs=0)
 
 	oscEventInfo = getOscEventInfo(subjects=subjects_w_LFPrecording, frequencyBands=frequencyBands, waveletPath=waveletPathSim)
 
+	## now thetaOscEventInfo is equivalent to
+	## oscEventInfo[band][region][subject][eventIdx] = {'chan': , 'minT': , ... }
+
+	for subject in subjects_w_LFPrecording:
+		for band in frequencyBands:
+			for region in layers.keys():
+				individual_oscEventInfo = oscEventInfo[band][region][subject]
+
+	for band in frequencyBands:
+		for region in layers.keys():
+			for subject in subjects_w_LFPrecording:
+
+				### GET SUBJECT NAME + PATH TO DATAFILE 
+				batch57_subject = subject.split('_data')[0]
+				if batch57_subject == 'v34_batch57_3_2':
+					subject_dataFile = 'A1_v34_batch67_v34_batch67_0_0_data.pkl'
+				elif batch57_subject == 'v34_batch57_3_3':
+					subject_dataFile = 'A1_v34_batch67_v34_batch67_1_1_data.pkl'
+				elif batch57_subject == 'v34_batch57_3_4':
+					subject_dataFile = 'A1_v34_batch65_v34_batch65_0_0_data.pkl'
+
+				dataFilePath = based + subject_dataFile
+
+				subject_all_oscEventInfo = oscEventInfo[band][region][subject]
+				for eventIdx in subject_all_oscEventInfo.keys():
+					individual_oscEventInfo = subject_all_oscEventInfo[eventIdx]
+
+					timeRange = list(np.zeros(2))
+					timeRange[0] = individual_oscEventInfo['minT']
+					timeRange[1] = individual_oscEventInfo['maxT']
+
+					dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
+														oscEventInfo = individual_oscEventInfo)
+
+					waveletElectrode = individual_oscEventInfo['chan']
+					# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+					maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
+					## PRINTING / TESTING LINES 
+					# print('max pops for ' + batch57_subject + '\n'
+					# 		+ 'frequencyBand: ' + band + '\n'
+					# 		+ 'region: ' + region + '\n'
+					# 		+ 'idx: ' + str(eventIdx) + '\n'
+					# 		+ 'MAX POPS: ') 
+					# print(maxPopsValues_avgCSD)
+					oscEventInfo[band][region][subject][eventIdx][maxPops_avgCSD] = maxPopsValues_avgCSD
 
 ###################################
 ######## PLOTTING HEATMAPS ########
