@@ -917,8 +917,14 @@ def getOscEventInfo(subjects, frequencyBands, waveletPath):
 								# add in the above info into dict 
 								oscEventInfo[band][layerRegion][subj][idx]['eventIdx'] = eventIdx
 								oscEventInfo[band][layerRegion][subj][idx]['chan'] = chan
-								oscEventInfo[band][layerRegion][subj][idx]['minT'] = minT
-								oscEventInfo[band][layerRegion][subj][idx]['maxT'] = maxT
+								### 6_11 timeRange correction -- UNDO THIS ONCE HAVE FULL RUNS 
+								if '6_11' in subj:
+									oscEventInfo[band][layerRegion][subj][idx]['minT'] = minT + 6000
+									oscEventInfo[band][layerRegion][subj][idx]['maxT'] = maxT + 6000
+								else:
+									oscEventInfo[band][layerRegion][subj][idx]['minT'] = minT
+									oscEventInfo[band][layerRegion][subj][idx]['maxT'] = maxT
+								####### 6_11 probably also affects how to use left and right and alignoffset etc, but leave these be for now
 								oscEventInfo[band][layerRegion][subj][idx]['alignoffset'] = alignoffset
 								oscEventInfo[band][layerRegion][subj][idx]['left'] = left
 								oscEventInfo[band][layerRegion][subj][idx]['right'] = right
@@ -1108,7 +1114,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	return ax
 
 ## Pops with the highest contributions to LFP / CSD signal at a particular electrode ## 
-def evalPops(dataFrame, electrode, verbose=0):
+def evalPops(dataFrame, electrode, verbose=0):   #  TODO --> elecOnly=1
 	##### -->  This function outputs a dict with the pops & values from the main & adjacent electrodes specified in the 'electrode' arg 
 	## dataFrame: pandas dataFrame --> with peak or avg LFP or CSD data of each pop at each electrode --> output of getDataFrames
 	## electrode: int 	--> electrode where the oscillation event of interest occurred - focus on data from this electrode plus the ones immediately above and below it

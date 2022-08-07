@@ -161,17 +161,19 @@ doProposal = 1
 
 if doProposal:
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
-	frequencyBands = ['delta', 'theta']#, 'alpha', 'beta', 'gamma']	# , 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
+	frequencyBands = ['delta', 'theta', 'alpha', 'beta']#, 'gamma']	# , 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
 	waveletPathSim = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/'
 	layers = getSimLayers()
 
-	subjects_w_LFPrecording = ['v34_batch57_3_2_data_timeRange_0_6']#,
+	# subjects_w_LFPrecording = ['v34_batch57_3_2_data_timeRange_0_6',
 								#'v34_batch57_3_3_data_timeRange_0_6',
-								#'v34_batch57_3_4_data_timeRange_0_6'] 
+								#'v34_batch57_3_4_data_timeRange_0_6']
 								
-								#, 'v34_batch57_3_2_data_timeRange_6_11',
-								#, 'v34_batch57_3_3_data_timeRange_6_11',
-								#, 'v34_batch57_3_4_data_timeRange_6_11']   ## NEED TO ADD TIME CORRECTION!! 
+	subjects_w_LFPrecording =  ['v34_batch57_3_3_data_timeRange_6_11',
+								'v34_batch57_3_4_data_timeRange_6_11'] 
+								#['v34_batch57_3_2_data_timeRange_6_11',
+								#'v34_batch57_3_3_data_timeRange_6_11',
+								#'v34_batch57_3_4_data_timeRange_6_11']   ## NEED TO ADD TIME CORRECTION!! 
 
 	## EQUIVALENCES ^^
 	### v34_batch57_3_2 == v34_batch67_0_0
@@ -180,8 +182,11 @@ if doProposal:
 
 	# waveletCounts_w_LFPrecording = getWaveletCounts(regions, frequencyBands, subjects_w_LFPrecording, waveletPathSim, sim=1, cutoffs=0)
 
+
+	
 	oscEventInfo = getOscEventInfo(subjects=subjects_w_LFPrecording, frequencyBands=frequencyBands, waveletPath=waveletPathSim)
 
+	#### UNCOMMENT BELOW #### 
 	## now thetaOscEventInfo is equivalent to
 	## oscEventInfo[band][region][subject][eventIdx] = {'chan': , 'minT': , ... }
 
@@ -231,6 +236,29 @@ if doProposal:
 					## max pops contributing to peak CSD
 					# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
 					# oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
+
+
+	### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
+	for band in frequencyBands:
+		for region in layers.keys():
+			print('frequencyBand:' + band)
+			print('layer region: ' + region)
+
+			for subject in subjects_w_LFPrecording:
+				eventIdxList = list(oscEventInfo[band][region][subject].keys())
+
+				for eventIdx in eventIdxList:
+					topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
+
+					topPops = []
+					for key in topPopKeys:
+						if not key == 'electrodeNumber':
+							topPops.append(key)
+
+					print(topPops)
+
+
+
 
 
 ###################################
