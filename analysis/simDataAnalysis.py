@@ -1164,8 +1164,8 @@ def evalPops(dataFrame, electrode, verbose=0):
 		#### OR SUBSET BY TAKING ANY VALUE > (MAX VALUE / 3) ---> 
 	# maxValueElec = list(dfElecAbs.max())[0]
 	# dfElecSub = dfElecAbs[dfElecAbs[elec]>(maxValueElec/3)]
-		#### OR SUBSET BY TAKING THE TOP 5 CONTRIBUTORS ----> 
-	dfElecSub = dfElecAbs.head(5)
+		#### OR SUBSET BY TAKING THE TOP 5 (OR TOP 3) CONTRIBUTORS ----> 
+	dfElecSub = dfElecAbs.head(3) # dfElecAbs.head(5)
 	elecPops = list(dfElecSub.index)
 	## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 	for pop in elecPops:
@@ -1178,7 +1178,7 @@ def evalPops(dataFrame, electrode, verbose=0):
 		maxPopsValues['bottomElec']['electrodeNumber'] = bottomElec
 		## Values / pops associated with bottom adjacent electrode 
 		dfBottomElecAbs = dataFrameSubsetBottomElecAbs.sort_values(by=[bottomElec], ascending=False) # bottomElec OR maxPopsValues['bottomElec']['electrodeNumber']
-		dfBottomElecSub = dfBottomElecAbs.head(5)		# dfBottomElecSub = dfBottomElecAbs[dfBottomElecAbs[bottomElec]>0.1]
+		dfBottomElecSub = dfBottomElecAbs.head(3) # dfBottomElecAbs.head(5)		# dfBottomElecSub = dfBottomElecAbs[dfBottomElecAbs[bottomElec]>0.1]
 		bottomElecPops = list(dfBottomElecSub.index)
 		## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 		for pop in bottomElecPops:
@@ -1191,7 +1191,7 @@ def evalPops(dataFrame, electrode, verbose=0):
 		maxPopsValues['topElec']['electrodeNumber'] = topElec
 		## Values / pops associated with top adjacent electrode 
 		dfTopElecAbs = dataFrameSubsetTopElecAbs.sort_values(by=[topElec], ascending=False) # topElec OR maxPopsValues['topElec']['electrodeNumber']
-		dfTopElecSub = dfTopElecAbs.head(5) 		# dfTopElecSub = dfTopElecAbs[dfTopElecAbs[topElec]>0.1]
+		dfTopElecSub = dfTopElecAbs.head(3) # dfTopElecAbs.head(5) 		# dfTopElecSub = dfTopElecAbs[dfTopElecAbs[topElec]>0.1]
 		topElecPops = list(dfTopElecSub.index)
 		## Find the non-absolute values of the above, and store this info along with the associated populations, into the storage dict:
 		for pop in topElecPops:

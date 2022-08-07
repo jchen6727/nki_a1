@@ -161,7 +161,7 @@ doProposal = 1
 
 if doProposal:
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
-	frequencyBands = ['delta', 'theta', 'alpha', 'beta', 'gamma']	# , 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
+	frequencyBands = ['delta', 'theta']#, 'alpha', 'beta', 'gamma']	# , 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
 	waveletPathSim = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/'
 	layers = getSimLayers()
 
@@ -217,7 +217,7 @@ if doProposal:
 														oscEventInfo = individual_oscEventInfo)
 
 					waveletElectrode = individual_oscEventInfo['chan']
-					# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+					## max pops contributing to avg CSD 
 					maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
 					## PRINTING / TESTING LINES 
 					# print('max pops for ' + batch57_subject + '\n'
@@ -226,7 +226,12 @@ if doProposal:
 					# 		+ 'idx: ' + str(eventIdx) + '\n'
 					# 		+ 'MAX POPS: ') 
 					# print(maxPopsValues_avgCSD)
-					oscEventInfo[band][region][subject][eventIdx][maxPops_avgCSD] = maxPopsValues_avgCSD
+					oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD'] = maxPopsValues_avgCSD
+
+					## max pops contributing to peak CSD
+					# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+					# oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
+
 
 ###################################
 ######## PLOTTING HEATMAPS ########
