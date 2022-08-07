@@ -818,6 +818,110 @@ def getWaveletInfo(freqBand, based, verbose=0):
 	else:
 		return timeRange, dataFile
 
+# getSimLayers and geteventprop are dependencies for getOscEventInfo
+def getSimLayers():
+	layers = {'supra':[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'gran':[10, 11], 'infra':[12, 13, 14, 15, 16, 17, 18, 19]} ## NETPYNE SIMS
+	return layers
+# get all major event properties, used for drawing the event or other...
+def geteventprop (dframe,evidx,align):
+  evidx=int(evidx)
+  dur,chan,hasbefore,hasafter,windowidx,offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT,filtsigcor,Foct = [dframe.at[evidx,c] for c in ['dur','chan','hasbefore','hasafter','windowidx','offidx','left','right','minT','maxT','peakT','minF','maxF','peakF','avgpowevent','ncycle','WavePeakT','WaveTroughT','WaveletPeakT','WaveletLeftTroughT','WaveletRightTroughT','filtsigcor','Foct']]
+  if 'cyc_npeak' in dframe.columns:
+    cycnpeak = dframe.at[evidx,'cyc_npeak']
+  else:
+    cycnpeak = -1
+  if 'ERPscore' in dframe.columns:
+    ERPscore = dframe.at[evidx,'ERPscore']
+  else:
+    ERPscore = -2
+  if False and 'OSCscore' in dframe.columns:
+    OSCscore = dframe.at[evidx,'OSCscore']
+  else:
+    OSCscore = -2
+  band=dframe.at[evidx,'band']
+  w2 = int((right-left+1)/2.)
+  left=int(left+offidx); right=int(right+offidx);
+  alignoffset = 0 # offset to align waveforms to 0, only used when specified as below
+  if align == 'byspecpeak':
+    alignoffset = -peakT
+  elif align == 'bywavepeak':
+    alignoffset = -WavePeakT
+  elif align == 'bywavetrough':
+    alignoffset = -WaveTroughT
+  elif align == 'bywaveletpeak':
+    alignoffset = -WaveletPeakT
+  elif align == 'bywaveletlefttrough':
+    alignoffset = -WaveletLeftTroughT
+  elif align == 'bywaveletrighttrough':
+    alignoffset = -WaveletRightTroughT
+  #print('align:',peakT,align,alignoffset)
+  return dur,int(chan),hasbefore,hasafter,int(windowidx),offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT ,w2,left,right,band,alignoffset,filtsigcor,Foct,cycnpeak,ERPscore,OSCscore
+# ONLY FOR SIM SUBJECTS FOR NOW!! 
+### TO DO: (1) expand to NHP (2) add in capability for 'all' regions 
+def getOscEventInfo(subjects, frequencyBands, waveletPath):
+	# subjects: list 
+	# frequencyBands: list 
+	# waveletPath: str 
+
+	layers = getSimLayers()   # layers = {'supra':[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'gran':[10, 11], 'infra':[12, 13, 14, 15, 16, 17, 18, 19]} ## NETPYNE SIMS
+
+
+	## organize a dict with all the wavelets from the above subjects:
+	oscEventInfo = {}
+	for band in frequencyBands:
+		oscEventInfo[band] = {}
+
+		for layerRegion in layers:
+			oscEventInfo[band][layerRegion] = {}
+
+			for subj in subjects:
+				oscEventInfo[band][layerRegion][subj] = {}
+
+				for chan in layers[layerRegion]:
+					chanDir = 'chan_' + str(chan) + '/'
+
+					dfsDir = waveletPath + subj  + '/' + chanDir
+					# print('dfsDir aka chanDir: ' + str(dfsDir))  # TESTING LINE!! 
+					os.chdir(dfsDir)  
+					chanDirFiles = os.listdir()
+					dfsFiles = []
+					for chanDirFile in chanDirFiles:
+						if '.pkl' in chanDirFile:
+							dfsFiles.append(chanDirFile)   
+					## so now here we have a list w/ the dfs.pkl files from a particular chan in a particular subject 
+
+					for dfsFile in dfsFiles:
+						# read this file for event idx info etc 
+						dfsPkl = pd.read_pickle(dfsDir + dfsFile)
+
+						for idx in dfsPkl.index:
+							if band in dfsFile:
+								oscEventInfo[band][layerRegion][subj][idx] = {}
+
+								eventIdx = idx
+								chan = dfsPkl.at[idx,'chan']
+								minT = dfsPkl.at[idx,'minT']
+								maxT = dfsPkl.at[idx,'maxT']
+								WaveletPeakT = dfsPkl.at[idx,'WaveletPeakT']
+								alignoffset = -WaveletPeakT
+								left = dfsPkl.at[idx,'left']
+								right = dfsPkl.at[idx,'right']
+								w2 = int((right-left+1)/2.)
+
+
+								# add in the above info into dict 
+								oscEventInfo[band][layerRegion][subj][idx]['eventIdx'] = eventIdx
+								oscEventInfo[band][layerRegion][subj][idx]['chan'] = chan
+								oscEventInfo[band][layerRegion][subj][idx]['minT'] = minT
+								oscEventInfo[band][layerRegion][subj][idx]['maxT'] = maxT
+								oscEventInfo[band][layerRegion][subj][idx]['alignoffset'] = alignoffset
+								oscEventInfo[band][layerRegion][subj][idx]['left'] = left
+								oscEventInfo[band][layerRegion][subj][idx]['right'] = right
+								oscEventInfo[band][layerRegion][subj][idx]['w2'] = w2 
+
+	return oscEventInfo
+
+
 ## Heatmaps for LFP data ## 
 def getDataFrames(dataFile, timeRange, verbose=0):  ### Make this work with arbitrary input data, not just LFP so can look at CSD as well!!!! 
 	## This function will return data frames of peak and average LFP amplitudes, for picking cell pops

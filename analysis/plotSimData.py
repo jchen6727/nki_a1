@@ -154,7 +154,22 @@ if evalPopsBool:
 	# maxPopsValues_avgCSD['elec']
 
 
+########################################################################
+####### LOOKING AT ALL OSC EVENTS BY BAND -- FOR THESIS PROPOSAL #######
+########################################################################
+doProposal = 1
 
+if doProposal:
+	frequencyBands = ['delta', 'theta', 'alpha', 'beta', 'gamma']	# , 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
+	waveletPathSim = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/wavelets/sim/spont/'
+
+	subjects_w_LFPrecording = ['v34_batch57_3_2_data_timeRange_0_6']#, 'v34_batch57_3_2_data_timeRange_6_11',
+								# 'v34_batch57_3_3_data_timeRange_0_6', 'v34_batch57_3_3_data_timeRange_6_11',
+								# 'v34_batch57_3_4_data_timeRange_0_6', 'v34_batch57_3_4_data_timeRange_6_11']
+
+	# waveletCounts_w_LFPrecording = getWaveletCounts(regions, frequencyBands, subjects_w_LFPrecording, waveletPathSim, sim=1, cutoffs=0)
+
+	oscEventInfo = getOscEventInfo(subjects=subjects_w_LFPrecording, frequencyBands=frequencyBands, waveletPath=waveletPathSim)
 
 
 ###################################
