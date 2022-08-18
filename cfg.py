@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 0.3*1e3			## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 0.3*1e3			## 2500 ms 	## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -34,11 +34,10 @@ cfg.connRandomSecFromList = False  # set to false for reproducibility
 cfg.cvode_active = False
 cfg.cvode_atol = 1e-6
 cfg.cache_efficient = True
-cfg.printRunTime = 0.1
+# cfg.printRunTime = 0.1  			## specified above 
 cfg.oneSynPerNetcon = False
 cfg.includeParamsLabel = False
-cfg.printPopAvgRates = [0, cfg.duration]
-
+cfg.printPopAvgRates = [0, cfg.duration]   # "printPopAvgRates": [[1500,1750],[1750,2000],[2000,2250],[2250,2500]]
 cfg.validateNetParams = False
 
 #------------------------------------------------------------------------------
@@ -55,7 +54,7 @@ cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
 cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
-cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]
+cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]			# null,
 #cfg.recordLFP = [[x, 1000, 100] for x in range(100, 2200, 200)] #+[[100, 2500, 200], [100,2700,200]]
 cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", "ITP4", "ITS4", "IT5A", "CT5A", "IT5B", "PT5B", "CT5B", "IT6", "CT6"]
 
@@ -70,13 +69,13 @@ cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", 
 
 cfg.simLabel = 'v31_tune3' 
 cfg.saveFolder = 'data/v31_manualTune'                	## Set file output name
-cfg.savePickle = True         	## Save pkl file
-cfg.saveJson = False           	## Save json file
+cfg.savePickle = True         							## Save pkl file
+cfg.saveJson = False           							## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
-cfg.backupCfgFile = None 		
-cfg.gatherOnlySimData = False	 
-cfg.saveCellSecs = True		 
-cfg.saveCellConns = False		 
+cfg.backupCfgFile = None
+cfg.gatherOnlySimData = False
+cfg.saveCellSecs = True		   	 # False
+cfg.saveCellConns = False
 
 #------------------------------------------------------------------------------
 # Analysis and plotting 
@@ -115,6 +114,10 @@ cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
 cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
 cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 cfg.synWeightFractionENGF = [0.834, 0.166] # NGF AMPA to NMDA ratio
+
+
+# cfg.synWeightFractionIE = [0.9, 0.1]
+# cfg.synWeightFractionII = [0.9, 0.1]
 
 
 #------------------------------------------------------------------------------
@@ -161,7 +164,7 @@ cfg.IECellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1.0
-cfg.addIntraThalamicConn = 1.0
+# cfg.addIntraThalamicConn = 1.0
 cfg.addCorticoThalamicConn = 1.0
 cfg.addThalamoCorticalConn = 1.0
 
@@ -227,35 +230,83 @@ cfg.tune = {}
 
 # ------------------------ ADD PARAM VALUES FROM .JSON FILES: 
 # COMMENT THIS OUT IF USING GCP !!! ONLY USE IF USING NEUROSIM!!! 
-# import json
+import json
 
-# with open('data/salva_runs/v29_batch3_trial_13425_cfg.json', 'rb') as f:
-# 	cfgLoad = json.load(f)['simConfig']
+with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:       # 'data/salva_runs/v29_batch3_trial_13425_cfg.json'
+	cfgLoad = json.load(f)['simConfig']
 
-# cfg.EEGain = cfgLoad['EEGain']
 
-# cfg.EILayerGain['1'] = cfgLoad['EILayerGain']['1-3']
-# cfg.EILayerGain['2'] = cfgLoad['EILayerGain']['1-3']
-# cfg.EILayerGain['3'] = cfgLoad['EILayerGain']['1-3']
-# cfg.EILayerGain['4'] = cfgLoad['EILayerGain']['4']
-# cfg.EILayerGain['5A'] = cfgLoad['EILayerGain']['5']
-# cfg.EILayerGain['5B'] = cfgLoad['EILayerGain']['5']
-# cfg.EILayerGain['6'] = cfgLoad['EILayerGain']['6']
+## UPDATE CORTICAL GAIN PARAMS 
+cfg.EEGain = cfgLoad['EEGain']
+cfg.EIGain = cfgLoad['EIGain']
+cfg.IEGain = cfgLoad['IEGain']
+cfg.IIGain = cfgLoad['IIGain']
 
-# cfg.IELayerGain['1'] = cfgLoad['IELayerGain']['1-3']
-# cfg.IELayerGain['2'] = cfgLoad['IELayerGain']['1-3']
-# cfg.IELayerGain['3'] = cfgLoad['IELayerGain']['1-3']
-# cfg.IELayerGain['4'] = cfgLoad['IELayerGain']['4']
-# cfg.IELayerGain['5A'] = cfgLoad['IELayerGain']['5']
-# cfg.IELayerGain['5B'] = cfgLoad['IELayerGain']['5']
-# cfg.IELayerGain['6'] = cfgLoad['IELayerGain']['6']
+cfg.EICellTypeGain['PV'] =  cfgLoad['EICellTypeGain']['PV']
+cfg.EICellTypeGain['SOM'] = cfgLoad['EICellTypeGain']['SOM']
+cfg.EICellTypeGain['VIP'] = cfgLoad['EICellTypeGain']['VIP']
+cfg.EICellTypeGain['NGF'] = cfgLoad['EICellTypeGain']['NGF']
 
-# cfg.IILayerGain['1'] = cfgLoad['IILayerGain']['1-3']
-# cfg.IILayerGain['2'] = cfgLoad['IILayerGain']['1-3']
-# cfg.IILayerGain['3'] = cfgLoad['IILayerGain']['1-3']
-# cfg.IILayerGain['4'] = cfgLoad['IILayerGain']['4']
-# cfg.IILayerGain['5A'] = cfgLoad['IILayerGain']['5']
-# cfg.IILayerGain['5B'] = cfgLoad['IILayerGain']['5']
-# cfg.IILayerGain['6'] = cfgLoad['IILayerGain']['6']
+cfg.IECellTypeGain['PV'] = cfgLoad['IECellTypeGain']['PV']
+cfg.IECellTypeGain['SOM'] = cfgLoad['IECellTypeGain']['SOM']
+cfg.IECellTypeGain['VIP'] = cfgLoad['IECellTypeGain']['VIP']
+cfg.IECellTypeGain['NGF'] = cfgLoad['IECellTypeGain']['NGF']
+
+cfg.EILayerGain['1'] = cfgLoad['EILayerGain']['1']
+cfg.IILayerGain['1'] = cfgLoad['IILayerGain']['1']
+
+cfg.EELayerGain['2'] = cfgLoad['EELayerGain']['2']
+cfg.EILayerGain['2'] = cfgLoad['EILayerGain']['2']
+cfg.IELayerGain['2'] = cfgLoad['IELayerGain']['2']
+cfg.IILayerGain['2'] = cfgLoad['IILayerGain']['2']
+
+
+cfg.EELayerGain['3'] = cfgLoad['EELayerGain']['3']
+cfg.EILayerGain['3'] = cfgLoad['EILayerGain']['3']
+cfg.IELayerGain['3'] = cfgLoad['IELayerGain']['3']
+cfg.IILayerGain['3'] = cfgLoad['IILayerGain']['3']
+
+
+cfg.EELayerGain['4'] = cfgLoad['EELayerGain']['4']
+cfg.EILayerGain['4'] = cfgLoad['EILayerGain']['4']
+cfg.IELayerGain['4'] = cfgLoad['IELayerGain']['4']
+cfg.IILayerGain['4'] = cfgLoad['IILayerGain']['4']
+
+cfg.EELayerGain['5A'] = cfgLoad['EELayerGain']['5A']
+cfg.EILayerGain['5A'] = cfgLoad['EILayerGain']['5A']
+cfg.IELayerGain['5A'] = cfgLoad['IELayerGain']['5A']
+cfg.IILayerGain['5A'] = cfgLoad['IILayerGain']['5A']
+
+cfg.EELayerGain['5B'] = cfgLoad['EELayerGain']['5B']
+cfg.EILayerGain['5B'] = cfgLoad['EILayerGain']['5B']
+cfg.IELayerGain['5B'] = cfgLoad['IELayerGain']['5B'] 
+cfg.IILayerGain['5B'] = cfgLoad['IILayerGain']['5B']
+
+cfg.EELayerGain['6'] = cfgLoad['EELayerGain']['6']  
+cfg.EILayerGain['6'] = cfgLoad['EILayerGain']['6']  
+cfg.IELayerGain['6'] = cfgLoad['IELayerGain']['6']  
+cfg.IILayerGain['6'] = cfgLoad['IILayerGain']['6']  
+
+
+
+# UPDATE THALAMIC GAIN PARAMS
+cfg.thalamoCorticalGain = cfgLoad['thalamoCorticalGain']
+cfg.intraThalamicGain = cfgLoad['intraThalamicGain']
+cfg.EbkgThalamicGain = cfgLoad['EbkgThalamicGain']
+cfg.IbkgThalamicGain = cfgLoad['IbkgThalamicGain']
+
+
+
+# UPDATE WMAT VALUES
+cfg.wmat = cfgLoad['wmat']
+
+
+
+
+
+
+
+
+
 
 
