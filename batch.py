@@ -3073,8 +3073,8 @@ def setRunCfg(b, type='mpi_bulletin'):
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'TG-IBN160014', 
             'walltime': '12:00:00',
-            'nodes': 4,
-            'coresPerNode': 48,
+            'nodes': 1, # 4
+            'coresPerNode': 80,#48,
             'partition': 'skx-normal', 
             'email': 'erica.griffith@downstate.edu',
             'folder': '/home1/06490/tg857900/A1/',
