@@ -752,8 +752,8 @@ def custom_spont(filename):
     initCfg['recordStep'] = 0.05
 
     ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
-    initCfg[('seeds', 'conn')] = 0
-    initCfg[('seeds', 'stim')] = 0
+    # initCfg[('seeds', 'conn')] = 0
+    # initCfg[('seeds', 'stim')] = 0
 
     # plotting and saving params
     initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
@@ -3069,6 +3069,21 @@ def setRunCfg(b, type='mpi_bulletin'):
             # 'skipCustom': ,
         #}
 
+    elif type=='hpc_slurm_xsede':
+        b.runCfg = {'type': 'hpc_slurm', 
+            'allocation': 'TG-IBN160014', 
+            'walltime': '12:00:00',
+            'nodes': 4,
+            'coresPerNode': 48,
+            'partition': 'skx-normal', 
+            'email': 'erica.griffith@downstate.edu',
+            'folder': '/home1/06490/tg857900/A1/',
+            'script': 'init.py', 
+            'mpiCommand': 'mpirun',
+            'nrnCommand': 'nrniv -mpi -python3',
+            'skip': True}
+            #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
+            # --nodelist=compute1
 
 # ----------------------------------------------------------------------------------------------
 # Main code
@@ -3092,10 +3107,10 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_TRIAL_4'    #'v35_batch6'                 # b.batchLabel = 'v34_batch27_0_3_QD_currentRecord2' 
+    b.batchLabel = 'v34_batch67_XSEDE_TRIAL_0'
     b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'hpc_slurm_cineca')    #'hpc_slurm_gcp')  #'mpi_bulletin') 
+    setRunCfg(b, 'hpc_slurm_xsede')
     b.run() # run batch
 
 
