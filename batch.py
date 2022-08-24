@@ -746,9 +746,9 @@ def custom_spont(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 2500 #11500
+    initCfg['duration'] = 2500                                  # 11500
     initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
-    initCfg['scaleDensity'] = 0.25 # 0.1   #1.0
+    initCfg['scaleDensity'] = 0.25                              # 1.0
     initCfg['recordStep'] = 0.05
 
     ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
@@ -756,7 +756,7 @@ def custom_spont(filename):
     # initCfg[('seeds', 'stim')] = 0
 
     # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
@@ -3053,7 +3053,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
             'skip': True}
 
-    elif type== 'hpc_slurm_cineca':         ## FILL THIS IN
+    elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
             'walltime': '4:00:00',         # MAX: 24 hrs      # '4:00:00'     # is there a time limit of 1:00:00 ? 
@@ -3064,7 +3064,7 @@ def setRunCfg(b, type='mpi_bulletin'):
             'folder': '/g100/home/userexternal/egriffit/A1/',
             'script': 'init.py',
             'mpiCommand': 'mpirun'} 
-            # 'nrnCommand': ,
+            # 'nrnCommand': ,  # 'nrniv -mpi -python', #'python3',
             # 'skip': ,
             # 'skipCustom': ,
         #}

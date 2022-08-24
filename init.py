@@ -40,7 +40,7 @@ sim.gatherDataFromFiles()
 
 sim.saveData()  
 
-sim.analysis.plotData()         			# plot spike raster etc
+# sim.analysis.plotData()         			# plot spike raster etc
 
 '''
 if sim.rank == 0:
