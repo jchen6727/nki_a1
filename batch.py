@@ -3056,7 +3056,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': '0:15:00',          # g100_qos_dbg : 2 hrs          # noQOS: 24 hrs 
+            'walltime': '0:10:00',          # g100_qos_dbg : 2 hrs          # noQOS: 24 hrs 
             'nodes': 2,                     # g100_qos_dbg : max 2 nodes    # noQOS: max 32 nodes 
             'coresPerNode': 48,             # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
             'partition': 'g100_usr_prod',
@@ -3108,7 +3108,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_CINECA_TRIAL_2'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v34_batch67_CINECA_TRIAL_3'  #'v34_batch67_XSEDE_TRIAL_0'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_cineca')
