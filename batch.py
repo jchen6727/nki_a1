@@ -3056,14 +3056,15 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': '4:00:00',         # MAX: 24 hrs      # '4:00:00'     # is there a time limit of 1:00:00 ? 
-            'nodes': 2,                     # arbitrary; may change this later (see nb)
-            'coresPerNode': 48,             # arbitrary; may change this later (see nb)
+            'walltime': '0:30:00',          # g100_qos_dbg : 2 hrs          # noQOS: 24 hrs 
+            'nodes': 2,                     # g100_qos_dbg : max 2 nodes    # noQOS: max 32 nodes 
+            'coresPerNode': 48,             # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
             'partition': 'g100_usr_prod',
+            'qos': 'g100_qos_dbg',           # g100_qos_dbg  # noQOS
             'email': 'erica.griffith@downstate.edu',
             'folder': '/g100/home/userexternal/egriffit/A1/',
             'script': 'init.py',
-            'mpiCommand': 'mpirun'} 
+            'mpiCommand': 'srun'}    # mpirun   # TRY SRUN
             # 'nrnCommand': ,  # 'nrniv -mpi -python', #'python3',
             # 'skip': ,
             # 'skipCustom': ,
@@ -3107,7 +3108,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_CINECA_TRIAL_0'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v34_batch67_CINECA_TRIAL_1'  #'v34_batch67_XSEDE_TRIAL_0'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_cineca')
