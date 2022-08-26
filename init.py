@@ -40,6 +40,10 @@ sim.gatherDataFromFiles()
 
 sim.saveData()  
 
+### SEEING IF THIS HELPS DIST SAVING RUNTIME TIMEOUT ERROR ON CINECA HPC 
+from neuron import h
+h.quit() ## 
+
 # sim.analysis.plotData()         			# plot spike raster etc
 
 '''
