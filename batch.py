@@ -734,8 +734,8 @@ def custom_spont(filename):
     
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     
-    params[('seeds', 'conn')] = [3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = [4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = [3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
     # params['ihGbar'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
     # params['KgbarFactor'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
@@ -3056,15 +3056,15 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': '00:10:00',          # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
-            'nodes': 1,                      # g100_qos_dbg : max 2 nodes     # noQOS: max 32 nodes 
-            'coresPerNode': 1,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
+            'walltime': '00:20:00',          # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
+            'nodes': 2,                      # g100_qos_dbg : max 2 nodes     # noQOS: max 32 nodes 
+            'coresPerNode': 24,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
             'partition': 'g100_usr_prod',
             'qos': 'g100_qos_dbg',           # g100_qos_dbg  # noQOS
             'email': 'erica.griffith@downstate.edu',
             'folder': '/g100/home/userexternal/egriffit/A1/',
             'script': 'init.py',
-            'mpiCommand': 'srun --cpu-bind=cores'}   # -m block:block' # mpirun   # TRY SRUN
+            'mpiCommand': 'srun'}   # --cpu-bind=cores -m block:block' # mpirun   # TRY SRUN
             # 'nrnCommand': ,  # 'nrniv -mpi -python', #'python3',
             # 'skip': ,
             # 'skipCustom': ,
@@ -3108,7 +3108,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_CINECA_TRIAL_6'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v34_batch67_CINECA_TRIAL_7'  #'v34_batch67_XSEDE_TRIAL_0'
     b.saveFolder = 'data/'+b.batchLabel
 
     setRunCfg(b, 'hpc_slurm_cineca')
