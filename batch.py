@@ -3056,7 +3056,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': '00:20:00',           # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
+            'walltime': '00:40:00',           # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
             'nodes': 2,                       # g100_qos_dbg : max 2 nodes     # noQOS: max 32 nodes 
             'coresPerNode': 48,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
             'partition': 'g100_usr_prod',
