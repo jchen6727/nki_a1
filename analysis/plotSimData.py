@@ -157,7 +157,7 @@ if evalPopsBool:
 ########################################################################
 ####### LOOKING AT ALL OSC EVENTS BY BAND -- FOR THESIS PROPOSAL #######
 ########################################################################
-doProposal = 1
+doProposal = 0
 
 if doProposal:
 	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/'
@@ -609,6 +609,41 @@ if getIEIstatsbyBandTEST:
 		medthresh=medthresh,lchan=lchan,MUA=MUA,overlapth=0.5,getphase=True,savespec=True,
 		threshfctr=2.0,useloglfreq=False,mspecwidth=7.0,noiseamp=noiseampCSD,endfctr=0.5,
 		normop=mednorm)
+
+
+
+####################################
+##### COMPARING CINECA AND GCP ##### 
+####################################
+
+compareHPC = 1
+
+dataFileCineca = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/v34_batch67_CINECA_2_4/v34_batch67_CINECA_2_4_data.pkl'
+dataFileGCP = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch57/v34_batch57_2_4_data.pkl'
+
+if compareHPC:
+	sim.load(dataFileCineca, instantiate=False)
+	cinecaLFP = sim.allSimData['LFP']
+
+	sim.load(dataFileGCP, instantiate=False)
+	gcpLFP = sim.allSimData['LFP']
+
+
+	# diff = []
+
+	# for i in range(len(cinecaLFP))
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
