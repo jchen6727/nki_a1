@@ -627,6 +627,8 @@ if compareHPC:
 	cineca_lfp = cineca_allData['LFP']			#sim.allSimData['LFP']
 	## CHECK LFP POPS 
 	cineca_lfpPops = cineca_allData['LFPPops']
+	## CHECK SPIKE TIME
+	cineca_spkt = cineca_allData['spkt']
 
 
 	sim.load(dataFileGCP, instantiate=False)
@@ -634,11 +636,19 @@ if compareHPC:
 	gcp_lfp = gcp_allData['LFP']				#sim.allSimData['LFP']
 	## CHECK LFP POPS 
 	#### gcp_lfpPops = gcp_allData['LFPPops'] <-- WILL NOT EXIST!!! DO THIS ONLY WITH THE batch65 batch67 0_0 0_1 files 
-
+	## CHECK SPIKE TIME
+	gcp_spkt = gcp_allData['spkt']
 
 	## TRY PLOTTING SOMETHING EQUIVALENT
 
 
+	## Differences between spike times:
+	diff_inds = []
+	diff_values = []
+	for i in range(len(gcp_spkt)):
+		if gcp_spkt[i]!= cineca_spkt[i]:
+			diff_inds.append(i)
+			diff_values.append([gcp_spkt[i], cineca_spkt[i]])
 
 
 
