@@ -618,21 +618,25 @@ if getIEIstatsbyBandTEST:
 
 compareHPC = 1
 
-dataFileCineca = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/v34_batch67_CINECA_2_4/v34_batch67_CINECA_2_4_data.pkl'
-dataFileGCP = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch57/v34_batch57_2_4_data.pkl'
+dataFileCineca = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/v34_batch67_CINECA_0_0_data.pkl'
+dataFileGCP = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch57/v34_batch57_0_0_data.pkl'
 
 if compareHPC:
 	sim.load(dataFileCineca, instantiate=False)
-	cinecaLFP = sim.allSimData['LFP']
+	cineca_allData = sim.allSimData
+	cineca_lfp = cineca_allData['LFP']			#sim.allSimData['LFP']
+	## CHECK LFP POPS 
+	cineca_lfpPops = cineca_allData['LFPPops']
+
 
 	sim.load(dataFileGCP, instantiate=False)
-	gcpLFP = sim.allSimData['LFP']
+	gcp_allData = sim.allSimData
+	gcp_lfp = gcp_allData['LFP']				#sim.allSimData['LFP']
+	## CHECK LFP POPS 
+	#### gcp_lfpPops = gcp_allData['LFPPops'] <-- WILL NOT EXIST!!! DO THIS ONLY WITH THE batch65 batch67 0_0 0_1 files 
 
 
-	# diff = []
-
-	# for i in range(len(cinecaLFP))
-
+	## TRY PLOTTING SOMETHING EQUIVALENT
 
 
 
