@@ -734,8 +734,8 @@ def custom_spont(filename):
     
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     
-    params[('seeds', 'conn')] = [1,0] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = [3,4] #list(range(3)) #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = [3] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = list(range(5)) #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
     # params['ihGbar'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
     # params['KgbarFactor'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
@@ -3109,7 +3109,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_CINECA_1_and_0_missing_seeds'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v34_batch67_CINECA_3_missing_seeds'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
