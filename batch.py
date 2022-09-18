@@ -825,16 +825,16 @@ def custom_speech(filename):
     params[('ICThalInput', 'weightI')] = [0.25, 0.5]
     params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.9, 0.95, 1.0, 1.1, 1.2]]# , 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
     '''
+    #### COMMENTING OUT LINES 829-834 (EYG 9/18/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
+    # params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
+    # params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
+    # params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
+    # params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
 
-    params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
-    params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
-    params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
-    params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
-
-    params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
+    # params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
     #params[('wmat', 'HTC', 'PV4')] = [0.3, 0.4, 0.5]
 
-
+    #### NOT COMMENTING OUT LINE 838 (EYG 9/18/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
     params[('ICThalInput', 'startTime')] = [2500, 2550, 2600, 2650]
 
     # conn gains 
@@ -846,8 +846,8 @@ def custom_speech(filename):
 
     # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)] # list(range(5)) 
     # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)] # list(range(5)) 
-    
-    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+    ###### SETTING GROUPEDPARAMS TO [] (EYG, 9/18/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
+    groupedParams = [] #[('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
@@ -873,6 +873,10 @@ def custom_speech(filename):
                             'probI': 0.12, #0.25 
                             'seed': 1}  
 
+    ## RECORDING EEG / DIPOLE (EYG, 9/18/22):
+    # initCfg['recordDipole'] = True
+    # initCfg['saveDipoleCells'] = ['all']
+    # initCfg['saveDipolePops'] = cfg.allpops # or is it initCfg['allpops']
 
     # changed directly in cfg.py    
     #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
@@ -3095,7 +3099,8 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
@@ -3109,7 +3114,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch67_CINECA_missing_2_3'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v34_batch_eegSpeech_CINECA_trial_0'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
