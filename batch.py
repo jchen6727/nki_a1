@@ -859,7 +859,7 @@ def custom_speech(filename):
     initCfg['recordStep'] = 0.05
 
     # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
     #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
