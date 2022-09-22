@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import os 
 
 
-basedir = '../data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_0/'
+basedir = '../data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_1/'
 # fn = 'v34_batch_eegSpeech_CINECA_trial_0_2_data.pkl'
 # fn = '../data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_0/v34_batch_eegSpeech_CINECA_trial_0_3_data.pkl'
 
@@ -24,7 +24,7 @@ for fn in pklFiles:
 
 	orderBy = ['pop']
 
-	timeRange = [500,1500]
+	timeRange = [500,4000]
 
 	fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
 		popRates=False, orderInverse=True, lw=0, markerSize=12, marker='.',  
@@ -36,7 +36,7 @@ for fn in pklFiles:
 
 	[i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
 
-	plt.xticks(timeRange, ['0', '1'])
+	plt.xticks(timeRange, [timeRange[0], timeRange[1]]) #['0', '1'])
 	plt.yticks([0, 5000, 10000], [0, 5000, 10000])
 
 	plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
