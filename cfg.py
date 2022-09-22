@@ -60,7 +60,7 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 
 cfg.recordDipole = True
 cfg.saveDipoleCells = ['all']
-cfg.saveDipolePops = False # cfg.allpops
+cfg.saveDipolePops = cfg.allpops
 ### ^^ EYG, 9/22/22: uncommenting for attempt at speech-EEG run on cineca
 
 #------------------------------------------------------------------------------
