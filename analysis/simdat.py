@@ -65,7 +65,8 @@ def pravgrates (dspkT,dspkID,dnumc,tlim=None):
 def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=False,saveFig=True,rasterFile=None):
   # draw raster (x-axis: time, y-axis: neuron ID)
   # NOTE: ADDING dnumc TO THE ARGS FOR IF drawLegend IS TRUE! 
-  lpop=list(dspkT.keys()); lpop.reverse()
+  lpop=list(dspkT.keys())#; lpop.reverse()
+  # print('lpop: ' + str(lpop))
   lpop = [x for x in lpop if not skipstim or x.count('stim')==0]  
   
   ## EYG ADDING COLORLIST 9/23/22
@@ -75,10 +76,14 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
   # print('popColors: ' + str(popColors))
 
   lclr = []
+  figure(figsize=(9*0.95, 13*0.9))
   for pdx,pop in enumerate(lpop):
     # popColors = {pop: colorList[pdx % len(colorList)]}
+    print('plotting pop: ' + str(pop))
     lclr.append(popColors[pop])
-    plot(dspkT[pop],dspkID[pop],'.',color=popColors[pop],markersize=msz)  # '.' instead of 'o'
+    # plot(dspkT[pop],dspkID[pop],'.',color=popColors[pop],markersize=msz)  # '.' instead of 'o'
+    ### EYG 9/23/22 -- TRY SCATTER INSTEAD OF PLOT
+    scatter(dspkT[pop],dspkID[pop],s=1,c=popColors[pop],marker='.')#,markersize=msz)  # '.' instead of 'o'
   # print('lpop: ' + str(lpop))
   
   ###   
@@ -112,10 +117,28 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
       handles.append(mpatches.Rectangle((0, 0), 1, 1, fc=popColors[pop]))
     ax=gca()
     ax.legend(handles,leg_labels, loc=2, borderaxespad=0.0, handlelength=0.5, fontsize=5, bbox_to_anchor=(1.025, 1)) 
-    tight_layout()
+    # tight_layout() -- putting this later before save!! EYG 9/23/22
     ########### 
 
+  # EYG 9/23/22
+  ## ORIG: ##
+  # ylim((0,sum([dnumc[x] for x in lpop])))
+  ## NEW: ##
+  ylim0, ylim1 = ax.get_ylim()
+  print('ylim1: ' + str(ylim1))
+  print('ylim0: ' + str(ylim0))
+  # ax.set_ylim(ylim1, ylim0)
   ylim((0,sum([dnumc[x] for x in lpop])))
+  print('sum([dnumc[x] for x in lpop]): ' + str(sum([dnumc[x] for x in lpop])))
+
+  # EYG 9/23/22
+  ylabel('NEURON ID')
+
+  # EYG 9/23/22
+  ax.invert_yaxis()
+  
+  # EYG 9/23/22
+  tight_layout()
   
   ## EYG ADDING SAVEFIG LINES 9/23/22
   if saveFig:
