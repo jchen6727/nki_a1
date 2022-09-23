@@ -3115,7 +3115,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch_eegSpeech_CINECA_trial_4'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v34_batch_eegSpeech_CINECA_trial_5'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
