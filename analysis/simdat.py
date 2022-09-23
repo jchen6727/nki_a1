@@ -88,6 +88,8 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     if rasterFile is None:
       rasterFile = 'raster.png'
     savefig(rasterFile, dpi=300)
+    print('Saved ' + rasterFile)
+  # ADD ARG + LINE(S) for showFig??
 
 #
 def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None):
