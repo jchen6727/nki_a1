@@ -13,7 +13,13 @@ for file in allFiles:
 for fn in pklFiles:
 	fullFilename = basedir + fn
 
+	print('Working with file: ' + fn)
+
 	simConfig, sdat, dstartidx, dendidx, dnumc, dspkID, dspkT = loaddat(pklFile)
+
+	print('loaddat run on ' + fn)
 
 	drawraster(dspkT,dspkID,tlim=None,msz=2,skipstim=False,drawlegend=False) # skipstim=True
 	## ^^^ HOW TO SAVE?? 
+
+	print('raster for file ' + fn + ' has been drawn!')
