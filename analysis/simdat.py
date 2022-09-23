@@ -97,7 +97,9 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     ## lpatch = [mpatches.Patch(color=c,label=s+' '+str(round(getrate(dspkT,dspkID,s,dnumc,tlim=tlim),2))+' Hz') for c,s in zip(lclr,lpop)]
     lpatch = [mpatches.Patch(color=c,label=s+' '+str(round(getrate(dspkT,dspkID,s,dnumc,tlim=tlim),2))+' Hz') for c,s in zip(lclr,lpop)]
     ax=gca()
-    ax.legend(handles=lpatch,handlelength=1,loc='best', fontsize=5)
+    ## ADDING ARGS TO legend(); EYG 9/23/22 -->
+    ###  handlelength=0.5 (from 1.0), loc=2 (from 'best'), fontsize='small' (from 5),bbox_to_anchor, borderaxespad
+    ax.legend(handles=lpatch,handlelength=0.5,loc=2, fontsize='small',bbox_to_anchor=(1.025, 1),borderaxespad=0.0)
   ylim((0,sum([dnumc[x] for x in lpop])))
   ## EYG ADDING SAVEFIG LINES 9/23/22
   if saveFig:
