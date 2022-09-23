@@ -615,7 +615,7 @@ if cfg.addBkgConn:
         maxLen = min(len(ICrates[0]), len(ICtimes))
 
         ### ADDED BY EYG 9/23/2022 TO ALLOW FOR MULTIPLE START TIMES (TEST)
-        if type(cfg.ICThalInput['startTime']) = list:
+        if type(cfg.ICThalInput['startTime']) == list:
             spkTimes = []
             startTimes = cfg.ICThalInput['startTime']
             for startTime in startTimes:
