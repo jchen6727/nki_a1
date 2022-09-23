@@ -72,10 +72,13 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
   colorList = [[0.42, 0.67, 0.84], [0.90, 0.76, 0.00], [0.42, 0.83, 0.59], [0.90, 0.32, 0.00], [0.34, 0.67, 0.67], [0.90, 0.59, 0.00], [0.42, 0.82, 0.83], [1.00, 0.85, 0.00], [0.33, 0.67, 0.47], [1.00, 0.38, 0.60], [0.57, 0.67, 0.33], [0.50, 0.20, 0.00], [0.71, 0.82, 0.41], [0.00, 0.20, 0.50], [0.70, 0.32, 0.10]] * 4  # *3
   lclr = []
   for pdx,pop in enumerate(lpop):
-    popColors = {pop: colorList[pdx % len(colorList)]}
+    # popColors = {pop: colorList[pdx % len(colorList)]}
     lclr.append(popColors[pop])
     plot(dspkT[pop],dspkID[pop],'.',color=popColors[pop],markersize=msz)  # '.' instead of 'o'
   print('lpop: ' + str(lpop))
+  
+
+  popColors = {pop: colorList[pdx % len(colorList)] for pdx, pop in enumerate(lpop)}
   print('popColors: ' + str(popColors))
   ###   
   
