@@ -19,7 +19,8 @@ for fn in pklFiles:
 
 	print('loaddat run on ' + fn)
 
-	drawraster(dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=False,drawlegend=False) # skipstim=True
+	rasterFilename = fullFilename.split('_data.pkl')[0] + '_raster.png'
+	drawraster(dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=False,drawlegend=False,saveFig=True,rasterFile=rasterFilename) # skipstim=True
 	## ^^^ HOW TO SAVE?? 
 
 	print('raster for file ' + fn + ' has been drawn!')

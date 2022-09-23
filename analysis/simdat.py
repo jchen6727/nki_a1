@@ -62,7 +62,7 @@ def pravgrates (dspkT,dspkID,dnumc,tlim=None):
   for pop in dspkT.keys(): print(pop,round(getrate(dspkT,dspkID,pop,dnumc,tlim=tlim),2),'Hz')
 
 #
-def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=False):
+def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=False,saveFig=True,rasterFile=None):
   # draw raster (x-axis: time, y-axis: neuron ID)
   # NOTE: ADDING dnumc TO THE ARGS FOR IF drawLegend IS TRUE! 
   lpop=list(dspkT.keys()); lpop.reverse()
@@ -84,6 +84,10 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     ax=gca()
     ax.legend(handles=lpatch,handlelength=1,loc='best')
   ylim((0,sum([dnumc[x] for x in lpop])))
+  if saveFig:
+    if rasterFile is None:
+      rasterFile = 'raster.png'
+    savefig(rasterFile, dpi=300)
 
 #
 def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None):
