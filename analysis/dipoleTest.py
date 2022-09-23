@@ -19,7 +19,7 @@ for fn in pklFiles:
 
 	print('loaddat run on ' + fn)
 
-	drawraster(dspkT,dspkID,tlim=None,msz=2,skipstim=False,drawlegend=False) # skipstim=True
+	drawraster(dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=False,drawlegend=False) # skipstim=True
 	## ^^^ HOW TO SAVE?? 
 
 	print('raster for file ' + fn + ' has been drawn!')
