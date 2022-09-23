@@ -72,14 +72,14 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
   colorList = [[0.42, 0.67, 0.84], [0.90, 0.76, 0.00], [0.42, 0.83, 0.59], [0.90, 0.32, 0.00], [0.34, 0.67, 0.67], [0.90, 0.59, 0.00], [0.42, 0.82, 0.83], [1.00, 0.85, 0.00], [0.33, 0.67, 0.47], [1.00, 0.38, 0.60], [0.57, 0.67, 0.33], [0.50, 0.20, 0.00], [0.71, 0.82, 0.41], [0.00, 0.20, 0.50], [0.70, 0.32, 0.10]] * 4  # *3
   
   popColors = {pop: colorList[pdx % len(colorList)] for pdx, pop in enumerate(lpop)}
-  print('popColors: ' + str(popColors))
+  # print('popColors: ' + str(popColors))
 
   lclr = []
   for pdx,pop in enumerate(lpop):
     # popColors = {pop: colorList[pdx % len(colorList)]}
     lclr.append(popColors[pop])
     plot(dspkT[pop],dspkID[pop],'.',color=popColors[pop],markersize=msz)  # '.' instead of 'o'
-  print('lpop: ' + str(lpop))
+  # print('lpop: ' + str(lpop))
   
   ###   
   
@@ -102,7 +102,7 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     ####### ORIG: #######
     ## lpatch = [mpatches.Patch(color=c,label=s+' '+str(round(getrate(dspkT,dspkID,s,dnumc,tlim=tlim),2))+' Hz') for c,s in zip(lclr,lpop)]
     ## ax=gca()
-    ## ax.legend(handles=lpatch,handlelength=0.5,loc=2,fontsize=5,bbox_to_anchor=(1.025, 1),borderaxespad=0.0)
+    ## ax.legend(handles=lpatch,handlelength=0.5,loc=2,fontsize=5,bbox_to_anchor=(1.025, 1),borderaxespad=0.0)     ## ADDING ARGS TO legend(); EYG 9/23/22 -->  handlelength=0.5 (from 1.0), loc=2 (from 'best'), fontsize='small' (from 5),bbox_to_anchor, borderaxespad
 
     ####### NEW LEGEND CODE #######
     leg_labels = []
@@ -110,11 +110,9 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     for pdx,pop in enumerate(lpop):
       leg_labels.append(pop)
       handles.append(mpatches.Rectangle((0, 0), 1, 1, fc=popColors[pop]))
-    # lpatch = [mpatches.Rectangle((0, 0), 1, 1, fc=popColors[popLabel])
     ax=gca()
-    ## ADDING ARGS TO legend(); EYG 9/23/22 -->  handlelength=0.5 (from 1.0), loc=2 (from 'best'), fontsize='small' (from 5),bbox_to_anchor, borderaxespad
-    tight_layout()
     ax.legend(handles,leg_labels, loc=2, borderaxespad=0.0, handlelength=0.5, fontsize=5, bbox_to_anchor=(1.025, 1)) 
+    tight_layout()
     ########### 
 
   ylim((0,sum([dnumc[x] for x in lpop])))
