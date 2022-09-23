@@ -83,8 +83,9 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     lclr.append(popColors[pop])
     # plot(dspkT[pop],dspkID[pop],'.',color=popColors[pop],markersize=msz)  # '.' instead of 'o'
     ### EYG 9/23/22 -- TRY SCATTER INSTEAD OF PLOT
-    scatter(dspkT[pop],dspkID[pop],s=1,c=popColors[pop],marker='.')#,markersize=msz)  # '.' instead of 'o'
-  # print('lpop: ' + str(lpop))
+    scatter(dspkT[pop],dspkID[pop],s=1,color=popColors[pop],marker='.') #,markersize=msz)  # '.' instead of 'o'
+    ### ^^ CINECA WANTS 'color' keyword INSTEAD OF 'c' it would seem!!)
+
   
   ###   
   
@@ -136,7 +137,7 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
 
   # EYG 9/23/22
   ax.invert_yaxis()
-  
+
   # EYG 9/23/22
   tight_layout()
   
