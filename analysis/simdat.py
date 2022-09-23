@@ -67,23 +67,27 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
   # NOTE: ADDING dnumc TO THE ARGS FOR IF drawLegend IS TRUE! 
   lpop=list(dspkT.keys()); lpop.reverse()
   lpop = [x for x in lpop if not skipstim or x.count('stim')==0]  
+  ## EYG ADDING COLORLIST 9/23/22
+  colorList = [[0.42, 0.67, 0.84], [0.90, 0.76, 0.00], [0.42, 0.83, 0.59], [0.90, 0.32, 0.00], [0.34, 0.67, 0.67], [0.90, 0.59, 0.00], [0.42, 0.82, 0.83], [1.00, 0.85, 0.00], [0.33, 0.67, 0.47], [1.00, 0.38, 0.60], [0.57, 0.67, 0.33], [0.50, 0.20, 0.00], [0.71, 0.82, 0.41], [0.00, 0.20, 0.50], [0.70, 0.32, 0.10]] * 3
   csm=cm.ScalarMappable(cmap=cm.prism); csm.set_clim(0,len(dspkT.keys()))
   lclr = []
   for pdx,pop in enumerate(lpop):
     color = csm.to_rgba(pdx); lclr.append(color)
-    plot(dspkT[pop],dspkID[pop],'o',color=color,markersize=msz)
+    plot(dspkT[pop],dspkID[pop],'.',color=color,markersize=msz)  # '.' instead of 'o'
   if tlim is not None:
     xlim(tlim)
   else:
     xlim((0,totalDur))
   xlabel('Time (ms)')
   #lclr.reverse();
-  ## EYG COMMENTING THESE OUT 
   if drawlegend:
+    # # set up a dict of pop colors, EYG 9/23/22
+    # popColors = {popLabel: colorList[ipop % len(colorList)] for ipop, popLabel in enumerate(lpop)}
     lpatch = [mpatches.Patch(color=c,label=s+' '+str(round(getrate(dspkT,dspkID,s,dnumc,tlim=tlim),2))+' Hz') for c,s in zip(lclr,lpop)]
     ax=gca()
-    ax.legend(handles=lpatch,handlelength=1,loc='best')
+    ax.legend(handles=lpatch,handlelength=1,loc='best', fontsize=5)
   ylim((0,sum([dnumc[x] for x in lpop])))
+  ## EYG ADDING SAVEFIG LINES 9/23/22
   if saveFig:
     if rasterFile is None:
       rasterFile = 'raster.png'
