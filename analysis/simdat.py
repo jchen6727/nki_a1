@@ -103,11 +103,11 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     handles = []
     for pdx,pop in enumerate(lpop):
       leg_labels.append(pop)
-      handles.append(mpatches.Rectangle(0, 0), 1, 1, fc=popColors[pop])
+      handles.append(mpatches.Rectangle((0, 0), 1, 1, fc=popColors[pop]))
     # lpatch = [mpatches.Rectangle((0, 0), 1, 1, fc=popColors[popLabel])
     ax=gca()
     ## ADDING ARGS TO legend(); EYG 9/23/22 -->  handlelength=0.5 (from 1.0), loc=2 (from 'best'), fontsize='small' (from 5),bbox_to_anchor, borderaxespad
-    ax.legend(handles, leg_labels,bbox_to_anchor=(1.025, 1), loc=2, borderaxespad=0.0, handlelength=0.5, fontsize=5)
+    ax.legend(handles,leg_labels,bbox_to_anchor=(1.025, 1), loc=2, borderaxespad=0.0, handlelength=0.5, fontsize=5)
     # ax.legend(handles=lpatch,handlelength=0.5,loc=2,fontsize=5,bbox_to_anchor=(1.025, 1),borderaxespad=0.0)
     ########### 
 
