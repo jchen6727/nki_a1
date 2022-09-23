@@ -114,7 +114,7 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     ax=gca()
     ## ADDING ARGS TO legend(); EYG 9/23/22 -->  handlelength=0.5 (from 1.0), loc=2 (from 'best'), fontsize='small' (from 5),bbox_to_anchor, borderaxespad
     tight_layout()
-    ax.legend(handles,leg_labels, loc=2, borderaxespad=0.0, handlelength=0.5, fontsize=5) # bbox_to_anchor=(1.025, 1)
+    ax.legend(handles,leg_labels, loc=2, borderaxespad=0.0, handlelength=0.5, fontsize=5, bbox_to_anchor=(1.025, 1)) 
     ########### 
 
   ylim((0,sum([dnumc[x] for x in lpop])))
