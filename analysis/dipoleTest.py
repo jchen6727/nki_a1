@@ -15,7 +15,7 @@ for fn in pklFiles:
 
 	print('Working with file: ' + fn)
 
-	simConfig, sdat, dstartidx, dendidx, dnumc, dspkID, dspkT = loaddat(pklFile)
+	simConfig, sdat, dstartidx, dendidx, dnumc, dspkID, dspkT = loaddat(fullFilename)
 
 	print('loaddat run on ' + fn)
 
