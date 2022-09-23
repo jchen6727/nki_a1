@@ -75,6 +75,8 @@ def drawraster (dspkT,dspkID,dnumc,tlim=None,msz=2,skipstim=True,drawlegend=Fals
     popColors = {pop: colorList[pdx % len(colorList)]}
     lclr.append(popColors[pop])
     plot(dspkT[pop],dspkID[pop],'.',color=popColors[pop],markersize=msz)  # '.' instead of 'o'
+  print('lpop: ' + str(lpop))
+  print('popColors: ' + str(popColors))
   ###   
   
   # ## ORIG COLOR LINES + RASTER PLOTTING  ## COMMENTING OUT, EYG 9/23/22
