@@ -615,13 +615,14 @@ if cfg.addBkgConn:
         maxLen = min(len(ICrates[0]), len(ICtimes))
 
         ### ADDED BY EYG 9/23/2022 TO ALLOW FOR MULTIPLE START TIMES (TEST)
-        if type(cfg.ICThalInput['startTime']) == list:
-            spkTimes = []
-            startTimes = cfg.ICThalInput['startTime']
-            for startTime in startTimes:
-                spkTimes.append([x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates)))
-        else:
-            spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
+        # if type(cfg.ICThalInput['startTime']) == list:
+        #     spkTimes = []
+        #     startTimes = cfg.ICThalInput['startTime']
+        #     for startTime in startTimes:
+        #         spkTimes.append([x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates)))
+        # else:
+        #     spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
+        spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
