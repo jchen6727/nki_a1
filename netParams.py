@@ -616,10 +616,18 @@ if cfg.addBkgConn:
 
         ### ADDED BY EYG 9/23/2022 TO ALLOW FOR MULTIPLE START TIMES (TEST)
         if type(cfg.ICThalInput['startTime']) == list:
-            spkTimes = []
+            # spkTimes = []
+            # startTimes = cfg.ICThalInput['startTime']
+            # for startTime in startTimes:
+            #     spkTimes.append([x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates)))
+            from collections import OrderedDict
             startTimes = cfg.ICThalInput['startTime']
             for startTime in startTimes:
-                spkTimes.append([x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates)))
+                keyName = 'startTime_' + str(startTime)
+                spkTimesDict[keyName] = [[x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
+            spkTimes = []
+            for key in spkTimesDict.keys():
+                spkTimes = spkTimes + spkTimesDict[key]
         else:
             spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
         # spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
