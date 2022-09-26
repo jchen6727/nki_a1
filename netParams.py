@@ -621,6 +621,7 @@ if cfg.addBkgConn:
             # for startTime in startTimes:
             #     spkTimes.append([x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates)))
             from collections import OrderedDict
+            spkTimesDict = OrderedDict()
             startTimes = cfg.ICThalInput['startTime']
             for startTime in startTimes:
                 keyName = 'startTime_' + str(startTime)
