@@ -202,4 +202,4 @@ def save_dipoles_matlab (outfn, simConfig, sdat, dnumc, dstartidx, dendidx):
   cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
   #matDat = {'cellPos': cellPos, 'cellPops': lty, 'cellDipoles': cellDipoles, 'dipoleSum': sdat['dipoleSum'], 'cortical': lcort}
   matDat = {'cellPos': cellPos, 'cellPops': lty, 'cellDipoles': cellDipoles, 'dipoleSum': sdat['dipoleSum']}
-  io.savemat(outfn, matDat)
+  io.savemat(outfn, matDat, do_compression=True)

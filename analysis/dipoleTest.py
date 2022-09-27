@@ -41,7 +41,7 @@ if dipoleMat:
 ###########################
 #### RASTER PLOTTING ######
 ###########################
-raster = 1
+raster = 0
 
 if raster:
 
