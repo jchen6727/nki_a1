@@ -129,9 +129,13 @@ if saveTest:
 				os.mkdir(outfn_dir)
 
 			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + partName + '__' + 'dipoleMat.mat'   		#fullFilename.split('_data.pkl')[0] + '__' + partName + '__' + 'dipoleMat.mat'
-			print('saving ' + outfn)
-			io.savemat(outfn, matDatDict[matDatPart], do_compression=True)
-			print(outfn + ' SAVED!')
+			
+			if not os.path.isfile(outfn):
+				print('saving ' + outfn)
+				io.savemat(outfn, matDatDict[matDatPart], do_compression=True)
+				print(outfn + ' SAVED!')
+			else:
+				print('already saved!')
 
 
 
