@@ -13,7 +13,7 @@ for file in allFiles:
 
 
 ##### FOR INDIVIDUAL TESTING #####
-pklFiles = ['v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl', 'v36_batch_eegSpeech_CINECA_trial_12_1_data.pkl']
+pklFiles = ['v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']#, 'v36_batch_eegSpeech_CINECA_trial_12_1_data.pkl']
 
 
 
@@ -33,9 +33,22 @@ if dipoleMat:
 		
 		outfn = fullFilename.split('_data.pkl')[0] + '_dipoleMat.mat'
 
-		save_dipoles_matlab(outfn, simConfig, sdat, dnumc, dstartidx, dendidx)
+		# save_dipoles_matlab(outfn, simConfig, sdat, dnumc, dstartidx, dendidx)
 
-		print('dipoles saved to matlab file!')
+		## LINE BY LINE ##
+		from scipy import io
+
+		lidx = list(sdat['dipoleCells'].keys())
+
+		lty = [GetCellType(idx,dnumc,dstartidx,dendidx) for idx in lidx]
+
+		cellPos = [GetCellCoords(simConfig,idx) for idx in lidx]
+		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+
+		matDat = {'cellPos': cellPos, 'cellPops': lty, 'cellDipoles': cellDipoles, 'dipoleSum': sdat['dipoleSum']}
+
+
+		### print('dipoles saved to matlab file!')
 
 
 ###########################
