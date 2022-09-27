@@ -835,7 +835,7 @@ def custom_speech(filename):
     #params[('wmat', 'HTC', 'PV4')] = [0.3, 0.4, 0.5]
 
     #### NOT COMMENTING OUT LINE 838 (EYG 9/22/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
-    params[('ICThalInput', 'startTime')] = [[2000, 3500, 5000], [2500, 4000], 2500] #[2500, 2550] # [2500, 2550, 2600, 2650]
+    params[('ICThalInput', 'startTime')] = [[2000, 3500, 5000, 6500, 8000], [2500, 4000, 5500, 7000]] #[2500, 2550] # [2500, 2550, 2600, 2650]
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
@@ -853,8 +853,8 @@ def custom_speech(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 7500 # 10000 # 4500
-    initCfg['printPopAvgRates'] = [1500, 7500] # [1500, 9500]  # [1500, 4500] 
+    initCfg['duration'] = 10000 # 7500 # 4500
+    initCfg['printPopAvgRates'] = [1500, 10000] #[1500, 7500] # [1500, 9500]  # [1500, 4500] 
     initCfg['scaleDensity'] = 1.0
     initCfg['recordStep'] = 0.05
 
@@ -3115,7 +3115,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v34_batch_eegSpeech_CINECA_trial_11'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v36_batch_eegSpeech_CINECA_trial_12'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 

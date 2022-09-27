@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 35
+netParams.version = 36
 
 #------------------------------------------------------------------------------
 #
@@ -616,22 +616,27 @@ if cfg.addBkgConn:
 
         ### ADDED BY EYG 9/23/2022 TO ALLOW FOR MULTIPLE START TIMES (TEST)
         if type(cfg.ICThalInput['startTime']) == list:
-            # spkTimes = []
-            # startTimes = cfg.ICThalInput['startTime']
-            # for startTime in startTimes:
-            #     spkTimes.append([x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates)))
+
             from collections import OrderedDict
             spkTimesDict = OrderedDict()
             startTimes = cfg.ICThalInput['startTime']
             for startTime in startTimes:
                 keyName = 'startTime_' + str(startTime)
+                print('KEY NAME: ' + keyName)
                 spkTimesDict[keyName] = [[x+startTime for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
-            spkTimes = []
-            for key in spkTimesDict.keys():
-                spkTimes = spkTimes + spkTimesDict[key]
+
+            spkTimes = [None] * len(ICrates) #[]
+
+            for i in range(len(ICrates)):
+                for key in spkTimesDict.keys():
+                    if spkTimes[i] is None:
+                        spkTimes[i] = spkTimesDict[key][i]
+                    else:
+                        spkTimes[i] = spkTimes[i] + spkTimesDict[key][i]
+
         else:
             spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
-        # spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
+
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
 
@@ -797,4 +802,5 @@ v32 - Added IE presyn-cell-type specific gains
 v33 - Fixed bug in matrix thalamocortical conn (were very low)
 v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
 v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
+v36 - Looped speech stimulus capability added for cfg.ICThalInput
 """
