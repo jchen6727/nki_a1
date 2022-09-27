@@ -55,6 +55,7 @@ if saveTest:
 			keyName = 'lidx_part' + str(i)
 			lidxDict[keyName] = lidx[lidxIncrements[i]:lidxIncrements[i+1]]
 
+		print('ldxDict completed')
 
 		##############################
 		###  ---  NOW DO LTY ----  ###
@@ -70,7 +71,7 @@ if saveTest:
 			keyName = 'lty_part' + str(i)
 			ltyDict[keyName] = lty[lidxIncrements[i]:lidxIncrements[i+1]]
 
-
+		print('ltyDict completed')
 
 		##############################
 		### --- NOW DO cellPos --- ###
@@ -82,6 +83,8 @@ if saveTest:
 		for i in range(len(lidxIncrements)-1):
 			keyName = 'cellPos_part' + str(i)
 			cellPosDict[keyName] = cellPos[lidxIncrements[i]:lidxIncrements[i+1]]
+
+		print('cellPosDict completed')
 
 
 		#################################
@@ -95,6 +98,7 @@ if saveTest:
 			keyName = 'cellDipoles_part' + str(i)
 			cellDipolesDict[keyName] = cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]]
 
+		print('cellDipolesDict completed')
 
 		###########################
 		### --- NOW DO matDat-- ###
@@ -110,6 +114,8 @@ if saveTest:
 								'cellDipoles': cellDipolesDict['cellDipoles' + partKeyName], 
 								'dipoleSum': sdat['dipoleSum']}
 
+		print('matDatDict completed')
+
 
 		###########################
 		### --- NOW SAVE !!! -- ###
@@ -123,7 +129,9 @@ if saveTest:
 				os.mkdir(outfn_dir)
 
 			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + partName + '__' + 'dipoleMat.mat'   		#fullFilename.split('_data.pkl')[0] + '__' + partName + '__' + 'dipoleMat.mat'
+			print('saving ' + outfn)
 			io.savemat(outfn, matDatDict[matDatPart], do_compression=True)
+			print(outfn + ' SAVED!')
 
 
 
