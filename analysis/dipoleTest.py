@@ -18,9 +18,55 @@ pklFiles = ['v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']#, 'v36_batch_eegSp
 
 
 #######################
+#### SAVING TEST ######
+#######################
+saveTest = 1
+
+if saveTest:
+	for fn in pklFiles:
+		## LOAD DATA 
+		fullFilename = basedir + fn
+		print('Working with file: ' + fn)
+		simConfig, sdat, dstartidx, dendidx, dnumc, dspkID, dspkT = loaddat(fullFilename)
+		print('loaddat run on ' + fn)
+
+		
+		# outfn = fullFilename.split('_data.pkl')[0] + '_dipoleMat.mat'
+		# save_dipoles_matlab(outfn, simConfig, sdat, dnumc, dstartidx, dendidx)
+
+		#####################
+		## SIZE TESTING ##
+		from scipy import io
+		lidx = list(sdat['dipoleCells'].keys())
+
+		lidxLen = len(lidx)
+		partialInd = int(lidxLen / 10)
+
+		print('lidx_part1: lidx[0:' + str(partialInd) + ']')
+		lidx_part1 = lidx[:partialInd]
+
+		lty = [GetCellType(idx,dnumc,dstartidx,dendidx) for idx in lidx]
+		lty_part1 = lty[:partialInd]
+
+
+		cellPos = [GetCellCoords(simConfig,idx) for idx in lidx]
+		cellPos_part1 = cellPos[:partialInd]
+
+		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+		cellDipoles_part1 = cellDipoles[:partialInd]
+
+		matDat_part1 = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
+
+		outfn_part1 = fullFilename.split('_data.pkl')[0] + '_PART_1_' + '_dipoleMat.mat'
+		io.savemat(outfn_part1, matDat_part1, do_compression=True)
+		print('part 1 saved')
+
+
+
+#######################
 #### DIPOLE TEST ######
 #######################
-dipoleMat = 1
+dipoleMat = 0
 if dipoleMat:
 
 	for fn in pklFiles:
@@ -37,6 +83,9 @@ if dipoleMat:
 
 		#####################
 		## GO LINE BY LINE ##
+		### NOTE: the strategy here was to do the original lines (like save_dipoles_matlab func from simdat.py, but then break the 
+		### data into two smaller chunks for saving. ALTERNATIVE approach would be to break lidx into two parts as we do here
+		### then use those two parts to guide the situation from there on out. I think what we have now is better, but just a note.)
 		from scipy import io
 
 		## determine lidx and then break lidx into two parts to make this smaller ## 
