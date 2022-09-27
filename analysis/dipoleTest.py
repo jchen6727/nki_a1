@@ -30,36 +30,54 @@ if saveTest:
 		simConfig, sdat, dstartidx, dendidx, dnumc, dspkID, dspkT = loaddat(fullFilename)
 		print('loaddat run on ' + fn)
 
-		
-		# outfn = fullFilename.split('_data.pkl')[0] + '_dipoleMat.mat'
-		# save_dipoles_matlab(outfn, simConfig, sdat, dnumc, dstartidx, dendidx)
 
-		#####################
-		## SIZE TESTING ##
+
+		#########################################
+		## BREAKING UP INTO SMALLER INCREMENTs ##
 		from scipy import io
 		lidx = list(sdat['dipoleCells'].keys())
 
 		lidxLen = len(lidx)
-		partialInd = int(lidxLen / 10)
+		increment = 20
+		lidxIncrement = int(lidxLen / increment)  # /15 worked too!! 
 
-		print('lidx_part1: lidx[0:' + str(partialInd) + ']')
-		lidx_part1 = lidx[:partialInd]
+		import numpy as np
+		lidxIncrements = (np.arange(0, lidxLen, lidxIncrement)).tolist()
+		if lidxIncrements[-1] != lidxLen:
+			lidxIncrements.append(lidxLen)
 
-		lty = [GetCellType(idx,dnumc,dstartidx,dendidx) for idx in lidx]
-		lty_part1 = lty[:partialInd]
+		Want to create --> 
+		lidx_part0 = lidx[lidxIncrements[0]:lidxIncrements[1]]
+		lidx_part1 = lidx[lidxIncrements[1]:lidxIncrements[2]]
+
+		lidxDict = {}
+		for i in range(len(lidxIncrements)-1):
+			keyName = 'lidx_part' + str(i)
+			lidxDict[keyName] = lidx[lidxIncrements[i]:lidxIncrements[i+1]]
 
 
-		cellPos = [GetCellCoords(simConfig,idx) for idx in lidx]
-		cellPos_part1 = cellPos[:partialInd]
 
-		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
-		cellDipoles_part1 = cellDipoles[:partialInd]
 
-		matDat_part1 = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
 
-		outfn_part1 = fullFilename.split('_data.pkl')[0] + '_PART_1_' + '_dipoleMat.mat'
-		io.savemat(outfn_part1, matDat_part1, do_compression=True)
-		print('part 1 saved')
+		###### FINISH CONVERTING THE REST OF THIS IN A SECOND ### 
+		# print('lidx_part1: lidx[0:' + str(partialInd) + ']')
+		# lidx_part1 = lidx[:partialInd]
+
+		# lty = [GetCellType(idx,dnumc,dstartidx,dendidx) for idx in lidx]
+		# lty_part1 = lty[:partialInd]
+
+
+		# cellPos = [GetCellCoords(simConfig,idx) for idx in lidx]
+		# cellPos_part1 = cellPos[:partialInd]
+
+		# cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+		# cellDipoles_part1 = cellDipoles[:partialInd]
+
+		# matDat_part1 = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
+
+		# outfn_part1 = fullFilename.split('_data.pkl')[0] + '__PART_1_' + '_dipoleMat.mat'
+		# io.savemat(outfn_part1, matDat_part1, do_compression=True)
+		# print('part 1 saved')
 
 
 
