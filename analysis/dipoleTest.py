@@ -100,18 +100,30 @@ if saveTest:
 		### --- NOW DO matDat-- ###
 		###########################
 
-		# matDatDict = {}
+		matDatDict = {}
 
-		# for i in range(len(cellDipolesDict.keys())):
-		# 	keyName = 'matDat_part' + str(i)
-		# 	partKeyName = '_part' + 
-		# 	matDatDict[keyName] = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
+		for i in range(len(cellDipolesDict.keys())):
+			keyName = 'matDat_part' + str(i)
+			partKeyName = '_part' + str(i)
+			matDatDict[keyName] = {'cellPos': cellPosDict['cellPos' + partKeyName], 
+								'cellPops': ltyDict['lty' + partKeyName], 
+								'cellDipoles': cellDipolesDict['cellDipoles' + partKeyName], 
+								'dipoleSum': sdat['dipoleSum']}
 
 
-		# matDat_part1 = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
+		###########################
+		### --- NOW SAVE !!! -- ###
+		###########################
 
+		for matDatPart in matDatDict.keys():
+			partName = matDatPart.split('matDat_')[1] 
 
+			outfn_dir = basedir + 'dipoleMatFiles/'
+			if not os.path.exists(outfn_dir):
+				os.mkdir(outfn_dir)
 
+			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + partName + '__' + 'dipoleMat.mat'   		#fullFilename.split('_data.pkl')[0] + '__' + partName + '__' + 'dipoleMat.mat'
+			io.savemat(outfn, matDatDict[matDatPart], do_compression=True)
 
 
 
