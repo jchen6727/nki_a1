@@ -46,9 +46,9 @@ if saveTest:
 		if lidxIncrements[-1] != lidxLen:
 			lidxIncrements.append(lidxLen)
 
-		Want to create --> 
-		lidx_part0 = lidx[lidxIncrements[0]:lidxIncrements[1]]
-		lidx_part1 = lidx[lidxIncrements[1]:lidxIncrements[2]]
+		# Want to create --> 
+		## lidx_part0 = lidx[lidxIncrements[0]:lidxIncrements[1]]
+		## lidx_part1 = lidx[lidxIncrements[1]:lidxIncrements[2]]
 
 		lidxDict = {}
 		for i in range(len(lidxIncrements)-1):
@@ -56,9 +56,66 @@ if saveTest:
 			lidxDict[keyName] = lidx[lidxIncrements[i]:lidxIncrements[i+1]]
 
 
+		##############################
+		###  ---  NOW DO LTY ----  ###
+		##############################
+		lty = [GetCellType(idx,dnumc,dstartidx,dendidx) for idx in lidx]
+
+		# Want to create --> 
+		## lty_part0 = lty[lidxIncrements[0]:lidxIncrements[1]]
+		## lty_part1 = lty[lidxIncrements[1]:lidxIncrements[2]]
+
+		ltyDict = {}
+		for i in range(len(lidxIncrements)-1):
+			keyName = 'lty_part' + str(i)
+			ltyDict[keyName] = lty[lidxIncrements[i]:lidxIncrements[i+1]]
 
 
 
+		##############################
+		### --- NOW DO cellPos --- ###
+		##############################
+
+		cellPos = [GetCellCoords(simConfig,idx) for idx in lidx]
+
+		cellPosDict = {}
+		for i in range(len(lidxIncrements)-1):
+			keyName = 'cellPos_part' + str(i)
+			cellPosDict[keyName] = cellPos[lidxIncrements[i]:lidxIncrements[i+1]]
+
+
+		#################################
+		### --- NOW DO cellDipoles--- ###
+		#################################
+
+		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+
+		cellDipolesDict = {}
+		for i in range(len(lidxIncrements)-1):
+			keyName = 'cellDipoles_part' + str(i)
+			cellDipolesDict[keyName] = cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]]
+
+
+		###########################
+		### --- NOW DO matDat-- ###
+		###########################
+
+		# matDatDict = {}
+
+		# for i in range(len(cellDipolesDict.keys())):
+		# 	keyName = 'matDat_part' + str(i)
+		# 	partKeyName = '_part' + 
+		# 	matDatDict[keyName] = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
+
+
+		# matDat_part1 = {'cellPos': cellPos_part1, 'cellPops': lty_part1, 'cellDipoles': cellDipoles_part1, 'dipoleSum': sdat['dipoleSum']}
+
+
+
+
+
+
+		#######
 		###### FINISH CONVERTING THE REST OF THIS IN A SECOND ### 
 		# print('lidx_part1: lidx[0:' + str(partialInd) + ']')
 		# lidx_part1 = lidx[:partialInd]
