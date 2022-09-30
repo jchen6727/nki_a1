@@ -80,29 +80,29 @@ if saveTest2:
 		# create cellDipolesDict w/ cellDipoles data + corresponding lidx indices 
 		cellDipolesDict = {}
 		for i in range(len(lidxIncrements)-1):
-			keyName = 'cellDipoles_part' + str(i)
-			cellDipolesDict[keyName] = cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]]
-
-			lidxKey = 'lidx_part' + str(i)
-			cellDipolesDict[lidxKey] = lidx[lidxIncrements[i]:lidxIncrements[i+1]]
+			keyName = 'part' + str(i)
+			cellDipolesDict[keyName] = {'cellDipoles': cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]], 
+										'lidx': lidx[lidxIncrements[i]:lidxIncrements[i+1]]}
+			# keyName = 'cellDipoles_part' + str(i)
+			# cellDipolesDict[keyName] = cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]]
+			# lidxKey = 'lidx_part' + str(i)
+			# cellDipolesDict[lidxKey] = lidx[lidxIncrements[i]:lidxIncrements[i+1]]
 		print('cellDipolesDict completed -- lidx & cellDipoles data included')
 
 
 
-
 		# SAVE cellDipoles dictionary to separate matlab files 
-		for fullKeyName in cellDipolesDict.keys():
-			partKeyName = fullKeyName.split('cellDipoles_')[1]
+		for keyName in cellDipolesDict.keys():
 
 			outfn_dir = basedir + 'dipoleMatFiles/'
 			if not os.path.exists(outfn_dir):
 				os.mkdir(outfn_dir)
 
-			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + partKeyName + '__' + 'cellDipoles.mat'
+			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + keyName + '__' + 'cellDipoles.mat'
 
 			if not os.path.isfile(outfn):
 				print('saving ' + outfn)
-				io.savemat(outfn, cellDipolesDict[fullKeyName], do_compression=True)
+				io.savemat(outfn, cellDipolesDict[keyName], do_compression=True)
 				print(outfn + ' SAVED!')
 			else:
 				print('already saved!')
