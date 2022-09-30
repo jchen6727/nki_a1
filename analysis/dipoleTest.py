@@ -52,7 +52,7 @@ if saveTest2:
 
 		# saving
 		outfn_cellDipoles = fullFilename.split('_data.pkl')[0] + '_cellDipoles.mat'
-		io.savemat(outfn_cellDipoles, dipoleMat, do_compression=True)
+		io.savemat(outfn_cellDipoles, cellDipolesDat, do_compression=True)
 		print('cellDipoles data saved!')
 
 
