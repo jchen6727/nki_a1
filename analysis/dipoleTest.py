@@ -64,7 +64,7 @@ if saveTest2:
 
 		# break lidx up into increments
 		lidxLen = len(lidx)
-		increment = 15
+		increment = 25			# 20
 		lidxIncrement = int(lidxLen / increment)  # /20 worked too!! 
 		print('Separating lidx into ' + str(increment) + ' increments')
 
