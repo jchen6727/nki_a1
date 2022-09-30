@@ -98,7 +98,7 @@ if saveTest2:
 			if not os.path.exists(outfn_dir):
 				os.mkdir(outfn_dir)
 
-			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + partName + '__' + 'cellDipoles.mat'
+			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + partKeyName + '__' + 'cellDipoles.mat'
 
 			if not os.path.isfile(outfn):
 				print('saving ' + outfn)
