@@ -44,15 +44,25 @@ if saveTest2:
 		matDat = {'cellPos': cellPos, 'cellPops': lty, 'lidx': lidx, 'dipoleSum': sdat['dipoleSum']}  # 'cellDipoles': cellDipoles, 
 
 		# save matDat dictionary as a .mat file
-		outfn_matDat = fullFilename.split('_data.pkl')[0] + '_matDat.mat'
-		io.savemat(outfn_matDat, matDat, do_compression=True)
-		print('non-cellDipoles data saved!')
-
+		### EDIT THIS SO SKIPS IF ALREADY SAVED!!!
+		outfn_dir = basedir + 'dipoleMatFiles/'
+		outfn_matDat = outfn_dir + fn.split('_data.pkl')[0] + '_matDat.mat'  # '__' + partName + '__' + 'cellDipoles.mat' # outfn_matDat = fullFilename.split('_data.pkl')[0] + '_matDat.mat'  ### EDIT THIS TO GO TO PROPER DIRECTORY! 
+		
+		if not os.path.isfile(outfn_matDat):
+			print('saving ' + outfn_matDat)
+			io.savemat(outfn_matDat, matDat, do_compression=True)
+			print('non-cellDipoles data saved!')
+		else:
+			print('already saved!')
 
 
 		#############################
 		### SAVE CELLDIPOLES DATA ### 
 		#############################
+		# get cellDipoles data 
+		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+
+
 		cellDipolesDat = {'cellDipoles': cellDipoles}
 
 		# break lidx up into increments
@@ -66,8 +76,6 @@ if saveTest2:
 		if lidxIncrements[-1] != lidxLen:
 			lidxIncrements.append(lidxLen)
 
-		# get cellDipoles data 
-		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
 
 		# create cellDipolesDict w/ cellDipoles data + corresponding lidx indices 
 		cellDipolesDict = {}
