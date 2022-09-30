@@ -17,10 +17,52 @@ pklFiles = ['v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']#, 'v36_batch_eegSp
 
 
 
+#########################
+#### SAVING TEST 2 ######
+#########################
+saveTest2 = 1
+
+if saveTest2:
+	for fn in pklFiles:
+		## LOAD DATA 
+		fullFilename = basedir + fn
+		print('Working with file: ' + fn)
+		simConfig, sdat, dstartidx, dendidx, dnumc, dspkID, dspkT = loaddat(fullFilename)
+		print('loaddat run on ' + fn)
+
+		#### SAVE ALL NON-CELLDIPOLES DATA! ##### 
+		from scipy import io
+
+		lidx = list(sdat['dipoleCells'].keys())
+		lty = [GetCellType(idx,dnumc,dstartidx,dendidx) for idx in lidx]
+		cellPos = [GetCellCoords(simConfig,idx) for idx in lidx]
+		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+
+		matDat = {'cellPos': cellPos, 'cellPops': lty, 'dipoleSum': sdat['dipoleSum']}  # 'cellDipoles': cellDipoles, 
+
+		# saving 
+		outfn_matDat = fullFilename.split('_data.pkl')[0] + '_matDat.mat'
+		io.savemat(outfn_matDat, matDat, do_compression=True)
+		print('non-cellDipoles data saved!')
+
+
+
+		### SAVE CELLDIPOLES DATA ### 
+		cellDipolesDat = {'cellDipoles': cellDipoles}
+
+		# saving
+		outfn_cellDipoles = fullFilename.split('_data.pkl')[0] + '_cellDipoles.mat'
+		io.savemat(outfn_cellDipoles, dipoleMat, do_compression=True)
+		print('cellDipoles data saved!')
+
+
+
+
+
 #######################
 #### SAVING TEST ######
 #######################
-saveTest = 1
+saveTest = 0
 
 if saveTest:
 	for fn in pklFiles:
@@ -33,7 +75,7 @@ if saveTest:
 
 
 		#########################################
-		## BREAKING UP INTO SMALLER INCREMENTs ##
+		## BREAKING UP INTO SMALLER INCREMENTS ##
 		from scipy import io
 		lidx = list(sdat['dipoleCells'].keys())
 
