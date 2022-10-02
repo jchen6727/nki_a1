@@ -13,7 +13,7 @@ for file in allFiles:
 
 
 ##### FOR INDIVIDUAL TESTING #####
-pklFiles = ['v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']#, 'v36_batch_eegSpeech_CINECA_trial_12_1_data.pkl']
+pklFiles = ['v36_batch_eegSpeech_CINECA_trial_12_1_data.pkl']#, 'v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']
 
 
 
@@ -44,7 +44,7 @@ if saveTest2:
 		matDat = {'cellPos': cellPos, 'cellPops': lty, 'lidx': lidx, 'dipoleSum': sdat['dipoleSum']}  # 'cellDipoles': cellDipoles, 
 
 		# save matDat dictionary as a .mat file
-		outfn_dir = basedir + 'dipoleMatFiles/'
+		outfn_dir = basedir + 'trial_12_1_dipoleMatFiles/'
 		outfn_matDat = outfn_dir + fn.split('_data.pkl')[0] + '_matDat.mat'  # '__' + partName + '__' + 'cellDipoles.mat' # outfn_matDat = fullFilename.split('_data.pkl')[0] + '_matDat.mat'  ### EDIT THIS TO GO TO PROPER DIRECTORY! 
 		
 		if not os.path.isfile(outfn_matDat):
@@ -64,7 +64,7 @@ if saveTest2:
 
 		# break lidx up into increments
 		lidxLen = len(lidx)
-		increment = 25			# 20
+		increment = 200 #25			# 20
 		lidxIncrement = int(lidxLen / increment)  # /20 worked too!! 
 		print('Separating lidx into ' + str(increment) + ' increments')
 
