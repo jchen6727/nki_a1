@@ -55,48 +55,48 @@ if saveTest2:
 			print('matDat file already saved!')
 
 
-		# #############################
-		# ### SAVE CELLDIPOLES DATA ### 
-		# #############################
-		# # get cellDipoles data 
-		# cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
+		#############################
+		### SAVE CELLDIPOLES DATA ### 
+		#############################
+		# get cellDipoles data 
+		cellDipoles = [sdat['dipoleCells'][idx] for idx in lidx]
 
 
-		# # break lidx up into increments
-		# lidxLen = len(lidx)
-		# increment = 200 #25			# 20
-		# lidxIncrement = int(lidxLen / increment)  # /20 worked too!! 
-		# print('Separating lidx into ' + str(increment) + ' increments')
+		# break lidx up into increments
+		lidxLen = len(lidx)
+		increment = 200 #25			# 20
+		lidxIncrement = int(lidxLen / increment)  # /20 worked too!! 
+		print('Separating lidx into ' + str(increment) + ' increments')
 
-		# import numpy as np
-		# lidxIncrements = (np.arange(0, lidxLen, lidxIncrement)).tolist()
-		# if lidxIncrements[-1] != lidxLen:
-		# 	lidxIncrements.append(lidxLen)
-
-
-		# # create cellDipolesDict w/ cellDipoles data + corresponding lidx indices 
-		# cellDipolesDict = {}
-		# for i in range(len(lidxIncrements)-1):
-		# 	keyName = 'part' + str(i)
-		# 	cellDipolesDict[keyName] = {'cellDipoles': cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]], 
-		# 								'lidx': lidx[lidxIncrements[i]:lidxIncrements[i+1]]}
-		# print('cellDipolesDict completed -- lidx & cellDipoles data included')
+		import numpy as np
+		lidxIncrements = (np.arange(0, lidxLen, lidxIncrement)).tolist()
+		if lidxIncrements[-1] != lidxLen:
+			lidxIncrements.append(lidxLen)
 
 
+		# create cellDipolesDict w/ cellDipoles data + corresponding lidx indices 
+		cellDipolesDict = {}
+		for i in range(len(lidxIncrements)-1):
+			keyName = 'part' + str(i)
+			cellDipolesDict[keyName] = {'cellDipoles': cellDipoles[lidxIncrements[i]:lidxIncrements[i+1]], 
+										'lidx': lidx[lidxIncrements[i]:lidxIncrements[i+1]]}
+		print('cellDipolesDict completed -- lidx & cellDipoles data included')
 
-		# # SAVE cellDipoles dictionary to separate matlab files 
-		# outfn_dir = basedir + 'dipoleMatFiles/'
-		# if not os.path.exists(outfn_dir):
-		# 	os.mkdir(outfn_dir)
 
-		# for keyName in cellDipolesDict.keys():
-		# 	outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + keyName + '__' + 'cellDipoles.mat'
-		# 	if not os.path.isfile(outfn):
-		# 		print('saving ' + outfn)
-		# 		io.savemat(outfn, cellDipolesDict[keyName], do_compression=True)
-		# 		print(outfn + ' SAVED!')
-		# 	else:
-		# 		print('already saved!')
+
+		# SAVE cellDipoles dictionary to separate matlab files 
+		outfn_dir = basedir + 'dipoleMatFiles/'
+		if not os.path.exists(outfn_dir):
+			os.mkdir(outfn_dir)
+
+		for keyName in cellDipolesDict.keys():
+			outfn = outfn_dir + fn.split('_data.pkl')[0] + '__' + keyName + '__' + 'cellDipoles.mat'
+			if not os.path.isfile(outfn):
+				print('saving ' + outfn)
+				io.savemat(outfn, cellDipolesDict[keyName], do_compression=True)
+				print(outfn + ' SAVED!')
+			else:
+				print('already saved!')
 
 
 
