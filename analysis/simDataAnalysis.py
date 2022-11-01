@@ -1047,7 +1047,7 @@ def plotDataFrames(dataFrame, electrodes=None, pops=None, title=None, cbarLabel=
 	## Set label for color scalebar 
 	if cbarLabel is None:
 		cbarLabel = 'LFP amplitude (mV)'
-	elif cbarLabel is 'CSD':
+	elif cbarLabel == 'CSD':
 		cbarLabel = 'CSD amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
 
 	## Create lists of electrode (columns and labels)
@@ -1696,9 +1696,9 @@ def getSpikeData(dataFile, pop, graphType, oscEventInfo):
 		popList = pop
 
 	# Set up which kind of data -- i.e. spectrogram or histogram 
-	if graphType is 'spect':
+	if graphType == 'spect':
 		spikeDict = getRateSpectrogramData(include=popList, oscEventInfo=oscEventInfo)
-	elif graphType is 'hist':
+	elif graphType == 'hist':
 		spikeDict = getSpikeHistData(include=popList, oscEventInfo=oscEventInfo, binSize=5, graphType='bar', measure='rate') ## sim.analysis.getSpikeHistData
 
 	return spikeDict 
@@ -2833,7 +2833,7 @@ def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, mi
 	Fs = int(1000.0/sim.cfg.recordStep)
 
 	## Calculations for raw LFP or CSD timeSeries
-	if inputDataType is 'timeSeries':
+	if inputDataType == 'timeSeries':
 		# freqList = np.arange(minFreq, maxFreq+stepFreq, stepFreq)
 		morletSpec = MorletSpec(inputData, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)#, lfreq=freqList) # specDuring[0]
 		freqs = F = morletSpec.f 		# F_during = specDuring[0].f
@@ -2846,7 +2846,7 @@ def getPSDdata(dataFile, inputData, inputDataType='spectrogram', duringOsc=1, mi
 
 
 	## Calculations for spectrogram input 
-	elif inputDataType is 'spectrogram':
+	elif inputDataType == 'spectrogram':
 		## This assumes a dict w/ an output structure that matches getCSDdata output when outputType is spectrogram
 		if duringOsc:
 			freqs = inputData['F_during']
