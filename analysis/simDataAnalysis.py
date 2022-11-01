@@ -859,12 +859,24 @@ def geteventprop (dframe,evidx,align):
 # ONLY FOR SIM SUBJECTS FOR NOW!! 
 ### TO DO: (1) expand to NHP (2) add in capability for 'all' regions 
 ### NOTE: can / should this even be expanded to NHP? 
-def getOscEventInfo(subjects, frequencyBands, waveletPath):
+def getOscEventInfo(subjects=None, frequencyBands, waveletPath):
 	# subjects: list 
 	# frequencyBands: list 
 	# waveletPath: str 
 
 	layers = getSimLayers()   # layers = {'supra':[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'gran':[10, 11], 'infra':[12, 13, 14, 15, 16, 17, 18, 19]} ## NETPYNE SIMS
+
+
+	if subjects is None:
+		os.chdir(waveletPath)
+		dirContents = os.listdir()
+		subjs = []
+		for dirContent in dirContents:
+			if os.path.isdir(dirContent) and 'batch' in dirContent:
+				subjs.append(dirContent)
+		subjects = subjs
+
+	print('Analyzing subjects: ' + str(subjects))
 
 
 	## organize a dict with all the wavelets from the above subjects:
