@@ -859,7 +859,7 @@ def geteventprop (dframe,evidx,align):
 # ONLY FOR SIM SUBJECTS FOR NOW!! 
 ### TO DO: (1) expand to NHP (2) add in capability for 'all' regions 
 ### NOTE: can / should this even be expanded to NHP? 
-def getOscEventInfo(subjects=None, frequencyBands, waveletPath):
+def getOscEventInfo(frequencyBands, waveletPath, subjects=None):
 	# subjects: list 
 	# frequencyBands: list 
 	# waveletPath: str 
