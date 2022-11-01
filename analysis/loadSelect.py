@@ -4,7 +4,8 @@
 # IMPORTS # 
 
 import numpy as np
-from bbox import bbox# , p2d
+#from bbox import bbox# , p2d
+import bbox 
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion  
 from scipy.ndimage.filters import maximum_filter
 from morlet import MorletSpec
