@@ -203,31 +203,22 @@ if popsByBand:
 			for region in layers.keys():
 				individual_oscEventInfo = oscEventInfo[band][region][subject]
 
-	# for band in frequencyBands:
-	# 	for region in layers.keys():
-	# 		for subject in subjects_w_LFPrecording:
+	for band in frequencyBands:
+		for region in layers.keys():
+			for subject in simSubjects:
 
-	# 			### GET SUBJECT NAME + PATH TO DATAFILE 
-	# 			batch57_subject = subject.split('_data')[0]
-	# 			if batch57_subject == 'v34_batch57_3_2':
-	# 				subject_dataFile = 'A1_v34_batch67_v34_batch67_0_0_data.pkl'
-	# 			elif batch57_subject == 'v34_batch57_3_3':
-	# 				subject_dataFile = 'A1_v34_batch67_v34_batch67_1_1_data.pkl'
-	# 			elif batch57_subject == 'v34_batch57_3_4':
-	# 				subject_dataFile = 'A1_v34_batch65_v34_batch65_0_0_data.pkl'
+				dataFilePath = based + subject + '.pkl'
 
-	# 			dataFilePath = based + subject_dataFile
+				subject_all_oscEventInfo = oscEventInfo[band][region][subject]
+				for eventIdx in subject_all_oscEventInfo.keys():
+					individual_oscEventInfo = subject_all_oscEventInfo[eventIdx]
 
-	# 			subject_all_oscEventInfo = oscEventInfo[band][region][subject]
-	# 			for eventIdx in subject_all_oscEventInfo.keys():
-	# 				individual_oscEventInfo = subject_all_oscEventInfo[eventIdx]
+					timeRange = list(np.zeros(2))
+					timeRange[0] = individual_oscEventInfo['minT']
+					timeRange[1] = individual_oscEventInfo['maxT']
 
-	# 				timeRange = list(np.zeros(2))
-	# 				timeRange[0] = individual_oscEventInfo['minT']
-	# 				timeRange[1] = individual_oscEventInfo['maxT']
-
-	# 				dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
-	# 													oscEventInfo = individual_oscEventInfo)
+					dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
+														oscEventInfo = individual_oscEventInfo)
 
 	# 				waveletElectrode = individual_oscEventInfo['chan']
 	# 				## max pops contributing to avg CSD 
