@@ -25,7 +25,7 @@ import pickle
 import morlet
 from morlet import MorletSpec, index2ms
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from loadSelect import * 
+#from loadSelect import * 
 
 
 
