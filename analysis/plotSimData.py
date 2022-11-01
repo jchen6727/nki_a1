@@ -179,43 +179,17 @@ if popsByBand:
 
 	layers = getSimLayers()
 
-	frequencyBands = ['delta', 'theta', 'alpha', 'beta']#, 'gamma']	#, 'hgamma'] ## DON'T DO HGAMMA FOR NOW 
+	frequencyBands = ['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
 
-	# simSubjects = ['']
-
-# 	v34_batch67_CINECA_2_1_data/
-#       v34_batch67_CINECA_2_2_data/
-# 	      v34_batch67_CINECA_2_3_data/
-# v34_batch67_CINECA_0_0_data/  v34_batch67_CINECA_2_4_data/
-# v34_batch67_CINECA_0_1_data/  v34_batch67_CINECA_3_0_data/
-# v34_batch67_CINECA_0_2_data/  v34_batch67_CINECA_3_1_data/
-# v34_batch67_CINECA_0_3_data/  v34_batch67_CINECA_3_2_data/
-# v34_batch67_CINECA_0_4_data/  v34_batch67_CINECA_3_3_data/
-# v34_batch67_CINECA_1_0_data/  v34_batch67_CINECA_3_4_data/
-# v34_batch67_CINECA_1_1_data/  v34_batch67_CINECA_4_0_data/
-# v34_batch67_CINECA_1_2_data/  v34_batch67_CINECA_4_1_data/
-# v34_batch67_CINECA_1_3_data/  v34_batch67_CINECA_4_2_data/
-# v34_batch67_CINECA_1_4_data/  v34_batch67_CINECA_4_3_data/
-# v34_batch67_CINECA_2_0_data/  v34_batch67_CINECA_4_4_data/
-
-	########################################################################
-	# # subjects_w_LFPrecording = ['v34_batch57_3_2_data_timeRange_0_6',
-	# 							#'v34_batch57_3_3_data_timeRange_0_6',
-	# 							#'v34_batch57_3_4_data_timeRange_0_6']
-								
-	# subjects_w_LFPrecording =  ['v34_batch57_3_3_data_timeRange_6_11',
-	# 							'v34_batch57_3_4_data_timeRange_6_11'] 
-								#['v34_batch57_3_2_data_timeRange_6_11',
-								#'v34_batch57_3_3_data_timeRange_6_11',
-								#'v34_batch57_3_4_data_timeRange_6_11']   ## NEED TO ADD TIME CORRECTION!! 
-	## EQUIVALENCES ^^
-	### v34_batch57_3_2 == v34_batch67_0_0
-	### v34_batch57_3_3 == v34_batch67_1_1
-	### v34_batch57_3_4 == v34_batch65_0_0
+	simSubjects = ['v34_batch67_CINECA_0_0_data/', 'v34_batch67_CINECA_0_1_data/', 'v34_batch67_CINECA_0_2_data/', 'v34_batch67_CINECA_0_3_data/', 'v34_batch67_CINECA_0_4_data/',
+				   'v34_batch67_CINECA_1_0_data/', 'v34_batch67_CINECA_1_1_data/', 'v34_batch67_CINECA_1_2_data/', 'v34_batch67_CINECA_1_3_data/', 'v34_batch67_CINECA_1_4_data/',
+				   'v34_batch67_CINECA_2_0_data/', 'v34_batch67_CINECA_2_1_data/', 'v34_batch67_CINECA_2_2_data/', 'v34_batch67_CINECA_2_3_data/', 'v34_batch67_CINECA_2_4_data/',
+				   'v34_batch67_CINECA_3_0_data/', 'v34_batch67_CINECA_3_1_data/', 'v34_batch67_CINECA_3_2_data/', 'v34_batch67_CINECA_3_3_data/', 'v34_batch67_CINECA_3_4_data/',
+				   'v34_batch67_CINECA_4_0_data/', 'v34_batch67_CINECA_4_1_data/', 'v34_batch67_CINECA_4_2_data/', 'v34_batch67_CINECA_4_3_data/', 'v34_batch67_CINECA_4_4_data/']
 
 	# waveletCounts_w_LFPrecording = getWaveletCounts(regions, frequencyBands, subjects_w_LFPrecording, waveletPathSim, sim=1, cutoffs=0)
-	# subjects=subjects_w_LFPrecording vv
-	oscEventInfo = getOscEventInfo(frequencyBands=frequencyBands, waveletPath=waveletPathSim) # took out subjects arg for test 
+
+	oscEventInfo = getOscEventInfo(frequencyBands=frequencyBands, waveletPath=waveletPathSim) # subjects = simSubjects
 
 	#### UNCOMMENT BELOW #### 
 	## now thetaOscEventInfo is equivalent to
@@ -224,9 +198,10 @@ if popsByBand:
 
 	##### COMMENTING OUT FOR TEST 11/01/2022 ####### 
 	# for subject in subjects_w_LFPrecording:
-	# 	for band in frequencyBands:
-	# 		for region in layers.keys():
-	# 			individual_oscEventInfo = oscEventInfo[band][region][subject]
+	for subject in simSubjects:
+		for band in frequencyBands:
+			for region in layers.keys():
+				individual_oscEventInfo = oscEventInfo[band][region][subject]
 
 	# for band in frequencyBands:
 	# 	for region in layers.keys():
