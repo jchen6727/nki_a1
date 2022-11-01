@@ -217,44 +217,45 @@ if popsByBand:
 					timeRange[0] = individual_oscEventInfo['minT']
 					timeRange[1] = individual_oscEventInfo['maxT']
 
+					print('Retrieving CSD data frame for subject: ' + str(subject))
 					dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
 														oscEventInfo = individual_oscEventInfo)
 
-	# 				waveletElectrode = individual_oscEventInfo['chan']
-	# 				## max pops contributing to avg CSD 
-	# 				maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
-	# 				## PRINTING / TESTING LINES 
-	# 				# print('max pops for ' + batch57_subject + '\n'
-	# 				# 		+ 'frequencyBand: ' + band + '\n'
-	# 				# 		+ 'region: ' + region + '\n'
-	# 				# 		+ 'idx: ' + str(eventIdx) + '\n'
-	# 				# 		+ 'MAX POPS: ') 
-	# 				# print(maxPopsValues_avgCSD)
-	# 				oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD'] = maxPopsValues_avgCSD
+					waveletElectrode = individual_oscEventInfo['chan']
+					## max pops contributing to avg CSD 
+					maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
+					## PRINTING / TESTING LINES 
+					print('max pops for ' + subject + '\n'
+							+ 'frequencyBand: ' + band + '\n'
+							+ 'region: ' + region + '\n'
+							+ 'idx: ' + str(eventIdx) + '\n'
+							+ 'MAX POPS: ') 
+					print(maxPopsValues_avgCSD)
+					oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD'] = maxPopsValues_avgCSD
 
-	# 				## max pops contributing to peak CSD
-	# 				# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
-	# 				# oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
+					# max pops contributing to peak CSD
+					maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+					oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
 
 
-	# ### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
-	# for band in frequencyBands:
-	# 	for region in layers.keys():
-	# 		print('frequencyBand:' + band)
-	# 		print('layer region: ' + region)
+	### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
+	for band in frequencyBands:
+		for region in layers.keys():
+			print('frequencyBand:' + band)
+			print('layer region: ' + region)
 
-	# 		for subject in subjects_w_LFPrecording:
-	# 			eventIdxList = list(oscEventInfo[band][region][subject].keys())
+			for subject in subjects_w_LFPrecording:
+				eventIdxList = list(oscEventInfo[band][region][subject].keys())
 
-	# 			for eventIdx in eventIdxList:
-	# 				topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
+				for eventIdx in eventIdxList:
+					topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
 
-	# 				topPops = []
-	# 				for key in topPopKeys:
-	# 					if not key == 'electrodeNumber':
-	# 						topPops.append(key)
+					topPops = []
+					for key in topPopKeys:
+						if not key == 'electrodeNumber':
+							topPops.append(key)
 
-	# 				print(topPops)
+					print(topPops)
 
 
 
