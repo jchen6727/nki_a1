@@ -181,8 +181,8 @@ if popsByBand:
 
 	frequencyBands = ['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
 
-	simSubjects = ['v34_batch67_CINECA_0_0_data', 'v34_batch67_CINECA_0_1_data', 'v34_batch67_CINECA_0_2_data', 'v34_batch67_CINECA_0_3_data', 'v34_batch67_CINECA_0_4_data',
-				   'v34_batch67_CINECA_1_0_data', 'v34_batch67_CINECA_1_1_data', 'v34_batch67_CINECA_1_2_data', 'v34_batch67_CINECA_1_3_data', 'v34_batch67_CINECA_1_4_data']#,
+	simSubjects = ['v34_batch67_CINECA_0_0_data']#, 'v34_batch67_CINECA_0_1_data', 'v34_batch67_CINECA_0_2_data', 'v34_batch67_CINECA_0_3_data', 'v34_batch67_CINECA_0_4_data',
+				   #'v34_batch67_CINECA_1_0_data', 'v34_batch67_CINECA_1_1_data', 'v34_batch67_CINECA_1_2_data', 'v34_batch67_CINECA_1_3_data', 'v34_batch67_CINECA_1_4_data']#,
 				   #'v34_batch67_CINECA_2_0_data', 'v34_batch67_CINECA_2_1_data', 'v34_batch67_CINECA_2_2_data', 'v34_batch67_CINECA_2_3_data', 'v34_batch67_CINECA_2_4_data',
 				   #'v34_batch67_CINECA_3_0_data', 'v34_batch67_CINECA_3_1_data', 'v34_batch67_CINECA_3_2_data', 'v34_batch67_CINECA_3_3_data', 'v34_batch67_CINECA_3_4_data',
 				   #'v34_batch67_CINECA_4_0_data', 'v34_batch67_CINECA_4_1_data', 'v34_batch67_CINECA_4_2_data', 'v34_batch67_CINECA_4_3_data', 'v34_batch67_CINECA_4_4_data']
@@ -208,6 +208,7 @@ if popsByBand:
 			for subject in simSubjects:
 
 				dataFilePath = based + subject + '.pkl'
+				print('path to dataFile:' + str(dataFilePath))
 
 				subject_all_oscEventInfo = oscEventInfo[band][region][subject]
 				for eventIdx in subject_all_oscEventInfo.keys():
