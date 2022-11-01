@@ -221,72 +221,74 @@ if popsByBand:
 	## now thetaOscEventInfo is equivalent to
 	## oscEventInfo[band][region][subject][eventIdx] = {'chan': , 'minT': , ... }
 
-	for subject in subjects_w_LFPrecording:
-		for band in frequencyBands:
-			for region in layers.keys():
-				individual_oscEventInfo = oscEventInfo[band][region][subject]
 
-	for band in frequencyBands:
-		for region in layers.keys():
-			for subject in subjects_w_LFPrecording:
+	##### COMMENTING OUT FOR TEST 11/01/2022 ####### 
+	# for subject in subjects_w_LFPrecording:
+	# 	for band in frequencyBands:
+	# 		for region in layers.keys():
+	# 			individual_oscEventInfo = oscEventInfo[band][region][subject]
 
-				### GET SUBJECT NAME + PATH TO DATAFILE 
-				batch57_subject = subject.split('_data')[0]
-				if batch57_subject == 'v34_batch57_3_2':
-					subject_dataFile = 'A1_v34_batch67_v34_batch67_0_0_data.pkl'
-				elif batch57_subject == 'v34_batch57_3_3':
-					subject_dataFile = 'A1_v34_batch67_v34_batch67_1_1_data.pkl'
-				elif batch57_subject == 'v34_batch57_3_4':
-					subject_dataFile = 'A1_v34_batch65_v34_batch65_0_0_data.pkl'
+	# for band in frequencyBands:
+	# 	for region in layers.keys():
+	# 		for subject in subjects_w_LFPrecording:
 
-				dataFilePath = based + subject_dataFile
+	# 			### GET SUBJECT NAME + PATH TO DATAFILE 
+	# 			batch57_subject = subject.split('_data')[0]
+	# 			if batch57_subject == 'v34_batch57_3_2':
+	# 				subject_dataFile = 'A1_v34_batch67_v34_batch67_0_0_data.pkl'
+	# 			elif batch57_subject == 'v34_batch57_3_3':
+	# 				subject_dataFile = 'A1_v34_batch67_v34_batch67_1_1_data.pkl'
+	# 			elif batch57_subject == 'v34_batch57_3_4':
+	# 				subject_dataFile = 'A1_v34_batch65_v34_batch65_0_0_data.pkl'
 
-				subject_all_oscEventInfo = oscEventInfo[band][region][subject]
-				for eventIdx in subject_all_oscEventInfo.keys():
-					individual_oscEventInfo = subject_all_oscEventInfo[eventIdx]
+	# 			dataFilePath = based + subject_dataFile
 
-					timeRange = list(np.zeros(2))
-					timeRange[0] = individual_oscEventInfo['minT']
-					timeRange[1] = individual_oscEventInfo['maxT']
+	# 			subject_all_oscEventInfo = oscEventInfo[band][region][subject]
+	# 			for eventIdx in subject_all_oscEventInfo.keys():
+	# 				individual_oscEventInfo = subject_all_oscEventInfo[eventIdx]
 
-					dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
-														oscEventInfo = individual_oscEventInfo)
+	# 				timeRange = list(np.zeros(2))
+	# 				timeRange[0] = individual_oscEventInfo['minT']
+	# 				timeRange[1] = individual_oscEventInfo['maxT']
 
-					waveletElectrode = individual_oscEventInfo['chan']
-					## max pops contributing to avg CSD 
-					maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
-					## PRINTING / TESTING LINES 
-					# print('max pops for ' + batch57_subject + '\n'
-					# 		+ 'frequencyBand: ' + band + '\n'
-					# 		+ 'region: ' + region + '\n'
-					# 		+ 'idx: ' + str(eventIdx) + '\n'
-					# 		+ 'MAX POPS: ') 
-					# print(maxPopsValues_avgCSD)
-					oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD'] = maxPopsValues_avgCSD
+	# 				dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
+	# 													oscEventInfo = individual_oscEventInfo)
 
-					## max pops contributing to peak CSD
-					# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
-					# oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
+	# 				waveletElectrode = individual_oscEventInfo['chan']
+	# 				## max pops contributing to avg CSD 
+	# 				maxPopsValues_avgCSD = evalPops(dataFrame=dfAvg_CSD, electrode=waveletElectrode)
+	# 				## PRINTING / TESTING LINES 
+	# 				# print('max pops for ' + batch57_subject + '\n'
+	# 				# 		+ 'frequencyBand: ' + band + '\n'
+	# 				# 		+ 'region: ' + region + '\n'
+	# 				# 		+ 'idx: ' + str(eventIdx) + '\n'
+	# 				# 		+ 'MAX POPS: ') 
+	# 				# print(maxPopsValues_avgCSD)
+	# 				oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD'] = maxPopsValues_avgCSD
+
+	# 				## max pops contributing to peak CSD
+	# 				# maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
+	# 				# oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
 
 
-	### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
-	for band in frequencyBands:
-		for region in layers.keys():
-			print('frequencyBand:' + band)
-			print('layer region: ' + region)
+	# ### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
+	# for band in frequencyBands:
+	# 	for region in layers.keys():
+	# 		print('frequencyBand:' + band)
+	# 		print('layer region: ' + region)
 
-			for subject in subjects_w_LFPrecording:
-				eventIdxList = list(oscEventInfo[band][region][subject].keys())
+	# 		for subject in subjects_w_LFPrecording:
+	# 			eventIdxList = list(oscEventInfo[band][region][subject].keys())
 
-				for eventIdx in eventIdxList:
-					topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
+	# 			for eventIdx in eventIdxList:
+	# 				topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
 
-					topPops = []
-					for key in topPopKeys:
-						if not key == 'electrodeNumber':
-							topPops.append(key)
+	# 				topPops = []
+	# 				for key in topPopKeys:
+	# 					if not key == 'electrodeNumber':
+	# 						topPops.append(key)
 
-					print(topPops)
+	# 				print(topPops)
 
 
 
