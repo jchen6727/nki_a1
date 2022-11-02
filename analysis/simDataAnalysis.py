@@ -2254,15 +2254,15 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 		maxT = oscEventInfo['maxT']
 		alignoffset = oscEventInfo['alignoffset']
 		w2 = oscEventInfo['w2']
-		# Print out the values for view in terminal 
-		print('channel: ' + str(chan))
-		print('left: ' + str(left))
-		print('right: ' + str(right))
-		print('minT: ' + str(minT))
-		print('maxT: ' + str(maxT))
-		print('alignoffset: ' + str(alignoffset))
-		print('w2: ' + str(w2))
-		# Calculate idx0 and idx1 for before, and beforeT
+		# # Print out the values for view in terminal 
+		# print('channel: ' + str(chan))
+		# print('left: ' + str(left))
+		# print('right: ' + str(right))
+		# print('minT: ' + str(minT))
+		# print('maxT: ' + str(maxT))
+		# print('alignoffset: ' + str(alignoffset))
+		# print('w2: ' + str(w2))
+		# # Calculate idx0 and idx1 for before, and beforeT
 		idx0_before = max(0,left - w2)
 		idx1_before = left 
 		beforeT = (maxT-minT) * (idx1_before - idx0_before) / (right - left + 1)
@@ -2705,8 +2705,10 @@ def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
 
 	# Get all cell pops (cortical)
 	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
+	ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
 	allPops = list(sim.net.allPops.keys())
-	pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops 
+	#pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops  ## COMMENTED OUT 11/02 TO TEST ONLY EXCITATORY CORT POPS!! 
+	pops = ECortPops  ## ADDED IN HERE 11/02 FOR TESTING!!! 
 
 	## Get all electrodes 	## SEE TO-DO ABOVE!! (make an if statement)
 	evalElecs = []
