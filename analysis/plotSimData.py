@@ -179,7 +179,7 @@ if popsByBand:
 
 	layers = getSimLayers()
 
-	frequencyBands = ['theta'] #['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
+	frequencyBands = ['beta'] #['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
 
 	simSubjects = ['v34_batch67_CINECA_0_0_data', 'v34_batch67_CINECA_0_1_data', 'v34_batch67_CINECA_0_2_data', 'v34_batch67_CINECA_0_3_data', 'v34_batch67_CINECA_0_4_data',
 				   'v34_batch67_CINECA_1_0_data', 'v34_batch67_CINECA_1_1_data', 'v34_batch67_CINECA_1_2_data', 'v34_batch67_CINECA_1_3_data', 'v34_batch67_CINECA_1_4_data',
@@ -190,18 +190,6 @@ if popsByBand:
 	# waveletCounts_w_LFPrecording = getWaveletCounts(regions, frequencyBands, subjects_w_LFPrecording, waveletPathSim, sim=1, cutoffs=0)
 
 	oscEventInfo = getOscEventInfo(subjects=simSubjects,frequencyBands=frequencyBands, waveletPath=waveletPathSim) # subjects = simSubjects
-
-	#### UNCOMMENT BELOW #### 
-	## now thetaOscEventInfo is equivalent to
-	## oscEventInfo[band][region][subject][eventIdx] = {'chan': , 'minT': , ... }
-
-	##### COMMENTING OUT FOR TEST 11/01/2022 ####### 
-	# for subject in subjects_w_LFPrecording:
-	### commented out on 11/02 -- not sure what this for loop is for? 
-	# for subject in simSubjects:
-	# 	for band in frequencyBands:
-	# 		for region in layers.keys():
-	# 			individual_oscEventInfo = oscEventInfo[band][region][subject]
 
 	for band in frequencyBands:
 		for region in layers.keys():
@@ -264,12 +252,13 @@ if popsByBand:
 							#topPops.append(key)
 							topPops[band][region][eventIdx].append(key)
 
-					print(topPops)
+		print(topPops)
 
 
-	## SAVE TOPPOPS DICTIONARY!! 
-	with open('topPops.json', 'w') as fp:
-		json.dump(topPops, fp)
+		## SAVE TOPPOPS DICTIONARY!! 
+		jsonFile = 'topPops_' + str(band) + '.json'
+		with open(jsonFile, 'w') as fp:
+			json.dump(topPops, fp)
 
 	#with open('oscEventInfo.json', 'w') as outfile:
 		#json.dump(oscEventInfo, outfile)
