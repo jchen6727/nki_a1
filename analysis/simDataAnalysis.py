@@ -2689,6 +2689,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	plt.show()
 # Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
 def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
+	#### NOTE: ADD POPS AS ARG?? 
 	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
 	### oscEvenfInfo: dict 			--> dict w/ chan, left, right, minT, maxT, alignoffset

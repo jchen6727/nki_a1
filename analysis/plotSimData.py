@@ -206,9 +206,10 @@ if popsByBand:
 	for band in frequencyBands:
 		for region in layers.keys():
 			for subject in simSubjects:
+				print('Analyzing subject ' + str(subject) + '; band: ' + str(band) + ' ; region: ' + str(region))
 
 				dataFilePath = based + subject + '.pkl'
-				print('path to dataFile:' + str(dataFilePath))
+				# print('path to dataFile:' + str(dataFilePath))
 
 				subject_all_oscEventInfo = oscEventInfo[band][region][subject]
 				for eventIdx in subject_all_oscEventInfo.keys():
