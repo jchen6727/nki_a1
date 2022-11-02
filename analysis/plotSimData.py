@@ -179,7 +179,7 @@ if popsByBand:
 
 	layers = getSimLayers()
 
-	frequencyBands = ['delta']#, 'theta', 'alpha']#, 'beta', 'gamma', 'hgamma']
+	frequencyBands = ['delta', 'alpha']#['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
 
 	simSubjects = ['v34_batch67_CINECA_0_0_data', 'v34_batch67_CINECA_0_1_data']#, 'v34_batch67_CINECA_0_2_data', 'v34_batch67_CINECA_0_3_data', 'v34_batch67_CINECA_0_4_data',
 				   #'v34_batch67_CINECA_1_0_data', 'v34_batch67_CINECA_1_1_data', 'v34_batch67_CINECA_1_2_data', 'v34_batch67_CINECA_1_3_data', 'v34_batch67_CINECA_1_4_data']#,
