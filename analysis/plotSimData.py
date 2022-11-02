@@ -241,21 +241,28 @@ if popsByBand:
 
 
 	### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
+	topPops = {}
 	for band in frequencyBands:
+		topPops[band] = {}
 		for region in layers.keys():
 			print('frequencyBand:' + band)
 			print('layer region: ' + region)
+
+			topPops[band][region] = {}
 
 			for subject in simSubjects:
 				eventIdxList = list(oscEventInfo[band][region][subject].keys())
 
 				for eventIdx in eventIdxList:
+					topPops[band][region][eventIdx] = []
+
 					topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
 
-					topPops = []
+					# topPops = []
 					for key in topPopKeys:
 						if not key == 'electrodeNumber':
-							topPops.append(key)
+							#topPops.append(key)
+							topPops[band][region][eventIdx].append(key)
 
 					print(topPops)
 
