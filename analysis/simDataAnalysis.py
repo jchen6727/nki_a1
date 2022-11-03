@@ -17,7 +17,8 @@ import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
 import netpyne
-from netpyne.analysis import csd
+#from netpyne.analysis import csd
+from csd import *
 from numbers import Number
 import seaborn as sns 
 import pandas as pd 
@@ -2189,7 +2190,7 @@ def getSumLFP(dataFile, pops, elecs=False, timeRange=None, showFig=False):
 	return lfpData 
 
 ## CSD: data and plotting ## 
-def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEventInfo=None, dt=None, sampr=None, pop=None, spacing_um=100, minFreq=1, maxFreq=110, stepFreq=0.25):
+def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEventInfo=None, dt=None, sampr=None, pop=None, norm=None, spacing_um=100, minFreq=1, maxFreq=110, stepFreq=0.25):
 	#### Outputs a dict with CSD and other relevant data for plotting! 
 	## dataFile: str     					--> .pkl file with recorded simulation 
 	## outputType: list of strings 			--> options are 'timeSeries' +/- 'spectrogram' --> OR could be empty, if want csdData from all electrodes!! 
@@ -2200,6 +2201,7 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 	## dt: time step of the simulation 		--> (usually --> sim.cfg.recordStep)
 	## sampr: sampling rate (Hz) 			--> (usually --> 1/(dt/1000))
 	## pop: str or list 					--> e.g. 'ITS4' or ['ITS4']
+	## norm: bool 							--> e.g. norm=True, norm=False; DEFAULT: True 
 	## spacing_um: int 						--> 100 by DEFAULT (spacing between electrodes in MICRONS)
 	## minFreq: float / int 				--> DEFAULT: 1 Hz  
 	## maxFreq: float / int 				--> DEFAULT: 110 Hz 
@@ -2217,10 +2219,10 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 	## Determine timestep, sampling rate, and electrode spacing 
-	# dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
-	# sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
-	dt = sim.cfg.recordStep/1000.0	# This is in Seconds 
-	sampr = 1.0 / dt 				# Hz 
+	dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+	#dt = sim.cfg.recordStep/1000.0	# This is in Seconds 
+	#sampr = 1.0 / dt 				# Hz 
 	spacing_um = spacing_um			# 100 um by default # 
 
 
@@ -2237,7 +2239,10 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 	#### ALL CSD DATA -- ALL CHANS, ALL TIMEPOINTS!!! 
-	csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, vaknin=True)
+	if norm is None:
+		norm=True
+	#csdData = csd.getCSD(LFP_input_data=lfpData, dt=dt, sampr=sampr, spacing_um=spacing_um, norm=norm, vaknin=True)
+	csdData = getCSDa1dat(lfps=lfpData,sampr=sampr,spacing_um=spacing_um,minf=0.05,maxf=300,norm=norm,vaknin=True)
 	tt = np.linspace(0, sim.cfg.duration, len(csdData[1])) 
 	# Input full CSD data (and time array) into outputData dict 
 	outputData.update({'csdData': csdData})
@@ -2726,7 +2731,7 @@ def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
 
 		csdPopData[pop] = {}
 		### MAYBE CHANGE dataFile arg here?!?!?! 
-		popCSDdataFULL_origShape_dict = getCSDdata(oscEventInfo=oscEventInfo, dt=dt, sampr=sampr, dataFile=dataFile, pop=pop, spacing_um=spacing_um, outputType=[]) ## HAVE TO ADD oscEventInfo arg since right now this arg is * NECESSARY * TO RUN getCSDdata!!!! 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		popCSDdataFULL_origShape_dict = getCSDdata(oscEventInfo=oscEventInfo, dt=dt, sampr=sampr, dataFile=dataFile, pop=pop, norm=False, spacing_um=spacing_um, outputType=[]) ## HAVE TO ADD oscEventInfo arg since right now this arg is * NECESSARY * TO RUN getCSDdata!!!! 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
 		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csdData']#['csd']
 		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
 

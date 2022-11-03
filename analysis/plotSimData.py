@@ -258,12 +258,12 @@ if popsByBand:
 
 		## SAVE TOPPOPS DICTIONARY!! 
 		os.chdir(waveletPathSim)
-		jsonFile = 'topPops_' + str(band) + '.json'
+		jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
 		print('Saving topPops json file!!')
 		with open(jsonFile, 'w') as fp:
 			json.dump(topPops, fp)
 		## SAVE OSCEVENTINFO DICTIONARY!!
-		oscEventFile = 'oscEventInfo_' + str(band) + '.json'
+		oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.json'
 		print('Saving oscEventInfo json file!')
 		with open(oscEventFile, 'w') as f:
 			json.dump(oscEventInfo, f)
