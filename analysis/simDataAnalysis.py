@@ -2693,12 +2693,13 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	## Show figure
 	plt.show()
 # Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
-def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
+def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, norm=None, verbose=0):
 	#### NOTE: ADD POPS AS ARG?? 
 	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
 	### oscEvenfInfo: dict 			--> dict w/ chan, left, right, minT, maxT, alignoffset
 		## RIGHT NOW THIS IS *NECESSARY* TO RUN THIS SINCE NECESSARY IN getCSDdata !!!! 
+	### norm: bool ---> Determines if CSD data should be normalized or not!! 
 	### verbose: bool 
 		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
 
@@ -2731,7 +2732,10 @@ def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, verbose=0):
 
 		csdPopData[pop] = {}
 		### MAYBE CHANGE dataFile arg here?!?!?! 
-		popCSDdataFULL_origShape_dict = getCSDdata(oscEventInfo=oscEventInfo, dt=dt, sampr=sampr, dataFile=dataFile, pop=pop, norm=False, spacing_um=spacing_um, outputType=[]) ## HAVE TO ADD oscEventInfo arg since right now this arg is * NECESSARY * TO RUN getCSDdata!!!! 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
+		## norm:
+		if norm is None:
+			norm=True
+		popCSDdataFULL_origShape_dict = getCSDdata(oscEventInfo=oscEventInfo, dt=dt, sampr=sampr, dataFile=dataFile, pop=pop, norm=norm, spacing_um=spacing_um, outputType=[]) ## HAVE TO ADD oscEventInfo arg since right now this arg is * NECESSARY * TO RUN getCSDdata!!!! 	# popCSDdataFULL_origShape = getCSDdata(dataFile, pop=pop) 
 		popCSDdataFULL_origShape = popCSDdataFULL_origShape_dict['csdData']#['csd']
 		popCSDdataFULL = np.transpose(popCSDdataFULL_origShape)	### TRANSPOSE THIS so (20,230000) --> (230000, 20)
 

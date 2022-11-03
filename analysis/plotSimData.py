@@ -178,6 +178,10 @@ if popsByBand:
 	waveletPathSim = '/u/ericag/a1dat/spontData_A1/oscEvents/'
 
 
+	### NORM EXPERIMENT ###
+	norm=True
+	#######################
+
 	layers = getSimLayers()
 
 	frequencyBands = ['delta'] #['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
@@ -210,7 +214,7 @@ if popsByBand:
 
 					print('Retrieving CSD data frame for subject: ' + str(subject))
 					dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
-														oscEventInfo = individual_oscEventInfo)
+														oscEventInfo = individual_oscEventInfo, norm=norm)
 
 					waveletElectrode = individual_oscEventInfo['chan']
 					## max pops contributing to avg CSD 
@@ -258,12 +262,19 @@ if popsByBand:
 
 		## SAVE TOPPOPS DICTIONARY!! 
 		os.chdir(waveletPathSim)
-		jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
+		if norm == True:
+			jsonFile = 'topPops_' + str(band) + '_normCSDtrue.json'
+		else:
+			jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
 		print('Saving topPops json file!!')
 		with open(jsonFile, 'w') as fp:
 			json.dump(topPops, fp)
+
 		## SAVE OSCEVENTINFO DICTIONARY!!
-		oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.json'
+		if norm==True:
+			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.json'
+		else:
+			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.json'
 		print('Saving oscEventInfo json file!')
 		with open(oscEventFile, 'w') as f:
 			json.dump(oscEventInfo, f)
