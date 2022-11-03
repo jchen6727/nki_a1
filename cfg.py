@@ -58,10 +58,9 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # cfg.recordLFP = [[x, 1000, 100] for x in range(100, 2200, 200)] #+[[100, 2500, 200], [100,2700,200]]
 # cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", "ITP4", "ITS4", "IT5A", "CT5A", "IT5B", "PT5B", "CT5B", "IT6", "CT6"]
 
-cfg.recordDipole = True
-cfg.saveDipoleCells = ['all']
-cfg.saveDipolePops = cfg.allpops
-### ^^ EYG, 9/22/22: uncommenting for attempt at speech-EEG run on cineca
+# cfg.recordDipole = True
+# cfg.saveDipoleCells = ['all']
+# cfg.saveDipolePops = cfg.allpops
 
 #------------------------------------------------------------------------------
 # Saving
@@ -203,6 +202,10 @@ cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], '
 # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
 cfg.ICThalInput = {} #'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
                     #'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
+# cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', 
+                    #'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
+
+
 
 #------------------------------------------------------------------------------
 # Current inputs 
