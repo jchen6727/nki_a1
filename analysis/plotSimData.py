@@ -1,6 +1,7 @@
 from simDataAnalysis import *
 import json
 import os
+import pickle 
 
 ##########################
 #### USEFUL VARIABLES ####
@@ -270,14 +271,14 @@ if popsByBand:
 		with open(jsonFile, 'w') as fp:
 			json.dump(topPops, fp)
 
-		# ## SAVE OSCEVENTINFO DICTIONARY!!
-		# if norm==True:
-		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.json'
-		# else:
-		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.json'
-		# print('Saving oscEventInfo json file!')
-		# with open(oscEventFile, 'w') as f:
-		# 	json.dump(oscEventInfo, f)
+		## SAVE OSCEVENTINFO DICTIONARY -- TRY PICKLE!!
+		if norm==True:
+			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.pkl'
+		else:
+			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.pkl'
+		print('Saving oscEventInfo pkl file!')
+		with open(oscEventFile, 'wb') as f:
+			pickle.dump(oscEventInfo, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 
