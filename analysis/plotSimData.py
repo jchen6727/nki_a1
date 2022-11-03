@@ -270,14 +270,14 @@ if popsByBand:
 		with open(jsonFile, 'w') as fp:
 			json.dump(topPops, fp)
 
-		## SAVE OSCEVENTINFO DICTIONARY!!
-		if norm==True:
-			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.json'
-		else:
-			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.json'
-		print('Saving oscEventInfo json file!')
-		with open(oscEventFile, 'w') as f:
-			json.dump(oscEventInfo, f)
+		# ## SAVE OSCEVENTINFO DICTIONARY!!
+		# if norm==True:
+		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.json'
+		# else:
+		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.json'
+		# print('Saving oscEventInfo json file!')
+		# with open(oscEventFile, 'w') as f:
+		# 	json.dump(oscEventInfo, f)
 
 
 
