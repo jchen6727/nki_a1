@@ -266,14 +266,16 @@ if popsByBand:
 		print(topPops)
 
 
+		#### NOTE: HAVE TO MANUALLY CHANGE THE POPS -- MAKE THIS BETTER SOMEHOW!!!!! ##### 
+
 		## SAVE TOPPOPS DICTIONARY!! 
-		dictSavePath = waveletPathSim + 'oscEventDicts/' + pops + '/'
-		os.chdir(waveletPathSim)
+		dictSavePath = waveletPathSim + 'oscEventDicts/' + 'ICortPops/'
+		os.chdir(dictSavePath)
 		# if norm == True:
 		# 	jsonFile = 'topPops_' + str(band) + '_normCSDtrue.json'
 		# else:
 		# 	jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
-		jsonFile = 'topPops_' + str(band) + '_' + pops + '.json'
+		jsonFile = 'topPops_' + str(band) + '_ICortPops.json'
 		print('Saving topPops json file!!')
 		with open(jsonFile, 'w') as fp:
 			json.dump(topPops, fp)
@@ -283,7 +285,7 @@ if popsByBand:
 		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.pkl'
 		# else:
 		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.pkl'
-		oscEventFile = 'oscEventInfo_' + str(band) + '_' + pops + '.pkl'
+		oscEventFile = 'oscEventInfo_' + str(band) + '_ICortPops.pkl'
 		print('Saving oscEventInfo pkl file!')
 		with open(oscEventFile, 'wb') as f:
 			pickle.dump(oscEventInfo, f, protocol=pickle.HIGHEST_PROTOCOL)

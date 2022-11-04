@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import os 
 
 
-basedir = '../data/simDataFiles/BBN/'
+basedir = '../data/simDataFiles/BBN/test_halfScale_startTime_debug_0/'
 # '../data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_1/'
 # fn = 'v34_batch_eegSpeech_CINECA_trial_0_2_data.pkl'
 # fn = '../data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_0/v34_batch_eegSpeech_CINECA_trial_0_3_data.pkl'
