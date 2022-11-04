@@ -183,9 +183,14 @@ if popsByBand:
 	norm=True
 	#######################
 
+	#######################
+	pops = ICortPops
+	#######################
+
+
 	layers = getSimLayers()
 
-	frequencyBands = ['beta'] #['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
+	frequencyBands = ['delta'] #['delta', 'theta', 'alpha', 'beta', 'gamma', 'hgamma']
 
 	simSubjects = ['v34_batch67_CINECA_0_0_data', 'v34_batch67_CINECA_0_1_data', 'v34_batch67_CINECA_0_2_data', 'v34_batch67_CINECA_0_3_data', 'v34_batch67_CINECA_0_4_data',
 				   'v34_batch67_CINECA_1_0_data', 'v34_batch67_CINECA_1_1_data', 'v34_batch67_CINECA_1_2_data', 'v34_batch67_CINECA_1_3_data', 'v34_batch67_CINECA_1_4_data',
@@ -215,7 +220,7 @@ if popsByBand:
 
 					print('Retrieving CSD data frame for subject: ' + str(subject))
 					dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFilePath, timeRange=timeRange, 
-														oscEventInfo = individual_oscEventInfo, norm=norm)
+														oscEventInfo = individual_oscEventInfo, norm=norm, pops=pops)
 
 					waveletElectrode = individual_oscEventInfo['chan']
 					## max pops contributing to avg CSD 
@@ -262,20 +267,23 @@ if popsByBand:
 
 
 		## SAVE TOPPOPS DICTIONARY!! 
+		dictSavePath = waveletPathSim + 'oscEventDicts/' + pops + '/'
 		os.chdir(waveletPathSim)
-		if norm == True:
-			jsonFile = 'topPops_' + str(band) + '_normCSDtrue.json'
-		else:
-			jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
+		# if norm == True:
+		# 	jsonFile = 'topPops_' + str(band) + '_normCSDtrue.json'
+		# else:
+		# 	jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
+		jsonFile = 'topPops_' + str(band) + '_' + pops + '.json'
 		print('Saving topPops json file!!')
 		with open(jsonFile, 'w') as fp:
 			json.dump(topPops, fp)
 
 		## SAVE OSCEVENTINFO DICTIONARY -- TRY PICKLE!!
-		if norm==True:
-			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.pkl'
-		else:
-			oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.pkl'
+		# if norm==True:
+		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.pkl'
+		# else:
+		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.pkl'
+		oscEventFile = 'oscEventInfo_' + str(band) + '_' + pops + '.pkl'
 		print('Saving oscEventInfo pkl file!')
 		with open(oscEventFile, 'wb') as f:
 			pickle.dump(oscEventInfo, f, protocol=pickle.HIGHEST_PROTOCOL)

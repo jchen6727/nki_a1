@@ -2693,13 +2693,14 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	## Show figure
 	plt.show()
 # Heatmaps for CSD data ##    NOTE: SHOULD COMBINE THIS WITH LFP DATA HEATMAP FUNCTIONS IN THE FUTURE!!
-def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, norm=None, verbose=0):
+def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, norm=None, pops=None, verbose=0):
 	#### NOTE: ADD POPS AS ARG?? 
 	## This function will return data frames of peak and average CSD amplitudes, for picking cell pops
 	### dataFile: str 		--> .pkl file to load, with data from the whole recording
 	### oscEvenfInfo: dict 			--> dict w/ chan, left, right, minT, maxT, alignoffset
 		## RIGHT NOW THIS IS *NECESSARY* TO RUN THIS SINCE NECESSARY IN getCSDdata !!!! 
 	### norm: bool ---> Determines if CSD data should be normalized or not!! 
+	### pops: list --> list of pops to get data frames for 
 	### verbose: bool 
 		### TO DO: Make evalElecs an argument, so don't have to do all of them, if that's not what we want! 
 
@@ -2713,9 +2714,19 @@ def getCSDDataFrames(dataFile, timeRange=None, oscEventInfo=None, norm=None, ver
 	# Get all cell pops (cortical)
 	thalPops = ['TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM']
 	ECortPops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
+	ICortPops = ['NGF1', 
+			'PV2', 'SOM2', 'VIP2', 'NGF2', 
+			'PV3', 'SOM3', 'VIP3', 'NGF3',
+			'PV4', 'SOM4', 'VIP4', 'NGF4',
+			'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
+			'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
+			'PV6', 'SOM6', 'VIP6', 'NGF6']
 	allPops = list(sim.net.allPops.keys())
+	if pops is None:
+		pops = [pop for pop in allPops if pop not in thalPops]
 	#pops = [pop for pop in allPops if pop not in thalPops] 			## exclude thal pops  ## COMMENTED OUT 11/02 TO TEST ONLY EXCITATORY CORT POPS!! 
-	pops = ECortPops  ## ADDED IN HERE 11/02 FOR TESTING!!! 
+	#pops = ICortPops  ## Changed to ICortPops from ECortPops on 11/04/22 ## ADDED IN HERE 11/02 FOR TESTING!!! 
+
 
 	## Get all electrodes 	## SEE TO-DO ABOVE!! (make an if statement)
 	evalElecs = []
