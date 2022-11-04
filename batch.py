@@ -961,7 +961,7 @@ def custom_BBN(filename):
     
     initCfg['duration'] = 10000 # 7500 # 4500
     initCfg['printPopAvgRates'] = [1500, 10000]     #[1500, 7500]   #[1500, 9500]   #[1500, 4500] 
-    initCfg['scaleDensity'] = 1.0
+    initCfg['scaleDensity'] = 0.5 #1.0
     initCfg['recordStep'] = 0.05
 
     # # plotting and saving params
@@ -3161,9 +3161,9 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': '1:30:00',            # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
+            'walltime': '1:00:00',            # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
             'nodes': 4,                       # g100_qos_dbg : max 2 nodes     # noQOS: max 32 nodes 
-            'coresPerNode': 48,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
+            'coresPerNode': 24, #48,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
             'partition': 'g100_usr_prod',
             'qos': None, #'noQOS',           # g100_qos_dbg  # noQOS
             'email': 'erica.griffith@downstate.edu',
@@ -3216,7 +3216,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v36_batch_BBN_CINECA'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v36_batch_BBN_CINECA_trial2'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
