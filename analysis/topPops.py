@@ -39,9 +39,27 @@ def topIndividualPops(topPopsData, freqBand, region):
 
 
 #############################################
-# def topPopGroups(freqBand=None, region=None):
+def topPopGroups(topPopsData, freqBand, region):
 	## OUTPUT: bar graph with the most popular trios for given osc event subtype
+	#### topPopsData	: dict 
+	#### freqBand 		: str
+	#### region 		: str 
 
+	eventIndices = list(topPopsData[freqBand][region].keys())
+
+	trioCounts = {}
+
+	for eventIdx in eventIndices:
+		trioSorted = sorted(topPopsData[freqBand][region][eventIdx])
+		if str(trioSorted) not in trioCounts.keys():
+			trioCounts[str(trioSorted)] = 1
+		else:
+			trioCounts[str(trioSorted)] += 1
+
+	trioCountsSorted = {k: v for k, v in sorted(trioCounts.items(), key=lambda item: item[1], reverse=True)}
+
+
+	return trioCountsSorted
 
 
 
@@ -108,7 +126,7 @@ ECortPops = ['IT2',
 
 popCounts = topIndividualPops(topPopsData, 'theta', 'supra')
 
-
+trioCounts = topPopGroups(topPopsData, 'theta', 'supra')
 
 
 
