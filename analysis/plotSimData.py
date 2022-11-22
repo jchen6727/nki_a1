@@ -184,7 +184,7 @@ if popsByBand:
 	#######################
 
 	#######################
-	pops = ICortPops
+	pops = AllCortPops #ICortPops
 	#######################
 
 
@@ -239,21 +239,21 @@ if popsByBand:
 					oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD'] = maxPopsValues_peakCSD
 
 
-	### Now print out a list with the top 3 pops for each osc event, organized by band and layer region 
-	topPops = {}
+	### Now print out a list with the top 3 (avg) pops for each osc event, organized by band and layer region 
+	topPopsAvg = {}
 	for band in frequencyBands:
-		topPops[band] = {}
+		topPopsAvg[band] = {}
 		for region in layers.keys():
 			print('frequencyBand:' + band)
 			print('layer region: ' + region)
 
-			topPops[band][region] = {}
+			topPopsAvg[band][region] = {}
 
 			for subject in simSubjects:
 				eventIdxList = list(oscEventInfo[band][region][subject].keys())
 
 				for eventIdx in eventIdxList:
-					topPops[band][region][eventIdx] = []
+					topPopsAvg[band][region][eventIdx] = []
 
 					topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
 
@@ -261,34 +261,112 @@ if popsByBand:
 					for key in topPopKeys:
 						if not key == 'electrodeNumber':
 							#topPops.append(key)
-							topPops[band][region][eventIdx].append(key)
+							topPopsAvg[band][region][eventIdx].append(key)
 
-		print(topPops)
+		print(topPopsAvg)
+
+	### Now print out a list with the top 3 (peak) pops for each osc event, organized by band and layer region 
+	topPopsPeak = {}
+	for band in frequencyBands:
+		topPopsPeak[band] = {}
+		for region in layers.keys():
+			print('frequencyBand:' + band)
+			print('layer region: ' + region)
+
+			topPopsPeak[band][region] = {}
+
+			for subject in simSubjects:
+				eventIdxList = list(oscEventInfo[band][region][subject].keys())
+
+				for eventIdx in eventIdxList:
+					topPopsPeak[band][region][eventIdx] = []
+
+					topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_peakCSD']['elec'].keys()
+
+					# topPops = []
+					for key in topPopKeys:
+						if not key == 'electrodeNumber':
+							#topPops.append(key)
+							topPopsPeak[band][region][eventIdx].append(key)
+
+		print(topPopsPeak)
 
 
-		#### NOTE: HAVE TO MANUALLY CHANGE THE POPS -- MAKE THIS BETTER SOMEHOW!!!!! ##### 
+	####### ORIG #######
+	# topPops = {}
+	# for band in frequencyBands:
+	# 	topPops[band] = {}
+	# 	for region in layers.keys():
+	# 		print('frequencyBand:' + band)
+	# 		print('layer region: ' + region)
 
-		## SAVE TOPPOPS DICTIONARY!! 
-		dictSavePath = waveletPathSim + 'oscEventDicts/' + 'ICortPops/'
+	# 		topPops[band][region] = {}
+
+	# 		for subject in simSubjects:
+	# 			eventIdxList = list(oscEventInfo[band][region][subject].keys())
+
+	# 			for eventIdx in eventIdxList:
+	# 				topPops[band][region][eventIdx] = []
+
+	# 				topPopKeys = oscEventInfo[band][region][subject][eventIdx]['maxPops_avgCSD']['elec'].keys()
+
+	# 				# topPops = []
+	# 				for key in topPopKeys:
+	# 					if not key == 'electrodeNumber':
+	# 						#topPops.append(key)
+	# 						topPops[band][region][eventIdx].append(key)
+
+	# 	print(topPops)
+
+
+
+		##### SAVING ######
+		## SAVE topPopsAvg DICTIONARY!! 
+		dictSavePath = waveletPathSim + 'oscEventDicts/' + 'AllCortPops/'
 		os.chdir(dictSavePath)
-		# if norm == True:
-		# 	jsonFile = 'topPops_' + str(band) + '_normCSDtrue.json'
-		# else:
-		# 	jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
-		jsonFile = 'topPops_' + str(band) + '_ICortPops.json'
-		print('Saving topPops json file!!')
-		with open(jsonFile, 'w') as fp:
-			json.dump(topPops, fp)
+		jsonFileAvg = 'topPopsAvg_' + str(band) + '_AllCortPops.json'
+		print('Saving topPopsAvg json file!!')
+		with open(jsonFileAvg, 'w') as fpAvg:
+			json.dump(topPopsAvg, fpAvg)
 
-		## SAVE OSCEVENTINFO DICTIONARY -- TRY PICKLE!!
-		# if norm==True:
-		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.pkl'
-		# else:
-		# 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.pkl'
-		oscEventFile = 'oscEventInfo_' + str(band) + '_ICortPops.pkl'
+		## SAVE topPopsPeak DICTIONARY!! 
+		dictSavePath = waveletPathSim + 'oscEventDicts/' + 'AllCortPops/'
+		os.chdir(dictSavePath)
+		jsonFilePeak = 'topPopsPeak_' + str(band) + '_AllCortPops.json'
+		print('Saving topPopsPeak json file!!')
+		with open(jsonFilePeak, 'w') as fpPeak:
+			json.dump(topPopsPeak, fpPeak)
+
+		## SAVE oscEventInfo DICTIONARY!! 
+		oscEventFile = 'oscEventInfo_' + str(band) + '_AllCortPops.pkl'
 		print('Saving oscEventInfo pkl file!')
 		with open(oscEventFile, 'wb') as f:
 			pickle.dump(oscEventInfo, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+		####### ORIG SAVING LINES #######
+		#### NOTE: HAVE TO MANUALLY CHANGE THE POPS -- MAKE THIS BETTER SOMEHOW!!!!! ##### 
+		# ## SAVE TOPPOPS DICTIONARY!! 
+		# dictSavePath = waveletPathSim + 'oscEventDicts/' + 'ICortPops/'
+		# os.chdir(dictSavePath)
+		# # if norm == True:
+		# # 	jsonFile = 'topPops_' + str(band) + '_normCSDtrue.json'
+		# # else:
+		# # 	jsonFile = 'topPops_' + str(band) + '_normCSDfalse.json'
+		# jsonFile = 'topPops_' + str(band) + '_ICortPops.json'
+		# print('Saving topPops json file!!')
+		# with open(jsonFile, 'w') as fp:
+		# 	json.dump(topPops, fp)
+
+		# ## SAVE OSCEVENTINFO DICTIONARY -- TRY PICKLE!!
+		# # if norm==True:
+		# # 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDtrue.pkl'
+		# # else:
+		# # 	oscEventFile = 'oscEventInfo_' + str(band) + '_normCSDfalse.pkl'
+		# oscEventFile = 'oscEventInfo_' + str(band) + '_ICortPops.pkl'
+		# print('Saving oscEventInfo pkl file!')
+		# with open(oscEventFile, 'wb') as f:
+		# 	pickle.dump(oscEventInfo, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 
