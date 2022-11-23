@@ -166,16 +166,17 @@ regions = ['supra', 'gran', 'infra']
 freqBands = ['delta', 'theta', 'alpha', 'beta']
 
 
-popCountsAvg = topIndividualPops(topPopsAvgData, 'theta', 'supra')
-trioCountsAvg = topPopGroups(topPopsAvgData, 'theta', 'supra')
+popCountsAvg = topIndividualPops(topPopsAvgData, 'delta', 'supra')
+trioCountsAvg = topPopGroups(topPopsAvgData, 'delta', 'supra')
 
-popCountsPeak = topIndividualPops(topPopsPeakData, 'theta', 'supra')
-trioCountsPeak = topPopGroups(topPopsPeakData, 'theta', 'supra')
+popCountsPeak = topIndividualPops(topPopsPeakData, 'delta', 'supra')
+trioCountsPeak = topPopGroups(topPopsPeakData, 'delta', 'supra')
 
 
-# barPlot(popCountsAvg, freqBand='theta', region='supra')
+#barPlot(popCountsAvg, freqBand='theta', region='supra')
+barPlot(popCountsPeak, freqBand='theta', region='supra')
 # barPlot(trioCountsAvg, freqBand='theta', region='supra')
-barPlot(trioCountsPeak, freqBand='theta', region='supra')
+#barPlot(trioCountsPeak, freqBand='delta', region='supra')
 
 
 
