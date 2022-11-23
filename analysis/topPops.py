@@ -80,7 +80,7 @@ def barPlot(countsDict, freqBand, region):
 	## Trying to figure out how to best label these for trioCounts 
 	if len(pops[0]) > 15:
 		xlabelTest = np.arange(len(pops))
-		plt.xticks(xlabelTest, pops, fontsize=8) # rotation=15,
+		plt.xticks(xlabelTest, pops, rotation=15, fontsize=8) # rotation=15,
 
 	# if region == 'supra':
 	# 	regionFull = 'supragranular'
@@ -94,7 +94,6 @@ def barPlot(countsDict, freqBand, region):
 # def popSourceSink(oscEventData,freqBand, region):
 	## OUTPUT: Identify / Visualize the sources and sinks for given osc event subtype
 
-	
 	### oscEventData[freqBand][region][subject][eventIdx]['maxPops_avgCSD']['elec'][pop] = CSD value
 
 
@@ -123,14 +122,11 @@ os.chdir(based)
 
 allFiles = os.listdir()
 
-# topPopsFiles = []
 topPopsAvgFiles = []
 topPopsPeakFiles = []
 oscEventFiles = []
 
 for file in allFiles:
-	# if 'topPops' in file:
-	# 	topPopsFiles.append(file)
 	if 'topPopsAvg' in file:
 		topPopsAvgFiles.append(file)
 	if 'topPopsPeak' in file:
@@ -141,13 +137,6 @@ for file in allFiles:
 # print(topPopsFiles)
 # print(oscEventFiles)
 
-
-## LOAD TOP POPS DATA
-# topPopsData = {}
-# for topPopFile in topPopsFiles:
-# 	f = open(topPopFile)
-# 	data = json.load(f)
-# 	topPopsData.update(data)
 
 ## LOAD TOP POPS AVG DATA
 topPopsAvgData = {}
@@ -176,6 +165,33 @@ for oscEventFile in oscEventFiles:
 regions = ['supra', 'gran', 'infra']
 freqBands = ['delta', 'theta', 'alpha', 'beta']
 
+
+popCountsAvg = topIndividualPops(topPopsAvgData, 'theta', 'supra')
+trioCountsAvg = topPopGroups(topPopsAvgData, 'theta', 'supra')
+
+popCountsPeak = topIndividualPops(topPopsPeakData, 'theta', 'supra')
+trioCountsPeak = topPopGroups(topPopsPeakData, 'theta', 'supra')
+
+
+# barPlot(popCountsAvg, freqBand='theta', region='supra')
+# barPlot(trioCountsAvg, freqBand='theta', region='supra')
+barPlot(trioCountsPeak, freqBand='theta', region='supra')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+######### POPULATIONS ######### 
 # ECortPops = ['IT2', 
 # 			 'IT3', 
 # 			 'ITP4', 'ITS4', 
@@ -194,27 +210,6 @@ freqBands = ['delta', 'theta', 'alpha', 'beta']
 # AllCortPops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4',
 # 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B',
 # 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-
-popCounts = topIndividualPops(topPopsData, 'theta', 'supra')
-
-trioCounts = topPopGroups(topPopsData, 'theta', 'supra')
-
-barPlot(trioCounts, freqBand='theta', region='supra')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
