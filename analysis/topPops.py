@@ -95,7 +95,7 @@ def barPlot(countsDict, freqBand, region):
 	## OUTPUT: Identify / Visualize the sources and sinks for given osc event subtype
 
 	### oscEventData[freqBand][region][subject][eventIdx]['maxPops_avgCSD']['elec'][pop] = CSD value
-
+	
 
 
 

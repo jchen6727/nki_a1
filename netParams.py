@@ -635,7 +635,8 @@ if cfg.addBkgConn:
                         spkTimes[i] = spkTimes[i] + spkTimesDict[key][i]
 
         else:
-            spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], cfg.duration, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
+            ## Change the t_stop arg in the inh_poisson_generator fx from cfg.duration to the length of the BBN stimulus (>100 ms)
+            spkTimes = [[x+cfg.ICThalInput['startTime'] for x in inh_poisson_generator(ICrates[i][:maxLen], ICtimes[:maxLen], 105, cfg.ICThalInput['seed']+i)] for i in range(len(ICrates))]
 
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
