@@ -866,13 +866,14 @@ def custom_speech(filename):
     #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     # 'startTime': 2500, 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/Speech_trials/ICoutput_CF_9600_10400_wav_01_ba_peter_AN.mat', 
                             'startTime': 2500, 
                             'weightE': 0.25,#1.0, 
                             'weightI': 0.25,#1.0, 
                             'probE': 0.12, 
                             'probI': 0.12, #0.25 
                             'seed': 1}  
+    ## orig file: 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat' ## EYG 12/02/22 
 
     ## RECORDING EEG / DIPOLE (EYG, 9/18/22):
     # initCfg['recordDipole'] = True
@@ -3201,8 +3202,8 @@ if __name__ == '__main__':
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
     # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
@@ -3216,7 +3217,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_fullScale'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
