@@ -946,7 +946,7 @@ def custom_BBN(filename):
 
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
-    params[('ICThalInput', 'startTime')] = [1000, 2000]#[[2500, 4000, 5500], 5000]
+    params[('ICThalInput', 'startTime')] = []#[1000, 2000]#[[2500, 4000, 5500], 5000]
 
     #### SET CONN AND STIM SEEDS #### 
     # params[('seeds', 'conn')] = list(range(1)) # list(range(5)) 
@@ -959,9 +959,9 @@ def custom_BBN(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 5000 # 10000 
+    initCfg['duration'] = 10000 # 5000 # 10000 
     initCfg['printPopAvgRates'] = [1500, 10000]
-    initCfg['scaleDensity'] = 0.5 #1.0
+    initCfg['scaleDensity'] = 1.0 # 0.5 #1.0
     initCfg['recordStep'] = 0.05
 
     # # plotting and saving params
@@ -3216,7 +3216,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_startTimeDebug_IPGmod'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_CINECA_fullScale'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 

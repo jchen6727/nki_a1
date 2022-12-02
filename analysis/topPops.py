@@ -95,7 +95,7 @@ def barPlot(countsDict, freqBand, region):
 	## OUTPUT: Identify / Visualize the sources and sinks for given osc event subtype
 
 	### oscEventData[freqBand][region][subject][eventIdx]['maxPops_avgCSD']['elec'][pop] = CSD value
-	
+
 
 
 
@@ -165,18 +165,20 @@ for oscEventFile in oscEventFiles:
 regions = ['supra', 'gran', 'infra']
 freqBands = ['delta', 'theta', 'alpha', 'beta']
 
+freqBand = 'alpha'
+region = 'infra'
 
-popCountsAvg = topIndividualPops(topPopsAvgData, 'delta', 'supra')
-trioCountsAvg = topPopGroups(topPopsAvgData, 'delta', 'supra')
+popCountsAvg = topIndividualPops(topPopsAvgData, freqBand, region)
+trioCountsAvg = topPopGroups(topPopsAvgData, freqBand, region)
 
-popCountsPeak = topIndividualPops(topPopsPeakData, 'delta', 'supra')
-trioCountsPeak = topPopGroups(topPopsPeakData, 'delta', 'supra')
+popCountsPeak = topIndividualPops(topPopsPeakData, freqBand, region)
+trioCountsPeak = topPopGroups(topPopsPeakData, freqBand, region)
 
 
 #barPlot(popCountsAvg, freqBand='theta', region='supra')
-barPlot(popCountsPeak, freqBand='theta', region='supra')
+barPlot(popCountsPeak, freqBand=freqBand, region=region)
 # barPlot(trioCountsAvg, freqBand='theta', region='supra')
-#barPlot(trioCountsPeak, freqBand='delta', region='supra')
+#barPlot(trioCountsPeak, freqBand=freqBand, region=region)
 
 
 
