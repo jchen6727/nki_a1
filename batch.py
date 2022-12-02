@@ -835,7 +835,7 @@ def custom_speech(filename):
     #params[('wmat', 'HTC', 'PV4')] = [0.3, 0.4, 0.5]
 
     #### NOT COMMENTING OUT LINE 838 (EYG 9/22/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
-    params[('ICThalInput', 'startTime')] = [[2000, 3500, 5000, 6500, 8000], [2500, 4000, 5500, 7000]] #[2500, 2550] # [2500, 2550, 2600, 2650]
+    params[('ICThalInput', 'startTime')] = [[2500, 4000, 5500, 7000]] #[[2000, 3500, 5000, 6500, 8000], [2500, 4000, 5500, 7000]] #[2500, 2550] # [2500, 2550, 2600, 2650]
 
     # conn gains 
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
@@ -866,7 +866,7 @@ def custom_speech(filename):
     #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     # 'startTime': 2500, 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/speechTrials/ICoutput_CF_9600_10400_wav_01_ba_peter_AN.mat', 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/speechTrials/ICoutput_CF_9600_10400_wav_01_ba_peter_BEZ2018.mat', 
                             'startTime': 2500, 
                             'weightE': 0.25,#1.0, 
                             'weightI': 0.25,#1.0, 
@@ -3217,7 +3217,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_CINECA_speech_BEZ2018' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
