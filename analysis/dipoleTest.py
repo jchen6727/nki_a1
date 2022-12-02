@@ -1,7 +1,8 @@
 from simdat import *
 import os
 
-basedir = '/g100_scratch/userexternal/egriffit/A1/v36_batch_eegSpeech_CINECA_trial_12/' # CINECA
+# basedir = '/g100_scratch/userexternal/egriffit/A1/v36_batch_eegSpeech_CINECA_trial_12/' # CINECA
+basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/BBN_CINECA_speech_BEZ2018/' # CINECA
 # basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_1/'
 
 allFiles = os.listdir(basedir)
@@ -13,14 +14,14 @@ for file in allFiles:
 
 
 ##### FOR INDIVIDUAL TESTING #####
-pklFiles = ['speechEEG_1_data.pkl']#['v36_batch_eegSpeech_CINECA_trial_12_1_data.pkl']#, 'v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']
+# pklFiles = ['speechEEG_1_data.pkl']#['v36_batch_eegSpeech_CINECA_trial_12_1_data.pkl']#, 'v36_batch_eegSpeech_CINECA_trial_12_0_data.pkl']
 
 
 
 #########################
 #### SAVING TEST 2 ######
 #########################
-saveTest2 = 1
+saveTest2 = 0
 
 if saveTest2:
 	for fn in pklFiles:
@@ -340,7 +341,7 @@ if dipoleMat:
 ###########################
 #### RASTER PLOTTING ######
 ###########################
-raster = 0
+raster = 1
 
 if raster:
 
