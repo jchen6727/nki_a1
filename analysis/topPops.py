@@ -64,7 +64,7 @@ def topPopGroups(topPopsData, freqBand, region):
 
 
 
-def barPlot(countsDict, freqBand, region):
+def barPlot(countsDict, freqBand, region, fileName):
 	## countsDict: dict -- e.g. popCounts or trioCounts 
 	## freqBand: str (e.g. 'delta')
 	## region: str (e.g. 'supra' , 'gran', 'infra') 
@@ -86,6 +86,9 @@ def barPlot(countsDict, freqBand, region):
 	# 	regionFull = 'supragranular'
 	plotTitle = freqBand + ', ' + region
 	plt.title(plotTitle)
+
+	if fileName:
+		plt.savefig(fileName)
 	plt.show()
 
 
@@ -165,18 +168,33 @@ for oscEventFile in oscEventFiles:
 regions = ['supra', 'gran', 'infra']
 freqBands = ['delta', 'theta', 'alpha', 'beta']
 
-freqBand = 'alpha'
-region = 'infra'
 
-popCountsAvg = topIndividualPops(topPopsAvgData, freqBand, region)
-trioCountsAvg = topPopGroups(topPopsAvgData, freqBand, region)
+for freqBand in freqBands:
+	for region in regions:
+		# popCountsAvg = topIndividualPops(topPopsAvgData, freqBand, region)
+		# trioCountsAvg = topPopGroups(topPopsAvgData, freqBand, region)
 
-popCountsPeak = topIndividualPops(topPopsPeakData, freqBand, region)
-trioCountsPeak = topPopGroups(topPopsPeakData, freqBand, region)
+		popCountsPeak = topIndividualPops(topPopsPeakData, freqBand, region)
+		trioCountsPeak = topPopGroups(topPopsPeakData, freqBand, region)
+
+		fileNamePeak = freqBand + '_' + region + '_peak.png'
+		barPlot(popCountsPeak, freqBand=freqBand, region=region, fileName=fileNamePeak)
+
+########
+# freqBand = 'alpha'
+# region = 'infra'
+
+
+
+# popCountsAvg = topIndividualPops(topPopsAvgData, freqBand, region)
+# trioCountsAvg = topPopGroups(topPopsAvgData, freqBand, region)
+
+# popCountsPeak = topIndividualPops(topPopsPeakData, freqBand, region)
+# trioCountsPeak = topPopGroups(topPopsPeakData, freqBand, region)
 
 
 #barPlot(popCountsAvg, freqBand='theta', region='supra')
-barPlot(popCountsPeak, freqBand=freqBand, region=region)
+#barPlot(popCountsPeak, freqBand=freqBand, region=region)
 # barPlot(trioCountsAvg, freqBand='theta', region='supra')
 #barPlot(trioCountsPeak, freqBand=freqBand, region=region)
 

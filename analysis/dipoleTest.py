@@ -2,7 +2,8 @@ from simdat import *
 import os
 
 # basedir = '/g100_scratch/userexternal/egriffit/A1/v36_batch_eegSpeech_CINECA_trial_12/' # CINECA
-basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/BBN_CINECA_speech_BEZ2018/' # CINECA
+# basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/BBN_CINECA_speech_BEZ2018/' # CINECA
+basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_ANmodel/' # CINECA
 # basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_1/'
 
 allFiles = os.listdir(basedir)
