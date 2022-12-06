@@ -19,6 +19,7 @@ from shared import *  ##
 with open('popColors.pkl', 'rb') as fileObj: popColors = pkl.load(fileObj)['popColors']
 
 
+
 def loadFile(filename, include):
 
     if filename.endswith('.json'):
@@ -79,242 +80,269 @@ if __name__ == '__main__':
     filenames.sort()
 
     ## List for testing specific files ##
-    # filenames = ['../data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl']
+    filenames = ['../data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl']
 
 
-#     timeRanges = [[1000,5000], [5000, 9000]]
-#     periodLabels = ['quiet', 'move']
-#     freqRanges = [[0,4], [30,80]]
+    timeRanges = [[1000,5000], [5000, 9000]]
+    freqRanges = [[0,4], [30,80]]
 
-#     individualPlots = False
-#     combinedPlots = True
-    
-#     allpops = ['IT2', 'SOM2','PV2','IT4','IT5A','SOM5A','PV5A','IT5B','PT5B','SOM5B','PV5B','IT6','CT6','SOM6','PV6']
-#     excpops = ['IT2','IT4','IT5A','IT5B','PT5B','SOM5B','PV5B','IT6','CT6']
-
-#     loadProcessedData = 1 #False
-
-#     fontsiz = 16
-
-#     for filename, periodLabel, timeRange, freqRange in zip(filenames, periodLabels, timeRanges, freqRanges):
-
-#         if not loadProcessedData:
-#             loadFile(filename, include=allpops)
-
-#             allDataLFP = []
-#             allDataPSD = []
-
-#             # # raster 
-#             # sim.analysis.plotRaster(
-#             #     include = allpops, 
-#             #     popColors = popColors,
-#             #     popRates = 'minimal', 
-#             #     orderInverse = True, 
-#             #     timeRange = timeRange,
-#             #     orderBy = ['pop','y'], 
-#             #     figSize = (12,8), 
-#             #     lw = 0.3, 
-#             #     markerSize = 3, 
-#             #     marker = '.', 
-#             #     dpi = 600,
-#             #     saveFig = True, 
-#             #     showFig = False)
-
-#             # LFP 
-#             if individualPlots:
-#                 # Overall
-#                 out = sim.plotting.plotLFPTimeSeries( 
-#                         electrodes = [6], #['avg']+list(range(11)), 
-#                         timeRange = timeRange, 
-#                         figSize = (16,12), 
-#                         rcParams = {'font.size': 20},
-#                         saveData = False, 
-#                         saveFig = True,
-#                         fileName = filename[ :-4]+'_LFP_timeSeries_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
-#                         showFig = False)
-
-                
-#                 out = sim.plotting.plotLFPPSD(
-#                         plots = ['PSD'], 
-#                         electrodes = [6],
-#                         timeRange = timeRange, 
-#                         minFreq = 0.05,
-#                         maxFreq = 80,
-#                         stepFreq = 0.05,
-#                         orderInverse = False, 
-#                         figSize = (8,6), 
-#                         rcParams = {'font.size': 20},
-#                         saveData = False, 
-#                         saveFig = True,
-#                         fileName = filename[:-4]+'_LFP_PSD_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
-#                         showFig = False)
+    individualPlots = False # True
+    combinedPlots = True # False
 
 
-#                 # By population
-#                 for pop in ['IT2','IT4','IT5A','IT5B','PT5B','SOM5B','PV5B','IT6','CT6']:
-#                     out = sim.plotting.plotLFPTimeSeries( 
-#                             electrodes = [6], #['avg']+list(range(11)), 
-#                             pop = pop,
-#                             timeRange = timeRange, 
-#                             figSize = (16,12), 
+    ## NOTE: Potentially change this to allCortPops after basic testing 
+    allpops = ['NGF1', 
+                    'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 
+                    'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 
+                    'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 
+                    'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 
+                    'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 
+                    'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 
-#                             rcParams = {'font.size': 20},
-#                             saveData = False, 
-#                             saveFig = True,
-#                             fileName = filename[ :-4]+'_LFP_timeSeries_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
-#                             showFig = False)
+    ## NOTE: Potentially change this to eCortPops after basic testing (to emphasize cort vs thal)
+    excpops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
+
+
+    ## SOLUTION TO POPCOLORS ERROR for COLORS in DATA PLOTTING!! 
+    colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.00],
+                [0.34,0.67,0.67], [0.90,0.59,0.00], [0.42,0.82,0.83], [1.00,0.85,0.00],
+                [0.33,0.67,0.47], [1.00,0.38,0.60], [0.57,0.67,0.33], [0.5,0.2,0.0],
+                [0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
+    popColors = {}
+    for p in range(len(allpops)):
+        popColors[allpops[p]] = colorList[p]
+    ####### 
+
+    loadProcessedData = 1 # 0 # 1 #False
+
+    fontsiz = 16
+
+    for filename, timeRange, freqRange in zip(filenames, timeRanges, freqRanges):
+        print('filename: ' + str(filename))
+        print('timeRange: ' + str(timeRange))
+
+        if not loadProcessedData:
+            loadFile(filename, include=allpops)
+
+            allDataLFP = []
+            allDataPSD = []
+
+            # # raster   ## NOTE: THIS IS COMMENTED OUT IN M1_PSD.py
+            # sim.analysis.plotRaster(
+            #     include = allpops, 
+            #     popColors = popColors,
+            #     popRates = 'minimal', 
+            #     orderInverse = True, 
+            #     timeRange = timeRange,
+            #     orderBy = ['pop','y'], 
+            #     figSize = (12,8), 
+            #     lw = 0.3, 
+            #     markerSize = 3, 
+            #     marker = '.', 
+            #     dpi = 600,
+            #     saveFig = True, 
+            #     showFig = False)
+
+            # LFP 
+            if individualPlots:
+                # Overall
+                out = sim.plotting.plotLFPTimeSeries( 
+                        electrodes = [6], #['avg']+list(range(11)), 
+                        timeRange = timeRange, 
+                        figSize = (16,12), 
+                        rcParams = {'font.size': 20},
+                        saveData = False, 
+                        saveFig = True,
+                        fileName = filename[ :-4]+'_LFP_timeSeries_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
+                        showFig = False)
+
+
+                out = sim.plotting.plotLFPPSD(
+                        plots = ['PSD'], 
+                        electrodes = [6],
+                        timeRange = timeRange, 
+                        minFreq = 0.05,
+                        maxFreq = 80,
+                        stepFreq = 0.05,
+                        orderInverse = False, 
+                        figSize = (8,6), 
+                        rcParams = {'font.size': 20},
+                        saveData = False, 
+                        saveFig = True,
+                        fileName = filename[:-4]+'_LFP_PSD_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
+                        showFig = False)
+
+
+                # By population
+                for pop in ['IT2','IT4']: #,'IT5A','IT5B','PT5B','SOM5B','PV5B','IT6','CT6']:
+                    out = sim.plotting.plotLFPTimeSeries( 
+                            electrodes = [6], #['avg']+list(range(11)), 
+                            pop = pop,
+                            timeRange = timeRange, 
+                            figSize = (16,12), 
+
+                            rcParams = {'font.size': 20},
+                            saveData = False, 
+                            saveFig = True,
+                            fileName = filename[ :-4]+'_LFP_timeSeries_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
+                            showFig = False)
                     
-#                     out = sim.plotting.plotLFPPSD(
-#                             plots = ['PSD'], 
-#                             electrodes = [6],
-#                             pop = pop,
-#                             timeRange = timeRange, 
-#                             minFreq = 0.05,
-#                             maxFreq = 80,
-#                             stepFreq = 0.05,
-#                             orderInverse = False, 
-#                             figSize = (8,6), 
-#                             rcParams = {'font.size': 20},
-#                             saveData = False, 
-#                             saveFig = True,
-#                             fileName = filename[:-4]+'_LFP_PSD_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
-#                             showFig = False)
+                    out = sim.plotting.plotLFPPSD(
+                            plots = ['PSD'], 
+                            electrodes = [6],   # NOTE THAT ELECTRODE WILL HAVE TO CORRESPOND TO ELEC OF OSC EVENT! 
+                            pop = pop,
+                            timeRange = timeRange, 
+                            minFreq = 0.05,
+                            maxFreq = 80,
+                            stepFreq = 0.05,
+                            orderInverse = False, 
+                            figSize = (8,6), 
+                            rcParams = {'font.size': 20},
+                            saveData = False, 
+                            saveFig = True,
+                            fileName = filename[:-4]+'_LFP_PSD_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
+                            showFig = False)
 
-#             if combinedPlots:
-#                 # Overall
-#                 dataLFP = sim.analysis.prepareLFP( 
-#                         electrodes = [6], #['avg']+list(range(11)), 
-#                         timeRange = timeRange, 
-#                         filtFreq = 200,
-#                         figSize = (16,12), 
-#                         rcParams = {'font.size': 20},
-#                         saveData = False, 
-#                         saveFig = True,
-#                         fileName = filename[ :-4]+'_LFP_timeSeries_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
-#                         showFig = False)
-                
-#                 dataPSD = sim.analysis.preparePSD(
-#                         electrodes = [6],
-#                         timeRange = timeRange, 
-#                         minFreq = 0.05,
-#                         maxFreq = 80,
-#                         stepFreq = 0.05,
-#                         orderInverse = False, 
-#                         figSize = (8,6), 
-#                         rcParams = {'font.size': 20},
-#                         saveData = False, 
-#                         saveFig = True,
-#                         fileName = filename[:-4]+'_LFP_PSD_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
-#                         showFig = False)
+            if combinedPlots:
+                # Overall
+                dataLFP = sim.analysis.prepareLFP( 
+                        electrodes = [6], #['avg']+list(range(11)), 
+                        timeRange = timeRange, 
+                        filtFreq = 200,
+                        figSize = (16,12), 
+                        rcParams = {'font.size': 20},
+                        saveData = False, 
+                        saveFig = True,
+                        fileName = filename[ :-4]+'_LFP_timeSeries_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
+                        showFig = False)
 
-#                 allDataLFP.append(dataLFP)
-#                 allDataPSD.append(dataPSD)
+                dataPSD = sim.analysis.preparePSD(
+                        electrodes = [6],
+                        timeRange = timeRange, 
+                        minFreq = 0.05,
+                        maxFreq = 80,
+                        stepFreq = 0.05,
+                        orderInverse = False, 
+                        figSize = (8,6), 
+                        rcParams = {'font.size': 20},
+                        saveData = False, 
+                        saveFig = True,
+                        fileName = filename[:-4]+'_LFP_PSD_allpops_%d_%d.png'%(timeRange[0], timeRange[1]), 
+                        showFig = False)
+
+                allDataLFP.append(dataLFP)
+                allDataPSD.append(dataPSD)
 
 
-#                 # By population
-#                 for pop in allpops:
-#                     dataLFP = sim.analysis.prepareLFP( 
-#                             electrodes = [6], #['avg']+list(range(11)), 
-#                             pop = pop,
-#                             timeRange = timeRange, 
-#                             filtFreq = 200,
-#                             figSize = (16,12), 
-#                             rcParams = {'font.size': 20},
-#                             saveData = False, 
-#                             saveFig = True,
-#                             fileName = filename[ :-4]+'_LFP_timeSeries_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
-#                             showFig = False)
+                # By population
+                ### TESTING LINES --> EYG 12/06 --> instead of allpops --> testpops = ['IT2', 'IT5A'] 
+                # testpops = ['IT2', 'IT5A'] 
+                for pop in allpops:
+                    # print('pop: ' + pop)
+                    dataLFP = sim.analysis.prepareLFP( 
+                            electrodes = [6], #['avg']+list(range(11)), 
+                            pop = pop,
+                            timeRange = timeRange, 
+                            filtFreq = 200,
+                            figSize = (16,12), 
+                            rcParams = {'font.size': 20},
+                            saveData = False, 
+                            saveFig = True,
+                            fileName = filename[ :-4]+'_LFP_timeSeries_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
+                            showFig = False)
                     
-#                     dataPSD = sim.analysis.preparePSD(
-#                             plots = ['PSD'], 
-#                             electrodes = [6],
-#                             pop = pop,
-#                             timeRange = timeRange, 
-#                             minFreq = 0.05,
-#                             maxFreq = 80,
-#                             stepFreq = 0.05,
-#                             orderInverse = False, 
-#                             figSize = (8,6), 
-#                             rcParams = {'font.size': 20},
-#                             saveData = False, 
-#                             saveFig = True,
-#                             fileName = filename[:-4]+'_LFP_PSD_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
-#                             showFig = False)
+                    dataPSD = sim.analysis.preparePSD(
+                            plots = ['PSD'], 
+                            electrodes = [6],
+                            pop = pop,
+                            timeRange = timeRange, 
+                            minFreq = 0.05,
+                            maxFreq = 80,
+                            stepFreq = 0.05,
+                            orderInverse = False, 
+                            figSize = (8,6), 
+                            rcParams = {'font.size': 20},
+                            saveData = False, 
+                            saveFig = True,
+                            fileName = filename[:-4]+'_LFP_PSD_%s_%d_%d.png'%(pop, timeRange[0], timeRange[1]), 
+                            showFig = False)
 
-#                     allDataLFP.append(dataLFP) 
-#                     allDataPSD.append(dataPSD)
+                    ## NOTE: these dicts (at least dataPSD) do not appear to have the pop names associated with them? hm. 
+                    allDataLFP.append(dataLFP) 
+                    allDataPSD.append(dataPSD)
             
-#             # save processed data to file
-#             with open(filename[ :-4]+'_processed_data.pkl', 'wb') as f:
-#                 pickle.dump([allDataLFP, allDataPSD] ,f)
+            # save processed data to file
+            with open(filename[ :-4]+'_processed_data.pkl', 'wb') as f:
+                pickle.dump([allDataLFP, allDataPSD] ,f)
 
-#         # load processed data from file
-#         else:
-            
-#             with open(filename[ :-4]+'_processed_data.pkl', 'rb') as f:
-#                 [allDataLFP, allDataPSD] = pickle.load(f)
+        # load processed data from file
+        else:
+            with open(filename[ :-4]+'_processed_data.pkl', 'rb') as f:
+                [allDataLFP, allDataPSD] = pickle.load(f)
 
 
-#         # calculate pops contributing most to psd
-#         #freqRange = [x*200 for x in freqRanges[]] #[0, 1600]  # 0-80 hz indices  #for 25 to 50 hz
-#         freqScale = 20
-#         #### freqPeaks is the line where "frequency power is calculated based on psd"!! ####
-#         freqPeaks = [np.sum(x['psdSignal'][0][freqRange[0]*freqScale:freqRange[1]*freqScale]) for x in allDataPSD]
-#         topPopIndices = np.argsort(freqPeaks)[::-1]
-#         topPopIndices = topPopIndices[:5]
-        
-#         # calculate pops contributing most to lfp amplitude
-#         # peaks = [np.max(np.mean(np.abs(x['electrodes']['lfps'][0]))) for x in allDataLFP]
-#         # topPopIndices = np.argsort(peaks)[::-1]
-#         # topPopIndices = topPopIndices[:6]
+        # calculate pops contributing most to psd
+        #freqRange = [x*200 for x in freqRanges[]] #[0, 1600]  # 0-80 hz indices  #for 25 to 50 hz
+        freqScale = 20
+        #### freqPeaks is the line where "frequency power is calculated based on psd"!! ####
+        freqPeaks = [np.sum(x['psdSignal'][0][freqRange[0]*freqScale:freqRange[1]*freqScale]) for x in allDataPSD]
+        topPopIndices = np.argsort(freqPeaks)[::-1]
+        topPopIndices = topPopIndices[:5]
 
-#         # plotting
-#         popLabels = ['All']+allpops #allpops
-#         popColors['All'] = 'black'
+        # calculate pops contributing most to lfp amplitude
+        # peaks = [np.max(np.mean(np.abs(x['electrodes']['lfps'][0]))) for x in allDataLFP]
+        # topPopIndices = np.argsort(peaks)[::-1]
+        # topPopIndices = topPopIndices[:6]
 
-#         plt.figure(figsize=(8,4))
-#         plt.ion()
-#         fs = 1000/0.025
+        # plotting
+        popLabels = ['All']+allpops #allpops
+        popColors['All'] = 'black'
 
-#         for i in topPopIndices:
-#             # combined PSD 
-#             # using netpyne PSD
-#             dataNorm = allDataPSD[i]['psdSignal'][0] #/ np.max(allDataPSD[0]['psdSignal'][0])
-#             f = allDataPSD[i]['psdFreqs'][0]
-#             plt.plot(f, dataNorm*1000, label=popLabels[i],  color=popColors[popLabels[i]], linewidth=2)
+        plt.figure(figsize=(8,4))
+        plt.ion()
+        fs = 1000/0.025  
 
-#             # using Welch
-#             # x = allDataLFP[i]['electrodes']['lfps'][0]
-#             # f, Pxx_den = ss.welch(x, fs, nperseg=len(x)/2)
-#             # if popLabels[i] == 'All':
-#             #     plt.semilogy(f, Pxx_den*1000, label=popLabels[i], color=popColors[popLabels[i]], linewidth=3)#, linestyle=':') # in uV
-#             # else:
-#             #     plt.semilogy(f, Pxx_den*1000, label=popLabels[i], color=popColors[popLabels[i]], linewidth=2 ) # in uV
-#             # if periodLabel == 'quiet':
-#             #     plt.ylim([5e-6,3])
-#             # elif periodLabel == 'move':
-#             #     plt.ylim([0.3e-4,1e-0])
-#             # plt.xlim([0.0, 80])
-#             # plt.grid(False)
+        for i in topPopIndices:
+            # combined PSD 
+            # using netpyne PSD
+            dataNorm = allDataPSD[i]['psdSignal'][0] #/ np.max(allDataPSD[0]['psdSignal'][0])
+            f = allDataPSD[i]['psdFreqs'][0]
+            plt.plot(f, dataNorm*1000, label=popLabels[i],  color=popColors[popLabels[i]], linewidth=2) 
+            print('popLabel: ' + str(popLabels[i]))
+            ## ^^ NOTE: can I verify that the label corresponds to whatever is being plotted...? 
 
-#         # log x and log y (for wavelet/netpyne PSD)
-#         ax = plt.gca()
-#         ax.set_xscale('log')
-#         ax.set_yscale('log')
-#         plt.xlim(1,80) 
-#         plt.ylim([.4e-3,4e0])
+            # using Welch
+            # x = allDataLFP[i]['electrodes']['lfps'][0]
+            # f, Pxx_den = ss.welch(x, fs, nperseg=len(x)/2)
+            # if popLabels[i] == 'All':
+            #     plt.semilogy(f, Pxx_den*1000, label=popLabels[i], color=popColors[popLabels[i]], linewidth=3)#, linestyle=':') # in uV
+            # else:
+            #     plt.semilogy(f, Pxx_den*1000, label=popLabels[i], color=popColors[popLabels[i]], linewidth=2 ) # in uV
+            # if periodLabel == 'quiet':
+            #     plt.ylim([5e-6,3])
+            # elif periodLabel == 'move':
+            #     plt.ylim([0.3e-4,1e-0])
+            # plt.xlim([0.0, 80])
+            # plt.grid(False)
 
-#         #ipy.embed()
+        # log x and log y (for wavelet/netpyne PSD)
+        ax = plt.gca()
+        ax.set_xscale('log')
+        ax.set_yscale('log')
+        plt.xlim(1,80) 
+        plt.ylim([.4e-3,4e0])
 
-#         xstep = 20
-#         xrange = np.arange(xstep, np.max(f)+1, xstep)
-#         xticks = [1, 4, 8, 12, 30, 80]# [3, 9, 28, 80]
-#         ax.set_xticks(xticks)
-#         ax.set_xticklabels(['%.0f' % x for x in xticks])
+        #ipy.embed()
 
-#         # log freq
-#         # ax.set_xscale('log')
-#         # plt.xlim([0.0, 80])
+        xstep = 20
+        xrange = np.arange(xstep, np.max(f)+1, xstep)
+        xticks = [1, 4, 8, 12, 30, 80]# [3, 9, 28, 80]
+        ax.set_xticks(xticks)
+        ax.set_xticklabels(['%.0f' % x for x in xticks])
+
+        # log freq
+        # ax.set_xscale('log')
+        # plt.xlim([0.0, 80])
 
 #         ax = plt.gca()
 #         plt.setp(ax.get_xticklabels(),fontsize=fontsiz)
