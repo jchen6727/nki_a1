@@ -599,6 +599,7 @@ if cfg.addBkgConn:
         data = loadmat(cfg.ICThalInput['file'])
         fs = data['RsFs'][0][0]
         ICrates = data['BE_sout_population'].tolist()
+        ICrates = [x + [0] for x in ICrates] # add trailing zero to avoid long output from inh_poisson_generator() 
         ICtimes = list(np.arange(0, cfg.duration, 1000./fs))  # list with times to set each time-dep rate
         
         ICrates = ICrates * 4 # 200 cells
