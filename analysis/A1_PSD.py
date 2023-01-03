@@ -69,6 +69,41 @@ def loadFile(filename, include):
 
 if __name__ == '__main__':
 
+    ## Osc Event Info files ##
+    oscEventDir = '../data/topPops/AllCortPops/'            # Could be ECortPops or ICortPops
+    oscEventFiles = []
+    filesOscEventDir = os.listdir(oscEventDir)
+    for file in filesOscEventDir:
+        if '.pkl' in file:
+            oscEventFiles.append(file)
+
+
+
+    ## PICK A FREQUENCY BAND -- iterate over later 
+    frequencyBand = ['delta'] # ['alpha', 'beta', 'theta']
+
+    ## PICK A REGION -- iterate over later 
+    corticalRegion = ['supra'] # ['infra', 'gran']
+
+
+    for band in frequencyBand:
+        ## load osc event info pkl file --> e.g. here it will load delta osc event pkl file
+        #### NOTE: Fix this during iteration process --- for now designed just to look at one particular file and go from there
+        for file in oscEventFiles:
+            if frequencyBand in file:
+                with open(file, 'rb') as handle:
+                    oscEventData = pickle.load(file)
+        ## Now 'delta' osc event info file should be loaded (from data/topPops/AllCortPops/)
+
+        ## Now get a list of osc event indices in the band x region specified (e.g. delta, supra)
+        oscEventIdx = []
+        A1_subjects = []
+        for region in corticalRegion:
+            A1_subjects = list(oscEventData[band][region].keys())
+
+
+
+
 
     ## Get all data dir files ##
     dataDir = '../data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/'
@@ -90,7 +125,6 @@ if __name__ == '__main__':
     combinedPlots = True # False
 
 
-    ## NOTE: Potentially change this to allCortPops after basic testing 
     allpops = ['NGF1', 
                     'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 
                     'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 
@@ -99,7 +133,6 @@ if __name__ == '__main__':
                     'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 
                     'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
 
-    ## NOTE: Potentially change this to eCortPops after basic testing (to emphasize cort vs thal)
     excpops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B', 'PT5B', 'IT6', 'CT6']
 
 
@@ -174,7 +207,7 @@ if __name__ == '__main__':
 
 
                 # By population
-                for pop in ['IT2','IT4']: #,'IT5A','IT5B','PT5B','SOM5B','PV5B','IT6','CT6']:
+                for pop in allpops:   #['IT2','IT4']: #,'IT5A','IT5B','PT5B','SOM5B','PV5B','IT6','CT6']:
                     out = sim.plotting.plotLFPTimeSeries( 
                             electrodes = [6], #['avg']+list(range(11)), 
                             pop = pop,
@@ -344,45 +377,50 @@ if __name__ == '__main__':
         # ax.set_xscale('log')
         # plt.xlim([0.0, 80])
 
-#         ax = plt.gca()
-#         plt.setp(ax.get_xticklabels(),fontsize=fontsiz)
-#         plt.setp(ax.get_yticklabels(),fontsize=fontsiz)
-#         plt.xlabel('Frequency (Hz)', fontsize=fontsiz)
-#         plt.ylabel('LFP power ($\mu$V$^2$/Hz)', fontsize=fontsiz) #'PSD [V**2/Hz]'
-#         plt.legend(fontsize=fontsiz, loc='upper left', bbox_to_anchor=(1.01, 1))
-#         plt.subplots_adjust(bottom=0.15, top=0.95 , left=0.1, right=0.82 )
+        ax = plt.gca()
+        plt.setp(ax.get_xticklabels(),fontsize=fontsiz)
+        plt.setp(ax.get_yticklabels(),fontsize=fontsiz)
+        plt.xlabel('Frequency (Hz)', fontsize=fontsiz)
+        plt.ylabel('LFP power ($\mu$V$^2$/Hz)', fontsize=fontsiz) #'PSD [V**2/Hz]'
+        plt.legend(fontsize=fontsiz, loc='upper left', bbox_to_anchor=(1.01, 1))
+        plt.subplots_adjust(bottom=0.15, top=0.95 , left=0.1, right=0.82 )
 
-#         plt.savefig(filename[:-4]+'_LFP_PSD_%s_combined_Welch.png' % (periodLabel), dpi=300)
+        # plt.savefig(filename[:-4]+'_LFP_PSD_%s_combined_Welch.png' % (periodLabel), dpi=300)
+        plt.savefig(filename[:-4]+'_LFP_PSD_combined_Welch.png', dpi=300)
+        ### ^^ NOTE: WHY DOES THIS HAVE COMBINED WELCH IN IT WHEN IT APPEARS THAT THE WELCH LINES ABOVE ARE COMMENTED OUT? 
 
-#         plotEachLFP = 0 
 
-#         if plotEachLFP:
+        plotEachLFP = 1 # 0 
 
-#             for i in topPopIndices:
-#                 # individual LFP timeseries
-#                 plt.figure(figsize=(8,4))
-#                 lw=0.5
-#                 t = allDataLFP[i]['t']
-#                 plt.plot(t, -allDataLFP[i]['electrodes']['lfps'][0], color=popColors[popLabels[i]], linewidth=lw)
-#                 ax = plt.gca()        
-#                 ax.invert_yaxis()
-#                 plt.axis('off')
-#                 plt.xlabel('time (ms)', fontsize=fontsiz)
+        if plotEachLFP:
 
-#                 meanSignal = np.mean(-allDataLFP[i]['electrodes']['lfps'][0])
-#                 plt.ylim(meanSignal+0.4,meanSignal-0.5)
-#                 plt.subplots_adjust(bottom=0.0, top=0.9, left=0.1, right=0.9)
+            for i in topPopIndices:
+                # individual LFP timeseries
+                plt.figure(figsize=(8,4))
+                lw=0.5
+                t = allDataLFP[i]['t']
+                plt.plot(t, -allDataLFP[i]['electrodes']['lfps'][0], color=popColors[popLabels[i]], linewidth=lw)
+                ax = plt.gca()        
+                ax.invert_yaxis()
+                plt.axis('off')
+                plt.xlabel('time (ms)', fontsize=fontsiz)
 
-#                 # calculate scalebar size and add scalebar
-#                 scaley = 1000.0  # values in mV but want to convert to uV
-#                 sizey = 100/scaley
-#                 labely = '%.3g $\mu$V'%(sizey*scaley)#)[1:]
-#                 sizex=500
-#                 add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, 
-#                         unitsx='ms', loc='upper right', pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
+                meanSignal = np.mean(-allDataLFP[i]['electrodes']['lfps'][0])
+                plt.ylim(meanSignal+0.4,meanSignal-0.5)
+                plt.subplots_adjust(bottom=0.0, top=0.9, left=0.1, right=0.9)
+
+                # calculate scalebar size and add scalebar
+                scaley = 1000.0  # values in mV but want to convert to uV
+                sizey = 100/scaley
+                labely = '%.3g $\mu$V'%(sizey*scaley)#)[1:]
+                sizex=500
+                add_scalebar(ax, hidey=True, matchy=False, hidex=True, matchx=True, sizex=None, sizey=-sizey, labely=labely, unitsy='$\mu$V', scaley=scaley, 
+                        unitsx='ms', loc='upper right', pad=0.5, borderpad=0.5, sep=3, prop=None, barcolor="black", barwidth=2)
                 
-#                 plt.title('LFP 0-200 Hz', fontsize=fontsiz, fontweight='bold')
-#                 plt.savefig(filename[:-4]+'_LFP_timeSignal_%s_%s.png' % (popLabels[i], periodLabel),dpi=300)
+                plt.title('LFP 0-200 Hz', fontsize=fontsiz, fontweight='bold')
+                # plt.savefig(filename[:-4]+'_LFP_timeSignal_%s_%s.png' % (popLabels[i], periodLabel),dpi=300)
+                plt.savefig(filename[:-4]+'_LFP_timeSignal_%s.png' % popLabels[i], dpi=300)
+
             
         
 #         #ipy.embed()
