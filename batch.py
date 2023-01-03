@@ -973,7 +973,7 @@ def custom_BBN(filename):
     # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     ## BBN STIMULUS FOR ICThalInput ## 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat' # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
                             'startTime': 2500, 
                             'weightE': 0.25,    #1.0, 
                             'weightI': 0.25,    #1.0, 
