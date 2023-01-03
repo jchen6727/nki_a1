@@ -947,11 +947,11 @@ def custom_BBN(filename):
 
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
-    params[('ICThalInput', 'startTime')] = [[2500, 4000, 5500], 5000]   #[1000, 2000]#[[2500, 4000, 5500], 5000]
+    params[('ICThalInput', 'startTime')] = [[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]#[[2500, 4000, 5500], 5000]
 
     #### SET CONN AND STIM SEEDS #### 
-    # params[('seeds', 'conn')] = list(range(1)) # list(range(5)) 
-    # params[('seeds', 'stim')] = list(range(1)) # list(range(5)) 
+    params[('seeds', 'conn')] = [0,1,4] # list(range(1)) # list(range(5)) 
+    params[('seeds', 'stim')] = [0,1,4] # list(range(1)) # list(range(5)) 
 
     #### GROUPED PARAMS #### 
     groupedParams = [] 
@@ -960,7 +960,7 @@ def custom_BBN(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 10000 # 5000 # 10000 
+    initCfg['duration'] = 11500 #10000 # 5000 # 10000 
     initCfg['printPopAvgRates'] = [1500, 10000]
     initCfg['scaleDensity'] = 1.0 # 0.5 #1.0
     initCfg['recordStep'] = 0.05
@@ -973,7 +973,7 @@ def custom_BBN(filename):
     # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     ## BBN STIMULUS FOR ICThalInput ## 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat' # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
                             'startTime': 2500, 
                             'weightE': 0.25,    #1.0, 
                             'weightI': 0.25,    #1.0, 
@@ -3217,7 +3217,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_ANmodel' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_CINECA_v36' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
