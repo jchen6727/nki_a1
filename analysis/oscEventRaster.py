@@ -93,23 +93,23 @@ if batch57:
 				indPop.extend(int(popNumCell) * [popLabel])
 
 
-			L1 = [0,100] # NGF1
-			L2 = [0,0]				#  'IT2'  --> 'NGF2'
-			L3 = [0,0] 				#  'IT3'  ---> 'NGF3'
+			L1 = [0,100] 			# NGF1
+			# L2 = [0,0]				#  'IT2'  --> 'NGF2'
+			# L3 = [0,0] 				#  'IT3'  ---> 'NGF3'
 			L4 = [0,0]				#  'ITP4' --> 'NGF4'
 			L5A = [0,0]				#  'IT5A' --> 'NGF5A'
-			L5B = [0,0] 				#  'IT5B'  --> 'NGF5B
-			L6 =  [0,0]				#  'IT6' --> 
+			# L5B = [0,0] 			#  'IT5B'  --> 'NGF5B
+			# L6 =  [0,0]				#  'IT6' --> 
 			Thal = [12000, 12907]   # TC --> TIM 
 
 
 			listL1 = []
 
-			listL2_TOP = []
-			listL2_BOTTOM = []
+			# listL2_TOP = []
+			# listL2_BOTTOM = []
 
-			listL3_TOP = []
-			listL3_BOTTOM = []
+			# listL3_TOP = []
+			# listL3_BOTTOM = []
 
 			listL4_TOP = []
 			listL4_BOTTOM = []
@@ -117,11 +117,11 @@ if batch57:
 			listL5A_TOP = []
 			listL5A_BOTTOM = []
 
-			listL5B_TOP = []
-			listL5B_BOTTOM = []
+			# listL5B_TOP = []
+			# listL5B_BOTTOM = []
 
-			listL6_TOP = []
-			listL6_BOTTOM = []
+			# listL6_TOP = []
+			# listL6_BOTTOM = []
 
 			listThal_TOP = []
 			listThal_BOTTOM = []
@@ -130,15 +130,15 @@ if batch57:
 				if indPop[spk] == 'NGF1':
 					listL1.append(spk)
 
-				elif indPop[spk] == 'IT2':
-					listL2_TOP.append(spk)
-				elif indPop[spk] == 'NGF2':
-					listL2_BOTTOM.append(spk)
+				# elif indPop[spk] == 'IT2':
+				# 	listL2_TOP.append(spk)
+				# elif indPop[spk] == 'NGF2':
+				# 	listL2_BOTTOM.append(spk)
 
-				elif indPop[spk] == 'IT3':
-					listL3_TOP.append(spk)
-				elif indPop[spk] == 'NGF3':
-					listL3_BOTTOM.append(spk)
+				# elif indPop[spk] == 'IT3':
+				# 	listL3_TOP.append(spk)
+				# elif indPop[spk] == 'NGF3':
+				# 	listL3_BOTTOM.append(spk)
 
 				elif indPop[spk] == 'ITP4':
 					listL4_TOP.append(spk)
@@ -147,80 +147,41 @@ if batch57:
 
 				elif indPop[spk] == 'IT5A':
 					listL5A_TOP.append(spk)
-				elif indPop[spk] == 'NGF5A':
-					listL5A_BOTTOM.append(spk)
+				# elif indPop[spk] == 'NGF5A':
+				# 	listL5A_BOTTOM.append(spk)
 
-				elif indPop[spk] == 'IT5B':
-					listL5B_TOP.append(spk)
-				elif indPop[spk] == 'NGF5B':
-					listL5B_BOTTOM.append(spk)
+				# elif indPop[spk] == 'IT5B':
+				# 	listL5B_TOP.append(spk)
+				# elif indPop[spk] == 'NGF5B':
+				# 	listL5B_BOTTOM.append(spk)
 
-				elif indPop[spk] == 'IT6':
-					listL6_TOP.append(spk)
-				elif indPop[spk] == 'NGF6':
-					listL6_BOTTOM.append(spk)
+				# elif indPop[spk] == 'IT6':
+				# 	listL6_TOP.append(spk)
+				# elif indPop[spk] == 'NGF6':
+				# 	listL6_BOTTOM.append(spk)
 
 				elif indPop[spk] == 'TC':
 					listThal_TOP.append(spk)
-				elif indPop[spk] == 'TIM':
-					listThal_BOTTOM.append(spk)
+				# elif indPop[spk] == 'TIM':
+				# 	listThal_BOTTOM.append(spk)
 
 			L1[0] = min(listL1)
-			L1[1] = max(listL1)
+			# L1[1] = max(listL1)
 			plt.axhline(0, color='black', linestyle=":")
-			#plt.hlines(0, timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L1[1], timeRangeBuffered[0], timeRangeBuffered[1])
 
-			# L2[0] = min(listL2_TOP)
-			# L2[1] = max(listL2_BOTTOM)
-			#plt.hlines(L2[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L2[1], timeRangeBuffered[0], timeRangeBuffered[1])
-
-			# L3[0] = min(listL3_TOP)
-			# L3[1] = max(listL3_BOTTOM)
-			#plt.hlines(L3[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L3[1], timeRangeBuffered[0], timeRangeBuffered[1])
 
 			L4[0] = min(listL4_TOP)
-			L4[1] = max(listL4_BOTTOM)
+			#L4[1] = max(listL4_BOTTOM)
 			plt.axhline(L4[0], color='black', linestyle=":")
-			#plt.hlines(L4[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L4[1], timeRangeBuffered[0], timeRangeBuffered[1])
+
 
 			L5A[0] = min(listL5A_TOP)
-			L5A[1] = max(listL5A_BOTTOM)
+			#L5A[1] = max(listL5A_BOTTOM)
 			plt.axhline(L5A[0], color='black', linestyle=":")
-			#plt.hlines(L5A[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L5A[1], timeRangeBuffered[0], timeRangeBuffered[1])
-
-			# L5B[0] = min(listL5B_TOP)
-			# L5B[1] = max(listL5B_BOTTOM)
-			#plt.hlines(L5B[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L5B[1], timeRangeBuffered[0], timeRangeBuffered[1])
-
-			# L6[0] = min(listL6_TOP)
-			# L6[1] = max(listL6_BOTTOM)
-			#plt.hlines(L6[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(L6[1], timeRangeBuffered[0], timeRangeBuffered[1])
 
 			Thal[0] = min(listThal_TOP)
-			Thal[1] = max(listThal_BOTTOM)
+			#Thal[1] = max(listThal_BOTTOM)
 			plt.axhline(Thal[0], color='black', linestyle=":")
-			#plt.hlines(Thal[0], timeRangeBuffered[0], timeRangeBuffered[1], colors='cyan')
-			#plt.hlines(Thal[1], timeRangeBuffered[0], timeRangeBuffered[1])
-
-			# y_tick_locations = [((L1[0] + L3[1])/2), L3[1],
-			# 					((L3[1] + L4[1])/2), L4[1],
-			# 					((L4[1] + L6[1])/2), L6[1],
-			# 					((Thal[0] + Thal[1])/2)
-			# 					]
-			# y_labels = ['supragranular', '',
-			# 			'granular', '',
-			# 			'infragranular', '',
-			# 			'thal']
-
-			# plt.yticks(y_tick_locations, y_labels) # add in fontsize 
-
 
 
 
