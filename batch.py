@@ -947,11 +947,12 @@ def custom_BBN(filename):
 
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
-    params[('ICThalInput', 'startTime')] = [[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]#[[2500, 4000, 5500], 5000]
+    BBN_stimTimes = list(np.arange(2500, 11300, 624))
+    params[('ICThalInput', 'startTime')] = [BBN_stimTimes]  #[[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]#[[2500, 4000, 5500], 5000]
 
     #### SET CONN AND STIM SEEDS #### 
-    params[('seeds', 'conn')] = [0,1,4] # list(range(1)) # list(range(5)) 
-    params[('seeds', 'stim')] = [0,1,4] # list(range(1)) # list(range(5)) 
+    params[('seeds', 'conn')] = [0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+    params[('seeds', 'stim')] = [0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
 
     #### GROUPED PARAMS #### 
     groupedParams = [] 
@@ -960,7 +961,7 @@ def custom_BBN(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500 #10000 # 5000 # 10000 
+    initCfg['duration'] = 12000 #11500 #10000 # 5000 # 10000 
     initCfg['printPopAvgRates'] = [1500, 10000]
     initCfg['scaleDensity'] = 1.0 # 0.5 #1.0
     initCfg['recordStep'] = 0.05
@@ -3217,7 +3218,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_v36' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_CINECA_v36_withNHPstimPeriod' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
