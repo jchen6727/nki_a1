@@ -45,10 +45,38 @@ waveletInfo = {
 
 freqBands = list(waveletInfo.keys()) # ['Theta']
 
-batch57 = 1
-saveFigs = 1
+replacementTest = 1
+batch57 = 0
+saveFigs = 0
 markerType = 'o'
 layerLines = 'layers' #'regions'   # OPTIONS: False, 'regions', 'layers'
+
+
+replacementTestFiles = {'v34_batch67_CINECA_0_0_data.pkl': {'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_0_gamma_106': {'timeRange': [7687.28, 7728.23]}}}#,
+#'v34_batch67_CINECA_4_0_data.pkl': {},
+#'v34_batch67_CINECA_4_4_data.pkl': {}}
+
+replacementBaseDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/'
+
+
+if replacementTest:
+	for seedFile in replacementTestFiles.keys():
+		fn = replacementBaseDir + seedFile
+		sim.load(fn, instantiate=False)
+
+		for png in replacementTestFiles[seedFile]:
+			timeRange = replacementTestFiles[seedFile][png]['timeRange']
+
+			orderBy = ['pop']
+
+			## PLOT RASTER ## 
+			sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels=False,
+				popRates=False, orderInverse=True, lw=0, markerSize=12, marker=markerType,
+				showFig=0, saveFig=0, orderBy=orderBy)#, figSize=(8,6))			#figSize=(6.4, 4.8) # labels='legend'
+
+			plt.title(png)
+			plt.show()
+
 
 if batch57: 
 	for band in freqBands:
@@ -124,6 +152,7 @@ if batch57:
 
 				elif indPop[spk] == 'TC':
 					listThal_TOP.append(spk)
+
 				elif indPop[spk] == 'TIM':
 					listThal_BOTTOM.append(spk)
 
