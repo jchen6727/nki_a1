@@ -947,12 +947,12 @@ def custom_BBN(filename):
 
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
-    BBN_stimTimes = list(np.arange(2500, 11300, 624))
-    params[('ICThalInput', 'startTime')] = [BBN_stimTimes]  #[[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]#[[2500, 4000, 5500], 5000]
+    BBN_stimTimes = list(np.arange(2500, 11300, 624.5))
+    params[('ICThalInput', 'startTime')] = [BBN_stimTimes, 5000, 6000, 7000, 8000]  #[[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]    #[[2500, 4000, 5500], 5000]
 
     #### SET CONN AND STIM SEEDS #### 
-    params[('seeds', 'conn')] = [0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
-    params[('seeds', 'stim')] = [0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
 
     #### GROUPED PARAMS #### 
     groupedParams = [] 
@@ -974,13 +974,13 @@ def custom_BBN(filename):
     # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     ## BBN STIMULUS FOR ICThalInput ## 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
                             'startTime': 2500, 
                             'weightE': 0.25,    #1.0, 
                             'weightI': 0.25,    #1.0, 
                             'probE': 0.12, 
                             'probI': 0.12,      #0.25 
-                            'seed': 1}  
+                            'seed': 1}  # SHOULD THIS BE ZERO? 
 
     ### OPTION TO RECORD EEG / DIPOLE ###
     initCfg['recordDipole'] = False
@@ -3218,7 +3218,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_v36_withNHPstimPeriod' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
