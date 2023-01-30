@@ -52,19 +52,31 @@ markerType = 'o'
 layerLines = 'layers' #'regions'   # OPTIONS: False, 'regions', 'layers'
 
 
-replacementTestFiles = {'v34_batch67_CINECA_0_0_data.pkl': {'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_0_gamma_106': {'timeRange': [7687.28, 7728.23]}}}#,
+replacementTestFiles = {'v34_batch67_CINECA_0_0_data.pkl': 
+{'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_0_gamma_106': {'timeRange': [7687.28, 7728.23]}, 
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_0_gamma_107': {'timeRange': [8669.99334996675, 8731.393656968285]}, 
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_2_gamma_490': {'timeRange': [1539.1576957884788, 1605.5080275401376]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_4_gamma_1001': {'timeRange': [2372.8618643093214, 2434.7121735608675]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_6_alpha_1350': {'timeRange': [98.1004905024525, 413.95206976034876]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_7_gamma_1699': {'timeRange': [10274.159138942596, 10328.860962397493]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_8_theta_1803': {'timeRange': [7156.785783928919, 7593.437967189835]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_11_theta_2461': {'timeRange': [1404.6570232851163, 1948.959744798724]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_13_beta_2983': {'timeRange': [10000.0, 10237.807927195146]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_13_theta_2942': {'timeRange': [1428.5071425357125, 1992.2599612998063]},
+'v34_batch67_CINECA_0_0_data_SIM_wavelet_chan_19_beta_4336': {'timeRange': [2149.6607483037415, 2332.7116635583175]}}} #,
 #'v34_batch67_CINECA_4_0_data.pkl': {},
 #'v34_batch67_CINECA_4_4_data.pkl': {}}
 
 replacementBaseDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/'
-
+saveDir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/oscEventRasters/rasters/oscReplacementRasters/'
+saveReplacements = 1
 
 if replacementTest:
 	for seedFile in replacementTestFiles.keys():
 		fn = replacementBaseDir + seedFile
 		sim.load(fn, instantiate=False)
 
-		for png in replacementTestFiles[seedFile]:
+		for png in replacementTestFiles[seedFile].keys():
 			timeRange = replacementTestFiles[seedFile][png]['timeRange']
 
 			orderBy = ['pop']
@@ -75,7 +87,12 @@ if replacementTest:
 				showFig=0, saveFig=0, orderBy=orderBy)#, figSize=(8,6))			#figSize=(6.4, 4.8) # labels='legend'
 
 			plt.title(png)
-			plt.show()
+
+			if saveReplacements:
+				rasterFile = saveDir + png + '_raster.png'
+				plt.savefig(rasterFile, dpi=300)
+			else:
+				plt.show()
 
 
 if batch57: 

@@ -88,7 +88,7 @@ if local:
 delta = 0
 beta = 	0
 alpha = 0
-theta = 1
+theta = 0
 # gamma = 0 
 
 if delta:
@@ -109,8 +109,8 @@ elif theta:
 	timeRange, dataFile, waveletElectrode = getWaveletInfo('theta', based=based, verbose=1)
 	wavelet='theta'
 	# maxFreq=None
-elif gamma:
-	print('Cannot analyze gamma wavelet at this time')
+# elif gamma:
+# 	print('Cannot analyze gamma wavelet at this time')
 
 
 ### OSC EVENT INFO DICTS !!
@@ -138,16 +138,28 @@ if evalWavelets_Band:
 
 
 ## Automated pop selection based on max (peak or avg) CSD values ## 
-evalPopsBool = 0
-
+evalPopsBool = 1
 if evalPopsBool:
+
+	# Put any test info here # 
+	beta2_getWaveletInfo = {'dataFile': 'v34_batch67_CINECA_0_0_data.pkl', 'channel': 19, 'timeRange': [2149.6607483037415, 2332.7116635583175]}
+	based = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/'
+	timeRange = beta2_getWaveletInfo['timeRange']
+	dataFile = based + beta2_getWaveletInfo['dataFile']
+	waveletElectrode = beta2_getWaveletInfo['channel']
+
+	beta2_oscEventInfo = {'chan': 19, 'minT': 2149.6607483037415, 'maxT': 2332.7116635583175, 'alignoffset': 0, 'left': 0, 'right': 100, 'w2': 100}
+
+
 	print('timeRange: ' + str(timeRange))
 	print('dataFile: ' + str(dataFile))
 	print('channel: ' + str(waveletElectrode))
 
 	# Get data frames for LFP and CSD data
 	### dfPeak_LFP, dfAvg_LFP = getDataFrames(dataFile=dataFile, timeRange=timeRange)			# dfPeak, dfAvg, peakValues, avgValues, lfpPopData = getDataFrames(dataFile=dataFile, timeRange=timeRange, verbose=1)
-	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo = thetaOscEventInfo)
+	#dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo = thetaOscEventInfo)
+	dfPeak_CSD, dfAvg_CSD = getCSDDataFrames(dataFile=dataFile, timeRange=timeRange, oscEventInfo = beta2_oscEventInfo)
+
 
 	# Get the pops with the max contributions 
 	maxPopsValues_peakCSD = evalPops(dataFrame=dfPeak_CSD, electrode=waveletElectrode)
@@ -159,7 +171,7 @@ if evalPopsBool:
 ########################################################################
 ####### LOOKING AT ALL OSC EVENTS BY BAND -- FOR THESIS PROPOSAL #######
 ########################################################################
-popsByBand = 1
+popsByBand = 0
 
 if popsByBand:
 	#####################
