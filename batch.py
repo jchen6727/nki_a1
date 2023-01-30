@@ -948,7 +948,7 @@ def custom_BBN(filename):
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
     BBN_stimTimes = list(np.arange(2500, 11300, 624.5))
-    params[('ICThalInput', 'startTime')] = [BBN_stimTimes, 5000, 6000, 7000, 8000]  #[[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]    #[[2500, 4000, 5500], 5000]
+    params[('ICThalInput', 'startTime')] = [BBN_stimTimes, 5000]#, 6000, 7000, 8000]  #[[2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500], 5000] #[[2500, 4000, 5500], 5000]   #[1000, 2000]    #[[2500, 4000, 5500], 5000]
 
     #### SET CONN AND STIM SEEDS #### 
     params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
