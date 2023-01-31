@@ -3,8 +3,8 @@ from matplotlib import pyplot as plt
 import os 
 import numpy as np
 
-
-basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/data_pklFiles/'
+basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_v36_5656BF_624SOA/'
+# basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/data_pklFiles/'
 # basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/BBN_CINECA_speech_ANmodel/'
 # basedir = '../data/simDataFiles/BBN/BBN_CINECA_startTimeDebug_IPGmod/'
 # '../data/simDataFiles/speech/v34_batch_eegSpeech_CINECA_trial_1/'
@@ -36,7 +36,7 @@ for fn in pklFiles:
 
 
 	# fig1 = sim.plotting.plotRaster(include=['allCells'], timeRange=timeRange, 
-	# 	popRates=False, orderInverse=True, lw=0, marker='.',  
+	# 	popRates=False, orderInverse=True, lw=0, #markerSize=10, marker='.',  
 	# 	showFig=0, saveFig=0, figSize=(9*0.95, 13*0.9), orderBy=orderBy)
 
 	print('RASTER PLOTTED')
