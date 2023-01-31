@@ -974,7 +974,7 @@ def custom_BBN(filename):
     # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
     ## BBN STIMULUS FOR ICThalInput ## 
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', #'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
                             'startTime': 2500, 
                             'weightE': 0.25,    #1.0, 
                             'weightI': 0.25,    #1.0, 
@@ -3218,7 +3218,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'ORIG_bbnICoutput_CINECA_v36'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
