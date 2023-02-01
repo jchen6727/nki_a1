@@ -30,34 +30,48 @@ for fn in pklFiles:
 
 	timeRange = [0,sim.cfg.duration]#[500,sim.cfg.duration]#[500,10000]
 
+
+	## FIGURING OUT GID ISSUE
+	#sim.net.allPops.keys()
+	# IC_cellGIDs = sim.net.allPops['IC']['cellGids']
+	# print('IC_GIDs : ' + str(IC_cellGIDs))
+	# IT3_cellGIDs = sim.net.allPops['IT3']['cellGids']
+	# print('IT3 cell GIDs : ' + str(IT3_cellGIDs))
+
+	# IC_spkTimes = sim.net.allPops['IC']['spkTimes']
+	# print('IC spk times: ' + str(IC_spkTimes))
+	# IT3_spkTimes = sim.net.allPops['IT3']['spkTimes']
+	# print('IT3_spkTimes: ' + str(IT3_spkTimes))
+
+
 	fig1 = sim.analysis.plotRaster(include=['allCells'], timeRange=timeRange, labels='legend', 
 		popRates=False, orderInverse=True, lw=0, markerSize=12, marker='.',  
-		showFig=0, saveFig=0, figSize=(9*0.95, 13*0.9), orderBy=orderBy)
+		showFig=0, saveFig=0, figSize=(9*0.95, 13*0.9))#, orderBy=orderBy)
 
 
-	# fig1 = sim.plotting.plotRaster(include=['allCells'], timeRange=timeRange, 
-	# 	popRates=False, orderInverse=True, lw=0, #markerSize=10, marker='.',  
-	# 	showFig=0, saveFig=0, figSize=(9*0.95, 13*0.9), orderBy=orderBy)
+	# # fig1 = sim.plotting.plotRaster(include=['allCells'], timeRange=timeRange, 
+	# # 	popRates=False, orderInverse=True, lw=0, #markerSize=10, marker='.',  
+	# # 	showFig=0, saveFig=0, figSize=(9*0.95, 13*0.9), orderBy=orderBy)
 
-	print('RASTER PLOTTED')
+	# print('RASTER PLOTTED')
 
-	# ax = plt.gca()
+	# # ax = plt.gca()
 
-	# [i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
+	# # [i.set_linewidth(0.5) for i in ax.spines.values()] # make border thinner
 
-	## set xticks -- but NOTE: this only works for single start time for now!! ## 
-	# xTickInterval = sim.cfg.ICThalInput['startTime']
-	# xTickMarkers = np.arange(timeRange[0], sim.cfg.duration, 2000)#500)	# xTickInterval)
-	# plt.xticks(xTickMarkers)	# plt.xticks(timeRange, [timeRange[0], timeRange[1]]) #['0', '1'])
+	# ## set xticks -- but NOTE: this only works for single start time for now!! ## 
+	# # xTickInterval = sim.cfg.ICThalInput['startTime']
+	# # xTickMarkers = np.arange(timeRange[0], sim.cfg.duration, 2000)#500)	# xTickInterval)
+	# # plt.xticks(xTickMarkers)	# plt.xticks(timeRange, [timeRange[0], timeRange[1]]) #['0', '1'])
 	
-	## set y ticks ##
-	#plt.yticks([0, 5000, 10000], [0, 5000, 10000])  	## for full-scale sim
-	#plt.yticks([0, 2500, 5000], [0, 2500, 5000])		## for half-scale sim 
+	# ## set y ticks ##
+	# #plt.yticks([0, 5000, 10000], [0, 5000, 10000])  	## for full-scale sim
+	# #plt.yticks([0, 2500, 5000], [0, 2500, 5000])		## for half-scale sim 
 
-	plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
-	plt.xlabel('Time (ms)')
+	# plt.ylabel('Neuron ID') #Neurons (ordered by NCD within each pop)')
+	# plt.xlabel('Time (ms)')
 
-	plt.title('')
+	# plt.title('')
 
 	rasterFilename = fn.split('_data.pkl')[0]
 	rasterFile = basedir + rasterFilename + '_RASTER.png' #'speechRaster_0_2.png'
