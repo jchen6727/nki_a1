@@ -3,7 +3,8 @@ from matplotlib import pyplot as plt
 import os 
 import numpy as np
 
-basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36/'
+basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_variedSOA_v36/'
+# basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36/'
 # basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_v36_5656BF_624SOA/'
 # basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/data_pklFiles/'
 # basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/speech/BBN_CINECA_speech_ANmodel/'

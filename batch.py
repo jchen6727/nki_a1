@@ -1026,6 +1026,100 @@ def custom_BBN(filename):
 # ----------------------------------------------------------------------------------------------
 # Custom pure tone stim
 # ----------------------------------------------------------------------------------------------
+def custom_click(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+
+    #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
+    click_stimTimes = list(np.arange(2500, 11300, 624.5))
+    click_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
+    click_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    params[('ICThalInput', 'startTime')] = [5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA, pureTone_stimTimes_longerSOA]
+
+    #### SET CONN AND STIM SEEDS #### 
+    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
+    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
+
+    #### GROUPED PARAMS #### 
+    groupedParams = [] 
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 12000 #11500 
+    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['scaleDensity'] = 1.0 
+    initCfg['recordStep'] = 0.05
+
+    # # plotting and saving params
+    # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
+    # initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    ## BBN STIMULUS FOR ICThalInput ## 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_click_25ms_burst.mat',
+                            'startTime': 2500, 
+                            'weightE': 0.25,
+                            'weightI': 0.25, 
+                            'probE': 0.12, 
+                            'probI': 0.12,
+                            'seed': 1}  # SHOULD THIS BE ZERO? 
+
+    ### OPTION TO RECORD EEG / DIPOLE ###
+    initCfg['recordDipole'] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+# ----------------------------------------------------------------------------------------------
+# Custom pure tone stim
+# ----------------------------------------------------------------------------------------------
 def custom_tone(filename):
     params = specs.ODict()
 
@@ -3297,7 +3391,8 @@ if __name__ == '__main__':
 
     # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
@@ -3312,7 +3407,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_CINECA_variedSOA_v36'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'click_CINECA_v36_CF5656_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
