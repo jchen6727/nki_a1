@@ -1043,7 +1043,7 @@ def custom_click(filename):
     click_stimTimes = list(np.arange(2500, 11300, 624.5))
     click_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
     click_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
-    params[('ICThalInput', 'startTime')] = [5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA, pureTone_stimTimes_longerSOA]
+    params[('ICThalInput', 'startTime')] = [5000, click_stimTimes, click_stimTimes_shorterSOA, click_stimTimes_longerSOA]
 
     #### SET CONN AND STIM SEEDS #### 
     params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
