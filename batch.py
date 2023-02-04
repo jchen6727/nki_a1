@@ -1140,7 +1140,7 @@ def custom_tone(filename):
     pureTone_stimTimes = list(np.arange(2500, 11300, 624.5))
     pureTone_stimTimes_shorterSOA = list(np.arange(2500, 11300, 200))
     # pureTone_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
-    params[('ICThalInput', 'startTime')] = [5000]#[5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #, pureTone_stimTimes_longerSOA]
+    params[('ICThalInput', 'startTime')] = [200]#[5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #, pureTone_stimTimes_longerSOA]
     params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_2628_3028_wav_pure_tone_2828Hz_25ms.mat']#, 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_11112_11512_wav_pure_tone_11312Hz_25ms.mat']
 
     #### SET CONN AND STIM SEEDS #### 
@@ -1154,8 +1154,8 @@ def custom_tone(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 100 #12000 #11500 
-    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['duration'] = 500 #12000 #11500 
+    initCfg['printPopAvgRates'] = [0,150]#[1500, 10000]
     initCfg['scaleDensity'] = 0.5 #1.0 
     initCfg['recordStep'] = 0.05
 
@@ -3415,7 +3415,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'pureTone_CINECA_quickTest2'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'pureTone_CINECA_quickTest3'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
