@@ -1040,10 +1040,13 @@ def custom_click(filename):
 
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
-    click_stimTimes = list(np.arange(2500, 11300, 624.5))
-    click_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
-    click_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
-    params[('ICThalInput', 'startTime')] = [5000, click_stimTimes, click_stimTimes_shorterSOA, click_stimTimes_longerSOA]
+    # click_stimTimes = list(np.arange(2500, 11300, 624.5))
+    # click_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
+    # click_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    # params[('ICThalInput', 'startTime')] = [5000, click_stimTimes, click_stimTimes_shorterSOA, click_stimTimes_longerSOA]
+
+    ## ICThalInput file 
+    params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_3600_4400_wav_click_25ms_burst.mat', 'data/ICoutput/ICoutput_CF_10913_11713_wav_click_25ms_burst.mat' ]
 
     #### SET CONN AND STIM SEEDS #### 
     params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
@@ -1070,7 +1073,7 @@ def custom_click(filename):
 
     ## BBN STIMULUS FOR ICThalInput ## 
     initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_click_25ms_burst.mat',
-                            'startTime': 2500, 
+                            'startTime': 5000, #2500, 
                             'weightE': 0.25,
                             'weightI': 0.25, 
                             'probE': 0.12, 
