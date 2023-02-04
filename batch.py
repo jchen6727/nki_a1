@@ -1138,13 +1138,14 @@ def custom_tone(filename):
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
     pureTone_stimTimes = list(np.arange(2500, 11300, 624.5))
-    pureTone_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
-    pureTone_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
-    params[('ICThalInput', 'startTime')] = [5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA, pureTone_stimTimes_longerSOA]
+    pureTone_stimTimes_shorterSOA = list(np.arange(2500, 11300, 200))
+    # pureTone_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    params[('ICThalInput', 'startTime')] = [5000]#[5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #, pureTone_stimTimes_longerSOA]
+    params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_2628_3028_wav_pure_tone_2828Hz_25ms.mat']#, 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_11112_11512_wav_pure_tone_11312Hz_25ms.mat']
 
     #### SET CONN AND STIM SEEDS #### 
-    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
-    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
+    # params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
+    # params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
 
     #### GROUPED PARAMS #### 
     groupedParams = [] 
@@ -1153,10 +1154,13 @@ def custom_tone(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 12000 #11500 
+    initCfg['duration'] = 100 #12000 #11500 
     initCfg['printPopAvgRates'] = [1500, 10000]
-    initCfg['scaleDensity'] = 1.0 
+    initCfg['scaleDensity'] = 0.5 #1.0 
     initCfg['recordStep'] = 0.05
+
+    initCfg[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
+    initCfg[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
 
     # # plotting and saving params
     # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
@@ -3395,8 +3399,8 @@ if __name__ == '__main__':
     # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
@@ -3410,7 +3414,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'click_CINECA_v36_CF4000_CF11313'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'pureTone_CINECA_quickTest'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
