@@ -1140,8 +1140,8 @@ def custom_tone(filename):
     pureTone_stimTimes = list(np.arange(2500, 11300, 624.5))
     pureTone_stimTimes_shorterSOA = list(np.arange(2500, 11300, 200))
     # pureTone_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
-    params[('ICThalInput', 'startTime')] = [5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #, pureTone_stimTimes_longerSOA]
-    params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_2628_3028_wav_pure_tone_2828Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_11112_11512_wav_pure_tone_11312Hz_25ms.mat']
+    params[('ICThalInput', 'startTime')] = [pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #[5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #, pureTone_stimTimes_longerSOA]
+    params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat'] #['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_2628_3028_wav_pure_tone_2828Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_11112_11512_wav_pure_tone_11312Hz_25ms.mat']
 
     #### SET CONN AND STIM SEEDS #### 
     params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
