@@ -1159,8 +1159,9 @@ def custom_tone(filename):
     initCfg['scaleDensity'] = 0.5 #1.0 
     initCfg['recordStep'] = 0.05
 
-    initCfg[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
-    initCfg[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
+    # initCfg[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
+    # initCfg[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
+    initCfg['seeds'] = {'conn': 0, 'stim': 0} #[0,1] #[0,1,4] 
 
     # # plotting and saving params
     # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
@@ -3414,7 +3415,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'pureTone_CINECA_quickTest'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'pureTone_CINECA_quickTest2'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
