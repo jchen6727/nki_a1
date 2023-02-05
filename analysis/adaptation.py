@@ -2,13 +2,16 @@ from netpyne import sim
 from netpyne.analysis.tools import *
 import matplotlib.pyplot as plt 
 import numpy as np
-import seaborn as sns 
-import pandas as pd
+# import seaborn as sns 
+# import pandas as pd
 
-basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/REDO_BBN_CINECA_v36_5656BF_624SOA/'
+
+
+basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36_CF500_tone500_SOA624/'
+#basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36_CF500_tone500_SOA200/'
 
 # filename
-filename = 'REDO_BBN_CINECA_v36_5656BF_624SOA_0_0_0_data.pkl'
+filename = 'pureTone_CINECA_v36_CF500_tone500_SOA624_data.pkl' #'pureTone_CINECA_v36_CF500_tone500_SOA200_data.pkl' #'REDO_BBN_CINECA_v36_5656BF_624SOA_0_0_0_data.pkl'
 
 fn = basedir + filename
 
@@ -81,8 +84,8 @@ cells, cellGids, netStimLabels = getInclude(include)
 # sel1, spkts1, spkgids1 = getSpktSpkid(cellGids, timeRange=timeRange1)
 ###########
 
-includePops = ['IC']#, 'CT6']#['CT6', 'IT6']#['CT5B', 'PT5B', 'CT6', 'IT6'] #+ ['IC'] # ['IC','CT6','IT6']
-timeRange = [stimTimes[0]-150, stimTimes[-1]+150]
+includePops = Epops #['IT6']#, 'CT6']#['CT6', 'IT6']#['CT5B', 'PT5B', 'CT6', 'IT6'] #+ ['IC'] # ['IC','CT6','IT6']
+timeRange = [stimTimes[0]-50, stimTimes[-1]+50]
 
 ## PLOT HISTOGRAM DIRECTLY
 # sim.plotting.plotSpikeHist(include=includePops, timeRange = timeRange, binSize=5, showFig=0, stacked=False, legend='labels')
@@ -92,21 +95,23 @@ timeRange = [stimTimes[0]-150, stimTimes[-1]+150]
 
 # # PLOT HISTOGRAM USING HISTDATA
 histData = sim.analysis.prepareSpikeHist(
-	timeRange=timeRange, include=Epops)#Epops)#['CT6', 'IT6', 'CT5B', 'IT5B'])#binSize)
+	timeRange=timeRange, include=includePops)#Epops)#['CT6', 'IT6', 'CT5B', 'IT5B'])#binSize)
 
 rcParams = {'xtick.color': 'blue'}#, 'axes.facecolor': 'black'}
-# sim.plotting.plotSpikeHist(histData=histData, include='allCells',binSize=50, showFig=0, rcParams=rcParams, legend=True, allCellsColor='darkblue', density=False,histType='stepfilled')#, density=True)#xlabel='TIME (ms)')
+sim.plotting.plotSpikeHist(histData=histData, include='allCells',binSize=20, showFig=0, rcParams=rcParams, legend=True, allCellsColor='darkblue', density=False,histType='stepfilled')#, density=True)#xlabel='TIME (ms)')
 
 
-# plt.vlines(stimTimes, 50, 300, linestyles='dashed', colors='yellow')  # 0, 0.000300, 
+plt.vlines(stimTimes, 0, 50, linestyles='dashed', colors='yellow')  # 0, 0.000300, 
 
-#plt.show()
+plt.show()
 
-binSize=50
-spkTimes = histData['spkTimes']
-histoData = np.histogram(spkTimes, bins=np.arange(timeRange[0], timeRange[1], binSize))
-histoCount = histoData[0]
-histoBins = histoData[1]#[0:-1]
+
+
+# binSize=50
+# spkTimes = histData['spkTimes']
+# histoData = np.histogram(spkTimes, bins=np.arange(timeRange[0], timeRange[1], binSize))
+# histoCount = histoData[0]
+# histoBins = histoData[1]#[0:-1]
 # plt.figure()
 # plt.stairs(histCount, histoBins)
 #plt.hist(histoBins[:-1], histoBins, histtype='step', weights=histoCount)
