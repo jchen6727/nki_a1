@@ -128,6 +128,44 @@ for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
 
 
 
+## Reduce T-type calcium channel conductances (cfg.tTypeCorticalFactor ; cfg.tTypeThalamicFactor)
+# for cellLabel in ['TC_reduced', 'HTC_reduced']:
+#     cellParam = netParams.cellParams[cellLabel]
+#     for secName in cellParam['secs']:  ## HAVE TO FIX THIS!! rough draft!!!
+#         cellParams['secs'][secName]['ittc']['gmax'] *= cfg.tTypeThalamicFactor
+
+for cellLabel in ['TC_reduced', 'HTC_reduced', 'RE_reduced']:
+    cellParam = netParams.cellParams[cellLabel]
+    for secName in cellParam['secs']:
+        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+            if mechName in ['itre', 'ittc']:
+                print('')  # ADD A TEST PRINT STATEMENT PRE-CHANGE
+                cellParams['secs'][secName]['mechs'][mechName]['gmax'] *= cfg.tTypeThalamicFactor
+                print('')  # ADD A TEST PRINT STATEMENT POST-CHANGE
+
+for cellLabel in ['TI_reduced']:
+    cellParam = netParams.cellParams[cellLabel]
+    for secName in cellParam['secs']:
+        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+            if mechName == 'it2INT':
+                print('') # ADD A TEST PRINT STATEMENT PRE-CHANGE
+                cellParams['secs'][secName]['mechs'][mechName]['gcabar'] *= cfg.tTypeThalamicFactor
+                print('')  # ADD A TEST PRINT STATEMENT POST-CHANGE
+
+for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced', 'CT5B_reduced', 
+                    'IT6_reduced', 'CT6_reduced']:
+    cellParams = netParams.cellParams[cellLabel]
+
+    for secName in cellParam['secs']:
+        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+            if mechName == 'cat':
+                print('') # ADD A TEST PRINT STATEMENT PRE-CHANGE
+                cellParams['secs'][secName]['mechs'][mechName]['gcatbar'] *= cfg.tTypeCorticalFactor
+                print('') # ADD A TEST PRINT STATEMENT POST-CHANGE
+
+
+
 
 #------------------------------------------------------------------------------
 # Population parameters

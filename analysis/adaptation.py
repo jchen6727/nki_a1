@@ -5,12 +5,12 @@ import numpy as np
 # import seaborn as sns 
 # import pandas as pd
 
-
-
-basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36_CF500_tone500_SOA624/'
+basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_v36_5656BF_SOA624/'#BBN_CINECA_v36_5656BF_SOA850/'
+# basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_v36_5656BF_singleStim/'#BBN_CINECA_v36_5656BF_SOA850/'
+#basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36_CF500_tone500_SOA624/'
 #basedir = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/tone/pureTone_CINECA_v36_CF500_tone500_SOA200/'
 
-filename = 'pureTone_CINECA_v36_CF500_tone500_SOA624_data.pkl' 
+filename = 'BBN_CINECA_v36_5656BF_624ms_data.pkl' #'BBN_CINECA_v36_5656BF_850ms_data.pkl' #'pureTone_CINECA_v36_CF500_tone500_SOA624_data.pkl' 
 #filename = 'pureTone_CINECA_v36_CF500_tone500_SOA200_data.pkl' 
 #filename = 'REDO_BBN_CINECA_v36_5656BF_624SOA_0_0_0_data.pkl'
 
@@ -77,16 +77,16 @@ Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'CT5B' , 'PT5B', 
 
 ##  Designate which POPS to include & the timeRange to plot  ## 
 includePops = Epops 	#['IT6']	#['CT6']
-timeRange = [stimTimes[0]-50, stimTimes[-1]+50]
+timeRange = [stimTimes[0]-1250, stimTimes[-1]+50]  #[stimTimes[0]-50, stimTimes[-1]+50]
 
 
 ## PLOT HISTOGRAM USING HISTDATA ##
 histData = sim.analysis.prepareSpikeHist(
 	timeRange=timeRange, include=includePops)	# Epops		# ['CT6', 'IT6', 'CT5B', 'IT5B']
 
-sim.plotting.plotSpikeHist(histData=histData, include='allCells',binSize=20, showFig=0, legend=True, allCellsColor='darkblue', density=False,histType='stepfilled')		# #rcParams = {'xtick.color': 'blue'}#, 'axes.facecolor': 'black'} # rcParams=rcParams # density=True	# xlabel='TIME (ms)'
+sim.plotting.plotSpikeHist(histData=histData, include='allCells',binSize=50, showFig=0, legend=True, allCellsColor='darkblue', density=False,histType='stepfilled')		# #rcParams = {'xtick.color': 'blue'}#, 'axes.facecolor': 'black'} # rcParams=rcParams # density=True	# xlabel='TIME (ms)'
 
-plt.vlines(stimTimes, 0, 50, linestyles='dashed', colors='yellow')  # 0, 0.000300, 
+plt.vlines(stimTimes, 0, 500, linestyles='dashed', colors='yellow') #(5000, 0, 500, linestyles='dashed', colors='yellow') #(stimTimes, 0, 50, linestyles='dashed', colors='yellow')  # 0, 0.000300, 
 
 plt.show()
 
