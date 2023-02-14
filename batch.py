@@ -734,11 +734,15 @@ def custom_spont(filename):
     
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     
-    params[('seeds', 'conn')] = [2] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = [3] #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = [4, 0] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [0] #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
     # params['ihGbar'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
     # params['KgbarFactor'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
+
+    # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
+    params['tTypeCorticalFactor'] = [0.5, 0.1]
+    params['tTypeThalamicFactor'] = [0.5, 0.1]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -3394,11 +3398,11 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
@@ -3412,7 +3416,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
