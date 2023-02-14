@@ -20,7 +20,7 @@ except:
 #------------------------------------------------------------------------------
 # VERSION 
 #------------------------------------------------------------------------------
-netParams.version = 36
+netParams.version = 37
 
 #------------------------------------------------------------------------------
 #
@@ -77,92 +77,95 @@ cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
                     'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',
                     'PV_reduced', 'SOM_reduced', 'VIP_reduced', 'NGF_reduced',
-                    'RE_reduced', 'TC_reduced', 'HTC_reduced'] #, 'TI_reduced']
+                    'RE_reduced', 'TC_reduced', 'HTC_reduced', 'TI_reduced']  # , 'TI_reduced']
 
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
-# Thalamic Interneuron Version:
-TI_version = 'default' # IAHP # IL # default
-
-if TI_version == 'IAHP': 
-    netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IAHP.json') 
-    print('IAHP reduced conductance version loaded')
-elif TI_version == 'IL':
-    netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IL.json') 
-    print('IL reduced conductance version loaded')
-else: 
-    netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams.json')
-    print('Default thal int model loaded')
-
-
-
-# change weightNorm 
-for k in cfg.weightNormScaling:
-    for sec in netParams.cellParams[k]['secs'].values():
-        for i in range(len(sec['weightNorm'])):
-            sec['weightNorm'][i] *= cfg.weightNormScaling[k]
-
-
-# Parametrize PT ih_gbar and exc cells K_gmax to simulate NA/ACh neuromodulation
-for cellLabel in ['PT5B_reduced']:
-    cellParam = netParams.cellParams[cellLabel] 
-
-    for secName in cellParam['secs']:
-        # Adapt ih params based on cfg param
-        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-            if mechName in ['ih','h','h15', 'hd']: 
-                mech['gbar'] = [g*cfg.ihGbar for g in mech['gbar']] if isinstance(mech['gbar'],list) else mech['gbar']*cfg.ihGbar
-
-
-# Adapt Kgbar
-for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
-                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
-                    'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced',]:
-    cellParam = netParams.cellParams[cellLabel] 
-
-    for secName in cellParam['secs']:
-        for kmech in [k for k in cellParam['secs'][secName]['mechs'].keys() if k in ['kap','kdr']]:
-            cellParam['secs'][secName]['mechs'][kmech]['gbar'] *= cfg.KgbarFactor 
-
-
 
 
 ## Reduce T-type calcium channel conductances (cfg.tTypeCorticalFactor ; cfg.tTypeThalamicFactor)
-# for cellLabel in ['TC_reduced', 'HTC_reduced']:
-#     cellParam = netParams.cellParams[cellLabel]
-#     for secName in cellParam['secs']:  ## HAVE TO FIX THIS!! rough draft!!!
-#         cellParams['secs'][secName]['ittc']['gmax'] *= cfg.tTypeThalamicFactor
-
 for cellLabel in ['TC_reduced', 'HTC_reduced', 'RE_reduced']:
     cellParam = netParams.cellParams[cellLabel]
     for secName in cellParam['secs']:
+        #print('cellType: ' + cellLabel + ', section: ' + secName)
         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
             if mechName in ['itre', 'ittc']:
-                print('')  # ADD A TEST PRINT STATEMENT PRE-CHANGE
-                cellParams['secs'][secName]['mechs'][mechName]['gmax'] *= cfg.tTypeThalamicFactor
-                print('')  # ADD A TEST PRINT STATEMENT POST-CHANGE
+                #print('gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT PRE-CHANGE
+                cellParam['secs'][secName]['mechs'][mechName]['gmax'] *= cfg.tTypeThalamicFactor
+                print('new gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT POST-CHANGE
 
 for cellLabel in ['TI_reduced']:
     cellParam = netParams.cellParams[cellLabel]
     for secName in cellParam['secs']:
+        #print('cellType: ' + cellLabel + ', section: ' + secName)
         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
             if mechName == 'it2INT':
-                print('') # ADD A TEST PRINT STATEMENT PRE-CHANGE
-                cellParams['secs'][secName]['mechs'][mechName]['gcabar'] *= cfg.tTypeThalamicFactor
-                print('')  # ADD A TEST PRINT STATEMENT POST-CHANGE
+                #print('gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT PRE-CHANGE
+                cellParam['secs'][secName]['mechs'][mechName]['gcabar'] *= cfg.tTypeThalamicFactor
+                print('new gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
 
 for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced', 'CT5B_reduced', 
                     'IT6_reduced', 'CT6_reduced']:
-    cellParams = netParams.cellParams[cellLabel]
-
+    cellParam = netParams.cellParams[cellLabel]
     for secName in cellParam['secs']:
+        #print('cellType: ' + cellLabel + ', section: ' + secName)
         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
             if mechName == 'cat':
-                print('') # ADD A TEST PRINT STATEMENT PRE-CHANGE
-                cellParams['secs'][secName]['mechs'][mechName]['gcatbar'] *= cfg.tTypeCorticalFactor
-                print('') # ADD A TEST PRINT STATEMENT POST-CHANGE
+                #print('gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar']))# ADD A TEST PRINT STATEMENT PRE-CHANGE
+                cellParam['secs'][secName]['mechs'][mechName]['gcatbar'] *= cfg.tTypeCorticalFactor
+                print('new gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
+
+
+
+
+
+# # Thalamic Interneuron Version:
+# TI_version = 'default' # IAHP # IL # default
+
+# if TI_version == 'IAHP': 
+#     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IAHP.json') 
+#     print('IAHP reduced conductance version loaded')
+# elif TI_version == 'IL':
+#     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IL.json') 
+#     print('IL reduced conductance version loaded')
+# else: 
+#     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams.json')
+#     print('Default thal int model loaded')
+
+
+
+# # change weightNorm 
+# for k in cfg.weightNormScaling:
+#     for sec in netParams.cellParams[k]['secs'].values():
+#         for i in range(len(sec['weightNorm'])):
+#             sec['weightNorm'][i] *= cfg.weightNormScaling[k]
+
+
+# # Parametrize PT ih_gbar and exc cells K_gmax to simulate NA/ACh neuromodulation
+# for cellLabel in ['PT5B_reduced']:
+#     cellParam = netParams.cellParams[cellLabel] 
+
+#     for secName in cellParam['secs']:
+#         # Adapt ih params based on cfg param
+#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+#             if mechName in ['ih','h','h15', 'hd']: 
+#                 mech['gbar'] = [g*cfg.ihGbar for g in mech['gbar']] if isinstance(mech['gbar'],list) else mech['gbar']*cfg.ihGbar
+
+
+# # Adapt Kgbar
+# for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+#                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
+#                     'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced']:
+#     cellParam = netParams.cellParams[cellLabel] 
+
+#     for secName in cellParam['secs']:
+#         for kmech in [k for k in cellParam['secs'][secName]['mechs'].keys() if k in ['kap','kdr']]:
+#             cellParam['secs'][secName]['mechs'][kmech]['gbar'] *= cfg.KgbarFactor 
+
+
+
 
 
 
@@ -843,4 +846,5 @@ v33 - Fixed bug in matrix thalamocortical conn (were very low)
 v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
 v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
 v36 - Looped speech stimulus capability added for cfg.ICThalInput
+v37 - Adding in code to modulate t-type calcium conductances in thalamic and cortical cells
 """
