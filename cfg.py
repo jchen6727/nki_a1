@@ -22,7 +22,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 10*1e3 #0.2*1e3 	#0.3*1e3			## 2500 ms 	## Duration of the sim, in ms -- value from M1 cfg.py 
+cfg.duration = 1*1e3	#10*1e3 #0.2*1e3 	#0.3*1e3			## 2500 ms 	## Duration of the sim, in ms -- value from M1 cfg.py 
 cfg.dt = 0.05                   ## Internal Integration Time Step -- value from M1 cfg.py 
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -52,7 +52,7 @@ alltypes = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'ITS4', 'PT5B', 'TC', 'HTC', '
 cfg.recordTraces = {'V_soma': {'sec':'soma', 'loc': 0.5, 'var':'v'}}  ## Dict with traces to record -- taken from M1 cfg.py 
 cfg.recordStim = False			## Seen in M1 cfg.py
 cfg.recordTime = False  		## SEen in M1 cfg.py 
-cfg.recordStep = 0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
+cfg.recordStep = 0.05 #0.1            ## Step size (in ms) to save data -- value from M1 cfg.py 
 
 cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]			# null,
 # cfg.recordLFP = [[x, 1000, 100] for x in range(100, 2200, 200)] #+[[100, 2500, 200], [100,2700,200]]
@@ -66,8 +66,8 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = 'v31_tune3' 
-cfg.saveFolder = 'data/v31_manualTune'                	## Set file output name
+cfg.simLabel = 'v38_NMDAR_test'		# 'v31_tune3' 
+cfg.saveFolder = 'data/NMDAR_test'	#'data/v31_manualTune'                	## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
