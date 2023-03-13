@@ -849,4 +849,5 @@ v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
 v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
 v36 - Looped speech stimulus capability added for cfg.ICThalInput
 v37 - Adding in code to modulate t-type calcium conductances in thalamic and cortical cells
+v38 - Adding in code to modulate NMDA synaptic weight from E --> I populations 
 """

@@ -812,17 +812,26 @@ def custom_manip(filename):
         cfgLoad = json.load(f)['simConfig']
     cfgLoad2 = cfgLoad
 
-    
-    # params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
-    # params[('seeds', 'conn')] = [0] 
-    # params[('seeds', 'stim')] = [0] 
+
+    #### LOOP STIMULUS INPUT ####  
+    ## DELTA 
+    BBN_stimTimes_delta500 = list(np.arange(2500, 14500, 500))
+    BBN_stimTimes_delta300 = list(np.arange(2500, 14500, 300))
+    ## THETA
+    BBN_stimTimes_theta250 = list(np.arange(2500, 14500, 250))
+    BBN_stimTimes_theta150 = list(np.arange(2500, 14500, 150))
+    ## ALPHA
+    BBN_stimTimes_alpha120 = list(np.arange(2500, 14500, 120))
+    BBN_stimTimes_alpha80 = list(np.arange(2500, 14500, 80))
+    ## VARY START TIMES LIST FOR BBN STIMULUS 
+    params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150, BBN_stimTimes_alpha80] 
 
     # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
     # params['tTypeCorticalFactor'] = [0.5, 0.1]
     # params['tTypeThalamicFactor'] = [0.5, 0.1]
 
     # TO TEST OUT NMDAR E --> I MANIPULATIONS 
-    params['NMDARfactor'] = []
+    params['NMDARfactor'] = [1.0, 0.1]         # 1.0 will be wild type 
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -835,9 +844,19 @@ def custom_manip(filename):
     initCfg['scaleDensity'] = 1.0                                     # 1.0
     initCfg['recordStep'] = 0.05
 
-    ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
+    # conn and stim seeds 
     initCfg[('seeds', 'conn')] = 0
     initCfg[('seeds', 'stim')] = 0
+
+    ## BBN STIMULUS FOR ICThalInput ##  COMMENT OUT FOR SPONTANEOUS RUNS ## OR SET TO {}
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat',
+                            'startTime': 2500,
+                            'weightE': 0.25,
+                            'weightI': 0.25,
+                            'probE': 0.12, 
+                            'probI': 0.12,
+                            'seed': 1} 
+
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -3468,7 +3487,8 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_manip('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
@@ -3486,7 +3506,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v38_NMDAR_BBN'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
