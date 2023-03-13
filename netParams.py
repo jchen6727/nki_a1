@@ -119,6 +119,8 @@ for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
 
 
 
+## Manipulate NMDAR weights to Inhibitory Populations 
+
 
 
 # # Thalamic Interneuron Version:
@@ -318,7 +320,7 @@ if cfg.addConn and cfg.EEGain > 0.0:
                     
 
 #------------------------------------------------------------------------------
-## E -> I
+## E -> I       ## MODIFIED FOR NMDAR MANIPULATION!! 
 if cfg.addConn and cfg.EIGain > 0.0:
     for pre in Epops:
         for post in Ipops:
@@ -339,7 +341,7 @@ if cfg.addConn and cfg.EIGain > 0.0:
                             'postConds': {'pop': post, 'cellType': postType, 'ynorm': layer[l]},
                             'synMech': ESynMech,
                             'probability': prob,
-                            'weight': wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l], 
+                            'weight': [wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l], cfg.NMDARfactor * wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l]], 
                             'synMechWeightFactor': synWeightFactor,
                             'delay': 'defaultDelay+dist_3D/propVelocity',
                             'synsPerConn': 1,

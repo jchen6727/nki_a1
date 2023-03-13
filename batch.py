@@ -759,16 +759,85 @@ def custom_spont(filename):
     # initCfg[('seeds', 'conn')] = 0
     # initCfg[('seeds', 'stim')] = 0
 
-    # plotting and saving params
-    # initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
 
-    # changed directly in cfg.py    
-    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
-    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Custom Manipulations for Dr Javitt
+# ----------------------------------------------------------------------------------------------
+def custom_manip(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'  # 'data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    
+    # params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = [0] 
+    # params[('seeds', 'stim')] = [0] 
+
+    # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
+    # params['tTypeCorticalFactor'] = [0.5, 0.1]
+    # params['tTypeThalamicFactor'] = [0.5, 0.1]
+
+    # TO TEST OUT NMDAR E --> I MANIPULATIONS 
+    params['NMDARfactor'] = []
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 15000                                      # 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0                                     # 1.0
+    initCfg['recordStep'] = 0.05
+
+    ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
+    initCfg[('seeds', 'conn')] = 0
+    initCfg[('seeds', 'stim')] = 0
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -805,6 +874,7 @@ def custom_spont(filename):
     b.method = 'grid'
 
     return b
+
 
 
 # ----------------------------------------------------------------------------------------------

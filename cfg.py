@@ -105,6 +105,8 @@ cfg.KgbarFactor = 1.0
 # For testing reduction in T-type calcium channel conductances
 cfg.tTypeCorticalFactor = 1.0 
 cfg.tTypeThalamicFactor = 1.0 
+# For testing NMDAR manipulations:
+cfg.NMDARfactor = 1.0
 
 #------------------------------------------------------------------------------
 # Synapses
@@ -204,8 +206,8 @@ cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], '
 # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
 # cfg.ICThalInput = {} #'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
                     #'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
-cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', 
-                    'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
+cfg.ICThalInput = {} #{'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', 
+                  #  'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
 
 
 
