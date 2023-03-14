@@ -815,23 +815,23 @@ def custom_manip(filename):
 
     #### LOOP STIMULUS INPUT ####  
     ## DELTA 
-    BBN_stimTimes_delta500 = list(np.arange(2500, 11500, 500))
-    BBN_stimTimes_delta300 = list(np.arange(2500, 11500, 300))
+    BBN_stimTimes_delta500 = list(np.arange(2500, 12500, 500))
+    BBN_stimTimes_delta300 = list(np.arange(2500, 12500, 300))
     ## THETA
-    BBN_stimTimes_theta250 = list(np.arange(2500, 11500, 250))
-    BBN_stimTimes_theta150 = list(np.arange(2500, 11500, 150))
+    BBN_stimTimes_theta250 = list(np.arange(2500, 12500, 250))
+    BBN_stimTimes_theta150 = list(np.arange(2500, 12500, 150))
     ## ALPHA
-    BBN_stimTimes_alpha120 = list(np.arange(2500, 11500, 120))
-    BBN_stimTimes_alpha80 = list(np.arange(2500, 11500, 80))
+    BBN_stimTimes_alpha120 = list(np.arange(2500, 12500, 120))
+    BBN_stimTimes_alpha80 = list(np.arange(2500, 12500, 80))
     ## VARY START TIMES LIST FOR BBN STIMULUS 
     params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
 
     # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
-    # params['tTypeCorticalFactor'] = [0.5, 0.1]
+    params['tTypeCorticalFactor'] = [0.5, 0.1]
     # params['tTypeThalamicFactor'] = [0.5, 0.1]
 
     # TO TEST OUT NMDAR E --> I MANIPULATIONS 
-    params['NMDARfactor'] = [1.0, 0.1]         # 1.0 will be wild type 
+    # params['NMDARfactor'] = [1.0, 0.1]         # 1.0 will be wild type 
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -839,7 +839,7 @@ def custom_manip(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 11500                                      # 11500
+    initCfg['duration'] = 12500                                      # 11500
     initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
     initCfg['scaleDensity'] = 1.0                                     # 1.0
     initCfg['recordStep'] = 0.05
@@ -3506,7 +3506,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v38_NMDAR_BBN'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v38_tTypeCortical_BBN'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
