@@ -815,16 +815,16 @@ def custom_manip(filename):
 
     #### LOOP STIMULUS INPUT ####  
     ## DELTA 
-    BBN_stimTimes_delta500 = list(np.arange(2500, 12500, 500))
-    BBN_stimTimes_delta300 = list(np.arange(2500, 12500, 300))
+    BBN_stimTimes_delta500 = list(np.arange(2500, 11500, 500))
+    BBN_stimTimes_delta300 = list(np.arange(2500, 11500, 300))
     ## THETA
-    BBN_stimTimes_theta250 = list(np.arange(2500, 12500, 250))
-    BBN_stimTimes_theta150 = list(np.arange(2500, 12500, 150))
+    BBN_stimTimes_theta250 = list(np.arange(2500, 11500, 250))
+    BBN_stimTimes_theta150 = list(np.arange(2500, 11500, 150))
     ## ALPHA
-    BBN_stimTimes_alpha120 = list(np.arange(2500, 12500, 120))
-    BBN_stimTimes_alpha80 = list(np.arange(2500, 12500, 80))
+    BBN_stimTimes_alpha120 = list(np.arange(2500, 11500, 120))
+    BBN_stimTimes_alpha80 = list(np.arange(2500, 11500, 80))
     ## VARY START TIMES LIST FOR BBN STIMULUS 
-    params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
+    params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300]#, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
 
     # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
     # params['tTypeCorticalFactor'] = [0.5, 0.1]
@@ -839,7 +839,7 @@ def custom_manip(filename):
     # initial config
     initCfg = {} # set default options from prev sim
     
-    initCfg['duration'] = 12500                                      # 11500
+    initCfg['duration'] = 11500                                      # 11500
     initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
     initCfg['scaleDensity'] = 1.0                                     # 1.0
     initCfg['recordStep'] = 0.05
