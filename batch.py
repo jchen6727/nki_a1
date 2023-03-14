@@ -824,14 +824,14 @@ def custom_manip(filename):
     BBN_stimTimes_alpha120 = list(np.arange(2500, 12500, 120))
     BBN_stimTimes_alpha80 = list(np.arange(2500, 12500, 80))
     ## VARY START TIMES LIST FOR BBN STIMULUS 
-    params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
+    # params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
 
     # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
-    params['tTypeCorticalFactor'] = [0.5, 0.1]
+    # params['tTypeCorticalFactor'] = [0.5, 0.1]
     # params['tTypeThalamicFactor'] = [0.5, 0.1]
 
     # TO TEST OUT NMDAR E --> I MANIPULATIONS 
-    # params['NMDARfactor'] = [1.0, 0.1]         # 1.0 will be wild type 
+    params['NMDARfactor'] = [1.0, 0.1]         # 1.0 will be wild type 
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -848,14 +848,14 @@ def custom_manip(filename):
     initCfg[('seeds', 'conn')] = 0
     initCfg[('seeds', 'stim')] = 0
 
-    ## BBN STIMULUS FOR ICThalInput ##  COMMENT OUT FOR SPONTANEOUS RUNS ## OR SET TO {}
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat',
-                            'startTime': 2500,
-                            'weightE': 0.25,
-                            'weightI': 0.25,
-                            'probE': 0.12, 
-                            'probI': 0.12,
-                            'seed': 1} 
+    # ## BBN STIMULUS FOR ICThalInput ##  COMMENT OUT FOR SPONTANEOUS RUNS ## OR SET TO {}
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat',
+    #                         'startTime': 2500,
+    #                         'weightE': 0.25,
+    #                         'weightI': 0.25,
+    #                         'probE': 0.12, 
+    #                         'probI': 0.12,
+    #                         'seed': 1} 
 
 
     initCfg['saveCellSecs'] = False
@@ -3506,7 +3506,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v38_tTypeCortical_BBN'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'v38_NMDAR_spont'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
