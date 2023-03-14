@@ -824,7 +824,7 @@ def custom_manip(filename):
     BBN_stimTimes_alpha120 = list(np.arange(2500, 11500, 120))
     BBN_stimTimes_alpha80 = list(np.arange(2500, 11500, 80))
     ## VARY START TIMES LIST FOR BBN STIMULUS 
-    params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300]#, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
+    params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
 
     # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
     # params['tTypeCorticalFactor'] = [0.5, 0.1]
