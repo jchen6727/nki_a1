@@ -106,7 +106,7 @@ cfg.KgbarFactor = 1.0
 cfg.tTypeCorticalFactor = 1.0 
 cfg.tTypeThalamicFactor = 1.0 
 # For testing NMDAR manipulations:
-cfg.NMDARfactor = 1.0
+# cfg.NMDARfactor = 1.0
 
 #------------------------------------------------------------------------------
 # Synapses
@@ -114,6 +114,7 @@ cfg.NMDARfactor = 1.0
 cfg.AMPATau2Factor = 1.0
 cfg.synWeightFractionEE = [0.5, 0.5] # E->E AMPA to NMDA ratio
 cfg.synWeightFractionEI = [0.5, 0.5] # E->I AMPA to NMDA ratio
+cfg.synWeightFractionEI_CustomCort = [0.5, 0.5] # E->I AMPA to NMDA ratio custom for cortex NMDA manipulation
 cfg.synWeightFractionSOME = [0.9, 0.1] # SOM -> E GABAASlow to GABAB ratio
 cfg.synWeightFractionNGF = [0.5, 0.5] # NGF GABAA to GABAB ratio
 cfg.synWeightFractionENGF = [0.834, 0.166] # NGF AMPA to NMDA ratio

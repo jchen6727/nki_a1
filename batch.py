@@ -815,7 +815,6 @@ def custom_manip(filename):
 
 
     BBN_deltaSOA_startTime2500 = list(np.arange(2500, 12000, 300))
-    # BBN_deltaSOA_startTime3450 = list(np.arange(3450, 12000, 300))
     BBN_deltaSOA_startTime1000 = list(np.arange(1000, 12000, 300))
     params[('ICThalInput', 'startTime')] = [BBN_deltaSOA_startTime2500, BBN_deltaSOA_startTime1000]
 
@@ -838,7 +837,10 @@ def custom_manip(filename):
     # params['tTypeThalamicFactor'] = [0.5, 0.1]
 
     # TO TEST OUT NMDAR E --> I MANIPULATIONS 
-    params['NMDARfactor'] = [1.0, 0.5, 0.1]         # 1.0 will be wild type 
+    ## params['NMDARfactor'] = [1.0, 0.5, 0.1]         # 1.0 will be wild type 
+
+    # cfg.synWeightFractionEI
+    params['synWeightFractionEI_CustomCort'] = [[0.5, 0.1], [0.5, 0.25], [0.5, 0.75]]      # synWeightFractionEI = [0.5, 0.5] # AMPA, NMDA 
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -3513,7 +3515,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v39_BBN_E_to_I'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_synWeightFractionEI_customCort' #'v39_BBN_E_to_I'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 

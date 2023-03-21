@@ -335,13 +335,13 @@ if cfg.addConn and cfg.EIGain > 0.0:
                         if 'NGF' in post:
                             synWeightFactor = cfg.synWeightFractionENGF
                         else:
-                            synWeightFactor = cfg.synWeightFractionEI
+                            synWeightFactor = cfg.synWeightFractionEI_CustomCort  #cfg.synWeightFractionEI
                         netParams.connParams['EI_'+pre+'_'+post+'_'+postType+'_'+l] = { 
                             'preConds': {'pop': pre}, 
                             'postConds': {'pop': post, 'cellType': postType, 'ynorm': layer[l]},
                             'synMech': ESynMech,
                             'probability': prob,
-                            'weight': wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l] * cfg.NMDARfactor, 
+                            'weight': wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l], 
                             'synMechWeightFactor': synWeightFactor,
                             'delay': 'defaultDelay+dist_3D/propVelocity',
                             'synsPerConn': 1,
