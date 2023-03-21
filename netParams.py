@@ -341,12 +341,14 @@ if cfg.addConn and cfg.EIGain > 0.0:
                             'postConds': {'pop': post, 'cellType': postType, 'ynorm': layer[l]},
                             'synMech': ESynMech,
                             'probability': prob,
-                            'weight': [wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l], cfg.NMDARfactor * wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l]], 
+                            'weight': wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l] * cfg.NMDARfactor, 
                             'synMechWeightFactor': synWeightFactor,
                             'delay': 'defaultDelay+dist_3D/propVelocity',
                             'synsPerConn': 1,
                             'sec': 'proximal'}
                 
+
+# cfg.NMDARfactor * wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l]]
 
 #------------------------------------------------------------------------------
 ## I -> E
@@ -850,4 +852,5 @@ v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modu
 v36 - Looped speech stimulus capability added for cfg.ICThalInput
 v37 - Adding in code to modulate t-type calcium conductances in thalamic and cortical cells
 v38 - Adding in code to modulate NMDA synaptic weight from E --> I populations 
+v39 - Changed E --> I cfg.NMDARfactor such that weight is not a list, but instead a single value 
 """
