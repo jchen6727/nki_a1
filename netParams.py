@@ -84,38 +84,38 @@ for ruleLabel in cellParamLabels:
 
 
 
-## Reduce T-type calcium channel conductances (cfg.tTypeCorticalFactor ; cfg.tTypeThalamicFactor)
-for cellLabel in ['TC_reduced', 'HTC_reduced', 'RE_reduced']:
-    cellParam = netParams.cellParams[cellLabel]
-    for secName in cellParam['secs']:
-        #print('cellType: ' + cellLabel + ', section: ' + secName)
-        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-            if mechName in ['itre', 'ittc']:
-                #print('gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT PRE-CHANGE
-                cellParam['secs'][secName]['mechs'][mechName]['gmax'] *= cfg.tTypeThalamicFactor
-                print('new gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT POST-CHANGE
+# ## Reduce T-type calcium channel conductances (cfg.tTypeCorticalFactor ; cfg.tTypeThalamicFactor)
+# for cellLabel in ['TC_reduced', 'HTC_reduced', 'RE_reduced']:
+#     cellParam = netParams.cellParams[cellLabel]
+#     for secName in cellParam['secs']:
+#         #print('cellType: ' + cellLabel + ', section: ' + secName)
+#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+#             if mechName in ['itre', 'ittc']:
+#                 #print('gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT PRE-CHANGE
+#                 cellParam['secs'][secName]['mechs'][mechName]['gmax'] *= cfg.tTypeThalamicFactor
+#                 print('new gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT POST-CHANGE
 
-for cellLabel in ['TI_reduced']:
-    cellParam = netParams.cellParams[cellLabel]
-    for secName in cellParam['secs']:
-        #print('cellType: ' + cellLabel + ', section: ' + secName)
-        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-            if mechName == 'it2INT':
-                #print('gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT PRE-CHANGE
-                cellParam['secs'][secName]['mechs'][mechName]['gcabar'] *= cfg.tTypeThalamicFactor
-                print('new gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
+# for cellLabel in ['TI_reduced']:
+#     cellParam = netParams.cellParams[cellLabel]
+#     for secName in cellParam['secs']:
+#         #print('cellType: ' + cellLabel + ', section: ' + secName)
+#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+#             if mechName == 'it2INT':
+#                 #print('gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT PRE-CHANGE
+#                 cellParam['secs'][secName]['mechs'][mechName]['gcabar'] *= cfg.tTypeThalamicFactor
+#                 print('new gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
 
-for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
-                    'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced', 'CT5B_reduced', 
-                    'IT6_reduced', 'CT6_reduced']:
-    cellParam = netParams.cellParams[cellLabel]
-    for secName in cellParam['secs']:
-        #print('cellType: ' + cellLabel + ', section: ' + secName)
-        for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-            if mechName == 'cat':
-                #print('gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar']))# ADD A TEST PRINT STATEMENT PRE-CHANGE
-                cellParam['secs'][secName]['mechs'][mechName]['gcatbar'] *= cfg.tTypeCorticalFactor
-                print('new gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
+# for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
+#                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced', 'CT5B_reduced', 
+#                     'IT6_reduced', 'CT6_reduced']:
+#     cellParam = netParams.cellParams[cellLabel]
+#     for secName in cellParam['secs']:
+#         #print('cellType: ' + cellLabel + ', section: ' + secName)
+#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
+#             if mechName == 'cat':
+#                 #print('gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar']))# ADD A TEST PRINT STATEMENT PRE-CHANGE
+#                 cellParam['secs'][secName]['mechs'][mechName]['gcatbar'] *= cfg.tTypeCorticalFactor
+#                 print('new gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
 
 
 
@@ -335,7 +335,7 @@ if cfg.addConn and cfg.EIGain > 0.0:
                         if 'NGF' in post:
                             synWeightFactor = cfg.synWeightFractionENGF
                         else:
-                            synWeightFactor = cfg.synWeightFractionEI_CustomCort  #cfg.synWeightFractionEI
+                            synWeightFactor = cfg.synWeightFractionEI #cfg.synWeightFractionEI_CustomCort  #cfg.synWeightFractionEI
                         netParams.connParams['EI_'+pre+'_'+post+'_'+postType+'_'+l] = { 
                             'preConds': {'pop': pre}, 
                             'postConds': {'pop': post, 'cellType': postType, 'ynorm': layer[l]},

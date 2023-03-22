@@ -103,8 +103,8 @@ cfg.weightNormScaling = {'NGF_reduced': 1.0, 'ITS4_reduced': 1.0}
 cfg.ihGbar = 1.0 
 cfg.KgbarFactor = 1.0
 # For testing reduction in T-type calcium channel conductances
-cfg.tTypeCorticalFactor = 1.0 
-cfg.tTypeThalamicFactor = 1.0 
+# cfg.tTypeCorticalFactor = 1.0 
+# cfg.tTypeThalamicFactor = 1.0 
 # For testing NMDAR manipulations:
 # cfg.NMDARfactor = 1.0
 
