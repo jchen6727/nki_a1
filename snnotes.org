@@ -604,3 +604,22 @@ netParams.synMechParams['AMPA'] = {'mod':'hsyn','tau1':0.05,'tau2':5.3,'e':0,'sc
 ok, adjusting to have option whether to use the homeostatic scaling ... ideally would want to have param
 for different target rates for each population ... will add that in if/when basic mechanism is working
 
+* 23aug2
+** sz modeling
+
+EG had szdelta branch, pull from there and merge with samn
+
+git pull origin szdelta
+
+From github.com:NathanKlineInstitute/A1
+ * branch            szdelta    -> FETCH_HEAD
+Auto-merging netParams.py
+CONFLICT (content): Merge conflict in netParams.py
+Auto-merging init.py
+CONFLICT (content): Merge conflict in init.py
+Auto-merging cfg.py
+CONFLICT (content): Merge conflict in cfg.py
+Automatic merge failed; fix conflicts and then commit the result.
+
+ok, fixed/updated those files and commited ... will stick with samn branch moving forward
+
