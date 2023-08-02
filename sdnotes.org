@@ -638,11 +638,34 @@ so will do that tomorrow and then submit a param sweep for conn params to see if
    IT6 - depol
 ** checked bkg (only long-range) rates in M1 model
 * 19Oct2020 Tuning by layers
+
 ** Allen V1 paper
 "Optimizing a full recurrent network at once was very challenging; instead, we followed a stepwise, layer-by-layer procedure. 
 We first optimized the recurrent weights within L4, with all recurrent connections outside L4 removed. 
 Then we added L2/3 recurrent connections and optimized the weights in both L4 and L2/3. 
 This approach was repeated by adding L5, then L6, and finally L1 (see Methods for details). "
+
+
+Optimization of Full V1 Models
+
+As described in the Main Text, running simulations after the above optimization did not yield suitable network behaviors in either of our V1 models. 
+Thus, we used an iterative grid search method (Arkhipov et al., 2018), where weights were uniformly scaled for every class (e.g. scaling weights of excitatory layer
+ 4 to excitatory layer 5 connections all by the same amount, as one iteration). We searched in discrete increments weight changes across connection classes and 
+ selected the best result before moving on to the next connection class (although there was still a need to revisit connections classes during this process). 
+ The optimization employed a small training set consisting of a two 0.5-second-long simulations: one of gray screen, and the other of a single drifting grating. 
+ We aimed to satisfy three criteria: (i) match spontaneous firing rates (gray screen stimulus) to experimental observations, (ii) match peak firing rates for the 
+ drifting grating, and (iii) avoid epileptic-like activity where the network would ramp up to have large global bursts and then enter a period of silence until 
+ the next very rapid burst. The weight adjustments were kept in a strict range where, for example, the LGN to L4 excitatory weights were not adjusted at all 
+ given that they were fit to direct in vivo experimental measurements (Lien and Scanziani, 2013). Other LGN connections were restricted to be scaled only in 
+ the range [0.5, 2] from the target net input current as those were scaled from optogenetics experiments (Ji et al., 2015). 
+ The optimization was performed starting from L4 only and adding successive layers one by one. First, all interlayer connections were set to zero and only the 
+ intra-layer connections in L4 were optimized. Once our criteria were met, we added L2/3 to the optimization, including the interactions between the two layers. 
+ This procedure simplified the optimization process even though weights optimized at one step had to be readjusted at the next step (typically minor). 
+ This process was continued for layer 5, followed by layer 6, and finally layer 1. During our optimization, the weight scaling was restricted in the 
+ range of [0.2, 5]. In the deeper layers (layers 5 and 6), this rule had to be expanded to reach the net adjustment range of [0.12, 18] for the 
+ biophysical model and [0.17, 6.0] for the GLIF model. Note that adjusting the synaptic weights in the biophysical model did not translate directly to 
+ scaling the PSP (see the Layer 1 description in Matching Target Post Synaptic Potentials).
+
 ** Allen emails
 Hi Salva,
  
@@ -716,6 +739,136 @@ Salva
    M2 : 1.158 Hz
    OC : 2.462 Hz
 
+* 18Nov2021 Paper result figs
+
+- multiscale output: raster, stats, voltage traces, LFP/CSD, current dipoles, EEG
+
+model validation:
+- comparison of laminar LFP/CSD exp vs model
+- comparison of osc events; examples for supra, gran, infra (Cosyne poster)
+
+model predictions:
+- select example LFP signal from single electrode from examples above (model and exp), 
+and show contributions from each population: raw LFP and potentially spectrogram; can include spike raster and spectrogram (for comparison with LFP)
+
+other easy/fast potential model predictions:
+- lesion different popuations and/or core vs thal matrix and show effects on dynamics (raster, LFP/CSD)
+* 19Nov20201 Exp data
+** noelle response
+I also just got part of a response from noelle (have a couple follow-up questions and need to look closer at some figs she sent), 
+but basically she thinks the two weird monkeys I showed you yesterday are actually "real" (the very "regular" one, and the one with the blips in the lower layers). 
+she thinks the lower-layer blips aren't an artifact and that they might have pierced a white matter tract right there by accident 
+(and still reading her response about the regularity of the that other one). but at least we can know that she also sees 
+/ saw the same things with those monkeys too! the figs she sent had diff timescales than mine so going to plot them myself w/ her timescales and just make sure they look the same.
+** 2-rb04 
+very regular CSD data across all 50 secs -- gamma (50-70 Hz) across most channels; occasional beta ~10 Hz
+** 2-rb03
+- longer osc events - ~75-175ms (~7-15 Hz) 
+- Most common: only red/blue in L1/2 (top electrodes) - top-down cortical feedback?? artifact? what if remove top 2 electrodes?
+- 2nd most common: top layer + some red/blue bands above granular; and/or below granular
+- some coupled osc? gamma over beta?
+- similar to model??
+** 1-bu3
+- shows more differences across layers than 2-rb03 and 2-rb04
+- infragranular - stroner and faster (gamma); supragran+gran - longer events (50ms to >200ms)
+- some similar to model - long (~200-1000 ms) of strong activation of same channe/layer, including L4
+** 2-ma03
+- weird blips at infragran electrode (white matter tract??)
+** model
+- most peaks happen at L4/L5A and L1; variable durations
+
+** Exp data analysis code
+ericaygriffith  7 hours ago
+
+okay so I put the .mat files and a .csv file w/ the layer-channel info (necessary for plotting NHP csds) into a subdir called 'data' (https://drive.google.com/drive/folders/14b85qqGjeLwCd5q4FiLNnVa2d43yHXB-?usp=sharing)
+
+I also have the script I used to plot large numbers of the spontaneous CSDs here on repro branch : https://github.com/NathanKlineInstitute/A1/blob/repro/analysis/NHPdataAnalysis.py
+
+the way it's set up now is to do that, but I've used it for other things as well (e.g. sorting .mat files, looking at the average CSD of click files, etc. so it can do other stuff too!)
+
+in the main code block at the bottom, there are some variables that can be changed (e.g. origDataDir is path to the directory w/ the .mat and .csv layer file, 
+'test' is an option to either iterate over all of the .mat files in a directory or look at a specific monkey, and dbpath is the path to the .csv file that has the layer info)
+
+the .csv file is used by the getflayers() function
+
+I import functions from two other files, both of which are also in A1/analysis (downsample.py and filter.py -- for downsampling and bandpass filtering respectively)
+
+let me know if anything isn't working / doesn't make sense and of course if you have any suggestions! I aspire to code with your efficiency and organizational skills!! lol
+** code to plot CSD
+if __name__ == '__main__':
+
+  # Parent data directory containing .mat files
+  origDataDir = '../data/NHPdata/spont/contproc/'   # LOCAL DIR 
+  
+  ## Sort these files by recording region 
+  # DataFiles = sortFiles(origDataDir, [1, 3, 7]) # path to data .mat files  # recording regions of interest
+
+  ## Delete or move unwanted / unworted .mat data files 
+  # moveDataFiles(origDataDir,'move')
+
+  ############### 
+  recordingArea = 'A1/' # 'MGB/' 
+  
+  test = 1 # set to 1 if testing a particular monkey, 0 if going through all files in data dir
+  testFiles =  ['1-bu031032017@os_eye06_20.mat']    #['2-bu037038046@os.mat']   # CHANGE FILE HERE IF LOOKING AT SPECIFIC MONKEY
+  
+  if test:
+    dataFiles = testFiles
+  else:
+    dataPath = origDataDir + recordingArea
+    dataFilesList = os.listdir(dataPath) 
+    dataFiles = []
+    for file in dataFilesList:
+      if '.mat' in file:
+        dataFiles.append(file)
+
+
+  for dataFile in dataFiles: 
+    fullPath = origDataDir + recordingArea + dataFile      # Path to data file 
+
+    [sampr,LFP_data,dt,tt,CSD_data,trigtimes] = loadfile(fn=fullPath, samprds=11*1e3, spacing_um=100)
+            # sampr is the sampling rate after downsampling 
+            # tt is time array (in seconds)
+            # trigtimes is array of stim trigger indices
+            # NOTE: make samprds and spacing_um args in this function as well for increased accessibility??? 
+
+    ##### SET PATH TO .csv LAYER FILE ##### 
+    dbpath = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/NHPdata/spont/contproc/A1/21feb02_A1_spont_layers.csv' 
+
+    ##### GET LAYERS FOR OVERLAY #####
+    s1low,s1high,s2low,s2high,glow,ghigh,i1low,i1high,i2low,i2high = getflayers(fullPath,dbpath=dbpath,getmid=False,abbrev=False) # fullPath is to data file, dbpath is to .csv layers file 
+    lchan = {}
+    lchan['S'] = s2high
+    lchan['G'] = ghigh
+    lchan['I'] = CSD_data.shape[0]-1 #i2high
+    print('s2high: ' + str(s2high))
+
+
+    ##### LFP #####
+    # plotLFP(dat=LFP_data,tt=tt,timeRange=[7500,8500], plots=['spectrogram'],electrodes=[2,8,13,18],maxFreq=80,saveFig=True, fn=fullPath,dbpath=dbpath) # fn=fullPath,dbpath = dbpath,  # 16,19 #[4,12]
+
+
+    ##### CSD #####
+
+    ### Plot batches of CSDs:
+    ## Set up time ranges for loop
+    tranges = [[x, x+200] for x in range(2000, 3000, 200)] # bring it down to 175-250 if possible
+    for t in tranges:
+      plotCSD(fn=fullPath,dat=CSD_data,tt=tt,
+            trigtimes=None,timeRange=[t[0], t[1]],
+            showFig=False, figSize=(6,9), 
+            layerLines=True, layerBounds=lchan, 
+            overlay='LFP', LFP_data=LFP_data, smooth=33,
+            saveFig=dataFile[:-4]+'_CSD_%d-%d' % (t[0], t[1]))
+
+** LFP electrode depths
+It would be 2200microns from ch1 (uppermost contact) to ch23 (deepest contact), but yes you are correct. 
+For presentation purposes we exclude ch1 and ch23 of the MUA and LFP so that it aligns nicely with the 21chs of the CSD. 
+You are probably aware of this but in some experiments (but not usually) we may use an electrode that has an inter-contact distance of 150microns instead of 100microns.
+Hope this was helpful,
+Noelle.
+ 
+
 * CELL TYPES
 ** Budinger et al 2018
 - Budinger 2018 also mentions few stellates in A1 compared to V1 or S1 (in most species), and also few pyramidal
@@ -740,6 +893,277 @@ exc frac	inh frac	PV 	SST	5HT3a	Total
 0.85	0.15	0.458333333	0.458333333	0.083333333	1
 ** total number of neurons in A1
 1.6 million (https://www.pnas.org/content/107/36/15927)
+** revisiting macaque A1 L4 stellate cells
+*** SUMMARY
+A1 L4 stellate:
+- charlie commented in paper:  "don't think the layer 4 cells in A1 are spiny stellate. They are called granule cells, 
+and are considered to be excitatory interneurons like SS, but are structurally different (not sure that is important)"
+
+- literature shows stellate are present in A1 L4 (though scarce compared to V1) of mice, rabbit, birds, bats, cats and humans
+
+- no direct evidence in macaque A1 except several papers from the 90s (coauthored by Charlie) which mention macaque A1 L4 stellate cells receiving input from TC.
+
+*** charlie (No); macaque
+don't think the layer 4 cells in A1 are spiny stellate. 
+They are called granule cells, and are considered to be excitatory interneurons like SS, but are structurally different (not sure that is important)
+
+*** Krause 2014 (weak); multispecies
+https://www.frontiersin.org/articles/10.3389/fnsys.2014.00170/full
+
+"However, spiny stellate cells are rare in auditory cortex, 
+their role likely being occupied by pyramidal cells (Smith and Populin, 2001; Barbour and Callaway, 2008; Sakata and Harris, 2009). "
+
+*** Smith 2001 (No); cat
+https://onlinelibrary.wiley.com/doi/abs/10.1002/cne.1084
+
+"No such spiny stellate population is encountered in the middle layers of the auditory cortex. Spiny cells that are not stellate or pyramidal are occasionally encountered 
+but, as a group, do not display consistent anatomical or physiological features that might allow them to function as auditory cortical versions of the visual spiny stellates. 
+Rather, pyramidal cells in the lower half of layer 3 and layer 4 appear to have assumed this role.""
+
+*** Meyer 1989 (Yes); human
+https://www.sciencedirect.com/science/article/abs/pii/0306452289904016?via%3Dihub - The spiny stellate neurons in layer IV of the human auditory cortex  
+
+"The spiny stellate neurons have been studied by the Golgi method in the auditory koniocortex and parakoniocortex of man. S
+piny stellate cells are a consistent though not very common component of layer IV. 
+They are not confined to specific sublayers but occur at all depths of layer IV, and also in layer IIIc. 
+Spiny stellate cells in the auditory areas show a great variety of their dendritic arborization pattern. 
+The presence of all intermediate forms between small pyramidal cells—which constitute the dominant cell type in layer IV 
+and which display an extraordinary heteromorphism—and spiny stellate cells shows the close kinship between both neuronal types."
+
+*** Oliv 2018 chapter 8 (Yes); multispecies
+https://link.springer.com/chapter/10.1007/978-3-319-71798-2_8
+
+Fig 8.2 example of L4 spiny stellate in the cat
+
+Fig 8.3 circuit diagram shows L4 spiny stellate
+
+"In cat ACX, there are also two types of star pyramidal cells (Fig. 8.2Ac) with more radiate dendrites: one with spiny and one with rather smooth dendrites (Winer 1984a). 
+Together with the sparsely spinous stellate cells (Winer 1984b), they could form a group of neurons having more or less equivalent functions like the classical L4 spiny stellate cells 
+of the visual cortex (Lund 1984) (see also Sect. 8.2.4)."
+
+"However, compared to the visual (da Costa and Martin 2011) and somatosensory cortex (Staiger et al. 2004), 
+spiny stellate cells are relatively rare in the ACX of bats (Fitzpatrick and Henson 1994), 
+rabbits (McMullen and Glaser 1982), 
+cats (Winer 1984c; Mitani et al. 1985; one study found none: Smith and Populin 2001), 
+and humans (Meyer et al. 1989). 
+In these species, spiny stellate cells primarily occur in sublayers 4a and 3b (Fig. 8.2Ad). 
+In cat ACX, spiny stellate cells, which have a small spherical dendritic field and an axon targeting L3–5, are driven by thalamic, 
+corticocortical, and commissural stimulation; other physiological properties are unknown (Mitani et al. 1985). "
+
+"Together, there is considerable evidence for species- and modality-specific dif- ferences in L4 organization. 
+In addition to the near absence of pyramidal and spiny stellate cells in ACX, the weak sublamination (particularly compared to the visual cortex) hints at a reduced intralaminar circuitry. 
+A related question is that of the putative target cells of the massive, mainly lemniscal, thalamic inputs to auditory L4 and L3b (Huang and Winer 2000). 
+Certainly, the few principal cells are located among the targets, thereby serving thalamocortical feedforward excitation, but these inputs most likely also terminate on the GABAergic interneurons, 
+providing strong feedforward inhibition (Verbny et al. 2006; Lee and Sherman 2008)."
+
+*** Steinschneider, Fishman, Schroeder and Arezzo, 1998 (Yes); monkey
+https://sci-hub.se/10.1121/1.423877 - "Click train encoding in primary auditory cortex of the awake monkey: Evidence for two mechanisms subserving pitch perception"
+
+"Initial current sinks are located in the thalamorecipient zone of lamina 4 and lower lamina 3 (depths 5 and 6). 
+The location and timing of these sinks and surrounding current sources are consistent with the initial depolarization of lamina 4 stellate cells, 
+basilar regions of lower lamina 3 pyramidal cells and terminal portions of thalamocortical afferents (Steinschneider et al., 1992 [visual]; Tenke et al., 1993)."
+
+
+re: cat A1: "An additional population of cortical neurons, characterized by short duration action potentials ~‘‘thin spikes’’! and thought to represent lamina 4 stellate cells, 
+is able to phase-lock to click trains at rates up to 400 Hz."
+
+*** Steinschneider, ..., Schroeder et al (1991) (Yes); monkey
+https://sci-hub.se/10.1016/0168-5597(92)90026-8 - "Cellular generators of the cortical auditory evoked potential initial component"
+
+"Findings indicate that thalamocortical afferents are a generator of N8 and support a role for lamina 4 stellate cells."
+
+"Elements implicated are lamina 4 stellate cells, which receive monosynaptic input from TC fibers
+(Smith and Moskowitz 1979). Many of these cells are characterized
+by an asymmetrical and vertical orientation of their dendritic trees
+that ascend into lamina 3 (McMillen and Glaser 1982). Because
+stellate cells in auditory cortex receive TC afferents mainly on
+dendritic branches (Smith and Moskowitz 1979) concentrated in
+lower lamina 3 and upper lamina 4 (Jones and Burton 1976), the
+initial stetlate cell depolarization would lead to an open-field configuration with a sink surrounding the dendrites and a source near the
+cell bodies, resulting in a surface-negative potential. "
+
+"We also hypothesize that the initial negative component in the monkey
+cortical AEP is partially generated by lamina 4 stellate cells. Stellate
+cells with a vertical dendritic orientation also occur in middle cortical
+laminae of the human auditory cortex (Seldon 1981)."
+
+"These data and the present findings support a role for stellate cells in the generation of
+the initial auditory cortical component."
+
+*** Fishman 2000
+https://sci-hub.se/10.1121/1.429460 - "Complex tone processing in primary auditory cortex of the awake monkey. I. Neural ensemble correlates of roughness"
+
+"It is likely that MUA recordings, particularly in the thalamorecipient zone, include contributions from thalamo-cortical
+axons and stellate cells, in addition to pyramidal cells."
+
+*** Wang 2010 (yes); avian
+https://www.pnas.org/content/pnas/107/28/12676.full.pdf
+
+*** Harris and Shepherd 2015 (yes); mice
+- L4 spiny stellate is one of the 3 types of L4 IT neurons in sensory cortical circuits
+
+*** check allen brain atlas
+
+only human and mouse
+
+** revisiting macaque A1 PT5B cells
+*** SUMMARY
+- Cortical excitatory neurons are classified into intratelencephalic (IT), pyramidal tract (PT) and corticothalamic (CT), 
+based not only on their projection target but also on their morphology, laminar location, physiology and genetic markers.
+
+- PT cells are characterized by being large L5B pyramidal neurons with thick apical tufts, intrinsically bursting and non-adapting, and express genes distinct from IT and CT.
+
+- Shepherd and Yamawaki, 2021: "PT cells are named (loosely, by tradition) for the most common route of their projection to subcerebral destinations in the brainstem and spinal cord.
+(The terminology of these neurons is a perennial source of confusion; in adult animals, not all PT neurons retain their PT axon branch, 
+owing to area-specific developmental pruning — for example, those in the primary visual cortex (V1) lose their PT branches, but form branches to the midbrain and pons. 
+An equivalent term for PT neurons is ‘subcerebral projection neurons’. 
+The term ‘extratelencephalic’ has also been introduced22, but as both CT and PT neurons project outside the telencephalon, 
+this entails a further distinction between extratelencephalic neurons of layers 5 and 6.)" 
+
+- Therefore PT neurons are not limited to motor corterx, but generally applied by convention to all neocortical regions, including sensory cortices (V1, S1, A1) (Harris and Shepherd 2015; Shepherd and Yamawaki 2021, Baker 2018; Bakken 2021)
+
+- In A1, L5 neurons identified as 'large pyramidal cells' share several features of PT type neurons: thick tufts, mostly in L5B, instrinsically bursting, 
+and project to brainstem, including inferior colliculus, superior olivary complex (SOC), and the cochlear nuclear complex (CN) (Budinger, 2018; 2020; Winer and Prieto, 2001; Winer et al 2002; Baker 2018; Malmierca 2010). 
+Distinct subsets of A1 L5 neurons also match the description of IT and CT neurons.
+ 
+
+*** charlie (No); macaque
+Pyramidal tract in A1?
+
+*** Harris and Shepherd 2015 (yes); mice sensory (canonical)
+IT, PT, CT common to cortical circuits (based mostly on mouse)
+
+*** Billeh 2019 / Allen Brain (No); mice V1
+no distinction of L5 excitatory cells
+
+*** Budinger 2018; 2020 (similar); multispecies
+- large, intrinsically bursting, non adapting pyramidal cells (~PT) found in L5A and L5A/B border (fig 8.2A shows ~thick tuft)
+- medium size pyramidals, regular spiking and adapting (~IT) found throughout L5A and 5B (fig 8.2A shows ~thin tuft)
+- CT cells projecting to thalamus found in both L5 and L6
+
+2018:
+Physiologically, the large pyramidal cells correspond to intrinsically bursting, mostly nonaccommodating, nonadapting cells as described in rat and mouse A1 (Hefti and Smith 2000; Sun et al. 2013). 
+The smaller pyramidal cells are regular spiking and nonaccommodating but sometimes adapting (Hefti and Smith 2000). 
+Together, the different L5 pyramidal cells are a main source of corticofugal pro-jections to the striatum, thalamus, midbrain, and brainstem.
+
+2020:
+- The axons of the very large and large pyramidal cells arborize locally in the subgranular and granular
+layers (Fig. 4); however, their main targets are subcortical structures like the MGB and the inferior colliculi (IC) but also the contralateral ACX (Ojima, 1994; Winer and Prieto, 2001). 
+The small and medium pyramidal cells are abundant throughout L5 (Fig. 3Af). 
+Their apical dendrites hardly reach L1; their axons have widespread branches in the supragranular layers (Fig. 4) and project subcortically and interhemispherically (Winer and Prieto, 2001).
+ 
+- Descending projections are primarily oriented toward the MGB and other structures of the auditory pathway but also to non-auditory nuclei of the telencephalon, 
+ thalamus, midbrain, and hindbrain (e.g. claustrum, striatum, superior colliculus, pons); these projections mainly originate from L5 and L6 pyramidal neurons subserving different connectional systems
+
+- The cortico- collicular projections are strongest for the A1 fields and they arise from several populations of L5 and L6 pyramidal neurons, 
+which, however, are largely different from those that project to the MGB.
+
+- The auditory corticobulbar system includes projections from the ACX to the nuclei of the lateral lemniscus (NLL), superior oli- vary complex (SOC), and the cochlear nuclear complex (CN) 
+
+- Taken together, the auditory corticocollicular and corticobulbar connections are largely organized in segregated channels (Lee et al., 2011). 
+Accordingly, their specific functions may be diverse as their targets but overall they might serve the modulation ofauditory response properties 
+of neurons in the midbrain and hindbrain leading to an adaptation of their sensitivity to sound frequency, intensity, and location; 
+which in turn may enhance the attention, orienting behavior, and learning of the individual
+
+*** Steiner and Tseng 2016
+Handbook of Basal Ganglia Structure and Function. (2016). Handbook of Basal Ganglia Structure and Function, Second Edition, i. doi:10.1016/b978-0-12-802206-1.00050-7 
+
+"Secondly, long-range corticofugal neurons that project ipsilaterally to the brainstem or spinal cord, from which a striatal projection arises as a collateral from the descending axon, 
+are called pyramidal tract neurons (PT). It is currently thought that there are no exclusively corticostriatal cells, but that the cortical afferents are collaterals of other projections (i.e., IT and PT neurons)."
+
+*** Winer and Prieto, 2001; cat
+"Layer V in Cat Primary Auditory Cortex (AI): Cellular Architecture and Identification of Projection Neurons" - https://sci-hub.se/10.1002/cne.1183
+
+Large pyr cells: 
+- They were concentrated in layer Vb (Fig. 1B: 1a) and dispersed in Va.  
+- it formed elaborate local tufts in the layer Ia neuropil
+- It entered the white matter (Fig. 4: 1a, AXON) and local branches projected toward layers III and IV andperhaps beyond (not shown). 
+All layer V pyramidal cells with a prominent apical dendrite and a corticofugal axon shared these features [corticofugal; extratelencelphalic]
+
+
+Medium pyr cells: 
+- apical dendrites up to 500 mm long that ended as simple tufts in layer II
+- local branches reascended as far as layer II . Collaterals projected obliquely (across layers) or laterally (within a layer) for 200–300 mm on each side, 
+so that their local domain might extend 500 mm [corticocortical]
+
+Projections:
+- re: corticocortical conn: Medium (Fig. 13A: 1b) and small (Fig. 13A: 1c) pyramidal cells were often marked, whereas few large pyramidal neurons were labeled
+
+- re: commisural (contralateral) conn:  Those identified reliably are medium (Fig. 14A: 1b) and small (Fig. 14A: 1c) pyramidal cells; 
+Few large pyramidal neurons (Fig. 4: 1a) were labeled, despite the involvement of layer Vb, where they concentrate (Fig. 1B)
+
+- re: corticothalamic (MGB thalamus): The corticogeniculate cells filled layer VI and involved sublayers Va and Vc (Fig 15B: V). 
+Layer VI corticothalamic neurons were smaller than layer V cells (Prieto and Winer, 1999). 
+Layer V projection neurons included many medium (Fig. 15A: 1b), small (Fig. 15A: 1c), and a few large (Fig. 15A: 1a) pyramidal cells.  
+
+- re: corticollicular (inferior colliculus / midbrain): These were the largest corticofugal neurons (Fig. 17E) and almost all
+were pyramidal (Fig. 16A). They were in layer V alone. Corticocollicular neurons occupied the part of layer V nearly devoid of corticothalamic retrograde labeling (compare Figs. 15B, 16B). 
+Large (1a) and medium (1b) pyra- midal cells predominated.  
+
+- perhaps sublaminar origins of the corticofugal systems coordinates the dis- charges of inferior colliculus and medial geniculate body neurons. 
+
+- The larger corticocollicular neurons (Table 2) with thicker axons might compensate for the spatiotem- poral offset between the auditory midbrain and thalamus, intervals that would presumably require fine intracortical timing. 
+The large corticofugal neurons may influence motor-related functions that place conduction velocity at a premium. Since many midbrain targets have a premotor function (Huffman and Henson, 1990), a rapid input is not unexpected. 
+
+- Thus, hooded rat corticotectal [tectum includes superior and inferiro colliculus] cells resemble the cells classified here as large pyramidal cells, whereas the callosal neuron types include medium, small, and fusiform pyramidal cells.
+
+- These data suggest that (1) the correlation between cell morphology, laminar position, and extracortical target is highly specific; 
+and (2) a cell type may participate in more than one connection, with the proviso that functional sub- classes could target different postsynaptic sites. 
+Finally, (3) the intracortical projections support the sublaminar partition of layer V proposed here.
+
+- Cells were intrinsi- cally bursting or regular spiking. Bursting cells have a large soma and an apical dendrite that reached layer I (like AI large pyramidal cells), whereas the latter resem- bled AI medium pyramidal cells.
+
+*** Winer 2002 (Yes); monkey
+"Descending projections to the inferior colliculus from the posteriorthalamus and the auditory cortex in rat, cat, and "
+The corticocollicular labeling was exclusively fromlayer V neurons in primary auditory cortex (AI), and consisted of 
+small (V10Wm in diameter; Fig. 3E: 13,16), medium sized (V15Wm; Fig. 3E: 1, 3), and large(s25Wm; Fig. 3E: 6, 15) pyramidal cells.
+
+
+*** Baker 2018 (Yes); multispecies
+"Specialized Subpopulations of Deep-Layer Pyramidal Neurons in the Neocortex: Bridging Cellular Properties to Functional Consequences" - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6001033/
+
+Additionally, in auditory cortex, L6 IT neurons participate in multimodal integration and L5 ET neurons in learning-induced plasticity of sound localization.
+
+PT also used in visual system
+
+*** Shepherd and Yamawaki 2021 (Yes); rodent/multispecies
+"Untangling the cortico-thalamo-cortical loop: cellular pieces of a knotty circuit puzzle"
+
+"The other component of the cortical projection to the thalamus arises as branches of ‘pyramidal tract’ (PT) neurons, 
+located in layer 5B and so named (loosely, by tradition18,19) for the most common route of their projection to subcerebral destinations in the brainstem and spinal cord. 
+(The terminology of these neurons is a perennial source of confusion; in adult animals, not all PT neurons retain their PT axon branch, 
+owing to area-specific developmental pruning — for example, those in the primary visual cortex (V1) lose their PT branches, but form branches to the midbrain and pons20. 
+An equivalent term for PT neurons is ‘subcerebral projection neurons’21. 
+The term ‘extratelencephalic’ has also been introduced22, but as both CT and PT neurons project outside the telencephalon, 
+this entails a further distinction between extratelencephalic neurons of layers 5 and 6.)"
+
+"Recent findings define thalamus-projecting PT neurons as a distinct subtype tending to lack branches to the medulla and PT."
+
+"Primary auditory cortex
+The primary auditory cortex (A1) receives a core-type projection from the ventral subdivision of the medial geniculate body (MGB). 
+These axons form functional excitatory synaptic contacts mainly onto layer 4 pyramidal neurons, with additional weaker innervation of cortical pyramidal neurons across all layers86. 
+This pattern resembles that of other core-type projections to the cortex, with branches ramifying most densely in layer 4, and to a lesser extent around the layer 5/6 border. 
+The extent to which CT and PT neurons in A1 receive direct input from the auditory thalamus is not yet clear, but laminar profiles of the MGB input suggest relatively weak excitation, 
+consistent with patterns seen in other areas. In the other direction, the CT and PT innervation of TC neurons in the subdivisions of the MGB has also not been fully determined, b
+ut the available anatomical data indicate reciprocity, with auditory cortical projections overlapping extensively with auditory thalamic subregions projecting back to auditory cortical areas87,88.""
+
+*** Bakken 2020
+"Evolution of cellular diversity in primary motor cortex of human, marmoset monkey, and mouse"
+
+"The L5 extratelencephalic-projecting (ET) types (also known as pyramidal tract, PT, or subcerebral types),"
+
+*** Malmierca 2010
+"Descending projections of auditory cortex to the midbrain and brain stem"
+
+Fig 9.9 showing  AC cells projecting to the inferior colliculus (IC), superior olivary complex (SOC), and cochlear nucleus [mostly from L5; some IC from L6]
+
+At least two types of layer V pyramidal neurons with different morphologies participate in the AI corticocollicular
+pathway (Figs. 9.8 and 9.9); these are tufted and nontufted pyramidal neurons. The morphological range of terminal
+fields in the IC after anterograde injections in AI also supports the notion of two separate populations (Bajo and Moore
+2005). Two populations of projecting neurons in layer V in rat AC have been described (Hefti and Smith 2000). Regular
+spiking neurons resemble the nontufted type and the intrinsic bursting neurons correspond to tufted neurons noted in gerbil (Bajo and Moore 2005). It has been suggested that only
+the intrinsic bursting neurons project to the IC, whereas the regular spiking neurons project to other cortical areas and to the putamen (thalamus)
+[i.e. L5B thicktufted bursting PT neurons project to IC]
 
 * CONNECTIVITY
 ** Budinger et al 2018
@@ -1498,6 +1922,16 @@ IC -> TC = we made it up (~=0.12) :slightly_smiling_face:
 ** v23 - IE/II specific layer gains and simplified code (assume 'Allen_custom')
 ** v24 - Fixed bug in IE/II specific layer gains
 ** v25 - Fixed subconnparams TC->E and NGF1->E; made IC input deterministic
+** v26 - Changed NGF AMPA:NMDA ratio 
+** v27 - Split thalamic interneurons into core and matrix (TI and TIM)
+** v28 - Set recurrent TC->TC conn to 0
+** v29 - Added EI specific layer gains
+** v30 - Added EE specific layer gains; and split combined L1-3 gains into L1,L2,L3
+** v31 - Added EI postsyn-cell-type specific gains; update ITS4 and NGF
+** v32 - Added IE presyn-cell-type specific gains
+** v33 - Fixed bug in matrix thalamocortical conn (were very low)
+** v34 - Added missing conn from cortex to matrix thalamus IREM and TIM
+** v35 - Parametrize L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
 * SIMS
 ** v11_manualTune/sim1
 - scale 0.05
@@ -1764,18 +2198,6 @@ def weightNorm(pops=[], rule = None, segs = None, allSegs = True, weights=list(n
 generated new weightNorm pkl files
 now values are reasonable -- not negative as before
 
-** Comparing conn
-update conn.py with Allen V1 vs BBP S1 vs custom A1 conn options
-
-run sim at 0.25 scale
-
-allpops = ['NGF1', 'IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'PV4', 'SOM4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'PV5A', 'SOM5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B', 'PV5B', 'SOM5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'PV6', 'SOM6', 'VIP6', 'NGF6']
-
-sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_Allen_V1_prob_0.25.png' , saveData='conn/E->EI_Allen_V1_prob_0.25.pkl')
-
-sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', showFig=0, saveFig='conn/E->EI_BBP_S1_prob_0.25.png' , saveData='conn/E->EI_BBP_S1_prob_0.25.pkl')
-
-sim.analysis.plotConn(includePre=allpops, includePost=allpops, feature='probability', synOrConn='conn', showFig=0, saveFig='conn/EI->EI_Allen_custom_prob_0.25_fixed.png' , saveData='conn/EI->EI_Allen_custom_prob_0.25_fixed.pkl')
 ** v16_batch1 - Small parameter on full net 200x200 um (12k cells); to get baseline
 *** code
 def custom():
@@ -5635,7 +6057,7 @@ Gen: 148, Cand: 22, Fitness: 673.06
 ** v25_batch1 - parallel Optuna optim test on GCP
 *** notes
 had to run:
-pip3 install --user bokeh optuna scikit-learn PIL joblib pymysql mysqlclient
+pip3 install --user bokeh optuna scikit-learn joblib pymysql mysqlclient
 sudo yum install MySQL-python
 
 mpi4py not working
@@ -7349,4 +7771,2907 @@ Hypotheses:
 *** notes
 increased TIM bkg from 2.0 to 3.0
 increased IREM from 1 to 1.5 
+=======
+
+
+** v30_batch1 - tuning by layers - thal + L4
+*** notes
+after 500 trials, ITS4 never spiked
+probably due to low bkg inputs and low thal inputs
+try: add bkg input gains to thal pops -> stronger thal -> ITS4 fires
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch2 - tuning by layers - thal + L4
+*** notes
+added bkg input gains to thal pops -> stronger thal -> ITS4 fires
+reduced to 1.5 secs
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch3 - same but replace ITS4 with IT cell type
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch4 - run best result from v30_batch3 for 10 sec
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch5 - tuning  L2+3+4 + thal
+*** notes
+increased duration since requires 1.5 sec to reach steady state
+- needs over 1.5 sec to reach steady state!!!
+- ITS4 not firing
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch6 - tuning  only L3+L4+thal; include L4 weights but starting from tuned and smaller interval - bug
+*** notes
+fitness func didn't include L3 pops
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch7 - tuning same as v30_batch6 but fixed fitness func to include L3 pops
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch8 - tuning added L2 and reduced width of gaussian tuning window
+*** note
+results were getting very low fitness, so made tuning func more restrictive by narrowing the gaussian func widths
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+** v30_batch9 - tuning best soln of v30_batch8, with param ranges +- 0.25, min rate = 0.5; increase min rate required
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+*** code
+
+- param ranges:
+
+    # from v30_batch8 (optuna), trial 3958
+    import json
+    with open('data/v30_batch8/trial_3958/trial_3958_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+
+    rangeV = 0.25
+    minV = 0.1
+    maxV = 5.0
+
+    # bkg inputs
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']-rangeV, minV), min(cfgLoad['IILayerGain']['2']+rangeV, maxV)]
+
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']-rangeV, minV), min(cfgLoad['EILayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']-rangeV, minV), min(cfgLoad['IILayerGain']['3']+rangeV, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV, minV), min(cfgLoad['EELayerGain']['4']+rangeV, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
+
+
+- tuning func: 
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+*** results
+- did not find better solution -- ITS3 too low
+
+- highest IT3 rates (1 - 1.5Hz) --> high SOM rates (~15hz)
+- highest IT3 rates (1 - 1.5Hz) --> mid PV rates (~3hz)
+- highest IT3 rates (1 - 1.5Hz) --> low VIP rates (<1hz)
+- highest IT3 rates (1 - 1.5Hz) --> mid NGF rates (~3Hz)
+
+- ITS4 proportional to ITP4; ITP4 slope x2
+- ITS4 proportional to PV4; PV4 slope x25
+- ITS4 proportional to SOM4; SOM4 slope x50
+- ITS4 inversely proportional to VIP4; VIP4 slope x10; if ITS4 > 1.0 -> VIP4 = 0Hz
+- ITS4 proportional to NGF4; NGF4 slope x2
+
+
+** v30_batch10 - tuning best soln of v30_batch8, with cell-type specific EI gains
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+*** code
+    params[('EICellTypeGain', 'PV')] = [minV, maxV]
+    params[('EICellTypeGain', 'SOM')] = [minV, maxV]
+    params[('EICellTypeGain', 'VIP')] = [minV, maxV]
+    params[('EICellTypeGain', 'NGF')] = [minV, maxV]
+** v30_batch11 - tuning L2+3+4+thal, layerwise + celltype
+*** notes
+https://docs.google.com/document/d/1Gbest9Xillhkq9XQ-UVBvq3AWZAkBBdcuDV74S7Nbtg/edit?usp=sharing
+
+*** code
+    minV1 = 0.2
+    maxV1 = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'SOM')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'VIP')] = [minV1, maxV1]
+    params[('EICellTypeGain', 'NGF')] = [minV1, maxV1]
+
+    params[('EELayerGain', '2')] = [minV1, maxV1]
+    params[('EILayerGain', '2')] = [minV1, maxV1]
+    params[('IELayerGain', '2')] = [minV1, maxV1]
+    params[('IILayerGain', '2')] = [minV1, maxV1]
+
+    params[('EELayerGain', '3')] = [minV1, maxV1]
+    params[('EILayerGain', '3')] = [minV1, maxV1]
+    params[('IELayerGain', '3')] = [minV1, maxV1]
+    params[('IILayerGain', '3')] = [minV1, maxV1]
+
+    params[('EELayerGain', '4')] = [minV1, maxV1]
+    params[('EILayerGain', '4')] = [minV1, maxV1]
+    params[('IELayerGain', '4')] = [minV1, maxV1]
+    params[('IILayerGain', '4')] = [minV1, maxV1]
+
+** v30_batch12 - tuning L4 + thal,  layer-specific + celltype-specific gains
+*** notes
+fixed thal gains from prev; 
+Overall ESOM, EPV, ENGF, EVIP gains in range [0.2, 3]
+L4 EE, EI, IE, II gains in range [0.2, 3]
+8 params with large range
+maybe II cell type-specific gains?
+
+** v30_batch13 - tuning L4 + thal,  layer-specific + celltype-specific gains -- repeat
+*** notes
+very similar results -- good, as expected
+** v31_batch2 - tuning L4 + thal, layer-specific + celltype-specific gains; new ITS4
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L3, with broad param range [0.2:4.0]
+layer-specific EE,EI,IE,II gains for L4, with range [prev-0.25:prev+0.25]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) in range [prev-0.25:prev+0.25]
+12 params; 8 small range, 4 large range
+good results
+
+
+** v31_batch3 - tuning L2+L3+L4 layer- + celltype-specific gains
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with broad param range [0.2:3.0]
+layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.25:prev+0.25]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+16 params; 12 small range, 4 large range
+Good results but IT3 0.5-1.0 Hz
+higher IT3 rates -> too high PV2+SOM2 is projecting too strongly to PV2 and SOM2 
+** v31_batch4 - tuning L2+L3+L4 layer- + celltype-specific gains -- try wider range for prev params
+*** notes
+same as v31_batch3 but E-PV, E-SOM, E-NGF, E-VIP params in range [prev-0.5:prev+0.5]
+** v31_batch5 - tuning L2+L3+L4 layer- + celltype-specific gains -- try wider range + min rate of 1 Hz
+*** notes
+same as v31_batch4 but min population rate set to 1.0 Hz (instead of 0.5 Hz)
+** v31_batch6 - tuning L2+L3+L4+L5A layer + celltype-specific gains; from v31_batch4; small ranges
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with broad param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5A, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+** v31_batch7 - tuning L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (subset of params)
+*** notes
 ** blank
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with fixed params
+layer-specific EE,EI,IE,II gains for L3, with fixed params
+layer-specific EE,EI,IE,II gains for L4, with fixed params
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+** v31_batch8 - tuning L2+L3+L4+L5A+L5B layer + celltype-specific gains; from v31_batch6; small ranges (all params)
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.2:3.0]
+20 params; 12 very small range, 4 small range, 4 large range
+
+** v31_batch9 - tuning increase L5B range from 0.2-3.0 to 0.1-5.0; increase L2+L3 range from 0.1 to 0.25
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:5.0]
+20 params; 8 very small range, 8 small range, 4 large range
+No good solutions; stuck at ~96 fitness
+SOM2, SOM3, PT5B, CT5B 0hz or very low rate
+
+** v32_batch1 - tuning L2-L5B; added IE presyn-cell-type specific params
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+28 params; 8 very small range, 12 small range, 4 large range
+good solution: fitness=47; all pops good except PV2 (~160Hz) and IT5B (~28hz) a bit high
+some solutions interesting slow (~1hz) oscillations on top of the fast ones (eg trial_13047)
+PV2 in particular is just ~5 cells, so prob has some peculiarities due to small size, and hopefully not hard to fix
+keep going with L6, and just fine tune at the end if needed
+
+*** results
+In [12]: df.iloc[7642][:30]
+Out[12]: 
+number               7642.000000
+value                  45.737540
+EELayerGain2            1.466797
+EELayerGain3            0.733775
+EELayerGain4            0.383257
+EELayerGain5A           1.134515
+EELayerGain5B           3.580222
+EICellTypeGainNGF       0.523345
+EICellTypeGainPV        1.577954
+EICellTypeGainSOM       0.422428
+EICellTypeGainVIP       1.963884
+EILayerGain2            0.181358
+EILayerGain3            0.210892
+EILayerGain4            0.109693
+EILayerGain5A           0.263932
+EILayerGain5B           0.162074
+IECellTypeGainNGF       0.495923
+IECellTypeGainPV        0.503529
+IECellTypeGainSOM       1.042023
+IECellTypeGainVIP       0.170270
+IELayerGain2            3.091169
+IELayerGain3            2.692236
+IELayerGain4            1.747858
+IELayerGain5A           2.515508
+IELayerGain5B           0.382218
+IILayerGain2            0.885747
+IILayerGain3            2.328585
+IILayerGain4            0.965311
+IILayerGain5A           0.230596
+IILayerGain5B           0.103807
+
+In [10]: df.iloc[6668][:30]
+Out[10]: 
+number               6668.000000
+value                  51.626852
+EELayerGain2            1.490007
+EELayerGain3            0.710163
+EELayerGain4            0.372384
+EELayerGain5A           1.179958
+EELayerGain5B           3.739412
+EICellTypeGainNGF       0.538782
+EICellTypeGainPV        1.616799
+EICellTypeGainSOM       0.444799
+EICellTypeGainVIP       1.947859
+EILayerGain2            0.190476
+EILayerGain3            0.221521
+EILayerGain4            0.104049
+EILayerGain5A           0.257049
+EILayerGain5B           0.175283
+IECellTypeGainNGF       0.310249
+IECellTypeGainPV        0.532399
+IECellTypeGainSOM       0.957409
+IECellTypeGainVIP       1.066277
+IELayerGain2            3.048898
+IELayerGain3            2.689434
+IELayerGain4            1.745614
+IELayerGain5A           2.514517
+IELayerGain5B           0.461983
+IILayerGain2            0.899853
+IILayerGain3            2.375172
+IILayerGain4            0.971353
+IILayerGain5A           0.230639
+IILayerGain5B           0.103220
+
+In [16]: df.iloc[6668][30:66]
+Out[16]: 
+IT2        7.603550
+PV2      166.833333
+SOM2      11.000000
+VIP2      48.375000
+NGF2       3.200000
+IT3        1.841704
+SOM3       1.885714
+PV3       45.318182
+VIP3       5.219048
+NGF3       1.720000
+ITP4       5.186603
+ITS4       4.454545
+PV4       28.108696
+SOM4       5.000000
+VIP4      22.833333
+NGF4       1.571429
+IT5A       1.452514
+CT5A       9.312849
+PV5A      57.250000
+SOM5A     19.904762
+VIP5A      3.000000
+NGF5A     10.000000
+IT5B      26.855319
+PT5B       1.340426
+CT5B       6.642553
+PV5B      63.701493
+SOM5B     35.982143
+VIP5B     21.375000
+NGF5B      2.166667
+TC         6.086207
+TCM       23.168831
+HTC        5.421053
+IRE        3.298701
+IREM       3.077922
+TI         3.880000
+TIM        5.200000
+Name: 6668, dtype: float64
+
+In [17]: df.iloc[7642][30:66]
+Out[17]: 
+IT2        9.692308
+PV2      168.500000
+SOM2       6.000000
+VIP2      40.500000
+NGF2       3.200000
+IT3        2.231390
+SOM3       1.685714
+PV3       49.420455
+VIP3       3.533333
+NGF3       1.866667
+ITP4       4.468900
+ITS4       3.811005
+PV4       24.369565
+SOM4       4.083333
+VIP4      32.666667
+NGF4       1.571429
+IT5A       2.625698
+CT5A      12.351955
+PV5A      72.527778
+SOM5A     21.428571
+VIP5A      2.400000
+NGF5A     10.500000
+IT5B      27.863830
+PT5B       2.000000
+CT5B       1.646809
+PV5B      50.716418
+SOM5B     31.375000
+VIP5B     19.125000
+NGF5B      2.166667
+TC         4.689655
+TCM       24.662338
+HTC        4.894737
+IRE        3.168831
+IREM       3.792208
+TI         2.720000
+TIM        4.720000
+** v32_batch2 - tuning L2-L6; EI and IE cell-type specific gains; params from v32_batch1; 20 very small rannges
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L5B, with param range [prev-0.1:prev+0.1]
+layer-specific EE,EI,IE,II gains for L6, with broad param range [0.1:4.0]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
+32 params; 20 very small range, 8 small range, 4 large range
+
+** v32_batch3 - tuning L1-L6; EI and IE cell-type specific gains; params from v32_batch1; added NGF1; inc range 0.1 to 0.15
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EI,II gains for L1, with broad param range [0.1:4.0]
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L5B, with param range [prev-0.15:prev+0.15]
+layer-specific EE,EI,IE,II gains for L6, with broad param range [0.1:4.0]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.25:prev+0.25]
+34 params; 20 very small range, 8 small range, 6 large range
+
+** v32_batch4 - tuning best soln v32_batch3, +- 0.2 all params; min rate >=0.5Hz
+*** notes
+fixed/frozen gains for thal from prev solution
+layer-specific EI,II gains for L1, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L2, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L3, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L4, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L5A, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L5B, with [prev-0.2:prev+0.2]
+layer-specific EE,EI,IE,II gains for L6, with [prev-0.2:prev+0.2]
+E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.2:prev+0.2]
+PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [prev-0.2:prev+0.2]
+34 params; 34 small range
+*** results
+many good results
+best: trial_15057
+
+** v32_batch5 - run best of v32_batch4, with LFP; 3 scales 
+*** notes
+*** code
+def custom():
+    params = specs.ODict()
+
+    # from v32_batch1 (optuna L2-L5B), trial 6668
+    import json
+    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # conn gains
+
+    initCfg['scaleDensity'] = [0.5, 0.75, 1.0]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = cfgLoad  # set default options from prev sim
+    
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [1500, 2500] 
+
+    # plotting and saving params
+    initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    
+    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': True, 'layer_lines': True, 'saveFig': 1, 'showFig': 0}
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+** v32_batch6 - run best of v32_batch4, with LFP; with cochlear/IC speech input; with different cortichothal gains
+** v32_batch7 - run best of v32_batch4, with LFP; scaled to 100% with different gains / scaling factors
+** v32_batch8 - tuning scale 1.0, from v32_batch4, with param range -0.4 +0.1
+*** results
+**** params order of importance (optuna)
+OrderedDict([("('IELayerGain', '5B')", 0.7499801502949816),
+             ("('EELayerGain', '6')", 0.055137684099558305),
+             ("('EILayerGain', '2')", 0.03635570655825216),
+             ("('EILayerGain', '5B')", 0.035392440489203265),
+             ("('IILayerGain', '1')", 0.022242992113195782),
+             ("('IILayerGain', '4')", 0.012277743367558977),
+             ("('IILayerGain', '5B')", 0.011612647383699343),
+             ("('EILayerGain', '3')", 0.009056442192559315),
+             ("('EELayerGain', '4')", 0.00710624539774585),
+             ("('IECellTypeGain', 'SOM')", 0.005899490508980003),
+             ("('IELayerGain', '3')", 0.005484483076799773),
+             ("('IELayerGain', '4')", 0.005259504941152925),
+             ("('EILayerGain', '5A')", 0.0038855760530673573),
+             ("('EICellTypeGain', 'VIP')", 0.003723196948324842),
+             ("('EILayerGain', '6')", 0.0035016070582954226),
+             ("('IILayerGain', '3')", 0.002852825893140483),
+             ("('EICellTypeGain', 'SOM')", 0.0027826202811932397),
+             ("('EELayerGain', '5A')", 0.002616465265447208),
+             ("('IILayerGain', '5A')", 0.0023586747106461156),
+             ("('IELayerGain', '2')", 0.002179872554014031),
+             ("('IECellTypeGain', 'NGF')", 0.0020017208171822327),
+             ("('EELayerGain', '2')", 0.0020012870209595184),
+             ("('IECellTypeGain', 'PV')", 0.002000904527418183),
+             ("('EICellTypeGain', 'PV')", 0.001971158738791962),
+             ("('EELayerGain', '5B')", 0.0019025344008027562),
+             ("('EELayerGain', '3')", 0.0016153303988286137),
+             ("('EILayerGain', '1')", 0.00147970708681901),
+             ("('IILayerGain', '2')", 0.0013053395401501741),
+             ("('IECellTypeGain', 'VIP')", 0.001196072679381705),
+             ("('EILayerGain', '4')", 0.0011403893414908093),
+             ("('IELayerGain', '6')", 0.0010167186924202067),
+             ("('EICellTypeGain', 'NGF')", 0.0009049134461898428),
+             ("('IELayerGain', '5A')", 0.0008924573619307901),
+             ("('IILayerGain', '6')", 0.0008650967598182902)])
+
+** v32_batch9 - tuning scale 1.0, from v32_batch4, with param range -0.75 +0.25
+** v32_batch10 - tuning scale 1.0, from v32_batch4, with param range -1.0 +1.0
+*** results
+**** params order of importance (optuna)
+OrderedDict([("('IELayerGain', '5B')", 0.3151041601577254),
+             ("('EICellTypeGain', 'SOM')", 0.08400212322088972),
+             ("('IELayerGain', '6')", 0.0762918769003323),
+             ("('IELayerGain', '4')", 0.0715883186275869),
+             ("('IELayerGain', '3')", 0.05313019308373143),
+             ("('EELayerGain', '4')", 0.045071353565951815),
+             ("('IECellTypeGain', 'SOM')", 0.04465051832626217),
+             ("('EILayerGain', '3')", 0.03513225590822564),
+             ("('IELayerGain', '5A')", 0.03431980052812068),
+             ("('IECellTypeGain', 'NGF')", 0.021889977683634144),
+             ("('IILayerGain', '5B')", 0.018055913288555152),
+             ("('EELayerGain', '5A')", 0.01603521241493111),
+             ("('EILayerGain', '6')", 0.014430459842131458),
+             ("('EELayerGain', '6')", 0.013700774868924117),
+             ("('EICellTypeGain', 'PV')", 0.012762351035541556),
+             ("('IECellTypeGain', 'PV')", 0.01271007860451602),
+             ("('EICellTypeGain', 'NGF')", 0.01247971221706121),
+             ("('EELayerGain', '3')", 0.011064900976532357),
+             ("('IILayerGain', '4')", 0.01050117989864462),
+             ("('IILayerGain', '5A')", 0.010040918117366206),
+             ("('IILayerGain', '2')", 0.008828854276217579),
+             ("('EELayerGain', '5B')", 0.008317352788539763),
+             ("('EELayerGain', '2')", 0.00814952977715714),
+             ("('EILayerGain', '5A')", 0.007014747634411912),
+             ("('IECellTypeGain', 'VIP')", 0.006998916046105591),
+             ("('EILayerGain', '1')", 0.006980195516415598),
+             ("('EICellTypeGain', 'VIP')", 0.0063617138402887645),
+             ("('IILayerGain', '1')", 0.006207601669380438),
+             ("('IELayerGain', '2')", 0.005453809051148756),
+             ("('IILayerGain', '6')", 0.005322212789753398),
+             ("('IILayerGain', '3')", 0.004741085624350056),
+             ("('EILayerGain', '4')", 0.004551092697970192),
+             ("('EILayerGain', '2')", 0.004396261976505042),
+             ("('EILayerGain', '5B')", 0.003714547045091773)])
+** v32_batch11 - tuning scale 1.0, only thal+L4, param range 0.1 - 4.0 - CHECK!
+** v32_batch12 - run best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different weights 
+** v32_batch13 - tuning from v32_batch11, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4 +-0.1; I->EI +-0.25
+*** results
+fitness ~90
+ITP4, ITS4 ~ 0 Hz
+** v32_batch14 - tuning from v32_batch13, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
+*** results
+fitness ~90
+**** params order of importance (optuna)
+OrderedDict([("('EICellTypeGain', 'PV')", 0.6012994003413611),
+             ("('EICellTypeGain', 'VIP')", 0.0674523215057324),
+             ("('EICellTypeGain', 'SOM')", 0.05859333642331545),
+             ("('EICellTypeGain', 'NGF')", 0.030404890848270017),
+             ("('IELayerGain', '3')", 0.026609611733240005),
+             ("('IECellTypeGain', 'VIP')", 0.024467396634401412),
+             ("('EILayerGain', '3')", 0.023617705813091756),
+             ("('EILayerGain', '2')", 0.02139474144951049),
+             ("('IILayerGain', '2')", 0.020743683311677006),
+             ("('IELayerGain', '2')", 0.017510779139447326),
+             ("('IECellTypeGain', 'NGF')", 0.015071640236342313),
+             ("('EELayerGain', '4')", 0.013298150090182486),
+             ("('IECellTypeGain', 'PV')", 0.01229421034433112),
+             ("('EILayerGain', '4')", 0.012034170246579217),
+             ("('IELayerGain', '4')", 0.010810362332032402),
+             ("('IECellTypeGain', 'SOM')", 0.010511967126289197),
+             ("('EELayerGain', '3')", 0.010027132954179493),
+             ("('IILayerGain', '3')", 0.008980533541981537),
+             ("('IILayerGain', '4')", 0.007605008889729912),
+             ("('EELayerGain', '2')", 0.007272957038305588)])
+** v32_batch15 - run best of v32_batch4, with LFP; with cochlear/IC speech input at 2000ms; with different conn probs
+** v32_batch16 - tuning from v32_batch13, scale 1.0, only thal+L2+L3+L4, param range +-1.0
+*** results
+fitness ~90
+
+** v32_batch17 - scale 1.0, full model, from v32_batch14 
+*** notes
+EI params from v32_batch14 trial 981, +-1.0  (by mistaked didnt include here IE params)
+thal+L2,L3,L4, IE params from v32_batch14 trial 981, +-0.5
+L1, L5A,L5B,L6 - 0.1-4
+*** results
+no good sols
+
+** v32_batch18 - tuning - best of v32_batch4; thal from v32_batch14; scaled to 100%; grid search of main params
+*** notes
+EE - [0.25, 0.5, 0.75, 1.0] - 16
+EI, IE, II - [0.5, 1.0, 1.5] - 9
+E-PV, E-SOM, E-NGF, E-VIP - [0.5, 1.0, 1.5] - 27
+total = 16*9*27 = 3888
+use thal from v32_batch14
+*** results
+- only solutions where all pops fire are with EE=1, but they don't fire at same time; different periods; pops inhibit each other
+- a few solutions with EE=0, show promising results, with some osc, but some layers (eg L5) and some upper pops (eg SOM) dont fire
+- did pop analysis 4D heatmap for all pops and params 
+-- hard to extract conclusions
+-- but IIGain=1.5 and IEGain=0.5 seems to work best for most pops
+
+DONE:
+- calculate fitness value as in evol/optuna, to find good solutions where most pops fire consistently 
+- need to recalculate popRates every 250 ms -- info should be obtainable from .pkl files
+- found good solutions based on fitness!
+
+TODO:
+- explore param space around these solutions using optuna and/or grid search
+- if grid search, calculate fitness values directly?
+** v32_batch19 - tuning - optuna based on best solutions of v32_batch18; plus added L2+L3-specific IE gains 
+*** code
+    # from prev - best of 50% cell density
+    import json
+    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v32_batch14/trial_981/trial_981_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.5
+    rangeV2 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+    # params based on v32_batch8 grid search best solutions; plus added L2 and L3 IE specific gains since those were problematic layers
+    params['EEGain'] = [0.3, 0.7] # [0.25, 0.5, 0.75, 1.0]  # 1 
+    params['EIGain'] = [0.3, 1.2] #[0.5, 1.0, 1.5] # 1, 0
+    params['IEGain'] = [0.3, 0.7] #[0.5, 1.0, 1.5] # 0
+    params['IIGain'] = [0.3, 0.7] #  0
+    params[('EICellTypeGain', 'PV')] = [0.3, 1.7] #[0.5, 1.0, 1.5] # 0, 2 
+    params[('EICellTypeGain', 'SOM')] = [0.3, 1.7] #[0.5, 1.0, 1.5] # 0, 2 once
+    params[('EICellTypeGain', 'VIP')] = [0.8, 1.7] #[0.5, 1.0, 1.5] # 1,2
+    params[('EICellTypeGain', 'NGF')] = [0.3, 1.7] #[0.5, 1.0, 1.5] # 0,1,2
+
+    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+*** results
+trial_974 good!
+** v32_batch20 - scale 1.0; best from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0)
+** v32_batch21 - scale 1.0; 11.5-sec; best from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0) and start time
+*** code
+    # from prev - best of 50% cell density
+    import json
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v32_batch19/trial_974/trial_974_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # conn gains - total 3888 param combs
+    params[('ICThalInput', 'probE')] = [0.0, 0.12, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'startTime')] = [2000, 5000, 8000]
+    
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['scaleDensity'] = 1.0
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
+
+*** results
+so this is the full scale 10 sec (1.5-11.5 sec) sim without auditory stimuli (just all pops receving bkg inputs)…
+after ~6sec the dynamics seem to change regime: several pops stop firing and others fire a lot and oscillations disappear (showing raster and lfp spec at 4 diff depths)
+same with speech stimuli at 2-3sec … the stim seems to move net also to different regime with no osc etc
+similar happens if move stim to 5-6sec or 8-9 sec
+
+I was thinking of 1) trying one of the other solutions to see if keeps showing reasonable activity beyond 6 sec; 
+and 2) trying lowering IC->Thal weight to see if can get transient response to stimuli that doesn’t mess up dynamics
+
+try following trials:
+- 287
+- 616
+- 1443
+
+- sam for spont (full scale model) use this: v32_batch21_0_0_0.pkl in https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch21 
+(ideally 1.5- 5.5s since after 6s dynamics changed)
+- for speech (full scale model) can try: v32_batch21_1_1_0.pkl, v32_batch21_2_2_0.pkl, v32_batch21_3_3_0.pkl, and v32_batch21_4_4_0.pkl; 
+stim starts at 2sec (the model response is not transient though, it changes regime and infragranular stop firing); the 4 sims correspond to different IC->Thal conn params
+** v32_batch22 - scale 1.0; 11.5-sec; trial 287 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+** v32_batch23 - scale 1.0; 11.5-sec; trial 616 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+** v32_batch24 - scale 1.0; 11.5-sec; trial 1443 from v32_batch19; with LFP; cochlear IC/speech input; different conn probs (including 0), weights and start time
+** v32_batch25 - No cortical conn, just bkg; scale 1.0; 11.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input
+*** code
+    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.0, 0.25]
+    params[('ICThalInput', 'weightI')] = [0.0, 0.25]
+    params['thalamoCorticalGain'] = [0.0, 1.0]
+
+    groupedParams = [('ICThalInput', 'probE'), ('ICThalInput', 'probI'), ('ICThalInput', 'weightE'), ('ICThalInput', 'weightI'), 'thalamoCorticalGain'] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    ...
+
+    initCfg['EEGain'] = 0.0 #1.0
+    initCfg['EIGain'] = 0.0 #1.0 # 1.8600534795309025 	
+    initCfg['IEGain'] = 0.0 #1.0 #0.75
+    initCfg['IIGain'] = 0.0
+    initCfg['thalamoCorticalGain'] = 0.0
+** v32_batch26 -  scale 1.0; 11.5-sec; trial 974 from v32_batch19; with LFP; with and w/o cochlear IC/speech input; diff thal->conn gains
+*** code
+    params[('ICThalInput', 'probE')] = [0.0, 0.12] #, 0.12, 0.26, 0.26] # 0,1,2 (orig: 0.12 - arbirtrary)
+    params[('ICThalInput', 'probI')] = [0.0, 0.12] #, 0.26, 0.12, 0.26] # 0,1,2 (orig: 0.26 - arbirtrary)
+    params[('ICThalInput', 'weightE')] = [0.0, 0.5] # (orig: 1.0 - arbitrary)
+    params[('ICThalInput', 'weightI')] = [0.0, 0.25] # (orig: 1.0 - arbitrary)
+    params['thalamoCorticalGain'] = [0.0, 0.25, 0.5, 1.0, 1.5] # (orig: 2.1058298893943608)
+*** results
+0_0_0_0-2 - no stim, TC gain<1.5 results in narrow large amp osc -- high sync; silent rest 
+0_0_0_3 - no stim, TC gain=1.5 results in less overall synchrony
+
+1_1_1_0-2 - stim, TC gain<1.5 no response to stim
+1_1_1_3 - stim, TC gain=1.5 transient response to stim
+Option 2: full scale model with weaker TC gain (shows less overall sync); spont=v32_batch26_0_0_0_0_3.pkl and v32_batch26_0_0_0_0_4.pkl; speech (starting at 3s)= v32_batch26_1_1_1_1_3.pkl and v32_batch26_1_1_1_1_4.pkl ; data folder: https://console.cloud.google.com/storage/browser/salvadord_data2/A1/v32_batch26 
+
+** v32_batch27 - grid search tune to exp; scale 1.0; 4.5-sec; trial 974 from v32_batch19; with LFP; WITH cochlear IC/speech input; diff thal->conn gains
+*** notes
+- focus on granular electrode
+- calculate wavelet CSD
+- focus on freqs < 10 hz
+- start stim at 2.5 sec; stim dur = 1sec; allow 1 sec after stim; total = 4.5 sec
+
+Run separately no stim vs speech:
+- no stim:
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+- speech:
+    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+** v32_batch28 - grid search tune to exp; scale 1.0; 4.5-sec; trial 974 from v32_batch19; with LFP; WITHOUT IC/speech input; diff thal->conn gains
+*** notes
+- start stim at 2.5 sec; stim dur = 1sec; allow 1 sec after stim; total = 4.5 sec
+
+    params['thalamoCorticalGain'] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+** v33_batch1 - same as v32_batch28 after fixing matrix thalamic conn bug
+*** notes
+while writing paper I just found a bug that made all prob conn from matrix thalamus to cortex be <0.0005 :disappointed: (edited) 
+I’m gonna fix and rerun the latest sims, hopefully results don’t change too drastically
+*** results
+overall similar although some pops slightly off (too high or too low)
+** v33_batch2 - tuning; same as v32_batch19 but after fixing matrix thalamic conn bug
+*** notes
+
+    # from prev - best of 50% cell density
+    import json
+    with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v32_batch14/trial_981/trial_981_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.5
+    rangeV2 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+    # params based on v32_batch8 grid search best solutions; plus added L2 and L3 IE specific gains since those were problematic layers
+    params['EEGain'] = [0.3, 0.7] # [0.25, 0.5, 0.75, 1.0]  # 1 
+    params['EIGain'] = [0.3, 1.2] #[0.5, 1.0, 1.5] # 1, 0
+    params['IEGain'] = [0.3, 0.7] #[0.5, 1.0, 1.5] # 0
+    params['IIGain'] = [0.3, 0.7] #  0
+    params[('EICellTypeGain', 'PV')] = [0.3, 1.7] #[0.5, 1.0, 1.5] # 0, 2 
+    params[('EICellTypeGain', 'SOM')] = [0.3, 1.7] #[0.5, 1.0, 1.5] # 0, 2 once
+    params[('EICellTypeGain', 'VIP')] = [0.8, 1.7] #[0.5, 1.0, 1.5] # 1,2
+    params[('EICellTypeGain', 'NGF')] = [0.3, 1.7] #[0.5, 1.0, 1.5] # 0,1,2
+
+    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+*** results
+- IT5A, PV6, VIP6 silent; IT3 very low
+
+
+
+** v34_batch1 - tuning; same as v32_batch18 after fixing matrix thalamic conn bug + adding cx->IREM,TIM
+** v34_batch2 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3+4 +-0.25; I->EI +-0.25
+** v34_batch3 - tuning; from v34_batch1, scale 1.0, only thal+L2+L3+L4, L2+3 param range 0.1-4.0; L4+-0.1; I->EI +-0.25
+** v34_batch4 - tuning; L2-L4; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main params; BUG: only L2-4+thal
+*** notes
+BUG! - ran only L2-4+thal -- good test to see if can use grid search to find similar/better solutions
+
+
+- trying same approach that worked before: take best of 50% scale, with thal for 100% scale, and grid search
+- note: thal from v34_batch3 doesn't matter which solution as they all use the same thal params; could also use thal from v32_batch14
+- however in this case might not work because the 50% scale is different from this 100% qualitatively, 
+i.e. fixed 2 matrix thalamic conn bugs (so maybe would have to tune 1st the 50% scale again with the bugs fixed)
+
+
+EE - [0.25, 0.5, 0.75, 1.0] - 16
+EI, IE, II - [0.5, 1.0, 1.5] - 9
+E-PV, E-SOM, E-NGF, E-VIP - [0.5, 1.0, 1.5] - 27
+total = 16*9*27 = 3888
+use thal from v32_batch14
+
+- if doesn't work, can continue tuning by layers -- eg. add L1, L5, L6
+
+- analyzed via batchAnalysis.py
+1)  var = [('simData','popRates')]
+    params, data = utils.readBatchData(dataFolder, batchLabel, loadAll=loadAll, saveAll=1-loadAll, vars=var, maxCombs=None)
+
+2)
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Ipops = [                         # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    df = addFitness(dataFolder, batchLabel, loadAll, tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]], Epops=Epops, Ipops=Ipops)
+
+*** results
+great results, better than optuna! at least 2 good solutions with all firing
+** v34_batch5 - tuning; full net; best of v32_batch4; thal from v34_batch3; scaled to 100%; grid search of main paramss
+*** notes
+- trying same approach that worked before: take best of 50% scale, with thal for 100% scale, and grid search
+- note: thal from v34_batch3 doesn't matter which solution as they all use the same thal params; could also use thal from v32_batch14
+- however in this case might not work because the 50% scale is different from this 100% qualitatively, 
+i.e. fixed 2 matrix thalamic conn bugs (so maybe would have to tune 1st the 50% scale again with the bugs fixed)
+
+
+EE - [0.25, 0.5, 0.75, 1.0] - 16
+EI, IE, II - [0.5, 1.0, 1.5] - 9
+E-PV, E-SOM, E-NGF, E-VIP - [0.5, 1.0, 1.5] - 27
+total = 16*9*27 = 3888 -- actually 8748 
+use thal from v32_batch14
+
+- if doesn't work, can continue tuning by layers -- eg. add L1, L5, L6
+*** results
+best fitness:
+
+In [31]: df.iloc[1520]
+Out[31]: 
+EEGain                                                                    0.25
+EIGain                                                                     1.5
+IEGain                                                                     0.5
+IIGain                                                                     0.5
+['EICellTypeGain', 'PV']                                                   1.5
+['EICellTypeGain', 'SOM']                                                  0.5
+['EICellTypeGain', 'VIP']                                                  1.5
+['EICellTypeGain', 'NGF']                                                  1.5
+paramValues                          [0.25, 1.5, 0.5, 0.5, 1.5, 0.5, 1.5, 1.5]
+popRates                     {'NGF1': {'1500_1750': 3.5231788079470197, '17...
+simLabel                                                      _0_2_0_0_2_0_2_2
+fitness                                                                315.461
+Name: 1520, dtype: object
+
+best fitness with thal oscillations (searched visually through rasters and then via pandas)
+In [30]: df.iloc[2006]
+Out[30]: 
+EEGain                                                                    0.25
+EIGain                                                                     1.5
+IEGain                                                                     1.5
+IIGain                                                                     0.5
+['EICellTypeGain', 'PV']                                                   1.5
+['EICellTypeGain', 'SOM']                                                  0.5
+['EICellTypeGain', 'VIP']                                                  1.5
+['EICellTypeGain', 'NGF']                                                  1.5
+paramValues                          [0.25, 1.5, 1.5, 0.5, 1.5, 0.5, 1.5, 1.5]
+popRates                     {'NGF1': {'1500_1750': 2.9403973509933774, '17...
+simLabel                                                      _0_2_2_0_2_0_2_2
+fitness                                                                473.409
+Name: 2006, dtype: object
+
+
+param ranges to explore based on this:
+EEGain: [0.1, 0.4]
+EIGain: [1.3, 1.7]
+IEGain: [0.3, 1.7]
+IIGain: [0.3, 0.7]
+['EICellTypeGain', 'PV']: [1.3, 1.7]
+['EICellTypeGain', 'SOM']: [0.3, 0.7]
+['EICellTypeGain', 'VIP']: [1.3, 1.7]
+['EICellTypeGain', 'NGF']: [1.3, 1.7]
+
+- include L2,3,4 +- 0.5 from v34_batch4 - check values:
+1_2_1_1_0_0_2_2:
+EEGain                                                                    0.5 - higher
+EIGain                                                                     1.5 - ok
+IEGain                                                                     1.0 - ok
+IIGain                                                                     1.0 - higher
+['EICellTypeGain', 'PV']                                                   0.5 - lower
+['EICellTypeGain', 'SOM']                                                  0.5 - ok
+['EICellTypeGain', 'VIP']                                                  1.5 - ok 
+['EICellTypeGain', 'NGF']                                                  1.5 - ok
+
+include IE l2,3,4,5A,5B:  with [prev-0.5:prev+0.5]]
+
+[before:
+Also added IE layer-specific gains for L2 and L3, since these seemed to be the more problematic, and set values based on v32_batch14 (full scale sim with only L2,3,4):
+layer-specific IE,II gains for L2,L3, with [prev-0.5:prev+0.5]]
+
+** v34_batch6 - tuning; full net; optuna based on best solutions of v34_batch5; plus added L2-5B specific IE gains since problematic layers
+*** notes
+
+- params ranges based on v34_batch5 2 best solutions
+- added IE l2,3,4, 5A,5B:  with [prev-0.25:prev+0.25]] since those layers problematic; prev = v34_batch5 
+
+
+- bug (1st attempt; wrong ranges):
+    rangeV = 0.25
+    rangeV2 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+
+    # params based on v32_batch8 grid search best solutions; plus added L2 and L3 IE specific gains since those were problematic layers
+    params['EEGain'] = [0.1, 0.5] 
+    params['EIGain'] = [1.3, 1.7] 
+    params['IEGain'] = [0.8, 1.7] 
+    params['IIGain'] = [0.3, 0.7] 
+    params[('EICellTypeGain', 'PV')] = [0.8, 1.7] 
+    params[('EICellTypeGain', 'SOM')] = [0.3, 0.7] 
+    params[('EICellTypeGain', 'VIP')] = [1.3, 1.7] 
+    params[('EICellTypeGain', 'NGF')] = [1.3, 1.7] 
+
+    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad2['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad2['IELayerGain']['5A']-rangeV, minV), min(cfgLoad['IELayerGain']['5A']+rangeV, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+
+- After fixing:
+
+    # good thal params for 100% cell density 
+    with open('data/v34_batch5/v34_batch5_0_2_0_0_2_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    cfgLoad = cfgLoad2
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+
+    # params based on v32_batch8 grid search best solutions; plus added L2 and L3 IE specific gains since those were problematic layers
+    params['EEGain'] = [0.1, 0.5] 
+    params['EIGain'] = [1.3, 1.7] 
+    params['IEGain'] = [0.8, 1.7] 
+    params['IIGain'] = [0.3, 0.7] 
+    params[('EICellTypeGain', 'PV')] = [0.8, 1.7] 
+    params[('EICellTypeGain', 'SOM')] = [0.3, 0.7] 
+    params[('EICellTypeGain', 'VIP')] = [1.3, 1.7] 
+    params[('EICellTypeGain', 'NGF')] = [1.3, 1.7] 
+
+    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad2['IELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad2['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad2['IELayerGain']['4']-rangeV, minV), min(cfgLoad2['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad2['IELayerGain']['5A']-rangeV, minV), min(cfgLoad2['IELayerGain']['5A']+rangeV, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad2['IELayerGain']['5B']+rangeV, maxV)]
+
+    
+*** results
+- after 3k iterations, best fitness was ~280
+- pretty bad - IT2, IT3 never fire; IT4S and IT4P very very low
+
+
+** v34_batch7 - tuning; full net; grid search of thal + layer params with best sol from v34_batch5 
+*** notes
+    with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v32_batch5/v32_batch5_0_2_2_0_2_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # conn gains 
+    # params['EEGain'] = [0.25, 0.5, 0.75, 1.0]
+    # params['EIGain'] = [0.5, 1.0, 1.5]
+    # params['IEGain'] = [0.5, 1.0, 1.5]
+    # params['IIGain'] = [0.5, 1.0, 1.5]
+    # params[('EICellTypeGain', 'PV')] = [0.5, 1.0, 1.5] 
+    # params[('EICellTypeGain', 'SOM')] = [0.5, 1.0, 1.5]
+    # params[('EICellTypeGain', 'VIP')] = [0.5, 1.0, 1.5] 
+    # params[('EICellTypeGain', 'NGF')] = [0.5, 1.0, 1.5]
+
+    flow = 0.5
+    fhigh = 1.5
+
+    params[('EILayerGain', '2')] = [cfgLoad['EILayerGain']['2']*flow, cfgLoad['EILayerGain']['2'], cfgLoad['EILayerGain']['2']*fhigh]
+    params[('EILayerGain', '3')] = [cfgLoad['EILayerGain']['3']*flow, cfgLoad['EILayerGain']['3'], cfgLoad['EILayerGain']['3']*fhigh]
+    params[('EILayerGain', '5A')] = [cfgLoad['EILayerGain']['5A']*flow, cfgLoad['EILayerGain']['5A'], cfgLoad['EILayerGain']['5A']*fhigh]
+    params[('EILayerGain', '5B')] = [cfgLoad['EILayerGain']['5B']*flow, cfgLoad['EILayerGain']['5B'], cfgLoad['EILayerGain']['5B']*fhigh]
+        
+    params[('IECellTypeGain', 'PV')] = [cfgLoad['IECellTypeGain']['PV']*flow, cfgLoad['IECellTypeGain']['PV'], cfgLoad['IECellTypeGain']['PV']*fhigh]
+    params[('IECellTypeGain', 'SOM')] = [cfgLoad['IECellTypeGain']['SOM']*flow, cfgLoad['IECellTypeGain']['SOM'], cfgLoad['IECellTypeGain']['SOM']*fhigh]
+    params[('IECellTypeGain', 'VIP')] = [cfgLoad['IECellTypeGain']['VIP']*flow, cfgLoad['IECellTypeGain']['VIP'], cfgLoad['IECellTypeGain']['VIP']*fhigh]
+    params[('IECellTypeGain', 'NGF')] = [cfgLoad['IECellTypeGain']['NGF']*flow, cfgLoad['IECellTypeGain']['NGF'], cfgLoad['IECellTypeGain']['NGF']*fhigh]
+
+*** results
+- >6500 sims, best fitness was 367
+- bad - IT2, IT3, ITS4 and ITP4 never fire 
+** v34_batch8 - tuning; L2-5A; best of v34_batch4; optuna with large range L5A, small range rest (bug L2,3 EE)
+*** notes
+- bug: didnt include L5A in fitness; wasn't setting all conn params based on prev sim -- rerun
+
+
+def optunaRatesLayersThalL2345A():
+
+    # from prev
+    import json
+    with open('data/v34_batch4/v34_batch4_2_2_2_1_0_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    minV = 0.1
+    maxV = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '5A')] = [minV, maxV]
+    params[('EILayerGain', '5A')] = [minV, maxV]
+    params[('IELayerGain', '5A')] = [minV, maxV]
+    params[('IILayerGain', '5A')] = [minV, maxV]
+
+*** results
+good results (fitness ~40)
+IT2 and CT5A a bit low (<0.1hz), and PV2 a bit high (~80hz); but rest good
+Note: missed CT5A in fitness func so that may explain why low!
+best fitness: trial 2979; best from pandas: trial 4529 
+
+** v34_batch9 - tuning; L2-5B; best of v34_batch8; optuna with large range L5B, small range rest (bug L2,3 EE)
+*** notes
+    # from prev
+    import json
+    with open('data/v34_batch8/trial_4529/trial_4529_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+    '''
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    # potentially increase to 0.1-4.0
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    # potentially increase to +-0.25
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    # potentially increase to +-0.25
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+    
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV2, minV), min(cfgLoad['EELayerGain']['5A']+rangeV2, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV2, minV), min(cfgLoad['EILayerGain']['5A']+rangeV2, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV2, minV), min(cfgLoad['IELayerGain']['5A']+rangeV2, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV2, minV), min(cfgLoad['IILayerGain']['5A']+rangeV2, maxV)]
+
+    params[('EELayerGain', '5B')] = [minV, maxV]
+    params[('EILayerGain', '5B')] = [minV, maxV]
+    params[('IELayerGain', '5B')] = [minV, maxV]
+    params[('IILayerGain', '5B')] = [minV, maxV]
+*** results
+- after 2.7k sims, best fitness was 274
+
+** v34_batch10 - v34_batch9 increased IE range to 0.1-4 (bug L2,3 EE)
+*** notes
+*** results
+- fitness ~199 after 10k sims
+- SOM2, SOM3, PT5B silent
+
+** v34_batch11 -  tuning; L2-5B; best of v34_batch10; optuna with L2, L3, L5B, EI +-0.25; rest +0.1 (bug L2,3 EE)
+*** code
+
+
+    # from prev
+    import json
+    with open('data/v34_batch10/trial_11993/trial_11993_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+    '''
+
+    # 0.25
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    # 0.1
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV2, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV2, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV2, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+    
+    # 0.1
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV2, minV), min(cfgLoad['EELayerGain']['5A']+rangeV2, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV2, minV), min(cfgLoad['EILayerGain']['5A']+rangeV2, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV2, minV), min(cfgLoad['IELayerGain']['5A']+rangeV2, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV2, minV), min(cfgLoad['IILayerGain']['5A']+rangeV2, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV, minV), min(cfgLoad['EELayerGain']['5B']+rangeV, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV, minV), min(cfgLoad['EILayerGain']['5B']+rangeV, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV, minV), min(cfgLoad['IILayerGain']['5B']+rangeV, maxV)]
+*** results
+   Trial 0:	 431.94
+   Trial 1:	 426.84
+   Trial 2:	 426.82
+   Trial 22:	 379.88
+   Trial 31:	 287.29
+   Trial 34:	 261.08
+   Trial 106:	 241.04
+   Trial 139:	 204.51
+   Trial 227:	 202.89
+   Trial 228:	 198.81
+   Trial 258:	 195.97
+   Trial 277:	 188.65
+   Trial 324:	 185.17
+   Trial 507:	 183.58
+   Trial 511:	 167.87
+   Trial 513:	 161.50
+   Trial 544:	 152.52
+   Trial 579:	 146.03
+   Trial 1250:	 145.26
+   Trial 1782:	 145.13
+   Trial 1831:	 145.10
+   Trial 2150:	 145.08
+   Trial 2175:	 144.82
+
+   Trial 2555 
+
+trial 2175 overall better rates, but still SOM2, SOM3, PT5B = 0Hz
+
+ 
+** v34_batch12 - tuning; L2-5B; best of v34_batch10; optuna with L2, L3, L5B, EI +-0.25; rest +0.1; E-SOM, SOM-E, and L5B increased range to +-1.0 (bug L2,3 EE)
+*** code
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    rangeV3 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+    '''
+
+    # 0.25
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV3, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV3, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    # 0.1
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV2, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV2, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+    
+    # 0.1
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV2, minV), min(cfgLoad['EELayerGain']['5A']+rangeV2, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV2, minV), min(cfgLoad['EILayerGain']['5A']+rangeV2, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV2, minV), min(cfgLoad['IELayerGain']['5A']+rangeV2, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV2, minV), min(cfgLoad['IILayerGain']['5A']+rangeV2, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV3, minV), min(cfgLoad['EELayerGain']['5B']+rangeV3, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV3, minV), min(cfgLoad['EILayerGain']['5B']+rangeV3, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV3, minV), min(cfgLoad['IELayerGain']['5B']+rangeV3, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV3, minV), min(cfgLoad['IILayerGain']['5B']+rangeV3, maxV)]
+
+** v34_batch13 - tuning; L2-5B; best of v34_batch11; optuna with IE, L5B 0.1-4.0; L2, L3, EI +-0.25; rest +-0.1; similar to v32_batch1 (L2-L5B 50% density) (bug L2,3 EE)
+*** code
+    # from prev
+    import json
+    with open('data/v34_batch11/trial_2150/trial_2150_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV1 = 0.1
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # 0.25
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV3, maxV)]
+
+    # 0.1
+    params[('IECellTypeGain', 'PV')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['PV']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['SOM']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['VIP']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['NGF']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV3, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV1, minV), min(cfgLoad['EELayerGain']['4']+rangeV1, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV1, minV), min(cfgLoad['EILayerGain']['4']+rangeV1, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV1, minV), min(cfgLoad['IELayerGain']['4']+rangeV1, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV1, minV), min(cfgLoad['IILayerGain']['4']+rangeV1, maxV)]
+    
+    # 0.1
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV1, minV), min(cfgLoad['EELayerGain']['5A']+rangeV1, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV1, minV), min(cfgLoad['EILayerGain']['5A']+rangeV1, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV1, minV), min(cfgLoad['IELayerGain']['5A']+rangeV1, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV1, minV), min(cfgLoad['IILayerGain']['5A']+rangeV1, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['EELayerGain']['5B']-rangeV2, minV), min(cfgLoad['EELayerGain']['5B']+rangeV2, maxV)]
+    params[('EILayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV2, maxV)]
+    params[('IELayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV2, maxV)]
+    params[('IILayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV2, maxV)]
+
+*** results
+
+** v34_batch14 - tuning; L1-6; best of v34_batch11; optuna with L1,L6 +-0.15; IE,EI +-0.25; rest +-0.1; changed fitness func of I cells to be >0.05Hz (before >0.5) (bug L2,3 EE)
+*** code
+** v34_batch15 - tuning; L1-6; best of v34_batch14; optuna with all params +-0.2 (bug L2,3 EE)
+*** code
+
+    # from prev
+    import json
+    with open('data/v34_batch14/trial_3782/trial_3782_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV1 = 0.2
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # E->I cell-type-specific
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV1, maxV)]
+
+    # I->E cell-type-specific
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV1, maxV)]
+
+    # L1
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV1, minV), min(cfgLoad['EILayerGain']['1']+rangeV1, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV1, minV), min(cfgLoad['IILayerGain']['1']+rangeV1, maxV)]
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+
+    # L4
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV1, minV), min(cfgLoad['EELayerGain']['4']+rangeV1, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV1, minV), min(cfgLoad['EILayerGain']['4']+rangeV1, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV1, minV), min(cfgLoad['IELayerGain']['4']+rangeV1, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV1, minV), min(cfgLoad['IILayerGain']['4']+rangeV1, maxV)]
+    
+    # L5A
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV1, minV), min(cfgLoad['EELayerGain']['5A']+rangeV1, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV1, minV), min(cfgLoad['EILayerGain']['5A']+rangeV1, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV1, minV), min(cfgLoad['IELayerGain']['5A']+rangeV1, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV1, minV), min(cfgLoad['IILayerGain']['5A']+rangeV1, maxV)]
+
+    # L5B
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV1, minV), min(cfgLoad['EELayerGain']['5B']+rangeV1, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV1, minV), min(cfgLoad['EILayerGain']['5B']+rangeV1, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV1, minV), min(cfgLoad['IELayerGain']['5B']+rangeV1, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV1, minV), min(cfgLoad['IILayerGain']['5B']+rangeV1, maxV)]
+
+    # L6
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV1, minV), min(cfgLoad['EELayerGain']['6']+rangeV1, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV1, minV), min(cfgLoad['EILayerGain']['6']+rangeV1, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV1, minV), min(cfgLoad['IELayerGain']['6']+rangeV1, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV1, minV), min(cfgLoad['IILayerGain']['6']+rangeV1, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    # Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    #Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    #Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 60,
+        'time_sleep': 150,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+** v34_batch16 - tuning; L1-6; best of v34_batch15; optuna with all params +-0.2 (bug L2,3 EE)
+*** code
+
+    # from prev
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV1 = 0.2
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # E->I cell-type-specific
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV1, maxV)]
+
+    # I->E cell-type-specific
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV1, maxV)]
+
+    # L1
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV1, minV), min(cfgLoad['EILayerGain']['1']+rangeV1, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV1, minV), min(cfgLoad['IILayerGain']['1']+rangeV1, maxV)]
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+
+    # L4
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV1, minV), min(cfgLoad['EELayerGain']['4']+rangeV1, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV1, minV), min(cfgLoad['EILayerGain']['4']+rangeV1, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV1, minV), min(cfgLoad['IELayerGain']['4']+rangeV1, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV1, minV), min(cfgLoad['IILayerGain']['4']+rangeV1, maxV)]
+    
+    # L5A
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV1, minV), min(cfgLoad['EELayerGain']['5A']+rangeV1, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV1, minV), min(cfgLoad['EILayerGain']['5A']+rangeV1, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV1, minV), min(cfgLoad['IELayerGain']['5A']+rangeV1, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV1, minV), min(cfgLoad['IILayerGain']['5A']+rangeV1, maxV)]
+
+    # L5B
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV1, minV), min(cfgLoad['EELayerGain']['5B']+rangeV1, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV1, minV), min(cfgLoad['EILayerGain']['5B']+rangeV1, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV1, minV), min(cfgLoad['IELayerGain']['5B']+rangeV1, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV1, minV), min(cfgLoad['IILayerGain']['5B']+rangeV1, maxV)]
+
+    # L6
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV1, minV), min(cfgLoad['EELayerGain']['6']+rangeV1, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV1, minV), min(cfgLoad['EILayerGain']['6']+rangeV1, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV1, minV), min(cfgLoad['IELayerGain']['6']+rangeV1, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV1, minV), min(cfgLoad['IILayerGain']['6']+rangeV1, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    # Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    #Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    #Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 60,
+        'time_sleep': 150,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+** v34_batch17 - tuning; L1-6; best of v34_batch15; optuna with all params +-0.2; maxFitness=2000 (bug L2,3EE)
+*** code
+
+    # from prev
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV1 = 0.2
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # E->I cell-type-specific
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV1, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV1, maxV)]
+
+    # I->E cell-type-specific
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV1, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV1, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV1, maxV)]
+
+    # L1
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV1, minV), min(cfgLoad['EILayerGain']['1']+rangeV1, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV1, minV), min(cfgLoad['IILayerGain']['1']+rangeV1, maxV)]
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+
+    # L4
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV1, minV), min(cfgLoad['EELayerGain']['4']+rangeV1, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV1, minV), min(cfgLoad['EILayerGain']['4']+rangeV1, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV1, minV), min(cfgLoad['IELayerGain']['4']+rangeV1, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV1, minV), min(cfgLoad['IILayerGain']['4']+rangeV1, maxV)]
+    
+    # L5A
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV1, minV), min(cfgLoad['EELayerGain']['5A']+rangeV1, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV1, minV), min(cfgLoad['EILayerGain']['5A']+rangeV1, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV1, minV), min(cfgLoad['IELayerGain']['5A']+rangeV1, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV1, minV), min(cfgLoad['IILayerGain']['5A']+rangeV1, maxV)]
+
+    # L5B
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV1, minV), min(cfgLoad['EELayerGain']['5B']+rangeV1, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV1, minV), min(cfgLoad['EILayerGain']['5B']+rangeV1, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV1, minV), min(cfgLoad['IELayerGain']['5B']+rangeV1, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV1, minV), min(cfgLoad['IILayerGain']['5B']+rangeV1, maxV)]
+
+    # L6
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV1, minV), min(cfgLoad['EELayerGain']['6']+rangeV1, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV1, minV), min(cfgLoad['EILayerGain']['6']+rangeV1, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV1, minV), min(cfgLoad['IELayerGain']['6']+rangeV1, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV1, minV), min(cfgLoad['IILayerGain']['6']+rangeV1, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    # Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    #Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    #Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 2000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 60,
+        'time_sleep': 150,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+** v34_batch18 - tuning; L1-6; best of v34_batch15; optuna with all params +- 25%; maxFitness=2000; maxV=0.5 (bug L2,3 EE)
+*** code
+   rangeV1 = 0.2
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+
+    scaleLow = 0.75
+    scaleHigh = 1.25
+
+    minV = 0.1
+    maxV = 5.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # E->I cell-type-specific
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['PV']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['SOM']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['VIP']*scaleHigh, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']*scaleLow, minV), min(cfgLoad['EICellTypeGain']['NGF']*scaleHigh, maxV)]
+
+    # I->E cell-type-specific
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['PV']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['SOM']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['VIP']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['NGF']*scaleHigh, maxV)]
+
+    # L1
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']*scaleLow, minV), min(cfgLoad['EILayerGain']['1']*scaleHigh, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']*scaleLow, minV), min(cfgLoad['IILayerGain']['1']*scaleHigh, maxV)]
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh, maxV)]
+
+    # L4
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']*scaleLow, minV), min(cfgLoad['EELayerGain']['4']*scaleHigh, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']*scaleLow, minV), min(cfgLoad['EILayerGain']['4']*scaleHigh, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']*scaleLow, minV), min(cfgLoad['IELayerGain']['4']*scaleHigh, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']*scaleLow, minV), min(cfgLoad['IILayerGain']['4']*scaleHigh, maxV)]
+    
+    # L5A
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']*scaleLow, minV), min(cfgLoad['EELayerGain']['5A']*scaleHigh, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']*scaleLow, minV), min(cfgLoad['EILayerGain']['5A']*scaleHigh, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']*scaleLow, minV), min(cfgLoad['IELayerGain']['5A']*scaleHigh, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']*scaleLow, minV), min(cfgLoad['IILayerGain']['5A']*scaleHigh, maxV)]
+
+    # L5B
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']*scaleLow, minV), min(cfgLoad['EELayerGain']['5B']*scaleHigh, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']*scaleLow, minV), min(cfgLoad['EILayerGain']['5B']*scaleHigh, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']*scaleLow, minV), min(cfgLoad['IELayerGain']['5B']*scaleHigh, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']*scaleLow, minV), min(cfgLoad['IILayerGain']['5B']*scaleHigh, maxV)]
+
+    # L6
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']*scaleLow, minV), min(cfgLoad['EELayerGain']['6']*scaleHigh, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']*scaleLow, minV), min(cfgLoad['EILayerGain']['6']*scaleHigh, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']*scaleLow, minV), min(cfgLoad['IELayerGain']['6']*scaleHigh, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']*scaleLow, minV), min(cfgLoad['IILayerGain']['6']*scaleHigh, maxV)]
+** v34_batch19 - tuning; L1-6; best of v34_batch15; optuna with all params +- 10%; fixed bug, L2,3 EI, IE, II 0.1-5.0
+*** notes
+- there was a bug in the last 11 batch sims where L2/3 EI, IE, II params were set around L2/3 EE:
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV1, minV), min(cfgLoad['EELayerGain']['2']+rangeV1, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV1, minV), min(cfgLoad['EELayerGain']['3']+rangeV1, maxV)]
+
+- therefore solutions found for L2/3 were not messed up in the following batch and the wrong param ranges were explored
+
+- to fix this, I reran the last batch (v34_batch18) with L2,3 EI, IE, II in range 0.1-5.0
+** v34_batch20 - 3 long sims; best from v34_batch15 (trial_5955); 11.5-sec; with LFP; corticothalamicgain +- 25%
+*** code
+def custom():
+    params = specs.ODict()
+
+    # from prev 
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    # conn gains 
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, 11500] 
+    initCfg['scaleDensity'] = 1.0
+
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    #                          'startTime': 2000, 
+    #                          'weightE': 1.0, 
+    #                          'weightI': 1.0, 
+    #                          'probE': 0.12, 
+    #                          'probI': 0.26, 
+    #                          'seed': 1}  
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+ 
+** v34_batch21 - 3 long sims; best from v34_batch15 (trial_8073); 11.5-sec; with LFP; corticothalamicgain +- 25%
+** v34_batch22 - single sim; v34_batch15_trial_5955; reduce IT2/3->PV2/VIP2 weight
+*** code
+def custom():
+    params = specs.ODict()
+
+    # from prev 
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+        wmat = connData['wmat']
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    params[('wmat', 'IT2', 'PV2')] = [wmat['IT2']['PV2'] * 0.75]
+    params[('wmat', 'IT2', 'VIP2')] = [wmat['IT2']['VIP2'] * 0.75]
+    params[('wmat', 'IT3', 'PV2')] = [wmat['IT3']['PV2'] * 0.75]
+    params[('wmat', 'IT3', 'VIP2')] = [wmat['IT3']['VIP2'] * 0.75]
+
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 2500 #11500
+    initCfg['printPopAvgRates'] = [1500, 2500] #11500] 
+    initCfg['scaleDensity'] = 1.0
+
+    # initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+    #                          'startTime': 2000, 
+    #                          'weightE': 1.0, 
+    #                          'weightI': 1.0, 
+    #                          'probE': 0.12, 
+    #                          'probI': 0.26, 
+    #                          'seed': 1}  
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+** v34_batch23 - tuning; v34_batch15_trial_5955; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) 
+*** code
+    # from prev
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+
+    scaleLow = 0.2
+    scaleHigh = 5.0
+    
+    import pickle
+    with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    wmat = connData['wmat']
+    
+
+    weightsScale = [['IT2', 'PV2'],
+                    ['IT2', 'SOM2'], 
+                    ['IT3', 'PV2'],
+                    ['IT3', 'SOM2'],
+                    ['PV2', 'PV2'],
+                    ['PV2', 'VIP2'],
+                    ['PV3', 'PV2'],
+                    ['PV3', 'VIP2'],
+                    ['SOM2', 'PV2'],
+                    ['SOM2', 'VIP2'],
+                    ['SOM3', 'PV2'],
+                    ['SOM3', 'VIP2'],
+                    ['VIP2', 'SOM2'],
+                    ['VIP3', 'SOM2']]
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+*** results
+good solution: trial_1937
+** v34_batch24 - 1 long sims; best from v34_batch23 (trial_1937); 11.5-sec; with LFP
+** v34_batch25 - tuning; optuna with 16 L2 cell-type-specific weight params (targeting PV2, SOM2, VIP2) around best sol of v34_batch23 (trial_1937)
+** v34_batch26 - 5x5 seeds; best from v34_batch23 (trial_1937); 11.5-sec; with LFP
+** v34_batch27 - 5x5 seeds; best from v34_batch25 (trial_2142); 11.5-sec; with LFP
+
+** v34_batch28 - tuning; optuna with 16 L6 cell-type-specific weight params 0.5-2.0 (targeting PV6, SOM6, NGF6) around best sol of v34_batch25 (trial_2142); 2.5 sec
+** v34_batch29 - tuning; optuna with 16 L6 cell-type-specific weight params 0.2-4.0 (targeting PV6, SOM6, NGF6) around best sol of v34_batch25 (trial_2142); 2.5 sec
+*** code
+def optunaRatesLayersWmat():
+
+    # from prev
+    import json
+    with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    scaleLow = 0.75
+    scaleHigh = 1.25
+
+    scaleLow2 = 0.2
+    scaleHigh2 = 4.0
+
+    # import pickle
+    # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    # wmat = connData['wmat']
+    wmat = cfgLoad['wmat']    
+
+    weightsScale = [['IT6', 'NGF6'],
+                    ['PV6', 'NGF6'],
+                    ['SOM6', 'NGF6'],
+                    ['VIP6', 'NGF6'],
+                    ['NGF6', 'NGF6'],
+                    ['IT6', 'SOM6'],
+                    ['PV6', 'SOM6'],
+                    ['SOM6', 'SOM6'],
+                    ['VIP6', 'SOM6'],
+                    ['NGF6', 'SOM6'],         
+                    ['IT6', 'PV6'],
+                    ['PV6', 'PV6'],
+                    ['SOM6', 'PV6'],
+                    ['VIP6', 'PV6'],
+                    ['NGF6', 'PV6']]        
+                    
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
+
+** v34_batch30 - tuning; optuna with 16 L6 cell-type-specific weight params 0.2-4.0 (targeting PV6, SOM6, NGF6) around best sol of v34_batch25 (trial_2142); 2.5 sec
+*** code
+    weightsScale =  [['IT6,' 'PV6'], 
+                    ['IT6,' 'SOM6'], 
+                    ['IT6,' 'VIP6'], 
+                    ['IT6,' 'NGF6'], 
+                    ['CT6,' 'PV6'], 
+                    ['CT6,' 'SOM6'], 
+                    ['CT6,' 'VIP6'], 
+                    ['CT6,' 'NGF6'], 
+                    ['PV6,' 'IT6'], 
+                    ['PV6,' 'CT6'], 
+                    ['PV6,' 'PV6'], 
+                    ['PV6,' 'SOM6'], 
+                    ['PV6,' 'VIP6'], 
+                    ['PV6,' 'NGF6'], 
+                    ['SOM6,' 'IT6'], 
+                    ['SOM6,' 'CT6'], 
+                    ['VIP6,' 'PV6'], 
+                    ['VIP6,' 'SOM6'], 
+                    ['VIP6,' 'VIP6'], 
+                    ['VIP6,' 'NGF6'], 
+                    ['NGF6,' 'IT6'], 
+                    ['NGF6,' 'CT6']]
+** v34_batch31 - tuning; same as v34_batch25 but with added L6 weights
+*** code
+
+    scaleLow2 = 0.5
+    scaleHigh2 = 2.0
+
+    weightsScale = [['IT2', 'PV2'],
+                    ['IT2', 'SOM2'], 
+                    ['IT3', 'PV2'],
+                    ['IT3', 'SOM2'],
+                    ['PV2', 'PV2'],
+                    ['PV2', 'VIP2'],
+                    ['PV3', 'PV2'],
+                    ['PV3', 'VIP2'],
+                    ['SOM2', 'PV2'],
+                    ['SOM2', 'VIP2'],
+                    ['SOM3', 'PV2'],
+                    ['SOM3', 'VIP2'],
+                    ['VIP2', 'SOM2'],
+                    ['VIP3', 'SOM2'],
+                    ['IT2', 'SOM3'], 
+                    ['IT3', 'SOM3'],
+                    ['VIP2', 'SOM3'],
+                    ['VIP3', 'SOM3'],
+                    
+                    ['IT6', 'PV6'], 
+                    ['IT6', 'SOM6'], 
+                    ['IT6', 'VIP6'], 
+                    ['IT6', 'NGF6']]
+
+** v34_batch32-48 - long sims of best from v34_batch31
+*** notes
+    #trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]  # 32-39
+    trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194] # 40-48
+** v34_batch49 - 5x5 seeds; best from v34_batch31 (trial_5214); 11.5-sec
+** v34_batch50 - explore contribution of pops to LFP as func of dist (for NIH R01 grant with UTH)
+*** code
+** v34_batch51 - v34_batch31 (trial_5214); all LFP pops at 1 horizontal distance
+** v34_batch52 - v34_batch31 (trial_5214); selected LFP pops at 20 horizontal distances
+** v34_batch53 - v34_batch31 (trial_5214); record dipole and EEG for first time!
+** v34_batch54 - v34_batch25 (trial_2142); testing LFPpops for long 11.5sec sim at 1ms recordStep
+*** notes
+at 0.1 ms recordStep crashed when gathering
+** v34_batch55 - v34_batch25 (trial_2142); 4.5 secs; with LFP; WITH cochlear IC/speech input; diff thal->conn gains
+*** code
+   params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    params[('ICThalInput', 'probE')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]]
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 1
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                             'startTime': 2000, 
+                             'weightE': 1.0, 
+                             'weightI': 1.0, 
+                             'probE': 0.12, 
+                             'probI': 0.26, 
+                             'seed': 1}  
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 1.0, 
+                            'weightI': 1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.26, 
+                            'seed': 1}  
+
+
+** v34_batch56 - 1 long sim; v34_batch25 (trial_2142); with LFP recordStep=0.05 to see if avoid artifact
+** v34_batch57 - 5x5 seeds; v34_batch56
+** v34_batch58 - explore IC->Thal params with speech; 25 sims (not seeds, different stim/conn params); v34_batch56 with speech
+** v34_batch59 - explore TC->IT/PV params with speech
+*** code
+    params[('wmat', 'TC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'TC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITS4')] = [0.5, 0.75, 1.0, 1.25]
+    params[('wmat', 'HTC', 'ITP4')] = [0.5, 0.75, 1.0, 1.25]
+
+    params[('wmat', 'TC', 'PV4')] = [0.25, 0.5]
+    params[('wmat', 'HTC', 'PV4')] = [0.25, 0.5]
+
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)]
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'IT4'), ('wmat', 'HTC', 'ITS4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 4500
+    initCfg['printPopAvgRates'] = [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                            'startTime': 2500, 
+                            'weightE': 0.25,#1.0, 
+                            'weightI': 0.25,#1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.12, #0.25 
+                            'seed': 1}  
+
+
+** v34_batch60 - 1 long sim (10sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact
+*** code
+cfg.py:
+cfg.allCorticalPops = ['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3',  'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'PT5B', 'CT5B',  'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6']
+cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200], [100,2700,200]]
+cfg.saveLFPPops =  cfg.allCorticalPops #, "IT3", "SOM3", "PV3", "VIP3", "NGF3", "ITP4", "ITS4", "IT5A", "CT5A", "IT5B", "PT5B", "CT5B", "IT6", "CT6"]
+** v34_batch61 - CRASHED - 1 very long sim (30 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
+*** notes
+
+** v34_batch62 - explore params with speech; 36 sims (TC->L4, start time); v34_batch56 with speech - TO ANALYZE
+    params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
+    params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
+
+    params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
+ 
+    params[('ICThalInput', 'startTime')] = [2500, 2550, 2600, 2650]
+
+    groupedParams = [('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] 
+
+** v34_batch63 - CRASHED- 1 very long sim (20 sec) with LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact - crashed
+** v34_batch64 - 1 very long sim (20 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+** v34_batch65 - 1 long sim (10 sec) with LFPpops; v34_batch57 seed 3_4 (for wavelets)
+*** notes
+- BUG saving LFPPops
+- had to rerun using:
+-- netpyne fix to merge lfppops
+-- pip install NEURON-nightly==8.0.dev99
+-- highmem nodes
+*** code
+    params[('seeds', 'conn')] = [3]#, 3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [4]#, 2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # -------------------------------------------------------- 
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+** v34_batch66 - 1 very long sim (30 sec) withOUT LFPpops; v34_batch25 (trial_2142); with LFP recordStep=0.05 to avoid artifact 
+** v34_batch67 - v34_batch65 with seeds 3_2, 3_3 
+*** code
+    params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+** v34_batch68 - response to netstim to thal E pops with different weights (to reproduce rate + lfp + bold responses)
+*** code test
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    # conn gains 
+    params[('NetStim1', 'weight')] = [1]#, 5, 10, 20, 40] # 50 Hz
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 6500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'pop')] = ['TC', 'TCM', 'HTC']
+    initCfg[('NetStim1', 'ynorm')] = [0.0, 3.0]
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'loc')] = 0.5
+    initCfg[('NetStim1', 'start')] = 1500
+    initCfg[('NetStim1', 'pop')] = 1000.0/50.0, # 50 Hz
+    initCfg[('NetStim1', 'noise')] = 0.5, # 50 Hz
+    initCfg[('NetStim1', 'number')] = 50 * 10, # enough spikes for 10 seconds
+
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+
+
+*** code
+    params[('NetStim1', 'weight')] = [1, 5, 10, 20] # 50 Hz
+    params[('NetStim1', 'interval')] = [1000.0/50.0, 1000.0/100.0] # 50 Hz
+    params[('NetStim1', 'noise')] = [0.5, 1.0] # 50 Hz
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 6000
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'pop')] = ['TC', 'TCM', 'HTC']
+    initCfg[('NetStim1', 'ynorm')] = [0.0, 3.0]
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'loc')] = 0.5
+    initCfg[('NetStim1', 'start')] = 3000
+    #initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
+    #initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
+    initCfg[('NetStim1', 'number')] = 100 * 10 # enough spikes for 10 seconds
+** v35_batch1 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation)  -- BUG (netsim on)
+*** notes
+left netstim input at the beginning turned on
+*** code
+def custom_spont(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    #params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    params['ihGbar'] = [1.0, 1.25]
+    params['KgbarFactor'] = [1.0, 1.25]
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+** v35_batch2 - effect of L5B PT Ih and exc cell K+ conductance (to simulate NA/ACh modulation) 
+*** code
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    #params[('seeds', 'conn')] = [3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    #params[('seeds', 'stim')] = [2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    params['ihGbar'] = [0.75, 1.0, 1.25]
+    params['KgbarFactor'] = [0.75, 1.0, 1.25]
+** blank
+
+
+

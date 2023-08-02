@@ -12,6 +12,7 @@ from pylab import *
 from itertools import product
 import pandas as pd
 from pprint import pprint
+import os
 
 from netpyne import specs
 from collections import OrderedDict
@@ -127,10 +128,22 @@ def readBatchData(dataFolder, batchLabel, loadAll=False, saveAll=True, vars=None
                 # read output file
                 iCombStr = ''.join([''.join('_'+str(i)) for i in iComb])
                 simLabel = b['batchLabel']+iCombStr
-                outFile = dataFolder+'/'+batchLabel+'/'+simLabel+'.json'
-                try:
-                    with open(outFile, 'r') as fileObj:
+                outFile = dataFolder+'/'+batchLabel+'/'+simLabel
+                if os.path.isfile(outFile+'.json'):
+                    outFile = outFile + '.json'
+                    with open(outFile, 'rb') as fileObj:
                         output = json.load(fileObj, object_pairs_hook=OrderedDict)
+                elif os.path.isfile(outFile+'.pkl'):
+                    outFile = outFile + '.pkl'
+                    with open(outFile, 'rb') as fileObj:
+                        output = pickle.load(fileObj)
+                else:
+                    print('... file missing')
+                    missing = missing + 1
+                    output = {}
+                    continue
+
+                try:
                     # save output file in data dict
                     data[iCombStr] = {}  
                     data[iCombStr]['paramValues'] = pComb  # store param values
@@ -216,7 +229,10 @@ def plotsFromFile(filename, raster=True, stats=True, rates=False, syncs=False, h
 
     # try:
     with open(filename, 'rb') as fileObj:
-        data = json.load(fileObj, object_pairs_hook=OrderedDict)
+        if filename.endswith('.json'):
+            data = json.load(fileObj, object_pairs_hook=OrderedDict)
+        elif filename.endswith('.pkl'):
+            data = pickle.load(fileObj)
     # except:
     #     print('Error opening file %s' % (filename))
     #     return 0
@@ -702,3 +718,23 @@ def move_element(odict, thekey, newpos):
         i += 1
     return odict
 
+
+def addPopRatesToJson(dataFolder, batchLabel):
+    from os import listdir
+    from os.path import isfile, join
+    from netpyne import sim
+    
+    path = dataFolder+batchLabel 
+    outFiles = [f for f in listdir(path) if isfile(join(path, f)) and f.endswith('.pkl')]
+
+    for outfile in outFiles:
+        try:
+            filepath = path+outfile
+            sim.load(filepath, instantiate=False)
+            sim.allSimData['popRates']=sim.analysis.popAvgRates(tranges=[[1500, 1750], [1750,2000], [2000,2250], [2250,2500]])
+            os.rename(filepath, filepath[:-4]+'_orig.pkl')
+            sim.saveData(filename=filepath[:-4])
+        except:
+            print('Error in file %s' % (outfile))
+
+        

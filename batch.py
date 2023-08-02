@@ -670,7 +670,7 @@ def EPSPs():
 # ----------------------------------------------------------------------------------------------
 # f-I curve
 # ----------------------------------------------------------------------------------------------
-def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
+def fIcurve(pops = [], amps = list(np.arange(0.0, 12.5, 0.5)/10.0) ):
     params = specs.ODict()
 
     params['singlePop'] = pops
@@ -715,75 +715,728 @@ def fIcurve(pops = [], amps = list(np.arange(0.0, 6.5, 0.5)/10.0) ):
     return b
 
 
+
 # ----------------------------------------------------------------------------------------------
-# Custom
+# Custom spont
 # ----------------------------------------------------------------------------------------------
-def custom():
+def custom_spont(filename):
     params = specs.ODict()
 
-    # conn gains
-    #params['synWeightFractionEI'] = [[0.6, 0.4], [0.8, 0.2], [1.0, 0.0]]
-    #params['IEGain'] = [1.05, 1.1, 1.15, 1.2]
-    #params[('weightNormScaling', 'NGF_reduced')] = [0.8, 0.9, 1.1]
-    #params[('weightNormScaling', 'ITS4_reduced')] = [0.8, 0.9, 1.1]
-    params[('IELayerGain', '1-3')] = list(np.arange(2.4969906720467807, 2.4969906720467807-0.25, -0.05)) 
-    # params[('IELayerGain', '4')] = [1.973369532, 1.973369532 - 0.1, 1.973369532 - 0.2]
-    # params[('IELayerGain', '5')] = [0.547478256, 0.547478256 - 0.1, 0.547478256 - 0.2]	
-    # params[('IELayerGain', '6')] = [0.817050621, 0.817050621 - 0.1, 0.817050621 - 0.2]
-    
-    #params[('ICThalInput', 'probE')] = [0.12*2]#, 0.25]#, 0.5]
-    #params[('ICThalInput', 'probI')] = [0.25]#, 0.5]
-    #params['thalamoCorticalGain'] = [1.0, 1.434715802, 2.0]
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'  # 'data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json'
 
-    #params['thalamoCorticalGain'] = [1.0]#, 1.5]
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
     
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    
+    params[('seeds', 'conn')] = [4, 0] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [0] #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+
+    # params['ihGbar'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
+    # params['KgbarFactor'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
+
+    # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
+    params['tTypeCorticalFactor'] = [0.5, 0.1]
+    params['tTypeThalamicFactor'] = [0.5, 0.1]
+
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
     # --------------------------------------------------------
     # initial config
-    initCfg = {}
-    initCfg['duration'] = 2000
-    initCfg['printPopAvgRates'] = [1000, 2000] 
-    initCfg['dt'] = 0.05
-
-    initCfg['scaleDensity'] = 0.5
-
-    #initCfg[('ICThalInput', 'startTime')] = 750
-
-    # plotting and saving params
-    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
-    initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
-    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    initCfg = {} # set default options from prev sim
     
-    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['duration'] = 11500                                      # 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0 #0.25                              # 1.0
+    initCfg['recordStep'] = 0.05
 
-    initCfg['addConn'] = True # test only bkg inputs
+    ### I DON'T KNOW IF I SHOULD HAVE THIS COMMENTED OR UNCOMMENTED???
+    # initCfg[('seeds', 'conn')] = 0
+    # initCfg[('seeds', 'stim')] = 0
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
 
-    # from v28_batch5 (optuna), trial 15446
-    initCfg.update({
-        "EEGain": 0.538221678982146,
-        "EIGain": 0.24522849924039522,
-        "IELayerGain": {
-            "1-3": 2.4969906720467807,
-            "4": 0.7523928690211563,
-            "5": 0.16855428023477206,
-            "6": 2.8991792469343576
-        },
-        "IILayerGain": {
-            "1-3": 0.6648270236528021,
-            "4": 2.2876886663946765,
-            "5": 0.10069589845756556,
-            "6": 2.6134986990296576
-        }})
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
 
 
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
 
     return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Custom Manipulations for Dr Javitt
+# ----------------------------------------------------------------------------------------------
+def custom_manip(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'  # 'data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+
+
+    BBN_deltaSOA_startTime2500 = list(np.arange(2500, 12000, 300))
+    BBN_deltaSOA_startTime1000 = list(np.arange(1000, 12000, 300))
+    params[('ICThalInput', 'startTime')] = [BBN_deltaSOA_startTime2500, BBN_deltaSOA_startTime1000]
+
+
+    # #### LOOP STIMULUS INPUT ####  
+    # ## DELTA 
+    # BBN_stimTimes_delta500 = list(np.arange(2500, 12500, 500))
+    # BBN_stimTimes_delta300 = list(np.arange(2500, 12500, 300))
+    # ## THETA
+    # BBN_stimTimes_theta250 = list(np.arange(2500, 12500, 250))
+    # BBN_stimTimes_theta150 = list(np.arange(2500, 12500, 150))
+    # ## ALPHA
+    # BBN_stimTimes_alpha120 = list(np.arange(2500, 12500, 120))
+    # BBN_stimTimes_alpha80 = list(np.arange(2500, 12500, 80))
+    ## VARY START TIMES LIST FOR BBN STIMULUS 
+    # params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
+
+    # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
+    # params['tTypeCorticalFactor'] = [0.5, 0.1]
+    # params['tTypeThalamicFactor'] = [0.5, 0.1]
+
+    # TO TEST OUT NMDAR E --> I MANIPULATIONS 
+    ## params['NMDARfactor'] = [1.0, 0.5, 0.1]         # 1.0 will be wild type 
+
+    # cfg.synWeightFractionEI
+    params['synWeightFractionEI_CustomCort'] = [[0.5, 0.1], [0.5, 0.25], [0.5, 0.75]]      # synWeightFractionEI = [0.5, 0.5] # AMPA, NMDA 
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 12000                                      # 11500
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
+    initCfg['scaleDensity'] = 1.0                                     # 1.0
+    initCfg['recordStep'] = 0.05
+
+    # conn and stim seeds 
+    initCfg[('seeds', 'conn')] = 0
+    initCfg[('seeds', 'stim')] = 0
+
+    ## BBN STIMULUS FOR ICThalInput ##  COMMENT OUT FOR SPONTANEOUS RUNS ## OR SET TO {}
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat',
+                            'startTime': 2500,
+                            'weightE': 0.25,
+                            'weightI': 0.25,
+                            'probE': 0.12, 
+                            'probI': 0.12,
+                            'seed': 1} 
+
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Custom speech stim
+# ----------------------------------------------------------------------------------------------
+def custom_speech(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    '''
+    params[('ICThalInput', 'probE')] = [0.26] #[0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'probI')] = [0.12, 0.26] # 0,1,2
+    params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.9, 0.95, 1.0, 1.1, 1.2]]# , 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    '''
+    #### COMMENTING OUT LINES 829-834 (EYG 9/18/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
+    # params[('wmat', 'TC', 'ITS4')] = [0.7, 0.8]
+    # params[('wmat', 'TC', 'ITP4')] = [0.7, 0.8]
+    # params[('wmat', 'HTC', 'ITS4')] = [0.7, 0.8]
+    # params[('wmat', 'HTC', 'ITP4')] = [0.7, 0.8]
+
+    # params[('wmat', 'TC', 'PV4')] = [0.2, 0.3, 0.4, 0.5]
+    #params[('wmat', 'HTC', 'PV4')] = [0.3, 0.4, 0.5]
+
+    #### NOT COMMENTING OUT LINE 838 (EYG 9/22/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
+    params[('ICThalInput', 'startTime')] = [[2500, 4000, 5500, 7000]] #[[2000, 3500, 5000, 6500, 8000], [2500, 4000, 5500, 7000]] #[2500, 2550] # [2500, 2550, 2600, 2650]
+
+    # conn gains 
+    #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+
+    # # Different dt and recordSteps -- No longer necessary; bug fixed 
+    # params['dt'] = [0.05, 0.1]
+    # params['recordStep'] = [0.05, 0.1]
+
+    # params[('seeds', 'conn')] = list(range(1)) #[4321+(17*i) for i in range(5)] # list(range(5)) 
+    # params[('seeds', 'stim')] = list(range(1)) #[1234+(17*i) for i in range(5)] # list(range(5)) 
+    ###### SETTING GROUPEDPARAMS TO [] (EYG, 9/18/22) FOR ATTEMPT AT SPEECH-EEG RUN ON CINECA!! #### 
+    groupedParams = [] #[('wmat', 'TC', 'ITS4'), ('wmat', 'TC', 'ITP4'), ('wmat', 'HTC', 'ITS4'), ('wmat', 'HTC', 'ITP4')] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 10000 # 7500 # 4500
+    initCfg['printPopAvgRates'] = [1500, 10000] #[1500, 7500] # [1500, 9500]  # [1500, 4500] 
+    initCfg['scaleDensity'] = 1.0
+    initCfg['recordStep'] = 0.05
+
+    # plotting and saving params
+    # initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis'
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    # 'startTime': 2500, 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/speechTrials/ICoutput_CF_9600_10400_wav_01_ba_peter_BEZ2018.mat', 
+                            'startTime': 2500, 
+                            'weightE': 0.25,#1.0, 
+                            'weightI': 0.25,#1.0, 
+                            'probE': 0.12, 
+                            'probI': 0.12, #0.25 
+                            'seed': 1}  
+    ## orig file: 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat' ## EYG 12/02/22 
+
+    ## RECORDING EEG / DIPOLE (EYG, 9/18/22):
+    # initCfg['recordDipole'] = True
+    # initCfg['saveDipoleCells'] = ['all']
+    # initCfg['saveDipolePops'] = cfg.allpops # or is it initCfg['allpops']
+
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+# ----------------------------------------------------------------------------------------------
+# Custom BBN stim
+# ----------------------------------------------------------------------------------------------
+def custom_BBN(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    '''
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain'] * x for x in [0.9, 0.95, 1.0, 1.1, 1.2]]# , 1.5, 1.75, 2.0]]  #[0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
+    '''
+
+    # params[('ICThalInput', 'probE')] = [0.12, 0.26]     # [0.26]    # 0,1,2  
+    # params[('ICThalInput', 'probI')] = [0.12, 0.26]                 # 0,1,2
+    #params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    #params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+
+
+    #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
+    BBN_stimTimes = list(np.arange(2500, 11300, 624.5))
+    BBN_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
+    BBN_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    params[('ICThalInput', 'startTime')] = [5000, BBN_stimTimes, BBN_stimTimes_shorterSOA, BBN_stimTimes_longerSOA]
+
+    #### SET CONN AND STIM SEEDS #### 
+    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+
+    #### GROUPED PARAMS #### 
+    groupedParams = [] 
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 12000 #11500 
+    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['scaleDensity'] = 1.0 
+    initCfg['recordStep'] = 0.05
+
+    # # plotting and saving params
+    # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
+    # initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    ## BBN STIMULUS FOR ICThalInput ## 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+                            'startTime': 2500,
+                            'weightE': 0.25,
+                            'weightI': 0.25,
+                            'probE': 0.12, 
+                            'probI': 0.12,
+                            'seed': 1}  # SHOULD THIS BE ZERO? 
+
+    ### OPTION TO RECORD EEG / DIPOLE ###
+    initCfg['recordDipole'] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+# ----------------------------------------------------------------------------------------------
+# Custom pure tone stim
+# ----------------------------------------------------------------------------------------------
+def custom_click(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+
+    #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
+    # click_stimTimes = list(np.arange(2500, 11300, 624.5))
+    # click_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
+    # click_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    # params[('ICThalInput', 'startTime')] = [5000, click_stimTimes, click_stimTimes_shorterSOA, click_stimTimes_longerSOA]
+
+    ## ICThalInput file 
+    params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_3600_4400_wav_click_25ms_burst.mat', 'data/ICoutput/ICoutput_CF_10913_11713_wav_click_25ms_burst.mat' ]
+
+    #### SET CONN AND STIM SEEDS #### 
+    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
+    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
+
+    #### GROUPED PARAMS #### 
+    groupedParams = [] 
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 12000 #11500 
+    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['scaleDensity'] = 1.0 
+    initCfg['recordStep'] = 0.05
+
+    # # plotting and saving params
+    # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
+    # initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    ## BBN STIMULUS FOR ICThalInput ## 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_click_25ms_burst.mat',
+                            'startTime': 5000, #2500, 
+                            'weightE': 0.25,
+                            'weightI': 0.25, 
+                            'probE': 0.12, 
+                            'probI': 0.12,
+                            'seed': 1}  # SHOULD THIS BE ZERO? 
+
+    ### OPTION TO RECORD EEG / DIPOLE ###
+    initCfg['recordDipole'] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+# ----------------------------------------------------------------------------------------------
+# Custom pure tone stim
+# ----------------------------------------------------------------------------------------------
+def custom_tone(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+
+    #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
+    pureTone_stimTimes = list(np.arange(2500, 11300, 624.5))
+    pureTone_stimTimes_shorterSOA = list(np.arange(2500, 11300, 200))
+    # pureTone_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    params[('ICThalInput', 'startTime')] = [pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #[5000, pureTone_stimTimes, pureTone_stimTimes_shorterSOA] #, pureTone_stimTimes_longerSOA]
+    params[('ICThalInput', 'file')] = ['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat'] #['data/ICoutput/ICoutput_CF_300_700_wav_pure_tone_500Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_2628_3028_wav_pure_tone_2828Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_5456_5856_wav_pure_tone_5656Hz_25ms.mat', 'data/ICoutput/ICoutput_CF_11112_11512_wav_pure_tone_11312Hz_25ms.mat']
+
+    #### SET CONN AND STIM SEEDS #### 
+    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] 
+    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] 
+
+    #### GROUPED PARAMS #### 
+    groupedParams = [] 
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+    
+    initCfg['duration'] = 12000 #11500 
+    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['scaleDensity'] = 1.0 
+    initCfg['recordStep'] = 0.05
+
+
+    # # plotting and saving params
+    # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
+    # initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    # initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+    ## BBN STIMULUS FOR ICThalInput ## 
+    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_1214_1614_wav_pure_tone_25ms.mat',
+                            'startTime': 2500, 
+                            'weightE': 0.25,
+                            'weightI': 0.25, 
+                            'probE': 0.12, 
+                            'probI': 0.12,
+                            'seed': 1}  # SHOULD THIS BE ZERO? 
+
+    ### OPTION TO RECORD EEG / DIPOLE ###
+    initCfg['recordDipole'] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+# ----------------------------------------------------------------------------------------------
+# Custom
+# ----------------------------------------------------------------------------------------------
+def custom_stim(filename):
+    params = specs.ODict()
+
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    # from prev 
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    # conn gains 
+    params[('NetStim1', 'weight')] = [1, 5, 10, 20] # 50 Hz
+    params[('NetStim1', 'interval')] = [1000.0/50.0, 1000.0/100.0] # 50 Hz
+    params[('NetStim1', 'noise')] = [0.5, 1.0] # 50 Hz
+
+    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {} # set default options from prev sim
+
+    #initCfg['dt'] = 0.025 
+    #initCfg['recordStep'] = 0.1 # 0.025 
+
+    ## record Current as well
+    # initCfg['use_fast_imem'] = True
+    # initCfg['recordTraces'] = {'I_soma':{'sec':'soma','loc':0.5,'var':'i_membrane_'}} # 'V_soma':{'sec':'soma','loc':0.5,'var':'v'},  # 'sec':'soma','loc':0.5,
+
+    initCfg['duration'] = 6000                                  # 11500 
+    initCfg['printPopAvgRates'] = [1500, initCfg['duration']]   # [1500, 11500]
+    initCfg['scaleDensity'] = 1.0                               # 0.25  # 0.075 
+    initCfg['recordStep'] = 0.05
+
+    initCfg['addNetStim'] = True
+    initCfg[('NetStim1', 'pop')] = ['TC', 'TCM', 'HTC']
+    initCfg[('NetStim1', 'ynorm')] = [0.0, 3.0]
+    initCfg[('NetStim1', 'sec')] = 'soma'
+    initCfg[('NetStim1', 'loc')] = 0.5
+    initCfg[('NetStim1', 'start')] = 3000
+    #initCfg[('NetStim1', 'interval')] = 1000.0/50.0 # 50 Hz
+    #initCfg[('NetStim1', 'noise')] = 0.5 # 50 Hz
+    initCfg[('NetStim1', 'number')] = 100 * 10 # enough spikes for 10 seconds
+
+
+
+    # save LFP trace from first cell of each pop 
+    #initCfg['saveLFPCells'] = [('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
+                                #('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0])]#, #[('IT3', [0]), ('SOM3', [0]), ('PV3', [0]), ('VIP3', [0]), ('NGF3', [0]),
+                                #('ITP4', [0]), ('ITS4', [0]), ('SOM4', [0]), ('PV4', [0]), ('VIP4', [0]), ('NGF4', [0])]#,
+                                # ('IT5A', [0]), ('CT5A', [0]), ('SOM5A', [0]), ('PV5A', [0]), ('VIP5A', [0]), ('NGF5A', [0]), 
+                                # ('IT5B', [0]), ('PT5B', [0]), ('CT5B', [0]), ('SOM5B', [0]), ('PV5B', [0]), ('VIP5B', [0]), ('NGF5B', [0]), 
+                                # ('IT6', [0]), ('CT6', [0]), ('SOM6', [0]), ('PV6', [0]), ('VIP6', [0]), ('NGF6', [0])] # [3, 'PYR', ('PV2', 5)] # True # Default is False ! 
+                                # [('IT2', [0]), ('PV2', [0]), ('SOM2', [0]), ('VIP2', [0]), ('NGF2', [0])],
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
+
+
+    # changed directly in cfg.py    
+    initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'layer_lines': 0, 'saveFig': 1, 'showFig': 0} # 'overlay': 'LFP', # 'LFP_overlay'
+    initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
+
+    # save LFP traces from populations 
+    #initCfg['saveLFPPops'] = ['IT2', 'CT6'] #['PV2', 'SOM2', 'VIP2', 'NGF2', 
+            #'PV3', 'SOM3', 'VIP3', 'NGF3',
+            #'PV4', 'SOM4', 'VIP4', 'NGF4',
+            #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',
+            #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',
+            #'PV6', 'SOM6', 'VIP6', 'NGF6'] #['IT2', 'PT5B'] #['IT6', 'CT6']	#['IT5B', 'CT5B']	#['IT3', 'ITP4', 'ITS4']	#['NGF1', 'IT5A', 'CT5A'] #['IT2', 'PT5B']
+    #initCfg[('analysis', 'plotLFP')] = {'pop': 'PT5B', 'includeAxon': False, 'figSize': (6,10), 'timeRange': [100,3000], 'saveFig': True}
+
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'grid'
+
+    return b
+
+
+
+
 
 # ----------------------------------------------------------------------------------------------
 # Evol
@@ -1078,7 +1731,12 @@ def optunaRates():
     params[('IILayerGain', '4')] = [0.1, 3.0]
     params[('IILayerGain', '5')] = [0.1, 3.0]
     params[('IILayerGain', '6')] = [0.1, 3.0]
-    
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV2, maxV)]
+
     # params['thalamoCorticalGain'] = [0.25, 2.0]
     # params['intraThalamicGain'] = [0.25, 2.0]
     # params['corticoThalamicGain'] = [0.25, 2.0]
@@ -1177,6 +1835,1557 @@ def optunaRates():
 
     return b
 
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayers():
+
+    '''
+    # from prev
+    import json
+    with open('data/v32_batch14/trial_981/trial_981_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    '''
+
+    # best from grid search
+    import json
+    # with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+
+    # good thal params for 100% cell density 
+    with open('data/v34_batch5/v34_batch5_0_2_0_0_2_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad2 = json.load(f)['simConfig']
+
+    cfgLoad = cfgLoad2
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+
+    # params based on v32_batch8 grid search best solutions; plus added L2 and L3 IE specific gains since those were problematic layers
+    params['EEGain'] = [0.1, 0.5] 
+    params['EIGain'] = [1.3, 1.7] 
+    params['IEGain'] = [0.8, 1.7] 
+    params['IIGain'] = [0.3, 0.7] 
+    params[('EICellTypeGain', 'PV')] = [0.8, 1.7] 
+    params[('EICellTypeGain', 'SOM')] = [0.3, 0.7] 
+    params[('EICellTypeGain', 'VIP')] = [1.3, 1.7] 
+    params[('EICellTypeGain', 'NGF')] = [1.3, 1.7] 
+
+    params[('IELayerGain', '2')] = [max(cfgLoad2['IELayerGain']['2']-rangeV, minV), min(cfgLoad2['IELayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad2['IELayerGain']['3']-rangeV, minV), min(cfgLoad2['IELayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad2['IELayerGain']['4']-rangeV, minV), min(cfgLoad2['IELayerGain']['4']+rangeV, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad2['IELayerGain']['5A']-rangeV, minV), min(cfgLoad2['IELayerGain']['5A']+rangeV, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad2['IELayerGain']['5B']-rangeV, minV), min(cfgLoad2['IELayerGain']['5B']+rangeV, maxV)]
+
+    
+    '''
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV2, maxV)]
+
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    params[('EILayerGain', '1')] = [minV, maxV] #(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    params[('IILayerGain', '1')] = [minV, maxV] #(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']-rangeV, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']-rangeV, minV), min(cfgLoad['IILayerGain']['2']+rangeV, maxV)]
+
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']-rangeV, minV), min(cfgLoad['EILayerGain']['3']+rangeV, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']-rangeV, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']-rangeV, minV), min(cfgLoad['IILayerGain']['3']+rangeV, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV, minV), min(cfgLoad['EELayerGain']['4']+rangeV, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
+
+    params[('EELayerGain', '5A')] = [minV, maxV] # [max(cfgLoad['EELayerGain']['5A']-rangeV2, minV), min(cfgLoad['EELayerGain']['5A']+rangeV, maxV)]
+    params[('EILayerGain', '5A')] = [minV, maxV] # [max(cfgLoad['EILayerGain']['5A']-rangeV2, minV), min(cfgLoad['EILayerGain']['5A']+rangeV, maxV)]
+    params[('IELayerGain', '5A')] = [minV, maxV] # [max(cfgLoad['IELayerGain']['5A']-rangeV2, minV), min(cfgLoad['IELayerGain']['5A']+rangeV, maxV)]
+    params[('IILayerGain', '5A')] = [minV, maxV] # [max(cfgLoad['IILayerGain']['5A']-rangeV2, minV), min(cfgLoad['IILayerGain']['5A']+rangeV, maxV)]
+
+    params[('EELayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['EELayerGain']['5B']-rangeV2, minV), min(cfgLoad['EELayerGain']['5B']+rangeV, maxV)]
+    params[('EILayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV, maxV)]
+    params[('IELayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+    params[('IILayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV, maxV)]
+
+    params[('EELayerGain', '6')] = [minV, maxV] # [max(cfgLoad['EELayerGain']['6']-rangeV2, minV), min(cfgLoad['EELayerGain']['6']+rangeV, maxV)]
+    params[('EILayerGain', '6')] = [minV, maxV] # [max(cfgLoad['EILayerGain']['6']-rangeV2, minV), min(cfgLoad['EILayerGain']['6']+rangeV, maxV)]
+    params[('IELayerGain', '6')] = [minV, maxV] # [max(cfgLoad['IELayerGain']['6']-rangeV2, minV), min(cfgLoad['IELayerGain']['6']+rangeV, maxV)]
+    params[('IILayerGain', '6')] = [minV, maxV] # [max(cfgLoad['IILayerGain']['6']-rangeV2, minV), min(cfgLoad['IILayerGain']['6']+rangeV, maxV)]
+    '''
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    '''
+    initCfg['EEGain'] = 1.0 	
+    initCfg['EIGain'] = 1.0 	
+    initCfg['IEGain'] = 1.0 	
+    initCfg['IIGain'] = 1.0 	
+
+    initCfg.update({'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+                    'intraThalamicGain': cfgLoad['intraThalamicGain'],
+                    'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
+                    'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+
+    print(initCfg)
+    '''
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    Ipops = ['NGF1',                            # L1
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+    # Ipops = [#'NGF1',  
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+    #         #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersThalL4():
+
+    # # from prev
+    # import json
+    # with open('data/v32_batch4/trial_15057/trial_15057_cfg.json', 'rb') as f:
+    #     cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 1.0
+    rangeV2 = 1.0
+    minV = 0.1
+    maxV = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [minV, maxV] # [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [minV, maxV] # [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [minV, maxV] # [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [minV, maxV] # [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    params[('IECellTypeGain', 'PV')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    # params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV, maxV)]
+    # params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']-rangeV2, minV), min(cfgLoad['EILayerGain']['2']+rangeV, maxV)]
+    # params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']-rangeV2, minV), min(cfgLoad['IELayerGain']['2']+rangeV, maxV)]
+    # params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']-rangeV2, minV), min(cfgLoad['IILayerGain']['2']+rangeV, maxV)]
+
+    # params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV, maxV)]
+    # params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']-rangeV2, minV), min(cfgLoad['EILayerGain']['3']+rangeV, maxV)]
+    # params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']-rangeV2, minV), min(cfgLoad['IELayerGain']['3']+rangeV, maxV)]
+    # params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']-rangeV2, minV), min(cfgLoad['IILayerGain']['3']+rangeV, maxV)]
+
+    params[('EELayerGain', '4')] = [minV, maxV] #[max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV, maxV)]
+    params[('EILayerGain', '4')] = [minV, maxV] #[max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV, maxV)]
+    params[('IELayerGain', '4')] = [minV, maxV] #[max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV, maxV)]
+    params[('IILayerGain', '4')] = [minV, maxV] #[max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV, maxV)]
+
+    params['thalamoCorticalGain'] = [minV, maxV]
+    params['intraThalamicGain'] = [minV, maxV]
+    params['EbkgThalamicGain'] = [minV, maxV]
+    params['IbkgThalamicGain'] = [minV, maxV]
+
+    # params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV2, minV), min(cfgLoad['EELayerGain']['5A']+rangeV, maxV)]
+    # params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV2, minV), min(cfgLoad['EILayerGain']['5A']+rangeV, maxV)]
+    # params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV2, minV), min(cfgLoad['IELayerGain']['5A']+rangeV, maxV)]
+    # params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV2, minV), min(cfgLoad['IILayerGain']['5A']+rangeV, maxV)]
+
+    # params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV2, minV), min(cfgLoad['EELayerGain']['5B']+rangeV, maxV)]
+    # params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV, maxV)]
+    # params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+    # params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV, maxV)]
+
+    # params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV2, minV), min(cfgLoad['EELayerGain']['6']+rangeV, maxV)]
+    # params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV2, minV), min(cfgLoad['EILayerGain']['6']+rangeV, maxV)]
+    # params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV2, minV), min(cfgLoad['IELayerGain']['6']+rangeV, maxV)]
+    # params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV2, minV), min(cfgLoad['IILayerGain']['6']+rangeV, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['EEGain'] = 1.0 	
+    initCfg['EIGain'] = 1.0 	
+    initCfg['IEGain'] = 1.0 	
+    initCfg['IIGain'] = 1.0 	
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    # initCfg.update({'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+    #                 'intraThalamicGain': cfgLoad['intraThalamicGain'],
+    #                 'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
+    #                 'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = [#'NGF1',  
+            #'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            #'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersThalL234():
+
+    # from prev
+    import json
+    with open('data/v34_batch1/trial_462/trial_462_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    minV = 0.1
+    maxV = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    params[('EELayerGain', '2')] = [minV, maxV]
+    params[('EILayerGain', '2')] = [minV, maxV]
+    params[('IELayerGain', '2')] = [minV, maxV]
+    params[('IILayerGain', '2')] = [minV, maxV]
+
+    params[('EELayerGain', '3')] = [minV, maxV]
+    params[('EILayerGain', '3')] = [minV, maxV]
+    params[('IELayerGain', '3')] = [minV, maxV]
+    params[('IILayerGain', '3')] = [minV, maxV]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+
+    # params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV2, minV), min(cfgLoad['EELayerGain']['5A']+rangeV, maxV)]
+    # params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV2, minV), min(cfgLoad['EILayerGain']['5A']+rangeV, maxV)]
+    # params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV2, minV), min(cfgLoad['IELayerGain']['5A']+rangeV, maxV)]
+    # params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV2, minV), min(cfgLoad['IILayerGain']['5A']+rangeV, maxV)]
+
+    # params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV2, minV), min(cfgLoad['EELayerGain']['5B']+rangeV, maxV)]
+    # params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV, maxV)]
+    # params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+    # params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV, maxV)]
+
+    # params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV2, minV), min(cfgLoad['EELayerGain']['6']+rangeV, maxV)]
+    # params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV2, minV), min(cfgLoad['EILayerGain']['6']+rangeV, maxV)]
+    # params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV2, minV), min(cfgLoad['IELayerGain']['6']+rangeV, maxV)]
+    # params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV2, minV), min(cfgLoad['IILayerGain']['6']+rangeV, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['EEGain'] = 1.0 	
+    initCfg['EIGain'] = 1.0 	
+    initCfg['IEGain'] = 1.0 	
+    initCfg['IIGain'] = 1.0 	
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+    
+    initCfg.update({'thalamoCorticalGain': cfgLoad['thalamoCorticalGain'],
+                    'intraThalamicGain': cfgLoad['intraThalamicGain'],
+                    'EbkgThalamicGain': cfgLoad['EbkgThalamicGain'],
+                    'IbkgThalamicGain': cfgLoad['IbkgThalamicGain']})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = [#'NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            #'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersThalL2345A():
+
+    # from prev
+    import json
+    with open('data/v34_batch4/v34_batch4_2_2_2_1_0_0_2_2_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV = 0.25
+    rangeV2 = 0.1
+    minV = 0.1
+    maxV = 4.0
+
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV, maxV)]
+
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']-rangeV, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']-rangeV, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']-rangeV, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']-rangeV, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV2, minV), min(cfgLoad['EELayerGain']['4']+rangeV2, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV2, minV), min(cfgLoad['EILayerGain']['4']+rangeV2, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV2, minV), min(cfgLoad['IELayerGain']['4']+rangeV2, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV2, minV), min(cfgLoad['IILayerGain']['4']+rangeV2, maxV)]
+
+    params[('EELayerGain', '5A')] = [minV, maxV]
+    params[('EILayerGain', '5A')] = [minV, maxV]
+    params[('IELayerGain', '5A')] = [minV, maxV]
+    params[('IILayerGain', '5A')] = [minV, maxV]
+
+    # params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']-rangeV2, minV), min(cfgLoad['EELayerGain']['5B']+rangeV, maxV)]
+    # params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV, maxV)]
+    # params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV, maxV)]
+    # params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV, maxV)]
+
+    # params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV2, minV), min(cfgLoad['EELayerGain']['6']+rangeV, maxV)]
+    # params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV2, minV), min(cfgLoad['EILayerGain']['6']+rangeV, maxV)]
+    # params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV2, minV), min(cfgLoad['IELayerGain']['6']+rangeV, maxV)]
+    # params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV2, minV), min(cfgLoad['IILayerGain']['6']+rangeV, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = [#'NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            #'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersThalL2345A5B():
+
+    # from prev
+    import json
+    with open('data/v34_batch11/trial_2150/trial_2150_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV1 = 0.1
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+    minV = 0.1
+    maxV = 4.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # 0.25
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['PV']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['SOM']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['VIP']+rangeV2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']-rangeV2, minV), min(cfgLoad['EICellTypeGain']['NGF']+rangeV3, maxV)]
+
+    # 0.1
+    params[('IECellTypeGain', 'PV')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['PV']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['PV']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['SOM']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['SOM']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['VIP']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['VIP']+rangeV3, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [minV, maxV] # [max(cfgLoad['IECellTypeGain']['NGF']-rangeV3, minV), min(cfgLoad['IECellTypeGain']['NGF']+rangeV3, maxV)]
+
+    # params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']-rangeV2, minV), min(cfgLoad['EILayerGain']['1']+rangeV, maxV)]
+    # params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']-rangeV2, minV), min(cfgLoad['IILayerGain']['1']+rangeV, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']-rangeV2, minV), min(cfgLoad['EELayerGain']['2']+rangeV2, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']-rangeV2, minV), min(cfgLoad['EELayerGain']['3']+rangeV2, maxV)]
+
+    # 0.1
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']-rangeV1, minV), min(cfgLoad['EELayerGain']['4']+rangeV1, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']-rangeV1, minV), min(cfgLoad['EILayerGain']['4']+rangeV1, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']-rangeV1, minV), min(cfgLoad['IELayerGain']['4']+rangeV1, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']-rangeV1, minV), min(cfgLoad['IILayerGain']['4']+rangeV1, maxV)]
+    
+    # 0.1
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']-rangeV1, minV), min(cfgLoad['EELayerGain']['5A']+rangeV1, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']-rangeV1, minV), min(cfgLoad['EILayerGain']['5A']+rangeV1, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']-rangeV1, minV), min(cfgLoad['IELayerGain']['5A']+rangeV1, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']-rangeV1, minV), min(cfgLoad['IILayerGain']['5A']+rangeV1, maxV)]
+
+    # 0.25
+    params[('EELayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['EELayerGain']['5B']-rangeV2, minV), min(cfgLoad['EELayerGain']['5B']+rangeV2, maxV)]
+    params[('EILayerGain', '5B')] = [minV, maxV] # [max(cfgLoad['EILayerGain']['5B']-rangeV2, minV), min(cfgLoad['EILayerGain']['5B']+rangeV2, maxV)]
+    params[('IELayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['IELayerGain']['5B']-rangeV2, minV), min(cfgLoad['IELayerGain']['5B']+rangeV2, maxV)]
+    params[('IILayerGain', '5B')] = [minV, maxV] #[max(cfgLoad['IILayerGain']['5B']-rangeV2, minV), min(cfgLoad['IILayerGain']['5B']+rangeV2, maxV)]
+
+    # params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']-rangeV2, minV), min(cfgLoad['EELayerGain']['6']+rangeV, maxV)]
+    # params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']-rangeV2, minV), min(cfgLoad['EILayerGain']['6']+rangeV, maxV)]
+    # params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']-rangeV2, minV), min(cfgLoad['IELayerGain']['6']+rangeV, maxV)]
+    # params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']-rangeV2, minV), min(cfgLoad['IILayerGain']['6']+rangeV, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    #Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    #Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = [#'NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            #'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    #Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 1000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersThalL12345A5B6():
+
+    # from prev
+    import json
+    with open('data/v34_batch15/trial_5955/trial_5955_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    rangeV1 = 0.2
+    rangeV2 = 0.25
+    rangeV3 = 2.0
+
+    scaleLow = 0.9
+    scaleHigh = 1.1
+
+    scaleLow2 = 0.5
+    scaleHigh2 = 1.5
+
+    minV = 0.1
+    maxV = 5.0
+
+    ''' potentially:
+    layer-specific EE,EI,IE,II gains for L2, with [prev-0.25:prev+0.25]
+    layer-specific EE,EI,IE,II gains for L3, with [prev-0.25:prev+025]
+    layer-specific EE,EI,IE,II gains for L4, with [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5A, with param range [prev-0.1:prev+0.1]
+    layer-specific EE,EI,IE,II gains for L5B, with broad param range [0.1:4.0]
+    E-PV, E-SOM, E-NGF, E-VIP (common to all layers) with range [prev-0.25:prev+0.25]
+    PV-E, SOM-E, NGF-E, VIP-E (common to all layers) with range [0.1:4.0]
+
+    '''
+
+    # E->I cell-type-specific
+    params[('EICellTypeGain', 'PV')] = [max(cfgLoad['EICellTypeGain']['PV']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['PV']*scaleHigh2, maxV)]
+    params[('EICellTypeGain', 'SOM')] = [max(cfgLoad['EICellTypeGain']['SOM']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['SOM']*scaleHigh2, maxV)]
+    params[('EICellTypeGain', 'VIP')] = [max(cfgLoad['EICellTypeGain']['VIP']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['VIP']*scaleHigh2, maxV)]
+    params[('EICellTypeGain', 'NGF')] = [max(cfgLoad['EICellTypeGain']['NGF']*scaleLow2, minV), min(cfgLoad['EICellTypeGain']['NGF']*scaleHigh2, maxV)]
+
+    # I->E cell-type-specific
+    params[('IECellTypeGain', 'PV')] = [max(cfgLoad['IECellTypeGain']['PV']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['PV']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'SOM')] = [max(cfgLoad['IECellTypeGain']['SOM']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['SOM']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'VIP')] = [max(cfgLoad['IECellTypeGain']['VIP']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['VIP']*scaleHigh, maxV)]
+    params[('IECellTypeGain', 'NGF')] = [max(cfgLoad['IECellTypeGain']['NGF']*scaleLow, minV), min(cfgLoad['IECellTypeGain']['NGF']*scaleHigh, maxV)]
+
+    # L1
+    params[('EILayerGain', '1')] = [max(cfgLoad['EILayerGain']['1']*scaleLow, minV), min(cfgLoad['EILayerGain']['1']*scaleHigh, maxV)]
+    params[('IILayerGain', '1')] = [max(cfgLoad['IILayerGain']['1']*scaleLow, minV), min(cfgLoad['IILayerGain']['1']*scaleHigh, maxV)]
+
+    # L2
+    params[('EELayerGain', '2')] = [max(cfgLoad['EELayerGain']['2']*scaleLow2, minV), min(cfgLoad['EELayerGain']['2']*scaleHigh2, maxV)]
+    params[('EILayerGain', '2')] = [max(cfgLoad['EILayerGain']['2']*scaleLow2, minV), min(cfgLoad['EILayerGain']['2']*scaleHigh2, maxV)]
+    params[('IELayerGain', '2')] = [max(cfgLoad['IELayerGain']['2']*scaleLow2, minV), min(cfgLoad['IELayerGain']['2']*scaleHigh2, maxV)]
+    params[('IILayerGain', '2')] = [max(cfgLoad['IILayerGain']['2']*scaleLow2, minV), min(cfgLoad['IILayerGain']['2']*scaleHigh2, maxV)]
+
+    # L3
+    params[('EELayerGain', '3')] = [max(cfgLoad['EELayerGain']['3']*scaleLow2, minV), min(cfgLoad['EELayerGain']['3']*scaleHigh2, maxV)]
+    params[('EILayerGain', '3')] = [max(cfgLoad['EILayerGain']['3']*scaleLow2, minV), min(cfgLoad['EILayerGain']['3']*scaleHigh2, maxV)]
+    params[('IELayerGain', '3')] = [max(cfgLoad['IELayerGain']['3']*scaleLow2, minV), min(cfgLoad['IELayerGain']['3']*scaleHigh2, maxV)]
+    params[('IILayerGain', '3')] = [max(cfgLoad['IILayerGain']['3']*scaleLow2, minV), min(cfgLoad['IILayerGain']['3']*scaleHigh2, maxV)]
+
+    # L4
+    params[('EELayerGain', '4')] = [max(cfgLoad['EELayerGain']['4']*scaleLow, minV), min(cfgLoad['EELayerGain']['4']*scaleHigh, maxV)]
+    params[('EILayerGain', '4')] = [max(cfgLoad['EILayerGain']['4']*scaleLow, minV), min(cfgLoad['EILayerGain']['4']*scaleHigh, maxV)]
+    params[('IELayerGain', '4')] = [max(cfgLoad['IELayerGain']['4']*scaleLow, minV), min(cfgLoad['IELayerGain']['4']*scaleHigh, maxV)]
+    params[('IILayerGain', '4')] = [max(cfgLoad['IILayerGain']['4']*scaleLow, minV), min(cfgLoad['IILayerGain']['4']*scaleHigh, maxV)]
+    
+    # L5A
+    params[('EELayerGain', '5A')] = [max(cfgLoad['EELayerGain']['5A']*scaleLow, minV), min(cfgLoad['EELayerGain']['5A']*scaleHigh, maxV)]
+    params[('EILayerGain', '5A')] = [max(cfgLoad['EILayerGain']['5A']*scaleLow, minV), min(cfgLoad['EILayerGain']['5A']*scaleHigh, maxV)]
+    params[('IELayerGain', '5A')] = [max(cfgLoad['IELayerGain']['5A']*scaleLow, minV), min(cfgLoad['IELayerGain']['5A']*scaleHigh, maxV)]
+    params[('IILayerGain', '5A')] = [max(cfgLoad['IILayerGain']['5A']*scaleLow, minV), min(cfgLoad['IILayerGain']['5A']*scaleHigh, maxV)]
+
+    # L5B
+    params[('EELayerGain', '5B')] = [max(cfgLoad['EELayerGain']['5B']*scaleLow, minV), min(cfgLoad['EELayerGain']['5B']*scaleHigh, maxV)]
+    params[('EILayerGain', '5B')] = [max(cfgLoad['EILayerGain']['5B']*scaleLow, minV), min(cfgLoad['EILayerGain']['5B']*scaleHigh, maxV)]
+    params[('IELayerGain', '5B')] = [max(cfgLoad['IELayerGain']['5B']*scaleLow, minV), min(cfgLoad['IELayerGain']['5B']*scaleHigh, maxV)]
+    params[('IILayerGain', '5B')] = [max(cfgLoad['IILayerGain']['5B']*scaleLow, minV), min(cfgLoad['IILayerGain']['5B']*scaleHigh, maxV)]
+
+    # L6
+    params[('EELayerGain', '6')] = [max(cfgLoad['EELayerGain']['6']*scaleLow, minV), min(cfgLoad['EELayerGain']['6']*scaleHigh, maxV)]
+    params[('EILayerGain', '6')] = [max(cfgLoad['EILayerGain']['6']*scaleLow, minV), min(cfgLoad['EILayerGain']['6']*scaleHigh, maxV)]
+    params[('IELayerGain', '6')] = [max(cfgLoad['IELayerGain']['6']*scaleLow, minV), min(cfgLoad['IELayerGain']['6']*scaleHigh, maxV)]
+    params[('IILayerGain', '6')] = [max(cfgLoad['IILayerGain']['6']*scaleLow, minV), min(cfgLoad['IILayerGain']['6']*scaleHigh, maxV)]
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    # Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    #Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    #Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 2000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 60,
+        'time_sleep': 150,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
+
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization
+# ----------------------------------------------------------------------------------------------
+def optunaRatesLayersWmat():
+
+    # from prev
+    import json
+    #with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:
+    #    cfgLoad = json.load(f)['simConfig']
+
+    with open('data/v34_batch23/trial_1937/trial_1937_cfg.json', 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    scaleLow = 0.75
+    scaleHigh = 1.25
+
+    #scaleLow2 = 0.1
+    #scaleHigh2 = 10.0
+
+    scaleLow2 = 0.5
+    scaleHigh2 = 2.0
+
+    # import pickle
+    # with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+    # wmat = connData['wmat']
+    wmat = cfgLoad['wmat']    
+
+    # ALL 36
+    # weightsScale = [['IT6', 'NGF6'],
+    #                 ['CT6', 'NGF6']
+    #                 ['PV6', 'NGF6'],
+    #                 ['SOM6', 'NGF6'],
+    #                 ['VIP6', 'NGF6'],
+    #                 ['NGF6', 'NGF6'],
+    #                 ['IT6', 'SOM6'],
+    #                 ['CT6', 'SOM6'],
+    #                 ['PV6', 'SOM6'],
+    #                 ['SOM6', 'SOM6'],
+    #                 ['VIP6', 'SOM6'],
+    #                 ['NGF6', 'SOM6'],         
+    #                 ['IT6', 'PV6'],
+    #                 ['CT6', 'PV6']
+    #                 ['PV6', 'PV6'],
+    #                 ['SOM6', 'PV6'],
+    #                 ['VIP6', 'PV6'],
+    #                 ['NGF6', 'PV6']
+    #                 ['IT6', 'IT6'],
+    #                 ['CT6', 'IT6']
+    #                 ['PV6', 'IT6'],
+    #                 ['SOM6', 'IT6'],
+    #                 ['VIP6', 'IT6'],
+    #                 ['NGF6', 'IT6'],
+    #                 ['IT6', 'CT6'],
+    #                 ['CT6', 'CT6']
+    #                 ['PV6', 'CT6'],
+    #                 ['SOM6', 'CT6'],
+    #                 ['VIP6', 'CT6'],
+    #                 ['NGF6', 'CT6'],
+    #                 ['IT6', 'VIP6'],
+    #                 ['CT6', 'VIP6']
+    #                 ['PV6', 'VIP6'],
+    #                 ['SOM6', 'VIP6'],
+    #                 ['VIP6', 'VIP6'],
+    #                 ['NGF6', 'VIP6']]        
+    
+    # only those with pmat > 0.08
+    # weightsScale =  [['IT6', 'PV6'], 
+    #                 ['IT6', 'SOM6'], 
+    #                 ['IT6', 'VIP6'], 
+    #                 ['IT6', 'NGF6'], 
+    #                 ['CT6', 'PV6'], 
+    #                 ['CT6', 'SOM6'], 
+    #                 ['CT6', 'VIP6'], 
+    #                 ['CT6', 'NGF6'], 
+    #                 ['PV6', 'IT6'], 
+    #                 ['PV6', 'CT6'], 
+    #                 ['PV6', 'PV6'], 
+    #                 ['PV6', 'SOM6'], 
+    #                 ['PV6', 'VIP6'], 
+    #                 ['PV6', 'NGF6'], 
+    #                 ['SOM6', 'IT6'], 
+    #                 ['SOM6', 'CT6'], 
+    #                 ['VIP6', 'PV6'], 
+    #                 ['VIP6', 'SOM6'], 
+    #                 ['VIP6', 'VIP6'], 
+    #                 ['VIP6', 'NGF6'], 
+    #                 ['NGF6', 'IT6'], 
+    #                 ['NGF6', 'CT6']]
+
+
+    weightsScale = [['IT2', 'PV2'],
+                    ['IT2', 'SOM2'], 
+                    ['IT3', 'PV2'],
+                    ['IT3', 'SOM2'],
+                    ['PV2', 'PV2'],
+                    ['PV2', 'VIP2'],
+                    ['PV3', 'PV2'],
+                    ['PV3', 'VIP2'],
+                    ['SOM2', 'PV2'],
+                    ['SOM2', 'VIP2'],
+                    ['SOM3', 'PV2'],
+                    ['SOM3', 'VIP2'],
+                    ['VIP2', 'SOM2'],
+                    ['VIP3', 'SOM2'],
+                    ['IT2', 'SOM3'], 
+                    ['IT3', 'SOM3'],
+                    ['VIP2', 'SOM3'],
+                    ['VIP3', 'SOM3'],
+                    
+                    ['IT6', 'PV6'], 
+                    ['IT6', 'SOM6'], 
+                    ['IT6', 'VIP6'], 
+                    ['IT6', 'NGF6']]
+                    
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow, wmat[ws[0]][ws[1]] * scaleHigh]
+
+    weightsScale2 = []
+
+    for ws in weightsScale:
+        params[('wmat', ws[0], ws[1])] = [wmat[ws[0]][ws[1]] * scaleLow2, wmat[ws[0]][ws[1]] * scaleHigh2]
+
+
+
+    groupedParams = []
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg = {}
+    initCfg['duration'] = 2500
+    initCfg['printPopAvgRates'] = [[1500, 1750], [1750, 2000], [2000, 2250], [2250, 2500]]
+    initCfg['dt'] = 0.05
+
+    initCfg['scaleDensity'] = 1.0
+
+    # plotting and saving params
+    initCfg[('analysis','plotRaster','markerSize')] = 10
+
+    initCfg[('analysis','plotRaster','timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'timeRange')] = [1500, 2500]
+    initCfg[('analysis', 'plotTraces', 'oneFigPer')] = 'trace'
+    initCfg['recordLFP'] = None
+    initCfg[('analysis', 'plotLFP')] = False
+
+    initCfg['saveCellSecs'] = False
+    initCfg['saveCellConns'] = False
+
+
+    # from prev - best of 50% cell density
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    print(initCfg)
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+    pops = {}
+    
+    ## Exc pops
+    Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+    # Epops = ['IT2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'TC', 'TCM', 'HTC']  # all layers + thal + IC
+
+    Etune = {'target': 5, 'width': 20, 'min': 0.05}
+    #Etune = {'target': 5, 'width': 5, 'min': 0.5}
+    
+    for pop in Epops:
+        pops[pop] = Etune
+    
+    ## Inh pops 
+    # Ipops = ['NGF1',                            # L1
+    #         'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+    #         'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+    #         'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+    #         'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A  
+    #         'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+    #         'PV6', 'SOM6', 'VIP6', 'NGF6',       # L6
+    #         'IRE', 'IREM', 'TI']  # Thal 
+    Ipops = ['NGF1',  
+            'PV2', 'SOM2', 'VIP2', 'NGF2',      # L2
+            'PV3', 'SOM3', 'VIP3', 'NGF3',      # L3
+            'PV4', 'SOM4', 'VIP4', 'NGF4',      # L4
+            'PV5A', 'SOM5A', 'VIP5A', 'NGF5A',  # L5A 
+            'PV5B', 'SOM5B', 'VIP5B', 'NGF5B',  # L5B
+            'PV6', 'SOM6', 'VIP6', 'NGF6',  # L6
+            'IRE', 'IREM', 'TI']  # Thal 
+
+    Itune = {'target': 10, 'width': 30, 'min': 0.05}
+    #Itune = {'target': 10, 'width': 15, 'min': 0.5}
+
+    for pop in Ipops:
+        pops[pop] = Itune
+    
+    fitnessFuncArgs['pops'] = pops
+    fitnessFuncArgs['maxFitness'] = 2000
+    fitnessFuncArgs['tranges'] = initCfg['printPopAvgRates']
+
+
+    def fitnessFunc(simData, **kwargs):
+        import numpy as np
+        pops = kwargs['pops']
+        maxFitness = kwargs['maxFitness']
+        tranges = kwargs['tranges']
+
+        popFitnessAll = []
+
+        for trange in tranges:
+            popFitnessAll.append([min(np.exp(abs(v['target'] - simData['popRates'][k]['%d_%d'%(trange[0], trange[1])])/v['width']), maxFitness) 
+                if simData['popRates'][k]['%d_%d'%(trange[0], trange[1])] >= v['min'] else maxFitness for k, v in pops.items()])
+        
+        popFitness = np.mean(np.array(popFitnessAll), axis=0)
+        
+        fitness = np.mean(popFitness)
+
+        popInfo = '; '.join(['%s rate=%.1f fit=%1.f' % (p, np.mean(list(simData['popRates'][p].values())), popFitness[i]) for i,p in enumerate(pops)])
+        print('  ' + popInfo)
+
+        return fitness
+        
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 60,
+        'time_sleep': 150,
+        'popsize': 1  # unused - run with mpi 
+    }
+
+    return b
+
 # ----------------------------------------------------------------------------------------------
 # Run configurations
 # ----------------------------------------------------------------------------------------------
@@ -1223,8 +3432,8 @@ def setRunCfg(b, type='mpi_bulletin'):
             'walltime': '24:00:00', #'48:00:00',
             'nodes': 1,
             'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
-            'email': 'salvadordura@gmail.com',
-            'folder': '/home/ext_salvadordura_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'email': 'ericaygriffith@gmail.com',
+            'folder': '/home/ext_ericaygriffith_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',
@@ -1245,7 +3454,39 @@ def setRunCfg(b, type='mpi_bulletin'):
             'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
             'skip': True}
 
+    elif type=='hpc_slurm_cineca':         ## FILL THIS IN
+        b.runCfg = {'type': 'hpc_slurm',
+            'allocation': 'icei_H_King',
+            'walltime': '2:00:00',            # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
+            'nodes': 4,                       # g100_qos_dbg : max 2 nodes     # noQOS: max 32 nodes 
+            'coresPerNode': 24, #48,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
+            'partition': 'g100_usr_prod',
+            'qos': None, #'noQOS',           # g100_qos_dbg  # noQOS
+            'email': 'erica.griffith@downstate.edu',
+            'folder': '/g100/home/userexternal/egriffit/A1/',
+            'script': 'init.py',
+            'mpiCommand': 'srun', 
+            'skip': True}   # --cpu-bind=cores -m block:block' # mpirun   # TRY SRUN
+            # 'nrnCommand': ,  # 'nrniv -mpi -python', #'python3',
+            # 'skip': ,
+            # 'skipCustom': ,
+        #}
 
+    elif type=='hpc_slurm_xsede':
+        b.runCfg = {'type': 'hpc_slurm', 
+            'allocation': 'TG-IBN160014', 
+            'walltime': '12:00:00',
+            'nodes': 1, # 4
+            'coresPerNode': 80,#48,
+            'partition': 'skx-normal', 
+            'email': 'erica.griffith@downstate.edu',
+            'folder': '/home1/06490/tg857900/A1/',
+            'script': 'init.py', 
+            'mpiCommand': 'mpirun',
+            'nrnCommand': 'nrniv -mpi -python3',
+            'skip': True}
+            #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
+            # --nodelist=compute1
 
 # ----------------------------------------------------------------------------------------------
 # Main code
@@ -1255,39 +3496,42 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    # b = custom()
+    b = custom_manip('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = evolRates()
     # b = asdRates()
-    b = optunaRates()
+    # b = optunaRates()
+    # b = optunaRatesLayers()
+    # b = optunaRatesLayersThalL2345A5B()
+    # b = optunaRatesLayersThalL12345A5B6()
+    # b = optunaRatesLayersWmat()
+
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    #b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    #b = fIcurve(pops=['ITS4']) 
+    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
+    # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'v29_batch4'
-    b.saveFolder = 'data/'+b.batchLabel
+    b.batchLabel = 'BBN_synWeightFractionEI_customCort' #'v39_BBN_E_to_I'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
+    b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
-    setRunCfg(b, 'hpc_slurm_gcp') #'hpc_slurm_gcp') #'mpi_bulletin') #'hpc_slurm_gcp')
+    setRunCfg(b, 'hpc_slurm_cineca')
     b.run() # run batch
 
 
-    # #Submit set of batch sims together (eg. for weight norm)
-
-    # # for weightNorm need to group cell types by those that have the same section names (one cell rule for each) 
-    # popsWeightNorm =    {#'IT2_reduced': ['CT5A', 'CT5B']}#, #'IT2', 'IT3', 'ITP4', 'IT5A', 'IT5B', 'PT5B', 'IT6', 'CT6'],
-    #                      'ITS4_reduced': ['ITS4']}
-    # # #                     'PV_reduced': ['PV2', 'SOM2'],
-    #                      'VIP_reduced': ['VIP2'],
-    #                      #'NGF_reduced': ['NGF2']} #,
-    # #                     #'RE_reduced': ['IRE', 'TC', 'HTC'],
-    # #                     #'TI_reduced': ['TI']}
- 
-    # batchIndex = 7
-    # for k, v in popsWeightNorm.items(): 
-    #     b = weightNorm(pops=v, rule=k)
-    #     b.batchLabel = 'v24_batch'+str(batchIndex) 
+    # trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
+    # trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]
+    
+    # batchIndex = 40
+    # for trial in trials: 
+    #     b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
+    #     b.batchLabel = 'v34_batch'+str(batchIndex) 
     #     b.saveFolder = 'data/'+b.batchLabel
     #     b.method = 'grid'  # evol
-    #     setRunCfg(b, 'mpi_bulletin')
+    #     setRunCfg(b, 'hpc_slurm_gcp')
     #     b.run()  # run batch
     #     batchIndex += 1
-
