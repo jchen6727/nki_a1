@@ -312,14 +312,3 @@ cfg.IbkgThalamicGain = cfgLoad['IbkgThalamicGain']
 # UPDATE WMAT VALUES
 cfg.wmat = cfgLoad['wmat']
 
-
-
-
-
-
-
-
-
-
-
->>>>>>> bf5818fb8f7b505fb0a4d8ef617ce202fef010c7
