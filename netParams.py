@@ -273,18 +273,7 @@ netParams.synMechParams['GABAA_VIP'] = {'mod':'MyExp2SynBB', 'tau1': 0.3, 'tau2'
 netParams.synMechParams['GABAASlow'] = {'mod': 'MyExp2SynBB','tau1': 2, 'tau2': 100, 'e': -80}
 netParams.synMechParams['GABAASlowSlow'] = {'mod': 'MyExp2SynBB', 'tau1': 200, 'tau2': 400, 'e': -80}
 
-def getAMPAType (poty):
-  if cfg.useHScale:
-    if poty == 'E':
-      return 'AMPAE'
-    else:
-      pass 'AMPAI'
-  else:
-    return 'AMPA'                
-        
-
-EISynMech = [getAMPAType('I'), 'NMDA']
-EESynMech = [getAMPAType('E'), 'NMDA']
+ESynMech = ['AMPA', 'NMDA']
 SOMESynMech = ['GABAASlow','GABAB']
 SOMISynMech = ['GABAASlow']
 PVSynMech = ['GABAA']
@@ -357,7 +346,7 @@ if cfg.addConn and cfg.EIGain > 0.0:
                             'delay': 'defaultDelay+dist_3D/propVelocity',
                             'synsPerConn': 1,
                             'sec': 'proximal'}
-
+                
 
 # cfg.NMDARfactor * wmat[pre][post] * cfg.EIGain * cfg.EICellTypeGain[postType] * cfg.EILayerGain[l]]
 
@@ -367,6 +356,7 @@ if cfg.addConn and cfg.IEGain > 0.0:
 
     if connDataSource['I->E/I'] == 'Allen_custom':
 
+        ESynMech = ['AMPA', 'NMDA']
         SOMESynMech = ['GABAASlow','GABAB']
         SOMISynMech = ['GABAASlow']
         PVSynMech = ['GABAA']
@@ -477,28 +467,22 @@ if cfg.addConn and cfg.addIntraThalamicConn:
 ## Corticothalamic 
 if cfg.addConn and cfg.addCorticoThalamicConn:
     for pre in Epops:
-        llpost = [TEpops, TIpops]
-        lesynmech = [EESynMech, EISynMech]
-        for lpost, esynmech in zip(llpost, lesynmech):
-                for post in lpost:
-                    if post in pmat[pre]:
-                        netParams.connParams['CxTh_'+pre+'_'+post] = { 
-                            'preConds': {'pop': pre}, 
-                            'postConds': {'pop': post},
-                            'synMech': esynmech,
-                            'probability': pmat[pre][post],
-                            'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
-                            'synMechWeightFactor': cfg.synWeightFractionEE,
-                            'delay': 'defaultDelay+dist_3D/propVelocity',
-                            'synsPerConn': 1,
-                            'sec': 'soma'}  
+        for post in TEpops+TIpops:
+            if post in pmat[pre]:
+                netParams.connParams['CxTh_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': ESynMech,
+                    'probability': pmat[pre][post],
+                    'weight': wmat[pre][post] * cfg.corticoThalamicGain, 
+                    'synMechWeightFactor': cfg.synWeightFractionEE,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'soma'}  
 
 #------------------------------------------------------------------------------
 ## Thalamocortical 
 if cfg.addConn and cfg.addThalamoCorticalConn:
-    llpre = [TEpops, TIpops]
-    llpost = [Epops, Ipops]
-    lesynmech = [EESynMech, EISynMech]                    
     for pre in TEpops+TIpops:
         for post in Epops+Ipops:
             if post in pmat[pre]:
@@ -702,6 +686,7 @@ if cfg.addBkgConn:
 
         netParams.popParams['IC'] = {'cellModel': 'VecStim', 'numCells': numCells, 'ynormRange': layer['cochlear'],
             'spkTimes': spkTimes}
+
 
     # excBkg/I -> thalamus + cortex
     with open('cells/bkgWeightPops.json', 'r') as f:
