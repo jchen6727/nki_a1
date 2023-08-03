@@ -66,8 +66,8 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = '23aug3_A0'  #'v38_NMDAR_test'		# 'v31_tune3' 
-cfg.saveFolder = 'data/23aug3_A0'  #'data/NMDAR_test'	#'data/v31_manualTune'                	## Set file output name
+cfg.simLabel = '23aug3_B0'  #'v38_NMDAR_test'
+cfg.saveFolder = 'data/' + cfg.simLabel  ## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
@@ -135,7 +135,7 @@ cfg.scale = 1.0     # Is this what should be used?
 cfg.sizeY = 2000.0 #1350.0 in M1_detailed # should this be set to 2000 since that is the full height of the column? 
 cfg.sizeX = 200.0 # 400 - This may change depending on electrode radius 
 cfg.sizeZ = 200.0
-cfg.scaleDensity = 1.0 #0.25 #1.0 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
+cfg.scaleDensity = 0.1 #0.25 #1.0 #0.075 # Should be 1.0 unless need lower cell density for test simulation or visualization
 
 
 #------------------------------------------------------------------------------

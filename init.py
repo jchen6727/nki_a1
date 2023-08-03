@@ -35,6 +35,7 @@ sim.net.createCells()              			# instantiate network cells based on defin
 sim.net.connectCells()            			# create connections between cells based on params
 sim.net.addStims() 							# add network stimulation
 sim.setupRecording()              			# setup variables to record for each cell (spikes, V traces, etc)
+alltags = sim._gatherAllCellTags()                      # gather cell tags; see https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/sim/gather.py
 sim.runSim()                      			# run parallel Neuron simulation  
 
 sim.gatherData()                  			# gather spiking data and cell info from each node
