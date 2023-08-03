@@ -65,8 +65,8 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 #------------------------------------------------------------------------------
 # Saving
 #------------------------------------------------------------------------------
-cfg.simLabel = 'v31_tune3'  #'v38_NMDAR_test'		# 'v31_tune3' 
-cfg.saveFolder = 'data/v31_manualTune'  #'data/NMDAR_test'	#'data/v31_manualTune'                	## Set file output name
+cfg.simLabel = '23aug3_A0'  #'v38_NMDAR_test'		# 'v31_tune3' 
+cfg.saveFolder = 'data/23aug3_A0'  #'data/NMDAR_test'	#'data/v31_manualTune'                	## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
 cfg.saveDataInclude = ['simData', 'simConfig', 'netParams', 'net'] 
