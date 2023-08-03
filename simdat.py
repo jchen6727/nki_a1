@@ -4,7 +4,6 @@ import pickle
 import pandas as pd
 import os
 import sys
-import anim
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
@@ -20,12 +19,10 @@ ion()
 rcParams['font.size'] = 12
 tl=tight_layout
 
-def loadsimdat (name=None,lpop = allpossible_pops): # load simulation data
+def loadsimdat (name,lpop = []): # load simulation data
   global totalDur, tstepPerAction
-  name = getsimname(name)
   print('loading data from', name)
-  conf.dconf = conf.readconf('backupcfg/'+name+'sim.json')
-  simConfig = pickle.load(open('data/'+name+'simConfig_data.pkl','rb'))
+  simConfig = pickle.load(open('data/'+name+'/'+name+'_data.pkl','rb'))
   dstartidx,dendidx={},{} # starting,ending indices for each population
   for p in simConfig['net']['pops'].keys():
     if simConfig['net']['pops'][p]['tags']['numCells'] > 0:
@@ -44,17 +41,8 @@ def loadsimdat (name=None,lpop = allpossible_pops): # load simulation data
     if dnumc[pop] > 0:
       dspkID[pop] = spkID[(spkID >= dstartidx[pop]) & (spkID <= dendidx[pop])]
       dspkT[pop] = spkT[(spkID >= dstartidx[pop]) & (spkID <= dendidx[pop])]
-  InputImages=ldflow=None
-  try:
-    InputImages = loadInputImages(dconf['sim']['name'])
-  except:
-    pass
-  try:
-    ldflow = loadMotionFields(dconf['sim']['name'])
-  except:
-    pass
-  totalDur = int(dconf['sim']['duration'])
-  tstepPerAction = dconf['sim']['tstepPerAction'] # time step per action (in ms)  
+  # totalDur = int(dconf['sim']['duration'])
+  # tstepPerAction = dconf['sim']['tstepPerAction'] # time step per action (in ms)  
   return simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT
 
 def getspikehist (spkT, numc, binsz, tmax):
@@ -140,7 +128,8 @@ def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
 def gifpath (name=''): return 'gif/' + getdatestr() + name
 
 if __name__ == '__main__':
-  simConfig, pdf, actreward, dstartidx, dendidx, dnumc, dspkID, dspkT, InputImages, ldflow, dact, dcumreward = loadsimdat(getactmap=False,lpop=lpop)
+  name = '23aug3_A0'
+  simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT = loadsimdat(name,lpop=[])
   dstr = getdatestr(); simstr = dconf['sim']['name'] # date and sim string
   print('loaded simulation data',simstr,'on',dstr)
   if totalDur <= 10e3:
