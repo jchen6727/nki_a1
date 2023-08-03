@@ -623,3 +623,117 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 ok, fixed/updated those files and commited ... will stick with samn branch moving forward
 
+* 23aug3
+** test run
+
+nrnivmodl mod
+
+./myrun 30
+
+  Cells: 1273
+  Connections: 0 (0.00 per cell)
+  Spikes: 112493 (8.84 Hz)
+  Simulated time: 10.0 s; 30 workers
+  Run time: 205.01 s
+   NGF1 : 3.421 Hz
+   IT2 : 4.434 Hz
+   PV2 : 132.900 Hz
+   VIP2 : 15.700 Hz
+   NGF2 : 13.400 Hz
+   IT3 : 3.694 Hz
+   SOM3 : 22.914 Hz
+   PV3 : 27.712 Hz
+   VIP3 : 19.390 Hz
+   NGF3 : 6.540 Hz
+   ITP4 : 7.131 Hz
+   ITS4 : 5.891 Hz
+   SOM4 : 14.650 Hz
+   PV4 : 21.100 Hz
+   VIP4 : 29.400 Hz
+   NGF4 : 7.700 Hz
+   IT5A : 2.309 Hz
+   CT5A : 1.300 Hz
+   SOM5A : 22.200 Hz
+   PV5A : 41.467 Hz
+   VIP5A : 62.700 Hz
+   IT5B : 6.496 Hz
+   CT5B : 0.373 Hz
+   PT5B : 0.615 Hz
+   SOM5B : 48.440 Hz
+   PV5B : 32.569 Hz
+   VIP5B : 7.000 Hz
+   NGF5B : 5.300 Hz
+   IT6 : 15.431 Hz
+   CT6 : 12.926 Hz
+   SOM6 : 60.150 Hz
+   PV6 : 37.138 Hz
+   NGF6 : 94.100 Hz
+   TC : 41.000 Hz
+   TCM : 39.147 Hz
+   HTC : 57.750 Hz
+   IRE : 4.027 Hz
+   IREM : 3.107 Hz
+   TI : 18.380 Hz
+   TIM : 18.300 Hz
+Saving output as data/23aug3_A0/23aug3_A0_data.pkl ... 
+Finished saving!
+  Done; saving time = 2.56 s.
+
+pretty fast runtime ... a little over 3 minutes for 10 s of simulation ...
+
+but this was at 10% density:
+cfg.scaleDensity # 0.1
+
+ok, much slower with 100% density ... 
+
+  Cells: 12908
+  Connections: 0 (0.00 per cell)
+  Spikes: 273942 (2.12 Hz)
+  Simulated time: 10.0 s; 30 workers
+  Run time: 7604.76 s
+   NGF1 : 1.752 Hz
+   IT2 : 0.484 Hz
+   SOM2 : 32.900 Hz
+   PV2 : 12.138 Hz
+   VIP2 : 24.233 Hz
+   NGF2 : 10.791 Hz
+   IT3 : 0.209 Hz
+   SOM3 : 1.147 Hz
+   PV3 : 9.172 Hz
+   VIP3 : 20.003 Hz
+   NGF3 : 5.747 Hz
+   ITP4 : 0.495 Hz
+   ITS4 : 0.475 Hz
+   SOM4 : 1.639 Hz
+   PV4 : 5.221 Hz
+   VIP4 : 15.131 Hz
+   NGF4 : 8.023 Hz
+   IT5A : 2.140 Hz
+   CT5A : 0.779 Hz
+   SOM5A : 3.250 Hz
+   PV5A : 4.764 Hz
+   VIP5A : 18.070 Hz
+   NGF5A : 14.550 Hz
+   IT5B : 4.446 Hz
+   CT5B : 0.242 Hz
+   PT5B : 0.196 Hz
+   SOM5B : 13.161 Hz
+   PV5B : 2.560 Hz
+   VIP5B : 13.600 Hz
+   NGF5B : 15.643 Hz
+   IT6 : 1.339 Hz
+   CT6 : 0.892 Hz
+   SOM6 : 47.630 Hz
+   PV6 : 0.363 Hz
+   VIP6 : 8.275 Hz
+   NGF6 : 81.697 Hz
+   TC : 4.940 Hz
+   TCM : 5.097 Hz
+   HTC : 4.384 Hz
+   IRE : 2.783 Hz
+   IREM : 3.198 Hz
+   TI : 1.976 Hz
+   TIM : 3.241 Hz
+
+will setup simdat.py for easier load/analysis of sim data ... 
+
