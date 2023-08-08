@@ -737,3 +737,6 @@ ok, much slower with 100% density ...
 
 will setup simdat.py for easier load/analysis of sim data ... 
 
+* 23aug7
+** continue
+
