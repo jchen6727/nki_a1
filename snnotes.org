@@ -684,7 +684,7 @@ pretty fast runtime ... a little over 3 minutes for 10 s of simulation ...
 but this was at 10% density:
 cfg.scaleDensity # 0.1
 
-ok, much slower with 100% density ... 
+ok, much slower with 100% density ... (on cycle with 30 cores)
 
   Cells: 12908
   Connections: 0 (0.00 per cell)
@@ -739,4 +739,118 @@ will setup simdat.py for easier load/analysis of sim data ...
 
 * 23aug7
 ** continue
+* 23aug10
+** continue test on edge
 
+with 30 cores: 
+  Done; run time = 4884.62 s; real-time ratio: 0.00.
+
+Gathering data...
+  Done; gather time = 50.09 s.
+
+Analyzing...
+  Cells: 12908
+  Connections: 0 (0.00 per cell)
+  Spikes: 235909 (1.83 Hz)
+  Simulated time: 10.0 s; 30 workers
+  Run time: 4884.62 s
+   NGF1 : 1.697 Hz
+   IT2 : 0.261 Hz
+   SOM2 : 16.040 Hz
+   PV2 : 8.469 Hz
+   VIP2 : 24.775 Hz
+   NGF2 : 8.727 Hz
+   IT3 : 0.156 Hz
+   SOM3 : 0.843 Hz
+   PV3 : 4.789 Hz
+   VIP3 : 15.738 Hz
+   NGF3 : 4.935 Hz
+   ITP4 : 0.287 Hz
+   ITS4 : 0.287 Hz
+   SOM4 : 0.946 Hz
+   PV4 : 2.958 Hz
+   VIP4 : 12.131 Hz
+   NGF4 : 6.050 Hz
+   IT5A : 1.557 Hz
+   CT5A : 0.464 Hz
+   SOM5A : 2.291 Hz
+   PV5A : 1.893 Hz
+   VIP5A : 8.710 Hz
+   NGF5A : 10.750 Hz
+   IT5B : 3.406 Hz
+   CT5B : 0.133 Hz
+   PT5B : 0.130 Hz
+   SOM5B : 11.856 Hz
+   PV5B : 0.940 Hz
+   VIP5B : 7.076 Hz
+   NGF5B : 9.617 Hz
+   IT6 : 0.678 Hz
+   CT6 : 0.532 Hz
+   SOM6 : 22.943 Hz
+   PV6 : 44.274 Hz
+   VIP6 : 52.917 Hz
+   NGF6 : 45.032 Hz
+   TC : 4.501 Hz
+   TCM : 4.436 Hz
+   HTC : 4.087 Hz
+   IRE : 2.546 Hz
+   IREM : 3.082 Hz
+   TI : 1.800 Hz
+   TIM : 3.067 Hz
+
+hmm, number of spikes is much different compared to the run on cycle ... 
+also does not finish saving data 
+
+  Saving output as: 23aug3_B0_node_8.pkl ... 
+  Done; saving time = 3.65 s.
+
+Searching for .pkl node files in data/23aug3_B0/23aug3_B0_node_data ...
+
+Gathering data from files for simulation: 23aug3_B0 ...
+  Merging data file: 23aug3_B0_node_0.pkl
+Traceback (most recent call last):
+  File "init.py", line 48, in <module>
+    sim.gatherDataFromFiles()
+  File "/home/samn/netpyne/netpyne/sim/gather.py", line 426, in gatherDataFromFiles
+    allCells.extend([cell.__getstate__() for cell in data['cells']])
+  File "/home/samn/netpyne/netpyne/sim/gather.py", line 426, in <listcomp>
+    allCells.extend([cell.__getstate__() for cell in data['cells']])
+AttributeError: 'dict' object has no attribute '__getstate__'
+bash: /opt/miniconda3/envs/py376/lib/libtinfo.so.6: no version information available (required by bash)
+
+(py376) samn@edge:~/A1$ python
+Python 3.7.6 (default, Jan  8 2020, 19:59:22) 
+[GCC 7.3.0] :: Anaconda, Inc. on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import neuron
+>>> neuron.__version__
+'8.2.2'
+>>> import netpyne
+>>> netpyne.__version__
+'1.0.4.2'
+>>> 
+
+and on cycle:
+(base) samn@cycle:~/accumnavnet$ python
+Python 3.7.6 (default, Jan  8 2020, 19:59:22) 
+[GCC 7.3.0] :: Anaconda, Inc. on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import netpyne
+>>> netpyne.__version__
+'1.0.2.1'
+>>> import neuron
+>>> neuron.__version__
+'8.0.2'
+>>> 
+
+so, older versions of both on cycle ... 
+
+can also try on edge w/o the gatherdatafromfiles ... 
+
+had an extra call to gatherdata ... will try again w/o it...
+
+and try with 60 cores ... see if that speeds up (took ~180 minutes with 30 cores on edge)
+
+./myrun 60
+
+** neuron/netpyne version used in A1 paper: neuron==7.8.2 and netpyne==1.0.2.1

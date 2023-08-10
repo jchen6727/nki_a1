@@ -38,7 +38,7 @@ sim.setupRecording()              			# setup variables to record for each cell (
 alltags = sim._gatherAllCellTags()                      # gather cell tags; see https://github.com/Neurosim-lab/netpyne/blob/development/netpyne/sim/gather.py
 sim.runSim()                      			# run parallel Neuron simulation  
 
-sim.gatherData()                  			# gather spiking data and cell info from each node
+# sim.gatherData()                  			# gather spiking data and cell info from each node
 # sim.saveData()                    			# save params, cell info and sim output to file (pickle,mat,txt,etc)#
 
 # if sim.rank==0: sim.analysis.plotData()         	# plot spike raster etc
