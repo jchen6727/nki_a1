@@ -737,6 +737,21 @@ ok, much slower with 100% density ... (on cycle with 30 cores)
 
 will setup simdat.py for easier load/analysis of sim data ... 
 
+* 23aug5
+** info from eg
+
+Hi all, 
+
+Hope you are doing well! I made a summary of those latest results as requested. 
+
+Here is a google drive directory with data files, summary documents, and slides:  https://drive.google.com/drive/folders/16XWvAeeessXokFPRn3B7PBM7zKy-qdko?usp=sharing 
+
+The Summary_BBN google slides doc shows the figures, and the notes section of each slide shows how to reproduce those figures. 
+
+Data files and more detailed summaries are located in each of the two main subdirectories of that google drive folder (they are called model_vs_NHP and NMDA). Each of those subdirs has a summary document that details the steps I took. 
+
+Let me know if there are any permissions issues or any issues reproducing the figs.
+
 * 23aug7
 ** continue
 * 23aug10
