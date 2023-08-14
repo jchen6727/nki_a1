@@ -26,8 +26,15 @@ import pickle
 import morlet
 from morlet import MorletSpec, index2ms
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-#from loadSelect import * 
+from loadSelect import * 
+#from loadSelect2 import * 
 
+
+## for COLORS in DATA PLOTTING!! 
+colorList = [[0.42,0.67,0.84], [0.90,0.76,0.00], [0.42,0.83,0.59], [0.90,0.32,0.00],
+			[0.34,0.67,0.67], [0.90,0.59,0.00], [0.42,0.82,0.83], [1.00,0.85,0.00],
+			[0.33,0.67,0.47], [1.00,0.38,0.60], [0.57,0.67,0.33], [0.5,0.2,0.0],
+			[0.71,0.82,0.41], [0.0,0.2,0.5], [0.70,0.32,0.10]]*3
 
 
 ######################################################################
@@ -528,6 +535,8 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 	elif pop is not None:
 		lfp = np.array(sim.allSimData['LFPPops'][pop])[int(timeRange[0]/sim.cfg.recordStep):int(timeRange[1]/sim.cfg.recordStep),:]
 
+	print('lfp shape:' + str(lfp.shape))
+
 
 	if filtFreq:
 		from scipy import signal
@@ -768,6 +777,82 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 		except:
 			print('  Failed to plot LFP locations...')
 
+	# PSD ----------------------------------
+	if 'PSD' in plots:
+		if overlay:
+			figs.append(plt.figure(figsize=figSize))
+		else:
+			numCols = 1 # np.round(len(electrodes) / maxPlots) + 1
+			figs.append(plt.figure(figsize=(figSize[0]*numCols, figSize[1])))
+			#import seaborn as sb
+
+		allFreqs = []
+		allSignal = []
+		data['allFreqs'] = allFreqs
+		data['allSignal'] = allSignal
+
+		for i,elec in enumerate(electrodes):
+			print('elec: ' + str(elec))
+			if elec == 'avg':
+				lfpPlot = np.mean(lfp, axis=1)
+			elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+				lfpPlot = lfp[:, elec]
+
+			# Morlet wavelet transform method
+			if transformMethod == 'morlet':
+				# from morlet import MorletSpec, index2ms
+
+				Fs = int(1000.0/sim.cfg.recordStep)
+
+				#t_spec = np.linspace(0, index2ms(len(lfpPlot), Fs), len(lfpPlot))
+				morletSpec = MorletSpec(lfpPlot, Fs, freqmin=minFreq, freqmax=maxFreq, freqstep=stepFreq)
+				freqs = F = morletSpec.f
+				spec = morletSpec.TFR
+				signal = np.mean(spec, 1)
+				ylabel = 'Power'
+
+			# FFT transform method
+			elif transformMethod == 'fft':
+				Fs = int(1000.0/sim.cfg.recordStep)
+				power = mlab.psd(lfpPlot, Fs=Fs, NFFT=NFFT, detrend=mlab.detrend_none, window=mlab.window_hanning, noverlap=noverlap, pad_to=None, sides='default', scale_by_freq=None)
+
+				if smooth:
+					signal = _smooth1d(10*np.log10(power[0]), smooth)
+				else:
+					signal = 10*np.log10(power[0])
+				freqs = power[1]
+				ylabel = 'Power (dB/Hz)'
+
+			allFreqs.append(freqs)
+			allSignal.append(signal)
+		
+		if normPSD:
+			vmax = np.max(allSignal)
+			for i, s in enumerate(allSignal):
+				allSignal[i] = allSignal[i]/vmax
+
+		for i,elec in enumerate(electrodes):
+			if not overlay:
+				plt.subplot(int(np.ceil(len(electrodes)/numCols)), numCols,i+1)
+			if elec == 'avg':
+				color = 'k'
+			elif isinstance(elec, Number) and (inputLFP is not None or elec <= sim.net.recXElectrode.nsites):
+				color = colors[i % len(colors)]
+			freqs = allFreqs[i]
+			signal = allSignal[i]
+			plt.plot(freqs[freqs<maxFreq], signal[freqs<maxFreq], linewidth=lineWidth, color=color, label='Electrode %s'%(str(elec)))
+			plt.xlim([0, maxFreq])
+			if len(electrodes) > 1 and not overlay:
+				plt.title('Electrode %s'%(str(elec)), fontsize=fontSize)
+			plt.ylabel(ylabel, fontsize=fontSize)
+
+		# format plot
+		plt.xlabel('Frequency (Hz)', fontsize=fontSize)
+		if overlay:
+			plt.legend(fontsize=fontSize)
+		plt.tight_layout()
+		plt.suptitle('LFP Power Spectral Density', fontsize=fontSize, fontweight='bold') # add yaxis in opposite side
+		plt.subplots_adjust(bottom=0.08, top=0.92)
 
 
 	outputData = {'LFP': lfp, 'electrodes': electrodes, 'timeRange': timeRange, 'saveData': saveData, 'saveFig': saveFig, 'showFig': showFig}
@@ -775,8 +860,8 @@ def plotLFP(pop=None, timeRange=None, electrodes=['avg', 'all'], plots=['timeSer
 	if 'timeSeries' in plots:
 		outputData.update({'t': t})
 
-	# if 'PSD' in plots:
-	# 	outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
+	if 'PSD' in plots:
+		outputData.update({'allFreqs': allFreqs, 'allSignal': allSignal})
 
 	if 'spectrogram' in plots:
 		outputData.update({'spec': spec, 't': t_spec*1000.0, 'freqs': f[f<=maxFreq]})
@@ -825,38 +910,38 @@ def getSimLayers():
 	return layers
 # get all major event properties, used for drawing the event or other...
 def geteventprop (dframe,evidx,align):
-  evidx=int(evidx)
-  dur,chan,hasbefore,hasafter,windowidx,offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT,filtsigcor,Foct = [dframe.at[evidx,c] for c in ['dur','chan','hasbefore','hasafter','windowidx','offidx','left','right','minT','maxT','peakT','minF','maxF','peakF','avgpowevent','ncycle','WavePeakT','WaveTroughT','WaveletPeakT','WaveletLeftTroughT','WaveletRightTroughT','filtsigcor','Foct']]
-  if 'cyc_npeak' in dframe.columns:
-    cycnpeak = dframe.at[evidx,'cyc_npeak']
-  else:
-    cycnpeak = -1
-  if 'ERPscore' in dframe.columns:
-    ERPscore = dframe.at[evidx,'ERPscore']
-  else:
-    ERPscore = -2
-  if False and 'OSCscore' in dframe.columns:
-    OSCscore = dframe.at[evidx,'OSCscore']
-  else:
-    OSCscore = -2
-  band=dframe.at[evidx,'band']
-  w2 = int((right-left+1)/2.)
-  left=int(left+offidx); right=int(right+offidx);
-  alignoffset = 0 # offset to align waveforms to 0, only used when specified as below
-  if align == 'byspecpeak':
-    alignoffset = -peakT
-  elif align == 'bywavepeak':
-    alignoffset = -WavePeakT
-  elif align == 'bywavetrough':
-    alignoffset = -WaveTroughT
-  elif align == 'bywaveletpeak':
-    alignoffset = -WaveletPeakT
-  elif align == 'bywaveletlefttrough':
-    alignoffset = -WaveletLeftTroughT
-  elif align == 'bywaveletrighttrough':
-    alignoffset = -WaveletRightTroughT
-  #print('align:',peakT,align,alignoffset)
-  return dur,int(chan),hasbefore,hasafter,int(windowidx),offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT ,w2,left,right,band,alignoffset,filtsigcor,Foct,cycnpeak,ERPscore,OSCscore
+	evidx=int(evidx)
+	dur,chan,hasbefore,hasafter,windowidx,offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT,filtsigcor,Foct = [dframe.at[evidx,c] for c in ['dur','chan','hasbefore','hasafter','windowidx','offidx','left','right','minT','maxT','peakT','minF','maxF','peakF','avgpowevent','ncycle','WavePeakT','WaveTroughT','WaveletPeakT','WaveletLeftTroughT','WaveletRightTroughT','filtsigcor','Foct']]
+	if 'cyc_npeak' in dframe.columns:
+		cycnpeak = dframe.at[evidx,'cyc_npeak']
+	else:
+		cycnpeak = -1
+	if 'ERPscore' in dframe.columns:
+		ERPscore = dframe.at[evidx,'ERPscore']
+	else:
+		ERPscore = -2
+	if False and 'OSCscore' in dframe.columns:
+		OSCscore = dframe.at[evidx,'OSCscore']
+	else:
+		OSCscore = -2
+	band=dframe.at[evidx,'band']
+	w2 = int((right-left+1)/2.)
+	left=int(left+offidx); right=int(right+offidx);
+	alignoffset = 0 # offset to align waveforms to 0, only used when specified as below
+	if align == 'byspecpeak':
+		alignoffset = -peakT
+	elif align == 'bywavepeak':
+		alignoffset = -WavePeakT
+	elif align == 'bywavetrough':
+		alignoffset = -WaveTroughT
+	elif align == 'bywaveletpeak':
+		alignoffset = -WaveletPeakT
+	elif align == 'bywaveletlefttrough':
+		alignoffset = -WaveletLeftTroughT
+	elif align == 'bywaveletrighttrough':
+		alignoffset = -WaveletRightTroughT
+	#print('align:',peakT,align,alignoffset)
+	return dur,int(chan),hasbefore,hasafter,int(windowidx),offidx,left,right,minT,maxT,peakT,minF,maxF,peakF,avgpowevent,ncycle,WavePeakT,WaveTroughT,WaveletPeakT,WaveletLeftTroughT,WaveletRightTroughT ,w2,left,right,band,alignoffset,filtsigcor,Foct,cycnpeak,ERPscore,OSCscore
 # ONLY FOR SIM SUBJECTS FOR NOW!! 
 ### TO DO: (1) expand to NHP (2) add in capability for 'all' regions 
 ### NOTE: can / should this even be expanded to NHP? 
@@ -2412,10 +2497,11 @@ def getCSDdata(dataFile=None, outputType=['timeSeries', 'spectrogram'], oscEvent
 
 
 	return outputData
-def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=None, alignoffset=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], hasBefore=1, hasAfter=1, savePath=None, saveFig=True):
+def plotCombinedCSD(pop, electrode, colorDict, customPopTitle=None, timeSeriesDict=None, spectDict=None, alignoffset=None, vmaxContrast=None, colorMap='jet', figSize=(10,7), minFreq=None, maxFreq=None, plotTypes=['timeSeries', 'spectrogram'], hasBefore=1, hasAfter=1, savePath=None, saveFig=True):
 	### pop: list or str 				--> relevant population to plot data for 
 	### electrode: int 					--> electrode at which to plot the CSD data 
 	### colorDict: dict 				--> corresponds pop to color 
+	### customPopTitle: str 
 	### timeSeriesDict: dict 			--> output of getCSDdata (with outputType=['timeSeries'])
 	### spectDict: dict 				--> output of getCSDdata (with outputType=['spectrogram'])
 	### alignoffset: float 				!! --> Can be gotten from plotWavelets.py in a1dat [TO DO: ELABORATE ON THIS / LINK CALCULATIONS]
@@ -2445,8 +2531,9 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 	fig, (ax1, ax2) = plt.subplots(2, 1, figsize=figSize)
 
 	# Set font sizes
-	labelFontSize = 12  ## NOTE: spike has this as 12, lfp plotting has this as 15 
-	titleFontSize = 20
+	labelFontSize = 20 # 15  ## NOTE: spike has this as 12, lfp plotting has this as 15 
+	titleFontSize = 30
+	tickFontSize = 17 #15
 
 	# Set electrode variable, for plot title(s)
 	if type(electrode) is list:
@@ -2504,7 +2591,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 			maxFreq = np.amax(F)	# 100
 
 		## Set up imshowSignal
-		imshowSignal = S#[minFreq:maxFreq+1] ## NOTE: Is the +1 necessary here or not? Same question for spiking data. Leave it in for now. 
+		imshowSignal = S 			#[minFreq:maxFreq+1] ## NOTE: Is the +1 necessary here or not? Same question for spiking data. Leave it in for now. 
 
 
 	#### TIME SERIES CALCULATIONS ####-------------------------------------------------------
@@ -2535,7 +2622,8 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		if popToPlot is None:
 			spectTitle = 'CSD Spectrogram, channel ' + str(spectDict['chan'])
 		else:
-			spectTitle = 'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
+			if customPopTitle:
+				spectTitle = customPopTitle	#'CSD Spectrogram for ' + popToPlot + ', channel ' + str(spectDict['chan'])
 		# plot and format 
 		ax1 = plt.subplot(2, 1, 1)
 		img = ax1.imshow(imshowSignal, extent=(np.amin(T), np.amax(T), minFreq, maxFreq), origin='lower', interpolation='None', aspect='auto', 
@@ -2544,11 +2632,14 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		cax1 = divider1.append_axes('right', size='3%', pad=0.2)
 		fmt = matplotlib.ticker.ScalarFormatter(useMathText=True)		## fmt lines are for colorbar scientific notation
 		fmt.set_powerlimits((0,0))
-		plt.colorbar(img, cax = cax1, orientation='vertical', label='Power', format=fmt)
+		cbar = plt.colorbar(img, cax = cax1, orientation='vertical', format=fmt)  # label='Power', 
+		cbar.set_label(label='Power', size=17)
+		cbar.ax.tick_params(labelsize=17)#12)
 		ax1.set_title(spectTitle, fontsize=titleFontSize)
 		ax1.set_ylabel('Frequency (Hz)', fontsize=labelFontSize)
 		ax1.set_xlim(left=T[0], right=T[1]) 			# ax1.set_xlim(left=timeRange[0], right=timeRange[1])
 		# ax1.set_ylim(minFreq, maxFreq)				# Uncomment this if using the commented-out ax1.imshow (with S, and with np.amin(F) etc.)
+		ax1.tick_params(axis='both', labelsize=tickFontSize)		# Increase tick size 
 
 
 		### PLOT TIMESERIES ###
@@ -2556,7 +2647,7 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 		if popToPlot is None:
 			timeSeriesTitle = 'CSD Signal, channel ' + str(timeSeriesDict['chan'])
 		else:
-			timeSeriesTitle = 'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
+			timeSeriesTitle = 'Model ' + popToPlot + ', CSD time series' #'CSD Signal for ' + popToPlot + ', channel ' + str(timeSeriesDict['chan'])
 
 		# y-axis label
 		timeSeriesYAxis = 'CSD Amplitude (' + r'$\frac{mV}{mm^2}$' + ')'
@@ -2589,6 +2680,8 @@ def plotCombinedCSD(pop, electrode, colorDict, timeSeriesDict=None, spectDict=No
 			ax2.set_xlim(left=tt_during[0], right=tt_during[-1]) 		# ax2.set_xlim(left=t[0], right=t[-1]) 			# ax2.set_xlim(left=timeRange[0], right=timeRange[1])
 		# Set y-axis label 
 		ax2.set_ylabel(timeSeriesYAxis, fontsize=labelFontSize)
+		ax2.tick_params(axis='both', labelsize=tickFontSize)
+
 
 		# For potential saving 
 		if popToPlot is None:
@@ -3023,19 +3116,27 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 		fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,7)) # fig = plt.figure() # figsize=figSize
 		ax1 = plt.subplot(1, 1, 1)
 
-		vmin = np.array([s.TFR for s in lms]).min()
-		vmax = np.array([s.TFR for s in lms]).max()
-		vc = [vmin, vmax]
-		# print('vmin: ' + str(vmin))
-		# print('vmax: ' + str(vmax))
+		# vc = [1,80]
+		# vmin = np.array([s.TFR for s in lms]).min()
+		# vmax = np.array([s.TFR for s in lms]).max()
+		# vc = [vmin, vmax]
+		# # print('vmin: ' + str(vmin))
+		# # print('vmax: ' + str(vmax))
 
 		
 		if plotNorm:
 			imshowSignalNorm = lmsnorm[0] # .TFR  
 			imshowSignal=imshowSignalNorm
+			vmin = np.array([s.TFR for s in lms][1]).min()
+			vmax = np.array([s.TFR for s in lms][1]).max()
+			vc = [vmin, vmax]
 		else:
 			S = lms[0].TFR
 			imshowSignal = S # imshowSignal 	# S #### [freqmin:freqmax+1]		# S[minFreq:maxFreq+1]
+			vmin = np.array([s.TFR for s in lms][0]).min()
+			vmax = np.array([s.TFR for s in lms][0]).max()
+			vc = [vmin, vmax]
+
 
 		T = lms[0].t # timeData # ms.t # lms[0].t ### CORRECT USING MINT, ALIGNOFFSET, ETC. 
 		F = lms[0].f
@@ -3075,4 +3176,72 @@ def getPeakF(dataFile, inputData, csdAllChans, timeData=None, chan=8, freqmin=1.
 
 
 
+######## PLOT LFP PSD ########
+
+
+## THIS CODE IS FOR THE FIGURE IN THESIS PRESENTATION REGARDING 1.6 HZ (624.5ms BBN SOA)
+
+# dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/BBN_CINECA_v36_5656BF_SOA624/BBN_CINECA_v36_5656BF_624ms_data.pkl'
+# simData = sim.load(dataFile, instantiate=False)
+# allData = plotLFP(timeRange = [0, 2500], plots=['PSD'], electrodes=[4, 11, 13], normSignal=False, normPSD=False, minFreq=0.1, maxFreq=3, stepFreq=0.1)		#, inputLFP=None)
+
+
+# # timeRange = [0, 2500]	#[2500, 10000]  # 0-2500 for BEFORE STIM 		# 2500-10000 for DURING STIM 
+
+
+
+
+## THIS CODE IS FOR NMDAR 
+
+# dataFile_WT = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/v39_BBN_E_to_I/v39_BBN_E_to_I_0_0_data.pkl'
+# simData_WT = sim.load(dataFile_WT, instantiate=False)
+# allData_WT = plotLFP(timeRange = [2500, 10000], plots=['PSD'], electrodes=[4, 11, 13], normSignal=False, normPSD=False, minFreq=0.1, maxFreq=5, stepFreq=0.1)#, showFig=False)		#, inputLFP=None)
+# allData_WT = plotLFP(timeRange = [2500, 10000], plots=['PSD'], electrodes=[4, 11, 13], normSignal=False, normPSD=False, minFreq=1, maxFreq=4, stepFreq=0.1)#, showFig=False)		#, inputLFP=None)
+# allData_WT_preStim = plotLFP(timeRange = [0, 2500], plots=['PSD'], electrodes=['avg', 4, 11, 13], normSignal=False, normPSD=False, minFreq=1, maxFreq=4, stepFreq=0.1)#, showFig=False)		#, inputLFP=None)
+
+# ['avg']
+# allFreqs_WT = allData_WT[1]['allFreqs'][0]
+# allSignal_WT = allData_WT[1]['allSignal'][0]
+# allFreqs_WT_preStim = allData_WT_preStim[1]['allFreqs'][0]
+# allSignal_WT_preStim = allData_WT_preStim[1]['allSignal'][0]
+
+
+
+# dataFile_NMDAR = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/BBN/v39_BBN_E_to_I/v39_BBN_E_to_I_0_1_data.pkl'  # 0_1
+# simData_NMDAR = sim.load(dataFile_NMDAR, instantiate=False)
+# allData_NMDAR = plotLFP(timeRange = [0,2500], plots=['PSD'], electrodes=[4, 11, 13], normSignal=False, normPSD=False, minFreq=0.1, maxFreq=5, stepFreq=0.1)#, showFig=False)		#, inputLFP=None)
+# [2500, 10000]
+#allData_NMDAR = plotLFP(timeRange = [2500, 10000], plots=['PSD'], electrodes=[4, 11, 13], normSignal=False, normPSD=False, minFreq=1, maxFreq=4, stepFreq=0.1)#, showFig=False)		#, inputLFP=None)
+# allData_NMDAR_preStim = plotLFP(timeRange = [0,2500], plots=['PSD'], electrodes=['avg'], normSignal=False, normPSD=False, minFreq=1, maxFreq=4, stepFreq=0.1, showFig=False)		#, inputLFP=None)
+
+# ['avg']
+# # ['avg', 4, 11, 13]
+
+# allFreqs_NMDAR = allData_NMDAR[1]['allFreqs'][0]
+# allSignal_NMDAR = allData_NMDAR[1]['allSignal'][0]
+# allFreqs_NMDAR_preStim = allData_NMDAR_preStim[1]['allFreqs'][0]
+# allSignal_NMDAR_preStim = allData_NMDAR_preStim[1]['allSignal'][0]
+
+
+# # DURING 
+# plt.plot(allFreqs_WT, allSignal_WT, 'k')
+# plt.plot(allFreqs_NMDAR, allSignal_NMDAR, 'k--')
+# plt.legend(['WT', 'NMDAR'])
+# plt.title('LFP PSD')
+# # plt.show()
+
+# # PRESTIM
+# plt.plot(allFreqs_WT, allSignal_WT)
+# plt.plot(allFreqs_WT_preStim, allSignal_WT_preStim)
+# # plt.figure(figsize=(3,2))
+# plt.legend(['WT', 'WT preStim'])
+# plt.title('LFP PSD')
+
+
+# # # PRESTIM 
+# plt.plot(allFreqs_WT_preStim, allSignal_WT_preStim)
+# plt.plot(allFreqs_NMDAR_preStim, allSignal_NMDAR_preStim)
+# plt.legend(['WT', 'NMDAR'])
+# plt.title('LFP PSD preStim')
+# plt.show()
 

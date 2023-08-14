@@ -4,8 +4,8 @@
 # IMPORTS # 
 
 import numpy as np
-#from bbox import bbox# , p2d
-import bbox 
+from bbox import bbox# , p2d
+# import bbox 
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion  
 from scipy.ndimage.filters import maximum_filter
 from morlet import MorletSpec
@@ -978,5 +978,4 @@ def getblobIEI (lblob,scalex=1.0):
 
 # get event blobs in (inclusive for lower bound, strictly less than for upper bound) range of minf,maxf
 def getblobinrange (lblobf, minF,maxF): return [blob for blob in lblobf if blob.peakF >= minF and blob.peakF < maxF]
-
 

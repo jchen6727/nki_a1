@@ -734,15 +734,11 @@ def custom_spont(filename):
     
     #params['thalamoCorticalGain'] = [cfgLoad['thalamoCorticalGain']] # [cfgLoad['thalamoCorticalGain']*0.75, cfgLoad['thalamoCorticalGain'], cfgLoad['thalamoCorticalGain']*1.25]
     
-    params[('seeds', 'conn')] = [4, 0] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
-    params[('seeds', 'stim')] = [0] #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
+    params[('seeds', 'conn')] = [2] #list(range(3)) #list(range(5)) #[3, 3]  #[3]#[3, 3] #list(range(1)) #[4321+(17*i) for i in range(5)]
+    params[('seeds', 'stim')] = [3] #list(range(5)) #[2, 3]  #[4]#[2, 3] #list(range(1)) #[1234+(17*i) for i in range(5)]
 
     # params['ihGbar'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
     # params['KgbarFactor'] = [0.25, 0.5] #[0.75, 1.0, 1.25]
-
-    # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
-    params['tTypeCorticalFactor'] = [0.5, 0.1]
-    params['tTypeThalamicFactor'] = [0.5, 0.1]
 
     groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
 
@@ -759,113 +755,16 @@ def custom_spont(filename):
     # initCfg[('seeds', 'conn')] = 0
     # initCfg[('seeds', 'stim')] = 0
 
-    initCfg['saveCellSecs'] = False
-    initCfg['saveCellConns'] = False
-    
-    # from prev - best of 50% cell density
-    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
-                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
-                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
-                    ('EILayerGain', '1'), ('IILayerGain', '1'),
-                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
-                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
-                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
-                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
-                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
-                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+    # plotting and saving params
+    # initCfg[('analysis','plotRaster','timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotTraces', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotSpikeStats', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotLFP', 'timeRange')] = initCfg['printPopAvgRates']
+    #initCfg[('analysis', 'plotCSD', 'timeRange')] = [1500, 1700]
 
-    for p in updateParams:
-        if isinstance(p, tuple):
-            initCfg.update({p: cfgLoad[p[0]][p[1]]})
-        else:
-            initCfg.update({p: cfgLoad[p]})
-
-    # good thal params for 100% cell density 
-    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
-
-    for p in updateParams2:
-        if isinstance(p, tuple):
-            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
-        else:
-            initCfg.update({p: cfgLoad2[p]})
-
-
-    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
-    b.method = 'grid'
-
-    return b
-
-
-
-# ----------------------------------------------------------------------------------------------
-# Custom Manipulations for Dr Javitt
-# ----------------------------------------------------------------------------------------------
-def custom_manip(filename):
-    params = specs.ODict()
-
-    if not filename:
-        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'  # 'data/simDataFiles/spont/jsonCfgFiles/A1_v34_batch27_v34_batch27_0_3_cfg.json'
-
-    # from prev 
-    import json
-    with open(filename, 'rb') as f:
-        cfgLoad = json.load(f)['simConfig']
-    cfgLoad2 = cfgLoad
-
-
-
-    BBN_deltaSOA_startTime2500 = list(np.arange(2500, 12000, 300))
-    BBN_deltaSOA_startTime1000 = list(np.arange(1000, 12000, 300))
-    params[('ICThalInput', 'startTime')] = [BBN_deltaSOA_startTime2500, BBN_deltaSOA_startTime1000]
-
-
-    # #### LOOP STIMULUS INPUT ####  
-    # ## DELTA 
-    # BBN_stimTimes_delta500 = list(np.arange(2500, 12500, 500))
-    # BBN_stimTimes_delta300 = list(np.arange(2500, 12500, 300))
-    # ## THETA
-    # BBN_stimTimes_theta250 = list(np.arange(2500, 12500, 250))
-    # BBN_stimTimes_theta150 = list(np.arange(2500, 12500, 150))
-    # ## ALPHA
-    # BBN_stimTimes_alpha120 = list(np.arange(2500, 12500, 120))
-    # BBN_stimTimes_alpha80 = list(np.arange(2500, 12500, 80))
-    ## VARY START TIMES LIST FOR BBN STIMULUS 
-    # params[('ICThalInput', 'startTime')] = [BBN_stimTimes_delta300, BBN_stimTimes_theta150]#, BBN_stimTimes_alpha80] 
-
-    # # TO TEST OUT T-TYPE CALCIUM CHANNEL MANIPULATIONS
-    # params['tTypeCorticalFactor'] = [0.5, 0.1]
-    # params['tTypeThalamicFactor'] = [0.5, 0.1]
-
-    # TO TEST OUT NMDAR E --> I MANIPULATIONS 
-    ## params['NMDARfactor'] = [1.0, 0.5, 0.1]         # 1.0 will be wild type 
-
-    # cfg.synWeightFractionEI
-    params['synWeightFractionEI_CustomCort'] = [[0.5, 0.1], [0.5, 0.25], [0.5, 0.75]]      # synWeightFractionEI = [0.5, 0.5] # AMPA, NMDA 
-
-    groupedParams = [] #('ICThalInput', 'probE'), ('ICThalInput', 'probI')] #('IELayerGain', '1-3'), ('IELayerGain', '4'), ('IELayerGain', '5'), ('IELayerGain', '6')]
-
-    # --------------------------------------------------------
-    # initial config
-    initCfg = {} # set default options from prev sim
-    
-    initCfg['duration'] = 12000                                      # 11500
-    initCfg['printPopAvgRates'] = [1500, initCfg['duration']] 
-    initCfg['scaleDensity'] = 1.0                                     # 1.0
-    initCfg['recordStep'] = 0.05
-
-    # conn and stim seeds 
-    initCfg[('seeds', 'conn')] = 0
-    initCfg[('seeds', 'stim')] = 0
-
-    ## BBN STIMULUS FOR ICThalInput ##  COMMENT OUT FOR SPONTANEOUS RUNS ## OR SET TO {}
-    initCfg['ICThalInput'] = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat',
-                            'startTime': 2500,
-                            'weightE': 0.25,
-                            'weightI': 0.25,
-                            'probE': 0.12, 
-                            'probI': 0.12,
-                            'seed': 1} 
-
+    # changed directly in cfg.py    
+    #initCfg[('analysis', 'plotCSD')] = {'spacing_um': 100, 'timeRange': initCfg['printPopAvgRates'], 'LFP_overlay': 1, 'layer_lines': 1, 'saveFig': 1, 'showFig': 0}
+    #initCfg['recordLFP'] = [[100, y, 100] for y in range(0, 2000, 100)]
 
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
@@ -902,7 +801,6 @@ def custom_manip(filename):
     b.method = 'grid'
 
     return b
-
 
 
 # ----------------------------------------------------------------------------------------------
@@ -1049,14 +947,20 @@ def custom_BBN(filename):
 
 
     #### UNCOMMENT THIS FOR LOOPED STIMULUS INPUT:  
-    BBN_stimTimes = list(np.arange(2500, 11300, 624.5))
-    BBN_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
-    BBN_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
-    params[('ICThalInput', 'startTime')] = [5000, BBN_stimTimes, BBN_stimTimes_shorterSOA, BBN_stimTimes_longerSOA]
+    # BBN_stimTimes = list(np.arange(2500, 11300, 624.5))
+    # BBN_stimTimes_shorterSOA = list(np.arange(2500, 11300, 400))
+    # BBN_stimTimes_longerSOA = list(np.arange(2500, 11300, 850))
+    # BBN_deltaSOA_startTime2500 = list(np.arange(2500, 12000, 300))
+    # BBN_deltaSOA_startTime3450 = list(np.arange(3450, 12000, 300))
+    # BBN_deltaSOA_startTime1000 = list(np.arange(1000, 12000, 300))
+    stim_noStim_startTime5000 = list(np.arange(5000, 9000, 300))    # 0-1s: discard / 1-5s: quiet   / 5-9s: BBN stim
+    stim_noStim_startTime5500 = list(np.arange(5500, 10000, 300))   # 0-1s: discard / 1-5.5s: quiet / 5.5-10s: BBN stim
+    stim_noStim_startTime5750 = list(np.arange(5750, 10500, 300))    # 0-1s: discard / 1-5.75s: quiet / 5.75-10.5s: BBN stim
+    params[('ICThalInput', 'startTime')] = [stim_noStim_startTime5000, stim_noStim_startTime5500, stim_noStim_startTime5750] #[BBN_deltaSOA_startTime2500, BBN_deltaSOA_startTime3450, BBN_deltaSOA_startTime1000]
 
-    #### SET CONN AND STIM SEEDS #### 
-    params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
-    params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+    # #### SET CONN AND STIM SEEDS #### 
+    # params[('seeds', 'conn')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
+    # params[('seeds', 'stim')] = [0] #[0,1] #[0,1,4] # list(range(1)) # list(range(5)) 
 
     #### GROUPED PARAMS #### 
     groupedParams = [] 
@@ -1066,9 +970,13 @@ def custom_BBN(filename):
     initCfg = {} # set default options from prev sim
     
     initCfg['duration'] = 12000 #11500 
-    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['printPopAvgRates'] = [1500, 11500]
     initCfg['scaleDensity'] = 1.0 
     initCfg['recordStep'] = 0.05
+
+    # SET SEEDS FOR CONN AND STIM 
+    initCfg[('seeds', 'conn')] = 0
+    initCfg[('seeds', 'stim')] = 0
 
     # # plotting and saving params
     # initCfg[('analysis', 'plotRaster','timeRange')] = initCfg['printPopAvgRates'] # MAY NEED TO BE 'plotting' rather than 'analysis' now? 
@@ -1088,7 +996,6 @@ def custom_BBN(filename):
 
     ### OPTION TO RECORD EEG / DIPOLE ###
     initCfg['recordDipole'] = False
-
     initCfg['saveCellSecs'] = False
     initCfg['saveCellConns'] = False
     
@@ -1126,7 +1033,7 @@ def custom_BBN(filename):
     return b
 
 # ----------------------------------------------------------------------------------------------
-# Custom pure tone stim
+# Custom pure click stim
 # ----------------------------------------------------------------------------------------------
 def custom_click(filename):
     params = specs.ODict()
@@ -1434,6 +1341,104 @@ def custom_stim(filename):
 
     return b
 
+
+# ----------------------------------------------------------------------------------------------
+# Optuna optimization for ERP 
+# ----------------------------------------------------------------------------------------------
+def optunaERP(): 
+
+    # from prev 
+    if not filename:
+        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+
+    import json
+    with open(filename, 'rb') as f:
+        cfgLoad = json.load(f)['simConfig']
+    cfgLoad2 = cfgLoad
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+
+    params[('seeds', 'conn')] = [0]
+    params[('seeds', 'stim')] = [0]
+
+
+    # ADD: parameters to vary 
+
+
+
+
+    groupedParams = []
+
+
+
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+
+    initCfg['duration'] = 11500 
+    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['scaleDensity'] = 1.0 
+    initCfg['recordStep'] = 0.05
+
+    # ADD: initCfg[] that correlates to parameters being varied above...
+
+
+
+
+    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                    ('EILayerGain', '1'), ('IILayerGain', '1'),
+                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+
+    for p in updateParams:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad[p]})
+
+    # good thal params for 100% cell density 
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+    for p in updateParams2:
+        if isinstance(p, tuple):
+            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
+        else:
+            initCfg.update({p: cfgLoad2[p]})
+
+
+    # --------------------------------------------------------
+    # fitness function
+    fitnessFuncArgs = {}
+
+    def fitnessFunc(simData, **kwargs):
+        print ('-- Defining fitness function -- ')
+
+
+    # --------------------------------------------------------
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'optuna'
+
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+    #     'maxFitness': fitnessFuncArgs['maxFitness'],
+    #     'maxiters':     1e6,      #    Maximum number of iterations (1 iteration = 1 function evaluation)
+    #     'maxtime':      None,     #    Maximum time allowed, in seconds
+    #     'maxiter_wait': 45,
+    #     'time_sleep': 120,
+    #     'popsize': 1              # unused - run with mpi 
+    }
+
+    return b
 
 
 
@@ -3457,7 +3462,7 @@ def setRunCfg(b, type='mpi_bulletin'):
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
-            'walltime': '2:00:00',            # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
+            'walltime': '1:30:00',            # g100_qos_dbg : 2 hrs           # noQOS: 24 hrs 
             'nodes': 4,                       # g100_qos_dbg : max 2 nodes     # noQOS: max 32 nodes 
             'coresPerNode': 24, #48,               # g100_qos_dbg : nodes*coresPerNode = 96 MAX       
             'partition': 'g100_usr_prod',
@@ -3496,10 +3501,9 @@ if __name__ == '__main__':
 
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
 
-    b = custom_manip('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
@@ -3515,7 +3519,7 @@ if __name__ == '__main__':
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
 
-    b.batchLabel = 'BBN_synWeightFractionEI_customCort' #'v39_BBN_E_to_I'               #'v37_tTypeReduction0_CINECA'   #'pureTone_CINECA_v36_variedCF_variedSOA'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'BBN_stim_noStim'    #'BBN_deltaSOA_variedStartTimes'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
     b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
 
@@ -3535,3 +3539,4 @@ if __name__ == '__main__':
     #     setRunCfg(b, 'hpc_slurm_gcp')
     #     b.run()  # run batch
     #     batchIndex += 1
+    

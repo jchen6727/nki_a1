@@ -118,6 +118,7 @@ thetaOscEventInfo = {'chan': 8, 'minT': 2785.22321038684,
 					'maxT': 3347.9278996316607, 'alignoffset':-3086.95, 'left': 55704, 'right':66958,
 					'w2': 3376}  # 
 
+# betaOscEventInfo = {'chan': 19, 'minT': 2149.6607483037415, 'maxT': 2332.7116635583175, 'alignoffset': 0, 'left': 0, 'right': 100, 'w2':100}
 
 
 ###############################
@@ -138,7 +139,7 @@ if evalWavelets_Band:
 
 
 ## Automated pop selection based on max (peak or avg) CSD values ## 
-evalPopsBool = 1
+evalPopsBool = 0
 if evalPopsBool:
 
 	# Put any test info here # 
@@ -459,30 +460,40 @@ if plotLFPCombinedData:
 #######################################
 
 
-plotCSDCombinedData = 0
+plotCSDCombinedData = 1
+
+
+
+dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl'
+betaOscEventInfo = {'chan': 19, 'minT': 2149.6607483037415, 'maxT': 2332.7116635583175, 'alignoffset': -2270.0, 'left': 42993, 'right': 46654, 'w2':1098}
+oscEventInfo = betaOscEventInfo
 
 
 if plotCSDCombinedData:
 
 	# print('Plotting Combined CSD data')
-	electrode=[8]
-	includePops=['ITS4']	#[None, 'ITS4', 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
+	electrode=[19] #[8]
+	includePops=['IT6']#['CT6', 'IT6', 'PT5B']	#['ITS4']	#[None, 'ITS4', 'ITP4', 'IT5A'] # ['IT3', 'ITS4', 'ITP4', 'IT5A', 'PT5B']
 
 	minFreq = 1 			# 0.25 # 1 
-	maxFreq = 12 			# 110 # 40 # 25 
+	maxFreq = 50 #12 			# 110 # 40 # 25 
 	stepFreq = 0.25 		# 1 # 0.25 
 
+	peakFDict = {'CT6': 15.25, 'IT6': 15.5}
 
 	for pop in includePops:
+
+		peakFbyPop = peakFDict[pop]
+		customPopTitle = 'Model ' + pop + ' (Beta)' #' (Beta, ' + str(peakFbyPop) + ' Hz)'
 
 		print('Plotting CSD spectrogram and timeSeries for ' + pop + ' at electrode ' + str(electrode))
 
 		## Get dictionaries with CSD data for spectrogram and timeSeries plotting 
-		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
-		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
+		timeSeriesDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=oscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=oscEventInfo, pop=pop, minFreq=minFreq, maxFreq=maxFreq, stepFreq=stepFreq)
 
 
-		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, pop=pop, electrode=electrode, 
+		plotCombinedCSD(timeSeriesDict=timeSeriesDict, spectDict=spectDict, colorDict=colorDict, customPopTitle=customPopTitle, pop=pop, electrode=electrode, 
 			minFreq=1, maxFreq=maxFreq, vmaxContrast=None, colorMap='jet', figSize=(10,7), plotTypes=['timeSeries', 'spectrogram'], 
 			hasBefore=1, hasAfter=1, saveFig=True) # colorDict=colorDictCustom 
 
@@ -492,11 +503,16 @@ if plotCSDCombinedData:
 ##########################################
 
 
-plotCombinedSpikeData = 0  
+plotCombinedSpikeData = 0
+
+dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl'
+betaOscEventInfo = {'chan': 19, 'minT': 2149.6607483037415, 'maxT': 2332.7116635583175, 'alignoffset': -2270.0, 'left': 42993, 'right': 46654, 'w2':1098}
+oscEventInfo = betaOscEventInfo
+
 
 if plotCombinedSpikeData:
 
-	includePops=['ITS4', 'ITP4', 'IT5A']		# ['IT3', 'ITS4', 'IT5A']  ## AUTOMATE THIS SOMEHOW? i.e. with eval pops fx's? 
+	includePops=['CT6', 'IT6', 'PT5B', 'CT5A'] #['ITS4', 'ITP4', 'IT5A']		# ['IT3', 'ITS4', 'IT5A']  ## AUTOMATE THIS SOMEHOW? i.e. with eval pops fx's? 
 
 	for pop in includePops:
 		print('Plotting spike data for ' + pop)
@@ -505,9 +521,9 @@ if plotCombinedSpikeData:
 		spikeSpectDict = getSpikeData(dataFile, graphType='spect', pop=pop, oscEventInfo=thetaOscEventInfo)		#	timeRange=timeRange)
 		histDict = getSpikeData(dataFile, graphType='hist', pop=pop, oscEventInfo=thetaOscEventInfo)			#	timeRange=timeRange)
 
-		## Then call plotting function 
-		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDictCustom, plotTypes=['spectrogram', 'histogram'],
-		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) 		# timeRange=timeRange, 
+		## Then call plotting function
+		plotCombinedSpike(spectDict=spikeSpectDict, histDict=histDict, colorDict=colorDict, plotTypes=['spectrogram', 'histogram'],
+		hasBefore=1, hasAfter=1, pop=pop, figSize=(10,7), colorMap='jet', vmaxContrast=2, maxFreq=None, saveFig=1) 	# colorDictCustom	# timeRange=timeRange, 
 
 # TO DO: Smooth or mess with bin size to smooth out spectrogram for spiking data
 
@@ -529,7 +545,7 @@ if summedLFP:
 	# lfpDataTEST = getSumLFP(dataFile=dataFile, popElecDict=popElecDict, timeRange=timeRange, showFig=False)
 
 
-lfpPSD = 0  ## fix bug !! see nb for error 
+lfpPSD = 0 ## fix bug !! see nb for error 
 if lfpPSD: 
 	psdData = getPSDdata(dataFile=dataFile, inputData = lfpDataTEST_fullElecs['sum'])	# inputData = lfpDataTEST['sum'])
 	plotPSD(psdData)
@@ -539,17 +555,23 @@ if lfpPSD:
 ### CSD ###
 csdPSD = 0
 
+dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl'
+betaOscEventInfo = {'chan': 19, 'minT': 2149.6607483037415, 'maxT': 2332.7116635583175, 'alignoffset': -2270.0, 'left': 42993, 'right': 46654, 'w2':1098}
+oscEventInfo = betaOscEventInfo
+
 if csdPSD:
-	includePops=['ITS4']			#['ITS4', 'ITP4', 'IT5A']
+	includePops=['CT6', 'IT6']		#['ITS4']			#['ITS4', 'ITP4', 'IT5A']
 	for pop in includePops:
-		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=betaOscEventInfo, pop=pop)  # thetaOscEventInfo
 		csdData = csdDataDict['csdDuring'] 
+		print('FOR POPULATION: ' + pop + ' , psdData')
 		psdData = getPSDdata(dataFile=dataFile, inputData=csdData, inputDataType='timeSeries', minFreq=1, maxFreq=50, stepFreq=0.1)
 		# plotPSD(psdData)
 		### Unclear on significance of these two sections -- figure that out / look back in nb 
-		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=thetaOscEventInfo, pop=pop, maxFreq=40)
+		spectDict = getCSDdata(dataFile=dataFile, outputType=['spectrogram'], oscEventInfo=betaOscEventInfo, pop=pop, maxFreq=40)  # thetaOscEventInfo,
+		print('FOR POPULATION: ' + pop + ' , psdDataSpect')
 		psdDataSpect = getPSDdata(dataFile=dataFile, inputData=spectDict, inputDataType='spectrogram', duringOsc=1, minFreq=1, maxFreq=40, stepFreq=1)
-		plotPSD(psdDataSpect)
+		#plotPSD(psdDataSpect)
 
 
 
@@ -590,13 +612,18 @@ if csdPSD_wholeCSD:
 ### LOOK AT MAX POWER FOR EACH POP -- TO DO: MAKE THIS INTO A FUNCTION !!!! ### 
 PSDbyPop = 0
 
+dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl'
+betaOscEventInfo = {'chan': 19, 'minT': 2149.6607483037415, 'maxT': 2332.7116635583175, 'alignoffset': -2270.0, 'left': 42993, 'right': 46654, 'w2':1098}
+oscEventInfo = betaOscEventInfo
+
+
 if PSDbyPop:
-	includePops = ECortPops    					# ['IT3'] 	# thalPops 		# AllCortPops
+	includePops = ['CT6', 'IT6']		#ECortPops    					# ['IT3'] 	# thalPops 		# AllCortPops
 	maxPowerByPop = {}
 
 	for pop in includePops:
 		# Get the max power frequency for each pop and put it in a dict
-		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=thetaOscEventInfo, pop=pop)
+		csdDataDict = getCSDdata(dataFile=dataFile, outputType=['timeSeries'], oscEventInfo=betaOscEventInfo, pop=pop)  # thetaOscEventInfo
 		csdDataPop = csdDataDict['csdDuring']
 
 		psdDataPop = getPSDdata(dataFile=dataFile, inputData=csdDataPop, inputDataType='timeSeries', minFreq=1, maxFreq=100, stepFreq=0.25)
@@ -611,11 +638,33 @@ if PSDbyPop:
 ###### load.py checks ######
 ############################
 
+#### plot blob ####
+dataFile = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl'
+
+plotBlobs = 0
+if plotBlobs:
+	sim.load(dataFile, instantiate=False)
+
+	# Calculate sampling rate from simulation timestep 
+	dt = sim.cfg.recordStep  	# or should I divide by 1000.0 up here, and then just do 1.0/dt below for sampr? 
+	sampr = 1.0/(dt/1000.0) 	# divide by 1000.0 to turn denominator from units of ms to s
+
+	spacing_um = 100
+	norm=True
+	lfpData = np.array(sim.allSimData['LFP'])
+
+	inputData = getCSDa1dat(lfps=lfpData,sampr=sampr, spacing_um=spacing_um, minf=0.05, maxf=300,norm=norm,vaknin=True)
+	inputData_chan19 = inputData[19, :]
+	peakFData = getPeakF(dataFile=dataFile,inputData=inputData_chan19, csdAllChans=inputData, chan=19, plotTest=True, plotNorm=0)
+
+
+
+
 #### peakF calculations ####
 peakF = 0
 if peakF:
 	maxFreq = 20 #110 #10
-	plotNorm = 1
+	plotNorm = 0
 	chan=8
 	pop = None #'ITP4'
 
@@ -635,7 +684,7 @@ if peakF:
 	datChan = dat[chan,:]
 	tt = tt[int(timeRange[0]/dt):int(timeRange[1]/dt)]
 
-	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
+	peakFData = getPeakF(dataFile=dataFile, inputData=datChan, csdAllChans=dat, timeData=tt, chan=chan, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdData_theta, csdAllChans=csdData_theta_allChans, timeData=tt, freqmax=maxFreq, plotTest=False, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdDuring, csdAllChans=csdDataAllChans, timeData=tt_During, freqmax=maxFreq, plotTest=True, plotNorm=plotNorm)
 	# peakFData = getPeakF(dataFile=dataFile, inputData=csdOscChan_plusTimeBuffer, csdAllChans=csdAllChans_plusTimeBuffer, timeData=tt_plusTimeBuffer, 
@@ -739,8 +788,8 @@ if getIEIstatsbyBandTEST:
 
 compareHPC = 0
 
-dataFileCineca = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/v34_batch67_CINECA_0_0_data.pkl'
-dataFileGCP = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch57/v34_batch57_0_0_data.pkl'
+dataFileCineca = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/v34_batch67_CINECA/data_pklFiles/v34_batch67_CINECA_0_0_data.pkl'
+dataFileGCP = '/Users/ericagriffith/Desktop/NEUROSIM/A1/data/simDataFiles/spont/A1_v34_batch67_v34_batch67_0_0_data.pkl' #v34_batch57/v34_batch57_0_0_data.pkl'
 
 if compareHPC:
 	sim.load(dataFileCineca, instantiate=False)
@@ -770,17 +819,4 @@ if compareHPC:
 		if gcp_spkt[i]!= cineca_spkt[i]:
 			diff_inds.append(i)
 			diff_values.append([gcp_spkt[i], cineca_spkt[i]])
-
-
-
-
-
-
-
-
-
-
-
-
-
 
