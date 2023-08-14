@@ -853,4 +853,114 @@ and try with 60 cores ... see if that speeds up (took ~180 minutes with 30 cores
 
 ./myrun 60
 
+  Done; run time = 4239.55 s; real-time ratio: 0.00.
+
+took ~70 minutes ...
+
+Saving an output file for each node in: data/23aug10_A0/23aug10_A0_node_data
+Searching for .pkl node files in data/23aug10_A0/23aug10_A0_node_data ...
+
+Gathering data from files for simulation: 23aug10_A0 ...
+  Merging data file: 23aug10_A0_node_0.pkl
+Traceback (most recent call last):
+  File "init.py", line 48, in <module>
+    sim.gatherDataFromFiles()
+  File "/home/samn/netpyne/netpyne/sim/gather.py", line 426, in gatherDataFromFiles
+    allCells.extend([cell.__getstate__() for cell in data['cells']])
+  File "/home/samn/netpyne/netpyne/sim/gather.py", line 426, in <listcomp>
+    allCells.extend([cell.__getstate__() for cell in data['cells']])
+AttributeError: 'dict' object has no attribute '__getstate__'
+
+so, get the same error as before ...
+
+will install versions used on cycle
+
+pip uninstall neuron
+pip uninstall netpyne
+
+pip install neuron==8.0.2
+pip install netpyne==1.0.2.1
+
+ok, try that again ...
+
+./myrun 48
+
+  Cells: 12908
+  Connections: 0 (0.00 per cell)
+  Spikes: 205839 (1.59 Hz)
+  Simulated time: 10.0 s; 48 workers
+  Run time: 3904.57 s
+   NGF1 : 1.673 Hz
+   IT2 : 0.193 Hz
+   SOM2 : 12.540 Hz
+   PV2 : 4.015 Hz
+   VIP2 : 23.019 Hz
+   NGF2 : 7.960 Hz
+   IT3 : 0.141 Hz
+   SOM3 : 0.858 Hz
+   PV3 : 2.888 Hz
+   VIP3 : 11.005 Hz
+   NGF3 : 4.669 Hz
+   ITP4 : 0.189 Hz
+   ITS4 : 0.204 Hz
+   SOM4 : 0.804 Hz
+   PV4 : 1.532 Hz
+   VIP4 : 7.777 Hz
+   NGF4 : 4.979 Hz
+   IT5A : 1.247 Hz
+   CT5A : 0.242 Hz
+   SOM5A : 2.129 Hz
+   PV5A : 0.571 Hz
+   VIP5A : 3.378 Hz
+   NGF5A : 6.300 Hz
+   IT5B : 2.579 Hz
+   CT5B : 0.063 Hz
+   PT5B : 0.082 Hz
+   SOM5B : 12.238 Hz
+   PV5B : 0.248 Hz
+   VIP5B : 1.731 Hz
+   NGF5B : 5.279 Hz
+   IT6 : 0.540 Hz
+   CT6 : 0.340 Hz
+   SOM6 : 12.087 Hz
+   PV6 : 66.013 Hz
+   VIP6 : 68.082 Hz
+   NGF6 : 31.905 Hz
+   TC : 4.322 Hz
+   TCM : 4.186 Hz
+   HTC : 4.057 Hz
+   IRE : 2.533 Hz
+   IREM : 2.982 Hz
+   TI : 1.858 Hz
+   TIM : 3.162 Hz
+Saving output as data/23aug10_A0/23aug10_A0_data.pkl ... 
+Finished saving!
+  Done; saving time = 30.59 s.
+
+ok, ran to completion ... and took ~65 minutes with 48 cores
+
 ** neuron/netpyne version used in A1 paper: neuron==7.8.2 and netpyne==1.0.2.1
+* 23aug14
+** check output from 23aug10_A0_
+
+python -i simdat.py
+
+loading data from 23aug10_A0
+Traceback (most recent call last):
+  File "simdat.py", line 132, in <module>
+    simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT = loadsimdat(name,lpop=[])
+  File "simdat.py", line 28, in loadsimdat
+    if simConfig['net']['pops'][p]['tags']['numCells'] > 0:
+KeyError: 'tags'
+
+no 'tags' used here
+
+name = '23aug10_A0'
+simConfig = pickle.load(open('data/'+name+'/'+name+'_data.pkl','rb'))
+simConfig['net']['pops'].keys()
+odict_keys(['NGF1', 'IT2', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'IT3', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'ITP4', 'ITS4', 'SOM4', 'PV4', 'VIP4', 'NGF4', 'IT5A', 'CT5A', 'SOM5A', 'PV5A', 'VIP5A', 'NGF5A', 'IT5B', 'CT5B', 'PT5B', 'SOM5B', 'PV5B', 'VIP5B', 'NGF5B', 'IT6', 'CT6', 'SOM6', 'PV6', 'VIP6', 'NGF6', 'TC', 'TCM', 'HTC', 'IRE', 'IREM', 'TI', 'TIM'])
+simConfig['net']['pops']['NGF1'].keys() # odict_keys(['cellType', 'cellModel', 'ynormRange', 'density', 'pop', 'numCells', 'cellGids'])
+simConfig['net']['pops']['NGF1']['numCells'] # 151
+
+python -i simdat.py
+

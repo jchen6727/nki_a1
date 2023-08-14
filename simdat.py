@@ -25,7 +25,7 @@ def loadsimdat (name,lpop = []): # load simulation data
   simConfig = pickle.load(open('data/'+name+'/'+name+'_data.pkl','rb'))
   dstartidx,dendidx={},{} # starting,ending indices for each population
   for p in simConfig['net']['pops'].keys():
-    if simConfig['net']['pops'][p]['tags']['numCells'] > 0:
+    if simConfig['net']['pops'][p]['numCells'] > 0:
       dstartidx[p] = simConfig['net']['pops'][p]['cellGids'][0]
       dendidx[p] = simConfig['net']['pops'][p]['cellGids'][-1]
   dnumc = {}
@@ -41,7 +41,7 @@ def loadsimdat (name,lpop = []): # load simulation data
     if dnumc[pop] > 0:
       dspkID[pop] = spkID[(spkID >= dstartidx[pop]) & (spkID <= dendidx[pop])]
       dspkT[pop] = spkT[(spkID >= dstartidx[pop]) & (spkID <= dendidx[pop])]
-  # totalDur = int(dconf['sim']['duration'])
+  totalDur = simConfig['simData']['t'][-1] 
   # tstepPerAction = dconf['sim']['tstepPerAction'] # time step per action (in ms)  
   return simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT
 
@@ -76,11 +76,10 @@ def drawraster (dspkT,dspkID,tlim=None,msz=2,skipstim=True,cmap=None):
   lclr = []
   for pdx,pop in enumerate(lpop):
     if cmap is None:
-      if pop.count('I')>0:
-        if pop.count('L'):
-          color = 'g'
-        else:
-          color = 'b'
+      if pop.count('PV')>0 or pop.count('NGF')>0 or pop.count('VIP')>0 or pop.count('SOM')>0:
+        color = 'b'
+      elif pop.count('TIM')>0 or pop.count('TI')>0 or pop.count('IREM')>0 or pop.count('IRE')>0:
+        color = 'g'
       else:
         color = 'r'
     else:
@@ -108,13 +107,13 @@ def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
   for kdx,k in enumerate(list(simConfig['simData']['V_soma'].keys())):  
     color = csm.to_rgba(kdx);
     if lclr is not None and kdx < len(lclr): color = lclr[kdx]
-    cty = simConfig['net']['cells'][int(k.split('_')[1])]['tags']['cellType']
+    cty = simConfig['net']['cells'][int(k.split('_')[1])]['cellType']
     if ldrawpop is not None and cty not in ldrawpop: continue
     dclr[kdx]=color
-    lpop.append(simConfig['net']['cells'][int(k.split('_')[1])]['tags']['cellType'])
+    lpop.append(simConfig['net']['cells'][int(k.split('_')[1])]['cellType'])
   if ldrawpop is None: ldrawpop = lpop    
   for kdx,k in enumerate(list(simConfig['simData']['V_soma'].keys())):
-    cty = simConfig['net']['cells'][int(k.split('_')[1])]['tags']['cellType']
+    cty = simConfig['net']['cells'][int(k.split('_')[1])]['cellType']
     if ldrawpop is not None and cty not in ldrawpop: continue
     if tlim is not None:
       plot(simConfig['simData']['t'][sidx:eidx],simConfig['simData']['V_soma'][k][sidx:eidx],color=dclr[kdx])
@@ -128,14 +127,14 @@ def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
 def gifpath (name=''): return 'gif/' + getdatestr() + name
 
 if __name__ == '__main__':
-  name = '23aug3_A0'
+  name = '23aug10_A0'
   simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT = loadsimdat(name,lpop=[])
-  dstr = getdatestr(); simstr = dconf['sim']['name'] # date and sim string
+  dstr = getdatestr(); simstr = name # date and sim string
   print('loaded simulation data',simstr,'on',dstr)
   if totalDur <= 10e3:
     pravgrates(dspkT,dspkID,dnumc,tlim=(totalDur-1e3,totalDur))
     drawraster(dspkT,dspkID)
-    figure(); drawcellVm(simConfig,lclr=['r','g','b','c','m','y'])    
+    # figure(); drawcellVm(simConfig,lclr=['r','g','b','c','m','y'])    
   else:
     pravgrates(dspkT,dspkID,dnumc,tlim=(250,totalDur))
 
