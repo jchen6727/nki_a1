@@ -979,3 +979,43 @@ simConfig['net']['pops']['NGF1']['numCells'] # 151
 
 python -i simdat.py
 
+** updated code from repro branch
+
+this was the branch eg used for BBN, ERP, NMDA adjustment figures
+
+most of the changes were in analysis subfolder
+
+** next runs -- BBN
+* 23aug15
+** check LFP presence
+
+python -i simdat.py
+
+savefig('gif/23aug15_rast_a0.png') # [[./gif/23aug15_rast_a0.png]]
+
+xlim((9e3,10e3))
+
+savefig('gif/23aug15_rast_a0b.png') # [[./gif/23aug15_rast_a0b.png]]
+
+some rhythmicity there in thalamic populations, have to check if providing auditory stim
+
+len(simConfig['simData']['LFP']) # 100000
+
+clf()
+
+plot(simConfig['simData']['t'],simConfig['simData']['LFP'])
+
+savefig('gif/23aug15_LFP_a1.png') # [[./gif/23aug15_LFP_a1.png]]
+
+strange transition at the end
+
+xlim((2e3,3e3)); ylim((-1.1,.65))
+
+savefig('gif/23aug15_LFP_a2.png') # [[./gif/23aug15_LFP_a2.png]]
+
+some useful plotting routines already in analysis subfolder (some of it is from OEvent code)
+
+from analysis.simDataAnalysis import *
+
+** setting up rhythmic BBN input
+
