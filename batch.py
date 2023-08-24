@@ -3396,18 +3396,16 @@ def optunaRatesLayersWmat():
 # ----------------------------------------------------------------------------------------------
 def setRunCfg(b, type='mpi_bulletin'):
     if type=='mpi_bulletin':
-        b.runCfg = {'type': 'mpi_bulletin', 
-            'script': 'init_cell.py', 
-            'skip': True}
-
+      b.runCfg = {'type': 'mpi_bulletin', 
+                  'script': 'init.py', 
+                  'skip': True}
     elif type=='mpi_direct':
         b.runCfg = {'type': 'mpi_direct',
             'nodes': 1,
-            'coresPerNode': 96,
+            'coresPerNode': 48,
             'script': 'init.py',
-            'mpiCommand': 'mpirun',
+            'mpiCommand': 'mpiexec',
             'skip': True}
-
     elif type=='hpc_torque':
         b.runCfg = {'type': 'hpc_torque',
              'script': 'init.py',
@@ -3417,7 +3415,6 @@ def setRunCfg(b, type='mpi_bulletin'):
              'queueName': 'longerq',
              'sleepInterval': 5,
              'skip': True}
-
     elif type=='hpc_slurm_comet':
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'shs100', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
@@ -3430,7 +3427,6 @@ def setRunCfg(b, type='mpi_bulletin'):
             'script': 'init.py', 
             'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
             'skipCustom': '_raster.png'}
-
     elif type=='hpc_slurm_gcp':
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'default', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403', gcp='default'
@@ -3445,8 +3441,6 @@ def setRunCfg(b, type='mpi_bulletin'):
             'skipCustom': '_raster.png'}
             #'custom': '#SBATCH --exclude=compute[17-64000]'} # only use first 16 nodes (non-preemptible for long runs )
             # --nodelist=compute1
-
-
     elif type=='hpc_slurm_bridges':
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'ib4iflp', # bridges='ib4iflp', comet m1='shs100', comet nsg='csd403'
@@ -3458,7 +3452,6 @@ def setRunCfg(b, type='mpi_bulletin'):
             'script': 'init.py', 
             'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
             'skip': True}
-
     elif type=='hpc_slurm_cineca':         ## FILL THIS IN
         b.runCfg = {'type': 'hpc_slurm',
             'allocation': 'icei_H_King',
@@ -3476,7 +3469,6 @@ def setRunCfg(b, type='mpi_bulletin'):
             # 'skip': ,
             # 'skipCustom': ,
         #}
-
     elif type=='hpc_slurm_xsede':
         b.runCfg = {'type': 'hpc_slurm', 
             'allocation': 'TG-IBN160014', 
@@ -3520,10 +3512,9 @@ if __name__ == '__main__':
     # b = fIcurve(pops=['IT3','CT5']) 
 
     b.batchLabel = 'BBN_stim_noStim'    #'BBN_deltaSOA_variedStartTimes'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
-    cinecaScratch = '/g100_scratch/userexternal/egriffit/A1/'
-    b.saveFolder = cinecaScratch + b.batchLabel         #'data/'+b.batchLabel
+    b.saveFolder = 'data/'+b.batchLabel
 
-    setRunCfg(b, 'hpc_slurm_cineca')
+    setRunCfg(b, 'mpi_direct')
     b.run() # run batch
 
 

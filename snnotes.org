@@ -1018,4 +1018,46 @@ some useful plotting routines already in analysis subfolder (some of it is from 
 from analysis.simDataAnalysis import *
 
 ** setting up rhythmic BBN input
+* 23aug23
+** how to run BBN
+
+check here
+https://github.com/NathanKlineInstitute/A1/commit/c4011870a4c1617ca8b4d056dbed494e3e18f706
+
+uses batch.py in repro branch, and there's a custom_BBN function there
+that runs with and without the BBN stimulus ... 
+
+* 23aug24
+** testing BBN batch
+
+http://www.netpyne.org/tutorial.html#tutorial-8-running-batch-simulations
+
+mpiexec -np 48 nrniv -python -mpi batch.py
+
+hmm, getting issues running using mpiexec ... creates configs but does not actually run them
+
+** info from SD
+
+sd: for BBN here’s the data: https://drive.google.com/drive/folders/1FYnlTBrS2WVvHAa6LWNoeq03v-O9496P?usp=drive_link
+and this some summary erica sent: https://docs.google.com/document/d/1E0EHdja1HpzQKHa0q5WqGRP386xjEYs_wHDLz2xanLI/edit
+sn: thanks...will try run it...for BBN using the ICThalInput
+sd:  this also best ERP matches from erica: https://docs.google.com/document/d/1eY1Vfk0wmd62bgWuM-FA1WA2Ma2RDSHecWJ6oDKTMTY/edit?usp=sharing
+and best BBN CSD matches: https://docs.google.com/document/d/1Lnt68zwRfQ8hzUx_B0DguUBNeyEr05m0abCs1JMn5IE/edit?usp=sharing
+the ERP fig I shared above is for SOA850
+sn: if i was going to optimize model to match ERPs to experiment ... could focus on dipoles, CSD, or LFP ... and adjust the strength/timing of inputs probably ...
+sd: yeah that makes sense
+
+** try a single sim with BBN
+
+use this in cfg.py : 
+
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+                   'startTime': 2500,
+                   'weightE': 0.25,
+                   'weightI': 0.25,
+                   'probE': 0.12, 
+                   'probI': 0.12,
+                   'seed': 1}  # SHOULD THIS BE ZERO?                   
+
+./myrun 48
 
