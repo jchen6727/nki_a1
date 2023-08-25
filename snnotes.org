@@ -1061,3 +1061,132 @@ cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_bu
 
 ./myrun 48
 
+  Done; gather time = 76.08 s.
+
+Analyzing...
+  Cells: 13108
+  Connections: 0 (0.00 per cell)
+  Spikes: 241557 (1.54 Hz)
+  Simulated time: 12.0 s; 48 workers
+  Run time: 5834.21 s
+   NGF1 : 1.696 Hz
+   IT2 : 0.161 Hz
+   SOM2 : 9.467 Hz
+   PV2 : 3.583 Hz
+   VIP2 : 22.328 Hz
+   NGF2 : 7.775 Hz
+   IT3 : 0.130 Hz
+   SOM3 : 0.715 Hz
+   PV3 : 2.794 Hz
+   VIP3 : 10.702 Hz
+   NGF3 : 4.684 Hz
+   ITP4 : 0.167 Hz
+   ITS4 : 0.165 Hz
+   SOM4 : 0.670 Hz
+   PV4 : 1.695 Hz
+   VIP4 : 7.006 Hz
+   NGF4 : 5.423 Hz
+   IT5A : 1.077 Hz
+   CT5A : 0.201 Hz
+   SOM5A : 2.054 Hz
+   PV5A : 0.462 Hz
+   VIP5A : 2.815 Hz
+   NGF5A : 5.448 Hz
+   IT5B : 2.698 Hz
+   CT5B : 0.058 Hz
+   PT5B : 0.078 Hz
+   SOM5B : 13.307 Hz
+   PV5B : 0.206 Hz
+   VIP5B : 1.516 Hz
+   NGF5B : 4.538 Hz
+   IT6 : 0.438 Hz
+   CT6 : 0.294 Hz
+   SOM6 : 10.228 Hz
+   PV6 : 66.888 Hz
+   VIP6 : 61.333 Hz
+   NGF6 : 28.491 Hz
+   TC : 4.613 Hz
+   TCM : 4.504 Hz
+   HTC : 4.200 Hz
+   IRE : 2.397 Hz
+   IREM : 2.975 Hz
+   TI : 1.872 Hz
+   TIM : 3.187 Hz
+   IC : 0.242 Hz
+Saving output as data/23aug24_A0/23aug24_A0_data.pkl ... 
+Finished saving!
+  Done; saving time = 31.39 s.
+
+* 23aug25
+** 23aug24_A0 -- check BBN sim
+
+python -i simdat.py
+
+NGF1 1.68 Hz
+IT2 0.16 Hz
+SOM2 9.57 Hz
+PV2 3.66 Hz
+VIP2 22.55 Hz
+NGF2 7.2 Hz
+IT3 0.13 Hz
+SOM3 0.72 Hz
+PV3 2.79 Hz
+VIP3 10.64 Hz
+NGF3 4.68 Hz
+ITP4 0.17 Hz
+ITS4 0.16 Hz
+SOM4 0.66 Hz
+PV4 1.71 Hz
+VIP4 7.05 Hz
+NGF4 5.53 Hz
+IT5A 0.97 Hz
+CT5A 0.12 Hz
+SOM5A 2.03 Hz
+PV5A 0.45 Hz
+VIP5A 2.39 Hz
+NGF5A 5.29 Hz
+IT5B 2.69 Hz
+CT5B 0.06 Hz
+PT5B 0.08 Hz
+SOM5B 13.16 Hz
+PV5B 0.19 Hz
+VIP5B 1.26 Hz
+NGF5B 4.43 Hz
+IT6 0.4 Hz
+CT6 0.25 Hz
+SOM6 9.94 Hz
+PV6 67.26 Hz
+VIP6 57.13 Hz
+NGF6 28.51 Hz
+TC 4.48 Hz
+TCM 4.47 Hz
+HTC 4.07 Hz
+IRE 2.37 Hz
+IREM 2.93 Hz
+TI 1.87 Hz
+TIM 3.18 Hz
+IC 0.24 Hz
+
+drawraster(dspkT,dspkID)
+savefig(gifpath()+'_rast.png') # [[./gif/23aug25__rast.png]]
+
+xlim((2e3,4e3))
+savefig(gifpath()+'_rastB.png') # [[./gif/23aug25__rastB.png]]
+
+only looks like one activation of IC population ... 
+even during that activation, do not see much impact on L4 ... 
+
+check the parameters for IC -> THAL and THAL -> CTX
+
+looks like it's only applied a single time at 2.5 s ... 
+
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+                   'startTime': 2500,
+                   'weightE': 0.25,
+                   'weightI': 0.25,
+                   'probE': 0.12, 
+                   'probI': 0.12,
+                   'seed': 1}  # SHOULD THIS BE ZERO?                   
+
+moved params into cfg.py ... 
+

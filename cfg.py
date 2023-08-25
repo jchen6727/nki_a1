@@ -66,7 +66,7 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = '23aug24_A0'  #'v38_NMDAR_test'
+cfg.simLabel = '23aug24_BBN0'  #'v38_NMDAR_test'
 cfg.saveFolder = 'data/' + cfg.simLabel  ## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
@@ -202,22 +202,63 @@ cfg.rateBkg = {'exc': 40, 'inh': 40}
 cfg.EbkgThalamicGain = 4.0
 cfg.IbkgThalamicGain = 4.0
 
-cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears 
+cfg.cochlearThalInput = False #{'numCells': 200, 'freqRange': [9*1e3, 11*1e3], 'toneFreq': 10*1e3, 'loudnessDBs': 50}  # parameters to generate realistic  auditory thalamic inputs using Brian Hears
 
-# parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
-# cfg.ICThalInput = {} #'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
-                    #'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
-cfg.ICThalInput = {} #{'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', 
-#                  #  'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}
+###############################################################################
+### from batch.py with BBN settings ###
+def updateCFGFromBatch ():
+  import numpy as np
+  filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
+  # from prev 
+  import json
+  with open(filename, 'rb') as f:
+    cfgLoad = json.load(f)['simConfig']
+  cfgLoad2 = cfgLoad
+  ### OPTION TO RECORD EEG / DIPOLE ###
+  cfg.recordDipole = False
+  cfg.saveCellSecs = False
+  cfg.saveCellConns = False
+  # from prev - best of 50% cell density
+  updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
+                  ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
+                  ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
+                  ('EILayerGain', '1'), ('IILayerGain', '1'),
+                  ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
+                  ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
+                  ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
+                  ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
+                  ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
+                  ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
+  for p in updateParams:
+    if isinstance(p, tuple):
+      cfg.p = cfgLoad[p[0]][p[1]]
+      # cfg.update({p: cfgLoad[p[0]][p[1]]})
+    else:
+      cfg.p = cfgLoad[p]
+      # cfg.update({p: cfgLoad[p]})
+  # good thal params for 100% cell density 
+  updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+  for p in updateParams2:
+    if isinstance(p, tuple):
+      cfg.p = cfgLoad2[p[0]][p[1]]
+      # cfg.update({p: cfgLoad2[p[0]][p[1]]})
+    else:
+      cfg.p = cfgLoad2[p]
+      # cfg.update({p: cfgLoad2[p]})
+  # parameters to generate realistic cochlear + IC input ; weight =unitary connection somatic EPSP (mV)
+  # cfg.ICThalInput = {} #'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_01_ba_peter.mat', 
+                      #'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}  
+  # cfg.ICThalInput = {} #{'file': 'data/ICoutput/ICoutput_CF_9600_10400_wav_BBN_100ms_burst.mat', 
+  #                  #  'startTime': 500, 'weightE': 0.5, 'weightI': 0.5, 'probE': 0.12, 'probI': 0.26, 'seed': 1}
+  cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+                     'startTime': list(np.arange(5000, 9000, 300)),
+                     'weightE': 0.25,
+                     'weightI': 0.25,
+                     'probE': 0.12, 
+                     'probI': 0.12,
+                     'seed': 1}  # SHOULD THIS BE ZERO?                   
 
-cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
-                   'startTime': 2500,
-                   'weightE': 0.25,
-                   'weightI': 0.25,
-                   'probE': 0.12, 
-                   'probI': 0.12,
-                   'seed': 1}  # SHOULD THIS BE ZERO?                   
-
+updateCFGFromBatch()
 
 #------------------------------------------------------------------------------
 # Current inputs 

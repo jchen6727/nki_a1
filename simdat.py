@@ -93,9 +93,11 @@ def drawraster (dspkT,dspkID,tlim=None,msz=2,skipstim=True,cmap=None):
   xlabel('Time (ms)')
   #lclr.reverse(); 
   lpatch = [mpatches.Patch(color=c,label=s+' '+str(round(getrate(dspkT,dspkID,s,dnumc),2))+' Hz') for c,s in zip(lclr,lpop)]
+  lpatch.reverse()
   ax=gca()
   ax.legend(handles=lpatch,handlelength=1,loc='best')
   ylim((0,sum([dnumc[x] for x in lpop])))
+  ax.invert_yaxis() # so superficial layers at top of raster plot
 
 #
 def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
@@ -127,7 +129,7 @@ def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
 def gifpath (name=''): return 'gif/' + getdatestr() + name
 
 if __name__ == '__main__':
-  name = '23aug10_A0'
+  name = '23aug24_A0'
   simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT = loadsimdat(name,lpop=[])
   dstr = getdatestr(); simstr = name # date and sim string
   print('loaded simulation data',simstr,'on',dstr)
