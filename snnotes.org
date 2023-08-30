@@ -1239,7 +1239,7 @@ moved params into cfg.py ...
    IC : 3.392 Hz
 Saving output as data/23aug24_BBN0/23aug24_BBN0_data.pkl ... 
 
-* 23aug30
+* 23aug30 - adjusting for BBN
 ** check output from 23aug24_BBN0
 
 python -i simdat.py 23aug24_BBN0
@@ -1318,4 +1318,50 @@ xlim((4e3,8e3))
 savefig(gifpath()+'_spikehistB.png') # [[./gif/23aug30_23aug24_BBN0_spikehistB.png]]
 
 so params used must not be correct ... 
+
+** discuss
+
+sn: those params i mentioned above must be incorrect, since look pretty different in terms of responses to BBN (almost negligible in L4)
+[[./gif/23aug30_23aug24_BBN0_rast.png]]
+[[./gif/23aug30_23aug24_BBN0_rastB.png]]
+[[./gif/23aug30_23aug24_BBN0_spikehistB.png]]
+sd: not sure if params right, but unfortunately there’s not much L4 activity in BBN sims… not sure if due to depol block
+sn: i should prob. start from ones used in paper
+that one had more noticeable response in L4
+sd: above was referring to paper sims, not much L4 activity either
+sn: so as long as maintain physiological firing rates during spontaneous and stimulation, tweaking thalamocortical and
+corticothalamic gain within ~25% range reasonable?
+will try that or something similar
+sd: yeah I think reasonable ... can play with IC->Thal and Thal->Cx prob conn and weights
+
+** adjust conn/weights for getting stronger BBN response
+
+some of the relevant parameters:
+    # params[('ICThalInput', 'probE')] = [0.12, 0.26]     # [0.26]    # 0,1,2  
+    # params[('ICThalInput', 'probI')] = [0.12, 0.26]                 # 0,1,2
+    #params[('ICThalInput', 'weightE')] = [0.25, 0.5]
+    #params[('ICThalInput', 'weightI')] = [0.25, 0.5]
+
+values used in previous simulation (23aug24_BBN0_):
+                            'weightE': 0.25,
+                            'weightI': 0.25,
+                            'probE': 0.12, 
+                            'probI': 0.12,
+
+here are the other params taken from the json file (data/v34_batch25/trial_2142/trial_2142_cfg.json):
+    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
+
+        "thalamoCorticalGain": 2.1111391118965863,
+        "intraThalamicGain": 0.9843624229766335,
+        "EbkgThalamicGain": 3.9181565363409163,
+        "IbkgThalamicGain": 3.9227144872233324,
+
+and the whole wmat is also specified in json ... 
+
+also, the json file was already getting loaded, so did not need the extra function to 'load from batch' config
+
+easiest to just change IC -> Thal, that way spontaneous dynamics do not require retuning
+
+*** 23aug30_BBN_A0
+*** 23aug30_BBN_B0
 
