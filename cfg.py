@@ -10,6 +10,7 @@ Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com, samnemo@gmail.co
 
 from netpyne import specs
 import pickle
+import numpy as np
 
 cfg = specs.SimConfig()
 
@@ -302,8 +303,8 @@ cfg.wmat = cfgLoad['wmat']
 
 cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
                    'startTime': list(np.arange(5000, 9000, 300)),
-                   'weightE': 0.25,
+                   'weightE': 0.375,
                    'weightI': 0.25,
-                   'probE': 0.12, 
+                   'probE': 0.19, 
                    'probI': 0.12,
                    'seed': 1}  # SHOULD THIS BE ZERO?                   

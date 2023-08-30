@@ -1363,5 +1363,10 @@ also, the json file was already getting loaded, so did not need the extra functi
 easiest to just change IC -> Thal, that way spontaneous dynamics do not require retuning
 
 *** 23aug30_BBN_A0
+
+weightE = 0.375, weightI = 0.25, probE = 0.19, probI = 0.12
+
+./myrun 48
+
 *** 23aug30_BBN_B0
 
