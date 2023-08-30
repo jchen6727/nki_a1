@@ -1370,3 +1370,7 @@ weightE = 0.375, weightI = 0.25, probE = 0.19, probI = 0.12
 
 *** 23aug30_BBN_B0
 
+weightE = 0.375, weightI = 0.375, probE = 0.19, probI = 0.19
+
+./myrun 48
+
