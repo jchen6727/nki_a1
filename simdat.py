@@ -126,10 +126,12 @@ def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
   ax.legend(handles=lpatch,handlelength=1,loc='best')
   if tlim is not None: ax.set_xlim(tlim)
 
-def gifpath (name=''): return 'gif/' + getdatestr() + name
+def gifpath (): global simstr; return 'gif/' + getdatestr() + simstr
 
 if __name__ == '__main__':
-  name = '23aug24_A0'
+  global simstr
+  name = '23aug24_BBN0'  
+  if len(sys.argv) > 0: name = sys.argv[1]
   simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT = loadsimdat(name,lpop=[])
   dstr = getdatestr(); simstr = name # date and sim string
   print('loaded simulation data',simstr,'on',dstr)
