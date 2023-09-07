@@ -1368,9 +1368,345 @@ weightE = 0.375, weightI = 0.25, probE = 0.19, probI = 0.12
 
 ./myrun 48
 
+  Spikes: 268783 (1.71 Hz)
+  Simulated time: 12.0 s; 48 workers
+  Run time: 9613.97 s
+   NGF1 : 1.707 Hz
+   IT2 : 0.160 Hz
+   SOM2 : 9.633 Hz
+   PV2 : 3.128 Hz
+   VIP2 : 15.802 Hz
+   NGF2 : 6.925 Hz
+   IT3 : 0.112 Hz
+   SOM3 : 0.715 Hz
+   PV3 : 3.202 Hz
+   VIP3 : 8.334 Hz
+   NGF3 : 4.535 Hz
+   ITP4 : 0.134 Hz
+   ITS4 : 0.149 Hz
+   SOM4 : 0.663 Hz
+   PV4 : 2.853 Hz
+   VIP4 : 5.679 Hz
+   NGF4 : 5.155 Hz
+   IT5A : 0.962 Hz
+   CT5A : 0.202 Hz
+   SOM5A : 1.716 Hz
+   PV5A : 0.468 Hz
+   VIP5A : 3.019 Hz
+   NGF5A : 5.104 Hz
+   IT5B : 2.301 Hz
+   CT5B : 0.113 Hz
+   PT5B : 0.071 Hz
+   SOM5B : 13.554 Hz
+   PV5B : 0.207 Hz
+   VIP5B : 2.047 Hz
+   NGF5B : 3.962 Hz
+   IT6 : 0.541 Hz
+   CT6 : 0.292 Hz
+   SOM6 : 10.314 Hz
+   PV6 : 88.349 Hz
+   VIP6 : 83.212 Hz
+   NGF6 : 29.702 Hz
+   TC : 5.342 Hz
+   TCM : 5.195 Hz
+   HTC : 5.041 Hz
+   IRE : 2.679 Hz
+   IREM : 3.188 Hz
+   TI : 1.672 Hz
+   TIM : 2.897 Hz
+   IC : 3.392 Hz
+
 *** 23aug30_BBN_B0
 
 weightE = 0.375, weightI = 0.375, probE = 0.19, probI = 0.19
 
 ./myrun 48
+
+  Spikes: 289178 (1.84 Hz)
+  Simulated time: 12.0 s; 48 workers
+  Run time: 9605.40 s
+   NGF1 : 1.736 Hz
+   IT2 : 0.160 Hz
+   SOM2 : 9.517 Hz
+   PV2 : 3.032 Hz
+   VIP2 : 15.990 Hz
+   NGF2 : 6.650 Hz
+   IT3 : 0.101 Hz
+   SOM3 : 0.715 Hz
+   PV3 : 4.125 Hz
+   VIP3 : 7.869 Hz
+   NGF3 : 4.456 Hz
+   ITP4 : 0.117 Hz
+   ITS4 : 0.138 Hz
+   SOM4 : 0.663 Hz
+   PV4 : 4.173 Hz
+   VIP4 : 6.128 Hz
+   NGF4 : 5.077 Hz
+   IT5A : 0.873 Hz
+   CT5A : 0.204 Hz
+   SOM5A : 1.661 Hz
+   PV5A : 0.514 Hz
+   VIP5A : 3.315 Hz
+   NGF5A : 5.052 Hz
+   IT5B : 2.402 Hz
+   CT5B : 0.177 Hz
+   PT5B : 0.067 Hz
+   SOM5B : 14.359 Hz
+   PV5B : 0.226 Hz
+   VIP5B : 1.818 Hz
+   NGF5B : 4.118 Hz
+   IT6 : 0.559 Hz
+   CT6 : 0.308 Hz
+   SOM6 : 10.388 Hz
+   PV6 : 102.047 Hz
+   VIP6 : 87.780 Hz
+   NGF6 : 30.684 Hz
+   TC : 5.927 Hz
+   TCM : 5.983 Hz
+   HTC : 5.532 Hz
+   IRE : 2.738 Hz
+   IREM : 3.038 Hz
+   TI : 1.672 Hz
+   TIM : 2.863 Hz
+   IC : 3.392 Hz
+
+* 23aug31
+** check outputs from last two sims
+*** 23aug30_BBN_A0
+
+weightE = 0.375, weightI = 0.25, probE = 0.19, probI = 0.12
+
+python -i simdat.py 23aug30_BBN_A0
+
+NGF1 1.69 Hz
+IT2 0.16 Hz
+SOM2 9.74 Hz
+PV2 3.19 Hz
+VIP2 15.88 Hz
+NGF2 6.41 Hz
+IT3 0.11 Hz
+SOM3 0.72 Hz
+PV3 3.2 Hz
+VIP3 8.27 Hz
+NGF3 4.53 Hz
+ITP4 0.13 Hz
+ITS4 0.15 Hz
+SOM4 0.65 Hz
+PV4 2.86 Hz
+VIP4 5.7 Hz
+NGF4 5.26 Hz
+IT5A 0.86 Hz
+CT5A 0.12 Hz
+SOM5A 1.69 Hz
+PV5A 0.46 Hz
+VIP5A 2.58 Hz
+NGF5A 4.94 Hz
+IT5B 2.29 Hz
+CT5B 0.11 Hz
+PT5B 0.07 Hz
+SOM5B 13.4 Hz
+PV5B 0.2 Hz
+VIP5B 1.77 Hz
+NGF5B 3.84 Hz
+IT6 0.5 Hz
+CT6 0.25 Hz
+SOM6 10.02 Hz
+PV6 88.91 Hz
+VIP6 77.61 Hz
+NGF6 29.75 Hz
+TC 5.2 Hz
+TCM 5.17 Hz
+HTC 4.9 Hz
+IRE 2.65 Hz
+IREM 3.14 Hz
+TI 1.67 Hz
+TIM 2.89 Hz
+IC 3.38 Hz
+
+drawraster(dspkT,dspkID)
+savefig(gifpath()+'_rast.png') # [[./gif/23aug31_23aug30_BBN_A0_rast.png]]
+
+xlim((4e3,6e3))
+savefig(gifpath()+'_rastB.png') # [[./gif/23aug31_23aug30_BBN_A0_rastB.png]]
+
+lk = ['IC', 'TC', 'TCM', 'IT2', 'IT3', 'ITP4','ITS4']
+lclr = ['r','g','b','c','m','y','k']
+sh = {k:getspikehist(dspkT[k], dnumc[k], 25, 12e3) for k in lk}
+
+for k,clr in zip(lk, lclr): plot(sh[k][0],sh[k][1],clr)
+xlim((4e3,6e3))
+ax=gca()
+lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr,lk)]
+ax.legend(handles=lpatch,handlelength=1)
+
+savefig(gifpath()+'_spikehist.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehist.png]]
+
+xlim((4e3,8e3))
+
+savefig(gifpath()+'_spikehistB.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehistB.png]]
+
+put thal, ctx hist in diff subplots
+
+lplt = [1,1,1,2,2,2,2]
+
+for k,clr,gdx in zip(lk, lclr,lplt): 
+  subplot(2,1,gdx)
+  plot(sh[k][0],sh[k][1],clr)
+
+ax=subplot(2,1,1)
+lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr[0:3],lk[0:3])]
+ax.legend(handles=lpatch,handlelength=1)
+ax=subplot(2,1,2)
+lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr[3:],lk[3:])]
+ax.legend(handles=lpatch,handlelength=1)
+
+savefig(gifpath()+'_spikehistC.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehistC.png]]
+
+ylim((0,.65))
+savefig(gifpath()+'_spikehistD.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehistD.png]]
+
+looks like IT3 increases slightly for some of the stimuli, while other E neurons decrease
+activation during stimulus, due to activation of interneurons ... 
+
+dnumc
+{'NGF1': 150, 'IT2': 338, 'SOM2': 5, 'PV2': 13, 'VIP2': 16, 'NGF2': 11, 'IT3': 4461, 'SOM3': 70, 'PV3': 176, 'VIP3': 211, 'NGF3': 150, 'ITP4': 837, 'ITS4': 837, 'SOM4': 24, 'PV4': 92, 'VIP4': 13, 'NGF4': 14, 'IT5A': 359, 'CT5A': 359, 'SOM5A': 43, 'PV5A': 73, 'VIP5A': 10, 'NGF5A': 8, 'IT5B': 471, 'CT5B': 471, 'PT5B': 471, 'SOM5B': 112, 'PV5B': 134, 'VIP5B': 17, 'NGF5B': 24, 'IT6': 1009, 'CT6': 1009, 'SOM6': 63, 'PV6': 84, 'VIP6': 12, 'NGF6': 38, 'TC': 116, 'TCM': 155, 'HTC': 38, 'IRE': 155, 'IREM': 155, 'TI': 51, 'TIM': 51, 'IC': 200}
+
+sh = {k:getspikehist(dspkT[k], dnumc[k], 25, 12e3) for k in dnumc.keys()}
+
+lkectx = ['IT2', 'IT3', 'ITP4', 'ITS4']
+lkictx = ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'SOM4', 'PV4', 'VIP4', 'NGF4']
+
+sh['ECTX'] = getspikehistpops(dspkT, lkectx, dnumc, 25, 12e3)
+sh['ICTX'] = getspikehistpops(dspkT, lkictx, dnumc, 25, 12e3)
+
+lk = ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'SOM4', 'PV4', 'VIP4', 'NGF4']
+sh['ICTX'] = sh[k]
+
+llk = [ ['IC', 'TC', 'TCM'], ['ECTX'], ['ICTX']]
+llclr = [['r','g','b'], ['r'], ['b']]
+
+for lk,lclr,gdx in zip(llk, llclr,[1,2,3]): 
+  ax=subplot(3,1,gdx)
+  for k,clr in zip(lk,lclr):
+    plot(sh[k][0],sh[k][1],clr); xlabel('Time (ms)'); ylabel('Hz')
+  lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr,lk)]
+  ax.legend(handles=lpatch,handlelength=1)
+
+savefig(gifpath()+'_spikehistE.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehistE.png]]
+
+subplot(3,1,2); ylim((0,.35)); subplot(3,1,3); ylim((1,7))
+
+savefig(gifpath()+'_spikehistF.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehistF.png]]
+
+for gdx in [1,2,3]: subplot(3,1,gdx); xlim((3e3,11e3))
+
+savefig(gifpath()+'_spikehistG.png') # [[./gif/23sep7_23aug30_BBN_A0_spikehistG.png]]
+
+so does look like inhib ramping up during stimulus ... check next simulation with diff params
+
+*** 23aug30_BBN_B0
+
+weightE = 0.375, weightI = 0.375, probE = 0.19, probI = 0.19
+
+python -i simdat.py 23aug30_BBN_B0
+
+NGF1 1.72 Hz
+IT2 0.16 Hz
+SOM2 9.62 Hz
+PV2 3.1 Hz
+VIP2 16.07 Hz
+NGF2 6.15 Hz
+IT3 0.1 Hz
+SOM3 0.72 Hz
+PV3 4.12 Hz
+VIP3 7.8 Hz
+NGF3 4.45 Hz
+ITP4 0.12 Hz
+ITS4 0.14 Hz
+SOM4 0.65 Hz
+PV4 4.16 Hz
+VIP4 6.15 Hz
+NGF4 5.18 Hz
+IT5A 0.77 Hz
+CT5A 0.12 Hz
+SOM5A 1.64 Hz
+PV5A 0.51 Hz
+VIP5A 2.85 Hz
+NGF5A 4.88 Hz
+IT5B 2.39 Hz
+CT5B 0.18 Hz
+PT5B 0.07 Hz
+SOM5B 14.2 Hz
+PV5B 0.22 Hz
+VIP5B 1.55 Hz
+NGF5B 4.0 Hz
+IT6 0.52 Hz
+CT6 0.27 Hz
+SOM6 10.1 Hz
+PV6 102.74 Hz
+VIP6 81.89 Hz
+NGF6 30.75 Hz
+TC 5.78 Hz
+TCM 5.96 Hz
+HTC 5.39 Hz
+IRE 2.71 Hz
+IREM 2.99 Hz
+TI 1.67 Hz
+TIM 2.85 Hz
+IC 3.38 Hz
+
+drawraster(dspkT,dspkID)
+savefig(gifpath()+'_rast.png') # [[./gif/23sep7_23aug30_BBN_B0_rast.png]]
+
+xlim((4e3,6e3))
+savefig(gifpath()+'_rastB.png') # [[./gif/23sep7_23aug30_BBN_B0_rastB.png]]
+
+sh = {k:getspikehist(dspkT[k], dnumc[k], 25, 12e3) for k in dnumc.keys()}
+
+lkectx = ['IT2', 'IT3', 'ITP4', 'ITS4']
+lkictx = ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'SOM4', 'PV4', 'VIP4', 'NGF4']
+
+sh['ECTX'] = getspikehistpops(dspkT, lkectx, dnumc, 25, 12e3)
+sh['ICTX'] = getspikehistpops(dspkT, lkictx, dnumc, 25, 12e3)
+
+lk = ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'SOM4', 'PV4', 'VIP4', 'NGF4']
+sh['ICTX'] = sh[k]
+
+llk = [ ['IC', 'TC', 'TCM'], ['ECTX'], ['ICTX']]
+llclr = [['r','g','b'], ['r'], ['b']]
+
+for lk,lclr,gdx in zip(llk, llclr,[1,2,3]): 
+  ax=subplot(3,1,gdx)
+  for k,clr in zip(lk,lclr):
+    plot(sh[k][0],sh[k][1],clr); xlabel('Time (ms)'); ylabel('Hz')
+  lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr,lk)]
+  ax.legend(handles=lpatch,handlelength=1)
+
+savefig(gifpath()+'_spikehistE.png') # [[./gif/23sep7_23aug30_BBN_B0_spikehistE.png]]
+
+subplot(3,1,2); ylim((0,.35)); subplot(3,1,3); ylim((1,7))
+
+savefig(gifpath()+'_spikehistF.png') # [[./gif/23sep7_23aug30_BBN_B0_spikehistF.png]]
+
+for gdx in [1,2,3]: subplot(3,1,gdx); xlim((3e3,11e3))
+
+savefig(gifpath()+'_spikehistG.png') # [[./gif/23sep7_23aug30_BBN_B0_spikehistG.png]]
+
+during stimulus looks like even less ECTX firing here, but more synchronized, partly through
+higher inhibition
+
+* 23sep7
+** next simulations (less inhib from IC -> Thal)
+
+hmm, that may not help since thalamus to cortex is the current issue leading
+to too much cortical inhibition activated ... adjusting thalamic to cortical
+drive for E vs I will cause changes in spontaneous activity
+
+ran before: 
+ 23aug30_BBN_A0 : weightE = 0.375, weightI = 0.25, probE = 0.19, probI = 0.12
+ 23aug30_BBN_B0 : weightE = 0.375, weightI = 0.375, probE = 0.19, probI = 0.19
+both had too much cortical inhibition activated ... ? 
+
+*** 23sep7_BBN_A0
+*** 23sep7_BBN_B0
 
