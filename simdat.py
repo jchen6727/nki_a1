@@ -51,6 +51,15 @@ def getspikehist (spkT, numc, binsz, tmax):
   nspk = [1e3*x/(binsz*numc) for x in nspk]
   return tt,nspk
 
+def getspikehistpops (spkT, lk, dnumc, binsz, tmax):
+  # get binned firing rate time-series from multiple populations
+  tt = np.arange(0,tmax,binsz)
+  nspk = np.zeros((len(tt),))
+  for k in lk:  nspk = nspk + np.array([len(spkT[k][(spkT[k]>=tstart) & (spkT[k]<tstart+binsz)]) for tstart in tt])
+  numc = np.sum([dnumc[k] for k in lk])  
+  nspk = [1e3*x/(binsz*numc) for x in nspk]
+  return tt,nspk
+
 #
 def getrate (dspkT,dspkID, pop, dnumc, tlim=None):
   # get average firing rate for the population, over entire simulation
