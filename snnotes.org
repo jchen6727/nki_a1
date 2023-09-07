@@ -1707,6 +1707,17 @@ ran before:
  23aug30_BBN_B0 : weightE = 0.375, weightI = 0.375, probE = 0.19, probI = 0.19
 both had too much cortical inhibition activated ... ? 
 
+some parameters that may need adjustment:
+cfg.EbkgThalamicGain = 4.0
+cfg.IbkgThalamicGain = 4.0
+
+cfg.thalamoCorticalGain = 1.0
+cfg.intraThalamicGain = 1.0
+cfg.corticoThalamicGain = 1.0
+
+also TC and TCM should probably get activated differently from IC inputs
+so may need to add separate gain factor for IC -> TC and IC -> TCM 
+
 *** 23sep7_BBN_A0
 *** 23sep7_BBN_B0
 
