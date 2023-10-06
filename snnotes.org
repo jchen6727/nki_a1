@@ -1720,4 +1720,31 @@ so may need to add separate gain factor for IC -> TC and IC -> TCM
 
 *** 23sep7_BBN_A0
 *** 23sep7_BBN_B0
+* 23oct6
+** opt for BBN
+
+to start, can use avg CSD BBN ERP response in each layer
+
+from NHP : /data/samn/a1dat/data/bbn/avgERP/19aug23_50dB_bbn_avgERP.pkl
+
+python
+
+import numpy as np
+import pickle
+d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/19aug23_50dB_bbn_avgERP.pkl','rb'))
+d.keys() # dict_keys([44000.0, 20000.0])
+
+type(d[44000.0]['CSD'])
+d[44000.0]['CSD'].keys() # dict_keys(['A1', 'Thal', 'Empty'])
+d[44000.0]['CSD']['A1'].keys() # dict_keys(['s2', 'g', 'i1', 'tt', 's2avg', 's2stderr', 'gavg', 'gstderr', 'i1avg', 'i1stderr'])
+
+for k in ['s2avg', 'gavg', 'i1avg']: plot(d[44000.0]['CSD']['A1']['tt'], d[44000.0]['CSD']['A1'][k])
+
+savefig('gif/23oct6_nhp_avg_csd_bbn_erp_a0.png') # [[./gif/23oct6_nhp_avg_csd_bbn_erp_a0.png]]
+
+looks much different from ERPs in
+ https://docs.google.com/presentation/d/1fBufKJtZsNOOGMmcXCTHjgU7cZlPMJFqPwm0hVfBPjw/edit#slide=id.g278ae243da3_0_84
+slide 28
+
+which CSD channels used in A1 model for s, g, i layers?
 
