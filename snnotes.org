@@ -1748,3 +1748,24 @@ slide 28
 
 which CSD channels used in A1 model for s, g, i layers?
 
+* 23oct31
+** back to BBN ERP opt
+
+d[44000.0]['CSD']['A1']['tt'][0] # 0.0
+d[44000.0]['CSD']['A1']['tt'][-1] # 150.0
+
+so 150 ms for the NHP ERP averages in s,g,i layers
+
+info from EG:
+https://docs.google.com/document/d/1E0EHdja1HpzQKHa0q5WqGRP386xjEYs_wHDLz2xanLI/edit
+https://github.com/NathanKlineInstitute/a1dat/blob/erica/avgERP_forPaper.py
+
+looks like the ERPs are smoothed using bandpass filter of 1-110 Hz
+and in slides/A1 paper, used 300 ms instead of 150 ms used in OEvent paper
+
+figure()
+
+for k,clr in zip(['s2avg', 'gavg', 'i1avg'],['r','g','b']): plot(d[44000.0]['CSD']['A1']['tt'], bandpass(d[44000.0]['CSD']['A1'][k],1,110,44000),clr)
+
+savefig('gif/23oct31_nhp_avg_csd_bbn_erp_smoothed_a0.png') # [[./gif/23oct31_nhp_avg_csd_bbn_erp_smoothed_a0.png]]
+
