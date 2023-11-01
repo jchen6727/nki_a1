@@ -510,6 +510,52 @@ if cfg.addConn and cfg.addThalamoCorticalConn:
 
 
 #------------------------------------------------------------------------------
+## Thalamocortical - this was added from Christoph Metzner's branch
+if cfg.addConn and cfg.addThalamoCorticalConn:
+    for pre in TEpops+TIpops:
+        for post in Epops+Ipops:
+            scaleFactor = 1.0
+            if post in pmat[pre]:
+                # for syns use ESynMech, SOMESynMech and SOMISynMech 
+                if pre in TEpops:     # E->E/I
+                    if post=='PV4':
+                        syn = ESynMech
+                        synWeightFactor = cfg.synWeightFractionEE
+                        scaleFactor = cfg.thalL4PV#25
+                    elif post=='SOM4':
+                        syn = ESynMech
+                        synWeightFactor = cfg.synWeightFractionEE
+                        scaleFactor = cfg.thalL4SOM
+                    elif post=='ITS4':
+                        syn = ESynMech
+                        synWeightFactor = cfg.synWeightFractionEE
+                        scaleFactor = cfg.thalL4E#25
+                    elif post=='ITP4':
+                        syn = ESynMech
+                        synWeightFactor = cfg.synWeightFractionEE
+                        scaleFactor = cfg.thalL4E#25
+                    else:
+                        syn = ESynMech
+                        synWeightFactor = cfg.synWeightFractionEE
+                elif post in Epops:  # I->E
+                    syn = SOMESynMech
+                    synWeightFactor = cfg.synWeightFractionIE
+                else:                  # I->I
+                    syn = SOMISynMech
+                    synWeightFactor = [1.0]
+
+                netParams.connParams['ThCx_'+pre+'_'+post] = { 
+                    'preConds': {'pop': pre}, 
+                    'postConds': {'pop': post},
+                    'synMech': syn,
+                    'probability': '%f * exp(-dist_2D/%f)' % (pmat[pre][post], lmat[pre][post]),
+                    'weight': wmat[pre][post] * cfg.thalamoCorticalGain*scaleFactor, 
+                    'synMechWeightFactor': synWeightFactor,
+                    'delay': 'defaultDelay+dist_3D/propVelocity',
+                    'synsPerConn': 1,
+                    'sec': 'soma'}  
+                
+#------------------------------------------------------------------------------
 # Subcellular connectivity (synaptic distributions)
 #------------------------------------------------------------------------------  
 

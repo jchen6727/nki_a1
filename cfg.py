@@ -177,6 +177,11 @@ cfg.thalamoCorticalGain = 1.0
 cfg.intraThalamicGain = 1.0
 cfg.corticoThalamicGain = 1.0
 
+# these params added from Christoph Metzner branch
+cfg.thalL4PV = 1.0 # [minF,maxF] 0.1 - 2
+cfg.thalL4SOM = 1.0 # [minF,maxF]
+cfg.thalL4E = 1.0 # [minF,maxF]
+
 cfg.addSubConn = 1
 
 ## full weight conn matrix
