@@ -1945,3 +1945,13 @@ look very different ... (thick lines are NHP, thing lines are model)
 
 note that amplitudes are normalized ... 
 
+** cmetzner version: https://github.com/ChristophMetzner/A1model/blob/main/batch_tu_mpi_ASSR.py
+
+has some code for modifying the thal -> cx weights specific for E vs I inputs
+cm thought could be too much activation of cx L4 I neurons by thal, while sd
+though could be depolarization blockade of L4 E neurons ... so running different
+grid searches to test 
+
+cm has setup these params for modulation (thal -> cx at finer specificity):
+ https://github.com/ChristophMetzner/A1model/blob/main/netParams_ASSR.py
+
