@@ -12,6 +12,7 @@ import matplotlib.patches as mpatches
 from collections import OrderedDict
 from utils import getdatestr
 from scipy.stats import pearsonr
+from csd import getCSDa1dat as getCSD
 
 rcParams['agg.path.chunksize'] = 100000000000 # for plots of long activity 
 ion()
@@ -42,9 +43,14 @@ def loadsimdat (name,lpop = []): # load simulation data
       dspkID[pop] = spkID[(spkID >= dstartidx[pop]) & (spkID <= dendidx[pop])]
       dspkT[pop] = spkT[(spkID >= dstartidx[pop]) & (spkID <= dendidx[pop])]
   totalDur = simConfig['simData']['t'][-1] 
-  # tstepPerAction = dconf['sim']['tstepPerAction'] # time step per action (in ms)  
+  # tstepPerAction = dconf['sim']['tstepPerAction'] # time step per action (in ms)
   return simConfig, dstartidx, dendidx, dnumc, dspkID, dspkT
 
+def getLFPArr (simConfig, totalDur):
+  LFP = np.array(simConfig['simData']['LFP'])
+  tLFP = linspace(0,totalDur,LFP.shape[0])
+  return LFP, tLFP
+  
 def getspikehist (spkT, numc, binsz, tmax):
   tt = np.arange(0,tmax,binsz)
   nspk = [len(spkT[(spkT>=tstart) & (spkT<tstart+binsz)]) for tstart in tt]

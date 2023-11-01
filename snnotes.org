@@ -1767,5 +1767,137 @@ figure()
 
 for k,clr in zip(['s2avg', 'gavg', 'i1avg'],['r','g','b']): plot(d[44000.0]['CSD']['A1']['tt'], bandpass(d[44000.0]['CSD']['A1'][k],1,110,44000),clr)
 
-savefig('gif/23oct31_nhp_avg_csd_bbn_erp_smoothed_a0.png') # [[./gif/23oct31_nhp_avg_csd_bbn_erp_smoothed_a0.png]]
+savefig('gif/23oct31_nhp_avg_csd_bbn_erp_smoothed_a0.png') # [[./gif/23oct31_nhp_avg_csd_bbn_erp_smoothed_a0.png
+
+dERPLowPass = {}
+for k in ['s2avg', 'gavg', 'i1avg']: dERPLowPass[k] = bandpass(d[44000.0]['CSD']['A1'][k],1,110,44000)
+pickle.dump(dERPLowPass,open('/data/samn/a1dat/data/bbn/avgERP/23nov1_50dB_bbn_avgERP_bandpass_1_110_Hz.pkl','wb'))
+ok, will use that file for optimization/comparison with model
+
+* 23nov1
+** model channels for s, g, i = 4, 10, 15
+
+	## Get channel(s) to plot
+		if region == 'supra':
+			chan = 4 # chan 0-9
+		elif region == 'gran':
+			chan = 10  # chan 10-11
+		elif region == 'infra':
+			chan = 15	# chan 12-19
+
+4, 10, 15
+
+** extract model ERPs from BBN sim
+
+from cfg.py can see when the BBN stimuli applied:
+cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
+                   'startTime': list(np.arange(5000, 9000, 300)),
+                   'weightE': 0.375,
+                   'weightI': 0.375,
+                   'probE': 0.19, 
+                   'probI': 0.19,
+                   'seed': 1}  # SHOULD THIS BE ZERO?                   
+
+from 5 - 9 s interval of 300 ms between, and each BBN is 100 ms
+
+conda activate py376
+
+python -i simdat.py 23aug30_BBN_B0
+
+loading data from 23aug30_BBN_B0
+loaded simulation data 23aug30_BBN_B0 on 23nov1_
+NGF1 1.72 Hz
+IT2 0.16 Hz
+SOM2 9.62 Hz
+PV2 3.1 Hz
+VIP2 16.07 Hz
+NGF2 6.15 Hz
+IT3 0.1 Hz
+SOM3 0.72 Hz
+PV3 4.12 Hz
+VIP3 7.8 Hz
+NGF3 4.45 Hz
+ITP4 0.12 Hz
+ITS4 0.14 Hz
+SOM4 0.65 Hz
+PV4 4.16 Hz
+VIP4 6.15 Hz
+NGF4 5.18 Hz
+IT5A 0.77 Hz
+CT5A 0.12 Hz
+SOM5A 1.64 Hz
+PV5A 0.51 Hz
+VIP5A 2.85 Hz
+NGF5A 4.88 Hz
+IT5B 2.39 Hz
+CT5B 0.18 Hz
+PT5B 0.07 Hz
+SOM5B 14.2 Hz
+PV5B 0.22 Hz
+VIP5B 1.55 Hz
+NGF5B 4.0 Hz
+IT6 0.52 Hz
+CT6 0.27 Hz
+SOM6 10.1 Hz
+PV6 102.74 Hz
+VIP6 81.89 Hz
+NGF6 30.75 Hz
+TC 5.78 Hz
+TCM 5.96 Hz
+HTC 5.39 Hz
+IRE 2.71 Hz
+IREM 2.99 Hz
+TI 1.67 Hz
+TIM 2.85 Hz
+IC 3.38 Hz
+
+next, get the LFP and derived CSD
+
+simConfig['simData'].keys() # dict_keys(['LFP', 'spkt', 'spkid', 't', 'popRates', 'avgRate'])
+LFP = simConfig['simData']['LFP']
+len(LFP) # 240000
+
+len(LFP[0]) # 20 <- 20 channels
+
+LFP = np.array(LFP)
+LFP.shape # (240000, 20)
+
+tt = linspace(0,12e3,LFP.shape[0])
+plot(tt,LFP[:,0])
+xlabel('Time (ms)'); 
+
+savefig('gif/23nov1_LFP_a0.png') # [[./gif/23nov1_LFP_a0.png]]
+
+ylim((-.4,-0.05)); xlim((2e3,12e3))
+savefig('gif/23nov1_LFP_a1.png') # [[./gif/23nov1_LFP_a1.png]]
+
+CSD = getCSD(LFP, 1e3/0.05)
+
+CSD.shape # (18, 240000)
+
+plot(tt,CSD[0,:])
+xlim((0,12e3))
+savefig('gif/23nov1_CSD_a2.png')
+ylim((-30,30))
+savefig('gif/23nov1_CSD_a3.png')
+
+lchan = [4, 10, 15]
+
+for chan,clr in zip(lchan,['r','g','b']): plot(tt,CSD[chan,:],clr)
+ylim((-20,20))
+xlim((2e3,12e3))
+
+savefig('gif/23nov1_CSD_a4.png')
+
+xlim((4e3,10e3))
+
+savefig('gif/23nov1_CSD_a5.png')
+
+now average the CSD ERPs ... take from BBN onset + 150 ms 
+
+bbnT = np.arange(5000, 9000, 300)
+array([5000, 5300, 5600, 5900, 6200, 6500, 6800, 7100, 7400, 7700, 8000,
+       8300, 8600, 8900])
+
+use modified code from a1dat/erp.py for cutting out the ERPs and averaging them... 
 
