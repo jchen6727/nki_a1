@@ -2439,3 +2439,7 @@ and then adjust netParams.py as follows:
 
 ok, try that sim out, same as previous otherwise
 
+also saving traces from each pop to check dep block
+
+./myrun 48
+
