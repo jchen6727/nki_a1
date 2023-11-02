@@ -23,7 +23,7 @@ cfg = specs.SimConfig()
 #------------------------------------------------------------------------------
 # Run parameters
 #------------------------------------------------------------------------------
-cfg.duration = 12e3             ## Duration of the sim, in ms
+cfg.duration = 11e3             ## Duration of the sim, in ms
 cfg.dt = 0.05                   ## Internal Integration Time Step
 cfg.verbose = 0         	## Show detailed messages
 cfg.hParams['celsius'] = 37
@@ -67,7 +67,7 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = '23aug30_BBN_B0'  #'v38_NMDAR_test'
+cfg.simLabel = '23nov2_BBN_A0'  #'v38_NMDAR_test'
 cfg.saveFolder = 'data/' + cfg.simLabel  ## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
@@ -169,13 +169,18 @@ cfg.IECellTypeGain= {'PV': 1.0, 'SOM': 1.0, 'VIP': 1.0, 'NGF': 1.0}
 
 # Thalamic
 cfg.addIntraThalamicConn = 1.0
-# cfg.addIntraThalamicConn = 1.0
 cfg.addCorticoThalamicConn = 1.0
 cfg.addThalamoCorticalConn = 1.0
 
 cfg.thalamoCorticalGain = 1.0
 cfg.intraThalamicGain = 1.0
 cfg.corticoThalamicGain = 1.0
+
+# these params control IC -> Thal
+cfg.ICThalweightE = 0.375
+cfg.ICThalweightI = 0.375
+cfg.ICThalprobE = 0.19
+cfg.ICThalprobI = 0.19
 
 # these params added from Christoph Metzner branch
 cfg.thalL4PV = 1.0 # [minF,maxF] 0.1 - 2
@@ -307,9 +312,9 @@ cfg.IbkgThalamicGain = cfgLoad['IbkgThalamicGain']
 cfg.wmat = cfgLoad['wmat']
 
 cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
-                   'startTime': list(np.arange(5000, 9000, 300)),
-                   'weightE': 0.375,
-                   'weightI': 0.375,
-                   'probE': 0.19, 
-                   'probI': 0.19,
+                   'startTime': list(np.arange(4000, 8000, 300)),
+                   'weightE': cfg.ICThalweightE,
+                   'weightI': cfg.ICThalweightI,
+                   'probE': cfg.ICThalprobE, 
+                   'probI': cfg.ICThalprobI,
                    'seed': 1}  # SHOULD THIS BE ZERO?                   

@@ -1955,3 +1955,12 @@ grid searches to test
 cm has setup these params for modulation (thal -> cx at finer specificity):
  https://github.com/ChristophMetzner/A1model/blob/main/netParams_ASSR.py
 
+** setup opt in optunaERP function in batch.py
+* 23nov2
+** sm suggests thalL4E==0.5 to avoid dep blockade
+** try sim with thalL4E==0.5
+
+can shorten sim duration and start BBN at 3 s instead of 4
+
+
+
