@@ -8,7 +8,7 @@ Contributors: salvadordura@gmail.com, samuel.neymotin@nki.rfmh.org
 from netpyne.batch import Batch
 from netpyne import specs
 import numpy as np
-
+import pickle
 
 # ----------------------------------------------------------------------------------------------
 # Weight Normalization 
@@ -1121,7 +1121,7 @@ def custom_stim(filename):
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
     b.method = 'grid'
     return b
-
+  
 # ----------------------------------------------------------------------------------------------
 # Optuna optimization for ERP 
 # ----------------------------------------------------------------------------------------------
@@ -1151,7 +1151,12 @@ def optunaERP ():
     initCfg['recordStep'] = 0.05
     # --------------------------------------------------------
     # fitness function
+    d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/23nov1_50dB_bbn_avgERP_bandpass_1_110_Hz.pkl','rb'))
+    ttnhpERP = np.linspace(0,150,len(d['s2avg']))
+    
     fitnessFuncArgs = {}
+    fitnessFuncArgs['maxFitness'] = 3.0
+    
     def fitnessFunc(simData, **kwargs):
         print ('-- Defining fitness function -- ')
     # --------------------------------------------------------
@@ -1161,12 +1166,12 @@ def optunaERP ():
     b.optimCfg = {
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
-    #     'maxFitness': fitnessFuncArgs['maxFitness'],
-    #     'maxiters':     1e6,      #    Maximum number of iterations (1 iteration = 1 function evaluation)
-    #     'maxtime':      None,     #    Maximum time allowed, in seconds
-    #     'maxiter_wait': 45,
-    #     'time_sleep': 120,
-    #     'popsize': 1              # unused - run with mpi 
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
     }
     return b
 
