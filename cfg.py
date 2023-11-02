@@ -178,14 +178,14 @@ cfg.corticoThalamicGain = 1.0
 
 # these params control IC -> Thal
 cfg.ICThalweightE = 0.375
-cfg.ICThalweightI = 0.375
+cfg.ICThalweightI = 0.25
 cfg.ICThalprobE = 0.19
-cfg.ICThalprobI = 0.19
+cfg.ICThalprobI = 0.12
 
 # these params added from Christoph Metzner branch
-cfg.thalL4PV = 1.0 # [minF,maxF] 0.1 - 2
-cfg.thalL4SOM = 1.0 # [minF,maxF]
-cfg.thalL4E = 1.0 # [minF,maxF]
+cfg.thalL4PV = 0.75 # [minF,maxF] 0.1 - 2
+cfg.thalL4SOM = 0.75 # [minF,maxF]
+cfg.thalL4E = 0.5 # [minF,maxF]
 
 cfg.addSubConn = 1
 

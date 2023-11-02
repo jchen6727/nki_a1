@@ -1720,7 +1720,7 @@ so may need to add separate gain factor for IC -> TC and IC -> TCM
 
 *** 23sep7_BBN_A0
 *** 23sep7_BBN_B0
-* 23oct6
+* 23oct6 - BBN ERPs
 ** opt for BBN
 
 to start, can use avg CSD BBN ERP response in each layer
@@ -1748,7 +1748,7 @@ slide 28
 
 which CSD channels used in A1 model for s, g, i layers?
 
-* 23oct31
+* 23oct31 - continue check BBN ERPs
 ** back to BBN ERP opt
 
 d[44000.0]['CSD']['A1']['tt'][0] # 0.0
@@ -1774,7 +1774,7 @@ for k in ['s2avg', 'gavg', 'i1avg']: dERPLowPass[k] = bandpass(d[44000.0]['CSD']
 pickle.dump(dERPLowPass,open('/data/samn/a1dat/data/bbn/avgERP/23nov1_50dB_bbn_avgERP_bandpass_1_110_Hz.pkl','wb'))
 ok, will use that file for optimization/comparison with model
 
-* 23nov1
+* 23nov1 - looking at BBN ERPs: model vs nhp
 ** model channels for s, g, i = 4, 10, 15
 
 	## Get channel(s) to plot
@@ -1955,12 +1955,60 @@ grid searches to test
 cm has setup these params for modulation (thal -> cx at finer specificity):
  https://github.com/ChristophMetzner/A1model/blob/main/netParams_ASSR.py
 
-** setup opt in optunaERP function in batch.py
-* 23nov2
+** need to setup opt in optunaERP function in batch.py
+* 23nov2 - more setup for ERP opt
+** IC -> Thal, only seems to go to core
+
+    if cfg.ICThalInput:
+        netParams.connParams['IC->ThalE'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'cellType': ['TC', 'HTC']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': cfg.ICThalInput['probE'],
+            'weight': cfg.ICThalInput['weightE'],
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': cfg.delayBkg}
+        
+        netParams.connParams['IC->ThalI'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'cellType': ['RE', 'TI']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': 'GABAA',
+            'probability': cfg.ICThalInput['probI'],
+            'weight': cfg.ICThalInput['weightI'],
+            'delay': cfg.delayBkg}  
+
+do not see projections to thalamic matrix
+
+** add IC->Thal cfg params
+
+# these params control IC -> Thal
+cfg.ICThalweightE = 0.375
+cfg.ICThalweightI = 0.375
+cfg.ICThalprobE = 0.19
+cfg.ICThalprobI = 0.19
+
 ** sm suggests thalL4E==0.5 to avoid dep blockade
-** try sim with thalL4E==0.5
+** next BBN sim (23nov2_BBN_A0)
 
-can shorten sim duration and start BBN at 3 s instead of 4
+# these params control IC -> Thal
+cfg.ICThalweightE = 0.375
+cfg.ICThalweightI = 0.25
+cfg.ICThalprobE = 0.19
+cfg.ICThalprobI = 0.12
 
+# these params added from Christoph Metzner branch
+cfg.thalL4PV = 0.75 # [minF,maxF] 0.1 - 2
+cfg.thalL4SOM = 0.75 # [minF,maxF]
+cfg.thalL4E = 0.5 # [minF,maxF]
 
+want to reduce thalamic triggered cortical inhibition,
+but also reduce potential for L4 E depolarization blockade
+
+also shortening sim duration (11 s) and start BBN at 3 s instead of 4
+
+./myrun 48
 
