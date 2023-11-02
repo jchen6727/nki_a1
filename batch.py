@@ -1126,50 +1126,29 @@ def custom_stim(filename):
 # Optuna optimization for ERP 
 # ----------------------------------------------------------------------------------------------
 def optunaERP (): 
-    # from prev 
-    if not filename:
-        filename = 'data/v34_batch25/trial_2142/trial_2142_cfg.json'
-    import json
-    with open(filename, 'rb') as f:
-        cfgLoad = json.load(f)['simConfig']
-    cfgLoad2 = cfgLoad
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
     params[('seeds', 'conn')] = [0]
     params[('seeds', 'stim')] = [0]
+    # these params control IC -> Thal
+    params['ICThalweightE'] = [0.1, 0.5]
+    params['ICThalweightI'] = [0.1, 0.5]
+    params['ICThalprobE'] = [0.06, 0.5]
+    params['ICThalprobI'] = [0.06, 0.5]
+    # these params added from Christoph Metzner branch
+    params['thalL4PV'] = [0.1, 2]
+    params['thalL4SOM'] = [0.1, 2]
+    params['thalL4E'] = [0.1, 2]
     # ADD: parameters to vary 
     groupedParams = []
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 11500 
+    initCfg['duration'] = 11000 
     initCfg['printPopAvgRates'] = [1500, 10000]
     initCfg['scaleDensity'] = 1.0 
     initCfg['recordStep'] = 0.05
-    # ADD: initCfg[] that correlates to parameters being varied above...
-    updateParams = ['EEGain', 'EIGain', 'IEGain', 'IIGain',
-                    ('EICellTypeGain', 'PV'), ('EICellTypeGain', 'SOM'), ('EICellTypeGain', 'VIP'), ('EICellTypeGain', 'NGF'),
-                    ('IECellTypeGain', 'PV'), ('IECellTypeGain', 'SOM'), ('IECellTypeGain', 'VIP'), ('IECellTypeGain', 'NGF'),
-                    ('EILayerGain', '1'), ('IILayerGain', '1'),
-                    ('EELayerGain', '2'), ('EILayerGain', '2'),  ('IELayerGain', '2'), ('IILayerGain', '2'), 
-                    ('EELayerGain', '3'), ('EILayerGain', '3'), ('IELayerGain', '3'), ('IILayerGain', '3'), 
-                    ('EELayerGain', '4'), ('EILayerGain', '4'), ('IELayerGain', '4'), ('IILayerGain', '4'), 
-                    ('EELayerGain', '5A'), ('EILayerGain', '5A'), ('IELayerGain', '5A'), ('IILayerGain', '5A'), 
-                    ('EELayerGain', '5B'), ('EILayerGain', '5B'), ('IELayerGain', '5B'), ('IILayerGain', '5B'), 
-                    ('EELayerGain', '6'), ('EILayerGain', '6'), ('IELayerGain', '6'), ('IILayerGain', '6')] 
-    for p in updateParams:
-        if isinstance(p, tuple):
-            initCfg.update({p: cfgLoad[p[0]][p[1]]})
-        else:
-            initCfg.update({p: cfgLoad[p]})
-    # good thal params for 100% cell density 
-    updateParams2 = ['thalamoCorticalGain', 'intraThalamicGain', 'EbkgThalamicGain', 'IbkgThalamicGain', 'wmat']
-    for p in updateParams2:
-        if isinstance(p, tuple):
-            initCfg.update({p: cfgLoad2[p[0]][p[1]]})
-        else:
-            initCfg.update({p: cfgLoad2[p]})
     # --------------------------------------------------------
     # fitness function
     fitnessFuncArgs = {}
