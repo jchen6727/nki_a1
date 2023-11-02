@@ -2350,6 +2350,10 @@ does that mean TCM would receive the IC inputs?
 
 sd> ah yes, TCM will be receiving the same IC input as TC, as they are defined using the same cell type
 sn> agree i should prob adjust that?
+sn> will give that a try via postconds on pop instead of celltype
+sd>  yeah I think makes sense
+thanks
+sn> putting that in samn branch
 
 *** email NO about this
 
@@ -2365,4 +2369,73 @@ agree?
 
 Thanks,
 Sam
+
+** make separate pathway for IC -> thalamic core and IC -> thalamic matrix (23nov2_BBN_B0)
+
+will have weaker and lower probability of connection from IC -> Thalamic Matrix
+compared to Thalamic Core
+
+for example:
+
+# these params control IC -> Thalamic Core
+cfg.ICThalweightECore = 0.375
+cfg.ICThalweightICore = 0.25
+cfg.ICThalprobECore = 0.19
+cfg.ICThalprobICore = 0.12
+# these params control IC -> Thalamic Matrix
+cfg.ICThalMatrixCoreFactor = 0.2
+cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalweightIMatrix = cfg.ICThalweightICore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobEMatrix = cfg.ICThalprobECore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobIMatrix = cfg.ICThalprobICore * cfg.ICThalMatrixCoreFactor
+
+and then adjust netParams.py as follows:
+
+    # cochlea/IC -> thal
+    if cfg.ICThalInput:
+        # IC -> thalamic core
+        netParams.connParams['IC->ThalECore'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'pop': ['TC', 'HTC']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': cfg.ICThalInput['probECore'],
+            'weight': cfg.ICThalInput['weightECore'],
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': cfg.delayBkg}
+        
+        netParams.connParams['IC->ThalICore'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'pop': ['RE', 'TI']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': 'GABAA',
+            'probability': cfg.ICThalInput['probICore'],
+            'weight': cfg.ICThalInput['weightICore'],
+            'delay': cfg.delayBkg}
+
+        # IC -> thalamic matrix
+        netParams.connParams['IC->ThalEMatrix'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'pop': ['TCM']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': ESynMech,
+            'probability': cfg.ICThalInput['probEMatrix'],
+            'weight': cfg.ICThalInput['weightEMatrix'],
+            'synMechWeightFactor': cfg.synWeightFractionEE,
+            'delay': cfg.delayBkg}
+        
+        netParams.connParams['IC->ThalIMatrix'] = { 
+            'preConds': {'pop': 'IC'}, 
+            'postConds': {'pop': ['IREM', 'TIM']},
+            'sec': 'soma', 
+            'loc': 0.5,
+            'synMech': 'GABAA',
+            'probability': cfg.ICThalInput['probIMatrix'],
+            'weight': cfg.ICThalInput['weightIMatrix'],
+            'delay': cfg.delayBkg}  
+
+ok, try that sim out, same as previous otherwise
 

@@ -67,7 +67,7 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = '23nov2_BBN_A0'  #'v38_NMDAR_test'
+cfg.simLabel = '23nov2_BBN_B0'  #'v38_NMDAR_test'
 cfg.saveFolder = 'data/' + cfg.simLabel  ## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
@@ -176,11 +176,18 @@ cfg.thalamoCorticalGain = 1.0
 cfg.intraThalamicGain = 1.0
 cfg.corticoThalamicGain = 1.0
 
-# these params control IC -> Thal
-cfg.ICThalweightE = 0.375
-cfg.ICThalweightI = 0.25
-cfg.ICThalprobE = 0.19
-cfg.ICThalprobI = 0.12
+# these params control IC -> Thalamic Core
+cfg.ICThalweightECore = 0.375
+cfg.ICThalweightICore = 0.25
+cfg.ICThalprobECore = 0.19
+cfg.ICThalprobICore = 0.12
+# these params control IC -> Thalamic Matrix
+cfg.ICThalMatrixCoreFactor = 0.2
+cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalweightIMatrix = cfg.ICThalweightICore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobEMatrix = cfg.ICThalprobECore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobIMatrix = cfg.ICThalprobICore * cfg.ICThalMatrixCoreFactor
+
 
 # these params added from Christoph Metzner branch
 cfg.thalL4PV = 0.75 # [minF,maxF] 0.1 - 2
@@ -313,8 +320,12 @@ cfg.wmat = cfgLoad['wmat']
 
 cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
                    'startTime': list(np.arange(4000, 8000, 300)),
-                   'weightE': cfg.ICThalweightE,
-                   'weightI': cfg.ICThalweightI,
-                   'probE': cfg.ICThalprobE, 
-                   'probI': cfg.ICThalprobI,
+                   'weightECore': cfg.ICThalweightECore,
+                   'weightICore': cfg.ICThalweightICore,
+                   'probECore': cfg.ICThalprobECore, 
+                   'probICore': cfg.ICThalprobICore,
+                   'weightEMatrix': cfg.ICThalweightEMatrix,
+                   'weightIMatrix': cfg.ICThalweightIMatrix,
+                   'probEMatrix': cfg.ICThalprobEMatrix,
+                   'probIMatrix': cfg.ICThalprobIMatrix,
                    'seed': 1}  # SHOULD THIS BE ZERO?                   
