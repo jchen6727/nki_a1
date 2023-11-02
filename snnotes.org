@@ -2348,3 +2348,21 @@ netParams.popParams['TCM'] =    {'cellType': 'TC',  'cellModel': 'HH_reduced',  
 
 does that mean TCM would receive the IC inputs?
 
+sd> ah yes, TCM will be receiving the same IC input as TC, as they are defined using the same cell type
+sn> agree i should prob adjust that?
+
+*** email NO about this
+
+one more question
+
+right now the model thalamic core and matrix get the same inputs from
+inferior colliculus. I was thinking core-like inputs should hit
+thalamic core more strongly than thalamic matrix. Do you agree?
+Perhaps just down-modulating the strength of inputs to thalamic matrix
+makes sense, so that some modulatory auditory stimulus component
+reaches thalamic matrix, just less strongly than thalamic core. Do you
+agree?
+
+Thanks,
+Sam
+
