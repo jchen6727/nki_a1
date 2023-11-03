@@ -2644,5 +2644,31 @@ savefig(gifpath()+'_cell_Vm_a6.png') # [[./gif/23nov3_23nov2_BBN_B0_cell_Vm_a6.p
 
 ITP4, ITS4 not activated much, and does not look like depolarization blockade ... 
 
-** next sim, increase thal activation of L4 excitatory neurons
+** next sim, increase thal activation of L4 excitatory neurons (23nov3_BBN_A0)
+
+and decrease thal activation of L4 inhibitory neurons
+cfg.thalL4PV = 0.5 # [minF,maxF] 0.1 - 2
+cfg.thalL4SOM = 0.5 # [minF,maxF]
+cfg.thalL4E = 2.0 # [minF,maxF]
+
+for prob of connections of IC -> Matrix, could keep same as core, just reduce
+the weights ... to ~10%
+
+# these params control IC -> Thalamic Matrix
+cfg.ICThalMatrixCoreFactor = 0.1
+cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalweightIMatrix = cfg.ICThalweightICore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobEMatrix = cfg.ICThalprobECore # * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobIMatrix = cfg.ICThalprobICore # * cfg.ICThalMatrixCoreFactor
+
+and for core have this:
+# these params control IC -> Thalamic Core
+cfg.ICThalweightECore = 0.375
+cfg.ICThalweightICore = 0.25
+cfg.ICThalprobECore = 0.19
+cfg.ICThalprobICore = 0.12
+
+cfg.simLabel = '23nov3_BBN_A0' 
+
+./myrun 48
 

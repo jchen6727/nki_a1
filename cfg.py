@@ -67,7 +67,7 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = '23nov2_BBN_B0'  #'v38_NMDAR_test'
+cfg.simLabel = '23nov3_BBN_A0'
 cfg.saveFolder = 'data/' + cfg.simLabel  ## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file
@@ -182,17 +182,17 @@ cfg.ICThalweightICore = 0.25
 cfg.ICThalprobECore = 0.19
 cfg.ICThalprobICore = 0.12
 # these params control IC -> Thalamic Matrix
-cfg.ICThalMatrixCoreFactor = 0.2
+cfg.ICThalMatrixCoreFactor = 0.1
 cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
 cfg.ICThalweightIMatrix = cfg.ICThalweightICore * cfg.ICThalMatrixCoreFactor
-cfg.ICThalprobEMatrix = cfg.ICThalprobECore * cfg.ICThalMatrixCoreFactor
-cfg.ICThalprobIMatrix = cfg.ICThalprobICore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobEMatrix = cfg.ICThalprobECore # * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobIMatrix = cfg.ICThalprobICore # * cfg.ICThalMatrixCoreFactor
 
 
 # these params added from Christoph Metzner branch
-cfg.thalL4PV = 0.75 # [minF,maxF] 0.1 - 2
-cfg.thalL4SOM = 0.75 # [minF,maxF]
-cfg.thalL4E = 0.5 # [minF,maxF]
+cfg.thalL4PV = 0.5 # [minF,maxF] 0.1 - 2
+cfg.thalL4SOM = 0.5 # [minF,maxF]
+cfg.thalL4E = 2.0 # [minF,maxF]
 
 cfg.addSubConn = 1
 
