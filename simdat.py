@@ -124,13 +124,13 @@ def drawcellVm (simConfig, ldrawpop=None,tlim=None, lclr=None,cmap=cm.prism):
   for kdx,k in enumerate(list(simConfig['simData']['V_soma'].keys())):  
     color = csm.to_rgba(kdx);
     if lclr is not None and kdx < len(lclr): color = lclr[kdx]
-    cty = simConfig['net']['cells'][int(k.split('_')[1])]['cellType']
+    cty = simConfig['net']['cells'][int(k.split('_')[1])]['tags']['cellType']
     if ldrawpop is not None and cty not in ldrawpop: continue
     dclr[kdx]=color
-    lpop.append(simConfig['net']['cells'][int(k.split('_')[1])]['cellType'])
+    lpop.append(simConfig['net']['cells'][int(k.split('_')[1])]['tags']['cellType'])
   if ldrawpop is None: ldrawpop = lpop    
   for kdx,k in enumerate(list(simConfig['simData']['V_soma'].keys())):
-    cty = simConfig['net']['cells'][int(k.split('_')[1])]['cellType']
+    cty = simConfig['net']['cells'][int(k.split('_')[1])]['tags']['cellType']
     if ldrawpop is not None and cty not in ldrawpop: continue
     if tlim is not None:
       plot(simConfig['simData']['t'][sidx:eidx],simConfig['simData']['V_soma'][k][sidx:eidx],color=dclr[kdx])
