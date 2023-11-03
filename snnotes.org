@@ -2672,3 +2672,209 @@ cfg.simLabel = '23nov3_BBN_A0'
 
 ./myrun 48
 
+Analyzing...
+  Cells: 13108
+  Connections: 0 (0.00 per cell)
+  Spikes: 562744 (3.90 Hz)
+  Simulated time: 11.0 s; 48 workers
+  Run time: 5360.39 s
+   NGF1 : 1.482 Hz
+   IT2 : 0.813 Hz
+   SOM2 : 6.327 Hz
+   PV2 : 29.867 Hz
+   VIP2 : 23.705 Hz
+   NGF2 : 17.536 Hz
+   IT3 : 0.119 Hz
+   SOM3 : 3.046 Hz
+   PV3 : 23.542 Hz
+   VIP3 : 54.117 Hz
+   NGF3 : 7.738 Hz
+   ITP4 : 2.098 Hz
+   ITS4 : 1.841 Hz
+   SOM4 : 14.957 Hz
+   PV4 : 7.751 Hz
+   VIP4 : 10.881 Hz
+   NGF4 : 13.162 Hz
+   IT5A : 1.902 Hz
+   CT5A : 1.509 Hz
+   SOM5A : 10.273 Hz
+   PV5A : 3.660 Hz
+   VIP5A : 29.545 Hz
+   NGF5A : 21.034 Hz
+   IT5B : 7.403 Hz
+   CT5B : 0.624 Hz
+   PT5B : 0.160 Hz
+   SOM5B : 24.932 Hz
+   PV5B : 1.554 Hz
+   VIP5B : 19.551 Hz
+   NGF5B : 18.697 Hz
+   IT6 : 2.038 Hz
+   CT6 : 2.438 Hz
+   SOM6 : 71.077 Hz
+   PV6 : 0.062 Hz
+   VIP6 : 1.281 Hz
+   NGF6 : 144.560 Hz
+   TC : 6.656 Hz
+   TCM : 5.969 Hz
+   HTC : 5.958 Hz
+   IRE : 3.645 Hz
+   IREM : 3.421 Hz
+   TI : 1.929 Hz
+   TIM : 2.927 Hz
+   IC : 3.701 Hz
+
+check output ... 
+
+python -i simdat.py 23nov3_BBN_A0
+
+NGF1 1.47 Hz
+IT2 0.72 Hz
+SOM2 6.2 Hz
+PV2 30.48 Hz
+VIP2 24.07 Hz
+NGF2 15.26 Hz
+IT3 0.02 Hz
+SOM3 2.25 Hz
+PV3 22.47 Hz
+VIP3 53.56 Hz
+NGF3 7.19 Hz
+ITP4 2.0 Hz
+ITS4 1.74 Hz
+SOM4 14.28 Hz
+PV4 7.4 Hz
+VIP4 10.34 Hz
+NGF4 12.68 Hz
+IT5A 1.81 Hz
+CT5A 1.42 Hz
+SOM5A 9.33 Hz
+PV5A 3.48 Hz
+VIP5A 27.02 Hz
+NGF5A 20.95 Hz
+IT5B 7.4 Hz
+CT5B 0.56 Hz
+PT5B 0.16 Hz
+SOM5B 23.72 Hz
+PV5B 1.45 Hz
+VIP5B 18.64 Hz
+NGF5B 18.42 Hz
+IT6 1.52 Hz
+CT6 2.26 Hz
+SOM6 68.85 Hz
+PV6 0.0 Hz
+VIP6 1.11 Hz
+NGF6 143.99 Hz
+TC 6.42 Hz
+TCM 5.95 Hz
+HTC 5.75 Hz
+IRE 3.54 Hz
+IREM 3.38 Hz
+TI 1.93 Hz
+TIM 2.92 Hz
+IC 3.69 Hz
+
+drawraster(dspkT,dspkID)
+savefig(gifpath()+'_rast.png') # [[./gif/23nov3_23nov3_BBN_A0_rast.png]]
+
+ok, now very clear firing in L2, L3, L4 excitatory neurons
+
+xlim((4e3,6e3))
+savefig(gifpath()+'_rastB.png') # [[./gif/23nov3_23nov3_BBN_A0_rastB.png]]
+
+sh = {k:getspikehist(dspkT[k], dnumc[k], 25, 11e3) for k in dnumc.keys()}
+
+lkectx = ['IT2', 'IT3', 'ITP4', 'ITS4']
+lkictx = ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'SOM4', 'PV4', 'VIP4', 'NGF4']
+
+sh['ECTX'] = getspikehistpops(dspkT, lkectx, dnumc, 25, 11e3)
+sh['ICTX'] = getspikehistpops(dspkT, lkictx, dnumc, 25, 11e3)
+
+lk = ['NGF1', 'SOM2', 'PV2', 'VIP2', 'NGF2', 'SOM3', 'PV3', 'VIP3', 'NGF3', 'SOM4', 'PV4', 'VIP4', 'NGF4']
+
+llk = [ ['IC', 'TC', 'TCM'], ['ECTX'], ['ICTX']]
+llclr = [['r','g','b'], ['r'], ['b']]
+
+for lk,lclr,gdx in zip(llk, llclr,[1,2,3]): 
+  ax=subplot(3,1,gdx)
+  for k,clr in zip(lk,lclr):
+    plot(sh[k][0],sh[k][1],clr); xlabel('Time (ms)'); ylabel('Hz')
+  lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr,lk)]
+  ax.legend(handles=lpatch,handlelength=1)
+  xlim((0,11e3))
+
+savefig(gifpath()+'_spikehistE.png') # [[./gif/23nov3_23nov3_BBN_A0_spikehistE.png]]
+
+subplot(3,1,2); ylim((0,5)); subplot(3,1,3); ylim((1,35))
+
+savefig(gifpath()+'_spikehistF.png') # [[./gif/23nov3_23nov3_BBN_A0_spikehistF.png]]
+
+should just show ITP4, ITS4 for the ectx ... 
+
+lkictx = ['SOM4', 'PV4', 'VIP4', 'NGF4']
+lkectx = ['ITP4', 'ITS4']
+sh['ECTX'] = getspikehistpops(dspkT, lkectx, dnumc, 25, 11e3)
+sh['ICTX'] = getspikehistpops(dspkT, lkictx, dnumc, 25, 11e3)
+lk = ['SOM4', 'PV4', 'VIP4', 'NGF4']
+llk = [ ['IC', 'TC', 'TCM'], ['ECTX'], ['ICTX']]
+llclr = [['r','g','b'], ['r'], ['b']]
+
+for lk,lclr,gdx in zip(llk, llclr,[1,2,3]): 
+  ax=subplot(3,1,gdx)
+  for k,clr in zip(lk,lclr):
+    plot(sh[k][0],sh[k][1],clr); xlabel('Time (ms)'); ylabel('Hz')
+  lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr,lk)]
+  ax.legend(handles=lpatch,handlelength=1)
+  xlim((0,11e3))
+
+subplot(3,1,2); ylim((0,10)); subplot(3,1,3); ylim((1,35))
+
+savefig(gifpath()+'_spikehistG.png') # [[./gif/23nov3_23nov3_BBN_A0_spikehistG.png]]
+
+so L4 E neurons are firing more, but cant really say it's due to stimulus
+and part of that is because TC is almost always firing, so the BBN input
+is not driving TC much more ... well, a little more firing in TC ... may
+need to strengthen that a bit and reduce TC -> L4E a bit so that there's
+a detectable response to stimulus and background L4E is a little quieter
+
+LFP = simConfig['simData']['LFP']
+LFP = np.array(LFP)
+tt = linspace(0,totalDur,LFP.shape[0])
+CSD = getCSD(LFP, 1e3/0.05)
+CSD.shape # (18, 220000)
+
+lchan = [4, 10, 15]
+
+for chan,clr in zip(lchan,['r','g','b']): plot(tt,CSD[chan,:],clr)
+
+ylim((-80,80))
+xlim((2e3,totalDur))
+
+savefig(gifpath()+'_CSD_a4.png') # [[./gif/23nov3_23nov3_BBN_A0_CSD_a4.png]]
+well, now granular layer (green) has much higher amplitude CSD
+
+bbnT = np.arange(4000, 8000, 300)
+
+from erp import *
+dt = 0.05
+sampr = 1e3/dt
+bbnTrigIdx = [ms2index(x,sampr) for x in bbnT]
+ttERP,avgERP = getAvgERP(CSD, sampr, bbnTrigIdx, 0, 150)
+
+for chan,clr in zip(lchan,['r','g','b']): plot(ttERP,avgERP[chan,:],clr)
+
+xlabel('Time (ms)');
+xlim((0,150))
+savefig(gifpath()+'_model_BBN_avg_ERP_CSD_a5.png') # [[./gif/23nov3_23nov3_BBN_A0_model_BBN_avg_ERP_CSD_a5.png]]
+
+granular CSD ERP looks a little better ...
+
+subplot(1,2,1)
+drawcellVm(simConfig,ldrawpop=['ITP4','ITS4']) # 
+subplot(1,2,2)
+drawcellVm(simConfig,ldrawpop=['PV4','SOM4','NGF4']) # 
+
+savefig(gifpath()+'_cell_Vm_a6.png') # [[./gif/23nov3_23nov3_BBN_A0_cell_Vm_a6.png]]
+
+** next sim (23nov3_BBN_B0)
+
+so may need to turn down cfg.thalL4E ... ? and increase IC -> TC ... ?
+
