@@ -2878,3 +2878,11 @@ savefig(gifpath()+'_cell_Vm_a6.png') # [[./gif/23nov3_23nov3_BBN_A0_cell_Vm_a6.p
 
 so may need to turn down cfg.thalL4E ... ? and increase IC -> TC ... ?
 
+increase cfg.ICThalweightECore from 0.375 to 1.0
+and decrease cfg.thalL4E from 2.0 to 1.0
+
+that way TC more activated when IC firing, and L4E a little more dependent on IC->TC pathway
+for activation
+
+./myrun 48
+
