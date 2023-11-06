@@ -3181,3 +3181,143 @@ should be enough to look at basic BBN response
 
 ./myrun 48
 
+   NGF1 : 1.286 Hz
+   IT2 : 0.877 Hz
+   SOM2 : 5.171 Hz
+   PV2 : 23.549 Hz
+   VIP2 : 11.652 Hz
+   NGF2 : 18.086 Hz
+   IT3 : 0.171 Hz
+   SOM3 : 5.884 Hz
+   PV3 : 30.593 Hz
+   VIP3 : 59.826 Hz
+   NGF3 : 8.314 Hz
+   ITP4 : 2.429 Hz
+   ITS4 : 2.134 Hz
+   SOM4 : 17.975 Hz
+   PV4 : 6.845 Hz
+   VIP4 : 25.857 Hz
+   NGF4 : 14.643 Hz
+   IT5A : 1.740 Hz
+   CT5A : 2.495 Hz
+   SOM5A : 14.259 Hz
+   PV5A : 4.226 Hz
+   VIP5A : 22.794 Hz
+   NGF5A : 22.768 Hz
+   IT5B : 7.964 Hz
+   CT5B : 1.682 Hz
+   PT5B : 0.177 Hz
+   SOM5B : 32.493 Hz
+   PV5B : 1.106 Hz
+   VIP5B : 10.786 Hz
+   NGF5B : 19.482 Hz
+   IT6 : 3.109 Hz
+   CT6 : 2.903 Hz
+   SOM6 : 82.354 Hz
+   PV6 : 0.098 Hz
+   VIP6 : 2.753 Hz
+   NGF6 : 188.086 Hz
+   TC : 8.578 Hz
+   TCM : 6.191 Hz
+   HTC : 7.274 Hz
+   IRE : 3.914 Hz
+   IREM : 3.320 Hz
+   TI : 2.297 Hz
+   TIM : 2.946 Hz
+   IC : 1.662 Hz
+
+python -i simdat.py 23nov6_BBN_A0
+
+NGF1 1.35 Hz
+IT2 0.32 Hz
+SOM2 3.6 Hz
+PV2 7.08 Hz
+VIP2 1.0 Hz
+NGF2 19.91 Hz
+IT3 0.0 Hz
+SOM3 0.04 Hz
+PV3 33.25 Hz
+VIP3 67.38 Hz
+NGF3 7.83 Hz
+ITP4 2.74 Hz
+ITS4 2.49 Hz
+SOM4 25.33 Hz
+PV4 3.89 Hz
+VIP4 2.23 Hz
+NGF4 14.21 Hz
+IT5A 1.31 Hz
+CT5A 1.64 Hz
+SOM5A 9.65 Hz
+PV5A 6.11 Hz
+VIP5A 47.5 Hz
+NGF5A 26.5 Hz
+IT5B 8.22 Hz
+CT5B 0.73 Hz
+PT5B 0.15 Hz
+SOM5B 23.97 Hz
+PV5B 0.89 Hz
+VIP5B 20.82 Hz
+NGF5B 24.92 Hz
+IT6 1.69 Hz
+CT6 2.67 Hz
+SOM6 76.98 Hz
+PV6 0.0 Hz
+VIP6 0.0 Hz
+NGF6 175.39 Hz
+TC 6.95 Hz
+TCM 6.55 Hz
+HTC 6.42 Hz
+IRE 3.35 Hz
+IREM 3.39 Hz
+TI 2.29 Hz
+TIM 2.98 Hz
+IC 0.0 Hz
+
+savefig(gifpath()+'_rast.png') # [[./gif/23nov6_23nov6_BBN_A0_rast.png]]
+
+sh = {k:getspikehist(dspkT[k], dnumc[k], 25, totalDur) for k in dnumc.keys()}
+lkictx = ['SOM4', 'PV4', 'VIP4', 'NGF4']
+lkectx = ['ITP4', 'ITS4']
+sh['ECTX'] = getspikehistpops(dspkT, lkectx, dnumc, 25, totalDur)
+sh['ICTX'] = getspikehistpops(dspkT, lkictx, dnumc, 25, totalDur)
+lk = ['SOM4', 'PV4', 'VIP4', 'NGF4']
+llk = [ ['IC', 'TC', 'TCM'], ['ECTX'], ['ICTX']]
+llclr = [['r','g','b'], ['r'], ['b']]
+
+for lk,lclr,gdx in zip(llk, llclr,[1,2,3]): 
+  ax=subplot(3,1,gdx)
+  for k,clr in zip(lk,lclr):
+    plot(sh[k][0],sh[k][1],clr); xlabel('Time (ms)'); ylabel('Hz')
+  lpatch = [mpatches.Patch(color=c,label=s) for c,s in zip(lclr,lk)]
+  ax.legend(handles=lpatch,handlelength=1)
+  xlim((0,totalDur))
+
+subplot(3,1,2); ylim((0,10)); subplot(3,1,3); ylim((0,25))
+
+savefig(gifpath()+'_spikehistG.png') # [[./gif/23nov6_23nov6_BBN_A0_spikehistG.png]]
+
+python
+from matplotlib import pyplot as plt
+from netpyne import sim
+
+fn = 'data/23nov6_BBN_A0/23nov6_BBN_A0_data.pkl'
+
+sim.load(fn,instantiate=False) # should use this more often
+
+layerBounds = {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+sim.analysis.plotCSD(overlay='CSD',timeRange=[2.75e3,4.5e3],stim_start_time=4e3,spacing_um=100,layerLines=True,layerBounds=layerBounds) # this works ...
+
+savefig(gifpath()+'_CSD__CSD_overlay_a2.png') # [[./gif/23nov6_23nov6_BBN_A0_CSD_CSD_overlay_a2.png]]
+
+** follow up email to no
+
+well, I tweaked connection strength from thalamic core -> L4 E and I
+neurons and got sinks in L4 during BBN ... firing activity is now too
+high, so this will require some optimization to get right. At least it
+shows that we can get ~the desired CSD profiles by tweaking some
+parameters we have access to ...
+
+attachments:
+ [[./gif/23nov6_23nov6_BBN_A0_rast.png]]
+ [[./gif/23nov6_23nov6_BBN_A0_CSD_CSD_overlay_a2.png]]
+
