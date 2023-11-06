@@ -3077,3 +3077,60 @@ not all L4 cells firing now, but as population there's a clear response...
 
 may need to optimize for ERP CSD since polarity could be reversed
 
+* 23nov6
+** continue with latest simulation
+
+check overall CSD ERP
+
+since even if waveforms look incorrect on channels, used, nearby channels could
+have better-looking waveforms ... 
+
+look in analysis/plostCSD.py for some useful functions
+
+from matplotlib import pyplot as plt
+from netpyne import sim
+
+fn = 'data/23nov3_BBN_B0/23nov3_BBN_B0_data.pkl'
+
+sim.load(fn,instantiate=False) # should use this more often
+
+layerBounds = {'L1': 100, 'L2': 160, 'L3': 950, 'L4': 1250, 'L5A': 1334, 'L5B': 1550, 'L6': 2000}
+sim.analysis.plotCSD(overlay='LFP',timeRange=[3.5e3,8.5e3],stim_start_time=4e3,spacing_um=100,layerLines=True,layerBounds=layerBounds) # this works ...
+
+savefig(gifpath()+'_CSD_a0.png') # [[./gif/23nov6_23nov3_BBN_B0_CSD_a0.png]]
+
+can see sinks/sources, but looks like main sink is above L4 (somewhere in L3), while main
+source is in L4 ... well some sinks in L4, but not as prominent ... 
+
+savefig(gifpath()+'_CSD_a1.png') # [[./gif/23nov6_23nov3_BBN_B0_CSD_a1.png]]
+
+sim.analysis.plotCSD(overlay='CSD',timeRange=[3.5e3,8.5e3],stim_start_time=4e3,spacing_um=100,layerLines=True,layerBounds=layerBounds) # this works ...
+
+savefig(gifpath()+'_CSD__CSD_overlay_a2.png') # [[./gif/23nov6_23nov3_BBN_B0_CSD_CSD_overlay_a2.png]]
+
+savefig(gifpath()+'_CSD__CSD_overlay_a3.png') # [[./gif/23nov6_23nov3_BBN_B0_CSD_CSD_overlay_a3.png]]
+
+** email about CSD
+
+I made some of those modifications to the model (adjusting level of
+activation between IC->Thalamic core vs matrix, and Thal->Ctx
+excitatory vs Thal->Ctx interneurons), ... now we get a more
+pronounced response in L4 after BBN stimulation (between 4-8 s in the
+model, every 300 ms).
+
+In the attached figures there's a rasterplot and CSD.
+
+Does the CSD look somewhat realistic / similar to what you see in BBN experiments? 
+
+There are prominent sinks during BBN, but slightly above the model's L4 (more in L3).
+
+Perhaps it's OK to use the ~L3 location as the approximate granular
+sink for purposes of optimization?
+
+Let me know if anything else stands out.
+
+attachments:
+  [[./gif/23nov3_23nov3_BBN_B0_rast.png]]  
+  [[./gif/23nov6_23nov3_BBN_B0_CSD_CSD_overlay_a2.png]]
+  [[./gif/23nov6_23nov3_BBN_B0_CSD_CSD_overlay_a3.png]]
+
