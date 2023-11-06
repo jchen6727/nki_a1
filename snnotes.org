@@ -3134,3 +3134,50 @@ attachments:
   [[./gif/23nov6_23nov3_BBN_B0_CSD_CSD_overlay_a2.png]]
   [[./gif/23nov6_23nov3_BBN_B0_CSD_CSD_overlay_a3.png]]
 
+no> Is the first plot the response to BBN and the 2nd to the 40Hz stimuli?
+
+I don't know Sam….Annie and I discussed it and we don't think these
+CSD responses look correct. There should not be a source in the
+granular layer (unless it's an inhibitory response) and the response
+in the upper supra should not have such a low amplitude
+either. Generally the CSD response amplitude in the upper and lower
+Supra layer should be pretty equal. Sorry!
+
+And in the 40HZ response similarly there should be an initial sink
+in the granular layer.
+ 
+You probably told me this already but what BF do you have this cortical
+column tuned to?
+
+sn> Both images I attached are responses to BBN at 300 ms intervals
+(from 4-8 s), none of those images had 40 Hz inputs. One was a raster
+plot, the other CSD. The BF is similar to NHP recordings.
+
+Thanks for the feedback.
+
+I'm thinking that the location of sinks/sources has more to do with
+the location of E vs I synapses on the dendrites, so the only way to
+move sinks/sources to physiological locations is to adjust that entire
+setup, which is a big change to the model. Alternatively, there's a
+chance that adjusting the relative input strengths of E vs I synapses
+while keeping them fixed vertically would work. . .
+
+jc> sorry, to clarify for me, does adjusting relative input strengths
+meaning altering the synaptic weights while retaining the same overall
+activity?
+
+samn> good question. remains to be seen. we'd probably want about same
+spontaneous firing rates, but allow for higher rates during auditory
+stimulation.  hopefully strength adjustments enough...seems feasible
+given ITS4 should have enough AMPA/NMDA activation within L4
+
+** more adjustments -- need stronger excitatory activation within L4 to produce current sink there
+
+try simple test of increasing cfg.thalL4E from 1.0 to 2.0
+and thalL4PV and thalL4SOM from 0.5 to 0.25
+
+also, no need for 11 s simulation ... just run BBN stimulation for 1 s (3-4 s) and then stop simulation after ~7 s
+should be enough to look at basic BBN response
+
+./myrun 48
+
