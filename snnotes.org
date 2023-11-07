@@ -3321,3 +3321,127 @@ attachments:
  [[./gif/23nov6_23nov6_BBN_A0_rast.png]]
  [[./gif/23nov6_23nov6_BBN_A0_CSD_CSD_overlay_a2.png]]
 
+* 23nov7
+** more discussion on CSD during BBN
+
+CM That looks good! Will also run some more sims with increased
+cfg.thalL4E and decreased cfg.thall4SOM,PV later 
+
+Two quick comments:
+The Allen Insitute paper Salva shared some days ago suggests that it
+might be possible to shift the synapse locations (and thus change the
+CSD) without a big effect on the firing rates (so maybe not that big
+of a change to the model!?). It also suggests that CSD patterns in
+supragranular layers might depend on feedback from higher areas. which
+we could artificially inject during stimulation (not the most elegant
+way of doing it but maybe the quickest) and thus we would also not
+alter the spontaneous activity
+
+samn: That sounds interesting to try, though synapses were placed on
+the neurons based on known physiology/anatomy, so not sure we should
+do that only to avoid re-tuning the model.
+
+@salvadord
+ what do you think?
+
+top-down inputs another question ... we might get part of that effect
+through thalamic matrix, but have to see if that top-down input should
+be primarily cortical/excitatory ...
+ 
+ cm I believe in the Allen paper it was primarily ecitatory  but will have to reread the paper
+
+cm: I agree it would be a big change if we significantly moved away
+from the experimental data.It might however be possible to first
+change the weights as you suggested earlier and then potentially move
+the synapses a little bit or change the percentage of synapses that go
+onto a specific compartment slightly (let's say within experimental
+variability), although I am not sure how much that would give us
+because of the reduced morphology
+
+samn: agree with that assessment. and agree that for cells such as ITS4
+which are already compact/very simplified geometries, likely won't
+have much room to move their synapses.
+
+sd: to be fair I don’t think we had that much detailed data on the
+dendritic placement of syns, particularly specific to macaque A1 …
+plus the cells are just 5 compartments, so I don’t think the changes
+should affect the spiking activity that significantly, and
+particularly since we have weight normalization/democratization
+(weights are adjusted so they produce similar effect on soma) … but
+the changes might still affect the LFP/EEG significantly, so I think
+it is worth trying
+
+samn: i wasn't clear how much the synapses could move since they'll
+still be localized within the boundaries of the cells, which are small
+for ITS4. but agree it's worth a try & might help in other layers -
+anyone here want to try that? i'll probably start with weight
+adjustments
+
+** email from no
+
+This is does look better alright for the gran layer but the pattern of
+sinks and sources in the supra layer is still off (it should be source
+over a sink). Perhaps that will come with further modifications.
+
+sn> great ... !
+
+for correct patterns in supra-granular layers, a question came up
+whether it will require: 1) additional top-down cortico-cortical
+feedback, or 2) depends on either local cortical circuitry within A1
+(L4 -> L2/3 pathway), or 3) from thalamic projections (matrix ->
+L2/3)... we can likely achieve the right effect with any of these
+modifications, but would prefer to stick to the correct neuroanatomy,
+where possible ...
+
+** avg ERP data at 20 kHz for optimization (on edge)
+
+/home/samn/a1dat/data/bbn/avgERP/2-rb023024011@os.mat_20kHz_avgERP.pkl
+/home/samn/a1dat/data/bbn/avgERP/2-rb023024052@os.mat_20kHz_avgERP.pkl
+
+** install optuna 
+
+pip install optuna
+conda install sqlalchemy
+
+apparently need sqlalchemy for optuna to import properly ...
+
+python
+import optuna
+
+python
+import netpyne
+dir(netpyne.batch)
+['Batch', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__path__', '__spec__', 'absolute_import', 'asd_parallel', 'batch', 'division', 'evol', 'grid', 'optuna_parallel', 'print_function', 'standard_library', 'unicode_literals', 'utils']
+
+now optuna visible in netpyne.batch
+
+** back to opt setup
+
+for now will just take correlation between avg granular CSD ERP
+fitness is 'minimized', so will take -pearson correlation
+
+python batch.py
+Saving batch to data/optunaERP/optunaERP_batch.json ... 
+ Warning: an exception occurred when running Optuna optimization...
+
+mpiexec -np 2 nrniv -python -mpi batch.py
+
+ mpiexec -np 2 nrniv -python -mpi batch.py
+numprocs=2
+NEURON -- VERSION 8.0.2 HEAD (f0ca7454) 2022-02-02
+Duke, Yale, and the BlueBrain Project -- Copyright 1984-2021
+See http://neuron.yale.edu/neuron/credits
+
+Additional mechanisms from files
+ "mod/APCounter2.mod" "mod/ar_traub.mod" "mod/beforestep_py.mod" "mod/CA1ika.mod" "mod/CA1ikdr.mod" "mod/CA1ina.mod" "mod/cadad.mod" "mod/cadecay_destexhe.mod" "mod/cad.mod" "mod/Cadynamics.mod" "mod/cadyn.mod" "mod/cagk.mod" "mod/cal_mh.mod" "mod/cal_mig.mod" "mod/cancr.mod" "mod/canin.mod" "mod/can_mig.mod" "mod/caolmw.mod" "mod/capr.mod" "mod/catcb.mod" "mod/cat_mig.mod" "mod/cat_traub.mod" "mod/ch_CavL.mod" "mod/ch_CavN.mod" "mod/ch_KCaS.mod" "mod/ch_Kdrfastngf.mod" "mod/ch_KvAngf.mod" "mod/ch_KvCaB.mod" "mod/ch_leak.mod" "mod/ch_Navngf.mod" "mod/cp2.mod" "mod/cp.mod" "mod/DynamicNetStim.mod" "mod/gabab.mod" "mod/h_BS.mod" "mod/HH2.mod" "mod/h_harnett.mod" "mod/HH_traub.mod" "mod/hin.mod" "mod/h_kole.mod" "mod/h_migliore.mod" "mod/htc.mod" "mod/Iahp.mod" "mod/ICal.mod" "mod/Ican.mod" "mod/ican_sidi.mod" "mod/icaolmw.mod" "mod/icapr.mod" "mod/iccr.mod" "mod/IC.mod" "mod/iconc_Ca.mod" "mod/iholmkop.mod" "mod/iholmw.mod" "mod/ihpyrkop.mod" "mod/IKM.mod" "mod/ikscr.mod" "mod/IKsin.mod" "mod/IL_gutnick.mod" "mod/IL.mod" "mod/IM_cortex.mod" "mod/ipulse3.mod" "mod/IT2.mod" "mod/IT.mod" "mod/kahppr.mod" "mod/kaolmkop.mod" "mod/kap_BS.mod" "mod/kapcb.mod" "mod/kapin.mod" "mod/kapyrkop.mod" "mod/kBK.mod" "mod/kca.mod" "mod/kcaolmw.mod" "mod/kcpr.mod" "mod/kctin.mod" "mod/kdmc_BS.mod" "mod/kdr2_orig.mod" "mod/kdr_BS.mod" "mod/kdrbwb.mod" "mod/kdrcr.mod" "mod/kdrin.mod" "mod/kdrolmkop.mod" "mod/kdrpr.mod" "mod/kdrpyrkop.mod" "mod/kl.mod" "mod/km.mod" "mod/kv.mod" "mod/MyExp2SynAlpha.mod" "mod/MyExp2SynBB.mod" "mod/my_exp2syn.mod" "mod/MyExp2SynNMDABB.mod" "mod/na_2.mod" "mod/naf2.mod" "mod/nafbwb.mod" "mod/nafcr.mod" "mod/nafolmkop.mod" "mod/nafpr.mod" "mod/nafpyrkop.mod" "mod/nafx.mod" "mod/nap_sidi.mod" "mod/nax_BS.mod" "mod/naz.mod" "mod/Nca.mod" "mod/ntIh.mod" "mod/ntleak.mod" "mod/ntt_int.mod" "mod/ntt.mod" "mod/pasi.mod" "mod/savedist.mod" "mod/tia.mod" "mod/vecstim.mod" "mod/wrap.mod"
+bash: /opt/miniconda3/envs/py376/lib/libtinfo.so.6: no version information available (required by bash)
+running batch...
+Saving batch to data/optunaERP/optunaERP_batch.json ... 
+ Warning: an exception occurred when running Optuna optimization...
+>>> 
+running batch...
+Saving batch to data/optunaERP/optunaERP_batch.json ... 
+ Warning: an exception occurred when running Optuna optimization...
+
+debugging ...
+

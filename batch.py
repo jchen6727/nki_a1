@@ -1132,33 +1132,52 @@ def optunaERP ():
     params[('seeds', 'conn')] = [0]
     params[('seeds', 'stim')] = [0]
     # these params control IC -> Thal
-    params['ICThalweightE'] = [0.1, 0.5]
-    params['ICThalweightI'] = [0.1, 0.5]
-    params['ICThalprobE'] = [0.06, 0.5]
-    params['ICThalprobI'] = [0.06, 0.5]
+    params['ICThalweightECore'] = [0.1, 0.5]
+    params['ICThalweightICore'] = [0.1, 0.5]
+    params['ICThalprobECore'] = [0.06, 0.5]
+    params['ICThalprobICore'] = [0.06, 0.5]
+    params['ICThalMatrixCoreFactor'] = [0.01, 1.0]
     # these params added from Christoph Metzner branch
-    params['thalL4PV'] = [0.1, 2]
-    params['thalL4SOM'] = [0.1, 2]
-    params['thalL4E'] = [0.1, 2]
+    params['thalL4PV'] = [0.1, 3]
+    params['thalL4SOM'] = [0.1, 3]
+    params['thalL4E'] = [0.1, 3]
     # ADD: parameters to vary 
     groupedParams = []
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 11000 
+    initCfg['duration'] = 7000 
     initCfg['printPopAvgRates'] = [1500, 10000]
     initCfg['scaleDensity'] = 1.0 
     initCfg['recordStep'] = 0.05
     # --------------------------------------------------------
     # fitness function
-    d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/23nov1_50dB_bbn_avgERP_bandpass_1_110_Hz.pkl','rb'))
-    ttnhpERP = np.linspace(0,150,len(d['s2avg']))
-    
+    d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/2-rb023024011@os.mat_20kHz_avgERP.pkl','rb'))
+    ttavgERPNHP = d['ttavg']
+    avgCSDNHP = d['avgCSD'] # s2, g, i1 channels for primary CSD sinks are at indices 10, 14, 19
     fitnessFuncArgs = {}
-    fitnessFuncArgs['maxFitness'] = 3.0
-    
+    fitnessFuncArgs['maxFitness'] = 1.0
+    groupedParams = []    
     def fitnessFunc(simData, **kwargs):
-        print ('-- Defining fitness function -- ')
+        from csd import getCSDa1dat as getCSD
+        from scipy.stats import pearsonr
+        from erp import getAvgERP
+        def ms2index (ms, sampr): return int(sampr*ms/1e3)
+        LFP = simData['LFP']
+        LFP = np.array(LFP)
+        tt = np.linspace(0,totalDur,LFP.shape[0])
+        CSD = getCSD(LFP, 1e3/0.05)
+        CSD.shape # (18, 220000)
+        lchan = [4, 10, 15]
+        lnhpchan = [11-1, 15-1, 20-1]
+        bbnT = np.arange(3000, 4000, 300)
+        dt = 0.05
+        sampr = 1e3/dt
+        bbnTrigIdx = [ms2index(x,sampr) for x in bbnT]
+        ttERP,avgERP = getAvgERP(CSD, sampr, bbnTrigIdx, 0, 150)
+        fitness = -pearsonr(avgCSDNHP[lnhpchan[1],:],avgERP[lchan[1]])[0]
+        print('fitness is', fitness)
+        return fitness
     # --------------------------------------------------------
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
@@ -3222,12 +3241,83 @@ def setRunCfg(b, type='mpi_bulletin'):
 # ----------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-
     cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
-
     # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
+    # b = optunaERP()
+
+
+    # --------------------------------------------------------
+    # parameters
+    params = specs.ODict()
+    params[('seeds', 'conn')] = [0]
+    params[('seeds', 'stim')] = [0]
+    # these params control IC -> Thal
+    params['ICThalweightECore'] = [0.1, 0.5]
+    params['ICThalweightICore'] = [0.1, 0.5]
+    params['ICThalprobECore'] = [0.06, 0.5]
+    params['ICThalprobICore'] = [0.06, 0.5]
+    params['ICThalMatrixCoreFactor'] = [0.01, 1.0]
+    # these params added from Christoph Metzner branch
+    params['thalL4PV'] = [0.1, 3]
+    params['thalL4SOM'] = [0.1, 3]
+    params['thalL4E'] = [0.1, 3]
+    # ADD: parameters to vary 
+    groupedParams = []
+    # --------------------------------------------------------
+    # initial config
+    initCfg = {}
+    initCfg['duration'] = 7000 
+    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['scaleDensity'] = 1.0 
+    initCfg['recordStep'] = 0.05
+    # --------------------------------------------------------
+    # fitness function
+    d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/2-rb023024011@os.mat_20kHz_avgERP.pkl','rb'))
+    ttavgERPNHP = d['ttavg']
+    avgCSDNHP = d['avgCSD'] # s2, g, i1 channels for primary CSD sinks are at indices 10, 14, 19
+    fitnessFuncArgs = {}
+    fitnessFuncArgs['maxFitness'] = 1.0
+    groupedParams = []    
+    def fitnessFunc(simData, **kwargs):
+        return 1.0
+        """
+        from csd import getCSDa1dat as getCSD
+        from scipy.stats import pearsonr
+        from erp import getAvgERP
+        def ms2index (ms, sampr): return int(sampr*ms/1e3)
+        LFP = simData['LFP']
+        LFP = np.array(LFP)
+        tt = np.linspace(0,totalDur,LFP.shape[0])
+        CSD = getCSD(LFP, 1e3/0.05)
+        CSD.shape # (18, 220000)
+        lchan = [4, 10, 15]
+        lnhpchan = [11-1, 15-1, 20-1]
+        bbnT = np.arange(3000, 4000, 300)
+        dt = 0.05
+        sampr = 1e3/dt
+        bbnTrigIdx = [ms2index(x,sampr) for x in bbnT]
+        ttERP,avgERP = getAvgERP(CSD, sampr, bbnTrigIdx, 0, 150)
+        fitness = -pearsonr(avgCSDNHP[lnhpchan[1],:],avgERP[lchan[1]])[0]
+        print('fitness is', fitness)
+        return fitness
+        """
+    # --------------------------------------------------------
+    # create Batch object with paramaters to modify, and specifying files to use
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b.method = 'optuna'
+    b.optimCfg = {
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'maxFitness': fitnessFuncArgs['maxFitness'],
+        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxtime':      None,    #    Maximum time allowed, in seconds
+        'maxiter_wait': 45,
+        'time_sleep': 120,
+        'popsize': 1  # unused - run with mpi 
+    }
+    
     # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
@@ -3238,21 +3328,17 @@ if __name__ == '__main__':
     # b = optunaRatesLayersThalL2345A5B()
     # b = optunaRatesLayersThalL12345A5B6()
     # b = optunaRatesLayersWmat()
-
     # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
     # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
     # b = fIcurve(pops=['IT3','CT5']) 
-
-    b.batchLabel = 'BBN_stim_noStim'    #'BBN_deltaSOA_variedStartTimes'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    #b.batchLabel = 'BBN_stim_noStim'    #'BBN_deltaSOA_variedStartTimes'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
+    b.batchLabel = 'optunaERP'
     b.saveFolder = 'data/'+b.batchLabel
-
     setRunCfg(b, 'mpi_direct')
+    print('running batch...')
     b.run() # run batch
-
-
     # trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
-    # trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]
-    
+    # trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]    
     # batchIndex = 40
     # for trial in trials: 
     #     b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
