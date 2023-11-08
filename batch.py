@@ -1129,8 +1129,6 @@ def optunaERP ():
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
-    #params[('seeds', 'conn')] = [0]
-    #params[('seeds', 'stim')] = [0]
     # these params control IC -> Thal
     params['ICThalweightECore'] = [0.75, 1.25]
     params['ICThalweightICore'] = [0.1875, 0.3125]
@@ -1146,10 +1144,12 @@ def optunaERP ():
     # --------------------------------------------------------
     # initial config
     initCfg = {}
-    initCfg['duration'] = 7000 
-    initCfg['printPopAvgRates'] = [1500, 10000]
+    initCfg['duration'] = 5000 
+    initCfg['printPopAvgRates'] = [300, 4000]
     initCfg['scaleDensity'] = 1.0 
     initCfg['recordStep'] = 0.05
+    # SET SEEDS FOR CONN AND STIM 
+    initCfg[('seeds', 'conn')] = 0    
     # --------------------------------------------------------
     # fitness function
     d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/2-rb023024011@os.mat_20kHz_avgERP.pkl','rb'))
@@ -1186,10 +1186,10 @@ def optunaERP ():
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
         'maxFitness': fitnessFuncArgs['maxFitness'],
-        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
+        'maxiters':     100,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
-        'maxiter_wait': 45,
-        'time_sleep': 120,
+        'maxiter_wait': 500,
+        'time_sleep': 150,
         'popsize': 1  # unused - run with mpi 
     }
     """
@@ -3164,7 +3164,7 @@ def optunaRatesLayersWmat():
 # ----------------------------------------------------------------------------------------------
 # Run configurations
 # ----------------------------------------------------------------------------------------------
-def setRunCfg(b, type='mpi_bulletin'):
+def setRunCfg(b, type='mpi_direct'):
     if type=='mpi_bulletin':
       b.runCfg = {'type': 'mpi_bulletin', 
                   'script': 'init.py', 
@@ -3260,39 +3260,10 @@ def setRunCfg(b, type='mpi_bulletin'):
 # ----------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    cellTypes = ['IT2', 'PV2', 'SOM2', 'VIP2', 'NGF2', 'IT3', 'ITP4', 'ITS4', 'IT5A', 'CT5A', 'IT5B', 'PT5B', 'CT5B', 'IT6', 'CT6', 'TC', 'HTC', 'IRE', 'TI']
-    # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     b = optunaERP()
-    # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = evolRates()
-    # b = asdRates()
-    # b = optunaRates()
-    # b = optunaRatesLayers()
-    # b = optunaRatesLayersThalL2345A5B()
-    # b = optunaRatesLayersThalL12345A5B6()
-    # b = optunaRatesLayersWmat()
-    # b = bkgWeights(pops = cellTypes, weights = list(np.arange(1,100)))
-    # b = bkgWeights2D(pops = ['ITS4'], weights = list(np.arange(0,150,10)))
-    # b = fIcurve(pops=['IT3','CT5']) 
-    #b.batchLabel = 'BBN_stim_noStim'    #'BBN_deltaSOA_variedStartTimes'   #'REDO_BBN_CINECA_v36_5656BF_624SOA' #'BBN_CINECA_speech_ANmodel'  #'v34_batch67_XSEDE_TRIAL_0'
     b.batchLabel = 'optunaERP'
     b.saveFolder = 'data/'+b.batchLabel
     setRunCfg(b, 'mpi_direct')
     print('running batch...')
     b.run() # run batch
-    # trials = [5421, 5214, 5383, 3719, 3606, 4005, 3079, 4300]
-    # trials = [7378, 5692, 7996, 5822, 6172, 7423, 5767, 6226, 6194]    
-    # batchIndex = 40
-    # for trial in trials: 
-    #     b = custom('data/v34_batch31/trial_%d/trial_%d_cfg.json' % (trial, trial))
-    #     b.batchLabel = 'v34_batch'+str(batchIndex) 
-    #     b.saveFolder = 'data/'+b.batchLabel
-    #     b.method = 'grid'  # evol
-    #     setRunCfg(b, 'hpc_slurm_gcp')
-    #     b.run()  # run batch
-    #     batchIndex += 1
     
