@@ -3445,3 +3445,15 @@ Saving batch to data/optunaERP/optunaERP_batch.json ...
 
 debugging ...
 
+* 23nov8
+** continue setup for optuna ERP
+
+apparently, this is a problem:
+    params[('seeds', 'conn')] = [0]
+    params[('seeds', 'stim')] = [0]
+
+since when get rid of it, both optuna and evol seem to run ... 
+
+also, need to make sure optuna, inspyred, sqlalchemy packages are installed
+in order to use optuna or inspyred with netpyne
+

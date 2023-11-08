@@ -1129,8 +1129,8 @@ def optunaERP ():
     # --------------------------------------------------------
     # parameters
     params = specs.ODict()
-    params[('seeds', 'conn')] = [0]
-    params[('seeds', 'stim')] = [0]
+    #params[('seeds', 'conn')] = [0]
+    #params[('seeds', 'stim')] = [0]
     # these params control IC -> Thal
     params['ICThalweightECore'] = [0.1, 0.5]
     params['ICThalweightICore'] = [0.1, 0.5]
@@ -1142,7 +1142,7 @@ def optunaERP ():
     params['thalL4SOM'] = [0.1, 3]
     params['thalL4E'] = [0.1, 3]
     # ADD: parameters to vary 
-    groupedParams = []
+    # groupedParams = []
     # --------------------------------------------------------
     # initial config
     initCfg = {}
@@ -1180,7 +1180,7 @@ def optunaERP ():
         return fitness
     # --------------------------------------------------------
     # create Batch object with paramaters to modify, and specifying files to use
-    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
+    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg)#, groupedParams=groupedParams)
     b.method = 'optuna'
     b.optimCfg = {
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
@@ -1192,6 +1192,25 @@ def optunaERP ():
         'time_sleep': 120,
         'popsize': 1  # unused - run with mpi 
     }
+    """
+    b.method = 'evol'
+    # Set evol alg configuration
+    b.evolCfg = {
+        'evolAlgorithm': 'custom',
+        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
+        'fitnessFuncArgs': fitnessFuncArgs,
+        'pop_size': 100,
+        'num_elites': 2,
+        'mutation_rate': 0.5,
+        'crossover': 0.5,
+        'maximize': True, # maximize fitness function?
+        'max_generations': 100,
+        'time_sleep': 150, # 2.5min wait this time before checking again if sim is completed (for each generation)
+        'maxiter_wait': 5, # max number of times to check if sim is completed (for each generation)
+        'defaultFitness': -1.0, # set fitness value in case simulation time is over
+        'scancelUser': 'samnemo_gmail_com'
+    }  
+    """          
     return b
 
 # ----------------------------------------------------------------------------------------------
@@ -3245,79 +3264,7 @@ if __name__ == '__main__':
     # b = custom_spont('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_speech('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_BBN('data/v34_batch25/trial_2142/trial_2142_cfg.json')
-    # b = optunaERP()
-
-
-    # --------------------------------------------------------
-    # parameters
-    params = specs.ODict()
-    params[('seeds', 'conn')] = [0]
-    params[('seeds', 'stim')] = [0]
-    # these params control IC -> Thal
-    params['ICThalweightECore'] = [0.1, 0.5]
-    params['ICThalweightICore'] = [0.1, 0.5]
-    params['ICThalprobECore'] = [0.06, 0.5]
-    params['ICThalprobICore'] = [0.06, 0.5]
-    params['ICThalMatrixCoreFactor'] = [0.01, 1.0]
-    # these params added from Christoph Metzner branch
-    params['thalL4PV'] = [0.1, 3]
-    params['thalL4SOM'] = [0.1, 3]
-    params['thalL4E'] = [0.1, 3]
-    # ADD: parameters to vary 
-    groupedParams = []
-    # --------------------------------------------------------
-    # initial config
-    initCfg = {}
-    initCfg['duration'] = 7000 
-    initCfg['printPopAvgRates'] = [1500, 10000]
-    initCfg['scaleDensity'] = 1.0 
-    initCfg['recordStep'] = 0.05
-    # --------------------------------------------------------
-    # fitness function
-    d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/2-rb023024011@os.mat_20kHz_avgERP.pkl','rb'))
-    ttavgERPNHP = d['ttavg']
-    avgCSDNHP = d['avgCSD'] # s2, g, i1 channels for primary CSD sinks are at indices 10, 14, 19
-    fitnessFuncArgs = {}
-    fitnessFuncArgs['maxFitness'] = 1.0
-    groupedParams = []    
-    def fitnessFunc(simData, **kwargs):
-        return 1.0
-        """
-        from csd import getCSDa1dat as getCSD
-        from scipy.stats import pearsonr
-        from erp import getAvgERP
-        def ms2index (ms, sampr): return int(sampr*ms/1e3)
-        LFP = simData['LFP']
-        LFP = np.array(LFP)
-        tt = np.linspace(0,totalDur,LFP.shape[0])
-        CSD = getCSD(LFP, 1e3/0.05)
-        CSD.shape # (18, 220000)
-        lchan = [4, 10, 15]
-        lnhpchan = [11-1, 15-1, 20-1]
-        bbnT = np.arange(3000, 4000, 300)
-        dt = 0.05
-        sampr = 1e3/dt
-        bbnTrigIdx = [ms2index(x,sampr) for x in bbnT]
-        ttERP,avgERP = getAvgERP(CSD, sampr, bbnTrigIdx, 0, 150)
-        fitness = -pearsonr(avgCSDNHP[lnhpchan[1],:],avgERP[lchan[1]])[0]
-        print('fitness is', fitness)
-        return fitness
-        """
-    # --------------------------------------------------------
-    # create Batch object with paramaters to modify, and specifying files to use
-    b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg, groupedParams=groupedParams)
-    b.method = 'optuna'
-    b.optimCfg = {
-        'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
-        'fitnessFuncArgs': fitnessFuncArgs,
-        'maxFitness': fitnessFuncArgs['maxFitness'],
-        'maxiters':     1e6,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
-        'maxtime':      None,    #    Maximum time allowed, in seconds
-        'maxiter_wait': 45,
-        'time_sleep': 120,
-        'popsize': 1  # unused - run with mpi 
-    }
-    
+    b = optunaERP()
     # b = custom_click('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_tone('data/v34_batch25/trial_2142/trial_2142_cfg.json')
     # b = custom_stim('data/v34_batch25/trial_2142/trial_2142_cfg.json')
