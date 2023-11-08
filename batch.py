@@ -1132,15 +1132,15 @@ def optunaERP ():
     #params[('seeds', 'conn')] = [0]
     #params[('seeds', 'stim')] = [0]
     # these params control IC -> Thal
-    params['ICThalweightECore'] = [0.1, 0.5]
-    params['ICThalweightICore'] = [0.1, 0.5]
-    params['ICThalprobECore'] = [0.06, 0.5]
-    params['ICThalprobICore'] = [0.06, 0.5]
-    params['ICThalMatrixCoreFactor'] = [0.01, 1.0]
+    params['ICThalweightECore'] = [0.75, 1.25]
+    params['ICThalweightICore'] = [0.1875, 0.3125]
+    params['ICThalprobECore'] = [0.1425, 0.2375]
+    params['ICThalprobICore'] = [0.09, 0.15]
+    params['ICThalMatrixCoreFactor'] = [0.075, 0.125]
     # these params added from Christoph Metzner branch
-    params['thalL4PV'] = [0.1, 3]
-    params['thalL4SOM'] = [0.1, 3]
-    params['thalL4E'] = [0.1, 3]
+    params['thalL4PV'] = [0.1875, 0.3125]
+    params['thalL4SOM'] = [0.1875, 0.3125]
+    params['thalL4E'] = [1.5, 2.5]
     # ADD: parameters to vary 
     # groupedParams = []
     # --------------------------------------------------------
