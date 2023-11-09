@@ -1189,7 +1189,7 @@ def optunaERP ():
         'maxiters':     100,    #    Maximum number of iterations (1 iteration = 1 function evaluation)
         'maxtime':      None,    #    Maximum time allowed, in seconds
         'maxiter_wait': 500,
-        'time_sleep': 150,
+        'time_sleep': 120,
         'popsize': 1  # unused - run with mpi 
     }
     """
@@ -1334,7 +1334,7 @@ def evolRates():
         'time_sleep': 150, # 2.5min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 5, # max number of times to check if sim is completed (for each generation)
         'defaultFitness': 1000, # set fitness value in case simulation time is over
-        'scancelUser': 'ext_salvadordura_gmail_com'
+        'scancelUser': 'samnemo_gmail_com'
     }
 
     return b
@@ -3192,7 +3192,7 @@ def setRunCfg(b, type='mpi_direct'):
             'walltime': '6:00:00',
             'nodes': 4,
             'coresPerNode': 24,  # comet=24, bridges=28
-            'email': 'salvadordura@gmail.com',
+            'email': 'samnemo@gmail.com',
             'folder': '/home/salvadord/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
             'script': 'init.py', 
             'mpiCommand': 'ibrun', # comet='ibrun', bridges='mpirun'
@@ -3203,8 +3203,8 @@ def setRunCfg(b, type='mpi_direct'):
             'walltime': '24:00:00', #'48:00:00',
             'nodes': 1,
             'coresPerNode': 80,  # comet=24, bridges=28, gcp=32
-            'email': 'ericaygriffith@gmail.com',
-            'folder': '/home/ext_ericaygriffith_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
+            'email': 'samnemo@gmail.com',
+            'folder': '/home/ext_samnemo_gmail_com/A1/',  # comet,gcp='/salvadord', bridges='/salvi82'
             'script': 'init.py',
             'mpiCommand': 'mpirun', # comet='ibrun', bridges,gcp='mpirun' 
             'nrnCommand': 'nrniv -mpi -python', #'python3',
@@ -3217,7 +3217,7 @@ def setRunCfg(b, type='mpi_direct'):
             'walltime': '06:00:00',
             'nodes': 2,
             'coresPerNode': 28,  # comet=24, bridges=28
-            'email': 'salvadordura@gmail.com',
+            'email': 'samnemo@gmail.com',
             'folder': '/home/salvi82/m1/sim/',  # comet='/salvadord', bridges='/salvi82'
             'script': 'init.py', 
             'mpiCommand': 'mpirun', # comet='ibrun', bridges='mpirun'
@@ -3260,8 +3260,9 @@ def setRunCfg(b, type='mpi_direct'):
 # ----------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
+    from utils import getdatestr
     b = optunaERP()
-    b.batchLabel = 'optunaERP'
+    b.batchLabel = 'optunaERP_'+getdatestr()
     b.saveFolder = 'data/'+b.batchLabel
     setRunCfg(b, 'mpi_direct')
     print('running batch...')
