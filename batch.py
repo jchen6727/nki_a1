@@ -1152,7 +1152,7 @@ def optunaERP ():
     initCfg[('seeds', 'conn')] = 0    
     # --------------------------------------------------------
     # fitness function
-    d = pickle.load(open('/data/samn/a1dat/data/bbn/avgERP/2-rb023024011@os.mat_20kHz_avgERP.pkl','rb'))
+    d = pickle.load(open('opt/2-rb023024011@os.mat_20kHz_avgERP.pkl','rb'))
     ttavgERPNHP = d['ttavg']
     avgCSDNHP = d['avgCSD'] # s2, g, i1 channels for primary CSD sinks are at indices 10, 14, 19
     fitnessFuncArgs = {}
@@ -1166,7 +1166,6 @@ def optunaERP ():
         def ms2index (ms, sampr): return int(sampr*ms/1e3)
         LFP = simData['LFP']
         LFP = np.array(LFP)
-        tt = np.linspace(0,totalDur,LFP.shape[0])
         CSD = getCSD(LFP, 1e3/0.05)
         CSD.shape # (18, 220000)
         lchan = [4, 10, 15]
