@@ -67,7 +67,7 @@ cfg.recordLFP = [[100, y, 100] for y in range(0, 2000, 100)] #+[[100, 2500, 200]
 # Saving
 #------------------------------------------------------------------------------
 
-cfg.simLabel = '23nov9_BBN_A0'
+cfg.simLabel = '23nov10_BBN_A0'
 cfg.saveFolder = 'data/' + cfg.simLabel  ## Set file output name
 cfg.savePickle = True         							## Save pkl file
 cfg.saveJson = False           							## Save json file

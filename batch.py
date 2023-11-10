@@ -1159,6 +1159,7 @@ def optunaERP ():
     fitnessFuncArgs['maxFitness'] = 1.0
     groupedParams = []    
     def fitnessFunc(simData, **kwargs):
+        print('fitness func')
         from csd import getCSDa1dat as getCSD
         from scipy.stats import pearsonr
         from erp import getAvgERP
@@ -1181,7 +1182,7 @@ def optunaERP ():
     # --------------------------------------------------------
     # create Batch object with paramaters to modify, and specifying files to use
     b = Batch(params=params, netParamsFile='netParams.py', cfgFile='cfg.py', initCfg=initCfg)#, groupedParams=groupedParams)
-    b.method = 'optuna'
+    b.method = 'optuna'    
     b.optimCfg = {
         'fitnessFunc': fitnessFunc, # fitness expression (should read simData)
         'fitnessFuncArgs': fitnessFuncArgs,
@@ -1203,14 +1204,14 @@ def optunaERP ():
         'num_elites': 2,
         'mutation_rate': 0.5,
         'crossover': 0.5,
-        'maximize': True, # maximize fitness function?
+        'maximize': False, # maximize fitness function?
         'max_generations': 100,
         'time_sleep': 150, # 2.5min wait this time before checking again if sim is completed (for each generation)
         'maxiter_wait': 5, # max number of times to check if sim is completed (for each generation)
-        'defaultFitness': -1.0, # set fitness value in case simulation time is over
+        'defaultFitness': 1.0, # set fitness value in case simulation time is over
         'scancelUser': 'samnemo_gmail_com'
     }  
-    """          
+    """
     return b
 
 # ----------------------------------------------------------------------------------------------

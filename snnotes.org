@@ -3459,3 +3459,84 @@ in order to use optuna or inspyred with netpyne
 
 need to run with mpi or directly?
 
+according to jc can run directly as
+ python batch.py
+unless using bulletin board (not doing that)
+
+* 23nov9
+** trying to start batch
+
+according to jc can run directly as
+ python batch.py
+unless using bulletin board (not doing that)
+
+even after restarting edge cannot get the batch to run ... 
+so it's not an issue of zombie processes ... 
+
+using evolution seems to start nrniv jobs, but creates full
+population at once ... cant afford to run all of them
+at once, and rather avoid large pop
+
+can probably try grid to start anyway ...
+
+* 23nov10
+** try optuna example to make sure runs properly
+
+from https://github.com/suny-downstate-medical-center/netpyne/blob/development/examples/optunaOptim/optuna_test.py
+
+python -i optunaTest.py
+
+need sklearn installed ... 
+
+conda install scikit-learn
+
+python -i optunaTest.py
+
+[I 2023-11-10 08:08:27,483] Using an existing study with name 'test1' instead of creating a new one.
+optunaTest.py:11: FutureWarning: suggest_uniform has been deprecated in v3.0.0. This feature will be removed in v6.0.0. See https://github.com/optuna/optuna/releases/tag/v3.0.0. Use suggest_float instead.
+  x = trial.suggest_uniform('x', min_x, max_x)
+[I 2023-11-10 08:08:27,546] Trial 10 finished with value: 0.7889987008429175 and parameters: {'x': 1.1117440116481525}. Best is trial 5 with value: 0.27876898863347926.
+[I 2023-11-10 08:08:27,579] Trial 11 finished with value: 0.8448447328713707 and parameters: {'x': 1.0808456425216868}. Best is trial 5 with value: 0.27876898863347926.
+[I 2023-11-10 08:08:27,612] Trial 12 finished with value: 0.7268634903091045 and parameters: {'x': 1.1474371047781258}. Best is trial 5 with value: 0.27876898863347926.
+[I 2023-11-10 08:08:27,645] Trial 13 finished with value: 0.38772961234199815 and parameters: {'x': 2.622679381658007}. Best is trial 5 with value: 0.27876898863347926.
+[I 2023-11-10 08:08:27,678] Trial 14 finished with value: 1.139511757085533 and parameters: {'x': 3.0674791600239946}. Best is trial 5 with value: 0.27876898863347926.
+[I 2023-11-10 08:08:27,711] Trial 15 finished with value: 0.22492627912903987 and parameters: {'x': 2.4742639340378307}. Best is trial 15 with value: 0.22492627912903987.
+[I 2023-11-10 08:08:27,745] Trial 16 finished with value: 6.902170141565098 and parameters: {'x': 4.627198154225352}. Best is trial 15 with value: 0.22492627912903987.
+[I 2023-11-10 08:08:27,777] Trial 17 finished with value: 0.010439265703461372 and parameters: {'x': 2.102172724850918}. Best is trial 17 with value: 0.010439265703461372.
+[I 2023-11-10 08:08:27,811] Trial 18 finished with value: 0.06389842145265216 and parameters: {'x': 2.252781370857609}. Best is trial 17 with value: 0.010439265703461372.
+[I 2023-11-10 08:08:27,844] Trial 19 finished with value: 4.063256986807175 and parameters: {'x': 4.015752213643129}. Best is trial 17 with value: 0.010439265703461372.
+{'x': 2.102172724850918}
+0.010439265703461372
+FrozenTrial(number=17, state=TrialState.COMPLETE, values=[0.010439265703461372], datetime_start=datetime.datetime(2023, 11, 10, 8, 8, 27, 750721), datetime_complete=datetime.datetime(2023, 11, 10, 8, 8, 27, 768822), params={'x': 2.102172724850918}, user_attrs={}, system_attrs={}, intermediate_values={}, distributions={'x': FloatDistribution(high=10.0, log=False, low=1.0, step=None)}, trial_id=18, value=None)
+>>> 
+
+ok, seemed to have worked now ... 
+
+** retry batch.py with optuna
+
+python batch.py
+
+running batch...
+Saving batch to data/optunaERP_23nov10_/optunaERP_23nov10__batch.json ... 
+[I 2023-11-10 08:09:22,689] A new study created in RDB with name: optunaERP_23nov10_
+set ICThalweightECore=0.7627168964940808
+set ICThalweightICore=0.29542883774592615
+set ICThalprobECore=0.1945618998343761
+set ICThalprobICore=0.10827470926186814
+set ICThalMatrixCoreFactor=0.0996924276891577
+set thalL4PV=0.21037339654005263
+set thalL4SOM=0.18771766488757063
+set thalL4E=2.4606712923135188
+Saving simConfig to data/optunaERP_23nov10_/trial_0/trial_0_cfg.json ... 
+Submitting job  trial_0
+#!/bin/bash
+
+cd .
+mpiexec -n 48 nrniv -python -mpi init.py simConfig=data/optunaERP_23nov10_/trial_0/trial_0_cfg.json netParams=data/optunaERP_23nov10_/optunaERP_23nov10__netParams.py 
+        
+--------------------------------------------------------------------------------
+Waiting for jobs from generation 0/100 ...
+completed: 0
+
+still does nothing ... just waits ... 
+
