@@ -3175,6 +3175,8 @@ def setRunCfg(b, type='mpi_direct'):
             'coresPerNode': 48,
             'script': 'init.py',
             'mpiCommand': 'mpiexec',
+            'custom': 'source ~/.bashrc',
+            'executor': 'bash',
             'skip': True}
     elif type=='hpc_torque':
         b.runCfg = {'type': 'hpc_torque',
