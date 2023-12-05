@@ -250,7 +250,7 @@ cfg.tune = {}
 # COMMENT THIS OUT IF USING GCP !!! ONLY USE IF USING NEUROSIM!!! 
 import json
 
-with open('data/v34_batch25/trial_2142/trial_2142_cfg.json', 'rb') as f:       # 'data/salva_runs/v29_batch3_trial_13425_cfg.json'
+with open('inputs/config.json', 'r') as f:       # 'data/salva_runs/v29_batch3_trial_13425_cfg.json'
 	cfgLoad = json.load(f)['simConfig']
 
 
