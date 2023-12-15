@@ -48,7 +48,7 @@ def getCSDa1dat (lfps,sampr,spacing_um=100.0,minf=0.05,maxf=300,norm=True,vaknin
   # can change to run Vaknin on bandpass filtered LFPs before calculating CSD, that
   # way would have same number of channels in CSD and LFP (but not critical, and would take more RAM);
   # also might want to subtract mean of each channel before calculating the diff(diff) ?
-  #
+
   if vaknin: datband = Vaknin(datband)
   if norm: removemean(datband,ax=ax)
   # when drawing CSD make sure that negative values (depolarizing intracellular current) drawn in red,

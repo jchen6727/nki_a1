@@ -3,3 +3,5 @@ __pycache__/*
 #batch files (optunaERP_)
 *.pid
 data/optunaERP_*
+
+.DS_Store

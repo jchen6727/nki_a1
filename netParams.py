@@ -8,6 +8,7 @@ Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 
 from netpyne import specs
 import pickle, json
+import numpy
 
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
@@ -16,6 +17,23 @@ try:
 except:
     from cfg import cfg
 
+# these variables are defined only to be referenced in ICThalInput...
+cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalweightIMatrix = cfg.ICThalweightICore * cfg.ICThalMatrixCoreFactor
+cfg.ICThalprobEMatrix = cfg.ICThalprobECore
+cfg.ICThalprobIMatrix = cfg.ICThalprobICore
+
+cfg.ICThalInput = {'file': 'inputs/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat',
+                   'startTime': list(numpy.arange(3000, 4000, 300)),
+                   'weightECore': cfg.ICThalweightECore,
+                   'weightICore': cfg.ICThalweightICore,
+                   'probECore': cfg.ICThalprobECore,
+                   'probICore': cfg.ICThalprobICore,
+                   'weightEMatrix': cfg.ICThalweightEMatrix,
+                   'weightIMatrix': cfg.ICThalweightIMatrix,
+                   'probEMatrix': cfg.ICThalprobEMatrix,
+                   'probIMatrix': cfg.ICThalprobIMatrix,
+                   'seed': 1}  # SHOULD THIS BE ZERO?
 
 #------------------------------------------------------------------------------
 # VERSION 
@@ -82,102 +100,12 @@ cellParamLabels = ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
 for ruleLabel in cellParamLabels:
     netParams.loadCellParamsRule(label=ruleLabel, fileName='cells/' + ruleLabel + '_cellParams.json')  # Load cellParams for each of the above cell subtype
 
-
-
-# ## Reduce T-type calcium channel conductances (cfg.tTypeCorticalFactor ; cfg.tTypeThalamicFactor)
-# for cellLabel in ['TC_reduced', 'HTC_reduced', 'RE_reduced']:
-#     cellParam = netParams.cellParams[cellLabel]
-#     for secName in cellParam['secs']:
-#         #print('cellType: ' + cellLabel + ', section: ' + secName)
-#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-#             if mechName in ['itre', 'ittc']:
-#                 #print('gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT PRE-CHANGE
-#                 cellParam['secs'][secName]['mechs'][mechName]['gmax'] *= cfg.tTypeThalamicFactor
-#                 print('new gmax of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gmax']))  # ADD A TEST PRINT STATEMENT POST-CHANGE
-
-# for cellLabel in ['TI_reduced']:
-#     cellParam = netParams.cellParams[cellLabel]
-#     for secName in cellParam['secs']:
-#         #print('cellType: ' + cellLabel + ', section: ' + secName)
-#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-#             if mechName == 'it2INT':
-#                 #print('gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT PRE-CHANGE
-#                 cellParam['secs'][secName]['mechs'][mechName]['gcabar'] *= cfg.tTypeThalamicFactor
-#                 print('new gcabar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcabar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
-
-# for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
-#                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced', 'CT5B_reduced', 
-#                     'IT6_reduced', 'CT6_reduced']:
-#     cellParam = netParams.cellParams[cellLabel]
-#     for secName in cellParam['secs']:
-#         #print('cellType: ' + cellLabel + ', section: ' + secName)
-#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-#             if mechName == 'cat':
-#                 #print('gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar']))# ADD A TEST PRINT STATEMENT PRE-CHANGE
-#                 cellParam['secs'][secName]['mechs'][mechName]['gcatbar'] *= cfg.tTypeCorticalFactor
-#                 print('new gcatbar of ' + mechName + ' ' + str(cellParam['secs'][secName]['mechs'][mechName]['gcatbar'])) # ADD A TEST PRINT STATEMENT POST-CHANGE
-
-
-
-## Manipulate NMDAR weights to Inhibitory Populations 
-
-
-
-# # Thalamic Interneuron Version:
-# TI_version = 'default' # IAHP # IL # default
-
-# if TI_version == 'IAHP': 
-#     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IAHP.json') 
-#     print('IAHP reduced conductance version loaded')
-# elif TI_version == 'IL':
-#     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams_IL.json') 
-#     print('IL reduced conductance version loaded')
-# else: 
-#     netParams.loadCellParamsRule(label='TI_reduced', fileName='cells/TI_reduced_cellParams.json')
-#     print('Default thal int model loaded')
-
-
-
-# # change weightNorm 
-# for k in cfg.weightNormScaling:
-#     for sec in netParams.cellParams[k]['secs'].values():
-#         for i in range(len(sec['weightNorm'])):
-#             sec['weightNorm'][i] *= cfg.weightNormScaling[k]
-
-
-# # Parametrize PT ih_gbar and exc cells K_gmax to simulate NA/ACh neuromodulation
-# for cellLabel in ['PT5B_reduced']:
-#     cellParam = netParams.cellParams[cellLabel] 
-
-#     for secName in cellParam['secs']:
-#         # Adapt ih params based on cfg param
-#         for mechName,mech in cellParam['secs'][secName]['mechs'].items():
-#             if mechName in ['ih','h','h15', 'hd']: 
-#                 mech['gbar'] = [g*cfg.ihGbar for g in mech['gbar']] if isinstance(mech['gbar'],list) else mech['gbar']*cfg.ihGbar
-
-
-# # Adapt Kgbar
-# for cellLabel in ['IT2_reduced', 'IT3_reduced', 'ITP4_reduced', 'ITS4_reduced',
-#                     'IT5A_reduced', 'CT5A_reduced', 'IT5B_reduced',
-#                     'PT5B_reduced', 'CT5B_reduced', 'IT6_reduced', 'CT6_reduced']:
-#     cellParam = netParams.cellParams[cellLabel] 
-
-#     for secName in cellParam['secs']:
-#         for kmech in [k for k in cellParam['secs'][secName]['mechs'].keys() if k in ['kap','kdr']]:
-#             cellParam['secs'][secName]['mechs'][kmech]['gbar'] *= cfg.KgbarFactor 
-
-
-
-
-
-
-
 #------------------------------------------------------------------------------
 # Population parameters
 #------------------------------------------------------------------------------
 
 ## load densities
-with open('cells/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileObj)['density']
+with open('inputs/cellDensity.pkl', 'rb') as fileObj: density = pickle.load(fileObj)['density']
 density = {k: [x * cfg.scaleDensity for x in v] for k,v in density.items()} # Scale densities 
 
 # ### LAYER 1:
@@ -286,10 +214,10 @@ NGFSynMech = ['GABAA', 'GABAB']
 #------------------------------------------------------------------------------
 
 ## load data from conn pre-processing file
-with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+with open('inputs/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
 pmat = connData['pmat']
 lmat = connData['lmat']
-wmat = connData['wmat']
+#wmat = connData['wmat']
 bins = connData['bins']
 connDataSource = connData['connDataSource']
 
@@ -735,7 +663,7 @@ if cfg.addBkgConn:
 
 
     # excBkg/I -> thalamus + cortex
-    with open('cells/bkgWeightPops.json', 'r') as f:
+    with open('inputs/bkgWeightPops.json', 'r') as f:
         weightBkg = json.load(f)
     pops = list(cfg.allpops)
     pops.remove('IC')

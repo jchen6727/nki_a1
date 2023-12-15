@@ -183,11 +183,6 @@ cfg.ICThalprobECore = 0.19
 cfg.ICThalprobICore = 0.12
 # these params control IC -> Thalamic Matrix
 cfg.ICThalMatrixCoreFactor = 0.1
-cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
-cfg.ICThalweightIMatrix = cfg.ICThalweightICore * cfg.ICThalMatrixCoreFactor
-cfg.ICThalprobEMatrix = cfg.ICThalprobECore 
-cfg.ICThalprobIMatrix = cfg.ICThalprobICore 
-
 
 # these params added from Christoph Metzner branch
 cfg.thalL4PV = 0.25 
@@ -196,9 +191,9 @@ cfg.thalL4E = 2.0
 
 cfg.addSubConn = 1
 
-## full weight conn matrix
-with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
-cfg.wmat = connData['wmat']
+## full weight conn matrix # THESE TWO LINES DO NOTHING!
+#with open('conn/conn.pkl', 'rb') as fileObj: connData = pickle.load(fileObj)
+#cfg.wmat = connData['wmat']
 
 
 #------------------------------------------------------------------------------
@@ -318,14 +313,3 @@ cfg.IbkgThalamicGain = cfgLoad['IbkgThalamicGain']
 # UPDATE WMAT VALUES
 cfg.wmat = cfgLoad['wmat']
 
-cfg.ICThalInput = {'file': 'data/ICoutput/ICoutput_CF_5256_6056_wav_BBN_100ms_burst.mat', # BBN_trials/ICoutput_CF_9600_10400_wav_BBN_100ms_burst_AN.mat', 
-                   'startTime': list(np.arange(3000, 4000, 300)),
-                   'weightECore': cfg.ICThalweightECore,
-                   'weightICore': cfg.ICThalweightICore,
-                   'probECore': cfg.ICThalprobECore, 
-                   'probICore': cfg.ICThalprobICore,
-                   'weightEMatrix': cfg.ICThalweightEMatrix,
-                   'weightIMatrix': cfg.ICThalweightIMatrix,
-                   'probEMatrix': cfg.ICThalprobEMatrix,
-                   'probIMatrix': cfg.ICThalprobIMatrix,
-                   'seed': 1}  # SHOULD THIS BE ZERO?                   
