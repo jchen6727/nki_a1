@@ -6,9 +6,12 @@ High-level specifications for A1 network model using NetPyNE
 Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com
 """
 
-from netpyne import specs
 import pickle, json
 import numpy
+
+"""
+# handled through the runtk package 
+from netpyne import specs
 
 netParams = specs.NetParams()   # object of class NetParams to store the network parameters
 
@@ -16,6 +19,27 @@ try:
     from __main__ import cfg  # import SimConfig object with params from parent module
 except:
     from cfg import cfg
+"""
+
+"""
+search_params = {
+    # these params control IC -> Thal [LB, UB]
+    'ICThalweightECore': [0.75, 1.25],
+    'ICThalweightICore': [0.1875, 0.3125],
+    'ICThalprobECore': [0.1425, 0.2375],
+    'ICThalprobICore': [0.09, 0.15],
+    'ICThalMatrixCoreFactor': [0.075, 0.125],
+    # these params added from Christoph Metzner branch
+    'thalL4PV': [0.1875, 0.3125],
+    'thalL4SOM': [0.1875, 0.3125],
+    'thalL4E': [1.5, 2.5]
+}
+"""
+from cfg import a1
+
+a1.set_mappings('cfg')
+netParams = a1.get_netParams()
+cfg = a1.get_cfg()
 
 # these variables are defined only to be referenced in ICThalInput...
 cfg.ICThalweightEMatrix = cfg.ICThalweightECore * cfg.ICThalMatrixCoreFactor
@@ -812,6 +836,32 @@ if cfg.addNetStim:
                 'weight': weight,
                 'synMechWeightFactor': synMechWeightFactor,
                 'delay': delay}
+
+
+
+modified_params = {
+    ### IC -> Thalamic Connectivity
+    'FLOATRUNTK0': ('cfg.ICThalweightECore', cfg.ICThalweightECore, netParams.connParams['IC->ThalECore']['weight']),
+    'FLOATRUNTK1': ('cfg.ICThalweightICore', cfg.ICThalweightICore, netParams.connParams['IC->ThalICore']['weight']),
+    'FLOATRUNTK2': ('cfg.ICThalprobECore', cfg.ICThalprobECore, netParams.connParams['IC->ThalECore']['probability'], netParams.connParams['IC->ThalEMatrix']['probability']),
+    'FLOATRUNTK3': ('cfg.ICThalprobICore', cfg.ICThalprobICore, netParams.connParams['IC->ThalICore']['probability'], netParams.connParams['IC->ThalIMatrix']['probability']),
+    'FLOATRUNTK4': ('cfg.ICThalMatrixCoreFactor', cfg.ICThalMatrixCoreFactor, netParams.connParams['IC->ThalEMatrix']['weight'], netParams.connParams['IC->ThalIMatrix']['weight']),
+    ### Thalamic -> L4 Connectivity
+    'FLOATRUNTK5': (cfg.thalL4PV),
+    'FLOATRUNTK6': (cfg.thalL4SOM),
+    'FLOATRUNTK7': (cfg.thalL4E),
+}
+
+print(modified_params)
+
+try:
+    print("writing to {}".format(a1.writefile))
+    a1.write(modified_params)
+    a1.signal()
+except:
+    print("writing to a1_data.json")
+    with open('a1_data.json', 'w') as fptr:
+        json.dump(modified_params, fptr)
 
 #------------------------------------------------------------------------------
 # Description

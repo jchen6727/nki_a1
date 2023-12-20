@@ -7,12 +7,32 @@ This file has sim configs as well as specification for parameterized values in n
 Contributors: ericaygriffith@gmail.com, salvadordura@gmail.com, samnemo@gmail.com
 """
 
+"""
+env={
+### IC -> Thalamic Connectivity
+	'FLOATRUNTK0': 'cfg.ICThalweightECore=1',
+	'FLOATRUNTK1': 'cfg.ICThalweightICore=2',
+	'FLOATRUNTK2': 'cfg.ICThalprobECore=3',
+	'FLOATRUNTK3': 'cfg.ICThalprobICore=4',
+	'FLOATRUNTK4': 'cfg.ICThalMatrixCoreFactor=5.0',
+### Thalamic -> L4 Connectivity
+	'FLOATRUNTK5': 'cfg.thalL4PV=2.5',
+	'FLOATRUNTK6': 'cfg.thalL4SOM=2.5',
+	'FLOATRUNTK7': 'cfg.thalL4E=20',
+}
+"""
 
-from netpyne import specs
+
+#from netpyne import specs
 import pickle
-import numpy as np
+#import numpy as np
 
-cfg = specs.SimConfig()
+#cfg = specs.SimConfig()
+
+from pubtk.runtk import NetpyneRunner
+
+a1 = NetpyneRunner()
+cfg = a1.get_cfg()
 
 #------------------------------------------------------------------------------
 #
